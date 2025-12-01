@@ -23,14 +23,3 @@ export const getEmptyRubric = (category: JudgingCategory): RubricFormValues => {
 
   return result;
 };
-
-export const getCategoryColor = (category: JudgingCategory) => {
-  switch (category) {
-    case 'core-values':
-      return '#d32f2f';
-    case 'innovation-project':
-      return '#1976d2';
-    case 'robot-design':
-      return '#388e3c';
-  }
-};

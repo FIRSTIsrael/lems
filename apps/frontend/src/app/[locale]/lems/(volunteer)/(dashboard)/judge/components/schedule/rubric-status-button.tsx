@@ -1,67 +1,48 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { Box, Typography, useTheme } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
-import EditIcon from '@mui/icons-material/Edit';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import VerifiedIcon from '@mui/icons-material/Verified';
-
-export type RubricType = 'core-values' | 'innovation-project' | 'robot-design';
-export type RubricStatus = 'empty' | 'in-progress' | 'completed' | 'waiting-for-review' | 'ready';
+import { JudgingCategory } from '@lems/types/judging';
+import { RubricStatus } from '@lems/database';
+import { getRubricColor, getRubricIcon } from '@lems/shared/rubrics/rubric-utils';
 
 interface RubricStatusButtonProps {
-  type: RubricType;
-  status: RubricStatus;
+  category: JudgingCategory;
+  status?: RubricStatus;
   label: string;
   onClick?: () => void;
   disabled?: boolean;
+  teamSlug?: string;
 }
 
-const getRubricColor = (type: RubricType) => {
-  switch (type) {
-    case 'core-values':
-      return '#d32f2f';
-    case 'innovation-project':
-      return '#1976d2';
-    case 'robot-design':
-      return '#388e3c';
-  }
-};
-
-const getStatusIcon = (status: RubricStatus, color: string) => {
-  const iconStyle = { fontSize: '1.1rem', color };
-  switch (status) {
-    case 'completed':
-      return <VerifiedIcon sx={iconStyle} />;
-    case 'in-progress':
-      return <EditIcon sx={iconStyle} />;
-    case 'waiting-for-review':
-      return <HourglassEmptyIcon sx={iconStyle} />;
-    case 'ready':
-      return <CheckCircleIcon sx={iconStyle} />;
-    case 'empty':
-    default:
-      return <CircleOutlinedIcon sx={{ ...iconStyle, opacity: 0.4 }} />;
-  }
-};
-
 export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
-  type,
-  status,
+  category,
+  status = 'empty',
   label,
   onClick,
-  disabled = false
+  disabled = false,
+  teamSlug
 }) => {
+  const router = useRouter();
   const theme = useTheme();
-  const rubricColor = getRubricColor(type);
-  const statusIcon = getStatusIcon(status, rubricColor);
+  const rubricColor = getRubricColor(category);
+  const statusIcon = getRubricIcon(status, rubricColor);
+
   const isCompleted = status === 'completed';
-  const isInProgress = status === 'in-progress';
+  const isDraft = status === 'draft';
+
+  const handleClick = () => {
+    if (teamSlug) {
+      const rubricPath = `/lems/team/${teamSlug}/rubric/${category}`;
+      router.push(rubricPath);
+    } else if (onClick) {
+      onClick();
+    }
+  };
 
   return (
     <Box
-      onClick={disabled ? undefined : onClick}
+      onClick={handleClick}
       sx={{
         display: 'flex',
         alignItems: 'center',
@@ -70,13 +51,13 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
         py: 1.25,
         borderRadius: 2,
         backgroundColor:
-          isCompleted || isInProgress
+          isCompleted || isDraft
             ? theme.palette.mode === 'dark'
               ? `${rubricColor}15`
               : `${rubricColor}08`
             : 'transparent',
         border: '1.5px solid',
-        borderColor: isCompleted || isInProgress ? rubricColor : theme.palette.divider,
+        borderColor: isCompleted || isDraft ? rubricColor : theme.palette.divider,
         cursor: disabled ? 'default' : 'pointer',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         minWidth: '140px',
@@ -102,7 +83,7 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
         sx={{
           fontWeight: 600,
           fontSize: '0.875rem',
-          color: isCompleted || isInProgress ? rubricColor : theme.palette.text.secondary,
+          color: isCompleted || isDraft ? rubricColor : theme.palette.text.secondary,
           flex: 1,
           textAlign: 'left'
         }}

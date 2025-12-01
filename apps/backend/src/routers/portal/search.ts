@@ -31,7 +31,7 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
       const processedTeams = matchingTeams.map(team => ({
         type: 'team' as const,
         id: `team-${team.id}`,
-        slug: `${team.region}-${team.number}`,
+        slug: `${team.region}-${team.number}`.toUpperCase(),
         title: `${team.name} #${team.number}`,
         location: [team.city, team.affiliation].filter(Boolean).join(' , '),
         description: team.affiliation || '',

@@ -19,6 +19,7 @@ export * from './tables/judging-sessions';
 export * from './tables/robot-game-tables';
 export * from './tables/robot-game-matches';
 export * from './tables/robot-game-match-participants';
+export * from './tables/agenda-events';
 
 // Teams
 export * from './tables/teams';
@@ -28,5 +29,6 @@ export * from './tables/team-division-notifications';
 // States
 export * from './documents/judging-session-state';
 export * from './documents/robot-game-match-state';
+export * from './documents/rubric';
 
 export * from './tables/awards';

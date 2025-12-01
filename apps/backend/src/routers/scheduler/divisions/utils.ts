@@ -5,7 +5,7 @@ export const makeSchedulerTeamResponse = (team: DbTeam): Team => ({
   id: team.id,
   number: team.number,
   region: team.region,
-  slug: `${team.region}-${team.number}`
+  slug: `${team.region}-${team.number}`.toUpperCase()
 });
 
 export const makeSchedulerLocationResponse = (
