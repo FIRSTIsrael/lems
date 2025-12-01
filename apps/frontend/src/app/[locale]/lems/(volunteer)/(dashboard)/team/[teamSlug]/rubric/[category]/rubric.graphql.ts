@@ -303,15 +303,17 @@ export function parseRubricData(queryData: RubricQueryResult): RubricItem | unde
 
   // If rubric exists but has no data, populate with minimal empty data structure
   if (!rubric.data) {
+    const emptyData: RubricDataFields = {
+      values: {},
+      feedback: {
+        greatJob: '',
+        thinkAbout: ''
+      }
+    };
+
     return {
       ...rubric,
-      data: {
-        values: {},
-        feedback: {
-          greatJob: '',
-          thinkAbout: ''
-        }
-      }
+      data: emptyData
     };
   }
 

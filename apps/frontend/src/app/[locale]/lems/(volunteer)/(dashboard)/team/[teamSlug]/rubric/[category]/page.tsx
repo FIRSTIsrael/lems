@@ -49,7 +49,7 @@ export default function RubricPage() {
   const { data: rubric, loading } = usePageData<
     RubricQueryResult,
     GetRubricQueryVariables,
-    RubricItem
+    RubricItem | undefined
   >(
     GET_RUBRIC_QUERY,
     {
