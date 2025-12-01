@@ -18,6 +18,7 @@ export const ScoreFloater = () => {
         alignItems="center"
         justifyContent="center"
         spacing={3}
+        className="score-floater"
         sx={{
           p: 4,
           position: 'fixed',
@@ -29,7 +30,10 @@ export const ScoreFloater = () => {
           zIndex: 1,
           bgcolor: 'primary.main',
           borderRadius: 4,
-          height: 50
+          height: 50,
+          '@media print': {
+            display: 'none !important'
+          }
         }}
       >
         <Typography sx={{ color: '#FFF' }} fontWeight={500} fontSize="1.25rem">
