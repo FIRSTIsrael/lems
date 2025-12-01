@@ -2,23 +2,96 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 import type { ApolloCache } from '@apollo/client';
 import { merge, updateById, Reconciler, underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
-import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import { getEmptyRubric } from './rubric-utils';
 import { RubricItem } from './types';
 
-export interface RubricQueryResult {
+type QueryResult = {
   division: {
     judging: {
       rubrics: RubricItem[];
     };
   };
-}
+};
+
+type QueryVariables = {
+  divisionId: string;
+  teamId: string;
+  category: 'innovation_project' | 'robot_design' | 'core_values';
+};
+
+type ValueMutationResult = {
+  updateRubricValue: {
+    rubricId: string;
+    fieldId: string;
+    value: { value: number; notes?: string };
+    version: number;
+  };
+};
+
+type ValueMutationVariables = {
+  divisionId: string;
+  rubricId: string;
+  fieldId: string;
+  value: number;
+  notes?: string;
+};
+
+type FeedbackMutationResult = {
+  updateRubricFeedback: {
+    rubricId: string;
+    feedback: { greatJob: string; thinkAbout: string };
+    version: number;
+  };
+};
+
+type FeedbackMutationVariables = {
+  divisionId: string;
+  rubricId: string;
+  greatJob: string;
+  thinkAbout: string;
+};
+
+type RubricValueUpdatedEvent = {
+  __typename: 'RubricValueUpdated';
+  rubricId: string;
+  fieldId: string;
+  value: { value: number; notes?: string };
+  version: number;
+};
+
+type RubricFeedbackUpdatedEvent = {
+  __typename: 'RubricFeedbackUpdated';
+  rubricId: string;
+  feedback: { greatJob: string; thinkAbout: string };
+  version: number;
+};
+
+type RubricStatusUpdatedEvent = {
+  __typename: 'RubricStatusUpdated';
+  rubricId: string;
+  status: string;
+  version: number;
+};
+
+type RubricUpdatedEvent =
+  | RubricValueUpdatedEvent
+  | RubricFeedbackUpdatedEvent
+  | RubricStatusUpdatedEvent;
+
+type SubscriptionResult = {
+  rubricUpdated: RubricUpdatedEvent;
+};
+
+type SubscriptionVariables = {
+  divisionId: string;
+  lastSeenVersion?: number;
+};
 
 /**
  * Query to fetch a single rubric for a team and category
  */
-export const GET_RUBRIC_QUERY: TypedDocumentNode<RubricQueryResult, GetRubricQueryVariables> = gql`
+export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = gql`
   query GetRubric($divisionId: String!, $teamId: String!, $category: JudgingCategory!) {
     division(id: $divisionId) {
       id
@@ -45,8 +118,8 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<RubricQueryResult, GetRubricQue
  * Mutation to update a single rubric field value
  */
 export const UPDATE_RUBRIC_VALUE_MUTATION: TypedDocumentNode<
-  UpdateRubricValueMutationResult,
-  UpdateRubricValueMutationVariables
+  ValueMutationResult,
+  ValueMutationVariables
 > = gql`
   mutation UpdateRubricValue(
     $divisionId: String!
@@ -77,8 +150,8 @@ export const UPDATE_RUBRIC_VALUE_MUTATION: TypedDocumentNode<
  * Mutation to update feedback in a rubric
  */
 export const UPDATE_RUBRIC_FEEDBACK_MUTATION: TypedDocumentNode<
-  UpdateRubricFeedbackMutationResult,
-  UpdateRubricFeedbackMutationVariables
+  FeedbackMutationResult,
+  FeedbackMutationVariables
 > = gql`
   mutation UpdateRubricFeedback(
     $divisionId: String!
@@ -103,29 +176,12 @@ export const UPDATE_RUBRIC_FEEDBACK_MUTATION: TypedDocumentNode<
 `;
 
 /**
- * Mutation to update the status of a rubric
- */
-export const UPDATE_RUBRIC_STATUS_MUTATION: TypedDocumentNode<
-  UpdateRubricStatusMutationResult,
-  UpdateRubricStatusMutationVariables
-> = gql`
-  mutation UpdateRubricStatus($divisionId: String!, $rubricId: String!, $status: RubricStatus!) {
-    updateRubricStatus(divisionId: $divisionId, rubricId: $rubricId, status: $status) {
-      rubricId
-      status
-      version
-    }
-  }
-`;
-
-/**
  * Subscription to real-time rubric updates
- * Fires whenever any field value, feedback, or status is updated in a rubric in the division
- * Returns RubricValueUpdated, RubricFeedbackUpdated, or RubricStatusUpdated
+ * Fires when any field value, feedback, or status changes
  */
 export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  RubricUpdatedSubscriptionResult,
-  RubricUpdatedSubscriptionVariables
+  SubscriptionResult,
+  SubscriptionVariables
 > = gql`
   subscription RubricUpdated($divisionId: String!, $lastSeenVersion: Int) {
     rubricUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
@@ -156,107 +212,11 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-export interface GetRubricQueryVariables {
-  divisionId: string;
-  teamId: string;
-
-  // Judging category, but with underscores so GraphQL doesn't complain
-  category: 'innovation_project' | 'robot_design' | 'core_values';
-}
-
-export interface UpdateRubricValueMutationResult {
-  updateRubricValue: {
-    rubricId: string;
-    fieldId: string;
-    value: {
-      value: number;
-      notes?: string;
-    };
-    version: number;
-  };
-}
-
-export interface UpdateRubricValueMutationVariables {
-  divisionId: string;
-  rubricId: string;
-  fieldId: string;
-  value: number;
-  notes?: string;
-}
-
-export interface UpdateRubricFeedbackMutationResult {
-  updateRubricFeedback: {
-    rubricId: string;
-    feedback: {
-      greatJob: string;
-      thinkAbout: string;
-    };
-    version: number;
-  };
-}
-
-export interface UpdateRubricFeedbackMutationVariables {
-  divisionId: string;
-  rubricId: string;
-  greatJob: string;
-  thinkAbout: string;
-}
-
-export interface UpdateRubricStatusMutationResult {
-  updateRubricStatus: {
-    rubricId: string;
-    status: RubricStatus;
-    version: number;
-  };
-}
-
-export interface UpdateRubricStatusMutationVariables {
-  divisionId: string;
-  rubricId: string;
-  status: RubricStatus;
-}
-
-export type RubricUpdatedEvent =
-  | {
-      __typename: 'RubricValueUpdated';
-      rubricId: string;
-      fieldId: string;
-      value: {
-        value: number;
-        notes?: string;
-      };
-      version: number;
-    }
-  | {
-      __typename: 'RubricFeedbackUpdated';
-      rubricId: string;
-      feedback: {
-        greatJob: string;
-        thinkAbout: string;
-      };
-      version: number;
-    }
-  | {
-      __typename: 'RubricStatusUpdated';
-      rubricId: string;
-      status: RubricStatus;
-      version: number;
-    };
-
-export interface RubricUpdatedSubscriptionResult {
-  rubricUpdated: RubricUpdatedEvent;
-}
-
-export interface RubricUpdatedSubscriptionVariables {
-  divisionId: string;
-  lastSeenVersion?: number;
-}
-
 /**
- * Parses the query result to extract the first rubric
- * If the rubric has no data, creates a empty rubric.
+ * Parses the query result to extract the first rubric.
+ * If the rubric has no data, creates an empty rubric.
  */
-export function parseRubricData(queryData: RubricQueryResult): RubricItem {
+export function parseRubricData(queryData: QueryResult): RubricItem {
   const rubric = queryData.division?.judging?.rubrics?.[0];
 
   if (!rubric.data) {
@@ -269,72 +229,9 @@ export function parseRubricData(queryData: RubricQueryResult): RubricItem {
   return rubric;
 }
 
-// ============ Cache Update Functions ============
-
-/**
- * Reconciler for rubric updates (both field and feedback).
- * Handles both RubricValueUpdated and RubricFeedbackUpdated event types.
- */
-const rubricUpdatedReconciler: Reconciler<RubricQueryResult, RubricUpdatedSubscriptionResult> = (
-  prev,
-  { data }
-) => {
-  if (!data?.rubricUpdated) {
-    return prev;
-  }
-
-  const rubricUpdatedEvent = data.rubricUpdated;
-  const { rubricId } = rubricUpdatedEvent;
-  const rubrics = prev.division.judging.rubrics;
-
-  // Find the rubric that was updated
-  const rubricIndex = rubrics.findIndex(r => r.id === rubricId);
-  if (rubricIndex === -1) {
-    return prev;
-  }
-
-  // Update based on event type
-  const updatedRubrics = [...rubrics];
-  const rubricData = (updatedRubrics[rubricIndex].data || {}) as RubricDataFields;
-
-  if (rubricUpdatedEvent.__typename === 'RubricValueUpdated') {
-    // Field value update
-    const { fieldId, value } = rubricUpdatedEvent;
-    updatedRubrics[rubricIndex].data = merge(rubricData, {
-      values: {
-        ...(rubricData.values || {}),
-        [fieldId]: value
-      }
-    });
-  } else if (rubricUpdatedEvent.__typename === 'RubricFeedbackUpdated') {
-    // Feedback update
-    const { feedback } = rubricUpdatedEvent;
-    updatedRubrics[rubricIndex].data = merge(rubricData, {
-      feedback
-    });
-  } else if (rubricUpdatedEvent.__typename === 'RubricStatusUpdated') {
-    // Status update
-    const { status } = rubricUpdatedEvent;
-    updatedRubrics[rubricIndex] = merge(updatedRubrics[rubricIndex], { status });
-  }
-
-  return merge(prev, {
-    division: {
-      judging: {
-        rubrics: updatedRubrics
-      }
-    }
-  });
-};
-
 /**
  * Creates an Apollo cache update function for the rubric field value mutation.
  * Optimistically updates the cache to reflect the new field value.
- *
- * @param rubricId - The ID of the rubric being updated
- * @param fieldId - The ID of the field being updated
- * @param fieldValue - The new field value (includes value and optional notes)
- * @returns Cache update function for Apollo useMutation
  */
 export function createUpdateRubricValueCacheUpdate(
   rubricId: string,
@@ -357,8 +254,8 @@ export function createUpdateRubricValueCacheUpdate(
               rubrics: updateById(division.judging.rubrics, rubricId, rubric =>
                 merge(rubric, {
                   data: merge(rubric.data || {}, {
-                    values: {
-                      ...(rubric.data?.values || {}),
+                    fields: {
+                      ...(rubric.data?.fields || {}),
                       [fieldId]: fieldValue
                     }
                   })
@@ -375,10 +272,6 @@ export function createUpdateRubricValueCacheUpdate(
 /**
  * Creates an Apollo cache update function for the rubric feedback mutation.
  * Optimistically updates the cache to reflect new feedback.
- *
- * @param rubricId - The ID of the rubric being updated
- * @param feedback - The new feedback data
- * @returns Cache update function for Apollo useMutation
  */
 export function createUpdateRubricFeedbackCacheUpdate(
   rubricId: string,
@@ -413,59 +306,68 @@ export function createUpdateRubricFeedbackCacheUpdate(
 }
 
 /**
- * Creates an Apollo cache update function for the rubric status mutation.
- * Optimistically updates the cache to reflect the new status.
- *
- * @param rubricId - The ID of the rubric being updated
- * @param status - The new status
- * @returns Cache update function for Apollo useMutation
+ * Reconciler for rubric updates from subscriptions.
+ * Handles RubricValueUpdated, RubricFeedbackUpdated, and RubricStatusUpdated events.
  */
-export function createUpdateRubricStatusCacheUpdate(rubricId: string, status: RubricStatus) {
-  return (cache: ApolloCache) => {
-    cache.modify({
-      fields: {
-        division(existingDivision = {}) {
-          const division = existingDivision as {
-            judging?: { rubrics?: RubricItem[] };
-          };
-          if (!division.judging?.rubrics) {
-            return existingDivision;
+const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (prev, { data }) => {
+  if (!data?.rubricUpdated) {
+    return prev;
+  }
+
+  const event = data.rubricUpdated;
+  const { rubricId } = event;
+
+  return merge(prev, {
+    division: {
+      judging: {
+        rubrics: updateById(prev.division.judging.rubrics, rubricId, rubric => {
+          if (event.__typename === 'RubricValueUpdated') {
+            return merge(rubric, {
+              data: merge(rubric.data || {}, {
+                fields: {
+                  ...(rubric.data?.fields || {}),
+                  [event.fieldId]: event.value
+                }
+              })
+            });
           }
 
-          return merge(existingDivision, {
-            judging: {
-              rubrics: updateById(division.judging.rubrics, rubricId, rubric =>
-                merge(rubric, { status })
-              )
-            }
-          });
-        }
-      }
-    });
-  };
-}
+          if (event.__typename === 'RubricFeedbackUpdated') {
+            return merge(rubric, {
+              data: merge(rubric.data || {}, {
+                feedback: event.feedback
+              })
+            });
+          }
 
-// ============ Subscription Config Factories ============
+          if (event.__typename === 'RubricStatusUpdated') {
+            return merge(rubric, {
+              status: event.status
+            });
+          }
+
+          return rubric;
+        })
+      }
+    }
+  });
+};
 
 /**
- * Creates a subscription configuration for rubric updates.
- * Fires when any field value or feedback is updated in a rubric in the division.
- * Handles both RubricValueUpdated and RubricFeedbackUpdated event types.
- *
- * @param divisionId - The division ID to subscribe to
- * @returns Subscription configuration for use with usePageData hook
+ * Creates a subscription configuration for real-time rubric updates.
+ * Syncs changes from other judges in the division.
  */
 export function createRubricUpdatedSubscription(
   divisionId: string
-): SubscriptionConfig<unknown, RubricQueryResult, RubricUpdatedSubscriptionVariables> {
+): SubscriptionConfig<unknown, QueryResult, SubscriptionVariables> {
   return {
     subscription: RUBRIC_UPDATED_SUBSCRIPTION,
     subscriptionVariables: {
       divisionId
     },
     updateQuery: rubricUpdatedReconciler as (
-      prev: RubricQueryResult,
+      prev: QueryResult,
       subscriptionData: { data?: unknown }
-    ) => RubricQueryResult
+    ) => QueryResult
   };
 }
