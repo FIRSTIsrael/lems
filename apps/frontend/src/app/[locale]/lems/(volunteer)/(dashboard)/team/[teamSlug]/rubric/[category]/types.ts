@@ -1,14 +1,14 @@
 import { JudgingCategory, RubricStatus } from '@lems/database';
 
-export interface RubricFieldValue {
+export type RubricFieldValue = {
   value: 1 | 2 | 3 | 4 | null;
   notes?: string;
-}
+};
 
-interface RubricFeedback {
+type RubricFeedback = {
   greatJob?: string;
   thinkAbout?: string;
-}
+};
 
 export interface RubricData {
   awards?: Record<string, boolean>;

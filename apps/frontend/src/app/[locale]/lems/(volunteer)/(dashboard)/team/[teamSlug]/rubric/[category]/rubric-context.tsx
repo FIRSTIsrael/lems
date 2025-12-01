@@ -9,11 +9,10 @@ import {
   createUpdateRubricValueCacheUpdate,
   createUpdateRubricFeedbackCacheUpdate
 } from './rubric.graphql';
-import { RubricFieldValue, RubricItem } from './types';
+import { RubricItem } from './types';
 
 interface RubricContextValue {
   rubric: RubricItem;
-  getFieldValue: (fieldId: string) => RubricFieldValue;
   updateFieldValue: (fieldId: string, value: 1 | 2 | 3 | 4, notes?: string) => Promise<void>;
   updateFeedback: (greatJob: string, thinkAbout: string) => Promise<void>;
 }
@@ -41,13 +40,6 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
       console.error('[RubricProvider] Update feedback mutation error:', err);
     }
   });
-
-  const getFieldValue = useCallback(
-    (fieldId: string): RubricFieldValue => {
-      return rubric.data?.fields[fieldId] ?? { value: null };
-    },
-    [rubric]
-  );
 
   const updateFieldValue = useCallback(
     async (fieldId: string, value: 1 | 2 | 3 | 4, notes?: string) => {
@@ -98,11 +90,10 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
   const value: RubricContextValue = useMemo(
     () => ({
       rubric,
-      getFieldValue,
       updateFieldValue,
       updateFeedback
     }),
-    [rubric, getFieldValue, updateFieldValue, updateFeedback]
+    [rubric, updateFieldValue, updateFeedback]
   );
 
   return <RubricContext.Provider value={value}>{children}</RubricContext.Provider>;
