@@ -27,12 +27,11 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   const t = useTranslations('pages.rubric');
   const { getFieldLevel } = useRubricsTranslations(category);
 
-  const { updateFieldValue, fieldValues } = useRubric();
-  const currentValue = fieldValues.get(fieldId)?.value;
+  const { rubric, updateFieldValue } = useRubric();
+  const currentValue = rubric.data?.fields?.[fieldId]?.value;
 
   const handleFieldChange = (cellValue: 1 | 2 | 3 | 4) => {
-    updateFieldValue(fieldId, cellValue).catch(error => {
-      console.error(`[FieldRatingRow] Failed to update field ${fieldId}:`, error);
+    updateFieldValue(fieldId, cellValue).catch(() => {
       toast.error(t('toasts.rating-update-error'));
     });
   };

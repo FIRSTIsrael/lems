@@ -19,45 +19,47 @@ const colors: { [key: string]: string } = {
   'robot-design': '#DAE8D8'
 };
 
+const feedbackFields = ['greatJob', 'thinkAbout'] as const;
+
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
   const t = useTranslations('pages.rubric');
 
-  const feedbackFields = ['great-job', 'think-about'] as const;
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
-  const { feedback: contextFeedback, updateFeedback } = useRubric();
+  const { rubric, updateFeedback } = useRubric();
 
-  const [feedback, setFeedback] = useState({
-    'great-job': contextFeedback?.greatJob || '',
-    'think-about': contextFeedback?.thinkAbout || ''
-  });
+  const [feedback, setFeedback] = useState(
+    rubric.data?.feedback || {
+      greatJob: '',
+      thinkAbout: ''
+    }
+  );
 
   // Sync local state with context changes (e.g., from subscriptions)
   useEffect(() => {
     setFeedback({
-      'great-job': contextFeedback?.greatJob || '',
-      'think-about': contextFeedback?.thinkAbout || ''
+      greatJob: rubric.data?.feedback?.greatJob || '',
+      thinkAbout: rubric.data?.feedback?.thinkAbout || ''
     });
-  }, [contextFeedback?.greatJob, contextFeedback?.thinkAbout]);
+  }, [rubric.data?.feedback?.greatJob, rubric.data?.feedback?.thinkAbout]);
 
   const handleFeedbackBlur = useCallback(
-    (field: 'great-job' | 'think-about', value: string) => {
-      const contextGreatJob = contextFeedback?.greatJob || '';
-      const contextThinkAbout = contextFeedback?.thinkAbout || '';
+    (field: 'greatJob' | 'thinkAbout', value: string) => {
+      const contextGreatJob = rubric.data?.feedback?.greatJob || '';
+      const contextThinkAbout = rubric.data?.feedback?.thinkAbout || '';
 
-      // Only send mutation if value changed from context
       if (
-        (field === 'great-job' && value !== contextGreatJob) ||
-        (field === 'think-about' && value !== contextThinkAbout)
+        (field === 'greatJob' && value !== contextGreatJob) ||
+        (field === 'thinkAbout' && value !== contextThinkAbout)
       ) {
-        const newGreatJob = field === 'great-job' ? value : contextGreatJob;
-        const newThinkAbout = field === 'think-about' ? value : contextThinkAbout;
+        const newGreatJob = field === 'greatJob' ? value : contextGreatJob;
+        const newThinkAbout = field === 'thinkAbout' ? value : contextThinkAbout;
         updateFeedback(newGreatJob, newThinkAbout).catch(err => {
           console.error('[FeedbackRow] Failed to update feedback:', err);
           toast.error(t('toasts.feedback-update-error'));
         });
       }
     },
-    [contextFeedback, updateFeedback, t]
+    [rubric.data?.feedback?.greatJob, rubric.data?.feedback?.thinkAbout, updateFeedback, t]
   );
 
   return (

@@ -25,8 +25,6 @@ export const RubricTable: React.FC<RubricTableProps> = ({
 }) => {
   const { rubric } = useRubric();
 
-  return JSON.stringify(rubric);
-
   return (
     <Paper elevation={3} sx={{ borderRadius: 2, my: 2 }}>
       <Table
@@ -63,7 +61,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({
                     coreValues={field.coreValues}
                     disabled={disabled}
                   />
-                  {fieldValues.get(field.id)?.value === 4 && (
+                  {rubric.data?.fields?.[field.id]?.value === 4 && (
                     <FieldNotesRow fieldId={field.id} disabled={disabled} />
                   )}
                 </React.Fragment>

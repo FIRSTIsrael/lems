@@ -14,9 +14,9 @@ interface FieldNotesRowProps {
 export const FieldNotesRow: React.FC<FieldNotesRowProps> = ({ fieldId, disabled = false }) => {
   const t = useTranslations('pages.rubric');
 
-  const { fieldValues, updateFieldValue } = useRubric();
-  const currentValue = fieldValues.get(fieldId)?.value || 4;
-  const contextNotes = fieldValues.get(fieldId)?.notes || '';
+  const { rubric, updateFieldValue } = useRubric();
+  const currentValue = rubric.data?.fields?.[fieldId]?.value || 4;
+  const contextNotes = rubric.data?.fields?.[fieldId]?.notes || '';
 
   const [notes, setNotes] = useState(contextNotes);
 
@@ -25,10 +25,8 @@ export const FieldNotesRow: React.FC<FieldNotesRowProps> = ({ fieldId, disabled 
   }, [contextNotes]);
 
   const handleNotesBlur = useCallback(() => {
-    // Only send mutation if value changed from context
     if (notes !== contextNotes) {
-      updateFieldValue(fieldId, currentValue, notes).catch(err => {
-        console.error(`[FieldNotesRow] Failed to update notes for field ${fieldId}:`, err);
+      updateFieldValue(fieldId, currentValue, notes).catch(() => {
         toast.error(t('toasts.notes-update-error'));
       });
     }
