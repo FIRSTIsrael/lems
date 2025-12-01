@@ -8,11 +8,14 @@ import {
   makeAdminJudgingRoomResponse,
   makeAdminRobotGameMatchResponse
 } from './util';
+import agendaRouter from './agenda';
 
 const router = express.Router({ mergeParams: true });
 
 const SCHEDULER_DOMAIN = process.env.SCHEDULER_URL;
 if (!SCHEDULER_DOMAIN) throw new Error('SCHEDULER_URL is not configured');
+
+router.use('/agenda', agendaRouter);
 
 router.post(
   '/validate',

@@ -1,7 +1,8 @@
 import { Dayjs } from 'dayjs';
 
-export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session';
-export type ScheduleColumn = 'judging' | 'field';
+export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session' | 'agenda-event';
+export type ScheduleColumn = 'judging' | 'field' | 'agenda';
+export type AgendaBlockVisibility = 'public' | 'field' | 'judging';
 
 export interface ScheduleBlock {
   id: string;
@@ -10,6 +11,12 @@ export interface ScheduleBlock {
   durationSeconds: number;
   isDragging?: boolean;
   canDelete?: boolean;
+}
+
+export interface AgendaBlock extends ScheduleBlock {
+  type: 'agenda-event';
+  title: string;
+  visibilty: AgendaBlockVisibility;
 }
 
 export type BlocksByType = Record<ScheduleColumn, ScheduleBlock[]>;
@@ -30,6 +37,6 @@ export const HEADER_HEIGHT = 40;
 export const BLOCK_COLORS: Record<ScheduleBlockType, string> = {
   'practice-round': '#4CAF50',
   'ranking-round': '#2196F3',
-  'judging-session': '#FF9800'
-  // break: '#757575'
+  'judging-session': '#FF9800',
+  'agenda-event': '#9C27B0'
 } as const;

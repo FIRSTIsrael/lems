@@ -645,6 +645,28 @@
             "add-practice-round": "Add Practice Round",
             "add-ranking-round": "Add Ranking Round"
           },
+          "agenda": {
+            "title": "Agenda",
+            "default-event-title": "General Event",
+            "edit-event": "Edit Event",
+            "cancel": "Cancel",
+            "save": "Save",
+            "delete": "Delete",
+            "event-title": "Event Title",
+            "visibility": "Visibility",
+            "public": "Public",
+            "description-public": "Visible to everyone on the Public Portal",
+            "judging": "Judging",
+            "description-judging": "Visible on the internal judging schedule",
+            "field": "Field",
+            "description-field": "Visible on the internal field schedule",
+            "generating": "Generating...",
+            "generate-button": "Generate Agenda",
+            "generate": {
+              "success": "Agenda Created",
+              "error": "Failed to generate agenda: {error}"
+            }
+          },
           "verify": {
             "title": "Verify schedule",
             "verifying": "Verifying schedule...",

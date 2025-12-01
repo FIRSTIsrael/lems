@@ -645,6 +645,28 @@
             "add-practice-round": "הוספת סבב אימונים",
             "add-ranking-round": "הוספת סבב דירוג"
           },
+          "agenda": {
+            "title": "סדר יום",
+            "default-event-title": "אירוע כללי",
+            "edit-event": "עריכת אירוע",
+            "cancel": "ביטול",
+            "save": "שמירה",
+            "delete": "מחיקה",
+            "event-title": "כותרת אירוע",
+            "visibility": "נראות",
+            "public": "ציבורי",
+            "description-public": "יופיע לכולם בפורטל האירועים",
+            "judging": "שיפוט",
+            "description-judging": "יופיע בלו\"ז השיפוט הפנימי",
+            "field": "זירה",
+            "description-field": "יופיע בלו\"ז הזירה הפנימי",
+            "generating": "יוצר סדר יום...",
+            "generate-button": "צור סדר יום",
+            "generate": {
+              "success": "סדר יום נוצר",
+              "error": "שגיאה ביצירת סדר היום: {error}"
+            }
+          },
           "verify": {
             "title": "אימות לוח הזמנים",
             "verifying": "מאמת את לוח הזמנים...",
