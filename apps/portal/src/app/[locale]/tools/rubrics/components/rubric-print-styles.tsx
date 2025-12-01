@@ -29,10 +29,12 @@ export const RubricPrintStyles = () => {
           width: 100% !important;
         }
         .MuiTable-root {
-          position: absolute !important;
-          left: 55% !important;
-          width: 43% !important;
-          right: 2% !important;
+          position: relative !important;
+          left: 0 !important;
+          right: 0 !important;
+          width: 80% !important;
+          margin-left: 10% !important;
+          margin-right: 10% !important;
         }
 
         .MuiTable-root .MuiTableCell-root {
