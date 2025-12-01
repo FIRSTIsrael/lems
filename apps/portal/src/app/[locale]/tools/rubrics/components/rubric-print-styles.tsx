@@ -4,66 +4,37 @@ export const RubricPrintStyles = () => {
   return (
     <style jsx global>{`
       @media print {
-        /* Hide the app bar/navigation */
         .MuiAppBar-root {
           display: none !important;
         }
 
-        /* Hide the rubric header with controls */
         .rubric-header {
           display: none !important;
         }
 
-        /* Hide the judging timer */
-        .judging-timer {
-          display: none !important;
-        }
-
-        /* Hide the category navigation row in the table */
         .MuiTableHead-root .MuiTableRow-root:first-child {
           display: none !important;
         }
 
-        /* Remove padding/margins for full-width print */
-        .MuiContainer-root {
-          padding: 0 !important;
-          margin: 0 !important;
-          max-width: none !important;
-        }
-
-        /* Ensure rubric content uses full page width */
-        .rubric-content {
-          width: 100% !important;
-          margin: 0 !important;
-          padding: 0 !important;
-        }
-
-        /* Optimize table layout for print */
-        .MuiTable-root {
-          width: 90% !important;
-          margin: 0 auto !important;
-          table-layout: fixed !important;
-        }
-
         /* Control column widths for better proportions */
         .MuiTable-root .MuiTableCell-root:first-child {
-          width: 40% !important;
-          max-width: 40% !important;
+          width: 50% !important;
+          max-width: 50% !important;
         }
 
         .MuiTable-root .MuiTableCell-root:nth-child(2) {
-          width: 20% !important;
-          max-width: 20% !important;
+          width: 17% !important;
+          max-width: 17% !important;
         }
 
         .MuiTable-root .MuiTableCell-root:nth-child(3) {
-          width: 20% !important;
-          max-width: 20% !important;
+          width: 17% !important;
+          max-width: 17% !important;
         }
 
         .MuiTable-root .MuiTableCell-root:nth-child(4) {
-          width: 20% !important;
-          max-width: 20% !important;
+          width: 16% !important;
+          max-width: 16% !important;
         }
 
         /* Remove box shadows and borders for cleaner print */
@@ -73,43 +44,45 @@ export const RubricPrintStyles = () => {
           border-radius: 0 !important;
         }
 
-        /* Ensure proper page breaks for sections */
-        .rubric-section {
-          page-break-inside: avoid;
-          break-inside: avoid;
+        /* Prevent page breaks and make content more compact */
+        .MuiTable-root,
+        .MuiTableBody-root,
+        .MuiTableRow-root {
+          page-break-inside: avoid !important;
+          break-inside: avoid !important;
         }
 
-        /* Optimize table cells for print - balanced size */
+        /* Optimize table cells for print - more compact */
         .MuiTableCell-root {
           border: 1px solid #ddd !important;
-          padding: 6px 8px !important;
-          font-size: 11px !important;
-          line-height: 1.4 !important;
+          padding: 3px 5px !important;
+          font-size: 9px !important;
+          line-height: 1.2 !important;
           vertical-align: top !important;
           overflow: visible !important;
         }
 
-        /* Make header cells readable */
+        /* Make header cells more compact */
         .MuiTableHead-root .MuiTableCell-root {
-          padding: 8px 10px !important;
-          font-size: 12px !important;
+          padding: 4px 6px !important;
+          font-size: 10px !important;
           font-weight: 600 !important;
         }
 
-        /* Section headers */
+        /* Section headers - more compact */
         .MuiTableCell-root h6,
         .MuiTableCell-root .MuiTypography-h6 {
-          font-size: 12px !important;
-          margin: 2px 0 !important;
+          font-size: 10px !important;
+          margin: 1px 0 !important;
           font-weight: 600 !important;
         }
 
-        /* Body text */
+        /* Body text - more compact */
         .MuiTableCell-root .MuiTypography-body2,
         .MuiTableCell-root .MuiTypography-body1 {
-          font-size: 10px !important;
-          line-height: 1.4 !important;
-          margin: 1px 0 !important;
+          font-size: 8px !important;
+          line-height: 1.2 !important;
+          margin: 0 !important;
         }
 
         /* Hide any floating elements */
@@ -122,17 +95,17 @@ export const RubricPrintStyles = () => {
           position: static !important;
         }
 
-        /* Optimize typography for print */
+        /* Optimize typography for print - more compact */
         body {
           -webkit-print-color-adjust: exact !important;
           color-adjust: exact !important;
-          font-size: 11px !important;
-          line-height: 1.4 !important;
+          font-size: 9px !important;
+          line-height: 1.2 !important;
         }
 
-        /* Balanced margins for readability */
+        /* Smaller margins to fit more content */
         @page {
-          margin: 0.4in;
+          margin: 0.25in;
           size: A4;
         }
 
