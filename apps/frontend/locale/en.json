@@ -148,6 +148,9 @@
           "cancel": "Cancel",
           "confirm": "Abort Session"
         }
+      },
+      "sound-test": {
+        "button-label": "Test Sound"
       }
     },
     "reports": {

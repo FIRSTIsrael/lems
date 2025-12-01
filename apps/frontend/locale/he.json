@@ -148,6 +148,9 @@
           "cancel": "ביטול",
           "confirm": "בטל מפגש"
         }
+      },
+      "sound-test": {
+        "button-label": "בדיקת שמע"
       }
     },
     "reports": {

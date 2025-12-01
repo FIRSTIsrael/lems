@@ -1,9 +1,9 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { ResponsiveComponent } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
@@ -24,9 +24,11 @@ import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
 import { JudgingSessionProvider } from './components/timer/judging-session-context';
 import { JudgingTimerDesktopLayout } from './components/timer/judging-timer-desktop-layout';
 import { JudgingTimerMobileLayout } from './components/timer/judging-timer-mobile-layout';
+import SoundTestDialog from '../components/sound-test-dialog';
 
 export default function JudgePage() {
   const t = useTranslations('pages.judge');
+  const [openSoundTest, setOpenSoundTest] = useState(false);
 
   const playSound = useJudgingSounds();
   const { currentDivision } = useEvent();
@@ -103,7 +105,12 @@ export default function JudgePage() {
 
   return (
     <>
-      <PageHeader title={t('page-title')} />
+      <PageHeader title={t('page-title')}>
+        <Button variant="contained" onClick={() => setOpenSoundTest(true)}>
+          {t('sound-test.button-label')}
+        </Button>
+        <SoundTestDialog open={openSoundTest} setOpen={setOpenSoundTest} />
+      </PageHeader>
 
       <Box sx={{ pt: 3 }}>
         <RoomScheduleTable
