@@ -89,8 +89,8 @@ jobs:
     needs: [extract-version, build-backend, build-admin, build-frontend, build-portal, build-scheduler]
     uses: ./.github/workflows/cleanup-registry-images.yml
     with:
-      tag_pattern: '^[0-9]+\.[0-9]+\.[0-9]+$'
-      exclude_pattern: '^${{ needs.extract-version.outputs.version }}$'
+      tag_pattern: '-[0-9]+\.[0-9]+\.[0-9]+$'
+      exclude_pattern: '-${{ needs.extract-version.outputs.version }}$'
     secrets:
       DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
