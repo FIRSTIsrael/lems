@@ -56,7 +56,7 @@ const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
         </Stack>
       </DialogContent>
       <DialogActions>
-        <Button onClick={() => setOpen(false)}>{t('cancel')}</Button>
+        <Button onClick={() => setOpen(false)}>{t('close')}</Button>
       </DialogActions>
     </Dialog>
   );
