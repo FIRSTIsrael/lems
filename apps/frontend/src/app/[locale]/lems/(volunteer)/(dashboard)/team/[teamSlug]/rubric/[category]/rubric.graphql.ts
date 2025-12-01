@@ -11,6 +11,7 @@ import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 export const GET_RUBRIC_QUERY: TypedDocumentNode<RubricQueryResult, GetRubricQueryVariables> = gql`
   query GetRubric($divisionId: String!, $teamId: String!, $category: JudgingCategory!) {
     division(id: $divisionId) {
+      id
       judging {
         rubrics(teamIds: [$teamId], category: $category) {
           id
