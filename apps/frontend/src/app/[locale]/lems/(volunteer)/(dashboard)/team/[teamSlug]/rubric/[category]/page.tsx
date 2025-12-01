@@ -21,7 +21,8 @@ import {
   RubricQueryResult,
   GetRubricQueryVariables,
   parseRubricData,
-  createRubricUpdatedSubscription
+  createRubricUpdatedSubscription,
+  type RubricItem
 } from './rubric.graphql';
 
 export default function RubricPage() {
@@ -43,10 +44,12 @@ export default function RubricPage() {
     ],
     [currentDivision.id]
   );
+
   // Fetch rubric data
-  const { data: rubricQueryData, loading } = usePageData<
+  const { data: rubric, loading } = usePageData<
     RubricQueryResult,
-    GetRubricQueryVariables
+    GetRubricQueryVariables,
+    RubricItem
   >(
     GET_RUBRIC_QUERY,
     {
@@ -54,14 +57,8 @@ export default function RubricPage() {
       teamId: team.id,
       category: hyphensToUnderscores(category as string) as JudgingCategory
     },
-    undefined,
+    parseRubricData,
     subscriptions
-  );
-
-  // Parse rubric from query data
-  const rubric = useMemo(
-    () => (rubricQueryData ? parseRubricData(rubricQueryData) : undefined),
-    [rubricQueryData]
   );
 
   const isEditable = useMemo(() => {

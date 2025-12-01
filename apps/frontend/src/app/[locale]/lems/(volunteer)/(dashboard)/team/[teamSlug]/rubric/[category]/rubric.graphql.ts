@@ -287,8 +287,35 @@ export interface RubricUpdatedSubscriptionVariables {
  * @param queryData - The query result from GetRubric
  * @returns The first rubric item or undefined
  */
+/**
+ * Parses the query result to extract the first rubric
+ * If the rubric has no data, creates a minimal empty data structure
+ *
+ * @param queryData - The query result from GetRubric
+ * @returns The first rubric item with populated data, or undefined if no rubric found
+ */
 export function parseRubricData(queryData: RubricQueryResult): RubricItem | undefined {
-  return queryData.division?.judging?.rubrics?.[0];
+  const rubric = queryData.division?.judging?.rubrics?.[0];
+
+  if (!rubric) {
+    return undefined;
+  }
+
+  // If rubric exists but has no data, populate with minimal empty data structure
+  if (!rubric.data) {
+    return {
+      ...rubric,
+      data: {
+        values: {},
+        feedback: {
+          greatJob: '',
+          thinkAbout: ''
+        }
+      }
+    };
+  }
+
+  return rubric;
 }
 
 // ============ Cache Update Functions ============
