@@ -22,7 +22,8 @@ import {
   GetRubricQueryVariables,
   parseRubricData,
   createRubricUpdatedSubscription,
-  type RubricItem
+  type RubricItem,
+  RubricUpdatedSubscriptionVariables
 } from './rubric.graphql';
 
 export default function RubricPage() {
@@ -35,21 +36,16 @@ export default function RubricPage() {
   const { category } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
-  const subscriptions = useMemo<SubscriptionConfig<unknown, RubricQueryResult>[]>(
-    () => [
-      createRubricUpdatedSubscription(currentDivision.id) as unknown as SubscriptionConfig<
-        unknown,
-        RubricQueryResult
-      >
-    ],
-    [currentDivision.id]
-  );
+  const subscriptions = useMemo<
+    SubscriptionConfig<unknown, RubricQueryResult, RubricUpdatedSubscriptionVariables>[]
+  >(() => [createRubricUpdatedSubscription(currentDivision.id)], [currentDivision.id]);
 
   // Fetch rubric data
   const { data: rubric, loading } = usePageData<
     RubricQueryResult,
     GetRubricQueryVariables,
-    RubricItem | undefined
+    RubricItem,
+    RubricUpdatedSubscriptionVariables
   >(
     GET_RUBRIC_QUERY,
     {

@@ -295,12 +295,8 @@ export interface RubricUpdatedSubscriptionVariables {
  * @param queryData - The query result from GetRubric
  * @returns The first rubric item with populated data, or undefined if no rubric found
  */
-export function parseRubricData(queryData: RubricQueryResult): RubricItem | undefined {
+export function parseRubricData(queryData: RubricQueryResult): RubricItem {
   const rubric = queryData.division?.judging?.rubrics?.[0];
-
-  if (!rubric) {
-    return undefined;
-  }
 
   // If rubric exists but has no data, populate with minimal empty data structure
   if (!rubric.data) {
@@ -519,5 +515,5 @@ export function createRubricUpdatedSubscription(
       prev: RubricQueryResult,
       subscriptionData: { data?: unknown }
     ) => RubricQueryResult
-  } as SubscriptionConfig<unknown, RubricQueryResult, RubricUpdatedSubscriptionVariables>;
+  };
 }
