@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { Container, CircularProgress, Box, Alert } from '@mui/material';
+import { Container, CircularProgress, Box } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { rubrics } from '@lems/shared/rubrics';
 import { hyphensToUnderscores } from '@lems/shared/utils';
@@ -79,25 +79,6 @@ export default function RubricPage() {
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}
       >
         <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (!rubric) {
-    return (
-      <Box>
-        <PageHeader
-          title={t('page-title', {
-            category: getCategory(category as string),
-            teamName: team.name,
-            teamNumber: team.number
-          })}
-        />
-        <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Alert severity="error">
-            {t('rubric-not-found', { defaultValue: 'Rubric not found' })}
-          </Alert>
-        </Container>
       </Box>
     );
   }
