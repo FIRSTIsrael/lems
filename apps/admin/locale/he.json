@@ -65,6 +65,14 @@
     "insights": {
       "coming-soon": "בקרוב..."
     },
+    "api-docs": {
+      "title": "תיעוד API",
+      "description": "תיעוד מלא של REST API עם בדיקת נקודות קצה אינטראקטיבית. חקור את כל נקודות הקצה הזמינות, סכמות בקשה/תגובה ודרישות אימות."
+    },
+    "graphql-schema": {
+      "title": "סכמת GraphQL",
+      "description": "IDE GraphQL אינטראקטיבי עם תיעוד סכמה מלא. ביצוע שאילתות, חקירת הסכמה שלך, וביצוע בדיקות ה-API שלך בזמן אמת."
+    },
     "teams": {
       "title": "קבוצות",
       "create-new-team": "יצירת קבוצה חדשה",
@@ -993,7 +1001,8 @@
       "manage-events": "ניהול אירועים",
       "manage-event-details": "ניהול פרטי אירועים",
       "manage-teams": "ניהול קבוצות",
-      "view-insights": "צפייה בתובנות"
+      "view-insights": "צפייה בתובנות",
+      "dev-tools": "כלי פיתוח"
     }
   },
   "layouts": {
@@ -1003,7 +1012,9 @@
         "users": "משתמשים",
         "events": "אירועים",
         "teams": "קבוצות",
-        "insights": "תובנות"
+        "insights": "תובנות",
+        "api-docs": "תיעוד API",
+        "graphql-schema": "סכמת GraphQL"
       },
       "user-menu": {
         "logout": "התנתקות"
