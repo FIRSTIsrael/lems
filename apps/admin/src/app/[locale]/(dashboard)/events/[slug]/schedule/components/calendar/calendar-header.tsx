@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { Box, Stack, Button, CircularProgress } from '@mui/material';
@@ -28,9 +28,15 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
   });
   const [verificationPassed, setVerificationPassed] = useState(false);
 
-  const { addPracticeRound, addRankingRound } = useCalendar();
   const calendarContext = useCalendar();
   const scheduleContext = useSchedule();
+  const { addPracticeRound, addRankingRound } = calendarContext;
+
+  // Disable "Generate" after any schedule/calendar change:
+  useEffect(() => {
+    // Whenever the schedule or calendar context changes, force re‑verify
+    setVerificationPassed(false);
+  }, [calendarContext, scheduleContext]);
 
   const handleVerify = async () => {
     setIsVerifying(true);
