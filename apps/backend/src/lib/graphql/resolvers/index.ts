@@ -104,5 +104,14 @@ export const resolvers = {
       if ('category' in obj) return 'CategoryRoleInfo';
       return null;
     }
+  },
+  RubricUpdatedEvent: {
+    __resolveType(obj: Record<string, unknown>) {
+      // Discriminate union type based on object properties
+      if ('fieldId' in obj) return 'RubricValueUpdated';
+      if ('feedback' in obj) return 'RubricFeedbackUpdated';
+      if ('status' in obj) return 'RubricStatusUpdated';
+      return null;
+    }
   }
 };

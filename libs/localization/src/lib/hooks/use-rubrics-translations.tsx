@@ -16,7 +16,10 @@ export const useRubricsGeneralTranslations = () => {
   const t = useTranslations('shared.rubrics');
 
   return {
-    getFeedbackTitle: (key: 'great-job' | 'think-about') => t(`feedback.${key}`),
+    getFeedbackTitle: (key: 'greatJob' | 'thinkAbout') => {
+      const kebabCaseKey = key.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
+      return t(`feedback.${kebabCaseKey}`);
+    },
     coreValuesExplanation: t('core-values-explanation'),
     getColumnTitle: (columnKey: 'beginning' | 'developing' | 'accomplished' | 'exceeds') =>
       t(`columns.${columnKey}`),

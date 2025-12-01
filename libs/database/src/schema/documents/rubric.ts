@@ -23,11 +23,11 @@ export interface Rubric {
      * '{problem: {value: 3}}' - where problem is the first field of the
      * 'identify' section in the 'innovation-project' rubric.
      */
-    values: Record<string, { value: number; notes?: string }>;
+    fields: Record<string, { value: 1 | 2 | 3 | 4 | null; notes?: string }>;
 
     /**
      * Free text feedback provided by judges.
      */
-    feedback: { greatJob: string; thinkAbout: string };
+    feedback?: { greatJob: string; thinkAbout: string };
   };
 }

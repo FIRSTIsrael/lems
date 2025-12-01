@@ -2,10 +2,9 @@
 
 import React from 'react';
 import { Table, TableHead, TableBody, Paper } from '@mui/material';
-import { useFormikContext } from 'formik';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema } from '@lems/shared/rubrics';
-import type { RubricFormValues } from '../rubric-utils';
+import { useRubric } from '../rubric-context';
 import { TableHeaderRow } from './table-header-row';
 import { SectionTitleRow } from './section-title-row';
 import { FieldRatingRow } from './field-rating-row';
@@ -24,16 +23,10 @@ export const RubricTable: React.FC<RubricTableProps> = ({
   category,
   disabled = false
 }) => {
-  const { values } = useFormikContext<RubricFormValues>();
+  const { rubric } = useRubric();
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        borderRadius: 2,
-        my: 2
-      }}
-    >
+    <Paper elevation={3} sx={{ borderRadius: 2, my: 2 }}>
       <Table
         sx={{
           tableLayout: 'fixed',
@@ -68,7 +61,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({
                     coreValues={field.coreValues}
                     disabled={disabled}
                   />
-                  {values.fields[field.id]?.value === 4 && (
+                  {rubric.data?.fields?.[field.id]?.value === 4 && (
                     <FieldNotesRow fieldId={field.id} disabled={disabled} />
                   )}
                 </React.Fragment>
