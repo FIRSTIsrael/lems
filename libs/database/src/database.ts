@@ -14,6 +14,7 @@ import { JudgingSessionsRepository } from './repositories/judging-sessions';
 import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 import { AwardsRepository } from './repositories/awards';
 import { EventUsersRepository } from './repositories/event-users';
+import { RubricsRepository } from './repositories/rubrics';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -56,10 +57,14 @@ export class Database {
   public events: EventsRepository;
   public divisions: DivisionsRepository;
   public eventUsers: EventUsersRepository;
+
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
+  public rubrics: RubricsRepository;
+
   public tables: TablesRepository;
   public robotGameMatches: RobotGameMatchesRepository;
+
   public awards: AwardsRepository;
 
   /**
@@ -115,10 +120,14 @@ export class Database {
     this.events = new EventsRepository(this.kysely);
     this.divisions = new DivisionsRepository(this.kysely, this.space);
     this.eventUsers = new EventUsersRepository(this.kysely);
+
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
+    this.rubrics = new RubricsRepository(this.kysely, this.mongoDb);
+
     this.tables = new TablesRepository(this.kysely);
     this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
+
     this.awards = new AwardsRepository(this.kysely);
   }
 

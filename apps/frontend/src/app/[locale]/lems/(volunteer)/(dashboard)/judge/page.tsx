@@ -33,11 +33,15 @@ export default function JudgePage() {
   const playSound = useJudgingSounds();
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
+
+  const playSound = useJudgingSounds();
+
   const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION, {
     onError: () => {
       toast.error(t('error.start'));
     }
   });
+
   const [abortSessionMutation] = useMutation(ABORT_JUDGING_SESSION_MUTATION, {
     onError: () => {
       toast.error(t('error.abort'));

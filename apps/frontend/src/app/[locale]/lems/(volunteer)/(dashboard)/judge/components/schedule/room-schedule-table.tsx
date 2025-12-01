@@ -16,7 +16,7 @@ import {
   useTheme
 } from '@mui/material';
 import { JudgingSession } from '../../judge.graphql';
-import { RubricStatusButton, RubricStatus } from './rubric-status-button';
+import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
 import { RubricStatusGlossary } from './rubric-status-glossary';
@@ -34,11 +34,6 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
 }) => {
   const t = useTranslations('pages.judge.schedule');
   const theme = useTheme();
-
-  // Mock rubric status mapping - in phase 2 this will come from GraphQL
-  const getRubricStatus = (): RubricStatus => {
-    return 'empty';
-  };
 
   const sortedSessions = useMemo(() => {
     return [...sessions].sort((a, b) => a.number - b.number);
@@ -204,19 +199,25 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                 <TableCell sx={{ py: 2.5 }}>
                   <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
-                      type="core-values"
-                      status={getRubricStatus()}
+                      category="core-values"
+                      status={session.rubrics?.coreValues?.status}
                       label={t('rubric-labels.core-values')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
-                      type="innovation-project"
-                      status={getRubricStatus()}
+                      category="innovation-project"
+                      status={session.rubrics?.innovationProject?.status}
                       label={t('rubric-labels.innovation-project')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
-                      type="robot-design"
-                      status={getRubricStatus()}
+                      category="robot-design"
+                      status={session.rubrics?.robotDesign?.status}
                       label={t('rubric-labels.robot-design')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
                     />
                   </Stack>
                 </TableCell>

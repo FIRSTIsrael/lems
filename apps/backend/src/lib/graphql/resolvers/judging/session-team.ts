@@ -32,7 +32,7 @@ export const judgingSessionTeamResolver: GraphQLFieldResolver<
     }
 
     // Build slug from region and number
-    const slug = `${team.region.toLowerCase()}-${team.number}`;
+    const slug = `${team.region}-${team.number}`.toUpperCase();
 
     // Base team resolver with divisionId for child resolvers
     return {

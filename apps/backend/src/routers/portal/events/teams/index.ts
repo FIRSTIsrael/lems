@@ -27,9 +27,9 @@ router.get('/:teamSlug', async (req: PortalTeamAtEventRequest, res: Response) =>
 });
 
 router.get('/:teamSlug/activities', async (req: PortalTeamAtEventRequest, res: Response) => {
-  const session = await db.judgingSessions.byDivisionId(req.divisionId).getByTeam(req.teamId);
+  const session = await db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId);
   const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-  const matches = await db.robotGameMatches.byDivisionId(req.divisionId).getByTeam(req.teamId);
+  const matches = await db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId);
   const tables = await db.tables.byDivisionId(req.divisionId).getAll();
 
   res.json({

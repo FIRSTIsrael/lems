@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import { FormikTextField } from '@lems/shared';
 import { LoginFormValues } from '../../types';
 
-export function PasswordStep() {
+export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
   const t = useTranslations('pages.login');
   const [showPassword, setShowPassword] = useState(false);
   const { isSubmitting, isValid } = useFormikContext<LoginFormValues>();
@@ -54,7 +54,7 @@ export function PasswordStep() {
         type={showPassword ? 'text' : 'password'}
         label={t('fields.password')}
         helperText={t('fields.password-helper')}
-        disabled={isSubmitting}
+        disabled={isSubmitting }
         autoComplete="off"
         required
         slotProps={{
@@ -107,7 +107,7 @@ export function PasswordStep() {
           type="submit"
           variant="contained"
           size="large"
-          disabled={isSubmitting || !isValid}
+          disabled={isSubmitting || disableLogin || !isValid}
           startIcon={<Login />}
           sx={{
             borderRadius: 3,

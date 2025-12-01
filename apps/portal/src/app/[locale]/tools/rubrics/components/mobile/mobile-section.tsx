@@ -14,7 +14,7 @@ import {
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
-import { getCategoryColor } from '../../rubric-utils';
+import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { MobileFieldSection } from './mobile-field-section';
 
 interface MobileSectionProps {
@@ -32,28 +32,29 @@ export const MobileSection: React.FC<MobileSectionProps> = ({
 }) => {
   const [expanded, setExpanded] = useState(true);
   const { getSectionTitle } = useRubricsTranslations(category);
-  const categoryColor = getCategoryColor(category);
-  const categoryBackground = lighten(categoryColor, 0.9);
+
+  const color = getRubricColor(category);
+  const background = lighten(color, 0.9);
 
   return (
     <Card
       sx={{
         mb: 3,
-        borderTop: `3px solid ${categoryColor}`,
+        borderTop: `3px solid ${color}`,
         boxShadow: 1,
-        backgroundColor: `${categoryBackground}10`,
+        backgroundColor: `${background}10`,
         transition: 'all 0.2s ease'
       }}
     >
       <CardHeader
         title={
-          <Typography variant="h6" fontWeight={700} sx={{ color: categoryColor }}>
+          <Typography variant="h6" fontWeight={700} sx={{ color: color }}>
             {getSectionTitle(sectionId)}
           </Typography>
         }
         sx={{
-          backgroundColor: `${categoryBackground}25`,
-          borderBottom: `1px solid ${categoryBackground}40`
+          backgroundColor: `${background}25`,
+          borderBottom: `1px solid ${background}40`
         }}
         action={
           <IconButton onClick={() => setExpanded(!expanded)} size="small">

@@ -147,7 +147,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
           {/* Registered Teams Chips */}
           <Grid size={6} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Typography variant="h6" gutterBottom>
-              {t('arrived-teams', { count: registeredTeams.length })}
+              {t('registered-teams', { count: registeredTeams.length })}
             </Typography>
             <Box
               sx={{

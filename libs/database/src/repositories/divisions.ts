@@ -7,6 +7,86 @@ import {
   UpdateableDivision,
   DivisionSummary
 } from '../schema/tables/divisions';
+import {
+  AgendaEvent,
+  InsertableAgendaEvent,
+  UpdateableAgendaEvent
+} from '../schema/tables/agenda-events';
+
+class DivisionAgendaSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private divisionId: string
+  ) {}
+
+  async delete(): Promise<number> {
+    const result = await this.db
+      .deleteFrom('agenda_events')
+      .where('division_id', '=', this.divisionId)
+      .execute();
+    return result.length;
+  }
+
+  async getAll(visibility?: string): Promise<AgendaEvent[]> {
+    let query = this.db
+      .selectFrom('agenda_events')
+      .selectAll()
+      .where('division_id', '=', this.divisionId)
+      .orderBy('start_time', 'asc');
+
+    if (visibility) {
+      query = query.where('visibility', '=', visibility);
+    }
+
+    return await query.execute();
+  }
+
+  async create(agendaEvent: InsertableAgendaEvent): Promise<AgendaEvent> {
+    const [createdEvent] = await this.db
+      .insertInto('agenda_events')
+      .values({ ...agendaEvent, division_id: this.divisionId })
+      .returningAll()
+      .execute();
+    return createdEvent;
+  }
+
+  async createMany(agendaEvents: InsertableAgendaEvent[]): Promise<AgendaEvent[]> {
+    if (agendaEvents.length === 0) {
+      return [];
+    }
+
+    const eventsWithDivision = agendaEvents.map(event => ({
+      ...event,
+      division_id: this.divisionId
+    }));
+
+    return await this.db
+      .insertInto('agenda_events')
+      .values(eventsWithDivision)
+      .returningAll()
+      .execute();
+  }
+
+  async update(agendaEventId: string, updatedEvent: UpdateableAgendaEvent): Promise<boolean> {
+    const result = await this.db
+      .updateTable('agenda_events')
+      .set(updatedEvent)
+      .where('id', '=', agendaEventId)
+      .where('division_id', '=', this.divisionId)
+      .execute();
+    return result.length > 0;
+  }
+
+  async get(id: string): Promise<AgendaEvent | null> {
+    const event = await this.db
+      .selectFrom('agenda_events')
+      .selectAll()
+      .where('id', '=', id)
+      .where('division_id', '=', this.divisionId)
+      .executeTakeFirst();
+    return event || null;
+  }
+}
 
 class DivisionSelector {
   constructor(
@@ -60,6 +140,10 @@ class DivisionSelector {
       .executeTakeFirst();
 
     return updatedDivision || null;
+  }
+
+  agenda(): DivisionAgendaSelector {
+    return new DivisionAgendaSelector(this.db, this.selector.value);
   }
 }
 

@@ -72,7 +72,7 @@ function buildResult(divisionId: string) {
     city: team.city,
     region: team.region,
     location: team.coordinates,
-    slug: `${team.region}-${team.number}`,
+    slug: `${team.region}-${team.number}`.toUpperCase(),
     logoUrl: team.logo_url || null,
     divisionId
   });
