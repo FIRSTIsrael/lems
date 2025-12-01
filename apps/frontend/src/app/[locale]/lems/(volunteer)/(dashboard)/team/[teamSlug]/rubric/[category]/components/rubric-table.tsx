@@ -26,13 +26,7 @@ export const RubricTable: React.FC<RubricTableProps> = ({
   const { fieldValues } = useRubric();
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        borderRadius: 2,
-        my: 2
-      }}
-    >
+    <Paper elevation={3} sx={{ borderRadius: 2, my: 2 }}>
       <Table
         sx={{
           tableLayout: 'fixed',

@@ -25,14 +25,14 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   disabled = false
 }) => {
   const t = useTranslations('pages.rubric');
-
   const { getFieldLevel } = useRubricsTranslations(category);
+
   const { updateFieldValue, fieldValues } = useRubric();
   const currentValue = fieldValues.get(fieldId)?.value;
 
   const handleFieldChange = (cellValue: 1 | 2 | 3 | 4) => {
-    updateFieldValue(fieldId, cellValue).catch(err => {
-      console.error(`[FieldRatingRow] Failed to update field ${fieldId}:`, err);
+    updateFieldValue(fieldId, cellValue).catch(error => {
+      console.error(`[FieldRatingRow] Failed to update field ${fieldId}:`, error);
       toast.error(t('toasts.rating-update-error'));
     });
   };
@@ -57,18 +57,14 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
               p: '0.75em',
               pr: '0.5em',
               pl: '0.25em',
-              backgroundColor: '#fff',
-              '@media print': {
-                fontSize: '0.875em',
-                p: '0.5em'
-              }
+              backgroundColor: '#fff'
             }}
           >
             <Stack
               spacing={0.5}
               direction="row"
-              alignItems={label ? 'flex-start' : 'center'}
-              justifyContent="center"
+              alignItems={'center'}
+              justifyContent={label ? 'flex-start' : 'center'}
             >
               <IconButton
                 disabled={disabled}

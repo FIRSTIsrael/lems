@@ -13,12 +13,13 @@ interface FieldNotesRowProps {
 
 export const FieldNotesRow: React.FC<FieldNotesRowProps> = ({ fieldId, disabled = false }) => {
   const t = useTranslations('pages.rubric');
+
   const { fieldValues, updateFieldValue } = useRubric();
   const currentValue = fieldValues.get(fieldId)?.value || 4;
   const contextNotes = fieldValues.get(fieldId)?.notes || '';
+
   const [notes, setNotes] = useState(contextNotes);
 
-  // Sync local state with context changes (e.g., from subscriptions)
   useEffect(() => {
     setNotes(contextNotes);
   }, [contextNotes]);
@@ -43,12 +44,7 @@ export const FieldNotesRow: React.FC<FieldNotesRowProps> = ({ fieldId, disabled 
           borderLeft: '1px solid rgba(0,0,0,0.2)',
           borderBottom: 'none',
           backgroundColor: 'rgba(0,0,0,0.03)',
-          py: 1,
-          '@media print': {
-            backgroundColor: 'rgba(0,0,0,0.03)',
-            WebkitPrintColorAdjust: 'exact',
-            printColorAdjust: 'exact'
-          }
+          py: 1
         }}
       >
         <Box sx={{ display: 'flex', alignItems: 'center' }}>

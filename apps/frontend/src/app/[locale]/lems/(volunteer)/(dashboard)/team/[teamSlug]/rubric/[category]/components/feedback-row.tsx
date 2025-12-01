@@ -21,6 +21,7 @@ const colors: { [key: string]: string } = {
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
   const t = useTranslations('pages.rubric');
+
   const feedbackFields = ['great-job', 'think-about'] as const;
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { feedback: contextFeedback, updateFeedback } = useRubric();
