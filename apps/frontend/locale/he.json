@@ -211,6 +211,11 @@
         "save-draft": "שמור כטיוטה",
         "submit-review": "הגש לבדיקה",
         "reset": "איפוס"
+      },
+      "toasts": {
+        "rating-update-error": "נכשל בעדכון הניקוד. אנא נסו שנית.",
+        "notes-update-error": "נכשל בשמירת ההערות. אנא נסו שנית.",
+        "feedback-update-error": "נכשל בשמירת המשוב. אנא נסו שנית."
       }
     }
   },

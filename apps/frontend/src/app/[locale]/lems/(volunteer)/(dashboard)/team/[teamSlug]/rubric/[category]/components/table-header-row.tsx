@@ -33,13 +33,7 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
             py: '0.875em',
             px: '0.5em',
             fontWeight: 700,
-            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
-            '@media print': {
-              WebkitPrintColorAdjust: 'exact',
-              printColorAdjust: 'exact',
-              position: 'relative',
-              top: 'auto'
-            }
+            boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
           }}
         >
           <Typography fontSize="1.4em" fontWeight={700}>

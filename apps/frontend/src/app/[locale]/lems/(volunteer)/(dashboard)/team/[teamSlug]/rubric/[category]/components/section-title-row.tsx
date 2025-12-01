@@ -27,13 +27,7 @@ export const SectionTitleRow: React.FC<SectionTitleRowProps> = ({ sectionId, cat
           px: '1.5em',
           textAlign: 'start',
           fontSize: '0.875em',
-          fontWeight: 500,
-          '@media print': {
-            py: 0,
-            px: '0.25em',
-            WebkitPrintColorAdjust: 'exact',
-            printColorAdjust: 'exact'
-          }
+          fontWeight: 500
         }}
         colSpan={4}
       >
