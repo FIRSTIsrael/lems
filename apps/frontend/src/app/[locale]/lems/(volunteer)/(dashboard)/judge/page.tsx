@@ -10,6 +10,7 @@ import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
+import SoundTestDialog from '../components/sound-test-dialog';
 import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscriptionForJudge,
@@ -24,15 +25,15 @@ import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
 import { JudgingSessionProvider } from './components/timer/judging-session-context';
 import { JudgingTimerDesktopLayout } from './components/timer/judging-timer-desktop-layout';
 import { JudgingTimerMobileLayout } from './components/timer/judging-timer-mobile-layout';
-import SoundTestDialog from '../components/sound-test-dialog';
 
 export default function JudgePage() {
   const t = useTranslations('pages.judge');
-  const [openSoundTest, setOpenSoundTest] = useState(false);
-
-  const playSound = useJudgingSounds();
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
+
+  const playSound = useJudgingSounds();
+
+  const [openSoundTest, setOpenSoundTest] = useState(false);
 
   const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION, {
     onError: () => {
@@ -111,7 +112,6 @@ export default function JudgePage() {
         <Button variant="contained" onClick={() => setOpenSoundTest(true)}>
           {t('sound-test.button-label')}
         </Button>
-        <SoundTestDialog open={openSoundTest} setOpen={setOpenSoundTest} />
       </PageHeader>
 
       <Box sx={{ pt: 3 }}>
@@ -121,6 +121,7 @@ export default function JudgePage() {
           onStartSession={handleStartSession}
         />
       </Box>
+      <SoundTestDialog open={openSoundTest} setOpen={setOpenSoundTest} />
     </>
   );
 }
