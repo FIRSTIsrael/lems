@@ -102,7 +102,7 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
           status
           data {
             awards
-            values
+            fields
             feedback {
               greatJob
               thinkAbout

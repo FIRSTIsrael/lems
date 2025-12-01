@@ -52,8 +52,8 @@ Data section of a rubric
 type RubricData {
   "Awards the team is eligible for"
   awards: JSON
-  "Values for each rubric criterion"
-  values: JSON!
+  "Field values for each rubric criterion"
+  fields: JSON!
   "Feedback for the team"
   feedback: RubricFeedback!
 }

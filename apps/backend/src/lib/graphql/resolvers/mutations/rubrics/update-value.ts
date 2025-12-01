@@ -56,7 +56,7 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
     { _id: rubricObjectId },
     {
       $set: {
-        [`data.values.${fieldId}`]: fieldUpdate,
+        [`data.fields.${fieldId}`]: fieldUpdate,
         // Update status to draft if it's empty
         ...(status === 'empty' && { status: 'draft' })
       }
