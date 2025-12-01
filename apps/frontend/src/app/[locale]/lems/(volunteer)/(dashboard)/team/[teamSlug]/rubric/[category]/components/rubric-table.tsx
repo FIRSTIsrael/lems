@@ -23,7 +23,9 @@ export const RubricTable: React.FC<RubricTableProps> = ({
   category,
   disabled = false
 }) => {
-  const { fieldValues } = useRubric();
+  const { rubric } = useRubric();
+
+  return JSON.stringify(rubric);
 
   return (
     <Paper elevation={3} sx={{ borderRadius: 2, my: 2 }}>

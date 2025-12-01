@@ -12,8 +12,8 @@ export interface RubricGraphQL {
   status: string;
   data?: {
     awards?: Record<string, boolean>;
-    values: Record<string, { value: number; notes?: string }>;
-    feedback: { greatJob: string; thinkAbout: string };
+    fields: Record<string, { value: 1 | 2 | 3 | 4; notes?: string }>;
+    feedback?: { greatJob: string; thinkAbout: string };
   };
 }
 

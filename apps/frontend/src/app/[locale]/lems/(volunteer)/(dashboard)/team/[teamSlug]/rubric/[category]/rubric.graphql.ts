@@ -1,9 +1,19 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import type { ApolloCache } from '@apollo/client';
-import { merge, updateById, Reconciler } from '@lems/shared/utils';
+import { merge, updateById, Reconciler, underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
+import { getEmptyRubric } from './rubric-utils';
+import { RubricItem } from './types';
+
+export interface RubricQueryResult {
+  division: {
+    judging: {
+      rubrics: RubricItem[];
+    };
+  };
+}
 
 /**
  * Query to fetch a single rubric for a team and category
@@ -15,11 +25,6 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<RubricQueryResult, GetRubricQue
       judging {
         rubrics(teamIds: [$teamId], category: $category) {
           id
-          team {
-            id
-            name
-            number
-          }
           category
           status
           data {
@@ -151,45 +156,12 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-// ============ Type Definitions ============
-
-export interface RubricTeamData {
-  id: string;
-  name: string;
-  number: number;
-}
-
-export interface RubricFeedbackData {
-  greatJob: string;
-  thinkAbout: string;
-}
-
-export interface RubricDataFields {
-  awards?: Record<string, unknown>;
-  values: Record<string, unknown>;
-  feedback: RubricFeedbackData;
-}
-
-export interface RubricItem {
-  id: string;
-  team: RubricTeamData;
-  category: JudgingCategory;
-  status: RubricStatus;
-  data?: RubricDataFields;
-}
-
-export interface RubricQueryResult {
-  division: {
-    judging: {
-      rubrics: RubricItem[];
-    };
-  };
-}
-
 export interface GetRubricQueryVariables {
   divisionId: string;
   teamId: string;
-  category: JudgingCategory;
+
+  // Judging category, but with underscores so GraphQL doesn't complain
+  category: 'innovation_project' | 'robot_design' | 'core_values';
 }
 
 export interface UpdateRubricValueMutationResult {
@@ -280,37 +252,17 @@ export interface RubricUpdatedSubscriptionVariables {
   lastSeenVersion?: number;
 }
 
-// ============ Parser Functions ============
-
 /**
  * Parses the query result to extract the first rubric
- *
- * @param queryData - The query result from GetRubric
- * @returns The first rubric item or undefined
- */
-/**
- * Parses the query result to extract the first rubric
- * If the rubric has no data, creates a minimal empty data structure
- *
- * @param queryData - The query result from GetRubric
- * @returns The first rubric item with populated data, or undefined if no rubric found
+ * If the rubric has no data, creates a empty rubric.
  */
 export function parseRubricData(queryData: RubricQueryResult): RubricItem {
   const rubric = queryData.division?.judging?.rubrics?.[0];
 
-  // If rubric exists but has no data, populate with minimal empty data structure
   if (!rubric.data) {
-    const emptyData: RubricDataFields = {
-      values: {},
-      feedback: {
-        greatJob: '',
-        thinkAbout: ''
-      }
-    };
-
     return {
       ...rubric,
-      data: emptyData
+      data: getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory)
     };
   }
 

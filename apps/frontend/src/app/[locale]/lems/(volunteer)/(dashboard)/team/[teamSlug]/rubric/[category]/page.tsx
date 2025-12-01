@@ -11,19 +11,15 @@ import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useUser } from '../../../../../../components/user-context';
-import { usePageData, type SubscriptionConfig } from '../../../../../hooks/use-page-data';
+import { usePageData } from '../../../../../hooks/use-page-data';
 import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
 import {
   GET_RUBRIC_QUERY,
-  RubricQueryResult,
-  GetRubricQueryVariables,
   parseRubricData,
-  createRubricUpdatedSubscription,
-  type RubricItem,
-  RubricUpdatedSubscriptionVariables
+  createRubricUpdatedSubscription
 } from './rubric.graphql';
 
 export default function RubricPage() {
@@ -33,46 +29,48 @@ export default function RubricPage() {
   const user = useUser();
   const { currentDivision } = useEvent();
 
-  const { category } = useParams();
+  const { category }: { category: JudgingCategory } = useParams();
   const schema = rubrics[category as JudgingCategory];
 
-  const subscriptions = useMemo<
-    SubscriptionConfig<unknown, RubricQueryResult, RubricUpdatedSubscriptionVariables>[]
-  >(() => [createRubricUpdatedSubscription(currentDivision.id)], [currentDivision.id]);
+  const subscriptions = useMemo(
+    () => [createRubricUpdatedSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
 
-  // Fetch rubric data
-  const { data: rubric, loading } = usePageData<
-    RubricQueryResult,
-    GetRubricQueryVariables,
-    RubricItem,
-    RubricUpdatedSubscriptionVariables
-  >(
+  const { data: rubric, loading } = usePageData(
     GET_RUBRIC_QUERY,
     {
       divisionId: currentDivision.id,
       teamId: team.id,
-      category: hyphensToUnderscores(category as string) as JudgingCategory
+      category: hyphensToUnderscores(category)
     },
     parseRubricData,
     subscriptions
   );
 
   const isEditable = useMemo(() => {
+    if (!rubric) return false;
+
     if (user.role === 'judge-advisor') {
-      return true;
+      return rubric.status !== 'approved';
     }
 
     if (user.role === 'lead-judge') {
-      return user.roleInfo?.['category'] === category;
+      return user.roleInfo?.['category'] === category && rubric.status !== 'approved';
     }
 
     return rubric ? ['empty', 'draft', 'completed'].includes(rubric.status) : false;
   }, [category, rubric, user.role, user.roleInfo]);
 
-  if (loading) {
+  if (loading || !rubric) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '50vh' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '50vh'
+        }}
       >
         <CircularProgress />
       </Box>
@@ -90,16 +88,14 @@ export default function RubricPage() {
       />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <RubricProvider rubric={rubric} divisionId={currentDivision.id}>
-          <div>
-            {schema.awards && <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />}
+        <RubricProvider rubric={rubric}>
+          {schema.awards && <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />}
 
-            <RubricTable
-              sections={schema.sections}
-              category={category as JudgingCategory}
-              disabled={!isEditable}
-            />
-          </div>
+          <RubricTable
+            sections={schema.sections}
+            category={category as JudgingCategory}
+            disabled={!isEditable}
+          />
         </RubricProvider>
       </Container>
     </>
