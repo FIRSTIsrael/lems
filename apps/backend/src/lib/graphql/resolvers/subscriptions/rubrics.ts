@@ -6,71 +6,45 @@ import {
   isGapMarker
 } from './base-subscription';
 
-interface RubricValueUpdatedEvent {
+type RubricValueUpdatedEvent = {
   rubricId: string;
   fieldId: string;
-  value: {
-    value: number;
-    notes?: string;
-  };
+  value: { value: number; notes?: string };
   version: number;
-}
+};
 
-interface RubricFeedbackUpdatedEvent {
+type RubricFeedbackUpdatedEvent = {
   rubricId: string;
-  feedback: {
-    greatJob: string;
-    thinkAbout: string;
-  };
+  feedback: { greatJob: string; thinkAbout: string };
   version: number;
-}
+};
 
-interface RubricStatusUpdatedEvent {
+type RubricStatusUpdatedEvent = {
   rubricId: string;
   status: string;
   version: number;
-}
+};
 
 type RubricUpdatedEventType =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
   | RubricStatusUpdatedEvent;
 
-/**
- * Resolver function for the rubricUpdated subscription field
- * Fires whenever any field value, feedback, or status is updated in a rubric within the division
- */
-const rubricUpdatedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for rubricUpdated subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.RUBRIC_UPDATED, lastSeenVersion);
-};
-
-/**
- * Transforms raw Redis events into RubricValueUpdatedEvent, RubricFeedbackUpdatedEvent,
- * or RubricStatusUpdatedEvent objects based on event type
- */
-const processRubricUpdatedEvent = async (
-  event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricUpdatedEventType>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[RubricUpdated] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
+function extractEventBase(event: Record<string, unknown>) {
   const eventData = event.data as Record<string, unknown>;
   const rubricId = (eventData.rubricId as string) || '';
   const version = (event.version as number) ?? 0;
+  return { eventData, rubricId, version };
+}
+
+async function processRubricUpdatedEvent(
+  event: Record<string, unknown>
+): Promise<SubscriptionResult<RubricUpdatedEventType>> {
+  if (isGapMarker(event.data)) {
+    return event.data;
+  }
+
+  const { eventData, rubricId, version } = extractEventBase(event);
 
   if (!rubricId) {
     return null;
@@ -81,139 +55,87 @@ const processRubricUpdatedEvent = async (
     const fieldId = (eventData.fieldId as string) || '';
     const value = eventData.value as Record<string, unknown>;
 
-    if (!fieldId || !value) {
-      return null;
-    }
-
-    const result: RubricValueUpdatedEvent = {
-      rubricId,
-      fieldId,
-      value: {
-        value: (value.value as number) ?? 0,
-        notes: (value.notes as string) || undefined
-      },
-      version
-    };
-
-    return result;
+    return fieldId && value
+      ? ({
+          rubricId,
+          fieldId,
+          value: { value: (value.value as number) ?? 0, notes: value.notes as string },
+          version
+        } as RubricValueUpdatedEvent)
+      : null;
   }
 
   // Handle RubricFeedbackUpdated events
   if ('feedback' in eventData) {
     const feedback = eventData.feedback as Record<string, unknown>;
 
-    if (!feedback) {
-      return null;
-    }
-
-    const result: RubricFeedbackUpdatedEvent = {
-      rubricId,
-      feedback: {
-        greatJob: (feedback.greatJob as string) || '',
-        thinkAbout: (feedback.thinkAbout as string) || ''
-      },
-      version
-    };
-
-    return result;
+    return feedback
+      ? ({
+          rubricId,
+          feedback: {
+            greatJob: (feedback.greatJob as string) || '',
+            thinkAbout: (feedback.thinkAbout as string) || ''
+          },
+          version
+        } as RubricFeedbackUpdatedEvent)
+      : null;
   }
 
   // Handle RubricStatusUpdated events
   if ('status' in eventData) {
     const status = (eventData.status as string) || '';
-
-    if (!status) {
-      return null;
-    }
-
-    const result: RubricStatusUpdatedEvent = {
-      rubricId,
-      status,
-      version
-    };
-
-    return result;
+    return status ? ({ rubricId, status, version } as RubricStatusUpdatedEvent) : null;
   }
 
   return null;
-};
+}
 
 /**
- * Resolver function for the rubricStatusChanged subscription field
- * Fires only when a rubric's overall status changes (lighter weight than rubricUpdated)
+ * Processes rubric status change events (status updates only)
  */
-const rubricStatusChangedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for rubricStatusChanged subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.RUBRIC_STATUS_CHANGED,
-    lastSeenVersion
-  );
-};
-
-/**
- * Transforms raw Redis events into RubricStatusUpdatedEvent objects
- */
-const processRubricStatusChangedEvent = async (
+async function processRubricStatusChangedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricStatusUpdatedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
+): Promise<SubscriptionResult<RubricStatusUpdatedEvent>> {
   if (isGapMarker(event.data)) {
-    console.warn('[RubricStatusChanged] Recovery gap detected - client should refetch');
     return event.data;
   }
 
-  const eventData = event.data as Record<string, unknown>;
-  const rubricId = (eventData.rubricId as string) || '';
+  const { eventData, rubricId, version } = extractEventBase(event);
   const status = (eventData.status as string) || '';
 
-  if (!rubricId || !status) {
-    return null;
-  }
-
-  const result: RubricStatusUpdatedEvent = {
-    rubricId,
-    status,
-    version: (event.version as number) ?? 0
-  };
-
-  return result;
-};
+  return rubricId && status ? { rubricId, status, version } : null;
+}
 
 /**
- * Subscription resolver object for rubricUpdated
- * Handles all rubric update events: value, feedback, and status updates
- * GraphQL subscriptions require a subscribe function
+ * Subscription resolver for rubricUpdated
+ * Fires on all rubric changes: field values, feedback, and status
  */
 export const rubricUpdatedResolver = {
-  subscribe: rubricUpdatedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<RubricUpdatedEventType>> => {
-    return processRubricUpdatedEvent(event);
-  }
+  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
+    const divisionId = args.divisionId as string;
+    if (!divisionId) throw new Error('divisionId is required');
+    return createSubscriptionIterator(
+      divisionId,
+      RedisEventTypes.RUBRIC_UPDATED,
+      (args.lastSeenVersion as number) || 0
+    );
+  },
+  resolve: processRubricUpdatedEvent
 };
 
 /**
- * Subscription resolver object for rubricStatusChanged
- * Handles only status change events (lightweight alternative to rubricUpdated)
- * GraphQL subscriptions require a subscribe function
+ * Subscription resolver for rubricStatusChanged
+ * Fires only on status changes (lightweight alternative)
  */
 export const rubricStatusChangedResolver = {
-  subscribe: rubricStatusChangedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<RubricStatusUpdatedEvent>> => {
-    return processRubricStatusChangedEvent(event);
-  }
+  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
+    const divisionId = args.divisionId as string;
+    if (!divisionId) throw new Error('divisionId is required');
+    return createSubscriptionIterator(
+      divisionId,
+      RedisEventTypes.RUBRIC_STATUS_CHANGED,
+      (args.lastSeenVersion as number) || 0
+    );
+  },
+  resolve: processRubricStatusChangedEvent
 };
