@@ -1,10 +1,12 @@
 'use client';
 
+import { useState, useCallback, useEffect } from 'react';
+import { TableRow, TableCell, Typography, TextField } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import toast from 'react-hot-toast';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
-import { useFormikContext } from 'formik';
-import { TableRow, TableCell, Typography, TextField } from '@mui/material';
-import type { RubricFormValues } from '../rubric-utils';
+import { useRubric } from '../rubric-context';
 
 interface FeedbackRowProps {
   category: JudgingCategory;
@@ -18,9 +20,44 @@ const colors: { [key: string]: string } = {
 };
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
+  const t = useTranslations('pages.rubric');
   const feedbackFields = ['great-job', 'think-about'] as const;
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
-  const { values, setFieldValue } = useFormikContext<RubricFormValues>();
+  const { feedback: contextFeedback, updateFeedback } = useRubric();
+
+  const [feedback, setFeedback] = useState({
+    'great-job': contextFeedback?.greatJob || '',
+    'think-about': contextFeedback?.thinkAbout || ''
+  });
+
+  // Sync local state with context changes (e.g., from subscriptions)
+  useEffect(() => {
+    setFeedback({
+      'great-job': contextFeedback?.greatJob || '',
+      'think-about': contextFeedback?.thinkAbout || ''
+    });
+  }, [contextFeedback?.greatJob, contextFeedback?.thinkAbout]);
+
+  const handleFeedbackBlur = useCallback(
+    (field: 'great-job' | 'think-about', value: string) => {
+      const contextGreatJob = contextFeedback?.greatJob || '';
+      const contextThinkAbout = contextFeedback?.thinkAbout || '';
+
+      // Only send mutation if value changed from context
+      if (
+        (field === 'great-job' && value !== contextGreatJob) ||
+        (field === 'think-about' && value !== contextThinkAbout)
+      ) {
+        const newGreatJob = field === 'great-job' ? value : contextGreatJob;
+        const newThinkAbout = field === 'think-about' ? value : contextThinkAbout;
+        updateFeedback(newGreatJob, newThinkAbout).catch(err => {
+          console.error('[FeedbackRow] Failed to update feedback:', err);
+          toast.error(t('toasts.feedback-update-error'));
+        });
+      }
+    },
+    [contextFeedback, updateFeedback, t]
+  );
 
   return (
     <>
@@ -82,11 +119,9 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
               placeholder={getFeedbackTitle(field)}
               disabled={disabled}
               variant="standard"
-              defaultValue={values.feedback?.[field] ?? ''}
-              onChange={() => {
-                // Update local state only during typing
-              }}
-              onBlur={e => setFieldValue(`feedback.${field}`, e.target.value)}
+              value={feedback[field]}
+              onChange={e => setFeedback(prev => ({ ...prev, [field]: e.target.value }))}
+              onBlur={e => handleFeedbackBlur(field, e.target.value)}
               sx={{
                 p: 1,
                 borderRadius: '12px',

@@ -211,6 +211,11 @@
         "save-draft": "Save as Draft",
         "submit-review": "Submit for Review",
         "reset": "Reset"
+      },
+      "toasts": {
+        "rating-update-error": "Failed to update score. Please try again.",
+        "notes-update-error": "Failed to save notes. Please try again.",
+        "feedback-update-error": "Failed to save feedback. Please try again."
       }
     }
   },
