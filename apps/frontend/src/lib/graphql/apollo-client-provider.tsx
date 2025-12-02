@@ -133,6 +133,7 @@ function makeClient(
         },
         Table: { keyFields: ['id'] },
         Room: { keyFields: ['id'] },
+        Rubric: { keyFields: ['id'] },
         Judging: {
           // Judging doesn't have an id field, so don't normalize it
           keyFields: false,

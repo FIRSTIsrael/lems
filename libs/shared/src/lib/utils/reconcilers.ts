@@ -256,15 +256,17 @@ export function updateObjectKeysBy<T = any>(
  * // { innovationProject: { id: '1', status: 'empty' }, robotDesign: { id: '2', status: 'completed' }, coreValues: null }
  * ```
  */
-export function updateObjectKeysById<T extends { id: string }>(
+export function updateObjectKeysById<T extends { id: string } = { id: string }>(
   obj: Record<string, T | null | undefined>,
   targetId: string,
   updater: (item: T | null | undefined) => T | null | undefined
 ): Record<string, T | null | undefined> {
   return updateObjectKeysBy(
     obj,
-    (item: T | null | undefined) =>
-      !!item && 'id' in item && (item as { id: string }).id === targetId,
+    (item: T | null | undefined) => {
+      if (!item || typeof item !== 'object') return false;
+      return 'id' in item && (item as { id: string }).id === targetId;
+    },
     updater
   );
 }

@@ -37,6 +37,7 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
   const { rubric, rubricObjectId } = await authorizeRubricAccess(context, divisionId, rubricId);
 
   const status = (rubric.status as string) || 'empty';
+  const wasEmpty = status === 'empty';
   assertRubricEditable(status, context.user?.role);
 
   // Validate field value is in acceptable range (1-4)
@@ -58,7 +59,7 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
       $set: {
         [`data.fields.${fieldId}`]: fieldUpdate,
         // Update status to draft if it's empty
-        ...(status === 'empty' && { status: 'draft' })
+        ...(wasEmpty && { status: 'draft' })
       }
     },
     { returnDocument: 'after' }
@@ -76,7 +77,14 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
     value: fieldUpdate,
     version: -1
   };
-  await pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload);
+  await Promise.all([
+    pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload),
+    wasEmpty &&
+      pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, {
+        rubricId,
+        status: 'draft'
+      })
+  ]);
 
   return eventPayload;
 };

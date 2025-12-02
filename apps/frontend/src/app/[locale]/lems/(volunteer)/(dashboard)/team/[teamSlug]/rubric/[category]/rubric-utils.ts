@@ -20,5 +20,5 @@ export const getEmptyRubric = (category: JudgingCategory): Rubric['data'] => {
     thinkAbout: ''
   };
 
-  return { ...(schema.awards ? { awards } : {}), fields, ...(schema.feedback && { feedback }) };
+  return { awards, fields, feedback };
 };

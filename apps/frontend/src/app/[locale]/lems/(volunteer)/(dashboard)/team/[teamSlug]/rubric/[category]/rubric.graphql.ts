@@ -253,12 +253,16 @@ export function createUpdateRubricValueCacheUpdate(
             judging: {
               rubrics: updateById(division.judging.rubrics, rubricId, rubric =>
                 merge(rubric, {
-                  data: merge(rubric.data || {}, {
-                    fields: {
-                      ...(rubric.data?.fields || {}),
-                      [fieldId]: fieldValue
+                  data: merge(
+                    rubric.data ||
+                      getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                    {
+                      fields: {
+                        ...(rubric.data?.fields || {}),
+                        [fieldId]: fieldValue
+                      }
                     }
-                  })
+                  )
                 })
               )
             }
@@ -292,9 +296,13 @@ export function createUpdateRubricFeedbackCacheUpdate(
             judging: {
               rubrics: updateById(division.judging.rubrics, rubricId, rubric =>
                 merge(rubric, {
-                  data: merge(rubric.data || {}, {
-                    feedback
-                  })
+                  data: merge(
+                    rubric.data ||
+                      getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                    {
+                      feedback
+                    }
+                  )
                 })
               )
             }
@@ -323,20 +331,28 @@ const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (pr
         rubrics: updateById(prev.division.judging.rubrics, rubricId, rubric => {
           if (event.__typename === 'RubricValueUpdated') {
             return merge(rubric, {
-              data: merge(rubric.data || {}, {
-                fields: {
-                  ...(rubric.data?.fields || {}),
-                  [event.fieldId]: event.value
+              data: merge(
+                rubric.data ||
+                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                {
+                  fields: {
+                    ...(rubric.data?.fields || {}),
+                    [event.fieldId]: event.value
+                  }
                 }
-              })
+              )
             });
           }
 
           if (event.__typename === 'RubricFeedbackUpdated') {
             return merge(rubric, {
-              data: merge(rubric.data || {}, {
-                feedback: event.feedback
-              })
+              data: merge(
+                rubric.data ||
+                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                {
+                  feedback: event.feedback
+                }
+              )
             });
           }
 
