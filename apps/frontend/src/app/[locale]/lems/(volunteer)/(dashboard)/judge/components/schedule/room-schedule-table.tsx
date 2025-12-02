@@ -199,13 +199,6 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                 <TableCell sx={{ py: 2.5 }}>
                   <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
-                      category="core-values"
-                      status={session.rubrics?.coreValues?.status}
-                      label={t('rubric-labels.core-values')}
-                      disabled={session.status !== 'completed'}
-                      teamSlug={session.team.slug}
-                    />
-                    <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovationProject?.status}
                       label={t('rubric-labels.innovation-project')}
@@ -216,6 +209,13 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                       category="robot-design"
                       status={session.rubrics?.robotDesign?.status}
                       label={t('rubric-labels.robot-design')}
+                      disabled={session.status !== 'completed'}
+                      teamSlug={session.team.slug}
+                    />
+                    <RubricStatusButton
+                      category="core-values"
+                      status={session.rubrics?.coreValues?.status}
+                      label={t('rubric-labels.core-values')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}
                     />

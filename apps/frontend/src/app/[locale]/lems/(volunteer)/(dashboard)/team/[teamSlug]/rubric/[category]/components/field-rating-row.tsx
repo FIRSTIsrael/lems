@@ -37,7 +37,7 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   };
 
   return (
-    <TableRow>
+    <TableRow id={`field-${fieldId}`}>
       {rubricColumns.map((level, levelIndex) => {
         const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
         const label = level === 'exceeds' ? null : getFieldLevel(sectionId, fieldId, level);

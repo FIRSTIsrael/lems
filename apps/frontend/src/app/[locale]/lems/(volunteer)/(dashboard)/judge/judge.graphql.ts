@@ -1,5 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { merge, updateInArray, Reconciler } from '@lems/shared/utils';
+import { merge, updateInArray, updateObjectKeysById, Reconciler } from '@lems/shared/utils';
 import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
 
@@ -30,10 +30,11 @@ export interface Team {
 /**
  * Categorized rubrics for a session
  */
-export interface CategorizedRubrics {
-  innovationProject: { status: RubricStatus } | null;
-  robotDesign: { status: RubricStatus } | null;
-  coreValues: { status: RubricStatus } | null;
+export interface CategorizedRubrics
+  extends Record<string, { id: string; status: RubricStatus } | null> {
+  innovationProject: { id: string; status: RubricStatus } | null;
+  robotDesign: { id: string; status: RubricStatus } | null;
+  coreValues: { id: string; status: RubricStatus } | null;
 }
 
 /**
@@ -79,12 +80,19 @@ export interface JudgingStartedEvent extends JudgingSessionEvent {
   startDelta: number;
 }
 
+export interface RubricStatusChangedEvent {
+  rubricId: string;
+  status: RubricStatus;
+  version: number;
+}
+
 type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
 type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
 type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingSessionEvent };
 type JudgingCompletedSubscriptionData = { judgingSessionCompleted: JudgingSessionEvent };
+type RubricStatusChangedSubscriptionData = { rubricStatusChanged: RubricStatusChangedEvent };
 
 /**
  * Query to fetch judging sessions for a specific room
@@ -137,6 +145,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
   }
 
   fragment RubricFields on Rubric {
+    id
     status
   }
 `;
@@ -186,6 +195,19 @@ export const JUDGING_SESSION_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription JudgingSessionCompleted($divisionId: String!, $lastSeenVersion: Int) {
     judgingSessionCompleted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
       sessionId
+      version
+    }
+  }
+`;
+
+export const RUBRIC_STATUS_CHANGED_SUBSCRIPTION: TypedDocumentNode<
+  RubricStatusChangedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription RubricStatusChanged($divisionId: String!, $lastSeenVersion: Int) {
+    rubricStatusChanged(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      rubricId
+      status
       version
     }
   }
@@ -306,7 +328,7 @@ const teamArrivalReconciler: Reconciler<QueryData, TeamArrivalSubscriptionData> 
  * @param onTeamArrived - Optional callback invoked when a team arrives
  * @returns Subscription configuration for use with usePageData hook
  */
-export function createTeamArrivalSubscriptionForJudge(
+export function createTeamArrivalSubscription(
   divisionId: string,
   onTeamArrived?: (event: TeamEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
@@ -352,7 +374,7 @@ const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubsc
  * @param onSessionStarted - Optional callback invoked when a session starts
  * @returns Subscription configuration for use with usePageData hook
  */
-export function createJudgingSessionStartedSubscriptionForJudge(
+export function createJudgingSessionStartedSubscription(
   divisionId: string,
   onSessionStarted?: (event: JudgingStartedEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
@@ -393,7 +415,7 @@ const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubsc
  * @param onAborted - Optional callback invoked when a session is aborted
  * @returns Subscription configuration for use with usePageData hook
  */
-export function createJudgingSessionAbortedSubscriptionForJudge(
+export function createJudgingSessionAbortedSubscription(
   divisionId: string,
   onAborted?: (event: JudgingSessionEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
@@ -434,7 +456,7 @@ const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedS
  * @param onSessionCompleted - Optional callback invoked when a session completes
  * @returns Subscription configuration for use with usePageData hook
  */
-export function createJudgingSessionCompletedSubscriptionForJudge(
+export function createJudgingSessionCompletedSubscription(
   divisionId: string,
   onSessionCompleted?: (event: JudgingSessionEvent) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
@@ -443,5 +465,49 @@ export function createJudgingSessionCompletedSubscriptionForJudge(
     divisionId,
     judgingSessionCompletedReconciler,
     onSessionCompleted ? data => onSessionCompleted(data.judgingSessionCompleted) : undefined
+  );
+}
+
+/**
+ * Reconciler for rubric status changed events.
+ * Updates the status of a specific rubric category for a team's session.
+ * Finds the rubric by ID and updates its status.
+ */
+const rubricStatusChangedReconciler: Reconciler<QueryData, RubricStatusChangedSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { rubricId, status } = data.rubricStatusChanged;
+
+  return updateJudgingSessions(prev, sessions =>
+    sessions.map(session =>
+      merge(session, {
+        rubrics: updateObjectKeysById(session.rubrics, rubricId, rubric =>
+          merge(rubric, { status })
+        )
+      })
+    )
+  );
+};
+
+/**
+ * Creates a subscription configuration for rubric status changes in the judge view.
+ * When a rubric's status changes, updates the corresponding rubric status in the sessions payload if present.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @param onRubricStatusChanged - Optional callback invoked when a rubric status changes
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createRubricStatusChangedSubscription(
+  divisionId: string,
+  onRubricStatusChanged?: (event: RubricStatusChangedEvent) => void
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    RUBRIC_STATUS_CHANGED_SUBSCRIPTION,
+    divisionId,
+    rubricStatusChangedReconciler,
+    onRubricStatusChanged ? data => onRubricStatusChanged(data.rubricStatusChanged) : undefined
   );
 }

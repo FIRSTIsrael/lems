@@ -216,6 +216,13 @@
         "rating-update-error": "נכשל בעדכון הניקוד. אנא נסו שנית.",
         "notes-update-error": "נכשל בשמירת ההערות. אנא נסו שנית.",
         "feedback-update-error": "נכשל בשמירת המשוב. אנא נסו שנית."
+      },
+      "validation": {
+        "title": "פורם הערכה לא שלם",
+        "missing-field-value": "אנא הערך את כל השדות לפני הגשה.",
+        "missing-notes-for-level-4": "שדות המדורגים כ'מצטיינת' דורשים הערות.",
+        "missing-feedback": "אנא מלאו את שני שדות המשוב.",
+        "show": "הצג בעיה"
       }
     }
   },

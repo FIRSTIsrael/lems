@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
+import { JudgingCategory } from '@lems/types';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import { useEvent } from '../../../../../components/event-context';
 import {
   UPDATE_RUBRIC_VALUE_MUTATION,
@@ -10,11 +12,13 @@ import {
   createUpdateRubricFeedbackCacheUpdate
 } from './rubric.graphql';
 import { RubricItem } from './types';
+import { validateRubric, ValidationResult } from './rubric-validation';
 
 interface RubricContextValue {
   rubric: RubricItem;
   updateFieldValue: (fieldId: string, value: 1 | 2 | 3 | 4, notes?: string) => Promise<void>;
   updateFeedback: (greatJob: string, thinkAbout: string) => Promise<void>;
+  validation: ValidationResult;
 }
 
 const RubricContext = createContext<RubricContextValue | undefined>(undefined);
@@ -87,13 +91,18 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
     [updateRubricFeedback, currentDivision.id, rubric.id]
   );
 
+  const validation = useMemo(() => {
+    return validateRubric(rubric, underscoresToHyphens(rubric.category) as JudgingCategory);
+  }, [rubric]);
+
   const value: RubricContextValue = useMemo(
     () => ({
       rubric,
       updateFieldValue,
-      updateFeedback
+      updateFeedback,
+      validation
     }),
-    [rubric, updateFieldValue, updateFeedback]
+    [rubric, updateFieldValue, updateFeedback, validation]
   );
 
   return <RubricContext.Provider value={value}>{children}</RubricContext.Provider>;

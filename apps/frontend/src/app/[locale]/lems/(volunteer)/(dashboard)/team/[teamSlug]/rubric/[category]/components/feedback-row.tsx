@@ -64,7 +64,7 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
 
   return (
     <>
-      <TableRow>
+      <TableRow id="field-feedback">
         {feedbackFields.map((field, index) => (
           <TableCell
             key={field}
