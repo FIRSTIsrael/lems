@@ -21,6 +21,7 @@ import {
   parseRubricData,
   createRubricUpdatedSubscription
 } from './rubric.graphql';
+import { ValidationAlert } from './components/validation-alert';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -89,6 +90,7 @@ export default function RubricPage() {
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <RubricProvider rubric={rubric}>
+          <ValidationAlert />
           {schema.awards && <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />}
 
           <RubricTable

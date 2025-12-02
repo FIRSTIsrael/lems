@@ -1,4 +1,4 @@
-import { JudgingCategory, RubricStatus } from '@lems/database';
+import { RubricStatus } from '@lems/database';
 
 export type RubricFieldValue = {
   value: 1 | 2 | 3 | 4 | null;
@@ -16,9 +16,11 @@ export interface RubricData {
   feedback?: RubricFeedback;
 }
 
+export type JudgingCategoryGraphQL = 'innovation_project' | 'robot_design' | 'core_values';
+
 export interface RubricItem {
   id: string;
-  category: JudgingCategory;
+  category: JudgingCategoryGraphQL;
   status: RubricStatus;
   data?: RubricData;
 }
