@@ -12,12 +12,13 @@ import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_ROOM_JUDGING_SESSIONS,
-  createTeamArrivalSubscriptionForJudge,
-  createJudgingSessionStartedSubscriptionForJudge,
+  createTeamArrivalSubscription,
+  createJudgingSessionStartedSubscription,
   START_JUDGING_SESSION_MUTATION,
-  createJudgingSessionAbortedSubscriptionForJudge,
+  createJudgingSessionAbortedSubscription,
   ABORT_JUDGING_SESSION_MUTATION,
-  createJudgingSessionCompletedSubscriptionForJudge
+  createJudgingSessionCompletedSubscription,
+  createRubricStatusChangedSubscription
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
@@ -46,16 +47,17 @@ export default function JudgePage() {
 
   const subscriptions = useMemo(
     () => [
-      createTeamArrivalSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id, () => {
+      createTeamArrivalSubscription(currentDivision.id),
+      createJudgingSessionStartedSubscription(currentDivision.id, () => {
         playSound('start');
       }),
-      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id, () => {
+      createJudgingSessionAbortedSubscription(currentDivision.id, () => {
         playSound('end');
       }),
-      createJudgingSessionCompletedSubscriptionForJudge(currentDivision.id, () => {
+      createJudgingSessionCompletedSubscription(currentDivision.id, () => {
         playSound('end');
-      })
+      }),
+      createRubricStatusChangedSubscription(currentDivision.id)
     ],
     [currentDivision.id, playSound]
   );

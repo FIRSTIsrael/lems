@@ -192,3 +192,79 @@ export function updateNested<T = any>(
     [first]: updateNested(currentValue, rest, updater)
   } as T;
 }
+
+/**
+ * Updates a value in an object structure with multiple keys by matching a predicate.
+ * Useful for updating a single item across multiple object properties where each property
+ * contains a value that may need updating based on custom logic.
+ *
+ * @param obj - Object with multiple keys, each containing a value (or null/undefined)
+ * @param predicate - Function that returns true for the item to update
+ * @param updater - Function that receives the found item and returns the updated item
+ * @returns A new object with the matching item updated, or the original if no match
+ *
+ * @example
+ * ```ts
+ * const rubrics = {
+ *   innovationProject: { id: '1', status: 'empty' },
+ *   robotDesign: { id: '2', status: 'empty' },
+ *   coreValues: null
+ * };
+ * const updated = updateObjectKeysBy(
+ *   rubrics,
+ *   rubric => rubric?.id === '2',
+ *   rubric => ({ ...rubric, status: 'completed' })
+ * );
+ * // { innovationProject: { id: '1', status: 'empty' }, robotDesign: { id: '2', status: 'completed' }, coreValues: null }
+ * ```
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function updateObjectKeysBy<T = any>(
+  obj: Record<string, T | null | undefined>,
+  predicate: (item: T | null | undefined) => boolean,
+  updater: (item: T | null | undefined) => T | null | undefined
+): Record<string, T | null | undefined> {
+  const updated = { ...obj };
+
+  for (const key of Object.keys(updated)) {
+    const item = updated[key];
+    if (item && predicate(item)) {
+      updated[key] = updater(item);
+    }
+  }
+
+  return updated;
+}
+
+/**
+ * Updates a value in an object structure with multiple keys by matching an ID.
+ * Convenience wrapper around updateObjectKeysBy for the common case of matching by ID.
+ *
+ * @param obj - Object with multiple keys, each containing an object with id and other properties
+ * @param targetId - The ID to match against
+ * @param updater - Function that receives the found item and returns the updated item
+ * @returns A new object with the matching item updated, or the original if no match
+ *
+ * @example
+ * ```ts
+ * const rubrics = {
+ *   innovationProject: { id: '1', status: 'empty' },
+ *   robotDesign: { id: '2', status: 'empty' },
+ *   coreValues: null
+ * };
+ * const updated = updateObjectKeysById(rubrics, '2', rubric => ({ ...rubric, status: 'completed' }));
+ * // { innovationProject: { id: '1', status: 'empty' }, robotDesign: { id: '2', status: 'completed' }, coreValues: null }
+ * ```
+ */
+export function updateObjectKeysById<T extends { id: string }>(
+  obj: Record<string, T | null | undefined>,
+  targetId: string,
+  updater: (item: T | null | undefined) => T | null | undefined
+): Record<string, T | null | undefined> {
+  return updateObjectKeysBy(
+    obj,
+    (item: T | null | undefined) =>
+      !!item && 'id' in item && (item as { id: string }).id === targetId,
+    updater
+  );
+}
