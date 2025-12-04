@@ -14,6 +14,19 @@ type QueryResult = {
   };
 };
 
+type AwardOptionsQueryResult = {
+  division: {
+    awards: Array<{
+      id: string;
+      name: string;
+    }>;
+  };
+};
+
+type AwardOptionsQueryVariables = {
+  divisionId: string;
+};
+
 type QueryVariables = {
   divisionId: string;
   teamId: string;
@@ -109,6 +122,24 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
             }
           }
         }
+      }
+    }
+  }
+`;
+
+/**
+ * Query to fetch award options that allow nominations for a division
+ */
+export const GET_AWARD_OPTIONS_QUERY: TypedDocumentNode<
+  AwardOptionsQueryResult,
+  AwardOptionsQueryVariables
+> = gql`
+  query GetAwardOptions($divisionId: String!) {
+    division(id: $divisionId) {
+      id
+      awards(allowNominations: true) {
+        id
+        name
       }
     }
   }
@@ -227,6 +258,14 @@ export function parseRubricData(queryData: QueryResult): RubricItem {
   }
 
   return rubric;
+}
+
+/**
+ * Parses the award options query result and returns a Set of award names.
+ */
+export function parseAwardOptions(queryData: AwardOptionsQueryResult): Set<string> {
+  const awards = queryData.division?.awards ?? [];
+  return new Set(awards.map(award => award.name));
 }
 
 /**
