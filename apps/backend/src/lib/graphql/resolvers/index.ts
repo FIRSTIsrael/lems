@@ -98,7 +98,6 @@ export const resolvers = {
   },
   RoleInfo: {
     __resolveType(obj: Record<string, unknown>) {
-      // Discriminate union type based on object properties
       if ('tableId' in obj) return 'TableRoleInfo';
       if ('roomId' in obj) return 'RoomRoleInfo';
       if ('category' in obj) return 'CategoryRoleInfo';
@@ -107,10 +106,10 @@ export const resolvers = {
   },
   RubricUpdatedEvent: {
     __resolveType(obj: Record<string, unknown>) {
-      // Discriminate union type based on object properties
       if ('fieldId' in obj) return 'RubricValueUpdated';
       if ('feedback' in obj) return 'RubricFeedbackUpdated';
       if ('status' in obj) return 'RubricStatusUpdated';
+      if ('awards' in obj) return 'RubricAwardsUpdated';
       return null;
     }
   }

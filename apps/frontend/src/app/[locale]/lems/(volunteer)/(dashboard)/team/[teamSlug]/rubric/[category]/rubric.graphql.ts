@@ -14,6 +14,19 @@ type QueryResult = {
   };
 };
 
+type AwardOptionsQueryResult = {
+  division: {
+    awards: Array<{
+      id: string;
+      name: string;
+    }>;
+  };
+};
+
+type AwardOptionsQueryVariables = {
+  divisionId: string;
+};
+
 type QueryVariables = {
   divisionId: string;
   teamId: string;
@@ -52,6 +65,20 @@ type FeedbackMutationVariables = {
   thinkAbout: string;
 };
 
+type AwardsMutationResult = {
+  updateRubricAwards: {
+    rubricId: string;
+    awards: Record<string, boolean>;
+    version: number;
+  };
+};
+
+type AwardsMutationVariables = {
+  divisionId: string;
+  rubricId: string;
+  awards: Record<string, boolean>;
+};
+
 type RubricValueUpdatedEvent = {
   __typename: 'RubricValueUpdated';
   rubricId: string;
@@ -74,10 +101,18 @@ type RubricStatusUpdatedEvent = {
   version: number;
 };
 
+type RubricAwardsUpdatedEvent = {
+  __typename: 'RubricAwardsUpdated';
+  rubricId: string;
+  awards: Record<string, boolean>;
+  version: number;
+};
+
 type RubricUpdatedEvent =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
-  | RubricStatusUpdatedEvent;
+  | RubricStatusUpdatedEvent
+  | RubricAwardsUpdatedEvent;
 
 type SubscriptionResult = {
   rubricUpdated: RubricUpdatedEvent;
@@ -109,6 +144,24 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
             }
           }
         }
+      }
+    }
+  }
+`;
+
+/**
+ * Query to fetch award options that allow nominations for a division
+ */
+export const GET_AWARD_OPTIONS_QUERY: TypedDocumentNode<
+  AwardOptionsQueryResult,
+  AwardOptionsQueryVariables
+> = gql`
+  query GetAwardOptions($divisionId: String!) {
+    division(id: $divisionId) {
+      id
+      awards(allowNominations: true) {
+        id
+        name
       }
     }
   }
@@ -176,8 +229,24 @@ export const UPDATE_RUBRIC_FEEDBACK_MUTATION: TypedDocumentNode<
 `;
 
 /**
+ * Mutation to update award nominations in a rubric
+ */
+export const UPDATE_RUBRIC_AWARDS_MUTATION: TypedDocumentNode<
+  AwardsMutationResult,
+  AwardsMutationVariables
+> = gql`
+  mutation UpdateRubricAwards($divisionId: String!, $rubricId: String!, $awards: JSON!) {
+    updateRubricAwards(divisionId: $divisionId, rubricId: $rubricId, awards: $awards) {
+      rubricId
+      awards
+      version
+    }
+  }
+`;
+
+/**
  * Subscription to real-time rubric updates
- * Fires when any field value, feedback, or status changes
+ * Fires when any field value, feedback, awards, or status changes
  */
 export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionResult,
@@ -208,6 +277,11 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
         status
         version
       }
+      ... on RubricAwardsUpdated {
+        rubricId
+        awards
+        version
+      }
     }
   }
 `;
@@ -227,6 +301,14 @@ export function parseRubricData(queryData: QueryResult): RubricItem {
   }
 
   return rubric;
+}
+
+/**
+ * Parses the award options query result and returns a Set of award names.
+ */
+export function parseAwardOptions(queryData: AwardOptionsQueryResult): Set<string> {
+  const awards = queryData.division?.awards ?? [];
+  return new Set(awards.map(award => award.name));
 }
 
 /**
@@ -315,7 +397,7 @@ export function createUpdateRubricFeedbackCacheUpdate(
 
 /**
  * Reconciler for rubric updates from subscriptions.
- * Handles RubricValueUpdated, RubricFeedbackUpdated, and RubricStatusUpdated events.
+ * Handles RubricValueUpdated, RubricFeedbackUpdated, RubricStatusUpdated, and RubricAwardsUpdated events.
  */
 const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (prev, { data }) => {
   if (!data?.rubricUpdated) {
@@ -359,6 +441,18 @@ const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (pr
           if (event.__typename === 'RubricStatusUpdated') {
             return merge(rubric, {
               status: event.status
+            });
+          }
+
+          if (event.__typename === 'RubricAwardsUpdated') {
+            return merge(rubric, {
+              data: merge(
+                rubric.data ||
+                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                {
+                  awards: event.awards
+                }
+              )
             });
           }
 
