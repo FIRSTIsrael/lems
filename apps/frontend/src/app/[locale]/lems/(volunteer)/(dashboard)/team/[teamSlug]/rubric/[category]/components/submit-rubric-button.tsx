@@ -33,7 +33,7 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
     submitRubricMutation({
       variables: {
         rubricId: rubric.id,
-        status: 'completed'
+        status: 'locked'
       }
     });
     router.push(`/lems/${user.role}`);

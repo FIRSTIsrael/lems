@@ -211,7 +211,7 @@
         "save-draft": "Save as Draft",
         "submit-review": "Submit for Review",
         "reset": "Reset",
-        "submit-rubric": "Submit Rubric"
+        "submit-rubric": "Submit and lock"
       },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",

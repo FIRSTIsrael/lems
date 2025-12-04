@@ -266,6 +266,8 @@ export const UPDATE_RUBRIC_STATUS_MUTATION: TypedDocumentNode<
   mutation UpdateRubricStatus($rubricId: String!, $status: RubricStatus!) {
     updateRubricStatus(rubricId: $rubricId, status: $status) {
       rubricId
+      status
+      version
     }
   }
 `;
