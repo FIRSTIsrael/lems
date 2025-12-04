@@ -207,4 +207,35 @@ router.post(
   }
 );
 
+// PATCH /admin/teams/:teamId/division
+router.patch(
+  '/:teamId/division',
+  requirePermission('MANAGE_TEAMS'),
+  async (req: AdminRequest, res) => {
+    const { teamId } = req.params;
+    const { divisionId } = req.body;
+
+    if (!divisionId) {
+      res.status(400).json({ error: 'DIVISION_ID_REQUIRED' });
+      return;
+    }
+
+    try {
+      // Use a transaction: remove existing assignment(s) then insert the new one.
+      await db.raw.sql.transaction().execute(async trx => {
+        await trx.deleteFrom('team_divisions').where('team_id', '=', teamId).execute();
+        await trx
+          .insertInto('team_divisions')
+          .values({ team_id: teamId, division_id: divisionId })
+          .execute();
+      });
+
+      res.status(204).end();
+    } catch (error) {
+      console.error('Failed to update team division:', error);
+      res.status(500).json({ error: 'FAILED_TO_UPDATE_DIVISION' });
+    }
+  }
+);
+
 export default router;

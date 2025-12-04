@@ -1,8 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { apiFetch } from '@lems/shared';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box, Chip } from '@mui/material';
+import { Avatar, Box, Chip, Menu, MenuItem } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
@@ -20,6 +21,11 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
 }) => {
   const t = useTranslations('pages.events.teams.unified');
   const [searchValue, setSearchValue] = useState('');
+  const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
+  const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
+  // local copy for optimistic updates
+  const [localTeams, setLocalTeams] = useState<TeamWithDivision[]>(teams);
+  useEffect(() => setLocalTeams(teams), [teams]);
 
   const hasMultipleDivisions = divisions.length > 1;
   const divisionsWithSchedule = new Set(
@@ -27,11 +33,12 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   );
 
   const filteredTeams = useMemo(() => {
-    if (!searchValue.trim()) return teams;
+    const source = localTeams || teams;
+    if (!searchValue.trim()) return source;
 
     const searchLower = searchValue.toLowerCase();
     return (
-      teams?.filter(team => {
+      source.filter(team => {
         const numberMatch = team.number.toString().includes(searchLower);
         const nameMatch = team.name.toLowerCase().includes(searchLower);
         const affiliationMatch = team.affiliation.toLowerCase().includes(searchLower);
@@ -41,7 +48,48 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         return numberMatch || nameMatch || affiliationMatch || cityMatch || divisionMatch;
       }) || []
     );
-  }, [teams, searchValue]);
+  }, [localTeams, teams, searchValue]);
+
+  const handleChipClick = (event: React.MouseEvent<HTMLElement>, team: TeamWithDivision) => {
+    setMenuAnchor(event.currentTarget);
+    setSelectedTeam(team);
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchor(null);
+    setSelectedTeam(null);
+  };
+
+  const handleDivisionChange = async (divisionId: string) => {
+    if (!selectedTeam) return;
+
+    try {
+      const result = await apiFetch(`/admin/teams/${selectedTeam.id}/division`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ divisionId })
+      });
+
+      if (!result.ok) {
+        console.error('Server returned error updating division:', result.status, result.error);
+        // TODO: show user-facing error/toast
+        return;
+      }
+
+      // optimistic UI update: update the localTeams array
+      const newDivision = divisions.find(d => d.id === divisionId);
+      if (newDivision) {
+        setLocalTeams(prev =>
+          prev.map(t => (t.id === selectedTeam.id ? { ...t, division: newDivision } : t))
+        );
+      }
+    } catch (error) {
+      console.error('Network error updating division:', error);
+      // TODO: show user-facing error/toast
+    } finally {
+      handleMenuClose();
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -82,18 +130,22 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             width: 140,
             sortable: true,
             renderCell: params => (
-              <Chip
-                label={params.row.division.name}
-                size="small"
-                sx={{
-                  backgroundColor: params.row.division.color,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  '& .MuiChip-label': {
-                    px: 1
-                  }
-                }}
-              />
+              <>
+                <Chip
+                  label={params.row.division.name}
+                  size="small"
+                  sx={{
+                    backgroundColor: params.row.division.color,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    '& .MuiChip-label': {
+                      px: 1
+                    }
+                  }}
+                  onClick={event => handleChipClick(event, params.row)}
+                />
+              </>
             ),
             valueGetter: (value, row) => row.division.name
           }
@@ -128,10 +180,8 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           key="edit"
           icon={<Edit />}
           label="Edit team"
-          // eslint-disable-next-line no-constant-binary-expression
-          disabled={true || divisionsWithSchedule.has(params.row.division.id)}
+          disabled={divisionsWithSchedule.has(params.row.division.id)}
           onClick={() => {
-            // TODO: Implement edit functionality
             console.log('Edit team:', params.row.id);
           }}
         />,
@@ -156,9 +206,6 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
               paginationModel: { page: 0, pageSize: 50 }
             },
             sorting: {
-              // We would like to sort this by division and then
-              // by number, but the community version of MUI
-              // does not support multiple sorts in datagrid :(
               sortModel: [{ field: 'number', sort: 'asc' }]
             }
           }}
@@ -181,6 +228,18 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           }}
         />
       </Box>
+
+      <Menu anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClose={handleMenuClose}>
+        {divisions.map(division => (
+          <MenuItem
+            key={division.id}
+            onClick={() => handleDivisionChange(division.id)}
+            disabled={division.id === selectedTeam?.division.id}
+          >
+            {division.name}
+          </MenuItem>
+        ))}
+      </Menu>
     </Box>
   );
 };
