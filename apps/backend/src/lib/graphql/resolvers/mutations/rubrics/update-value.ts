@@ -4,7 +4,11 @@ import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { authorizeRubricAccess, assertRubricEditable } from './utils';
+import {
+  authorizeRubricAccess,
+  assertRubricEditable,
+  determineRubricCompletionStatus
+} from './utils';
 
 type RubricValueUpdatedEvent = {
   rubricId: string;
@@ -37,7 +41,6 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
   const { rubric, rubricObjectId } = await authorizeRubricAccess(context, divisionId, rubricId);
 
   const status = (rubric.status as string) || 'empty';
-  const wasEmpty = status === 'empty';
   assertRubricEditable(status, context.user?.role);
 
   // Validate field value is in acceptable range (1-4)
@@ -57,9 +60,7 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
     { _id: rubricObjectId },
     {
       $set: {
-        [`data.fields.${fieldId}`]: fieldUpdate,
-        // Update status to draft if it's empty
-        ...(wasEmpty && { status: 'draft' })
+        [`data.fields.${fieldId}`]: fieldUpdate
       }
     },
     { returnDocument: 'after' }
@@ -67,6 +68,19 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
 
   if (!result) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Failed to update rubric ${rubricId}`);
+  }
+
+  // Determine new status based on completion criteria
+  const rubricData = result.value?.data as Record<string, unknown> | undefined;
+  const rubricCategory = (result.value?.category as string) || '';
+  const newStatus = determineRubricCompletionStatus(rubricData, rubricCategory);
+
+  // Update status if it has changed
+  const statusChanged = newStatus !== status;
+  if (statusChanged) {
+    await db.raw.mongo
+      .collection('rubrics')
+      .updateOne({ _id: rubricObjectId }, { $set: { status: newStatus } });
   }
 
   // Publish the update event
@@ -77,14 +91,20 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
     value: fieldUpdate,
     version: -1
   };
-  await Promise.all([
-    pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload),
-    wasEmpty &&
+
+  const publishTasks = [pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload)];
+
+  // Publish status change event if status changed
+  if (statusChanged) {
+    publishTasks.push(
       pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, {
         rubricId,
-        status: 'draft'
+        status: newStatus
       })
-  ]);
+    );
+  }
+
+  await Promise.all(publishTasks);
 
   return eventPayload;
 };

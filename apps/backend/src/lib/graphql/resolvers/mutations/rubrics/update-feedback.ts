@@ -4,7 +4,11 @@ import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { authorizeRubricAccess, assertRubricEditable } from './utils';
+import {
+  authorizeRubricAccess,
+  assertRubricEditable,
+  determineRubricCompletionStatus
+} from './utils';
 
 type RubricFeedbackUpdatedEvent = {
   rubricId: string;
@@ -43,9 +47,7 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
     { _id: rubricObjectId },
     {
       $set: {
-        'data.feedback': feedbackUpdate,
-        // Update status to draft if it's empty
-        ...(status === 'empty' && { status: 'draft' })
+        'data.feedback': feedbackUpdate
       }
     },
     { returnDocument: 'after' }
@@ -55,6 +57,19 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Failed to update rubric ${rubricId}`);
   }
 
+  // Determine new status based on completion criteria
+  const rubricData = result.value?.data as Record<string, unknown> | undefined;
+  const rubricCategory = (result.value?.category as string) || '';
+  const newStatus = determineRubricCompletionStatus(rubricData, rubricCategory);
+
+  // Update status if it has changed
+  const statusChanged = newStatus !== status;
+  if (statusChanged) {
+    await db.raw.mongo
+      .collection('rubrics')
+      .updateOne({ _id: rubricObjectId }, { $set: { status: newStatus } });
+  }
+
   // Publish the update event
   const pubSub = getRedisPubSub();
   const eventPayload = {
@@ -62,7 +77,19 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
     feedback: feedbackUpdate,
     version: -1
   };
-  await pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload);
+
+  const publishTasks = [pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload)];
+
+  if (statusChanged) {
+    publishTasks.push(
+      pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, {
+        rubricId,
+        status: newStatus
+      })
+    );
+  }
+
+  await Promise.all(publishTasks);
 
   return eventPayload;
 };
