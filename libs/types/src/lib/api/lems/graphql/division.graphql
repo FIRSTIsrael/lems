@@ -64,8 +64,17 @@ type Award {
   "Display name of the award"
   name: String!
 
-  "Number of places/positions available for this award type"
-  placeCount: Int!
+  "Index/order of this award within the division"
+  index: Int!
+
+  "Place/position number for this award"
+  place: Int!
+
+  "Type of award (PERSONAL for individuals, TEAM for team-based)"
+  type: String!
+
+  "Whether this award is optional"
+  isOptional: Boolean!
 
   "Optional description for this award"
   description: String
