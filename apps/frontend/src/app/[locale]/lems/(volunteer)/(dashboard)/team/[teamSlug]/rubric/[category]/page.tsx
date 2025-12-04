@@ -22,6 +22,7 @@ import {
   createRubricUpdatedSubscription
 } from './rubric.graphql';
 import { ValidationAlert } from './components/validation-alert';
+import { SubmitRubricButton } from './components/submit-rubric-button';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -98,6 +99,7 @@ export default function RubricPage() {
             category={category as JudgingCategory}
             disabled={!isEditable}
           />
+          <SubmitRubricButton disabled={!isEditable} />
         </RubricProvider>
       </Container>
     </>

@@ -210,7 +210,8 @@
       "actions": {
         "save-draft": "שמור כטיוטה",
         "submit-review": "הגש לבדיקה",
-        "reset": "איפוס"
+        "reset": "איפוס",
+        "submit-rubric": "הגש מחוון"
       },
       "toasts": {
         "rating-update-error": "נכשל בעדכון הניקוד. אנא נסו שנית.",
@@ -223,6 +224,9 @@
         "missing-notes-for-level-4": "שדות המדורגים כ'מצטיינת' דורשים הערות.",
         "missing-feedback": "אנא מלאו את שני שדות המשוב.",
         "show": "הצג בעיה"
+      },
+      "errors": {
+        "submit": "הגשת המחוון נכשלה."
       }
     }
   },
