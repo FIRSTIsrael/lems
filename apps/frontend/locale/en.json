@@ -210,7 +210,15 @@
       "actions": {
         "save-draft": "Save as Draft",
         "submit-review": "Submit for Review",
-        "reset": "Reset"
+        "reset": "Reset",
+        "submit-rubric": "Submit and lock"
+      },
+      "submit-dialog": {
+        "title": "Submit and Lock Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Once you submit and lock this rubric, you will no longer be able to make any changes to it. Please ensure all information is correct before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Submit and Lock"
       },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
@@ -223,6 +231,9 @@
         "missing-notes-for-level-4": "Fields rated as 'Exceeds' require notes.",
         "missing-feedback": "Please fill in both feedback fields.",
         "show": "Show Issue"
+      },
+      "errors": {
+        "submit": "Failed to submit rubric."
       }
     }
   },

@@ -2,6 +2,7 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 import type { ApolloCache } from '@apollo/client';
 import { merge, updateById, Reconciler, underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
+import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import { getEmptyRubric } from './rubric-utils';
 import { RubricItem } from './types';
@@ -77,6 +78,18 @@ type AwardsMutationVariables = {
   divisionId: string;
   rubricId: string;
   awards: Record<string, boolean>;
+};
+
+type RubricStatusMutationResult = {
+  rubricId: string;
+  status: RubricStatus;
+  version: number;
+};
+
+type RubricStatusMutationVariables = {
+  divisionId: string;
+  rubricId: string;
+  status: RubricStatus;
 };
 
 type RubricValueUpdatedEvent = {
@@ -239,6 +252,22 @@ export const UPDATE_RUBRIC_AWARDS_MUTATION: TypedDocumentNode<
     updateRubricAwards(divisionId: $divisionId, rubricId: $rubricId, awards: $awards) {
       rubricId
       awards
+      version
+    }
+  }
+`;
+
+/**
+ * Mutation to change a rubric's status
+ */
+export const UPDATE_RUBRIC_STATUS_MUTATION: TypedDocumentNode<
+  RubricStatusMutationResult,
+  RubricStatusMutationVariables
+> = gql`
+  mutation UpdateRubricStatus($divisionId: String!, $rubricId: String!, $status: RubricStatus!) {
+    updateRubricStatus(divisionId: $divisionId, rubricId: $rubricId, status: $status) {
+      rubricId
+      status
       version
     }
   }
