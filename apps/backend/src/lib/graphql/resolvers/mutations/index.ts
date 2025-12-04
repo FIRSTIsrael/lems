@@ -3,7 +3,8 @@ import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judg
 import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
-  updateRubricStatusResolver
+  updateRubricStatusResolver,
+  updateRubricAwardsResolver
 } from './rubrics';
 
 export const mutationResolvers = {
@@ -12,5 +13,6 @@ export const mutationResolvers = {
   abortJudgingSession: abortJudgingSessionResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
-  updateRubricStatus: updateRubricStatusResolver
+  updateRubricStatus: updateRubricStatusResolver,
+  updateRubricAwards: updateRubricAwardsResolver
 };

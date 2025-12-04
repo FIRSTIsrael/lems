@@ -140,6 +140,18 @@ type RubricStatusUpdated {
   version: Int!
 }
 
+"""
+Response type for rubric awards nominations update
+"""
+type RubricAwardsUpdated {
+  "The ID of the rubric that was updated"
+  rubricId: String!
+  "The award names that the team is nominated for"
+  awards: JSON!
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
   Update a single value in a rubric.
@@ -182,12 +194,28 @@ extend type Mutation {
     "The new status for the rubric"
     status: RubricStatus!
   ): RubricStatusUpdated!
+
+  """
+  Update award nominations for a rubric.
+  """
+  updateRubricAwards(
+    "The ID of the division containing the rubric"
+    divisionId: String!
+    "The ID of the rubric to update"
+    rubricId: String!
+    "The award names the team is nominated for"
+    awards: JSON!
+  ): RubricAwardsUpdated!
 }
 
 """
 Union type for all rubric update events
 """
-union RubricUpdatedEvent = RubricValueUpdated | RubricFeedbackUpdated | RubricStatusUpdated
+union RubricUpdatedEvent =
+  | RubricValueUpdated
+  | RubricFeedbackUpdated
+  | RubricStatusUpdated
+  | RubricAwardsUpdated
 
 extend type Subscription {
   """

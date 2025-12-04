@@ -25,10 +25,17 @@ type RubricStatusUpdatedEvent = {
   version: number;
 };
 
+type RubricAwardsUpdatedEvent = {
+  rubricId: string;
+  awards: Record<string, boolean>;
+  version: number;
+};
+
 type RubricUpdatedEventType =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
-  | RubricStatusUpdatedEvent;
+  | RubricStatusUpdatedEvent
+  | RubricAwardsUpdatedEvent;
 
 function extractEventBase(event: Record<string, unknown>) {
   const eventData = event.data as Record<string, unknown>;
@@ -85,6 +92,19 @@ async function processRubricUpdatedEvent(
   if ('status' in eventData) {
     const status = (eventData.status as string) || '';
     return status ? ({ rubricId, status, version } as RubricStatusUpdatedEvent) : null;
+  }
+
+  // Handle RubricAwardsUpdated events
+  if ('awards' in eventData) {
+    const awards = eventData.awards as Record<string, boolean>;
+
+    return awards
+      ? ({
+          rubricId,
+          awards,
+          version
+        } as RubricAwardsUpdatedEvent)
+      : null;
   }
 
   return null;
