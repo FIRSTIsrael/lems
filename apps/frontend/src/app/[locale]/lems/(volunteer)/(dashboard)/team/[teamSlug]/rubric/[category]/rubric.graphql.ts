@@ -87,6 +87,7 @@ type RubricStatusMutationResult = {
 };
 
 type RubricStatusMutationVariables = {
+  divisionId: string;
   rubricId: string;
   status: RubricStatus;
 };
@@ -263,8 +264,8 @@ export const UPDATE_RUBRIC_STATUS_MUTATION: TypedDocumentNode<
   RubricStatusMutationResult,
   RubricStatusMutationVariables
 > = gql`
-  mutation UpdateRubricStatus($rubricId: String!, $status: RubricStatus!) {
-    updateRubricStatus(rubricId: $rubricId, status: $status) {
+  mutation UpdateRubricStatus($divisionId: String!, $rubricId: String!, $status: RubricStatus!) {
+    updateRubricStatus(divisionId: $divisionId, rubricId: $rubricId, status: $status) {
       rubricId
       status
       version

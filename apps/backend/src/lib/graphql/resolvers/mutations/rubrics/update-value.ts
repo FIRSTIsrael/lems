@@ -1,4 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { JudgingCategory } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
@@ -71,8 +72,8 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
   }
 
   // Determine new status based on completion criteria
-  const rubricData = result.value?.data as Record<string, unknown> | undefined;
-  const rubricCategory = (result.value?.category as string) || '';
+  const rubricData = result.data as Record<string, unknown>;
+  const rubricCategory = result.category as JudgingCategory;
   const newStatus = determineRubricCompletionStatus(rubricData, rubricCategory);
 
   // Update status if it has changed

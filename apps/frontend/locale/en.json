@@ -213,6 +213,13 @@
         "reset": "Reset",
         "submit-rubric": "Submit and lock"
       },
+      "submit-dialog": {
+        "title": "Submit and Lock Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Once you submit and lock this rubric, you will no longer be able to make any changes to it. Please ensure all information is correct before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Submit and Lock"
+      },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
         "notes-update-error": "Failed to save notes. Please try again.",

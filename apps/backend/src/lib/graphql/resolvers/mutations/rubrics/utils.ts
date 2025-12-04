@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { JudgingCategory } from '@lems/database';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { rubrics } from '@lems/shared/rubrics';
 import type { GraphQLContext } from '../../../apollo-server';
@@ -129,8 +130,8 @@ export function assertRubricEditable(status: string, userRole?: string): void {
  * @returns The determined status ('empty', 'draft', or 'completed')
  */
 export function determineRubricCompletionStatus(
-  rubricData: Record<string, unknown> | undefined,
-  rubricCategory: string
+  rubricData: Record<string, unknown>,
+  rubricCategory: JudgingCategory
 ): 'empty' | 'draft' | 'completed' {
   if (!rubricData || typeof rubricData !== 'object') {
     return 'empty';
