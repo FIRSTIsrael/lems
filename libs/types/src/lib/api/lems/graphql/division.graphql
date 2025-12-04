@@ -20,8 +20,8 @@ type Division {
   "Judging rooms assigned to this division"
   rooms: [Room!]!
 
-  "Awards configured for this division"
-  awards: [Award!]!
+  "Awards configured for this division, optionally filtered by allowNominations"
+  awards("Filter awards by whether they allow nominations" allowNominations: Boolean): [Award!]!
 
   "Teams registered in this division, optionally filtered by IDs or slugs"
   teams(
@@ -54,6 +54,7 @@ type Room {
   "Display name of the room (e.g., 'Room A', 'Innovation Lab')"
   name: String!
 }
+
 """
 An award configured for a division
 """

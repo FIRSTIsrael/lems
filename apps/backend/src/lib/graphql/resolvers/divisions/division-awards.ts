@@ -5,6 +5,10 @@ interface DivisionWithId {
   id: string;
 }
 
+interface AwardsArgs {
+  allowNominations?: boolean;
+}
+
 export interface AwardGraphQL {
   id: string;
   name: string;
@@ -18,15 +22,23 @@ export interface AwardGraphQL {
 /**
  * Resolver for Division.awards field.
  * Fetches all awards configured for a division.
+ * @param division - The division object containing the id
+ * @param args - Optional arguments to filter results
+ * @param args.allowNominations - Filter by allowNominations
  */
 export const divisionAwardsResolver: GraphQLFieldResolver<
   DivisionWithId,
   unknown,
-  unknown,
+  AwardsArgs,
   Promise<AwardGraphQL[]>
-> = async (division: DivisionWithId) => {
+> = async (division: DivisionWithId, args: AwardsArgs) => {
   try {
-    const awards = await db.awards.byDivisionId(division.id).getAll();
+    let awards = await db.awards.byDivisionId(division.id).getAll();
+
+    // Filter by allowNominations if specified
+    if (args?.allowNominations !== undefined) {
+      awards = awards.filter(award => award.allow_nominations === args.allowNominations);
+    }
 
     return awards.map(award => ({
       id: award.id,
