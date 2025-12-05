@@ -1,5 +1,5 @@
-import { teamArrivedResolver } from './teams';
-import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions';
+import { teamArrivedResolver } from './team-arrived';
+import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
 import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,

@@ -1,9 +1,9 @@
-import { teamArrivalUpdatedResolver } from './teams';
+import { teamArrivalUpdatedResolver } from './team-arrived';
 import {
   judgingSessionAbortedResolver,
   judgingSessionStartedResolver,
   judgingSessionCompletedResolver
-} from './judging';
+} from './judging-sessions';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 
 /**
