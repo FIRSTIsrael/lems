@@ -16,10 +16,11 @@ import {
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { Match, MatchStage, MatchStatus } from './scorekeeper.graphql';
+import { useScorekeeperData } from '../scorekeeper-context';
 
 interface MatchScheduleTableProps {
-  matches: Match[];
-  currentStage: MatchStage;
+  matches?: Match[] | null;
+  currentStage?: MatchStage | null;
   loadedMatchId?: string | null;
 }
 
@@ -81,12 +82,18 @@ const TeamsCell = ({ participants }: TeamsCellProps) => {
 };
 
 export function MatchScheduleTable({
-  matches,
-  currentStage,
-  loadedMatchId
+  matches: propMatches,
+  currentStage: propCurrentStage,
+  loadedMatchId: propLoadedMatchId
 }: MatchScheduleTableProps) {
   const t = useTranslations('pages.scorekeeper.schedule');
   const { getStage, getStatus } = useMatchTranslations();
+
+  // Use context values if props are not provided
+  const contextData = useScorekeeperData();
+  const matches = propMatches ?? contextData.matches;
+  const currentStage = propCurrentStage ?? contextData.currentStage;
+  const loadedMatchId = propLoadedMatchId ?? contextData.loadedMatchId;
 
   // Filter to only show matches in current stage, excluding test match
   const filteredMatches = matches.filter(m => m.stage === currentStage && m.stage !== 'TEST');

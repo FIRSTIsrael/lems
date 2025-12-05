@@ -250,15 +250,72 @@
       }
     },
     "scorekeeper": {
-      "page-title": "שמרן ניקוד",
+      "page-title": "סקורקיפר",
+      "common": {
+        "loading": "טוען...",
+        "error": "שגיאה"
+      },
+      "current-match": {
+        "section-title": "מקצה נוכחי",
+        "no-match": "אין מקצה פעיל",
+        "time-remaining": "זמן נותר",
+        "scheduled-time": "שעה מתוכננת",
+        "delay": "עיכוב",
+        "teams": "קבוצות",
+        "round": "סבב"
+      },
+      "next-match": {
+        "section-title": "המקצה הבא",
+        "no-match": "אין מקצה טעון",
+        "scheduled-time": "שעה מתוכננת",
+        "delay": "עיכוב נוכחי",
+        "teams": "קבוצות",
+        "round": "סבב",
+        "statuses": {
+          "ready": "מוכן",
+          "not-ready": "לא מוכן",
+          "no-show": "לא הגיע",
+          "missing": "לא עדכן",
+          "queued": "בתור"
+        },
+        "legend": {
+          "title": "מפתח סטטוס הקבוצות",
+          "ready": "הקבוצה מוכנה",
+          "not-ready": "הקבוצה לא מוכנה",
+          "no-show": "הקבוצה לא הגיעה",
+          "missing": "סטטוס לא עדכן",
+          "queued": "הקבוצה בתור"
+        }
+      },
+      "controls": {
+        "section-title": "בקרת מקצה",
+        "start-match": "התחל מקצה",
+        "abort-match": "בטל מקצה",
+        "load-next": "טען הבא",
+        "test-match": "מקצה בדיקה",
+        "not-all-ready": "לא כל המשתתפים מוכנים",
+        "abort-confirm-title": "בטל מקצה?",
+        "abort-confirm-message": "האם אתם בטוחים שברצונכם לבטל את המקצה הנוכחי? פעולה זו אינה ניתנת לביטול.",
+        "confirm-abort": "בטל",
+        "cancel": "ביטול"
+      },
+      "audience-display": {
+        "section-title": "תצוגת הקהל",
+        "description": "בחרו איזו תצוגה להציג על מסך הקהל",
+        "modes": {
+          "scoreboard": "לוח ניקוד",
+          "match-preview": "תצוגה מוקדמת"
+        },
+        "status-label": "מצב נוכחי"
+      },
       "schedule": {
-        "title": "לוח זמנים של משחקים",
-        "match-number": "משחק",
+        "title": "לו״ז מקצים",
+        "match-number": "מקצה",
         "scheduled-time": "שעה",
         "teams": "קבוצות",
         "status": "סטטוס",
         "actions": "פעולות",
-        "load": "טען",
+        "load": "טעינה",
         "loaded": "טעון",
         "no-matches": "אין משחקים זמינים"
       }

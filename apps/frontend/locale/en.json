@@ -251,6 +251,63 @@
     },
     "scorekeeper": {
       "page-title": "Scorekeeper",
+      "common": {
+        "loading": "Loading...",
+        "error": "Error"
+      },
+      "current-match": {
+        "section-title": "Current Match",
+        "no-match": "No active match",
+        "time-remaining": "Time Remaining",
+        "scheduled-time": "Scheduled Time",
+        "delay": "Delay",
+        "teams": "Teams",
+        "round": "Round"
+      },
+      "next-match": {
+        "section-title": "Next Match",
+        "no-match": "No match loaded",
+        "scheduled-time": "Scheduled Time",
+        "delay": "Current Delay",
+        "teams": "Teams",
+        "round": "Round",
+        "statuses": {
+          "ready": "Ready",
+          "not-ready": "Not Ready",
+          "no-show": "No Show",
+          "missing": "Missing",
+          "queued": "Queued"
+        },
+        "legend": {
+          "title": "Team Status Legend",
+          "ready": "Team is ready",
+          "not-ready": "Team is not ready",
+          "no-show": "Team did not show up",
+          "missing": "Status not updated",
+          "queued": "Team in queue"
+        }
+      },
+      "controls": {
+        "section-title": "Match Control",
+        "start-match": "Start Match",
+        "abort-match": "Abort Match",
+        "load-next": "Load Next",
+        "test-match": "Test Match",
+        "not-all-ready": "Not all participants are ready",
+        "abort-confirm-title": "Abort Match?",
+        "abort-confirm-message": "Are you sure you want to abort the current match? This action cannot be undone.",
+        "confirm-abort": "Abort",
+        "cancel": "Cancel"
+      },
+      "audience-display": {
+        "section-title": "Audience Display",
+        "description": "Select which display to show on the audience screen",
+        "modes": {
+          "scoreboard": "Scoreboard",
+          "match-preview": "Match Preview"
+        },
+        "status-label": "Current Mode"
+      },
       "schedule": {
         "title": "Match Schedule",
         "match-number": "Match",
