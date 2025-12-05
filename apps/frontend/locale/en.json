@@ -248,6 +248,20 @@
       "errors": {
         "submit": "Failed to submit rubric."
       }
+    },
+    "scorekeeper": {
+      "page-title": "Scorekeeper",
+      "schedule": {
+        "title": "Match Schedule",
+        "match-number": "Match",
+        "scheduled-time": "Time",
+        "teams": "Teams",
+        "status": "Status",
+        "actions": "Actions",
+        "load": "Load",
+        "loaded": "Loaded",
+        "no-matches": "No matches available"
+      }
     }
   },
   "components": {

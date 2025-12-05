@@ -248,6 +248,20 @@
       "errors": {
         "submit": "הגשת המחוון נכשלה."
       }
+    },
+    "scorekeeper": {
+      "page-title": "שמרן ניקוד",
+      "schedule": {
+        "title": "לוח זמנים של משחקים",
+        "match-number": "משחק",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "actions": "פעולות",
+        "load": "טען",
+        "loaded": "טעון",
+        "no-matches": "אין משחקים זמינים"
+      }
     }
   },
   "components": {
