@@ -37,9 +37,6 @@ type Match {
 A team or empty slot participating in a match at a specific table
 """
 type MatchParticipant {
-  "Unique participant identifier"
-  id: String!
-
   "Team at this table, null if no team assigned"
   team: Team
 

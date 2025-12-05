@@ -22,6 +22,12 @@ import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
+import { matchesResolver } from './divisions/field/matches';
+import { matchLengthResolver } from './divisions/field/match-length';
+import { currentStageResolver } from './divisions/field/current-stage';
+import { matchParticipantsResolver } from './divisions/field/match-participants';
+import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
+import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -78,6 +84,18 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     rubrics: judgingRubricsResolver
+  },
+  Field: {
+    matches: matchesResolver,
+    matchLength: matchLengthResolver,
+    currentStage: currentStageResolver
+  },
+  Match: {
+    participants: matchParticipantsResolver
+  },
+  MatchParticipant: {
+    team: matchParticipantTeamResolver,
+    table: matchParticipantTableResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,

@@ -5,12 +5,13 @@ import { MatchParticipantGraphQL } from './match-participants';
 /**
  * Resolver for MatchParticipant.team field.
  * Fetches the team for a match participant, returns null if no team is assigned.
+ * Only executed when the team field is explicitly requested.
  */
 export const matchParticipantTeamResolver: GraphQLFieldResolver<
   MatchParticipantGraphQL,
   unknown,
   unknown,
-  Promise<{ id: string } | null>
+  Promise<{ id: string; name: string; number: number } | null>
 > = async (participant: MatchParticipantGraphQL) => {
   if (!participant.teamId) {
     return null;
@@ -23,36 +24,12 @@ export const matchParticipantTeamResolver: GraphQLFieldResolver<
     }
 
     return {
-      id: team.id
+      id: team.id,
+      name: team.name,
+      number: team.number
     };
   } catch (error) {
     console.error('Error fetching team for participant:', participant.tableId, error);
-    throw error;
-  }
-};
-
-/**
- * Resolver for MatchParticipant.table field.
- * Fetches the table where a match participant is located.
- */
-export const matchParticipantTableResolver: GraphQLFieldResolver<
-  MatchParticipantGraphQL,
-  unknown,
-  unknown,
-  Promise<{ id: string }>
-> = async (participant: MatchParticipantGraphQL) => {
-  try {
-    const table = await db.tables.byId(participant.tableId).get();
-
-    if (!table) {
-      throw new Error(`Table not found for table ID: ${participant.tableId}`);
-    }
-
-    return {
-      id: table.id
-    };
-  } catch (error) {
-    console.error('Error fetching table for participant:', participant.tableId, error);
     throw error;
   }
 };
