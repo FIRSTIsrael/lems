@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
-import db from '../../../database';
-import { buildRubricResult, RubricGraphQL } from '../judging/rubric';
+import db from '../../../../database';
+import { buildRubricResult, RubricGraphQL } from '../../judging/rubric';
 
 interface JudgingWithDivisionId {
   divisionId: string;
