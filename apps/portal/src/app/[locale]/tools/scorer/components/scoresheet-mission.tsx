@@ -29,22 +29,23 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
 
   return (
     <Grid component={Paper} container pb={2} id={mission.id}>
-      <Grid container size={{ xs: 12, md: 8 }} ref={ref}>
+      <Grid container size={{ xs: 8, md: 8 }} ref={ref}>
         <Grid
           py={1}
-          size={2}
+          size={{ xs: 'auto', sm: 2 }}
           alignSelf="flex-start"
           bgcolor={errors.length > 0 ? theme.palette.error.main : theme.palette.primary.main}
           borderRadius="6px 0 0 0"
           textAlign="center"
+          sx={{ minWidth: { xs: '50px', sm: 'auto' }, px: { xs: 1, sm: 0 } }}
         >
-          <Typography fontSize="1.5rem" fontWeight={600} sx={{ color: '#FFF' }}>
+          <Typography fontSize={{ xs: '1rem', sm: '1.5rem' }} fontWeight={600} sx={{ color: '#FFF' }}>
             {mission.id.toUpperCase()}
           </Typography>
         </Grid>
-        <Grid size={10} pt={1}>
+        <Grid size="grow" pt={1}>
           <Stack direction="row" spacing={2} alignItems="center">
-            <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
+            <Typography fontSize={{ xs: '1rem', sm: '1.5rem' }} fontWeight={600} pl={{ xs: 2, sm: 4 }}>
               {title}
             </Typography>
             {mission.noEquipment && (
@@ -100,17 +101,20 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
             </Grid>
           ))}
       </Grid>
-      <Grid borderRadius={8} p={2} size={{ xs: 0, md: 4 }} display={{ xs: 'none', md: 'block' }}>
+      <Grid
+        p={{ xs: 1, md: 2 }}
+        size={{ xs: 4, md: 4 }}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
         <Image
           src={src}
           width={0}
           height={0}
           sizes="100vw"
           alt={`Mission photo ${mission.id}`}
-          style={{
-            width: '100%',
-            height: 'auto'
-          }}
+          style={{ width: '100%', height: 'auto', maxWidth: '150px' }}
         />
       </Grid>
     </Grid>

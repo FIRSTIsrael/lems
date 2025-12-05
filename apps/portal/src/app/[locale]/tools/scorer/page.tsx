@@ -13,7 +13,7 @@ export default async function ScorerPage() {
   return (
     <MissionProvider>
       <Container maxWidth="md" sx={{ mt: 2 }}>
-        <Box maxWidth="95%" mb={8}>
+        <Box mb={8}>
           <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
             {t('title')}
           </Typography>
