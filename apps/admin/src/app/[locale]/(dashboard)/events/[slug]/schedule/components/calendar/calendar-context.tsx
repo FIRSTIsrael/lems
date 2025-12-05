@@ -293,6 +293,15 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }
 
     setBlocks(prev => ({ ...prev, field: newBlocks }));
+
+    // update counters
+    if (deleted.type === 'practice-round') {
+      setPracticeRounds(prevRounds => prevRounds - 1)
+    }
+
+    if (deleted.type === 'ranking-round') {
+      setRankingRounds(prevRounds => prevRounds - 1);
+    }
   };
 
   const addAgendaEvent = (startTime: Dayjs, durationSeconds: number, title: string) => {
