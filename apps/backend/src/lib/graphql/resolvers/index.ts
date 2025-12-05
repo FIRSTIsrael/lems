@@ -1,7 +1,6 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
-import { teamsResolver } from './teams';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
 import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
@@ -56,8 +55,7 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver,
-    teams: teamsResolver
+    division: divisionResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
