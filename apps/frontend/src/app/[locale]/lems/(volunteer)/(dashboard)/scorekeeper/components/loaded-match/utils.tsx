@@ -6,6 +6,7 @@ import {
   HelpOutline,
   HorizontalRuleRounded
 } from '@mui/icons-material';
+import { Match } from '../../scorekeeper.graphql';
 
 export type TeamReadinessStatus = 'ready' | 'no-show' | 'queued' | 'conflict' | 'missing' | 'empty';
 
@@ -28,4 +29,9 @@ export const getStatusIcon = (status: TeamReadinessStatus) => {
     default:
       return null;
   }
+};
+
+export const getTeamLabel = (participant: Match['participants'][number]) => {
+  if (!participant.team) return '-';
+  return `#${participant.team.number} · ${participant.team.name}`;
 };

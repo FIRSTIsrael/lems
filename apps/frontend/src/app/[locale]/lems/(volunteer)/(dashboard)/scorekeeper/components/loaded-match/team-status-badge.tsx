@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Box, Tooltip } from '@mui/material';
 import { Match } from '../../scorekeeper.graphql';
-import { getStatusIcon, type TeamReadinessStatus } from './status-utils';
+import { getStatusIcon, type TeamReadinessStatus } from './utils';
 
 const getStatus = (participant: Match['participants'][number]): TeamReadinessStatus => {
   // Empty: No team assigned to participant

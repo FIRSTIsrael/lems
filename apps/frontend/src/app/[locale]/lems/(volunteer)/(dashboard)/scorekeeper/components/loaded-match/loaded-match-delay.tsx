@@ -6,7 +6,7 @@ import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
 
-export const NextMatchDelay: React.FC = () => {
+export const LoadedMatchDelay: React.FC = () => {
   const { loadedMatch: match } = useScorekeeperData();
   const currentTime = useTime({ interval: 1000 });
 

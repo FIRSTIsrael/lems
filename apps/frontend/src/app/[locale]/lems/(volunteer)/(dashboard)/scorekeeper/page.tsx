@@ -7,8 +7,8 @@ import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import { GET_SCOREKEEPER_DATA, parseScorekeeperData } from './scorekeeper.graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
-import { CurrentMatchDisplay } from './components/active-match/current-match-display';
-import { NextMatchDisplay } from './components/loaded-match/next-match-display';
+import { ActiveMatchDisplay } from './components/active-match/active-match-display';
+import { LoadedMatchDisplay } from './components/loaded-match/loaded-match-display';
 import { ControlButtons } from './components/control/control-buttons';
 import { AudienceDisplayControl } from './components/audience-display-control';
 import { ScorekeeperLoadingSkeleton } from './components/scorekeeper-loading-skeleton';
@@ -78,7 +78,7 @@ export default function ScorekeeperPage() {
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('current-match.section-title')}
                   </Typography>
-                  <CurrentMatchDisplay />
+                  <ActiveMatchDisplay />
                 </Stack>
               </Grid>
 
@@ -87,7 +87,7 @@ export default function ScorekeeperPage() {
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('next-match.section-title')}
                   </Typography>
-                  <NextMatchDisplay />
+                  <LoadedMatchDisplay />
                 </Stack>
               </Grid>
             </Grid>

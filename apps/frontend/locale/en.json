@@ -323,6 +323,9 @@
         "load": "Load",
         "loaded": "Loaded",
         "no-matches": "No matches available"
+      },
+      "active-match": {
+        "teams": "Teams"
       }
     }
   },

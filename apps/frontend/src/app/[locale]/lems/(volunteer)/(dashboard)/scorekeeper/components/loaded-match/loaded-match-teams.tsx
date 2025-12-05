@@ -4,8 +4,9 @@ import { useTranslations } from 'next-intl';
 import { Stack, Box, Typography, Chip } from '@mui/material';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamStatusBadge } from './team-status-badge';
+import { getTeamLabel } from './utils';
 
-export function NextMatchTeams() {
+export function LoadedMatchTeams() {
   const t = useTranslations('pages.scorekeeper.next-match');
   const { loadedMatch: match } = useScorekeeperData();
 
@@ -57,7 +58,7 @@ export function NextMatchTeams() {
                   textOverflow: 'ellipsis'
                 }}
               >
-                T{participant.team?.number || '?'} · {participant.team?.name || 'Unknown'}
+                {getTeamLabel(participant)}
               </Typography>
             </Box>
 

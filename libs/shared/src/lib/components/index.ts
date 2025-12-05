@@ -4,7 +4,6 @@ export * from './color-picker';
 export * from './timezone-picker';
 export * from './responsive-component';
 export * from './flag';
-export * from '../../../../../apps/frontend/src/lib/time/countdown';
 
 // Formik helpers
 export * from './formik/formik-number-input';

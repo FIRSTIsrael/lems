@@ -7,10 +7,10 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useMatchTranslations } from '@lems/localization';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamStatusLegend } from './team-status-legend';
-import { NextMatchDelay } from './next-match-delay';
-import { NextMatchTeams } from './next-match-teams';
+import { LoadedMatchDelay } from './loaded-match-delay';
+import { LoadedMatchTeams } from './loaded-match-teams';
 
-export const NextMatchDisplay = () => {
+export const LoadedMatchDisplay = () => {
   const t = useTranslations('pages.scorekeeper.next-match');
   const { getStage } = useMatchTranslations();
   const theme = useTheme();
@@ -18,13 +18,20 @@ export const NextMatchDisplay = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const openLegend = Boolean(anchorEl);
 
-  // Get data from context
   const { loadedMatch: match } = useScorekeeperData();
 
   if (!match) {
     return (
-      <Paper sx={{ p: 1.5, textAlign: 'center', bgcolor: 'background.paper' }}>
-        <Typography variant="body2" color="textSecondary">
+      <Paper
+        sx={{
+          p: 1.5,
+          textAlign: 'center',
+          bgcolor: 'background.paper',
+          border: '1px solid',
+          borderColor: 'divider'
+        }}
+      >
+        <Typography variant="caption" color="textSecondary">
           {t('no-match')}
         </Typography>
       </Paper>
@@ -61,7 +68,7 @@ export const NextMatchDisplay = () => {
         </Stack>
 
         <Stack direction="row" gap={0.75} alignItems="center">
-          <NextMatchDelay />
+          <LoadedMatchDelay />
 
           <Tooltip title={t('legend.title')}>
             <IconButton
@@ -85,7 +92,7 @@ export const NextMatchDisplay = () => {
         </Stack>
       </Stack>
 
-      <NextMatchTeams />
+      <LoadedMatchTeams />
 
       <TeamStatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </Paper>

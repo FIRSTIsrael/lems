@@ -29,6 +29,7 @@ export interface Match {
   round: number;
   number: number;
   scheduledTime: string;
+  startTime: string | null;
   status: MatchStatus;
   participants: MatchParticipant[];
 }
@@ -62,6 +63,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
           round
           number
           scheduledTime
+          startTime
           status
           participants {
             team {

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Typography, Stack, Popover, Box, useTheme, Divider } from '@mui/material';
-import { getStatusIcon, type TeamReadinessStatus } from './status-utils';
+import { getStatusIcon, type TeamReadinessStatus } from './utils';
 
 const ALL_STATUSES: TeamReadinessStatus[] = [
   'ready',
