@@ -3,7 +3,7 @@
 import { Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { useTime } from '../../../../../../../../lib/hooks';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 import { Match } from '../../scorekeeper.graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 

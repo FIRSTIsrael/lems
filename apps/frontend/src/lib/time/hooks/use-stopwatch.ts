@@ -1,6 +1,6 @@
 import { useTime } from './use-time';
 
-const useStopwatch = (startDate: Date) => {
+export const useStopwatch = (startDate: Date) => {
   const currentTime = useTime({ interval: 1000 });
   return timestampBreakdown(currentTime.diff(startDate));
 };
@@ -17,5 +17,3 @@ const timestampBreakdown = (countDown: number) => {
 
   return [days, hours, minutes, seconds];
 };
-
-export default useStopwatch;

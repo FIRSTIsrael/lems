@@ -12,7 +12,7 @@ import {
   DialogActions
 } from '@mui/material';
 import { PlayArrowRounded, StopRounded } from '@mui/icons-material';
-import { useTime } from '../../../../../../../../lib/hooks';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
 
 export const StartStopMatchButton = () => {

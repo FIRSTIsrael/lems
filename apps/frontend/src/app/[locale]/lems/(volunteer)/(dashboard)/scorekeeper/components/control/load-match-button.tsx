@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Button, Tooltip } from '@mui/material';
 import { StartRounded } from '@mui/icons-material';
-import { useTime } from '../../../../../../../../lib/hooks';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
 
 export const LoadMatchButton = () => {

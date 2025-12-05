@@ -10,11 +10,7 @@ import { TeamStatusLegend } from './team-status-legend';
 import { NextMatchDelay } from './next-match-delay';
 import { NextMatchTeams } from './next-match-teams';
 
-interface NextMatchDisplayProps {
-  currentDelay?: string;
-}
-
-export function NextMatchDisplay({ currentDelay }: NextMatchDisplayProps) {
+export const NextMatchDisplay = () => {
   const t = useTranslations('pages.scorekeeper.next-match');
   const { getStage } = useMatchTranslations();
   const theme = useTheme();
@@ -45,7 +41,6 @@ export function NextMatchDisplay({ currentDelay }: NextMatchDisplayProps) {
         height: '100%'
       }}
     >
-      {/* Header Row */}
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
         <Stack spacing={0}>
           <Typography
@@ -66,7 +61,8 @@ export function NextMatchDisplay({ currentDelay }: NextMatchDisplayProps) {
         </Stack>
 
         <Stack direction="row" gap={0.75} alignItems="center">
-          <NextMatchDelay scheduledTime={match.scheduledTime} currentDelay={currentDelay} />
+          <NextMatchDelay />
+
           <Tooltip title={t('legend.title')}>
             <IconButton
               size="small"
@@ -94,4 +90,4 @@ export function NextMatchDisplay({ currentDelay }: NextMatchDisplayProps) {
       <TeamStatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </Paper>
   );
-}
+};
