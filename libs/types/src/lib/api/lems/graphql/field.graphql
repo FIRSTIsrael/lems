@@ -89,3 +89,38 @@ extend type Division {
   "Field information for this division"
   field: Field!
 }
+
+"""
+Represents an event when a match has been loaded
+"""
+type MatchLoadedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+extend type Mutation {
+  """
+  Load a match to make it the currently loaded match.
+  """
+  loadMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to load"
+    matchId: String!
+  ): MatchLoadedEvent!
+}
+
+extend type Subscription {
+  """
+  Subscribe to events when a match is loaded in a division.
+  """
+  matchLoaded(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchLoadedEvent!
+}
