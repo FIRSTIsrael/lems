@@ -4,7 +4,8 @@ import {
   SubscriptionResult,
   BaseSubscriptionArgs,
   isGapMarker
-} from './base-subscription';
+} from '../base-subscription';
+import { extractEventBase } from './utils';
 
 type RubricValueUpdatedEvent = {
   rubricId: string;
@@ -36,13 +37,6 @@ type RubricUpdatedEventType =
   | RubricFeedbackUpdatedEvent
   | RubricStatusUpdatedEvent
   | RubricAwardsUpdatedEvent;
-
-function extractEventBase(event: Record<string, unknown>) {
-  const eventData = event.data as Record<string, unknown>;
-  const rubricId = (eventData.rubricId as string) || '';
-  const version = (event.version as number) ?? 0;
-  return { eventData, rubricId, version };
-}
 
 async function processRubricUpdatedEvent(
   event: Record<string, unknown>
@@ -110,26 +104,6 @@ async function processRubricUpdatedEvent(
   return null;
 }
 
-/**
- * Processes rubric status change events (status updates only)
- */
-async function processRubricStatusChangedEvent(
-  event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricStatusUpdatedEvent>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
-
-  const { eventData, rubricId, version } = extractEventBase(event);
-  const status = (eventData.status as string) || '';
-
-  return rubricId && status ? { rubricId, status, version } : null;
-}
-
-/**
- * Subscription resolver for rubricUpdated
- * Fires on all rubric changes: field values, feedback, and status
- */
 export const rubricUpdatedResolver = {
   subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
     const divisionId = args.divisionId as string;
@@ -141,21 +115,4 @@ export const rubricUpdatedResolver = {
     );
   },
   resolve: processRubricUpdatedEvent
-};
-
-/**
- * Subscription resolver for rubricStatusChanged
- * Fires only on status changes (lightweight alternative)
- */
-export const rubricStatusChangedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
-    if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.RUBRIC_STATUS_CHANGED,
-      (args.lastSeenVersion as number) || 0
-    );
-  },
-  resolve: processRubricStatusChangedEvent
 };

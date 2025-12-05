@@ -16,8 +16,8 @@ export const getEmptyRubric = (category: JudgingCategory): RubricFormValues => {
 
   if (schema.feedback) {
     result.feedback = {
-      'great-job': '',
-      'think-about': ''
+      greatJob: '',
+      thinkAbout: ''
     };
   }
 

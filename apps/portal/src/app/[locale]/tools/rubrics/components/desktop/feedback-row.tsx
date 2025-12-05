@@ -16,16 +16,16 @@ const colors: { [key: string]: string } = {
   'robot-design': '#DAE8D8'
 };
 
-const feedbackFields = ['great-job', 'think-about'] as const;
+const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) => {
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { rubric, updateRubric } = useRubricContext();
 
-  const handleFeedbackUpdate = async (field: 'great-job' | 'think-about', value: string) => {
+  const handleFeedbackUpdate = async (field: 'greatJob' | 'thinkAbout', value: string) => {
     const feedback = {
-      'great-job': rubric.values.feedback?.['great-job'] || '',
-      'think-about': rubric.values.feedback?.['think-about'] || ''
+      greatJob: rubric.values.feedback?.greatJob || '',
+      thinkAbout: rubric.values.feedback?.thinkAbout || ''
     };
 
     const updatedValues = {

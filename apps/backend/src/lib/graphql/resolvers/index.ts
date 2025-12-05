@@ -1,7 +1,6 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
-import { teamsResolver } from './teams';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
 import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
@@ -9,11 +8,11 @@ import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionAwardsResolver } from './divisions/division-awards';
-import { divisionJudgingResolver } from './divisions/judging';
-import { judgingSessionsResolver } from './divisions/judging-sessions';
-import { judgingRoomsResolver } from './divisions/judging-rooms';
-import { judgingSessionLengthResolver } from './divisions/judging-session-length';
-import { judgingRubricsResolver } from './divisions/judging-rubrics';
+import { divisionJudgingResolver } from './divisions/judging/judging';
+import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
+import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
+import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
+import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -56,8 +55,7 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver,
-    teams: teamsResolver
+    division: divisionResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
