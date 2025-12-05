@@ -107,7 +107,7 @@
     "@types/express": "^5.0.5",
     "@types/express-fileupload": "^1.5.1",
     "@types/grecaptcha": "^3.0.9",
-    "@types/ioredis": "^4.28.10",
+    "@types/ioredis": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.19.0",
     "@types/pg": "^8.15.6",
