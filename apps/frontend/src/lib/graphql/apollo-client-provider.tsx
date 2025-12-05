@@ -143,7 +143,18 @@ function makeClient(
             // e.g., { sessions: [...], rubrics: [...] }
             return { ...existing, ...incoming };
           }
-        }
+        },
+        Field: {
+          // Judging doesn't have an id field, so don't normalize it
+          keyFields: false,
+          // Custom merge function to safely merge Judging objects fetched with different arguments
+          merge(existing = {}, incoming) {
+            // Merge the objects, allowing multiple field queries to coexist
+            // e.g., { sessions: [...], rubrics: [...] }
+            return { ...existing, ...incoming };
+          }
+        },
+        MatchParticipant: { keyFields: ['tableId'] }
       }
     }),
     defaultOptions: {

@@ -3,5 +3,6 @@ export interface DivisionState {
   field?: {
     loadedMatch: string | null;
     activeMatch: string | null;
+    currentStage: 'PRACTICE' | 'RANKING';
   };
 }
