@@ -16,6 +16,8 @@ on:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
 
+permissions: {}
+
 jobs:
   cleanup:
     name: Cleanup old images
