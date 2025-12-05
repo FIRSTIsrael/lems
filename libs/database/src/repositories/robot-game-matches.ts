@@ -192,6 +192,8 @@ export class RobotGameMatchesRepository {
       matchId: id,
       status: 'not-started',
       called: null,
+      startTime: null,
+      startDelta: null,
       participants: participantStates
     };
   }
