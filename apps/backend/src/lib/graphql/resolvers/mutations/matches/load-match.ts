@@ -23,6 +23,7 @@ interface MatchEvent {
  *
  * Validation checks:
  * 1. Match must be in not-started status
+ * 2. Match must start 15 minutes or less from now
  */
 export const loadMatchResolver: GraphQLFieldResolver<
   unknown,
@@ -31,7 +32,7 @@ export const loadMatchResolver: GraphQLFieldResolver<
   Promise<MatchEvent>
 > = async (_root, { divisionId, matchId }, context) => {
   try {
-    await authorizeMatchAccess(context, divisionId, matchId);
+    const match = await authorizeMatchAccess(context, divisionId, matchId);
 
     // Check 1: Match must be in not-started status
     const matchState = await db.raw.mongo
@@ -40,6 +41,17 @@ export const loadMatchResolver: GraphQLFieldResolver<
 
     if (!matchState || matchState.status !== 'not-started') {
       throw new MutationError(MutationErrorCode.CONFLICT, 'Match is not in not-started status');
+    }
+
+    // Check 2: Match must start 15 minutes or less from now
+    const now = new Date();
+    const matchStartTime = new Date(match.scheduled_time);
+    const timeDifferenceMinutes = (matchStartTime.getTime() - now.getTime()) / (1000 * 60);
+    if (timeDifferenceMinutes > 15) {
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        'Match is scheduled to start more than 15 minutes from now'
+      );
     }
 
     // Update the division's loaded match in MongoDB

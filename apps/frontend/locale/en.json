@@ -273,18 +273,20 @@
         "round": "Round",
         "statuses": {
           "ready": "Ready",
-          "not-ready": "Not Ready",
           "no-show": "No Show",
+          "queued": "Queued",
+          "conflict": "Conflict",
           "missing": "Missing",
-          "queued": "Queued"
+          "empty": "Empty"
         },
         "legend": {
           "title": "Team Status Legend",
-          "ready": "Team is ready",
-          "not-ready": "Team is not ready",
-          "no-show": "Team did not show up",
-          "missing": "Status not updated",
-          "queued": "Team in queue"
+          "ready": "Table is ready and participant is present",
+          "no-show": "Team did not arrive at the event or is not present at the table",
+          "queued": "Team arrived at event and is in queue, but not yet at the table",
+          "conflict": "Team is present but not queued (should be resolved)",
+          "missing": "Team arrived at event but has not queued yet",
+          "empty": "No team assigned to this participant slot"
         }
       },
       "controls": {
@@ -293,7 +295,6 @@
         "abort-match": "Abort Match",
         "load-next": "Load Next",
         "test-match": "Test Match",
-        "not-all-ready": "Not all participants are ready",
         "abort-confirm-title": "Abort Match?",
         "abort-confirm-message": "Are you sure you want to abort the current match? This action cannot be undone.",
         "confirm-abort": "Abort",
@@ -304,7 +305,11 @@
         "description": "Select which display to show on the audience screen",
         "modes": {
           "scoreboard": "Scoreboard",
-          "match-preview": "Match Preview"
+          "match-preview": "Match Preview",
+          "sponsors": "Sponsors",
+          "logo": "Season Logo",
+          "message": "Message",
+          "awards": "Awards"
         },
         "status-label": "Current Mode"
       },

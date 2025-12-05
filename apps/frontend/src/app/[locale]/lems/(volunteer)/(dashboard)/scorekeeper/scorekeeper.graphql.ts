@@ -1,5 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { merge, updateInArray, Reconciler } from '@lems/shared/utils';
+import { merge, Reconciler } from '@lems/shared/utils';
 
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
@@ -9,11 +9,17 @@ export interface MatchParticipant {
     id: string;
     name: string;
     number: number;
+    affiliation: string;
+    city: string;
+    arrived: boolean;
   } | null;
   table: {
     id: string;
     name: string;
   };
+  queued: boolean;
+  present: boolean;
+  ready: boolean;
 }
 
 export interface Match {
@@ -62,11 +68,17 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
               id
               name
               number
+              affiliation
+              city
+              arrived
             }
             table {
               id
               name
             }
+            queued
+            present
+            ready
           }
         }
         currentStage
@@ -77,6 +89,10 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
     }
   }
 `;
+
+export function parseScorekeeperData(data: ScorekeeperData) {
+  return data.division.field;
+}
 
 export interface MatchEvent {
   matchId: string;

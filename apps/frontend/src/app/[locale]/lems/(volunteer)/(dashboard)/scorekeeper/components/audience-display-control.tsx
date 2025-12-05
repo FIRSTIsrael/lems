@@ -1,37 +1,29 @@
 'use client';
 
-import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, ToggleButton, ToggleButtonGroup, useTheme } from '@mui/material';
-import { MonitorRounded, SlideshowRounded } from '@mui/icons-material';
+import {
+  LeaderboardRounded,
+  VisibilityRounded,
+  BusinessRounded,
+  ImageRounded,
+  AnnouncementRounded,
+  EmojiEventsRounded
+} from '@mui/icons-material';
 
-export type AudienceDisplayMode = 'scoreboard' | 'match-preview';
+export type AudienceDisplayMode =
+  | 'scoreboard'
+  | 'match-preview'
+  | 'sponsors'
+  | 'logo'
+  | 'message'
+  | 'awards';
 
-interface AudienceDisplayControlProps {
-  currentMode: AudienceDisplayMode;
-  onModeChange: (mode: AudienceDisplayMode) => void;
-  isLoading?: boolean;
-}
-
-export function AudienceDisplayControl({
-  currentMode,
-  onModeChange,
-  isLoading = false
-}: AudienceDisplayControlProps) {
+export function AudienceDisplayControl() {
   const t = useTranslations('pages.scorekeeper.audience-display');
   const theme = useTheme();
-  const [isChanging, setIsChanging] = useState(false);
 
-  const handleModeChange = (
-    _: React.MouseEvent<HTMLElement>,
-    newMode: AudienceDisplayMode | null
-  ) => {
-    if (newMode !== null && newMode !== currentMode) {
-      setIsChanging(true);
-      onModeChange(newMode);
-      setTimeout(() => setIsChanging(false), 300);
-    }
-  };
+  const currentMode = 'scoreboard'; // TODO: Get from state
 
   return (
     <Paper
@@ -41,12 +33,13 @@ export function AudienceDisplayControl({
         height: '100%'
       }}
     >
-      {/* Compact toggle buttons */}
       <ToggleButtonGroup
         value={currentMode}
         exclusive
-        onChange={handleModeChange}
-        disabled={isLoading || isChanging}
+        onChange={(_, newMode: AudienceDisplayMode) => {
+          console.log('Change audience display mode to:', newMode);
+        }}
+        disabled={false}
         size="small"
         sx={{
           display: 'flex',
@@ -79,15 +72,39 @@ export function AudienceDisplayControl({
         }}
       >
         <ToggleButton value="scoreboard" aria-label="scoreboard">
-          <MonitorRounded sx={{ fontSize: '1rem' }} />
+          <LeaderboardRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.scoreboard')}
           </Typography>
         </ToggleButton>
         <ToggleButton value="match-preview" aria-label="match-preview">
-          <SlideshowRounded sx={{ fontSize: '1rem' }} />
+          <VisibilityRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.match-preview')}
+          </Typography>
+        </ToggleButton>
+        <ToggleButton value="sponsors" aria-label="sponsors" disabled>
+          <BusinessRounded sx={{ fontSize: '1.15rem' }} />
+          <Typography variant="caption" sx={{ fontWeight: 600 }}>
+            {t('modes.sponsors')}
+          </Typography>
+        </ToggleButton>
+        <ToggleButton value="logo" aria-label="logo" disabled>
+          <ImageRounded sx={{ fontSize: '1.15rem' }} />
+          <Typography variant="caption" sx={{ fontWeight: 600 }}>
+            {t('modes.logo')}
+          </Typography>
+        </ToggleButton>
+        <ToggleButton value="message" aria-label="message" disabled>
+          <AnnouncementRounded sx={{ fontSize: '1.15rem' }} />
+          <Typography variant="caption" sx={{ fontWeight: 600 }}>
+            {t('modes.message')}
+          </Typography>
+        </ToggleButton>
+        <ToggleButton value="awards" aria-label="awards" disabled>
+          <EmojiEventsRounded sx={{ fontSize: '1.15rem' }} />
+          <Typography variant="caption" sx={{ fontWeight: 600 }}>
+            {t('modes.awards')}
           </Typography>
         </ToggleButton>
       </ToggleButtonGroup>

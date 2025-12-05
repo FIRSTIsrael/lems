@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
 import {
   Table,
   TableBody,
@@ -9,20 +10,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Typography,
   Box,
   Chip
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import { Match, MatchStage, MatchStatus } from './scorekeeper.graphql';
+import { MatchStatus } from '../../scorekeeper.graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
-
-interface MatchScheduleTableProps {
-  matches?: Match[] | null;
-  currentStage?: MatchStage | null;
-  loadedMatchId?: string | null;
-}
+import { TeamsCell } from './match-schedule-teams-cell';
+import { LoadMatchButton } from './load-match-button';
 
 const getStatusColor = (status: MatchStatus) => {
   switch (status) {
@@ -35,68 +31,12 @@ const getStatusColor = (status: MatchStatus) => {
   }
 };
 
-const formatScheduledTime = (isoTime: string) => {
-  const date = new Date(isoTime);
-  return date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
-  });
-};
-
-interface TeamsCellProps {
-  participants: Match['participants'];
-}
-
-const TeamsCell = ({ participants }: TeamsCellProps) => {
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'row',
-        gap: 2,
-        alignItems: 'center',
-        flexWrap: 'wrap'
-      }}
-    >
-      {participants.map((p, idx) => (
-        <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: 500,
-              minWidth: '2.5rem',
-              textAlign: 'right',
-              fontFamily: 'monospace'
-            }}
-          >
-            #{p.team?.number || '—'}
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-            {p.table?.name || 'Unknown'}
-          </Typography>
-        </Box>
-      ))}
-    </Box>
-  );
-};
-
-export function MatchScheduleTable({
-  matches: propMatches,
-  currentStage: propCurrentStage,
-  loadedMatchId: propLoadedMatchId
-}: MatchScheduleTableProps) {
+export const MatchScheduleTable = () => {
   const t = useTranslations('pages.scorekeeper.schedule');
   const { getStage, getStatus } = useMatchTranslations();
 
-  // Use context values if props are not provided
-  const contextData = useScorekeeperData();
-  const matches = propMatches ?? contextData.matches;
-  const currentStage = propCurrentStage ?? contextData.currentStage;
-  const loadedMatchId = propLoadedMatchId ?? contextData.loadedMatchId;
-
-  // Filter to only show matches in current stage, excluding test match
-  const filteredMatches = matches.filter(m => m.stage === currentStage && m.stage !== 'TEST');
+  const { matches, currentStage, loadedMatch } = useScorekeeperData();
+  const filteredMatches = matches.filter(match => match.stage === currentStage);
 
   if (filteredMatches.length === 0) {
     return (
@@ -123,18 +63,14 @@ export function MatchScheduleTable({
             <TableCell sx={{ color: 'primary.contrastText', fontWeight: 600, width: '10%' }}>
               {t('status')}
             </TableCell>
-            <TableCell
-              align="right"
-              sx={{ color: 'primary.contrastText', fontWeight: 600, width: '13%' }}
-            >
+            <TableCell sx={{ color: 'primary.contrastText', fontWeight: 600, width: '13%' }}>
               {t('actions')}
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {filteredMatches.map(match => {
-            const isLoaded = match.id === loadedMatchId;
-            const isDisabled = match.status !== 'not-started' || isLoaded;
+            const isLoaded = match.id === loadedMatch?.id;
 
             return (
               <TableRow
@@ -154,7 +90,7 @@ export function MatchScheduleTable({
                 </TableCell>
                 <TableCell>
                   <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
-                    {formatScheduledTime(match.scheduledTime)}
+                    {dayjs(match.scheduledTime).format('HH:mm')}
                   </Typography>
                 </TableCell>
                 <TableCell>
@@ -168,18 +104,8 @@ export function MatchScheduleTable({
                     variant="outlined"
                   />
                 </TableCell>
-                <TableCell align="right">
-                  <Button
-                    size="small"
-                    variant={isLoaded ? 'contained' : 'outlined'}
-                    disabled={isDisabled}
-                    onClick={() => {
-                      // TODO: Implement load match mutation
-                      console.log('Load match:', match.id);
-                    }}
-                  >
-                    {isLoaded ? t('loaded') : t('load')}
-                  </Button>
+                <TableCell>
+                  <LoadMatchButton match={match} />
                 </TableCell>
               </TableRow>
             );
@@ -188,4 +114,4 @@ export function MatchScheduleTable({
       </Table>
     </TableContainer>
   );
-}
+};

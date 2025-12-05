@@ -4,14 +4,11 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, LinearProgress, Stack, Box, useTheme, Chip } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import { Match } from '../scorekeeper.graphql';
+import { Match } from '../../scorekeeper.graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 
 interface CurrentMatchDisplayProps {
-  match?: Match | null;
-  matchLength?: number;
   elapsedTime?: number;
-  actualStartDelay?: string;
 }
 
 const formatTime = (seconds: number): string => {
@@ -20,19 +17,13 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-export function CurrentMatchDisplay({
-  match: propMatch,
-  matchLength: propMatchLength,
-  elapsedTime = 0
-}: CurrentMatchDisplayProps) {
+export function CurrentMatchDisplay({ elapsedTime = 0 }: CurrentMatchDisplayProps) {
   const t = useTranslations('pages.scorekeeper.current-match');
   const { getStage } = useMatchTranslations();
   const theme = useTheme();
 
-  // Use context values if props are not provided
-  const contextData = useScorekeeperData();
-  const match = propMatch ?? contextData.currentMatch;
-  const matchLength = propMatchLength ?? contextData.matchLength;
+  // Get data from context
+  const { activeMatch: match, matchLength } = useScorekeeperData();
 
   const progressPercent = useMemo(() => {
     return (elapsedTime / matchLength) * 100;
