@@ -1,0 +1,15 @@
+"""
+Field-related information for a division
+"""
+type Field {
+  "ID of the currently loaded match, null if none"
+  loadedMatch: String
+
+  "ID of the currently active match, null if none"
+  activeMatch: String
+}
+
+extend type Division {
+  "Field information for this division"
+  field: Field!
+}
