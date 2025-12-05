@@ -75,7 +75,7 @@ export const matchesResolver: GraphQLFieldResolver<
         throw new Error(`State for robot game match ID ${match.id} not found`);
       }
 
-      const slug = `${match.stage.toLowerCase()}-r${match.round}m${match.number}`;
+      const slug = `R${match.round}M${match.number}`;
 
       return {
         id: match.id,

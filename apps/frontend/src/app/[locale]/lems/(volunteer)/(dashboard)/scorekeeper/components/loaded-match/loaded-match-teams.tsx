@@ -38,6 +38,8 @@ export function LoadedMatchTeams() {
               p: 0.75,
               bgcolor: 'action.hover',
               borderRadius: 0.75,
+              border: participant.ready ? '1.2px solid' : 'none',
+              borderColor: participant.ready ? 'success.main' : 'none',
               transition: 'all 0.2s ease',
               '&:hover': {
                 bgcolor: 'action.selected'

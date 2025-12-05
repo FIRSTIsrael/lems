@@ -32,6 +32,6 @@ export const getStatusIcon = (status: TeamReadinessStatus) => {
 };
 
 export const getTeamLabel = (participant: Match['participants'][number]) => {
-  if (!participant.team) return '-';
+  if (!participant.team) return '';
   return `#${participant.team.number} · ${participant.team.name}`;
 };
