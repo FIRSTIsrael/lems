@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { JudgingCategory } from '@lems/types';
+import { JudgingCategory } from '@lems/types/judging';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { useEvent } from '../../../../../components/event-context';
 import {
