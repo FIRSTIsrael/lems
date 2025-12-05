@@ -43,7 +43,7 @@
     "csv-parse": "^6.1.0",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.0",
-    "express": "^5.1.0",
+    "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
     "express-rate-limit": "^8.2.1",
     "formik": "^2.4.8",
