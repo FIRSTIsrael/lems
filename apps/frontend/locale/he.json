@@ -298,7 +298,8 @@
         "abort-confirm-title": "בטל מקצה?",
         "abort-confirm-message": "האם אתם בטוחים שברצונכם לבטל את המקצה הנוכחי? פעולה זו אינה ניתנת לביטול.",
         "confirm-abort": "בטל",
-        "cancel": "ביטול"
+        "cancel": "ביטול",
+        "load-error": "טעינת המקצה נכשלה."
       },
       "audience-display": {
         "section-title": "תצוגת הקהל",
@@ -322,7 +323,8 @@
         "actions": "פעולות",
         "load": "טעינה",
         "loaded": "טעון",
-        "no-matches": "אין משחקים זמינים"
+        "no-matches": "אין משחקים זמינים",
+        "load-error": "טעינת המקצה נכשלה."
       },
       "active-match": {
         "teams": "קבוצות"

@@ -298,7 +298,8 @@
         "abort-confirm-title": "Abort Match?",
         "abort-confirm-message": "Are you sure you want to abort the current match? This action cannot be undone.",
         "confirm-abort": "Abort",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "load-error": "Failed to load match."
       },
       "audience-display": {
         "section-title": "Audience Display",
@@ -322,7 +323,8 @@
         "actions": "Actions",
         "load": "Load",
         "loaded": "Loaded",
-        "no-matches": "No matches available"
+        "no-matches": "No matches available",
+        "load-error": "Failed to load match."
       },
       "active-match": {
         "teams": "Teams"

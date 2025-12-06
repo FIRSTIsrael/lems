@@ -1,11 +1,16 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Container, Typography, Stack, Grid } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import { GET_SCOREKEEPER_DATA, parseScorekeeperData } from './scorekeeper.graphql';
+import {
+  GET_SCOREKEEPER_DATA,
+  parseScorekeeperData,
+  createMatchLoadedSubscription
+} from './scorekeeper.graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
 import { LoadedMatchDisplay } from './components/loaded-match/loaded-match-display';
@@ -18,12 +23,18 @@ export default function ScorekeeperPage() {
   const t = useTranslations('pages.scorekeeper');
   const { currentDivision } = useEvent();
 
+  const subscriptions = useMemo(
+    () => [createMatchLoadedSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const { data, loading, error } = usePageData(
     GET_SCOREKEEPER_DATA,
     {
       divisionId: currentDivision.id
     },
-    parseScorekeeperData
+    parseScorekeeperData,
+    subscriptions
   );
 
   if (error) {

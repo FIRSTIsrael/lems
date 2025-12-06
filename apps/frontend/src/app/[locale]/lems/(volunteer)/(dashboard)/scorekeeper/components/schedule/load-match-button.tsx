@@ -3,9 +3,12 @@
 import { Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import { useMutation } from '@apollo/client/react';
+import toast from 'react-hot-toast';
 import { useTime } from '../../../../../../../../lib/time/hooks';
-import { Match } from '../../scorekeeper.graphql';
+import { LOAD_MATCH_MUTATION, Match } from '../../scorekeeper.graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
+import { useEvent } from '../../../../components/event-context';
 
 interface LoadMatchButtonProps {
   match: Match;
@@ -16,6 +19,14 @@ export const LoadMatchButton = ({ match }: LoadMatchButtonProps) => {
   const currentTime = useTime({ interval: 1000 });
 
   const { loadedMatch, activeMatch } = useScorekeeperData();
+  const { currentDivision } = useEvent();
+
+  const [loadMatch] = useMutation(LOAD_MATCH_MUTATION, {
+    onError: () => {
+      toast.error(t('load-error'));
+    }
+  });
+
   const isLoaded = loadedMatch?.id === match.id;
   const isActive = activeMatch?.id === match.id;
 
@@ -30,7 +41,11 @@ export const LoadMatchButton = ({ match }: LoadMatchButtonProps) => {
       size="small"
       variant={isLoaded ? 'contained' : 'outlined'}
       disabled={isDisabled}
-      onClick={() => console.log('Load match', match.id)}
+      onClick={() =>
+        loadMatch({
+          variables: { divisionId: currentDivision.id, matchId: match.id }
+        })
+      }
     >
       {isLoaded ? t('loaded') : t('load')}
     </Button>
