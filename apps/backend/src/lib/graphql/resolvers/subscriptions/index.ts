@@ -4,7 +4,12 @@ import {
   judgingSessionStartedResolver,
   judgingSessionCompletedResolver
 } from './judging-sessions';
-import { matchLoadedResolver, matchStartedResolver, matchStageAdvancedResolver } from './matches';
+import {
+  matchLoadedResolver,
+  matchStartedResolver,
+  matchStageAdvancedResolver,
+  matchCompletedResolver
+} from './matches';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 
 /**
@@ -19,6 +24,7 @@ export const subscriptionResolvers = {
   matchLoaded: matchLoadedResolver,
   matchStarted: matchStartedResolver,
   matchStageAdvanced: matchStageAdvancedResolver,
+  matchCompleted: matchCompletedResolver,
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver
 };

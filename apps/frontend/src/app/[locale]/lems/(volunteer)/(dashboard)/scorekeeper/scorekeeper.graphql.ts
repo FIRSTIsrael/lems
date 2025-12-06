@@ -107,10 +107,16 @@ export interface MatchStageAdvancedEvent {
   version: number;
 }
 
+export interface MatchCompletedEvent {
+  matchId: string;
+  version: number;
+}
+
 type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 type MatchLoadedSubscriptionData = { matchLoaded: MatchEvent };
 type MatchStartedSubscriptionData = { matchStarted: MatchEvent };
 type MatchStageAdvancedSubscriptionData = { matchStageAdvanced: MatchStageAdvancedEvent };
+type MatchCompletedSubscriptionData = { matchCompleted: MatchCompletedEvent };
 
 export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
   MatchLoadedSubscriptionData,
@@ -144,6 +150,18 @@ export const MATCH_STAGE_ADVANCED_SUBSCRIPTION: TypedDocumentNode<
 > = gql`
   subscription MatchStageAdvanced($divisionId: String!, $lastSeenVersion: Int) {
     matchStageAdvanced(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      version
+    }
+  }
+`;
+
+export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
+  MatchCompletedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription MatchCompleted($divisionId: String!, $lastSeenVersion: Int) {
+    matchCompleted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      matchId
       version
     }
   }
@@ -244,6 +262,35 @@ export function createMatchStageAdvancedSubscription(divisionId: string) {
         division: {
           field: {
             currentStage: 'RANKING' as MatchStage
+          }
+        }
+      });
+    }
+  };
+}
+
+/**
+ * Creates a subscription configuration for match completed events in the scorekeeper view.
+ * When a match completes, updates its status in the matches list.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createMatchCompletedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_COMPLETED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field?.matches || !data) return prev;
+      const completedMatchId = (data as MatchCompletedSubscriptionData).matchCompleted.matchId;
+      return merge(prev, {
+        division: {
+          field: {
+            matches: prev.division.field.matches.map(match =>
+              match.id === completedMatchId
+                ? { ...match, status: 'completed' as MatchStatus }
+                : match
+            )
           }
         }
       });

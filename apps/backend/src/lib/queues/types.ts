@@ -1,4 +1,4 @@
-export type ScheduledEventType = 'session-completed';
+export type ScheduledEventType = 'session-completed' | 'match-completed';
 
 export interface ScheduledEvent {
   eventType: ScheduledEventType;

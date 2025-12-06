@@ -6,6 +6,7 @@ import { DivisionState, RobotGameMatchState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+import { enqueueScheduledEvent } from '../../../../queues/scheduled-events-queue';
 import { authorizeMatchAccess } from './utils';
 
 interface StartMatchArgs {
@@ -23,6 +24,7 @@ interface MatchEvent {
  * Starts a robot game match for a division.
  *
  * If the match is RANKING stage and division is in PRACTICE stage, advances to RANKING.
+ * Enqueues a match-completed event after the match duration expires.
  */
 export const startMatchResolver: GraphQLFieldResolver<
   unknown,
@@ -33,6 +35,15 @@ export const startMatchResolver: GraphQLFieldResolver<
   try {
     const match = await authorizeMatchAccess(context, divisionId, matchId);
     await checkMatchCanBeStarted(matchId);
+
+    const division = await db.divisions.byId(divisionId).get();
+
+    if (!division?.schedule_settings) {
+      throw new MutationError(
+        MutationErrorCode.INTERNAL_ERROR,
+        `Schedule settings not found for division ${divisionId}`
+      );
+    }
 
     const divisionState = await db.raw.mongo
       .collection<DivisionState>('division_states')
@@ -101,6 +112,27 @@ export const startMatchResolver: GraphQLFieldResolver<
     // Publish stage advanced event if applicable
     if (shouldAdvanceStage) {
       await pubSub.publish(divisionId, RedisEventTypes.MATCH_STAGE_ADVANCED, {});
+    }
+
+    // Enqueue match completion event
+    try {
+      await enqueueScheduledEvent(
+        {
+          eventType: 'match-completed',
+          divisionId,
+          metadata: {
+            matchId
+          }
+        },
+        division.schedule_settings.match_length * 1000
+      );
+    } catch (error) {
+      console.error(
+        `Failed to enqueue match completion for ${matchId}, but match was started:`,
+        error
+      );
+      // Don't fail the mutation - the match is already started
+      // The queue failure should be monitored separately
     }
 
     return { matchId, version: -1 };
