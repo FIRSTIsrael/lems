@@ -1,6 +1,8 @@
 import { Kysely } from 'kysely';
+import { Db as MongoDb } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
+import { DivisionState } from '../schema/documents/division-state';
 import {
   InsertableDivision,
   Division,
@@ -92,6 +94,7 @@ class DivisionSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
     private space: ObjectStorage,
+    private mongo: MongoDb,
     private selector: { type: 'id'; value: string }
   ) {}
 
@@ -114,6 +117,11 @@ class DivisionSelector {
   }
 
   async delete(): Promise<boolean | null> {
+    // Delete division state from MongoDB
+    await this.mongo
+      .collection<DivisionState>('division_states')
+      .deleteOne({ divisionId: this.selector.value });
+
     const result = await this.db
       .deleteFrom('divisions')
       .where(this.selector.type, '=', this.selector.value)
@@ -195,11 +203,12 @@ class DivisionsSelector {
 export class DivisionsRepository {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private space: ObjectStorage
+    private space: ObjectStorage,
+    private mongo: MongoDb
   ) {}
 
   byId(id: string): DivisionSelector {
-    return new DivisionSelector(this.db, this.space, { type: 'id', value: id });
+    return new DivisionSelector(this.db, this.space, this.mongo, { type: 'id', value: id });
   }
 
   byEventId(eventId: string): DivisionsSelector {
@@ -212,6 +221,12 @@ export class DivisionsRepository {
       .values(division)
       .returningAll()
       .execute();
+
+    // Create division state in MongoDB
+    await this.mongo
+      .collection<DivisionState>('division_states')
+      .insertOne({ divisionId: createdDivision.id });
+
     return createdDivision;
   }
 
@@ -220,6 +235,21 @@ export class DivisionsRepository {
       return [];
     }
 
-    return await this.db.insertInto('divisions').values(divisions).returningAll().execute();
+    const createdDivisions = await this.db
+      .insertInto('divisions')
+      .values(divisions)
+      .returningAll()
+      .execute();
+
+    // Create division states in MongoDB for each division
+    const divisionStates: DivisionState[] = createdDivisions.map(division => ({
+      divisionId: division.id
+    }));
+
+    if (divisionStates.length > 0) {
+      await this.mongo.collection<DivisionState>('division_states').insertMany(divisionStates);
+    }
+
+    return createdDivisions;
   }
 }

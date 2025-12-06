@@ -8,6 +8,8 @@ on:
         required: true
         type: string
 
+permissions: {}
+
 jobs:
   validate-confirmation:
     name: Validate Confirmation

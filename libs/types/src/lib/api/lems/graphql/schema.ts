@@ -14,7 +14,16 @@ import { fileURLToPath } from 'url';
  * const server = new ApolloServer({ typeDefs, resolvers });
  */
 export function loadLemsGraphQLSchema(): string[] {
-  const schemaFiles = ['base', 'event', 'division', 'team', 'volunteer', 'judging', 'rubric'];
+  const schemaFiles = [
+    'base',
+    'event',
+    'division',
+    'team',
+    'volunteer',
+    'judging',
+    'field',
+    'rubric'
+  ];
   const schemaDir = getLemsGraphQLSchemaDir();
 
   return schemaFiles.map(filename => {

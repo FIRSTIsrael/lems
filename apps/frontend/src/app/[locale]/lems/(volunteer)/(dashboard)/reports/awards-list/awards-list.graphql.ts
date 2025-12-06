@@ -10,7 +10,12 @@ export interface Award {
 interface QueryData {
   division?: {
     id: string;
-    awards: Award[];
+    awards: Array<{
+      id: string;
+      name: string;
+      place: number;
+      description: string | null;
+    }>;
   } | null;
 }
 
@@ -25,7 +30,7 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
       awards {
         id
         name
-        placeCount
+        place
         description
       }
     }
@@ -33,5 +38,21 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
 `;
 
 export function parseDivisionAwards(data: QueryData): Award[] {
-  return data.division?.awards ?? [];
+  const awards = data.division?.awards ?? [];
+  
+  // Group by award name and count places
+  const awardGroups = awards.reduce((groups, award) => {
+    if (!groups[award.name]) {
+      groups[award.name] = {
+        id: award.id,
+        name: award.name,
+        placeCount: 0,
+        description: award.description,
+      };
+    }
+    groups[award.name].placeCount++;
+    return groups;
+  }, {} as Record<string, Award>);
+
+  return Object.values(awardGroups);
 }

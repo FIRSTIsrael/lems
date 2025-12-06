@@ -23,15 +23,15 @@ interface MobileFeedbackProps {
 export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabled = false }) => {
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { rubric, updateRubric } = useRubricContext();
-  const feedbackFields = ['great-job', 'think-about'] as const;
+  const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
   const color = getRubricColor(category);
   const background = lighten(color, 0.9);
 
-  const handleFeedbackChange = async (field: 'great-job' | 'think-about', value: string) => {
+  const handleFeedbackChange = async (field: 'greatJob' | 'thinkAbout', value: string) => {
     const feedback = {
-      'great-job': rubric.values.feedback?.['great-job'] || '',
-      'think-about': rubric.values.feedback?.['think-about'] || ''
+      greatJob: rubric.values.feedback?.greatJob || '',
+      thinkAbout: rubric.values.feedback?.thinkAbout || ''
     };
 
     const updatedValues = {

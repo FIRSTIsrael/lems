@@ -7,6 +7,8 @@ env:
   REGISTRY: registry.digitalocean.com/first-israel-registry
   IMAGE_TAG: staging-${{ github.sha }}
 
+permissions: {}
+
 jobs:
   build-backend:
     name: Build & Push Backend

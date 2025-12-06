@@ -21,6 +21,8 @@ on:
       RECAPTCHA_SITE_KEY:
         required: false
 
+permissions: {}
+
 jobs:
   build:
     name: Build Frontend LEMS

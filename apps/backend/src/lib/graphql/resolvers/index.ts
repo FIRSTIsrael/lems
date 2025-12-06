@@ -1,7 +1,6 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
-import { teamsResolver } from './teams';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
 import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
@@ -9,11 +8,12 @@ import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionAwardsResolver } from './divisions/division-awards';
-import { divisionJudgingResolver } from './divisions/judging';
-import { judgingSessionsResolver } from './divisions/judging-sessions';
-import { judgingRoomsResolver } from './divisions/judging-rooms';
-import { judgingSessionLengthResolver } from './divisions/judging-session-length';
-import { judgingRubricsResolver } from './divisions/judging-rubrics';
+import { divisionFieldResolver } from './divisions/field/field';
+import { divisionJudgingResolver } from './divisions/judging/judging';
+import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
+import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
+import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
+import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -22,6 +22,12 @@ import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
+import { matchesResolver } from './divisions/field/matches';
+import { matchLengthResolver } from './divisions/field/match-length';
+import { currentStageResolver } from './divisions/field/current-stage';
+import { matchParticipantsResolver } from './divisions/field/match-participants';
+import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
+import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -56,8 +62,7 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver,
-    teams: teamsResolver
+    division: divisionResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
@@ -71,6 +76,7 @@ export const resolvers = {
     rooms: divisionRoomsResolver,
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
+    field: divisionFieldResolver,
     awards: divisionAwardsResolver
   },
   Judging: {
@@ -78,6 +84,18 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     rubrics: judgingRubricsResolver
+  },
+  Field: {
+    matches: matchesResolver,
+    matchLength: matchLengthResolver,
+    currentStage: currentStageResolver
+  },
+  Match: {
+    participants: matchParticipantsResolver
+  },
+  MatchParticipant: {
+    team: matchParticipantTeamResolver,
+    table: matchParticipantTableResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,
@@ -98,10 +116,18 @@ export const resolvers = {
   },
   RoleInfo: {
     __resolveType(obj: Record<string, unknown>) {
-      // Discriminate union type based on object properties
       if ('tableId' in obj) return 'TableRoleInfo';
       if ('roomId' in obj) return 'RoomRoleInfo';
       if ('category' in obj) return 'CategoryRoleInfo';
+      return null;
+    }
+  },
+  RubricUpdatedEvent: {
+    __resolveType(obj: Record<string, unknown>) {
+      if ('fieldId' in obj) return 'RubricValueUpdated';
+      if ('feedback' in obj) return 'RubricFeedbackUpdated';
+      if ('status' in obj) return 'RubricStatusUpdated';
+      if ('awards' in obj) return 'RubricAwardsUpdated';
       return null;
     }
   }

@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
-import db from '../../../database';
+import db from '../../../../database';
 
 interface JudgingWithDivisionId {
   divisionId: string;
@@ -9,20 +9,15 @@ interface JudgingWithDivisionId {
  * Resolver for Judging.rooms field.
  * Fetches all available judging room IDs for a division.
  */
-export const judgingSessionLengthResolver: GraphQLFieldResolver<
+export const judgingRoomsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
   unknown,
   unknown,
-  Promise<number>
+  Promise<string[]>
 > = async (judging: JudgingWithDivisionId) => {
   try {
-    const division = await db.divisions.byId(judging.divisionId).get();
-
-    if (!division) {
-      throw new Error(`Division not found for division ID: ${judging.divisionId}`);
-    }
-
-    return division.schedule_settings.judging_session_length;
+    const rooms = await db.rooms.byDivisionId(judging.divisionId).getAll();
+    return rooms.map(room => room.id);
   } catch (error) {
     console.error('Error fetching judging rooms for division:', judging.divisionId, error);
     throw error;

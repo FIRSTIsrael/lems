@@ -1,21 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { Rubric as DbRubric } from '@lems/database';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import db from '../../../database';
 import { toGraphQLId } from '../../utils/object-id-transformer';
-
-export interface RubricGraphQL {
-  _id?: string; // Optional MongoDB ObjectId or string
-  divisionId: string;
-  teamId: string;
-  category: string;
-  status: string;
-  data?: {
-    awards?: Record<string, boolean>;
-    values: Record<string, { value: number; notes?: string }>;
-    feedback: { greatJob: string; thinkAbout: string };
-  };
-}
+import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
+import { RubricGraphQL } from '../../utils/rubric-builder';
 
 /**
  * Resolver for Rubric.team field.
@@ -25,33 +13,13 @@ export const rubricTeamResolver: GraphQLFieldResolver<
   RubricGraphQL,
   unknown,
   unknown,
-  Promise<{
-    id: string;
-    name: string;
-    number: string;
-    affiliation: string;
-    city: string;
-    region: string;
-    location: string | null;
-    slug: string;
-    logoUrl: string | null;
-  }>
+  Promise<TeamGraphQL>
 > = async (rubric: RubricGraphQL) => {
   const team = await db.teams.byId(rubric.teamId).get();
   if (!team) {
     throw new Error(`Team not found: ${rubric.teamId}`);
   }
-  return {
-    id: team.id,
-    name: team.name,
-    number: team.number.toString(),
-    affiliation: team.affiliation,
-    city: team.city,
-    region: team.region,
-    location: team.coordinates || null,
-    slug: `${team.region}-${team.number}`.toUpperCase(),
-    logoUrl: team.logo_url || null
-  };
+  return buildTeamGraphQL(team, rubric.divisionId);
 };
 
 /**
@@ -73,10 +41,10 @@ export const rubricDataResolver: GraphQLFieldResolver<
  */
 export const rubricResolvers = {
   id: ((rubric: RubricGraphQL) => {
-    if (!rubric._id) {
+    if (!rubric.id) {
       throw new Error('Rubric ID is missing');
     }
-    return toGraphQLId(rubric._id);
+    return toGraphQLId(rubric.id);
   }) as GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string>,
 
   category: ((rubric: RubricGraphQL) => {
@@ -89,17 +57,3 @@ export const rubricResolvers = {
     return rubric.status;
   }) as GraphQLFieldResolver<RubricGraphQL, unknown, unknown, string>
 };
-
-/**
- * Helper function to build a RubricGraphQL object from a database rubric.
- */
-export function buildRubricResult(rubric: DbRubric): RubricGraphQL {
-  return {
-    _id: rubric._id,
-    divisionId: rubric.divisionId,
-    teamId: rubric.teamId,
-    category: rubric.category,
-    status: rubric.status,
-    data: rubric.data
-  };
-}

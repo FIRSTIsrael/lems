@@ -1,23 +1,25 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { ResponsiveComponent } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
+import SoundTestDialog from '../components/sound-test-dialog';
 import {
   GET_ROOM_JUDGING_SESSIONS,
-  createTeamArrivalSubscriptionForJudge,
-  createJudgingSessionStartedSubscriptionForJudge,
+  createTeamArrivalSubscription,
+  createJudgingSessionStartedSubscription,
   START_JUDGING_SESSION_MUTATION,
-  createJudgingSessionAbortedSubscriptionForJudge,
+  createJudgingSessionAbortedSubscription,
   ABORT_JUDGING_SESSION_MUTATION,
-  createJudgingSessionCompletedSubscriptionForJudge
+  createJudgingSessionCompletedSubscription,
+  createRubricStatusChangedSubscription
 } from './judge.graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
@@ -31,6 +33,8 @@ export default function JudgePage() {
   const { roleInfo } = useUser();
 
   const playSound = useJudgingSounds();
+
+  const [openSoundTest, setOpenSoundTest] = useState(false);
 
   const [startSessionMutation] = useMutation(START_JUDGING_SESSION_MUTATION, {
     onError: () => {
@@ -46,16 +50,17 @@ export default function JudgePage() {
 
   const subscriptions = useMemo(
     () => [
-      createTeamArrivalSubscriptionForJudge(currentDivision.id),
-      createJudgingSessionStartedSubscriptionForJudge(currentDivision.id, () => {
+      createTeamArrivalSubscription(currentDivision.id),
+      createJudgingSessionStartedSubscription(currentDivision.id, () => {
         playSound('start');
       }),
-      createJudgingSessionAbortedSubscriptionForJudge(currentDivision.id, () => {
+      createJudgingSessionAbortedSubscription(currentDivision.id, () => {
         playSound('end');
       }),
-      createJudgingSessionCompletedSubscriptionForJudge(currentDivision.id, () => {
+      createJudgingSessionCompletedSubscription(currentDivision.id, () => {
         playSound('end');
-      })
+      }),
+      createRubricStatusChangedSubscription(currentDivision.id)
     ],
     [currentDivision.id, playSound]
   );
@@ -105,7 +110,11 @@ export default function JudgePage() {
 
   return (
     <>
-      <PageHeader title={t('page-title')} />
+      <PageHeader title={t('page-title')}>
+        <Button variant="contained" onClick={() => setOpenSoundTest(true)}>
+          {t('sound-test.button-label')}
+        </Button>
+      </PageHeader>
 
       <Box sx={{ pt: 3 }}>
         <RoomScheduleTable
@@ -114,6 +123,7 @@ export default function JudgePage() {
           onStartSession={handleStartSession}
         />
       </Box>
+      <SoundTestDialog open={openSoundTest} setOpen={setOpenSoundTest} />
     </>
   );
 }

@@ -19,6 +19,8 @@ on:
       DIGITALOCEAN_ACCESS_TOKEN:
         required: true
 
+permissions: {}
+
 jobs:
   build:
     name: Build Portal

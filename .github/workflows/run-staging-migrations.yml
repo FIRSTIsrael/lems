@@ -3,6 +3,8 @@ name: Run Staging Migrations
 on:
   workflow_dispatch:
 
+permissions: {}
+
 jobs:
   migrate:
     name: Run Database Migrations

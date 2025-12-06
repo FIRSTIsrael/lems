@@ -1,0 +1,88 @@
+"""
+A robot game match in a division
+"""
+type Match {
+  "Unique identifier for the match"
+  id: String!
+
+  "Stage of the match (PRACTICE, RANKING, or TEST)"
+  stage: String!
+
+  "Round number of the match"
+  round: Int!
+
+  "Match number within the round"
+  number: Int!
+
+  "Scheduled start time (ISO 8601 datetime)"
+  scheduledTime: String!
+
+  "Current status of the match (e.g., 'not-started', 'in-progress', 'completed')"
+  status: String!
+
+  "Whether the teams in this match were called to queue up"
+  called: Boolean!
+
+  "Actual timestamp when the match was started"
+  startTime: String
+
+  "Difference in seconds between scheduled and actual start time"
+  startDelta: Int
+
+  "Match participants at each table"
+  participants("Filter participants by table IDs" tableIds: [String!]): [MatchParticipant!]!
+}
+
+"""
+A team or empty slot participating in a match at a specific table
+"""
+type MatchParticipant {
+  "Team at this table, null if no team assigned"
+  team: Team
+
+  "Table where this participant is located"
+  table: Table!
+
+  "Whether the team has arrived at the queue"
+  queued: Boolean!
+
+  "Whether the team is present"
+  present: Boolean!
+
+  "Whether the referee marked their table as ready"
+  ready: Boolean!
+}
+
+"""
+Field-related information for a division
+"""
+type Field {
+  "Matches in this division, optionally filtered"
+  matches(
+    "Filter matches by their IDs"
+    ids: [String!]
+
+    "Filter matches by stage (PRACTICE, RANKING, TEST)"
+    stage: String
+
+    "Filter matches by match numbers"
+    matchNumbers: [Int!]
+  ): [Match!]!
+
+  "Length of each match in seconds"
+  matchLength: Int!
+
+  "ID of the currently loaded match, null if none"
+  loadedMatch: String
+
+  "ID of the currently active match, null if none"
+  activeMatch: String
+
+  "Current stage of the field (PRACTICE or RANKING)"
+  currentStage: String!
+}
+
+extend type Division {
+  "Field information for this division"
+  field: Field!
+}

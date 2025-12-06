@@ -7,6 +7,8 @@ on:
 env:
   REGISTRY: registry.digitalocean.com/first-israel-registry
 
+permissions: {}
+
 jobs:
   extract-version:
     name: Extract Version

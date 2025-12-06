@@ -20,8 +20,8 @@ type Division {
   "Judging rooms assigned to this division"
   rooms: [Room!]!
 
-  "Awards configured for this division"
-  awards: [Award!]!
+  "Awards configured for this division, optionally filtered by allowNominations"
+  awards("Filter awards by whether they allow nominations" allowNominations: Boolean): [Award!]!
 
   "Teams registered in this division, optionally filtered by IDs or slugs"
   teams(
@@ -54,6 +54,7 @@ type Room {
   "Display name of the room (e.g., 'Room A', 'Innovation Lab')"
   name: String!
 }
+
 """
 An award configured for a division
 """
@@ -64,8 +65,17 @@ type Award {
   "Display name of the award"
   name: String!
 
-  "Number of places/positions available for this award type"
-  placeCount: Int!
+  "Index/order of this award within the division"
+  index: Int!
+
+  "Place/position number for this award"
+  place: Int!
+
+  "Type of award (PERSONAL for individuals, TEAM for team-based)"
+  type: String!
+
+  "Whether this award is optional"
+  isOptional: Boolean!
 
   "Optional description for this award"
   description: String

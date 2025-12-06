@@ -1,9 +1,10 @@
-import { teamArrivalUpdatedResolver } from './teams';
+import { teamArrivalUpdatedResolver } from './team-arrived';
 import {
   judgingSessionAbortedResolver,
   judgingSessionStartedResolver,
   judgingSessionCompletedResolver
-} from './judging';
+} from './judging-sessions';
+import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 
 /**
  * GraphQL Subscription resolvers
@@ -13,5 +14,7 @@ export const subscriptionResolvers = {
   teamArrivalUpdated: teamArrivalUpdatedResolver,
   judgingSessionStarted: judgingSessionStartedResolver,
   judgingSessionAborted: judgingSessionAbortedResolver,
-  judgingSessionCompleted: judgingSessionCompletedResolver
+  judgingSessionCompleted: judgingSessionCompletedResolver,
+  rubricUpdated: rubricUpdatedResolver,
+  rubricStatusChanged: rubricStatusChangedResolver
 };

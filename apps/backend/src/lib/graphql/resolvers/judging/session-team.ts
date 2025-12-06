@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { TeamGraphQL } from '../divisions/division-teams';
 import db from '../../../database';
+import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 
 interface JudgingSessionWithTeamAndDivisionId {
   teamId: string | null;
@@ -31,22 +31,7 @@ export const judgingSessionTeamResolver: GraphQLFieldResolver<
       throw new Error(`Team with ID ${session.teamId} not found`);
     }
 
-    // Build slug from region and number
-    const slug = `${team.region}-${team.number}`.toUpperCase();
-
-    // Base team resolver with divisionId for child resolvers
-    return {
-      id: team.id,
-      number: team.number,
-      name: team.name,
-      affiliation: team.affiliation,
-      city: team.city,
-      region: team.region,
-      slug,
-      location: team.coordinates || undefined,
-      divisionId: session.divisionId,
-      logoUrl: team.logo_url
-    };
+    return buildTeamGraphQL(team, session.divisionId);
   } catch (error) {
     console.error('Error fetching team for judging session:', session.teamId, error);
     throw error;

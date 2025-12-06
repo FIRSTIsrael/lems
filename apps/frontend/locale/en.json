@@ -148,6 +148,19 @@
           "cancel": "Cancel",
           "confirm": "Abort Session"
         }
+      },
+      "sound-test": {
+        "button-label": "Test Sound",
+        "dialog": {
+          "title": "Sound Check",
+          "description": "During the judging session, several indicators will be played to update the team on the transition of their presentation stages. Please check that the audio clips are working before the teams enter.",
+          "close": "Close",
+          "sounds": {
+            "start": "Start of session",
+            "end": "End of session",
+            "transition": "Stage transition"
+          }
+        }
       }
     },
     "reports": {
@@ -210,7 +223,30 @@
       "actions": {
         "save-draft": "Save as Draft",
         "submit-review": "Submit for Review",
-        "reset": "Reset"
+        "reset": "Reset",
+        "submit-rubric": "Submit and lock"
+      },
+      "submit-dialog": {
+        "title": "Submit and Lock Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Once you submit and lock this rubric, you will no longer be able to make any changes to it. Please ensure all information is correct before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Submit and Lock"
+      },
+      "toasts": {
+        "rating-update-error": "Failed to update score. Please try again.",
+        "notes-update-error": "Failed to save notes. Please try again.",
+        "feedback-update-error": "Failed to save feedback. Please try again."
+      },
+      "validation": {
+        "title": "Rubric Incomplete",
+        "missing-field-value": "Please rate all fields before submitting.",
+        "missing-notes-for-level-4": "Fields rated as 'Exceeds' require notes.",
+        "missing-feedback": "Please fill in both feedback fields.",
+        "show": "Show Issue"
+      },
+      "errors": {
+        "submit": "Failed to submit rubric."
       }
     }
   },

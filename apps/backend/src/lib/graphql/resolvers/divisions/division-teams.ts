@@ -1,19 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { Team as DbTeam } from '@lems/database';
 import db from '../../../database';
-
-export interface TeamGraphQL {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-  city: string;
-  region: string;
-  location: string | null;
-  divisionId: string;
-  slug: string;
-  logoUrl: string | null;
-}
+import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 
 interface DivisionWithId {
   id: string;
@@ -53,27 +40,9 @@ export const divisionTeamsResolver: GraphQLFieldResolver<
       });
     }
 
-    return teams.map(buildResult(division.id));
+    return teams.map(team => buildTeamGraphQL(team, division.id));
   } catch (error) {
     console.error('Error fetching teams for division:', division.id, error);
     throw error;
   }
 };
-
-/**
- * Maps a database Team to GraphQL TeamGraphQL, binding to a division.
- */
-function buildResult(divisionId: string) {
-  return (team: DbTeam): TeamGraphQL => ({
-    id: team.id,
-    number: team.number,
-    name: team.name,
-    affiliation: team.affiliation,
-    city: team.city,
-    region: team.region,
-    location: team.coordinates,
-    slug: `${team.region}-${team.number}`.toUpperCase(),
-    logoUrl: team.logo_url || null,
-    divisionId
-  });
-}

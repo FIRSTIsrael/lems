@@ -126,13 +126,38 @@ function makeClient(
         Event: { keyFields: ['id'] },
         Division: { keyFields: ['id'] },
         Team: { keyFields: ['id'] },
-        RootTeam: { keyFields: ['id'] },
         Volunteer: {
           // Use id when available, otherwise don't normalize
           keyFields: object => (object.id ? ['id'] : false)
         },
         Table: { keyFields: ['id'] },
-        Room: { keyFields: ['id'] }
+        Room: { keyFields: ['id'] },
+        Rubric: { keyFields: ['id'] },
+        Judging: {
+          // Judging doesn't have an id field, so don't normalize it
+          keyFields: false,
+          // Custom merge function to safely merge Judging objects fetched with different arguments
+          merge(existing = {}, incoming) {
+            // Merge the objects, allowing multiple field queries to coexist
+            // e.g., { sessions: [...], rubrics: [...] }
+            return { ...existing, ...incoming };
+          }
+        },
+        Field: {
+          // Field doesn't have an id field, so don't normalize it
+          keyFields: false,
+          // Custom merge function to safely merge Field objects fetched with different arguments
+          merge(existing = {}, incoming) {
+            // Merge the objects, allowing multiple field queries to coexist
+            // e.g., { matches: [...], matchLength: ..., currentStage: ... }
+            return { ...existing, ...incoming };
+          }
+        },
+        MatchParticipant: {
+          // MatchParticipant doesn't have an id field
+          // Don't normalize it to avoid cache issues
+          keyFields: false
+        }
       }
     }),
     defaultOptions: {

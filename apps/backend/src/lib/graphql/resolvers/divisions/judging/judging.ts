@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
-import db from '../../../database';
+import db from '../../../../database';
 
 export interface JudgingGraphQL {
   divisionId: string;

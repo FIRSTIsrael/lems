@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { JudgingSessionState } from '@lems/database';
-import db from '../../../database';
+import db from '../../../../database';
 
 export interface JudgingSessionGraphQL {
   id: string;

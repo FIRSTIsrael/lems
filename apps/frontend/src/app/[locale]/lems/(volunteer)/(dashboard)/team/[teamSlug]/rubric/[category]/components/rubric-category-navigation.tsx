@@ -8,11 +8,12 @@ import { JudgingCategory, JUDGING_CATEGORIES } from '@lems/types/judging';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 
 export const RubricCategoryNavigation: React.FC = () => {
-  const theme = useTheme();
-  const router = useRouter();
-  const { category: currentCategory, teamSlug } = useParams();
   const t = useTranslations('pages.rubric.navigation');
   const { getCategory } = useJudgingCategoryTranslations();
+
+  const router = useRouter();
+  const theme = useTheme();
+  const { category: currentCategory, teamSlug } = useParams();
 
   const handleNavigate = (category: JudgingCategory) => {
     if (category !== currentCategory) {

@@ -4,9 +4,10 @@ import { Paper, Typography, useTheme, Box } from '@mui/material';
 
 interface PageHeaderProps {
   title: string;
+  children?: React.ReactNode;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, children }) => {
   const theme = useTheme();
 
   return (
@@ -38,6 +39,9 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title }) => {
         >
           {title}
         </Typography>
+        <Box>
+          {children}
+        </Box>
       </Box>
     </Paper>
   );
