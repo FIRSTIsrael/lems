@@ -5,7 +5,7 @@ type Match {
   "Unique identifier for the match"
   id: String!
 
-  "URL-friendly slug for the match (e.g., 'ranking-r1m3')"
+  "URL-friendly slug for the match (e.g., 'R1M3')"
   slug: String!
 
   "Stage of the match (PRACTICE, RANKING, or TEST)"
