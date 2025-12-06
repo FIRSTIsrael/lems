@@ -101,6 +101,31 @@ type MatchLoadedEvent {
   version: Int!
 }
 
+"""
+Represents an event when a match has been started
+"""
+type MatchStartedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Actual timestamp when the match started"
+  startTime: String!
+
+  "Difference in seconds between scheduled and actual start time"
+  startDelta: Int!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when the match stage has advanced in a division
+"""
+type MatchStageAdvancedEvent {
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
   Load a match to make it the currently loaded match.
@@ -111,6 +136,17 @@ extend type Mutation {
     "The ID of the match to load"
     matchId: String!
   ): MatchLoadedEvent!
+
+  """
+  Start a robot game match in a division.
+  All participants must be marked as present before starting.
+  """
+  startMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to start"
+    matchId: String!
+  ): MatchStartedEvent!
 }
 
 extend type Subscription {
@@ -123,4 +159,24 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): MatchLoadedEvent!
+
+  """
+  Subscribe to events when a match starts in a division.
+  """
+  matchStarted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchStartedEvent!
+
+  """
+  Subscribe to events when the match stage advances in a division.
+  """
+  matchStageAdvanced(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchStageAdvancedEvent!
 }

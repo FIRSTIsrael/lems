@@ -8,6 +8,8 @@ export enum RedisEventTypes {
   JUDGING_SESSION_ABORTED = 'judgingSessionAborted',
   JUDGING_SESSION_COMPLETED = 'judgingSessionCompleted',
   MATCH_LOADED = 'matchLoaded',
+  MATCH_STARTED = 'matchStarted',
+  MATCH_STAGE_ADVANCED = 'matchStageAdvanced',
   RUBRIC_UPDATED = 'rubricUpdated',
   RUBRIC_STATUS_CHANGED = 'rubricStatusChanged'
 }

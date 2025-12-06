@@ -1,5 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { merge, Reconciler } from '@lems/shared/utils';
+import { merge } from '@lems/shared/utils';
 
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
@@ -99,10 +99,18 @@ export function parseScorekeeperData(data: ScorekeeperData) {
 export interface MatchEvent {
   matchId: string;
   version: number;
+  startTime?: string;
+  startDelta?: number;
+}
+
+export interface MatchStageAdvancedEvent {
+  version: number;
 }
 
 type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 type MatchLoadedSubscriptionData = { matchLoaded: MatchEvent };
+type MatchStartedSubscriptionData = { matchStarted: MatchEvent };
+type MatchStageAdvancedSubscriptionData = { matchStageAdvanced: MatchStageAdvancedEvent };
 
 export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
   MatchLoadedSubscriptionData,
@@ -116,8 +124,36 @@ export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const MATCH_STARTED_SUBSCRIPTION: TypedDocumentNode<
+  MatchStartedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription MatchStarted($divisionId: String!, $lastSeenVersion: Int) {
+    matchStarted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      matchId
+      startTime
+      startDelta
+      version
+    }
+  }
+`;
+
+export const MATCH_STAGE_ADVANCED_SUBSCRIPTION: TypedDocumentNode<
+  MatchStageAdvancedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription MatchStageAdvanced($divisionId: String!, $lastSeenVersion: Int) {
+    matchStageAdvanced(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      version
+    }
+  }
+`;
+
 type LoadMatchMutationData = { loadMatch: MatchEvent };
 type LoadMatchMutationVars = { divisionId: string; matchId: string };
+
+type StartMatchMutationData = { startMatch: MatchEvent };
+type StartMatchMutationVars = { divisionId: string; matchId: string };
 
 export const LOAD_MATCH_MUTATION: TypedDocumentNode<LoadMatchMutationData, LoadMatchMutationVars> =
   gql`
@@ -129,65 +165,88 @@ export const LOAD_MATCH_MUTATION: TypedDocumentNode<LoadMatchMutationData, LoadM
     }
   `;
 
-/**
- * Reconciler for match loaded events in the scorekeeper view.
- * Updates the loadedMatch field when a match is loaded.
- */
-const matchLoadedReconciler: Reconciler<ScorekeeperData, MatchLoadedSubscriptionData> = (
-  prev,
-  { data }
-) => {
-  if (!prev.division?.field || !data) return prev;
-
-  const { matchId } = data.matchLoaded;
-
-  return merge(prev, {
-    division: {
-      id: prev.division.id,
-      field: {
-        matches: prev.division.field.matches,
-        currentStage: prev.division.field.currentStage,
-        loadedMatch: matchId,
-        activeMatch: prev.division.field.activeMatch,
-        matchLength: prev.division.field.matchLength
-      }
+export const START_MATCH_MUTATION: TypedDocumentNode<
+  StartMatchMutationData,
+  StartMatchMutationVars
+> = gql`
+  mutation StartMatch($divisionId: String!, $matchId: String!) {
+    startMatch(divisionId: $divisionId, matchId: $matchId) {
+      matchId
+      startTime
+      startDelta
+      version
     }
-  });
-};
+  }
+`;
 
 /**
  * Creates a subscription configuration for match loaded events in the scorekeeper view.
  * When a match is loaded, updates the loadedMatch field in the field data.
  *
  * @param divisionId - The division ID to subscribe to
- * @param onMatchLoaded - Optional callback invoked when a match is loaded
  * @returns Subscription configuration for use with usePageData hook
  */
-export function createMatchLoadedSubscription(
-  divisionId: string,
-  onMatchLoaded?: (event: MatchEvent) => void
-) {
-  const subscription = MATCH_LOADED_SUBSCRIPTION;
-  const subscriptionVariables: SubscriptionVars = { divisionId };
-
-  const baseConfig = {
-    subscription,
-    subscriptionVariables,
-    updateQuery: matchLoadedReconciler as (
-      prev: ScorekeeperData,
-      subscriptionData: { data?: unknown }
-    ) => ScorekeeperData
+export function createMatchLoadedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_LOADED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      return merge(prev, {
+        division: {
+          field: {
+            loadedMatch: (data as MatchLoadedSubscriptionData).matchLoaded.matchId
+          }
+        }
+      });
+    }
   };
+}
 
-  if (onMatchLoaded) {
-    const originalUpdateQuery = baseConfig.updateQuery;
-    baseConfig.updateQuery = (prev: ScorekeeperData, subscriptionData: { data?: unknown }) => {
-      if (subscriptionData.data) {
-        onMatchLoaded((subscriptionData.data as MatchLoadedSubscriptionData).matchLoaded);
-      }
-      return originalUpdateQuery(prev, subscriptionData);
-    };
-  }
+/**
+ * Creates a subscription configuration for match started events in the scorekeeper view.
+ * When a match starts, updates the activeMatch field in the field data.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createMatchStartedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_STARTED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      return merge(prev, {
+        division: {
+          field: {
+            activeMatch: (data as MatchStartedSubscriptionData).matchStarted.matchId
+          }
+        }
+      });
+    }
+  };
+}
 
-  return baseConfig;
+/**
+ * Creates a subscription configuration for match stage advanced events in the scorekeeper view.
+ * When the stage advances, updates the currentStage field in the field data.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createMatchStageAdvancedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_STAGE_ADVANCED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      return merge(prev, {
+        division: {
+          field: {
+            currentStage: 'RANKING' as MatchStage
+          }
+        }
+      });
+    }
+  };
 }

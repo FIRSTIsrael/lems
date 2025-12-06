@@ -1,6 +1,6 @@
 import { teamArrivedResolver } from './team-arrived';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
-import { loadMatchResolver } from './matches/index';
+import { loadMatchResolver, startMatchResolver } from './matches/index';
 import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
@@ -13,6 +13,7 @@ export const mutationResolvers = {
   startJudgingSession: startJudgingSessionResolver,
   abortJudgingSession: abortJudgingSessionResolver,
   loadMatch: loadMatchResolver,
+  startMatch: startMatchResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
