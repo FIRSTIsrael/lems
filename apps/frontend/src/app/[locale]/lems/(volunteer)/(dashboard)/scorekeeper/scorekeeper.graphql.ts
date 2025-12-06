@@ -234,10 +234,21 @@ export function createMatchStartedSubscription(divisionId: string) {
     subscriptionVariables: { divisionId },
     updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
       if (!prev.division?.field || !data) return prev;
+      const match = (data as MatchStartedSubscriptionData).matchStarted;
       return merge(prev, {
         division: {
           field: {
-            activeMatch: (data as MatchStartedSubscriptionData).matchStarted.matchId
+            activeMatch: match.matchId,
+            matches: prev.division.field.matches.map(m =>
+              m.id === match.matchId
+                ? {
+                    ...m,
+                    status: 'in-progress' as MatchStatus,
+                    startTime: match.startTime,
+                    startDelta: match.startDelta
+                  }
+                : m
+            )
           }
         }
       });
@@ -286,6 +297,7 @@ export function createMatchCompletedSubscription(divisionId: string) {
       return merge(prev, {
         division: {
           field: {
+            activeMatch: null,
             matches: prev.division.field.matches.map(match =>
               match.id === completedMatchId
                 ? { ...match, status: 'completed' as MatchStatus }

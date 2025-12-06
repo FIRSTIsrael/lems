@@ -9,7 +9,7 @@ import { Countdown } from '../../../../../../../../lib/time/countdown';
 
 const getProgressColor = (progressPercent: number) => {
   if (progressPercent < 80) return 'success';
-  return 'error';
+  return 'warning';
 };
 
 export const ActiveMatchTime = () => {

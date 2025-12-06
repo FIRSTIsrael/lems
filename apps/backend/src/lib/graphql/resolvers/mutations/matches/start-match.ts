@@ -135,7 +135,7 @@ export const startMatchResolver: GraphQLFieldResolver<
       // The queue failure should be monitored separately
     }
 
-    return { matchId, version: -1 };
+    return { matchId, version: -1, startTime, startDelta };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }
