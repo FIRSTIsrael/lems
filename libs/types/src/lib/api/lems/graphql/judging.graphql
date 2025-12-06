@@ -58,6 +58,9 @@ type Judging {
   "Room IDs available for judging in this division"
   rooms: [String!]!
 
+  "All rooms in this division (for judge advisor view)"
+  allRooms: [Room!]!
+
   "Length of each judging session in seconds"
   sessionLength: Int!
 
