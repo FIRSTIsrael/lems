@@ -8,8 +8,7 @@ import { useTime } from '../../../../../../../../lib/time/hooks';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 
 const getProgressColor = (progressPercent: number) => {
-  if (progressPercent < 50) return 'success';
-  if (progressPercent < 80) return 'warning';
+  if (progressPercent < 80) return 'success';
   return 'error';
 };
 

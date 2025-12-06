@@ -10,7 +10,7 @@ interface CountdownProps extends TypographyProps {
 
 export const Countdown: React.FC<CountdownProps> = ({
   targetDate,
-  expiredText,
+  expiredText = '00:00',
   allowNegativeValues,
   ...props
 }) => {
@@ -26,7 +26,7 @@ export const Countdown: React.FC<CountdownProps> = ({
         </Typography>
       );
     }
-    return <Typography {...props}>{expiredText ? expiredText : 'נגמר הזמן'}</Typography>;
+    return <Typography {...props}>{expiredText}</Typography>;
   } else {
     return (
       <Typography {...props}>

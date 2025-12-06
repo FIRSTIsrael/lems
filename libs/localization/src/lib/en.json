@@ -2,7 +2,8 @@
   "robot-game-matches": {
     "stages": {
       "practice": "Practice",
-      "ranking": "Ranking"
+      "ranking": "Ranking",
+      "test": "Test Match"
     },
     "status": {
       "not-started": "Not Started",

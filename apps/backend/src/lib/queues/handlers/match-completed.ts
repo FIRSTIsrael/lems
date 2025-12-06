@@ -16,6 +16,14 @@ export async function handleMatchCompleted(job: Job<ScheduledEvent>): Promise<vo
   try {
     console.log(`[MatchCompletionHandler] Processing match ${matchId} for division ${divisionId}`);
 
+    const match = await db.robotGameMatches.byId(matchId).get();
+    if (!match) {
+      console.warn(
+        `[MatchCompletionHandler] Match ${matchId} not found in database, marking as completed`
+      );
+      return; // Job already processed or match was deleted
+    }
+
     // Idempotency check: verify match is still in-progress
     const matchState = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
@@ -35,12 +43,13 @@ export async function handleMatchCompleted(job: Job<ScheduledEvent>): Promise<vo
       return;
     }
 
+    const newStatus = match.stage === 'TEST' ? 'not-started' : 'completed';
     const result = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOneAndUpdate(
         { matchId },
         {
-          $set: { status: 'completed' }
+          $set: { status: newStatus }
         },
         { returnDocument: 'after' }
       );
@@ -50,6 +59,15 @@ export async function handleMatchCompleted(job: Job<ScheduledEvent>): Promise<vo
     }
 
     console.log(`[MatchCompletionHandler] Updated match ${matchId} status to completed`);
+
+    // Clear the activeMatch from division state
+    await db.raw.mongo.collection('division_states').findOneAndUpdate(
+      { divisionId },
+      {
+        $set: { 'field.activeMatch': null }
+      },
+      { returnDocument: 'after' }
+    );
 
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.MATCH_COMPLETED, {

@@ -299,7 +299,8 @@
         "abort-confirm-message": "האם אתם בטוחים שברצונכם לבטל את המקצה הנוכחי? פעולה זו אינה ניתנת לביטול.",
         "confirm-abort": "בטל",
         "cancel": "ביטול",
-        "load-error": "טעינת המקצה נכשלה."
+        "load-error": "טעינת המקצה נכשלה.",
+        "start-error": "התחלת המקצה נכשלה."
       },
       "audience-display": {
         "section-title": "תצוגת הקהל",

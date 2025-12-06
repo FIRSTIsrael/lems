@@ -2,7 +2,8 @@
   "robot-game-matches": {
     "stages": {
       "practice": "אימון",
-      "ranking": "דירוג"
+      "ranking": "דירוג",
+      "test": "מקצה בדיקה"
     },
     "status": {
       "not-started": "לא התחיל",

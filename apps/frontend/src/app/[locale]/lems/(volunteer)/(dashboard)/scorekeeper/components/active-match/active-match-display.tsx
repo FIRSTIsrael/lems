@@ -13,6 +13,8 @@ export function ActiveMatchDisplay() {
 
   const { activeMatch: match } = useScorekeeperData();
 
+  const isNotTest = match?.stage !== 'TEST';
+
   if (!match) {
     return (
       <Paper
@@ -57,9 +59,9 @@ export function ActiveMatchDisplay() {
               color: 'text.primary'
             }}
           >
-            {getStage(match.stage)} #{match.number}
+            {getStage(match.stage)} {isNotTest && `#${match.number}`}
           </Typography>
-          {match.round && (
+          {isNotTest && match.round && (
             <Typography variant="caption" color="textSecondary" sx={{ mt: 0.25 }}>
               {t('round')} {match.round}
             </Typography>
@@ -69,7 +71,7 @@ export function ActiveMatchDisplay() {
         <ActiveMatchTime />
       </Stack>
 
-      <ActiveMatchTeams />
+      {isNotTest && <ActiveMatchTeams />}
     </Paper>
   );
 }
