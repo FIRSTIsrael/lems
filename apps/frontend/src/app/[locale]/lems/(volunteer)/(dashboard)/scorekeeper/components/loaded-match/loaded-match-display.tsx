@@ -9,6 +9,7 @@ import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamStatusLegend } from './team-status-legend';
 import { LoadedMatchDelay } from './loaded-match-delay';
 import { LoadedMatchTeams } from './loaded-match-teams';
+import { NotReadyWarning } from './not-ready-warning';
 
 export const LoadedMatchDisplay = () => {
   const t = useTranslations('pages.scorekeeper.next-match');
@@ -97,6 +98,8 @@ export const LoadedMatchDisplay = () => {
       </Stack>
 
       <LoadedMatchTeams />
+
+      <NotReadyWarning />
 
       <TeamStatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </Paper>

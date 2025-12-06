@@ -287,7 +287,8 @@
           "conflict": "Team is present but not queued (should be resolved)",
           "missing": "Team arrived at event but has not queued yet",
           "empty": "No team assigned to this participant slot"
-        }
+        },
+        "not-ready-warning": "Not all teams are ready."
       },
       "controls": {
         "section-title": "Match Control",
