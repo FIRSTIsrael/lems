@@ -19,7 +19,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
 
-  const { data: teams } = useSWR<Team[]>('/admin/teams', {
+  const { data: teams } = useSWR<Team[]>('/admin/teams?extraFields=deletable', {
     fallbackData: initialTeams
   });
 
