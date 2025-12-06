@@ -12,6 +12,7 @@ export const PortalAwardResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
   type: z.enum(['PERSONAL', 'TEAM']),
+  showPlaces: z.boolean(),
   place: z.number(),
   winner: z.string().optional()
 });
