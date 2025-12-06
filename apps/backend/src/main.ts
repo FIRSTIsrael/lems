@@ -17,6 +17,7 @@ import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import { getWorkerManager } from './lib/queues/worker-manager';
 import { handleSessionCompleted } from './lib/queues/handlers/session-completed';
+import { handleMatchCompleted } from './lib/queues/handlers/match-completed';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -57,6 +58,9 @@ try {
 
   // Register session completion handler
   workerManager.registerHandler('session-completed', handleSessionCompleted);
+
+  // Register match completion handler
+  workerManager.registerHandler('match-completed', handleMatchCompleted);
 
   // Start the unified worker
   await workerManager.start();

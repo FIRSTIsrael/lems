@@ -1,14 +1,22 @@
 {
-  "robot-game-stages": {
-    "practice": "Practice",
-    "ranking": "Ranking"
+  "robot-game-matches": {
+    "stages": {
+      "practice": "Practice",
+      "ranking": "Ranking",
+      "test": "Test Match"
+    },
+    "status": {
+      "not-started": "Not Started",
+      "in-progress": "In Progress",
+      "completed": "Completed"
+    }
   },
   "judging-categories": {
     "core-values": "Core Values",
     "innovation-project": "Innovation Project",
     "robot-design": "Robot Design"
   },
-    "judging-session-stages": {
+  "judging-session-stages": {
     "setup": "Setup Time",
     "innovation-presentation": "Presentation - Innovation Project",
     "innovation-questions": "Questions - Innovation Project",

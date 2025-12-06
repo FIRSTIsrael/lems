@@ -1,7 +1,15 @@
 {
-  "robot-game-stages": {
-    "practice": "אימון",
-    "ranking": "דירוג"
+  "robot-game-matches": {
+    "stages": {
+      "practice": "אימון",
+      "ranking": "דירוג",
+      "test": "מקצה בדיקה"
+    },
+    "status": {
+      "not-started": "לא התחיל",
+      "in-progress": "בתהליך",
+      "completed": "הושלם"
+    }
   },
   "judging-categories": {
     "core-values": "ערכי הליבה",

@@ -1,18 +1,24 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../../database';
-import { MatchParticipantGraphQL } from './match-participants';
+import { buildTeamGraphQL, TeamGraphQL } from '../../../utils/team-builder';
+
+interface TeamAndDivisionId {
+  teamId: string | null;
+  divisionId: string;
+}
 
 /**
  * Resolver for MatchParticipant.team field.
  * Fetches the team for a match participant, returns null if no team is assigned.
  * Only executed when the team field is explicitly requested.
+ * Includes divisionId context so the team can be properly built with division scope.
  */
 export const matchParticipantTeamResolver: GraphQLFieldResolver<
-  MatchParticipantGraphQL,
+  TeamAndDivisionId,
   unknown,
   unknown,
-  Promise<{ id: string; name: string; number: number } | null>
-> = async (participant: MatchParticipantGraphQL) => {
+  Promise<TeamGraphQL | null>
+> = async (participant: TeamAndDivisionId) => {
   if (!participant.teamId) {
     return null;
   }
@@ -23,13 +29,9 @@ export const matchParticipantTeamResolver: GraphQLFieldResolver<
       return null;
     }
 
-    return {
-      id: team.id,
-      name: team.name,
-      number: team.number
-    };
+    return buildTeamGraphQL(team, participant.divisionId);
   } catch (error) {
-    console.error('Error fetching team for participant:', participant.tableId, error);
+    console.error('Error fetching team for participant:', participant.teamId, error);
     throw error;
   }
 };

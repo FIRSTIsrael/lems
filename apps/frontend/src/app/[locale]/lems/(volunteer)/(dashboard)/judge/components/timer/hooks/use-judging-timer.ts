@@ -2,7 +2,7 @@
 
 import dayjs from 'dayjs';
 import { useEffect, useRef, useMemo } from 'react';
-import { useCountdown } from '../../../../../../../../../lib/hooks/time/use-countdown';
+import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
 import { useJudgingSounds } from './use-judging-sounds';
 
 // Judging stages with durations in seconds
