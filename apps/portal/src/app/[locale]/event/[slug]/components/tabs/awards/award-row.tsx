@@ -42,7 +42,7 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
           const team = isTeamAward ? teams.find(t => t.id === award.winner) : null;
           const winnerText = team ? `${team.name} #${team.number}` : (award.winner as string);
 
-          const trophyColor = award.showPlaces ? getColorByPlace(award.place) : getColorByPlace(null);
+          const trophyColor = getColorByPlace(award.place);
 
           return (
             <Grid
