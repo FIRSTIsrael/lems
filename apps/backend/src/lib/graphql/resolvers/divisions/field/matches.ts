@@ -4,6 +4,7 @@ import db from '../../../../database';
 
 export interface MatchGraphQL {
   id: string;
+  slug: string;
   stage: string;
   round: number;
   number: number;
@@ -74,8 +75,11 @@ export const matchesResolver: GraphQLFieldResolver<
         throw new Error(`State for robot game match ID ${match.id} not found`);
       }
 
+      const slug = `R${match.round}M${match.number}`;
+
       return {
         id: match.id,
+        slug,
         stage: match.stage,
         round: match.round,
         number: match.number,
