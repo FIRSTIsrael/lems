@@ -12,8 +12,12 @@ import {
   DialogActions
 } from '@mui/material';
 import { PlayArrowRounded, StopRounded } from '@mui/icons-material';
+import toast from 'react-hot-toast';
+import { useMutation } from '@apollo/client/react';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
+import { START_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { useEvent } from '../../../../components/event-context';
 
 export const StartStopMatchButton = () => {
   const t = useTranslations('pages.scorekeeper.controls');
@@ -22,6 +26,14 @@ export const StartStopMatchButton = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { loadedMatch, activeMatch } = useScorekeeperData();
+  const { currentDivision } = useEvent();
+
+  const [startMatch] = useMutation(START_MATCH_MUTATION, {
+    onError: () => {
+      toast.error(t('start-error'));
+    }
+  });
+
   const hasActiveMatch = !!activeMatch;
   const hasLoadedMatch = !!loadedMatch;
 
@@ -48,7 +60,11 @@ export const StartStopMatchButton = () => {
   const handleStartMatch = async () => {
     setIsSubmitting(true);
     try {
-      console.log('Start match');
+      if (hasLoadedMatch) {
+        await startMatch({
+          variables: { divisionId: currentDivision.id, matchId: loadedMatch.id }
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }

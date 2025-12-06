@@ -239,6 +239,10 @@ export function createMatchStartedSubscription(divisionId: string) {
         division: {
           field: {
             activeMatch: match.matchId,
+            loadedMatch:
+              match.matchId === prev.division.field.loadedMatch
+                ? null
+                : prev.division.field.loadedMatch,
             matches: prev.division.field.matches.map(m =>
               m.id === match.matchId
                 ? {
