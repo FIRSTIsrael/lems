@@ -13,7 +13,8 @@ import {
   createMatchStartedSubscription,
   createMatchStageAdvancedSubscription,
   createMatchCompletedSubscription,
-  createMatchAbortedSubscription
+  createMatchAbortedSubscription,
+  createTeamArrivalSubscription
 } from './scorekeeper.graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
@@ -30,6 +31,7 @@ export default function ScorekeeperPage() {
 
   const subscriptions = useMemo(
     () => [
+      createTeamArrivalSubscription(currentDivision.id),
       createMatchLoadedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id),

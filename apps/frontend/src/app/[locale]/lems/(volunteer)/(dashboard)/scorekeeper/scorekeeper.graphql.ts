@@ -96,6 +96,11 @@ export function parseScorekeeperData(data: ScorekeeperData) {
   return data.division.field;
 }
 
+export interface TeamEvent {
+  teamId: string;
+  version: number;
+}
+
 export interface MatchEvent {
   matchId: string;
   version: number;
@@ -119,6 +124,7 @@ export interface MatchAbortedEvent {
 }
 
 type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
 type MatchLoadedSubscriptionData = { matchLoaded: MatchEvent };
 type MatchStartedSubscriptionData = { matchStarted: MatchEvent };
 type MatchStageAdvancedSubscriptionData = { matchStageAdvanced: MatchStageAdvancedEvent };
@@ -187,6 +193,18 @@ export const MATCH_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  TeamArrivalSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
+    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      teamId
+      version
+    }
+  }
+`;
+
 type LoadMatchMutationData = { loadMatch: MatchEvent };
 type LoadMatchMutationVars = { divisionId: string; matchId: string };
 
@@ -231,6 +249,46 @@ export const ABORT_MATCH_MUTATION: TypedDocumentNode<
     }
   }
 `;
+
+/**
+ * Creates a subscription configuration for team arrival updated events in the scorekeeper view.
+ * When a team's arrival status is updated, updates the corresponding team in all matches' participants list.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createTeamArrivalSubscription(divisionId: string) {
+  return {
+    subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field?.matches || !data) return prev;
+      const teamArrivalUpdated = (data as TeamArrivalSubscriptionData).teamArrivalUpdated;
+
+      return merge(prev, {
+        division: {
+          field: {
+            matches: prev.division.field.matches.map(match => ({
+              ...match,
+              participants: match.participants.map(participant => {
+                if (participant.team?.id === teamArrivalUpdated.teamId) {
+                  return {
+                    ...participant,
+                    team: {
+                      ...participant.team,
+                      arrived: true
+                    }
+                  };
+                }
+                return participant;
+              })
+            }))
+          }
+        }
+      });
+    }
+  };
+}
 
 /**
  * Creates a subscription configuration for match loaded events in the scorekeeper view.
