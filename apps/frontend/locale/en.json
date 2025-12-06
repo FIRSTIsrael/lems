@@ -248,6 +248,91 @@
       "errors": {
         "submit": "Failed to submit rubric."
       }
+    },
+    "scorekeeper": {
+      "page-title": "Scorekeeper",
+      "common": {
+        "loading": "Loading...",
+        "error": "Error"
+      },
+      "current-match": {
+        "section-title": "Current Match",
+        "no-match": "No active match",
+        "time-remaining": "Time Remaining",
+        "scheduled-time": "Scheduled Time",
+        "delay": "Delay",
+        "teams": "Teams",
+        "round": "Round"
+      },
+      "next-match": {
+        "section-title": "Next Match",
+        "no-match": "No match loaded",
+        "scheduled-time": "Scheduled Time",
+        "delay": "Current Delay",
+        "teams": "Teams",
+        "round": "Round",
+        "statuses": {
+          "ready": "Ready",
+          "no-show": "No Show",
+          "queued": "Queued",
+          "conflict": "Conflict",
+          "missing": "Missing",
+          "empty": "Empty"
+        },
+        "legend": {
+          "title": "Team Status Legend",
+          "ready": "Table is ready and participant is present",
+          "no-show": "Team did not arrive at the event or is not present at the table",
+          "queued": "Team arrived at event and is in queue, but not yet at the table",
+          "conflict": "Team is present but not queued (should be resolved)",
+          "missing": "Team arrived at event but has not queued yet",
+          "empty": "No team assigned to this participant slot"
+        },
+        "not-ready-warning": "Not all teams are ready."
+      },
+      "controls": {
+        "section-title": "Match Control",
+        "start-match": "Start Match",
+        "abort-match": "Abort Match",
+        "load-next": "Load Next",
+        "test-match": "Test Match",
+        "abort-confirm-title": "Abort Match?",
+        "abort-confirm-message": "Are you sure you want to abort the current match? This action cannot be undone.",
+        "confirm-abort": "Abort",
+        "cancel": "Cancel",
+        "load-error": "Failed to load match.",
+        "start-error": "Failed to start match.",
+        "abort-error": "Failed to abort match."
+      },
+      "audience-display": {
+        "section-title": "Audience Display",
+        "description": "Select which display to show on the audience screen",
+        "modes": {
+          "scoreboard": "Scoreboard",
+          "match-preview": "Match Preview",
+          "sponsors": "Sponsors",
+          "logo": "Season Logo",
+          "message": "Message",
+          "awards": "Awards"
+        },
+        "status-label": "Current Mode"
+      },
+      "schedule": {
+        "title": "Match Schedule",
+        "hide-completed": "Hide Completed Matches",
+        "match-number": "Match",
+        "scheduled-time": "Time",
+        "teams": "Teams",
+        "status": "Status",
+        "actions": "Actions",
+        "load": "Load",
+        "loaded": "Loaded",
+        "no-matches": "No matches available",
+        "load-error": "Failed to load match."
+      },
+      "active-match": {
+        "teams": "Teams"
+      }
     }
   },
   "components": {

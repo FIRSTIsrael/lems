@@ -248,6 +248,91 @@
       "errors": {
         "submit": "הגשת המחוון נכשלה."
       }
+    },
+    "scorekeeper": {
+      "page-title": "סקורקיפר",
+      "common": {
+        "loading": "טוען...",
+        "error": "שגיאה"
+      },
+      "current-match": {
+        "section-title": "מקצה נוכחי",
+        "no-match": "אין מקצה פעיל",
+        "time-remaining": "זמן נותר",
+        "scheduled-time": "שעה מתוכננת",
+        "delay": "עיכוב",
+        "teams": "קבוצות",
+        "round": "סבב"
+      },
+      "next-match": {
+        "section-title": "המקצה הבא",
+        "no-match": "אין מקצה טעון",
+        "scheduled-time": "שעה מתוכננת",
+        "delay": "עיכוב נוכחי",
+        "teams": "קבוצות",
+        "round": "סבב",
+        "statuses": {
+          "ready": "מוכן",
+          "no-show": "לא הגיע",
+          "queued": "בתור",
+          "conflict": "ניגוד",
+          "missing": "חסר",
+          "empty": "ריק"
+        },
+        "legend": {
+          "title": "מפתח סטטוס הקבוצות",
+          "ready": "השולחן מוכן והמשתתף נוכח",
+          "no-show": "הקבוצה לא הגיעה לאירוע או לא נוכחת בשולחן",
+          "queued": "הקבוצה הגיעה לאירוע והיא בתור, אך עדיין לא בשולחן",
+          "conflict": "הקבוצה נוכחת אך לא בתור (צריך לפתור)",
+          "missing": "הקבוצה הגיעה לאירוע אך עדיין לא הצטרפה לתור",
+          "empty": "לא הוקצתה קבוצה לחריץ משתתף זה"
+        },
+        "not-ready-warning": "לא כל הקבוצות מוכנות."
+      },
+      "controls": {
+        "section-title": "בקרת מקצה",
+        "start-match": "התחל מקצה",
+        "abort-match": "בטל מקצה",
+        "load-next": "טען הבא",
+        "test-match": "מקצה בדיקה",
+        "abort-confirm-title": "בטל מקצה?",
+        "abort-confirm-message": "האם אתם בטוחים שברצונכם לבטל את המקצה הנוכחי? פעולה זו אינה ניתנת לביטול.",
+        "confirm-abort": "בטל",
+        "cancel": "ביטול",
+        "load-error": "טעינת המקצה נכשלה.",
+        "start-error": "התחלת המקצה נכשלה.",
+        "abort-error": "ביטול המקצה נכשל."
+      },
+      "audience-display": {
+        "section-title": "תצוגת הקהל",
+        "description": "בחרו איזו תצוגה להציג על מסך הקהל",
+        "modes": {
+          "scoreboard": "לוח ניקוד",
+          "match-preview": "תצוגה מוקדמת",
+          "sponsors": "נותני חסות",
+          "logo": "לוגו עונה",
+          "message": "הודעה",
+          "awards": "פרסים"
+        },
+        "status-label": "מצב נוכחי"
+      },
+      "schedule": {
+        "title": "לו״ז מקצים",
+        "hide-completed": "הסתר מקצים שהושלמו",
+        "match-number": "מקצה",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "actions": "פעולות",
+        "load": "טעינה",
+        "loaded": "טעון",
+        "no-matches": "אין משחקים זמינים",
+        "load-error": "טעינת המקצה נכשלה."
+      },
+      "active-match": {
+        "teams": "קבוצות"
+      }
     }
   },
   "components": {
