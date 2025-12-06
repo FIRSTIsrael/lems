@@ -4,8 +4,8 @@ export interface RubricFieldValue {
 }
 
 export type RubricFeedback = {
-  'great-job': string;
-  'think-about': string;
+  greatJob: string;
+  thinkAbout: string;
 };
 
 export interface RubricFormValues {

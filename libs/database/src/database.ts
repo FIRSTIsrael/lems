@@ -118,7 +118,7 @@ export class Database {
     this.seasons = new SeasonsRepository(this.kysely, this.space);
     this.teams = new TeamsRepository(this.kysely, this.space);
     this.events = new EventsRepository(this.kysely);
-    this.divisions = new DivisionsRepository(this.kysely, this.space);
+    this.divisions = new DivisionsRepository(this.kysely, this.space, this.mongoDb);
     this.eventUsers = new EventUsersRepository(this.kysely);
 
     this.rooms = new RoomsRepository(this.kysely);

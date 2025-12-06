@@ -1,0 +1,238 @@
+"""
+A robot game match in a division
+"""
+type Match {
+  "Unique identifier for the match"
+  id: String!
+
+  "URL-friendly slug for the match (e.g., 'R1M3')"
+  slug: String!
+
+  "Stage of the match (PRACTICE, RANKING, or TEST)"
+  stage: String!
+
+  "Round number of the match"
+  round: Int!
+
+  "Match number within the round"
+  number: Int!
+
+  "Scheduled start time (ISO 8601 datetime)"
+  scheduledTime: String!
+
+  "Current status of the match (e.g., 'not-started', 'in-progress', 'completed')"
+  status: String!
+
+  "Whether the teams in this match were called to queue up"
+  called: Boolean!
+
+  "Actual timestamp when the match was started"
+  startTime: String
+
+  "Difference in seconds between scheduled and actual start time"
+  startDelta: Int
+
+  "Match participants at each table"
+  participants("Filter participants by table IDs" tableIds: [String!]): [MatchParticipant!]!
+}
+
+"""
+A team or empty slot participating in a match at a specific table
+"""
+type MatchParticipant {
+  "Team at this table, null if no team assigned"
+  team: Team
+
+  "Table where this participant is located"
+  table: Table!
+
+  "Whether the team has arrived at the queue"
+  queued: Boolean!
+
+  "Whether the team is present"
+  present: Boolean!
+
+  "Whether the referee marked their table as ready"
+  ready: Boolean!
+}
+
+"""
+Field-related information for a division
+"""
+type Field {
+  "Matches in this division, optionally filtered"
+  matches(
+    "Filter matches by their IDs"
+    ids: [String!]
+
+    "Filter matches by stage (PRACTICE, RANKING, TEST)"
+    stage: String
+
+    "Filter matches by match numbers"
+    matchNumbers: [Int!]
+  ): [Match!]!
+
+  "Length of each match in seconds"
+  matchLength: Int!
+
+  "ID of the currently loaded match, null if none"
+  loadedMatch: String
+
+  "ID of the currently active match, null if none"
+  activeMatch: String
+
+  "Current stage of the field (PRACTICE or RANKING)"
+  currentStage: String!
+}
+
+extend type Division {
+  "Field information for this division"
+  field: Field!
+}
+
+"""
+Represents an event when a match has been loaded
+"""
+type MatchLoadedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when a match has been started
+"""
+type MatchStartedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Actual timestamp when the match started"
+  startTime: String!
+
+  "Difference in seconds between scheduled and actual start time"
+  startDelta: Int!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when the match stage has advanced in a division
+"""
+type MatchStageAdvancedEvent {
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when a match has been completed
+"""
+type MatchCompletedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "ID of the automatically loaded next match, if one was eligible (starts within 15 minutes)"
+  autoLoadedMatchId: String
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when a match has been aborted
+"""
+type MatchAbortedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+extend type Mutation {
+  """
+  Load a match to make it the currently loaded match.
+  """
+  loadMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to load"
+    matchId: String!
+  ): MatchLoadedEvent!
+
+  """
+  Start a robot game match in a division.
+  All participants must be marked as present before starting.
+  """
+  startMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to start"
+    matchId: String!
+  ): MatchStartedEvent!
+
+  """
+  Abort a robot game match that is currently in progress.
+  Dequeues the pending match completion event.
+  """
+  abortMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to abort"
+    matchId: String!
+  ): MatchAbortedEvent!
+}
+
+extend type Subscription {
+  """
+  Subscribe to events when a match is loaded in a division.
+  """
+  matchLoaded(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchLoadedEvent!
+
+  """
+  Subscribe to events when a match starts in a division.
+  """
+  matchStarted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchStartedEvent!
+
+  """
+  Subscribe to events when the match stage advances in a division.
+  """
+  matchStageAdvanced(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchStageAdvancedEvent!
+
+  """
+  Subscribe to events when a match completes in a division.
+  """
+  matchCompleted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchCompletedEvent!
+
+  """
+  Subscribe to events when a match is aborted in a division.
+  """
+  matchAborted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchAbortedEvent!
+}
