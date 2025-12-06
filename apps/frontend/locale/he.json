@@ -316,6 +316,7 @@
       },
       "schedule": {
         "title": "לו״ז מקצים",
+        "hide-completed": "הסתר מקצים שהושלמו",
         "match-number": "מקצה",
         "scheduled-time": "שעה",
         "teams": "קבוצות",

@@ -28,7 +28,11 @@ export const LoadedMatchDisplay = () => {
           textAlign: 'center',
           bgcolor: 'background.paper',
           border: '1px solid',
-          borderColor: 'divider'
+          borderColor: 'divider',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
         }}
       >
         <Typography variant="caption" color="textSecondary">

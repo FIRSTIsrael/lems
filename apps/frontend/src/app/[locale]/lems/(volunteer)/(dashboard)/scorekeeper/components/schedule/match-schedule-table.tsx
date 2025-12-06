@@ -31,12 +31,21 @@ const getStatusColor = (status: MatchStatus) => {
   }
 };
 
-export const MatchScheduleTable = () => {
+interface MatchScheduleTableProps {
+  hideCompleted?: boolean;
+}
+
+export const MatchScheduleTable: React.FC<MatchScheduleTableProps> = ({
+  hideCompleted = false
+}) => {
   const t = useTranslations('pages.scorekeeper.schedule');
   const { getStage, getStatus } = useMatchTranslations();
 
-  const { matches, currentStage, loadedMatch } = useScorekeeperData();
-  const filteredMatches = matches.filter(match => match.stage === currentStage);
+  const { matches, loadedMatch } = useScorekeeperData();
+  let filteredMatches = matches.filter(match => match.stage !== 'TEST');
+  if (hideCompleted) {
+    filteredMatches = filteredMatches.filter(match => match.status !== 'completed');
+  }
 
   if (filteredMatches.length === 0) {
     return (

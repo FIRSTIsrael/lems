@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
+import { merge } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { LOAD_MATCH_MUTATION, Match } from '../../scorekeeper.graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
@@ -22,6 +23,27 @@ export const LoadMatchButton = ({ match }: LoadMatchButtonProps) => {
   const { currentDivision } = useEvent();
 
   const [loadMatch] = useMutation(LOAD_MATCH_MUTATION, {
+    optimisticResponse: {
+      loadMatch: {
+        matchId: match.id,
+        version: -1
+      }
+    },
+    update: (cache, { data }) => {
+      if (!data?.loadMatch) return;
+
+      cache.modify({
+        fields: {
+          division: division => {
+            return merge(division, {
+              field: {
+                loadedMatch: data.loadMatch.matchId
+              }
+            });
+          }
+        }
+      });
+    },
     onError: () => {
       toast.error(t('load-error'));
     }

@@ -10,6 +10,7 @@ interface ScorekeeperContextType {
   currentStage: MatchStage;
   loadedMatch: Match | null;
   activeMatch: Match | null;
+  testMatch: Match | null;
 }
 
 const ScorekeeperContext = createContext<ScorekeeperContextType | null>(null);
@@ -41,13 +42,15 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     const loadedMatch = loadedMatchId
       ? sortedMatches.find(match => match.id === loadedMatchId) || null
       : null;
+    const testMatch = sortedMatches.find(match => match.stage === 'TEST') || null;
 
     return {
       matches: sortedMatches,
       matchLength,
       currentStage,
       loadedMatch,
-      activeMatch
+      activeMatch,
+      testMatch
     };
   }, [activeMatchId, loadedMatchId, sortedMatches, matchLength, currentStage]);
 

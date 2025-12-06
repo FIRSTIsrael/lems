@@ -316,6 +316,7 @@
       },
       "schedule": {
         "title": "Match Schedule",
+        "hide-completed": "Hide Completed Matches",
         "match-number": "Match",
         "scheduled-time": "Time",
         "teams": "Teams",

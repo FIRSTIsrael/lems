@@ -7,10 +7,10 @@ import { useScorekeeperData } from '../scorekeeper-context';
 
 export const TestMatchButton = () => {
   const t = useTranslations('pages.scorekeeper.controls');
-  const { activeMatch } = useScorekeeperData();
+  const { activeMatch, testMatch } = useScorekeeperData();
 
   const hasActiveMatch = !!activeMatch;
-  const isDisabled = hasActiveMatch;
+  const isDisabled = hasActiveMatch || !testMatch;
 
   return (
     <Button

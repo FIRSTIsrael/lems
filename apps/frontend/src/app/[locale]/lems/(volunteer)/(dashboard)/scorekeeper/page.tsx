@@ -1,15 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Container, Typography, Stack, Grid } from '@mui/material';
+import { Container, Typography, Stack, Grid, Switch, FormControlLabel } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_SCOREKEEPER_DATA,
   parseScorekeeperData,
-  createMatchLoadedSubscription
+  createMatchLoadedSubscription,
+  createMatchStartedSubscription,
+  createMatchStageAdvancedSubscription
 } from './scorekeeper.graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
@@ -22,9 +24,14 @@ import { ScorekeeperProvider } from './components/scorekeeper-context';
 export default function ScorekeeperPage() {
   const t = useTranslations('pages.scorekeeper');
   const { currentDivision } = useEvent();
+  const [hideCompletedMatches, setHideCompletedMatches] = useState(false);
 
   const subscriptions = useMemo(
-    () => [createMatchLoadedSubscription(currentDivision.id)],
+    () => [
+      createMatchLoadedSubscription(currentDivision.id),
+      createMatchStartedSubscription(currentDivision.id),
+      createMatchStageAdvancedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 
@@ -85,7 +92,7 @@ export default function ScorekeeperPage() {
               </Grid>
 
               <Grid size={{ xs: 12, lg: 6 }}>
-                <Stack spacing={2}>
+                <Stack spacing={2} height="100%">
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('current-match.section-title')}
                   </Typography>
@@ -104,10 +111,24 @@ export default function ScorekeeperPage() {
             </Grid>
 
             <Stack spacing={2}>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
-                {t('schedule.title')} ({matchesInStage})
-              </Typography>
-              <MatchScheduleTable />
+              <Stack direction="row" alignItems="center" justifyContent="space-between">
+                <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
+                  {t('schedule.title')} ({matchesInStage})
+                </Typography>
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={hideCompletedMatches}
+                      onChange={() => setHideCompletedMatches(!hideCompletedMatches)}
+                    />
+                  }
+                  label={
+                    <Typography variant="subtitle2">{t('schedule.hide-completed')}</Typography>
+                  }
+                />
+              </Stack>
+              <MatchScheduleTable hideCompleted={hideCompletedMatches} />
             </Stack>
           </Stack>
         </ScorekeeperProvider>
