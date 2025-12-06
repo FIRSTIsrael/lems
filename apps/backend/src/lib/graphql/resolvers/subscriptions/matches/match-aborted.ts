@@ -6,18 +6,17 @@ import {
   isGapMarker
 } from '../base-subscription';
 
-interface MatchCompletedEvent {
+interface MatchAbortedEvent {
   matchId: string;
-  autoLoadedMatchId: string | null;
   version: number;
 }
 
-const processMatchCompletedEvent = async (
+const processMatchAbortedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchCompletedEvent>> => {
+): Promise<SubscriptionResult<MatchAbortedEvent>> => {
   // Check for gap marker (recovery buffer exceeded)
   if (isGapMarker(event.data)) {
-    console.warn('[MatchCompleted] Recovery gap detected - client should refetch');
+    console.warn('[MatchAborted] Recovery gap detected - client should refetch');
     return event.data;
   }
 
@@ -28,39 +27,38 @@ const processMatchCompletedEvent = async (
     return null;
   }
 
-  const result: MatchCompletedEvent = {
+  const result: MatchAbortedEvent = {
     matchId,
-    autoLoadedMatchId: (eventData.autoLoadedMatchId as string | null) || null,
     version: (event.version as number) ?? 0
   };
 
   return result;
 };
 
-const matchCompletedSubscribe = (
+const matchAbortedSubscribe = (
   _root: unknown,
   args: BaseSubscriptionArgs & Record<string, unknown>
 ) => {
   const divisionId = args.divisionId as string;
 
   if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchCompleted subscription';
+    const errorMsg = 'divisionId is required for matchAborted subscription';
     throw new Error(errorMsg);
   }
 
   const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_COMPLETED, lastSeenVersion);
+  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_ABORTED, lastSeenVersion);
 };
 
 /**
- * Subscription resolver object for matchCompleted
+ * Subscription resolver object for matchAborted
  * GraphQL subscriptions require a subscribe function
  */
-export const matchCompletedResolver = {
-  subscribe: matchCompletedSubscribe,
+export const matchAbortedResolver = {
+  subscribe: matchAbortedSubscribe,
   resolve: async (
     event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchCompletedEvent>> => {
-    return processMatchCompletedEvent(event);
+  ): Promise<SubscriptionResult<MatchAbortedEvent>> => {
+    return processMatchAbortedEvent(event);
   }
 };

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Stack, Tooltip, IconButton, useTheme } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamStatusLegend } from './team-status-legend';
@@ -90,7 +90,7 @@ export const LoadedMatchDisplay = () => {
                 }
               }}
             >
-              <InfoOutlinedIcon sx={{ fontSize: '1rem' }} />
+              <InfoOutlined sx={{ fontSize: '1rem' }} />
             </IconButton>
           </Tooltip>
         </Stack>

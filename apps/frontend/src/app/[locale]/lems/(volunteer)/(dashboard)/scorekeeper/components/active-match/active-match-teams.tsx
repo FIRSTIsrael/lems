@@ -48,7 +48,6 @@ export const ActiveMatchTeams = () => {
                 variant="body2"
                 sx={{
                   fontWeight: 600,
-                  fontFamily: 'monospace',
                   fontSize: '0.875rem',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',

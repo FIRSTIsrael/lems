@@ -12,7 +12,8 @@ import {
   createMatchLoadedSubscription,
   createMatchStartedSubscription,
   createMatchStageAdvancedSubscription,
-  createMatchCompletedSubscription
+  createMatchCompletedSubscription,
+  createMatchAbortedSubscription
 } from './scorekeeper.graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
@@ -32,7 +33,8 @@ export default function ScorekeeperPage() {
       createMatchLoadedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id),
-      createMatchCompletedSubscription(currentDivision.id)
+      createMatchCompletedSubscription(currentDivision.id),
+      createMatchAbortedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -62,11 +64,6 @@ export default function ScorekeeperPage() {
       </>
     );
   }
-
-  const matchesInStage =
-    data.matches.filter(match => {
-      return match.stage === data.currentStage;
-    }).length || 0;
 
   return (
     <>
@@ -115,7 +112,7 @@ export default function ScorekeeperPage() {
             <Stack spacing={2}>
               <Stack direction="row" alignItems="center" justifyContent="space-between">
                 <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
-                  {t('schedule.title')} ({matchesInStage})
+                  {t('schedule.title')}
                 </Typography>
 
                 <FormControlLabel

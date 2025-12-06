@@ -300,7 +300,8 @@
         "confirm-abort": "בטל",
         "cancel": "ביטול",
         "load-error": "טעינת המקצה נכשלה.",
-        "start-error": "התחלת המקצה נכשלה."
+        "start-error": "התחלת המקצה נכשלה.",
+        "abort-error": "ביטול המקצה נכשל."
       },
       "audience-display": {
         "section-title": "תצוגת הקהל",

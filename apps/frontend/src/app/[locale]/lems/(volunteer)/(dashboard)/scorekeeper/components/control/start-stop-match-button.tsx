@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import { useMutation } from '@apollo/client/react';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
-import { START_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { ABORT_MATCH_MUTATION, START_MATCH_MUTATION } from '../../scorekeeper.graphql';
 import { useEvent } from '../../../../components/event-context';
 
 export const StartStopMatchButton = () => {
@@ -31,6 +31,12 @@ export const StartStopMatchButton = () => {
   const [startMatch] = useMutation(START_MATCH_MUTATION, {
     onError: () => {
       toast.error(t('start-error'));
+    }
+  });
+
+  const [abortMatch] = useMutation(ABORT_MATCH_MUTATION, {
+    onError: () => {
+      toast.error(t('abort-error'));
     }
   });
 
@@ -51,7 +57,11 @@ export const StartStopMatchButton = () => {
     setAbortDialogOpen(false);
     setIsSubmitting(true);
     try {
-      console.log('Abort match');
+      if (hasActiveMatch) {
+        await abortMatch({
+          variables: { divisionId: currentDivision.id, matchId: activeMatch.id }
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -77,7 +87,7 @@ export const StartStopMatchButton = () => {
         color={hasActiveMatch ? 'error' : 'success'}
         size="large"
         fullWidth
-        disabled={isSubmitting || !canStart}
+        disabled={isSubmitting || (!hasActiveMatch && !canStart)}
         onClick={hasActiveMatch ? handleAbortClick : handleStartMatch}
         startIcon={hasActiveMatch ? <StopRounded /> : <PlayArrowRounded />}
         sx={{ py: 1.25, fontSize: '1rem', fontWeight: 600 }}

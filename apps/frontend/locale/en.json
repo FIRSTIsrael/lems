@@ -300,7 +300,8 @@
         "confirm-abort": "Abort",
         "cancel": "Cancel",
         "load-error": "Failed to load match.",
-        "start-error": "Failed to start match."
+        "start-error": "Failed to start match.",
+        "abort-error": "Failed to abort match."
       },
       "audience-display": {
         "section-title": "Audience Display",

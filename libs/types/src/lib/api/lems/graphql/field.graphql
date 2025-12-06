@@ -133,6 +133,20 @@ type MatchCompletedEvent {
   "Match identifier"
   matchId: String!
 
+  "ID of the automatically loaded next match, if one was eligible (starts within 15 minutes)"
+  autoLoadedMatchId: String
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when a match has been aborted
+"""
+type MatchAbortedEvent {
+  "Match identifier"
+  matchId: String!
+
   "Event version for subscription recovery tracking"
   version: Int!
 }
@@ -158,6 +172,17 @@ extend type Mutation {
     "The ID of the match to start"
     matchId: String!
   ): MatchStartedEvent!
+
+  """
+  Abort a robot game match that is currently in progress.
+  Dequeues the pending match completion event.
+  """
+  abortMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match to abort"
+    matchId: String!
+  ): MatchAbortedEvent!
 }
 
 extend type Subscription {
@@ -200,4 +225,14 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): MatchCompletedEvent!
+
+  """
+  Subscribe to events when a match is aborted in a division.
+  """
+  matchAborted(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchAbortedEvent!
 }

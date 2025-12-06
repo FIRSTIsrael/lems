@@ -8,7 +8,8 @@ import {
   matchLoadedResolver,
   matchStartedResolver,
   matchStageAdvancedResolver,
-  matchCompletedResolver
+  matchCompletedResolver,
+  matchAbortedResolver
 } from './matches';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 
@@ -25,6 +26,7 @@ export const subscriptionResolvers = {
   matchStarted: matchStartedResolver,
   matchStageAdvanced: matchStageAdvancedResolver,
   matchCompleted: matchCompletedResolver,
+  matchAborted: matchAbortedResolver,
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver
 };

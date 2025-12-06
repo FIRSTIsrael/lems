@@ -11,6 +11,7 @@ export enum RedisEventTypes {
   MATCH_STARTED = 'matchStarted',
   MATCH_STAGE_ADVANCED = 'matchStageAdvanced',
   MATCH_COMPLETED = 'matchCompleted',
+  MATCH_ABORTED = 'matchAborted',
   RUBRIC_UPDATED = 'rubricUpdated',
   RUBRIC_STATUS_CHANGED = 'rubricStatusChanged'
 }
