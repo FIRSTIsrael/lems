@@ -15,6 +15,7 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JudgingSessionAdvisor } from '../judge-advisor.graphql';
 import { RubricStatus } from '@lems/database';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 
 interface RubricStatusSummaryProps {
   sessions: JudgingSessionAdvisor[];
@@ -26,6 +27,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   loading = false
 }) => {
   const t = useTranslations('pages.judge-advisor.summary');
+  const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
 
   const stats = useMemo(() => {
@@ -38,7 +40,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
 
       return {
         category,
-        label: t(`rubric.${category}`),
+        label: getCategory(category),
         empty: statuses.filter(s => s === 'empty').length,
         draft: statuses.filter(s => s === 'draft').length,
         inReview: statuses.filter(s => s === 'locked').length,
@@ -155,7 +157,6 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                     </Box>
                   </Stack>
 
-                  {/* Progress bar */}
                   <Box
                     sx={{
                       mt: 2,

@@ -257,11 +257,6 @@
           "empty": "Empty",
           "draft": "Draft",
           "completed": "Completed"
-        },
-        "rubric": {
-          "core-values": "Core Values",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design"
         }
       },
       "grid": {
@@ -271,11 +266,6 @@
           "room": "Room",
           "team": "Team",
           "status": "Status"
-        },
-        "rubric": {
-          "core-values": "Core Values",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design"
         },
         "rubric-status": {
           "empty": "Not Started",

@@ -24,6 +24,7 @@ import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { JudgingSessionAdvisor } from '../judge-advisor.graphql';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 
 interface RubricStatusGridProps {
   sessions: JudgingSessionAdvisor[];
@@ -35,6 +36,7 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
   loading = false
 }) => {
   const t = useTranslations('pages.judge-advisor.grid');
+  const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
 
   const [teamFilter, setTeamFilter] = useState('');
@@ -58,7 +60,6 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
       filtered = filtered.filter(session => session.status === statusFilter);
     }
 
-    // Apply sorting based on sortBy state
     if (sortBy === 'room') {
       return filtered.sort((a, b) => {
         if (a.room.name !== b.room.name) {
@@ -67,7 +68,6 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
         return a.number - b.number;
       });
     } else {
-      // Sort by session number
       return filtered.sort((a, b) => a.number - b.number);
     }
   }, [sessions, teamFilter, statusFilter, sortBy]);
@@ -188,7 +188,7 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
                   fontSize: '0.85rem'
                 }}
               >
-                {t(`rubric.${category}`)}
+                {getCategory(category)}
               </TableCell>
             ))}
           </TableRow>
@@ -242,7 +242,7 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
                   <RubricStatusButton
                     category={category}
                     status={session.rubrics[category]?.status || 'empty'}
-                    label={t(`rubric.${category}`)}
+                    label={getCategory(category)}
                     teamSlug={session.team.slug}
                   />
                 </TableCell>

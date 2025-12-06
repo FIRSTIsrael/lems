@@ -257,11 +257,6 @@
           "empty": "ריק",
           "draft": "טיוטה",
           "completed": "הסתיים"
-        },
-        "rubric": {
-          "core-values": "ערכי הליבה",
-          "innovation-project": "פרויקט החדשנות",
-          "robot-design": "תכנון הרובוט"
         }
       },
       "grid": {
@@ -271,11 +266,6 @@
           "room": "חדר",
           "team": "קבוצה",
           "status": "סטטוס"
-        },
-        "rubric": {
-          "core-values": "ערכי הליבה",
-          "innovation-project": "פרויקט החדשנות",
-          "robot-design": "תכנון הרובוט"
         },
         "rubric-status": {
           "empty": "לא התחיל",

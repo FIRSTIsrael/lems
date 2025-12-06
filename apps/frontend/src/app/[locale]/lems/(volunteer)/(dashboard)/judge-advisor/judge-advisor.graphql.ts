@@ -2,18 +2,13 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, updateInArray, updateObjectKeysById, Reconciler } from '@lems/shared/utils';
 import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
+import { Session } from 'inspector';
 
-/**
- * Room information for judge advisor view
- */
 export interface Room {
   id: string;
   name: string;
 }
 
-/**
- * Team information for judge advisor view
- */
 export interface Team {
   id: string;
   number: string;
@@ -27,9 +22,6 @@ export interface Team {
   location?: string;
 }
 
-/**
- * Categorized rubrics for a session
- */
 export interface CategorizedRubrics
   extends Record<string, { id: string; status: RubricStatus } | null> {
   innovationProject: { id: string; status: RubricStatus } | null;
@@ -37,9 +29,6 @@ export interface CategorizedRubrics
   coreValues: { id: string; status: RubricStatus } | null;
 }
 
-/**
- * JudgingSession for judge advisor view - shows all rooms
- */
 export interface JudgingSessionAdvisor {
   id: string;
   number: number;
@@ -52,9 +41,6 @@ export interface JudgingSessionAdvisor {
   startDelta?: number;
 }
 
-/**
- * Judging information for a division - all sessions across all rooms
- */
 export interface JudgingAdvisor {
   sessions: JudgingSessionAdvisor[];
   rooms: Room[];
@@ -80,20 +66,27 @@ export interface RubricStatusChangedEvent {
   version: number;
 }
 
+export interface TeamEvent {
+  teamId: string;
+  version: number;
+}
+
 type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
 
 type JudgingStartedSubscriptionData = { judgingSessionStarted: JudgingStartedEvent };
 type JudgingAbortedSubscriptionData = { judgingSessionAborted: JudgingSessionEvent };
 type JudgingCompletedSubscriptionData = { judgingSessionCompleted: JudgingSessionEvent };
 type RubricStatusChangedSubscriptionData = { rubricStatusChanged: RubricStatusChangedEvent };
+type TeamArrivalSubscriptionData = { teamArrivalUpdated: TeamEvent };
 
-/**
- * Query to fetch all judging sessions across all rooms for a division (Judge Advisor view)
- */
 export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetAllJudgingSessions($divisionId: String!) {
     division(id: $divisionId) {
       id
+      rooms {
+        id
+        name
+      }
       judging {
         sessions {
           id
@@ -125,10 +118,6 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
           }
           startTime
           startDelta
-        }
-        allRooms {
-          id
-          name
         }
         sessionLength
       }
@@ -192,9 +181,22 @@ export const RUBRIC_STATUS_CHANGED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-/**
- * Helper function to update judging sessions in the query data.
- */
+export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  TeamArrivalSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
+    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      teamId
+      version
+    }
+  }
+`;
+
+export function parseDivisionSessions(queryData: QueryData): JudgingSessionAdvisor[] {
+  return queryData?.division?.judging.sessions ?? [];
+}
+
 function updateJudgingSessions(
   prev: QueryData,
   updater: (sessions: JudgingSessionAdvisor[]) => JudgingSessionAdvisor[]
@@ -215,9 +217,6 @@ function updateJudgingSessions(
   });
 }
 
-/**
- * Helper function to create a subscription configuration.
- */
 function createSubscriptionConfig<TSubscriptionData>(
   subscription: TypedDocumentNode<TSubscriptionData, SubscriptionVars>,
   divisionId: string,
@@ -243,9 +242,6 @@ function createSubscriptionConfig<TSubscriptionData>(
   return baseConfig;
 }
 
-/**
- * Reconciler for judging session started events.
- */
 const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubscriptionData> = (
   prev,
   { data }
@@ -268,9 +264,6 @@ const judgingSessionStartedReconciler: Reconciler<QueryData, JudgingStartedSubsc
   );
 };
 
-/**
- * Creates a subscription configuration for judging session start events.
- */
 export function createJudgingSessionStartedSubscription(
   divisionId: string,
   onSessionStarted?: (event: JudgingStartedEvent) => void
@@ -283,9 +276,6 @@ export function createJudgingSessionStartedSubscription(
   );
 }
 
-/**
- * Reconciler for judging session aborted events.
- */
 const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubscriptionData> = (
   prev,
   { data }
@@ -303,9 +293,6 @@ const judgingSessionAbortedReconciler: Reconciler<QueryData, JudgingAbortedSubsc
   );
 };
 
-/**
- * Creates a subscription configuration for judging session aborted events.
- */
 export function createJudgingSessionAbortedSubscription(
   divisionId: string,
   onAborted?: (event: JudgingSessionEvent) => void
@@ -318,9 +305,6 @@ export function createJudgingSessionAbortedSubscription(
   );
 }
 
-/**
- * Reconciler for judging session completed events.
- */
 const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedSubscriptionData> = (
   prev,
   { data }
@@ -338,9 +322,6 @@ const judgingSessionCompletedReconciler: Reconciler<QueryData, JudgingCompletedS
   );
 };
 
-/**
- * Creates a subscription configuration for judging session completed events.
- */
 export function createJudgingSessionCompletedSubscription(
   divisionId: string,
   onSessionCompleted?: (event: JudgingSessionEvent) => void
@@ -353,9 +334,6 @@ export function createJudgingSessionCompletedSubscription(
   );
 }
 
-/**
- * Reconciler for rubric status changed events.
- */
 const rubricStatusChangedReconciler: Reconciler<QueryData, RubricStatusChangedSubscriptionData> = (
   prev,
   { data }
@@ -375,9 +353,6 @@ const rubricStatusChangedReconciler: Reconciler<QueryData, RubricStatusChangedSu
   );
 };
 
-/**
- * Creates a subscription configuration for rubric status changes.
- */
 export function createRubricStatusChangedSubscription(
   divisionId: string,
   onRubricStatusChanged?: (event: RubricStatusChangedEvent) => void
@@ -387,5 +362,34 @@ export function createRubricStatusChangedSubscription(
     divisionId,
     rubricStatusChangedReconciler,
     onRubricStatusChanged ? data => onRubricStatusChanged(data.rubricStatusChanged) : undefined
+  );
+}
+
+const teamArrivalReconciler: Reconciler<QueryData, TeamArrivalSubscriptionData> = (
+  prev,
+  { data }
+) => {
+  if (!data) return prev;
+
+  const { teamId } = data.teamArrivalUpdated;
+
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.team.id === teamId,
+      session => merge(session, { team: { arrived: true } })
+    )
+  );
+};
+
+export function createTeamArrivalSubscription(
+  divisionId: string,
+  onTeamArrived?: (event: TeamEvent) => void
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
+  return createSubscriptionConfig(
+    TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
+    divisionId,
+    teamArrivalReconciler,
+    onTeamArrived ? data => onTeamArrived(data.teamArrivalUpdated) : undefined
   );
 }

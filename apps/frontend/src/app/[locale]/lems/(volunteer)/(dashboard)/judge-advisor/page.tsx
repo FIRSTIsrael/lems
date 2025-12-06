@@ -13,7 +13,9 @@ import {
   createJudgingSessionStartedSubscription,
   createJudgingSessionAbortedSubscription,
   createJudgingSessionCompletedSubscription,
-  createRubricStatusChangedSubscription
+  createRubricStatusChangedSubscription,
+  createTeamArrivalSubscription,
+  parseDivisionSessions
 } from './judge-advisor.graphql';
 
 export default function JudgeAdvisorPage() {
@@ -25,19 +27,20 @@ export default function JudgeAdvisorPage() {
       createJudgingSessionStartedSubscription(currentDivision.id),
       createJudgingSessionAbortedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
-      createRubricStatusChangedSubscription(currentDivision.id)
+      createRubricStatusChangedSubscription(currentDivision.id),
+      createTeamArrivalSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
-
+  
   const { data, loading } = usePageData(
     GET_ALL_JUDGING_SESSIONS,
     { divisionId: currentDivision.id },
-    undefined,
+    parseDivisionSessions,
     subscriptions
   );
 
-  const sessions = data?.division?.judging.sessions ?? [];
+  const sessions = data || [];
 
   return (
     <>
