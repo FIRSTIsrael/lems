@@ -249,6 +249,52 @@
         "submit": "Failed to submit rubric."
       }
     },
+    "judge-advisor": {
+      "page-title": "Judge Advisor",
+      "summary": {
+        "title": "Summary",
+        "status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "completed": "Completed"
+        }
+      },
+      "grid": {
+        "empty-state": "Judging Sessions were not found",
+        "column": {
+          "session": "Judging Session",
+          "room": "Room",
+          "team": "Team",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Not Started",
+          "draft": "In Progress",
+          "approved": "Approved",
+          "locked": "Locked",
+          "completed": "Completed"
+        },
+        "session-status": {
+          "not-started": "Not Started",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "filter": {
+          "team": "Team",
+          "team-placeholder": "Search by number, name, or affiliation...",
+          "status": "Status",
+          "all-statuses": "All Statuses",
+          "results": "Results"
+        },
+        "sort": {
+          "room": "Sort by Room",
+          "session": "Sort by Session"
+        }
+      },
+      "team-info-cell": {
+        "not-arrived": "Not Arrived"
+      }
+    },
     "scorekeeper": {
       "page-title": "Scorekeeper",
       "common": {
