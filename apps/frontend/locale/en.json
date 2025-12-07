@@ -379,6 +379,9 @@
       "active-match": {
         "teams": "Teams"
       }
+    },
+    "lead-judge": {
+      "page-title": "Lead Judge"
     }
   },
   "components": {

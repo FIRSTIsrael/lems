@@ -379,6 +379,9 @@
       "active-match": {
         "teams": "קבוצות"
       }
+    },
+    "lead-judge": {
+      "page-title": "שופט מוביל"
     }
   },
   "components": {
