@@ -1,12 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ScoreboardEntry } from '@lems/types/api/portal';
-import { Locale } from '@lems/localization';
 
 interface DesktopScoreboardProps {
   sortedData: ScoreboardEntry[];
@@ -20,7 +19,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
   eventSlug
 }) => {
   const t = useTranslations('pages.event');
-  const currentLocale = useLocale() as Locale;
+  const theme = useTheme();
 
   const columns: GridColDef<ScoreboardEntry>[] = [
     {
@@ -78,7 +77,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
         density="compact"
         rows={sortedData}
         columns={columns}
-        disableVirtualization={currentLocale === 'he'} // Workaround for MUI issue with RTL virtualization
+        disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
         getRowId={row => row.team.id}
         slots={{
           noRowsOverlay: () => (

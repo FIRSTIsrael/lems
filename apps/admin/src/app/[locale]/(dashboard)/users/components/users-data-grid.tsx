@@ -3,12 +3,11 @@
 import { useMemo, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box } from '@mui/material';
+import { Avatar, Box, useTheme } from '@mui/material';
 import { Edit, Security, Delete } from '@mui/icons-material';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
 import { AdminUser } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
-import { Locale } from '@lems/localization';
 import { useSession } from '../../components/session-context';
 import { UsersSearch } from './users-search';
 import { PermissionsEditorDialog } from './permissions-editor-dialog';
@@ -31,7 +30,7 @@ interface DialogState {
 export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUsers }) => {
   const t = useTranslations('pages.users.list');
   const session = useSession();
-  const currentLocale = useLocale() as Locale;
+  const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
   const [dialog, setDialog] = useState<DialogState>({
     type: null,
@@ -197,7 +196,7 @@ export const UsersDataGrid: React.FC<UsersDataGridProps> = ({ users: initialUser
         <DataGrid
           rows={filteredUsers}
           columns={columns}
-          disableVirtualization={currentLocale === 'he'} // Workaround for MUI issue with RTL virtualization
+          disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }

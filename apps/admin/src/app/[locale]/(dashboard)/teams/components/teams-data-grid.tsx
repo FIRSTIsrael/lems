@@ -3,11 +3,10 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Avatar, Box, Chip } from '@mui/material';
-import { useLocale, useTranslations } from 'next-intl';
+import { Avatar, Box, Chip, useTheme } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
-import { Locale } from '@lems/localization';
 import { TeamsSearch } from './teams-search';
 import { DeleteTeamButton } from './delete-team-button';
 import { UpdateTeamButton } from './update-team-button';
@@ -19,7 +18,7 @@ interface TeamsDataGridProps {
 export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
-  const currentLocale = useLocale() as Locale;
+  const theme = useTheme();
 
   const { data: teams } = useSWR<Team[]>('/admin/teams', {
     fallbackData: initialTeams
@@ -164,7 +163,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         <DataGrid
           rows={filteredTeams}
           columns={columns}
-          disableVirtualization={currentLocale === 'he'} // Workaround for MUI issue with RTL virtualization
+          disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }
