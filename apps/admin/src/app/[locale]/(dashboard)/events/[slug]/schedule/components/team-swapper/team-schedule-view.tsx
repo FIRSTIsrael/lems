@@ -10,7 +10,7 @@ import {
   Card,
   CardContent
 } from '@mui/material';
-import { useMatchStageTranslations } from '@lems/localization';
+import { useMatchTranslations } from '@lems/localization';
 import { TeamSchedule } from '@lems/types/api/admin';
 
 interface TeamScheduleViewProps {
@@ -20,7 +20,7 @@ interface TeamScheduleViewProps {
 
 export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule, isLoading }) => {
   const t = useTranslations('pages.events.schedule.team-swap');
-  const { getStage } = useMatchStageTranslations();
+  const { getStage } = useMatchTranslations();
 
   if (!teamSchedule) {
     return null;

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import useSWR from 'swr';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
-import { useMatchStageTranslations } from '@lems/localization';
+import { useMatchTranslations } from '@lems/localization';
 import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
 import { useTeamAtEvent } from './team-at-event-context';
 
@@ -27,7 +27,7 @@ export const TeamSchedule: React.FC = () => {
   });
 
   const t = useTranslations('pages.team-in-event');
-  const { getStage } = useMatchStageTranslations();
+  const { getStage } = useMatchTranslations();
 
   if (!data) {
     return null; // Should be handled by suspense

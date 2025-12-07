@@ -23,12 +23,12 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import { RobotGameMatch } from '@lems/types/api/portal';
-import { useMatchStageTranslations } from '@lems/localization';
+import { useMatchTranslations } from '@lems/localization';
 import { useDivision } from '../division-data-context';
 
 export const FieldScheduleTab: React.FC = () => {
   const t = useTranslations('pages.event');
-  const { getStage } = useMatchStageTranslations();
+  const { getStage } = useMatchTranslations();
 
   const params = useParams();
   const eventSlug = params.slug as string;
