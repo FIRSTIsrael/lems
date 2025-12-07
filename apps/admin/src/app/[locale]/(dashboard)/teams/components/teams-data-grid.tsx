@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
-import { useTranslations } from 'next-intl';
+import { Locale, useLocale, useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
 import { TeamsSearch } from './teams-search';
@@ -18,6 +18,7 @@ interface TeamsDataGridProps {
 export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
+  const currentLocale = useLocale() as Locale;
 
   const { data: teams } = useSWR<Team[]>('/admin/teams', {
     fallbackData: initialTeams
@@ -162,6 +163,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         <DataGrid
           rows={filteredTeams}
           columns={columns}
+          disableVirtualization={currentLocale === 'he'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }

@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip } from '@mui/material';
 import { Edit } from '@mui/icons-material';
-import { useTranslations } from 'next-intl';
+import { Locale, useLocale, useTranslations } from 'next-intl';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
@@ -19,6 +19,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   divisions
 }) => {
   const t = useTranslations('pages.events.teams.unified');
+  const currentLocale = useLocale() as Locale;
   const [searchValue, setSearchValue] = useState('');
 
   const hasMultipleDivisions = divisions.length > 1;
@@ -151,7 +152,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <DataGrid
           rows={filteredTeams}
           columns={columns}
-          disableVirtualization
+          disableVirtualization={currentLocale === 'he'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }
