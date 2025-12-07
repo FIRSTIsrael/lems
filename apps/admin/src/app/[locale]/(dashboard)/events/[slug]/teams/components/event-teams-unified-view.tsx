@@ -76,28 +76,28 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
     },
     ...((hasMultipleDivisions
       ? [
-          {
-            field: 'division',
-            headerName: t('columns.division'),
-            width: 140,
-            sortable: true,
-            renderCell: params => (
-              <Chip
-                label={params.row.division.name}
-                size="small"
-                sx={{
-                  backgroundColor: params.row.division.color,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  '& .MuiChip-label': {
-                    px: 1
-                  }
-                }}
-              />
-            ),
-            valueGetter: (value, row) => row.division.name
-          }
-        ]
+        {
+          field: 'division',
+          headerName: t('columns.division'),
+          width: 140,
+          sortable: true,
+          renderCell: params => (
+            <Chip
+              label={params.row.division.name}
+              size="small"
+              sx={{
+                backgroundColor: params.row.division.color,
+                color: 'white',
+                fontWeight: 'bold',
+                '& .MuiChip-label': {
+                  px: 1
+                }
+              }}
+            />
+          ),
+          valueGetter: (value, row) => row.division.name
+        }
+      ]
       : []) as GridColDef[]),
     {
       field: 'name',
@@ -151,6 +151,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <DataGrid
           rows={filteredTeams}
           columns={columns}
+          disableVirtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }
