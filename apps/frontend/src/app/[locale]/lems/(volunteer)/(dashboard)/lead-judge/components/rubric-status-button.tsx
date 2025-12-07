@@ -23,7 +23,7 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   disabled = false,
   teamSlug
 }) => {
-  const t = useTranslations('pages.judge-advisor.grid.rubric-status');
+  const t = useTranslations('pages.lead-judge.list.rubric-status');
   const router = useRouter();
   const theme = useTheme();
   const rubricColor = getRubricColor(category);

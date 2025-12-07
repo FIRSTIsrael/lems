@@ -11,10 +11,10 @@ interface TeamInfoCellProps {
 }
 
 export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
-  const t = useTranslations('pages.judge-advisor.team-info-cell');
+  const t = useTranslations('pages.lead-judge.team-info-cell');
 
   return (
-    <Stack spacing={1} sx={{ minWidth: 200 }}>
+    <Stack direction={'row'} spacing={1} sx={{ minWidth: 200 }}>
       <TeamInfo team={team} size="sm" />
       {!team.arrived && (
         <Chip

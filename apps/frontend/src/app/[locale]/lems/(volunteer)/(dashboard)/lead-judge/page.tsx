@@ -7,7 +7,7 @@ import { PageHeader } from '../components/page-header';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { RubricStatusSummary } from './components/rubric-status-summary';
-import { RubricStatusGrid } from './components/rubric-status-grid';
+import { RubricStatusList } from './components/rubric-status-list';
 import {
   GET_ALL_JUDGING_SESSIONS,
   createJudgingSessionStartedSubscription,
@@ -53,10 +53,16 @@ export default function LeadJudgePage() {
   return (
     <>
       <PageHeader title={t('page-title')} />
-      <Stack sx={{ p: { xs: 2, sm: 3 } }}>
-        <RubricStatusSummary sessions={sessions} category={category} loading={loading} />
-        <RubricStatusGrid sessions={sessions} category={category} loading={loading} />
-      </Stack>
+      <Box sx={{ p: { xs: 2, sm: 3 } }}>
+        <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ height: 'fit-content' }}>
+          <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 320px' }, minWidth: 0 }}>
+            <RubricStatusSummary sessions={sessions} category={category} loading={loading} />
+          </Box>
+          <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 auto' }, minWidth: 0 }}>
+            <RubricStatusList sessions={sessions} category={category} loading={loading} />
+          </Box>
+        </Stack>
+      </Box>
     </>
   );
 }

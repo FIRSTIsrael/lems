@@ -381,7 +381,52 @@
       }
     },
     "lead-judge": {
-      "page-title": "שופט מוביל"
+      "page-title": "שופט מוביל",
+      "summary": {
+        "title": "סיכום מחווני תחום",
+        "status": {
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "completed": "הסתיים"
+        }
+      },
+      "list": {
+        "empty-state": "לא נמצאו סבבי שיפוט",
+        "column": {
+          "session": "סבב שיפוט",
+          "room": "חדר",
+          "team": "קבוצה",
+          "status": "סטטוס"
+        },
+        "rubric-status": {
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "approved": "אושר",
+          "locked": "נעול",
+          "completed": "הושלם"
+        },
+        "session-status": {
+          "not-started": "לא התחיל",
+          "in-progress": "בתהליך",
+          "completed": "הושלם"
+        },
+        "filter": {
+          "team": "קבוצה",
+          "team-placeholder": "חפש לפי מספר, שם או שיוך...",
+          "status": "סטטוס",
+          "all-statuses": "כל הסטטוסים",
+          "results": "תוצאות"
+        },
+        "sort": {
+          "room": "מיין לפי חדר",
+          "session": "מיין לפי סבב"
+        },
+        "session": "סבב",
+        "room": "חדר"
+      },
+      "team-info-cell": {
+        "not-arrived": "לא הגיעה"
+      }
     }
   },
   "components": {

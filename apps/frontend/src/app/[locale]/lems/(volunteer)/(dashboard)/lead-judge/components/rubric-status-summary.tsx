@@ -16,6 +16,7 @@ import { JudgingSessionAdvisor } from '../lead-judge.graphql';
 import { RubricStatus } from '@lems/database';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { SessionFilters } from './session-filters';
 
 interface RubricStatusSummaryProps {
   sessions: JudgingSessionAdvisor[];
@@ -28,10 +29,10 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   category,
   loading = false
 }) => {
-  const t = useTranslations('pages.judge-advisor.summary');
+  const t = useTranslations('pages.lead-judge.summary');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
-
+  const color = getRubricColor(category as JudgingCategory);
   const stats = useMemo(() => {
     const statuses = sessions
       .map(session => session.rubrics[category as keyof typeof session.rubrics]?.status || 'empty' as RubricStatus)
@@ -68,91 +69,94 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   }
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 3 }, borderRadius: 2, mb: 3 }}>
-      <Typography variant="h6" sx={{ mb: 3, fontWeight: 600 }}>
+    <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, fontSize: '0.95rem' }}>
         {t('title')}
       </Typography>
 
-      <Box>
-        {(() => {
-          const color = getRubricColor(stats.category as JudgingCategory);
-
-          return (
-            <Card
+      <Box 
+        sx={{ 
+          flex: 1, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          justifyContent: 'flex-start',
+          gap: 2
+          }}>
+        <Card
+          sx={{
+            backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
+            borderLeft: `4px solid ${color}`,
+          }}
+        >
+          <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
+            <Typography
+              variant="subtitle2"
               sx={{
-                backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
-                borderLeft: `4px solid ${color}`
+                fontWeight: 600,
+                mb: 1.5,
+                color: color,
+                fontSize: '0.9rem'
               }}
             >
-              <CardContent>
+              {stats.label}
+            </Typography>
+
+            <Stack spacing={0.75}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                <Typography variant="caption" color="textSecondary">
+                  {t('status.empty')}
+                </Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                  {stats.empty} / {stats.total}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                <Typography variant="caption" color="textSecondary">
+                  {t('status.draft')}
+                </Typography>
+                <Typography variant="caption" sx={{ fontWeight: 600 }}>
+                  {stats.draft} / {stats.total}
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1 }}>
+                <Typography variant="caption" color="textSecondary">
+                  {t('status.completed')}
+                </Typography>
                 <Typography
-                  variant="subtitle1"
+                  variant="caption"
                   sx={{
                     fontWeight: 600,
-                    mb: 2,
-                    color: color
+                    color: stats.completed === stats.total ? '#4caf50' : 'inherit'
                   }}
                 >
-                  {stats.label}
+                  {stats.completed} / {stats.total}
                 </Typography>
+              </Box>
+            </Stack>
 
-                <Stack spacing={1}>
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="textSecondary">
-                      {t('status.empty')}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {stats.empty} / {stats.total}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="textSecondary">
-                      {t('status.draft')}
-                    </Typography>
-                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                      {stats.draft} / {stats.total}
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Typography variant="body2" color="textSecondary">
-                      {t('status.completed')}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        fontWeight: 600,
-                        color: stats.completed === stats.total ? '#4caf50' : 'inherit'
-                      }}
-                    >
-                      {stats.completed} / {stats.total}
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Box
-                  sx={{
-                    mt: 2,
-                    height: 8,
-                    backgroundColor: theme.palette.action.disabledBackground,
-                    borderRadius: 1,
-                    overflow: 'hidden'
-                  }}
-                >
-                  <Box
-                    sx={{
-                      height: '100%',
-                      width: `${stats.total > 0 ? (stats.completed / stats.total) * 100 : 0}%`,
-                      backgroundColor: color,
-                      transition: 'width 0.3s ease'
-                    }}
-                  />
-                </Box>
-              </CardContent>
-            </Card>
-          );
-        })()}
+            <Box
+              sx={{
+                mt: 1.5,
+                height: 6,
+                backgroundColor: theme.palette.action.disabledBackground,
+                borderRadius: 1,
+                overflow: 'hidden'
+              }}
+            >
+              <Box
+                sx={{
+                  height: '100%',
+                  width: `${stats.total > 0 ? (stats.completed / stats.total) * 100 : 0}%`,
+                  backgroundColor: color,
+                  transition: 'width 0.3s ease'
+                }}
+              />
+            </Box>
+          </CardContent>
+        </Card>
+        <SessionFilters sessions={sessions} />
       </Box>
     </Paper>
   );

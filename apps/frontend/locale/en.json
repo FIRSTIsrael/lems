@@ -381,7 +381,52 @@
       }
     },
     "lead-judge": {
-      "page-title": "Lead Judge"
+      "page-title": "Lead Judge",
+      "summary": {
+        "title": "Rubrics Category Summary",
+        "status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "completed": "Completed"
+        }
+      },
+      "list": {
+        "empty-state": "Judging Sessions were not found",
+        "column": {
+          "session": "Judging Session",
+          "room": "Room",
+          "team": "Team",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "approved": "Approved",
+          "locked": "Locked",
+          "completed": "Completed"
+        },
+        "session-status": {
+          "not-started": "Not Started",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "filter": {
+          "team": "Team",
+          "team-placeholder": "Search by number, name, or affiliation...",
+          "status": "Status",
+          "all-statuses": "All Statuses",
+          "results": "Results"
+        },
+        "sort": {
+          "room": "Sort by Room",
+          "session": "Sort by Session"
+        },
+        "session": "Session",
+        "room": "Room"
+      },
+      "team-info-cell": {
+        "not-arrived": "Not Arrived"
+      }
     }
   },
   "components": {
