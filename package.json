@@ -32,7 +32,7 @@
     "@mui/material": "^7.3.5",
     "@mui/material-nextjs": "^7.3.5",
     "@mui/stylis-plugin-rtl": "^7.3.5",
-    "@mui/x-data-grid": "^8.17.0",
+    "@mui/x-data-grid": "^8.21.0",
     "@mui/x-date-pickers": "^8.17.0",
     "@uiw/react-color": "^2.9.2",
     "axios": "^1.13.2",
