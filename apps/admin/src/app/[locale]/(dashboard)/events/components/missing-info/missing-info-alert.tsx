@@ -31,7 +31,6 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
     );
   }
 
-  // If we don't have detailed data, show simple message with option to load details
   if (!hasDetailedData) {
     return (
       <Alert
@@ -56,7 +55,6 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
     );
   }
 
-  // Show detailed missing items count with expand/collapse
   return (
     <Alert
       severity="warning"
