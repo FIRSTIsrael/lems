@@ -168,7 +168,8 @@
       "menu": {
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
-        "awards-list": "רשימת פרסים"
+        "awards-list": "רשימת פרסים",
+        "event-agenda": "לו״ז אירוע"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -206,6 +207,18 @@
         "loading": "טוען מפת פיטים...",
         "error-loading": "שגיאה בטעינת מפת הפיטים. אנא נסו שוב.",
         "no-map": "לא קיימת מפת פיטים."
+      },
+      "event-agenda": {
+        "page-title": "לו״ז אירוע",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-events": "לא נקבעו אירועים בלו״ז.",
+        "loading": "טוען לו״ז...",
+        "duration-minutes": "{count, plural, one {דקה אחת} other {# דקות}}",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט",
+          "field": "זירה"
+        }
       }
     },
     "rubric": {
