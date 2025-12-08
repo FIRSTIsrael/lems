@@ -1,11 +1,16 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Container, Box } from '@mui/material';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { GET_JUDGING_SCHEDULE, parseJudgingSchedule } from './judging-schedule.graphql';
+import {
+  GET_JUDGING_SCHEDULE,
+  parseJudgingSchedule,
+  createTeamArrivalSubscription
+} from './judging-schedule.graphql';
 import { ScheduleTable } from './components/schedule-table';
 import { ErrorState } from './components/error-state';
 import { EmptyState } from './components/empty-state';
@@ -15,11 +20,21 @@ export default function JudgingSchedulePage() {
   const t = useTranslations('pages.reports.judging-schedule');
   const { currentDivision } = useEvent();
 
+  const subscriptions = useMemo(
+    () => [createTeamArrivalSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const {
     data = { rooms: [], rows: [] },
     loading,
     error
-  } = usePageData(GET_JUDGING_SCHEDULE, { divisionId: currentDivision.id }, parseJudgingSchedule);
+  } = usePageData(
+    GET_JUDGING_SCHEDULE,
+    { divisionId: currentDivision.id },
+    parseJudgingSchedule,
+    subscriptions
+  );
 
   const hasData = data.rows.length > 0;
 

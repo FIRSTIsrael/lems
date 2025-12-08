@@ -226,6 +226,8 @@
         "error-loading": "An error occurred while loading the schedule.",
         "no-sessions": "No judging sessions have been scheduled yet.",
         "loading": "Loading schedule...",
+        "arrived": "Arrived",
+        "not-arrived": "Not arrived",
         "table": {
           "time": "Time"
         },

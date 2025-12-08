@@ -1,4 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import { merge, updateInArray, Reconciler } from '@lems/shared/utils';
+import type { SubscriptionConfig } from '../../../hooks/use-page-data';
 
 export interface Room {
   id: string;
@@ -9,6 +11,7 @@ export interface Team {
   id: string;
   number: number;
   name: string;
+  arrived: boolean;
 }
 
 export interface JudgingSession {
@@ -28,6 +31,11 @@ export interface AgendaEvent {
   visibility: string;
 }
 
+export interface TeamEvent {
+  teamId: string;
+  version: number;
+}
+
 interface QueryData {
   division?: {
     id: string;
@@ -42,6 +50,9 @@ interface QueryData {
 interface QueryVars {
   divisionId: string;
 }
+
+type SubscriptionData = { teamArrivalUpdated: TeamEvent };
+type SubscriptionVars = QueryVars & { lastSeenVersion?: number };
 
 export const GET_JUDGING_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetJudgingSchedule($divisionId: String!) {
@@ -72,6 +83,7 @@ export const GET_JUDGING_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql
             id
             number
             name
+            arrived
           }
         }
       }
@@ -140,4 +152,61 @@ export function parseJudgingSchedule(data: QueryData): {
   rows.sort((a, b) => a.time.getTime() - b.time.getTime());
 
   return { rooms, rows };
+}
+
+export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  SubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
+    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+      teamId
+      version
+    }
+  }
+`;
+
+/**
+ * Reconciler for team arrival updates in the judging schedule.
+ * Updates the arrived status of a team in judging sessions.
+ */
+const teamArrivalReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
+  if (!data || !prev.division) return prev;
+
+  const { teamId } = data.teamArrivalUpdated;
+  const sessions = prev.division.judging.sessions;
+
+  const updatedSessions = updateInArray(
+    sessions,
+    session => session.team.id === teamId,
+    session => merge(session, { team: { arrived: true } })
+  );
+
+  return merge(prev, {
+    division: {
+      judging: {
+        sessions: updatedSessions
+      }
+    }
+  });
+};
+
+/**
+ * Creates a subscription configuration for team arrival updates.
+ * When a team arrives, the subscription returns minimal data (teamId + version).
+ * The reconciler locates the team in the cached sessions and marks it as arrived.
+ */
+export function createTeamArrivalSubscription(
+  divisionId: string
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
+  return {
+    subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
+    subscriptionVariables: {
+      divisionId
+    },
+    updateQuery: teamArrivalReconciler as (
+      prev: QueryData,
+      subscriptionData: { data?: unknown }
+    ) => QueryData
+  } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
 }

@@ -14,8 +14,10 @@ import {
   Tooltip,
   Chip,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Box
 } from '@mui/material';
+import { Block as BlockIcon } from '@mui/icons-material';
 import { Room, ScheduleRow } from '../judging-schedule.graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
@@ -136,18 +138,35 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                   {row.rooms?.map(room => (
                     <TableCell key={room.id} align="center">
                       {room.team ? (
-                        <Tooltip title={room.team.name} arrow>
-                          <Typography
+                        <Tooltip
+                          title={`${room.team.name} ${room.team.arrived ? '' : `(${t('not-arrived')})`}`}
+                          arrow
+                        >
+                          <Box
                             sx={{
-                              cursor: 'default',
-                              fontSize: isMobile ? '0.75rem' : '1rem',
-                              '&:hover': {
-                                color: 'primary.main'
-                              }
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: 0.5,
+                              cursor: 'default'
                             }}
                           >
-                            #{room.team.number}
-                          </Typography>
+                            {!room.team.arrived && (
+                              <BlockIcon
+                                sx={{
+                                  fontSize: isMobile ? 14 : 16,
+                                  color: 'error.main'
+                                }}
+                              />
+                            )}
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: isMobile ? '0.75rem' : '1rem'
+                              }}
+                            >
+                              #{room.team.number}
+                            </Typography>
+                          </Box>
                         </Tooltip>
                       ) : (
                         <Typography color="text.disabled" fontSize={isMobile ? '0.75rem' : '1rem'}>
