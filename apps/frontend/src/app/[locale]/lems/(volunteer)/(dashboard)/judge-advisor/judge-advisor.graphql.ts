@@ -2,7 +2,6 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, updateInArray, updateObjectKeysById, Reconciler } from '@lems/shared/utils';
 import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
-import { Session } from 'inspector';
 
 export interface Room {
   id: string;
@@ -19,11 +18,12 @@ export interface Team {
   slug: string;
   logoUrl?: string | null;
   arrived: boolean;
-  location?: string;
 }
 
-export interface CategorizedRubrics
-  extends Record<string, { id: string; status: RubricStatus } | null> {
+export interface CategorizedRubrics extends Record<
+  string,
+  { id: string; status: RubricStatus } | null
+> {
   innovationProject: { id: string; status: RubricStatus } | null;
   robotDesign: { id: string; status: RubricStatus } | null;
   coreValues: { id: string; status: RubricStatus } | null;
@@ -102,8 +102,10 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
             number
             name
             affiliation
+            city
             slug
             logoUrl
+            arrived
           }
           rubrics {
             innovationProject {
