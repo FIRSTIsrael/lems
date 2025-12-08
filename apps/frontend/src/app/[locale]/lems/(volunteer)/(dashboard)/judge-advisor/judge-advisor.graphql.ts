@@ -2,7 +2,6 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, updateInArray, updateObjectKeysById, Reconciler } from '@lems/shared/utils';
 import { RubricStatus } from '@lems/database';
 import type { SubscriptionConfig } from '../../hooks/use-page-data';
-import { Session } from 'inspector';
 
 export interface Room {
   id: string;
@@ -19,7 +18,6 @@ export interface Team {
   slug: string;
   logoUrl?: string | null;
   arrived: boolean;
-  location?: string;
 }
 
 export interface CategorizedRubrics
@@ -29,7 +27,7 @@ export interface CategorizedRubrics
   coreValues: { id: string; status: RubricStatus } | null;
 }
 
-export interface JudgingSessionAdvisor {
+export interface JudgingSession {
   id: string;
   number: number;
   scheduledTime: string;
@@ -41,13 +39,13 @@ export interface JudgingSessionAdvisor {
   startDelta?: number;
 }
 
-export interface JudgingAdvisor {
-  sessions: JudgingSessionAdvisor[];
+export interface JudgeAdvisorData {
+  sessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
 }
 
-type QueryData = { division?: { id: string; judging: JudgingAdvisor } | null };
+type QueryData = { division?: { id: string; judging: JudgeAdvisorData } | null };
 type QueryVars = { divisionId: string };
 
 export interface JudgingSessionEvent {
@@ -102,8 +100,10 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
             number
             name
             affiliation
+            city
             slug
             logoUrl
+            arrived
           }
           rubrics {
             innovationProject {
@@ -193,13 +193,13 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-export function parseDivisionSessions(queryData: QueryData): JudgingSessionAdvisor[] {
+export function parseDivisionSessions(queryData: QueryData): JudgingSession[] {
   return queryData?.division?.judging.sessions ?? [];
 }
 
 function updateJudgingSessions(
   prev: QueryData,
-  updater: (sessions: JudgingSessionAdvisor[]) => JudgingSessionAdvisor[]
+  updater: (sessions: JudgingSession[]) => JudgingSession[]
 ): QueryData {
   if (!prev.division?.judging.sessions) {
     return prev;

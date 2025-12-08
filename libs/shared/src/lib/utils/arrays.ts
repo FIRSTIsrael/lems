@@ -9,3 +9,13 @@ export const reorderArray = <T>(arr: Array<T>, startIndex: number, endIndex: num
   result.splice(endIndex, 0, removed);
   return result;
 };
+
+export const range = (n: number) => [...Array(n).keys()];
+
+export const average = (arr: Array<number>) => {
+  return arr.reduce((acc, value) => acc + value, 0) / arr.length;
+};
+
+export const sum = (arr: Array<number>) => {
+  return arr.reduce((acc, value) => acc + value, 0);
+};

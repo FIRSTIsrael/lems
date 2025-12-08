@@ -252,11 +252,11 @@
     "judge-advisor": {
       "page-title": "שופט ראשי",
       "summary": {
-        "title": "סיכום",
         "status": {
           "empty": "ריק",
           "draft": "טיוטה",
-          "completed": "הסתיים"
+          "completed": "הסתיים",
+          "approved": "מאושר"
         }
       },
       "grid": {
@@ -268,11 +268,11 @@
           "status": "סטטוס"
         },
         "rubric-status": {
-          "empty": "לא התחיל",
-          "draft": "בתהליך",
-          "approved": "אושר",
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "completed": "הושלם",
           "locked": "נעול",
-          "completed": "הושלם"
+          "approved": "מאושר"
         },
         "session-status": {
           "not-started": "לא התחיל",

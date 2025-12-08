@@ -252,11 +252,11 @@
     "judge-advisor": {
       "page-title": "Judge Advisor",
       "summary": {
-        "title": "Summary",
         "status": {
           "empty": "Empty",
           "draft": "Draft",
-          "completed": "Completed"
+          "completed": "Completed",
+          "approved": "Approved"
         }
       },
       "grid": {

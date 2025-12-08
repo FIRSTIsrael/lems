@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box, Chip } from '@mui/material';
+import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
@@ -19,6 +19,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   divisions
 }) => {
   const t = useTranslations('pages.events.teams.unified');
+  const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
 
   const hasMultipleDivisions = divisions.length > 1;
@@ -76,28 +77,28 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
     },
     ...((hasMultipleDivisions
       ? [
-          {
-            field: 'division',
-            headerName: t('columns.division'),
-            width: 140,
-            sortable: true,
-            renderCell: params => (
-              <Chip
-                label={params.row.division.name}
-                size="small"
-                sx={{
-                  backgroundColor: params.row.division.color,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  '& .MuiChip-label': {
-                    px: 1
-                  }
-                }}
-              />
-            ),
-            valueGetter: (value, row) => row.division.name
-          }
-        ]
+        {
+          field: 'division',
+          headerName: t('columns.division'),
+          width: 140,
+          sortable: true,
+          renderCell: params => (
+            <Chip
+              label={params.row.division.name}
+              size="small"
+              sx={{
+                backgroundColor: params.row.division.color,
+                color: 'white',
+                fontWeight: 'bold',
+                '& .MuiChip-label': {
+                  px: 1
+                }
+              }}
+            />
+          ),
+          valueGetter: (value, row) => row.division.name
+        }
+      ]
       : []) as GridColDef[]),
     {
       field: 'name',
@@ -151,6 +152,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <DataGrid
           rows={filteredTeams}
           columns={columns}
+          disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }
