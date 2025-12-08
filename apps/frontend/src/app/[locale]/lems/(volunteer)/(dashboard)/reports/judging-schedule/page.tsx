@@ -1,0 +1,56 @@
+'use client';
+
+import { useTranslations } from 'next-intl';
+import { Stack, Container, Box, Typography } from '@mui/material';
+import { PageHeader } from '../../components/page-header';
+import { useEvent } from '../../../components/event-context';
+import { usePageData } from '../../../hooks/use-page-data';
+import { GET_DIVISION_AGENDA, parseDivisionAgenda } from './judging-schedule.graphql';
+import { AgendaEventsList } from './components/agenda-events-list';
+import { ErrorState } from './components/error-state';
+import { EmptyState } from './components/empty-state';
+import { LoadingState } from './components/loading-state';
+
+export default function JudgingSchedulePage() {
+  const t = useTranslations('pages.reports.judging-schedule');
+  const { currentDivision } = useEvent();
+
+  const {
+    data: events = [],
+    loading,
+    error
+  } = usePageData(
+    GET_DIVISION_AGENDA,
+    { divisionId: currentDivision.id, visibility: ['public', 'judging'] },
+    parseDivisionAgenda
+  );
+
+  return (
+    <Container maxWidth="lg" disableGutters>
+      <Stack spacing={{ xs: 3, sm: 4, md: 5 }}>
+        <PageHeader title={t('page-title')} />
+
+        <Box
+          sx={{
+            px: { xs: 2, sm: 3 },
+            py: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          <Stack spacing={3}>
+            <Typography variant="body1" color="text.secondary">
+              {t('description')}
+            </Typography>
+
+            {error && <ErrorState />}
+
+            {!error && events.length === 0 && !loading && <EmptyState />}
+
+            {!error && events.length > 0 && <AgendaEventsList events={events} />}
+
+            {loading && <LoadingState />}
+          </Stack>
+        </Box>
+      </Stack>
+    </Container>
+  );
+}

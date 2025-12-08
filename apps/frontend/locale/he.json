@@ -168,7 +168,8 @@
       "menu": {
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
-        "awards-list": "רשימת פרסים"
+        "awards-list": "רשימת פרסים",
+        "judging-schedule": "לו״ז שיפוט"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -206,6 +207,18 @@
         "loading": "טוען מפת פיטים...",
         "error-loading": "שגיאה בטעינת מפת הפיטים. אנא נסו שוב.",
         "no-map": "לא קיימת מפת פיטים."
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "description": "פריטי לו״ז לאירועים כלליים ומפגשי שיפוט.",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-events": "לא נקבעו אירועים בלו״ז.",
+        "loading": "טוען לו״ז...",
+        "duration-minutes": "{count, plural, one {דקה אחת} other {# דקות}}",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שופטים"
+        }
       }
     },
     "rubric": {

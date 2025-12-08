@@ -8,6 +8,7 @@ import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionAwardsResolver } from './divisions/division-awards';
+import { divisionAgendaResolver } from './divisions/division-agenda';
 import { divisionFieldResolver } from './divisions/field/field';
 import { divisionJudgingResolver } from './divisions/judging/judging';
 import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
@@ -77,7 +78,8 @@ export const resolvers = {
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
-    awards: divisionAwardsResolver
+    awards: divisionAwardsResolver,
+    agenda: divisionAgendaResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,
