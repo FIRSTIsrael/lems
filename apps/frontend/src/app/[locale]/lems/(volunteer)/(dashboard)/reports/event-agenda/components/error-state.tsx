@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material';
 import { Error as ErrorIcon } from '@mui/icons-material';
 
 export function ErrorState() {
-  const t = useTranslations('pages.reports.judging-schedule');
+  const t = useTranslations('pages.reports.event-agenda');
 
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>

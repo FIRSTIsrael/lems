@@ -17,7 +17,7 @@ interface QueryData {
 
 interface QueryVars {
   divisionId: string;
-  visibility: string[];
+  visibility?: string[];
 }
 
 export const GET_DIVISION_AGENDA: TypedDocumentNode<QueryData, QueryVars> = gql`

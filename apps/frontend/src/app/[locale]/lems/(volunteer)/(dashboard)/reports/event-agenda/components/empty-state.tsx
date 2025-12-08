@@ -5,7 +5,7 @@ import { Box, Typography } from '@mui/material';
 import { EventNote } from '@mui/icons-material';
 
 export function EmptyState() {
-  const t = useTranslations('pages.reports.judging-schedule');
+  const t = useTranslations('pages.reports.event-agenda');
 
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>

@@ -1,7 +1,7 @@
 'use client';
 
 import { Stack } from '@mui/material';
-import { AgendaEvent } from '../judging-schedule.graphql';
+import { AgendaEvent } from '../event-agenda.graphql';
 import { AgendaEventCard } from './agenda-event-card';
 
 interface AgendaEventsListProps {

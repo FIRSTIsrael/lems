@@ -169,7 +169,7 @@
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
-        "judging-schedule": "Judging Schedule"
+        "event-agenda": "Event Agenda"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -208,15 +208,16 @@
         "error-loading": "Failed to load pit map. Please try again.",
         "no-map": "No pit map is available."
       },
-      "judging-schedule": {
-        "page-title": "Judging Schedule",
-        "error-loading": "An error occurred while loading the schedule.",
+      "event-agenda": {
+        "page-title": "Event Agenda",
+        "error-loading": "An error occurred while loading the agenda.",
         "no-events": "No agenda events have been scheduled yet.",
-        "loading": "Loading schedule...",
+        "loading": "Loading agenda...",
         "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
         "visibility": {
           "public": "General",
-          "judging": "Judging"
+          "judging": "Judging",
+          "field": "Field"
         }
       }
     },

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Chip, Stack } from '@mui/material';
 import { Schedule } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import { AgendaEvent } from '../judging-schedule.graphql';
+import { AgendaEvent } from '../event-agenda.graphql';
 
 interface AgendaEventCardProps {
   event: AgendaEvent;
@@ -13,11 +13,12 @@ interface AgendaEventCardProps {
 
 const VISIBILITY_COLORS: Record<string, string> = {
   public: '#4CAF50',
-  judging: '#FF9800'
+  judging: '#FF9800',
+  field: '#2196F3'
 };
 
 export function AgendaEventCard({ event }: AgendaEventCardProps) {
-  const t = useTranslations('pages.reports.judging-schedule');
+  const t = useTranslations('pages.reports.event-agenda');
 
   const formattedTime = useMemo(() => {
     const start = dayjs(event.startTime);

@@ -13,7 +13,7 @@ export default function ReportsPage() {
     { path: 'team-list', label: t('menu.team-list'), icon: <Groups /> },
     { path: 'pit-map', label: t('menu.pit-map'), icon: <Map /> },
     { path: 'awards-list', label: t('menu.awards-list'), icon: <EmojiEvents /> },
-    { path: 'judging-schedule', label: t('menu.judging-schedule'), icon: <EventNote /> }
+    { path: 'event-agenda', label: t('menu.event-agenda'), icon: <EventNote /> }
   ];
   return (
     <Container maxWidth="lg" disableGutters>
