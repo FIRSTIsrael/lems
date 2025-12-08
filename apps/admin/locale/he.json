@@ -261,7 +261,9 @@
         "missing-items-title": "פריטים חסרים",
         "missing-awards": "פרסים לא הוגדרו",
         "missing-users": "משתמשים לא הוקצו",
-        "missing-schedule": "לוח זמנים לא הוגדר"
+        "missing-schedule": "לוח זמנים לא הוגדר",
+        "filter-divisions": "סינון לפי בתים",
+        "all-divisions": "הכל"
       },
       "create": {
         "title": "יצירת אירוע",

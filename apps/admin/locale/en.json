@@ -261,7 +261,9 @@
         "missing-items-title": "Missing items",
         "missing-awards": "Awards not configured",
         "missing-users": "Users not assigned",
-        "missing-schedule": "Schedule not configured"
+        "missing-schedule": "Schedule not configured",
+        "filter-divisions": "Filter by divisions",
+        "all-divisions": "All"
       },
       "create": {
         "title": "Create Event",
