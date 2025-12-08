@@ -16,11 +16,11 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { range } from '@lems/shared/utils';
-import { JudgingSessionAdvisor } from '../judge-advisor.graphql';
+import { JudgingSession } from '../judge-advisor.graphql';
 import { getRubricStatusStats } from './utils';
 
 interface RubricStatusSummaryProps {
-  sessions: JudgingSessionAdvisor[];
+  sessions: JudgingSession[];
   loading?: boolean;
 }
 
@@ -72,7 +72,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
             <Card
               sx={{
                 height: '100%',
-                backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
+                backgroundColor: '#fafafa',
                 borderLeft: `4px solid ${color}`
               }}
             >
@@ -134,9 +134,14 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                   </Grid>
                 </Grid>
 
-                <Typography variant="body2" color="textSecondary" mt={2} mb={1}>
-                  {t('status.approved')}
-                </Typography>
+                <Stack direction="row" justifyContent="space-between" mt={2}>
+                  <Typography variant="body2" color="textSecondary" mt={2} mb={1}>
+                    {t('status.approved')}
+                  </Typography>
+                  <Typography variant="body2" fontWeight={600} mt={2} mb={1}>
+                    {total > 0 ? Math.round((approved / total) * 100) : 0}%
+                  </Typography>
+                </Stack>
                 <LinearProgress
                   variant="determinate"
                   value={total > 0 ? (approved / total) * 100 : 0}

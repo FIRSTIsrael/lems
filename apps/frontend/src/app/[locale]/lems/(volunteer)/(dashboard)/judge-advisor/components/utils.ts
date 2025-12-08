@@ -1,6 +1,6 @@
 import { RubricStatus } from '@lems/database';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
-import { JudgingSessionAdvisor } from '../judge-advisor.graphql';
+import { JudgingSession } from '../judge-advisor.graphql';
 
 export type RubricStatusStat = {
   empty: number;
@@ -12,7 +12,7 @@ export type RubricStatusStat = {
 };
 
 export function getRubricStatusStats(
-  sessions: JudgingSessionAdvisor[]
+  sessions: JudgingSession[]
 ): Record<JudgingCategory, RubricStatusStat> {
   return JUDGING_CATEGORIES.reduce(
     (acc, category) => {
