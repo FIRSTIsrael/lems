@@ -383,11 +383,11 @@
     "lead-judge": {
       "page-title": "שופט מוביל",
       "summary": {
-        "title": "סיכום מחווני תחום",
         "status": {
           "empty": "ריק",
           "draft": "טיוטה",
-          "completed": "הסתיים"
+          "completed": "הסתיים",
+          "approved": "מאושר"
         }
       },
       "list": {

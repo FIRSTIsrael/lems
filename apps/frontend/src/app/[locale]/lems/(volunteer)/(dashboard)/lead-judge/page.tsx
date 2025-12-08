@@ -1,9 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
-import { Box, Stack } from '@mui/material';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { Box, Stack } from '@mui/material';
+import { JudgingCategory } from '@lems/database';
 import { PageHeader } from '../components/page-header';
+import { useUser } from '../../../components/user-context';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { RubricStatusSummary } from './components/rubric-status-summary';
@@ -18,15 +20,18 @@ import {
   getLeadJudgeCategory,
   parseDivisionSessions
 } from './lead-judge.graphql';
-import { useUser } from '../../../components/user-context';
-import { JudgingCategory } from '@lems/database';
 
 export default function LeadJudgePage() {
   const t = useTranslations('pages.lead-judge');
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
 
-  const category = getLeadJudgeCategory(roleInfo?.['category'] as string | undefined) as JudgingCategory;
+  const [teamFilter, setTeamFilter] = useState<string>('');
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+
+  const category = getLeadJudgeCategory(
+    roleInfo?.['category'] as string | undefined
+  ) as JudgingCategory;
 
   const subscriptions = useMemo(
     () => [
@@ -38,10 +43,10 @@ export default function LeadJudgePage() {
     ],
     [currentDivision.id]
   );
-  
+
   const { data, loading } = usePageData(
     GET_ALL_JUDGING_SESSIONS,
-    { 
+    {
       divisionId: currentDivision.id
     },
     parseDivisionSessions,
@@ -56,10 +61,24 @@ export default function LeadJudgePage() {
       <Box sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ height: 'fit-content' }}>
           <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 320px' }, minWidth: 0 }}>
-            <RubricStatusSummary sessions={sessions} category={category} loading={loading} />
+            <RubricStatusSummary
+              sessions={sessions}
+              category={category}
+              loading={loading}
+              teamFilter={teamFilter}
+              setTeamFilter={setTeamFilter}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
           </Box>
           <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 auto' }, minWidth: 0 }}>
-            <RubricStatusList sessions={sessions} category={category} loading={loading} />
+            <RubricStatusList
+              sessions={sessions}
+              category={category}
+              loading={loading}
+              teamFilter={teamFilter}
+              statusFilter={statusFilter}
+            />
           </Box>
         </Stack>
       </Box>

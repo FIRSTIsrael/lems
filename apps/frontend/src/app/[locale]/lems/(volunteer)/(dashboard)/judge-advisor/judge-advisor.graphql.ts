@@ -14,8 +14,8 @@ export interface Team {
   name: string;
   affiliation: string;
   city: string;
-  region: string;
   slug: string;
+  region: string;
   logoUrl?: string | null;
   arrived: boolean;
 }
@@ -102,6 +102,7 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
             affiliation
             city
             slug
+            region
             logoUrl
             arrived
           }

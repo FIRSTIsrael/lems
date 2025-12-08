@@ -9,46 +9,44 @@ import {
   CardContent,
   Typography,
   Stack,
-  useTheme
+  useTheme,
+  LinearProgress
 } from '@mui/material';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
-import { JudgingSessionAdvisor } from '../lead-judge.graphql';
-import { RubricStatus } from '@lems/database';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { JudgingSession } from '../lead-judge.graphql';
+import { getRubricStatusStats } from './utils';
 import { SessionFilters } from './session-filters';
 
 interface RubricStatusSummaryProps {
-  sessions: JudgingSessionAdvisor[];
+  sessions: JudgingSession[];
   category: string;
   loading?: boolean;
+  teamFilter: string;
+  setTeamFilter: (value: string) => void;
+  statusFilter: string[];
+  setStatusFilter: (value: string[]) => void;
 }
 
 export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   sessions,
   category,
-  loading = false
+  loading = false,
+  teamFilter,
+  setTeamFilter,
+  statusFilter,
+  setStatusFilter
 }) => {
   const t = useTranslations('pages.lead-judge.summary');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
   const color = getRubricColor(category as JudgingCategory);
-  const stats = useMemo(() => {
-    const statuses = sessions
-      .map(session => session.rubrics[category as keyof typeof session.rubrics]?.status || 'empty' as RubricStatus)
-      .filter(Boolean);
 
-    return {
-      category,
-      label: getCategory(category),
-      empty: statuses.filter(s => s === 'empty').length,
-      draft: statuses.filter(s => s === 'draft').length,
-      inReview: statuses.filter(s => s === 'locked').length,
-      completed: statuses.filter(s => s === 'completed').length,
-      approved: statuses.filter(s => s === 'approved').length,
-      total: statuses.length
-    };
-  }, [sessions, category, getCategory]);
+  const stats = useMemo(
+    () => getRubricStatusStats(sessions, category as JudgingCategory),
+    [sessions, category]
+  );
 
   if (loading) {
     return (
@@ -69,23 +67,28 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   }
 
   return (
-    <Paper sx={{ p: { xs: 2, sm: 2.5 }, borderRadius: 2, height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: 600, fontSize: '0.95rem' }}>
-        {t('title')}
-      </Typography>
-
-      <Box 
-        sx={{ 
-          flex: 1, 
-          display: 'flex', 
-          flexDirection: 'column', 
+    <Paper
+      sx={{
+        p: { xs: 2, sm: 2.5 },
+        borderRadius: 2,
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
+      }}
+    >
+      <Box
+        sx={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'flex-start',
           gap: 2
-          }}>
+        }}
+      >
         <Card
           sx={{
             backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
-            borderLeft: `4px solid ${color}`,
+            borderLeft: `4px solid ${color}`
           }}
         >
           <CardContent sx={{ p: 2, '&:last-child': { pb: 2 } }}>
@@ -98,7 +101,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                 fontSize: '0.9rem'
               }}
             >
-              {stats.label}
+              {getCategory(category as JudgingCategory)} ({stats.total})
             </Typography>
 
             <Stack spacing={0.75}>
@@ -107,7 +110,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                   {t('status.empty')}
                 </Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                  {stats.empty} / {stats.total}
+                  {stats.empty}
                 </Typography>
               </Box>
 
@@ -116,7 +119,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                   {t('status.draft')}
                 </Typography>
                 <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                  {stats.draft} / {stats.total}
+                  {stats.draft}
                 </Typography>
               </Box>
 
@@ -131,32 +134,48 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                     color: stats.completed === stats.total ? '#4caf50' : 'inherit'
                   }}
                 >
-                  {stats.completed} / {stats.total}
+                  {stats.completed + stats.locked}
                 </Typography>
               </Box>
             </Stack>
 
-            <Box
-              sx={{
-                mt: 1.5,
-                height: 6,
-                backgroundColor: theme.palette.action.disabledBackground,
-                borderRadius: 1,
-                overflow: 'hidden'
-              }}
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ mt: 1.5 }}
             >
-              <Box
-                sx={{
-                  height: '100%',
-                  width: `${stats.total > 0 ? (stats.completed / stats.total) * 100 : 0}%`,
+              <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
+                {t('status.approved')}
+              </Typography>
+              <Typography variant="caption" sx={{ fontWeight: 600, mt: 1 }}>
+                {stats.total > 0 ? Math.round((stats.approved / stats.total) * 100) : 0}%
+              </Typography>
+            </Stack>
+
+            <LinearProgress
+              variant="determinate"
+              value={stats.total > 0 ? (stats.approved / stats.total) * 100 : 0}
+              sx={{
+                height: 10,
+                mt: 1,
+                borderRadius: 1,
+                backgroundColor: theme.palette.action.disabledBackground,
+                '& .MuiLinearProgress-bar': {
                   backgroundColor: color,
                   transition: 'width 0.3s ease'
-                }}
-              />
-            </Box>
+                }
+              }}
+            />
           </CardContent>
         </Card>
-        <SessionFilters sessions={sessions} />
+        <SessionFilters
+          sessions={sessions}
+          teamFilter={teamFilter}
+          setTeamFilter={setTeamFilter}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+        />
       </Box>
     </Paper>
   );

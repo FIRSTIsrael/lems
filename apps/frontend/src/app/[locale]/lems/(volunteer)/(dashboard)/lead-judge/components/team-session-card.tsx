@@ -1,34 +1,24 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-  Box,
-  Typography,
-  useTheme,
-  Chip,
-  Stack,
-  Card,
-  CardContent
-} from '@mui/material';
-import { JudgingSessionAdvisor } from '../lead-judge.graphql';
+import { JudgingCategory } from '@lems/types/judging';
+import { useJudgingCategoryTranslations } from '@lems/localization';
+import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
+import { Box, Typography, useTheme, Chip, Stack, Card, CardContent } from '@mui/material';
+import { JudgingSession } from '../lead-judge.graphql';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
-import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingCategory } from '@lems/types/judging';
-import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 
 interface TeamSessionCardProps {
-  session: JudgingSessionAdvisor;
+  session: JudgingSession;
   category: JudgingCategory;
   loading?: boolean;
-  key?: string;
 }
 
 export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
   session,
   category,
-  loading = false,
-  key
+  loading = false
 }) => {
   const t = useTranslations('pages.lead-judge.list');
   const { getCategory } = useJudgingCategoryTranslations();
@@ -70,31 +60,24 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
 
   return (
     <Card
-      key={key}
       sx={{
         backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
         borderLeft: `4px solid ${rubricColor}`
       }}
     >
       <CardContent sx={{ pb: 1, '&:last-child': { pb: 1 } }}>
-        <Stack 
-          direction={'row'} 
-          spacing={2}
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'space-between', 
-            alignItems: 'center',
-            width: '100%'
-          }}>
-          <Stack 
-            direction={'row'} 
-            sx={{ 
+        <Stack direction="row" justifyContent="space-between">
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{
               display: 'flex',
-              gap: 2, 
-              minWidth: 0, 
-              flex: 1 
-              }}>
-            <Box sx={{ flex: 1, minWidth: 0 }}>
+              justifyContent: 'flex-start',
+              alignItems: 'center',
+              width: '100%'
+            }}
+          >
+            <Box>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.5 }}>
                 {t('session')} #{session.number}
               </Typography>
@@ -102,6 +85,17 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
                 {t('room')} - {session.room.name}
               </Typography>
             </Box>
+
+            <Chip
+              label={getSessionStatusLabel(session.status)}
+              size="small"
+              sx={{
+                backgroundColor: getSessionStatusColor(session.status),
+                color: 'white',
+                fontWeight: 600,
+                height: 24
+              }}
+            />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
               <TeamInfoCell team={session.team} />
             </Box>
@@ -113,16 +107,6 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
               status={session.rubrics[category as keyof typeof session.rubrics]?.status || 'empty'}
               label={getCategory(category)}
               teamSlug={session.team.slug}
-            />
-            <Chip
-              label={getSessionStatusLabel(session.status)}
-              size="small"
-              sx={{
-                backgroundColor: getSessionStatusColor(session.status),
-                color: 'white',
-                fontWeight: 600,
-                height: 24
-              }}
             />
           </Box>
         </Stack>

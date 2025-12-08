@@ -1,14 +1,33 @@
-import { Box, MenuItem, Stack, TextField, Typography } from "@mui/material";
-import { useTranslations } from "next-intl";
-import { useFilter } from "../hooks/use-filter";
-import { JudgingSessionAdvisor } from "../lead-judge.graphql";
+import { Box, Stack, TextField, Typography } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { JudgingSession } from '../lead-judge.graphql';
+import { useFilteredSessions } from '../hooks/use-filtered-sessions';
+import { StatusFilterSelector } from './status-filter-selector';
 
-export const SessionFilters : React.FC<{
-  sessions: JudgingSessionAdvisor[];
-}> = ({sessions}) => {
+interface SessionFiltersProps {
+  sessions: JudgingSession[];
+  teamFilter: string;
+  setTeamFilter: (value: string) => void;
+  statusFilter: string[];
+  setStatusFilter: (value: string[]) => void;
+}
+
+export const SessionFilters: React.FC<SessionFiltersProps> = ({
+  sessions,
+  teamFilter,
+  setTeamFilter,
+  statusFilter = [],
+  setStatusFilter
+}) => {
   const t = useTranslations('pages.lead-judge.list');
-  const {teamFilter, setTeamFilter, statusFilter, setStatusFilter, sortedAndFilteredSessions} = useFilter(sessions);
-  
+
+  const filteredSessions = useFilteredSessions(sessions, {
+    teamFilter,
+    statusFilter
+  });
+
+  const sessionStatuses = ['not-started', 'in-progress', 'completed'];
+
   return (
     <Stack direction={'column'} spacing={1.5}>
       <TextField
@@ -19,26 +38,18 @@ export const SessionFilters : React.FC<{
         size="small"
         sx={{ flex: 1, minWidth: 150 }}
       />
-      <TextField
-        select
-        label={t('filter.status')}
-        value={statusFilter}
-        onChange={e => setStatusFilter(e.target.value)}
-        size="small"
-        sx={{ flex: 1, minWidth: 150 }}
-      >
-        <MenuItem value="">{t('filter.all-statuses')}</MenuItem>
-        <MenuItem value="not-started">{t('session-status.not-started')}</MenuItem>
-        <MenuItem value="in-progress">{t('session-status.in-progress')}</MenuItem>
-        <MenuItem value="completed">{t('session-status.completed')}</MenuItem>
-      </TextField>
-      {(teamFilter || statusFilter) && (
+      <StatusFilterSelector
+        statuses={sessionStatuses}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
+      {(teamFilter || statusFilter.length > 0) && (
         <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
           <Typography variant="caption" color="textSecondary">
-            {t('filter.results')}: <strong>{sortedAndFilteredSessions.length}</strong>
+            {t('filter.results')}: <strong>{filteredSessions.length}</strong>
           </Typography>
         </Box>
       )}
     </Stack>
-  )
-}
+  );
+};
