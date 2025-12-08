@@ -33,7 +33,6 @@ export const divisionAgendaResolver: GraphQLFieldResolver<
   try {
     let agendaEvents = await db.divisions.byId(division.id).agenda().getAll();
 
-    // Filter by visibility if specified
     if (args?.visibility && args.visibility.length > 0) {
       agendaEvents = agendaEvents.filter(event =>
         args.visibility!.includes(event.visibility)

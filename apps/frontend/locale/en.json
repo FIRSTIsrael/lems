@@ -210,7 +210,6 @@
       },
       "judging-schedule": {
         "page-title": "Judging Schedule",
-        "description": "Event agenda items for general announcements and judging sessions.",
         "error-loading": "An error occurred while loading the schedule.",
         "no-events": "No agenda events have been scheduled yet.",
         "loading": "Loading schedule...",

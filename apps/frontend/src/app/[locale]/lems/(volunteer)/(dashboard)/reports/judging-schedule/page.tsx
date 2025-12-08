@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Stack, Container, Box, Typography } from '@mui/material';
+import { Stack, Container, Box } from '@mui/material';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
@@ -37,10 +37,6 @@ export default function JudgingSchedulePage() {
           }}
         >
           <Stack spacing={3}>
-            <Typography variant="body1" color="text.secondary">
-              {t('description')}
-            </Typography>
-
             {error && <ErrorState />}
 
             {!error && events.length === 0 && !loading && <EmptyState />}
