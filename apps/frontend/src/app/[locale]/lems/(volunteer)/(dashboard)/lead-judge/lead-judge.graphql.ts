@@ -39,13 +39,13 @@ export interface JudgingSession {
   startDelta?: number;
 }
 
-export interface JudgeAdvisorData {
+export interface LeadJudgeData {
   sessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
 }
 
-type QueryData = { division?: { id: string; judging: JudgeAdvisorData } | null };
+type QueryData = { division?: { id: string; judging: LeadJudgeData } | null };
 type QueryVars = { divisionId: string };
 
 export interface JudgingSessionEvent {
@@ -196,6 +196,13 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 
 export function parseDivisionSessions(queryData: QueryData): JudgingSession[] {
   return queryData?.division?.judging.sessions ?? [];
+}
+
+export function getLeadJudgeCategory(category: string | undefined): string {
+  if (!category) {
+    throw new Error('Lead judge must have a category in roleInfo');
+  }
+  return category.toLowerCase();
 }
 
 function updateJudgingSessions(
