@@ -217,7 +217,7 @@
         "duration-minutes": "{count, plural, one {דקה אחת} other {# דקות}}",
         "visibility": {
           "public": "כללי",
-          "judging": "שופטים"
+          "judging": "שיפוט"
         }
       }
     },

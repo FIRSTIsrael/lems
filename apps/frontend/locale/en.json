@@ -217,7 +217,7 @@
         "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
         "visibility": {
           "public": "General",
-          "judging": "Judges"
+          "judging": "Judging"
         }
       }
     },
