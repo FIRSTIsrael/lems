@@ -169,7 +169,8 @@
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
-        "event-agenda": "לו״ז אירוע"
+        "event-agenda": "לו״ז אירוע",
+        "judging-schedule": "לו״ז שיפוט"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,6 +219,21 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-sessions": "לא נקבעו מפגשי שיפוט.",
+        "loading": "טוען לו״ז...",
+        "arrived": "הגיעה",
+        "not-arrived": "לא הגיעה",
+        "table": {
+          "time": "שעה"
+        },
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט"
         }
       }
     },
