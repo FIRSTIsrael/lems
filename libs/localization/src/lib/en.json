@@ -316,9 +316,6 @@
       "e1": {
         "description": "You cannot have the brush in the forum (M14) and touching the excavation site (M01)."
       },
-      "e2": {
-        "description": "You cannot have the opposing team's minecart in the forum (M14) if it has not been moved to your field (M03)."
-      },
       "e3": {
         "description": "You cannot have the scale pan in the forum (M14) if it has not been completely removed (M10)."
       },

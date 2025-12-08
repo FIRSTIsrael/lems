@@ -208,10 +208,6 @@ export const scoresheet: ScoresheetSchema = {
       if (brushInForum && missions['m01'][1] === false) throw new ScoresheetError('e1');
     },
     missions => {
-      const minecartInForum = ensureArray(missions['m14'][0]).includes('minecart');
-      if (minecartInForum && missions['m03'][1] === false) throw new ScoresheetError('e2');
-    },
-    missions => {
       const scalePanInForum = ensureArray(missions['m14'][0]).includes('scale-pan');
       if (scalePanInForum && missions['m10'][1] === false) throw new ScoresheetError('e3');
     },
