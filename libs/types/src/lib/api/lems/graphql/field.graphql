@@ -1,4 +1,27 @@
 """
+Display screen type for audience display
+"""
+enum AudienceDisplayScreen {
+  scoreboard
+  match_preview
+  sponsors
+  logo
+  message
+  awards
+}
+
+"""
+Audience display configuration
+"""
+type AudienceDisplay {
+  "Currently active display screen"
+  activeDisplay: AudienceDisplayScreen!
+
+  "Settings for each display screen"
+  settings: JSON
+}
+
+"""
 A robot game match in a division
 """
 type Match {
@@ -80,6 +103,9 @@ type Field {
 
   "ID of the currently active match, null if none"
   activeMatch: String
+
+  "Audience display state, null if none"
+  audienceDisplay: AudienceDisplay
 
   "Current stage of the field (PRACTICE or RANKING)"
   currentStage: String!
