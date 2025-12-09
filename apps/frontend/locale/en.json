@@ -452,6 +452,11 @@
     "rubric": {
       "error-not-authorized": "Unauthorized to access rubric",
       "error-team-not-judged": "This team has not completed judging yet"
+    },
+    "scoresheet": {
+      "error-match-not-found": "Match not found",
+      "error-match-not-completed": "Match not completed",
+      "error-not-assigned-to-table": "No permission to access this scoresheet"
     }
   }
 }

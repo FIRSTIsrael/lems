@@ -452,6 +452,11 @@
     "rubric": {
       "error-not-authorized": "אין לך הרשאות לגשת למחוון זה",
       "error-team-not-judged": "הקבוצה עוד לא סיימה את מפגש השיפוט"
+    },
+    "scoresheet": {
+      "error-match-not-found": "מקצה לא נמצא",
+      "error-match-not-completed": "מקצה לא הושלם",
+      "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה"
     }
   }
 }
