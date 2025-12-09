@@ -427,6 +427,9 @@
       "team-info-cell": {
         "not-arrived": "לא הגיעה"
       }
+    },
+    "scoresheet": {
+      "title": "קבוצה #{teamNumber} | סבב {stage} {round}"
     }
   },
   "components": {

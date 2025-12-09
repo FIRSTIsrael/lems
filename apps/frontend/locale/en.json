@@ -427,6 +427,9 @@
       "team-info-cell": {
         "not-arrived": "Not Arrived"
       }
+    },
+    "scoresheet": {
+      "title": "Team #{teamNumber}, {stage} round {round}"
     }
   },
   "components": {
