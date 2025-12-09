@@ -1,0 +1,125 @@
+"""
+Status of a scoresheet evaluation
+"""
+enum ScoresheetStatus {
+  "Scoresheet has not been filled yet"
+  empty
+  "Scoresheet is partially filled"
+  draft
+  "Scoresheet has been completed"
+  completed
+  "Scoresheet is marked for Good Practices rating"
+  gp
+  "Scoresheet has been submitted"
+  submitted
+}
+
+"""
+Stage of a robot game match
+"""
+enum MatchStage {
+  "Practice stage"
+  PRACTICE
+  "Ranking stage"
+  RANKING
+}
+
+"""
+A mission clause value in a scoresheet
+"""
+type MissionClauseValue {
+  "Type of the clause (boolean, enum, or number)"
+  type: String!
+  "The value of the clause (for boolean or numeric types)"
+  value: Boolean
+  "The string value for enum clauses"
+  stringValue: String
+  "The numeric value for number clauses"
+  numericValue: Int
+}
+
+"""
+Mission data in a scoresheet
+"""
+type ScoresheetMission {
+  "Mission identifier"
+  id: String!
+  "Clause values for this mission"
+  clauses: [MissionClauseValue!]!
+}
+
+"""
+Data section of a scoresheet
+"""
+type ScoresheetData {
+  "Mission data organized by mission ID"
+  missions: JSON!
+  "Signature data as encoded PNG string"
+  signature: String
+  "Good Practices rating"
+  gp: GraciousProfessionalismRating
+  "Total score for the match"
+  score: Int!
+}
+
+"""
+Good Practices rating data
+"""
+type GraciousProfessionalismRating {
+  "Rating value (2-4)"
+  value: Int
+  "Optional notes about the rating if value is 2 or 4"
+  notes: String
+}
+
+"""
+A scoresheet evaluation for a team in a specific match
+"""
+type Scoresheet {
+  "Unique identifier for the scoresheet"
+  id: String!
+
+  "The team being evaluated"
+  team: Team!
+
+  "Division this scoresheet belongs to"
+  divisionId: String!
+
+  "URL-friendly slug for the scoresheet (e.g., 'P1' for practice round 1, 'R2' for ranking round 2)"
+  slug: String!
+
+  "Stage of the match (PRACTICE or RANKING)"
+  stage: MatchStage!
+
+  "Round number"
+  round: Int!
+
+  "Current status of the scoresheet"
+  status: ScoresheetStatus!
+
+  "Whether this scoresheet has been escalated"
+  escalated: Boolean
+
+  "Scoresheet data including scores and mission values"
+  data: ScoresheetData
+}
+
+extend type Field {
+  "Scoresheets in this division, optionally filtered"
+  scoresheets(
+    "Filter scoresheets by their IDs"
+    ids: [String!]
+
+    "Filter scoresheets by team IDs"
+    teamIds: [String!]
+
+    "Filter scoresheets by slug (e.g., 'P1', 'R2')"
+    slug: String
+
+    "Filter scoresheets by stage (PRACTICE, RANKING)"
+    stage: MatchStage
+
+    "Filter scoresheets by round number"
+    round: Int
+  ): [Scoresheet!]!
+}
