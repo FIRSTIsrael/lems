@@ -79,7 +79,7 @@ jobs:
     
     steps:
       - name: Deploy to DigitalOcean Droplet
-        uses: appleboy/ssh-action@25ce8cbbcb08177468c7ff7ec5cbfa236f9341e1 # v1.2.0
+        uses: appleboy/ssh-action@v1.2.4
         env:
           # Metadata
           REGISTRY: ${{ env.REGISTRY }}
