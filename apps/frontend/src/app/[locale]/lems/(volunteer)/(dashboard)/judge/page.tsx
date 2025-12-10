@@ -10,7 +10,7 @@ import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import SoundTestDialog from '../components/sound-test-dialog';
+import { SoundTestDialog } from '../components/sound-test-dialog';
 import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscription,

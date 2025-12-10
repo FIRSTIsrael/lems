@@ -6,10 +6,10 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
 const config = defineConfig([
-  ...nextCoreWebVitals,
-  ...nextTs,
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  ...nextCoreWebVitals,
+  ...nextTs,
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     settings: {
@@ -48,7 +48,10 @@ const config = defineConfig([
       'no-unused-vars': 'off', // Use TypeScript version instead
       'no-undef': 'off', // TypeScript handles this
 
-      "@next/next/no-html-link-for-pages": ["error", "apps/frontend", "apps/admin", "apps/portal"],
+      '@next/next/no-html-link-for-pages': [
+        'error',
+        ['apps/frontend', 'apps/admin', 'apps/portal']
+      ],
 
       // Nx rules
       '@nx/enforce-module-boundaries': [
@@ -101,6 +104,7 @@ const config = defineConfig([
     '**/.next',
     'apps/backend/webpack.config.js',
     './eslint.config.mjs',
+    '**/next-env.d.ts',
     '**/dist',
     '**/build',
     '**/out',

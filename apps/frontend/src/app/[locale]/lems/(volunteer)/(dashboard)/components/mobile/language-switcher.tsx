@@ -1,6 +1,6 @@
 'use client';
 
-import * as React from 'react';
+import { useCallback, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { Typography, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import { alpha, lighten, useTheme } from '@mui/material/styles';
@@ -17,7 +17,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
   const theme = useTheme();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const submenuOpen = Boolean(anchorEl);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -28,12 +28,15 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
     setAnchorEl(null);
   };
 
-  const handleLanguageChange = (locale: Locale) => {
-    handleClose();
-    document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
-    router.refresh();
-    onClose?.();
-  };
+  const handleLanguageChange = useCallback(
+    (locale: Locale) => {
+      handleClose();
+      document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+      router.refresh();
+      onClose?.();
+    },
+    [onClose, router]
+  );
 
   const direction = Locales[currentLocale].direction;
 
