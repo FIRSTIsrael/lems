@@ -1,77 +1,30 @@
+import { defineConfig, globalIgnores } from 'eslint/config';
+import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 import nx from '@nx/eslint-plugin';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactPlugin from 'eslint-plugin-react';
-import importPlugin from 'eslint-plugin-import';
-import nextEslint from '@next/eslint-plugin-next';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 
-export default [
-  {
-    ignores: [
-      '**/node_modules',
-      '**/.next',
-      'apps/backend/webpack.config.js',
-      './eslint.config.mjs',
-      '**/dist',
-      '**/build',
-      '**/out',
-      '**/coverage',
-      '**/.turbo',
-      '**/.cache',
-      '**/.vercel',
-      '**/.idea',
-      '**/.vscode',
-      '**/.git'
-    ]
-  },
+const config = defineConfig([
+  ...nextCoreWebVitals,
+  ...nextTs,
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    plugins: {
-      '@nx': nx,
-      'react-hooks': reactHooks,
-      react: reactPlugin,
-      import: importPlugin,
-      '@next/next': nextEslint,
-      'jsx-a11y': jsxA11y
-    },
-    languageOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
-      globals: {
-        console: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        setInterval: 'readonly',
-        clearInterval: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        global: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        exports: 'writable',
-        module: 'writable',
-        require: 'readonly'
-      },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true
-        }
-      }
-    },
+    files: ['**/*.{js,jsx,ts,tsx}'],
     settings: {
-      'import/resolver': {
-        typescript: true,
-        node: true
-      },
-      react: {
-        version: 'detect'
+      next: {
+        rootDir: ['apps/frontend/', 'apps/admin/', 'apps/portal/']
       }
+    }
+  },
+  {
+    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
+    plugins: {
+      '@nx': nx
     },
     rules: {
-      // React Hooks rules
+      // React Hooks rules - must be explicit to override inherited configs
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
 
@@ -93,12 +46,11 @@ export default [
 
       // Override some base rules for TypeScript
       'no-unused-vars': 'off', // Use TypeScript version instead
-      'no-undef': 'off' // TypeScript handles this
-    }
-  },
-  {
-    files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx'],
-    rules: {
+      'no-undef': 'off', // TypeScript handles this
+
+      "@next/next/no-html-link-for-pages": ["error", "apps/frontend", "apps/admin", "apps/portal"],
+
+      // Nx rules
       '@nx/enforce-module-boundaries': [
         'error',
         {
@@ -115,11 +67,9 @@ export default [
     }
   },
   {
-    files: ['**/*.jsx', '**/*.tsx'],
+    files: ['**/*.tsx', '**/*.jsx'],
     rules: {
-      // JSX Accessibility rules
-      ...jsxA11y.configs.recommended.rules,
-
+      // JSX Accessibility rules are already configured by next-core-web-vitals
       'jsx-a11y/anchor-is-valid': [
         'error',
         {
@@ -137,7 +87,7 @@ export default [
   {
     files: ['**/*.ts', '**/*.tsx'],
     rules: {
-      // TypeScript-specific rules are already handled by typescript-eslint configs
+      // TypeScript-specific rules - placed after base configs to override
       '@typescript-eslint/no-unused-vars': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn'
     }
@@ -145,5 +95,23 @@ export default [
   {
     files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
     rules: {}
-  }
-];
+  },
+  globalIgnores([
+    '**/node_modules',
+    '**/.next',
+    'apps/backend/webpack.config.js',
+    './eslint.config.mjs',
+    '**/dist',
+    '**/build',
+    '**/out',
+    '**/coverage',
+    '**/.turbo',
+    '**/.cache',
+    '**/.vercel',
+    '**/.idea',
+    '**/.vscode',
+    '**/.git'
+  ])
+]);
+
+export default config;
