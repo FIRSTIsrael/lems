@@ -10,7 +10,7 @@
     "scheduler": "run-script-os",
     "scheduler:win32": "cd apps/scheduler/src && python -m fastapi dev main.py && cd --",
     "scheduler:linux:darwin": "cd apps/scheduler/src && python3 -m fastapi dev main.py && cd --",
-    "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal,admin",
+    "lint": "npx nx run-many --target=lint --projects=backend,frontend,portal,admin,database,shared,presentations,types,localization",
     "migrate": "npx nx build database && node dist/libs/database/src/scripts/run-migrations.js"
   },
   "private": true,
