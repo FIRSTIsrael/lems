@@ -8,7 +8,7 @@ const publicPages = ['/login'];
 
 const handleI18nRouting = createMiddleware(routing);
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const response = handleI18nRouting(request);
   const { nextUrl } = request;
   const { basePath } = nextUrl;
