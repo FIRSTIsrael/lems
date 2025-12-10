@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import {
@@ -33,7 +33,7 @@ import { getUrl, highlightText } from './utils';
 export const SearchSection = () => {
   const t = useTranslations('pages.index.search');
   const theme = useTheme();
-  const anchorRef = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
 
   const { query, setQuery, searchResults, isValid, isSearching, clearSearch, error } = useSearch();
 
@@ -61,7 +61,7 @@ export const SearchSection = () => {
             {t('title')}
           </Typography>
 
-          <Box ref={anchorRef} sx={{ position: 'relative' }}>
+          <Box ref={setAnchorEl} sx={{ position: 'relative' }}>
             <TextField
               fullWidth
               placeholder={t('placeholder')}
@@ -102,9 +102,9 @@ export const SearchSection = () => {
 
             <Popper
               open={!!query && (isValid || isSearching)}
-              anchorEl={anchorRef.current}
+              anchorEl={anchorEl}
               placement="bottom-start"
-              style={{ width: anchorRef.current?.offsetWidth, zIndex: 1300 }}
+              style={{ width: anchorEl?.offsetWidth, zIndex: 1300 }}
             >
               <Paper
                 sx={{

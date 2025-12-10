@@ -36,7 +36,7 @@ export const NavSearch = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  const anchorRef = React.useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLDivElement | null>(null);
   const { query, setQuery, searchResults, isValid, isSearching, clearSearch, error } = useSearch();
 
   const noResults = searchResults.length === 0 && isValid && !isSearching && !error;
@@ -57,7 +57,7 @@ export const NavSearch = () => {
 
   return (
     <ClickAwayListener onClickAway={clearSearch}>
-      <Box ref={anchorRef} flexShrink={1} display="flex" alignItems="center" sx={containerStyle}>
+      <Box ref={setAnchorEl} flexShrink={1} display="flex" alignItems="center" sx={containerStyle}>
         <TextField
           fullWidth
           size="small"
@@ -94,9 +94,9 @@ export const NavSearch = () => {
 
         <Popper
           open={!!query && (isValid || isSearching)}
-          anchorEl={anchorRef.current}
+          anchorEl={anchorEl}
           placement="bottom-start"
-          style={{ width: anchorRef.current?.offsetWidth, zIndex: 1300 }}
+          style={{ width: anchorEl?.offsetWidth, zIndex: 1300 }}
         >
           <Paper
             sx={{

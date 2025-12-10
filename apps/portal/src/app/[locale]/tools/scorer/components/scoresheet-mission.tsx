@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import Image from 'next/image';
 import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
@@ -18,18 +18,20 @@ interface ScoresheetMissionProps {
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
   const theme = useTheme();
-  const ref = useRef<HTMLDivElement | null>(null);
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
   const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
   const [missionWidth, setMissionWidth] = useState(0);
 
-  useLayoutEffect(() => {
-    setMissionWidth(ref.current?.offsetWidth || 0);
-  }, []);
+  // Use callback ref to measure width when element mounts
+  const measureRef = (node: HTMLDivElement | null) => {
+    if (node) {
+      setMissionWidth(node.offsetWidth);
+    }
+  };
 
   return (
     <Grid component={Paper} container pb={2} id={mission.id}>
-      <Grid container size={{ xs: 12, md: 8 }} ref={ref}>
+      <Grid container size={{ xs: 12, md: 8 }} ref={measureRef}>
         <Grid
           py={1}
           size={2}

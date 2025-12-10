@@ -1,4 +1,4 @@
-const importImages = (requireContext: any) => {
+const importImages = (requireContext: __WebpackModuleApi.RequireContext) => {
   //RequireContext is not exported (webpack) so we ned to use any
   const images: { [key: string]: string } = {};
   requireContext.keys().map((item: string) => {

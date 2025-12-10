@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridActionsCellItem, GridActionsCell } from '@mui/x-data-grid';
 import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
@@ -77,28 +77,28 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
     },
     ...((hasMultipleDivisions
       ? [
-        {
-          field: 'division',
-          headerName: t('columns.division'),
-          width: 140,
-          sortable: true,
-          renderCell: params => (
-            <Chip
-              label={params.row.division.name}
-              size="small"
-              sx={{
-                backgroundColor: params.row.division.color,
-                color: 'white',
-                fontWeight: 'bold',
-                '& .MuiChip-label': {
-                  px: 1
-                }
-              }}
-            />
-          ),
-          valueGetter: (value, row) => row.division.name
-        }
-      ]
+          {
+            field: 'division',
+            headerName: t('columns.division'),
+            width: 140,
+            sortable: true,
+            renderCell: params => (
+              <Chip
+                label={params.row.division.name}
+                size="small"
+                sx={{
+                  backgroundColor: params.row.division.color,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  '& .MuiChip-label': {
+                    px: 1
+                  }
+                }}
+              />
+            ),
+            valueGetter: (value, row) => row.division.name
+          }
+        ]
       : []) as GridColDef[]),
     {
       field: 'name',
@@ -124,23 +124,26 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       headerName: t('columns.actions'),
       width: 120,
       sortable: false,
-      getActions: params => [
-        <GridActionsCellItem
-          key="edit"
-          icon={<Edit />}
-          label="Edit team"
-          // eslint-disable-next-line no-constant-binary-expression
-          disabled={true || divisionsWithSchedule.has(params.row.division.id)}
-          onClick={() => {
-            // TODO: Implement edit functionality
-            console.log('Edit team:', params.row.id);
-          }}
-        />,
-        <RemoveTeamButton
-          team={params.row}
-          disabled={divisionsWithSchedule.has(params.row.division.id)}
-        />
-      ]
+      renderCell: params => (
+        <GridActionsCell {...params}>
+          <GridActionsCellItem
+            key="edit"
+            icon={<Edit />}
+            label="Edit team"
+            // eslint-disable-next-line no-constant-binary-expression
+            disabled={true || divisionsWithSchedule.has(params.row.division.id)}
+            onClick={() => {
+              // TODO: Implement edit functionality
+              console.log('Edit team:', params.row.id);
+            }}
+          />
+          ,
+          <RemoveTeamButton
+            team={params.row}
+            disabled={divisionsWithSchedule.has(params.row.division.id)}
+          />
+        </GridActionsCell>
+      )
     }
   ];
 

@@ -32,8 +32,16 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'emojicdn.elk.sh'
       }
-    ]
-  }
+    ],
+    localPatterns: [
+      {
+        pathname: '/assets/**',
+        search: '?v=1'
+      }
+    ],
+  },
+
+  reactCompiler: true
 };
 
 const plugins = [
