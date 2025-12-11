@@ -33,7 +33,7 @@
     "@mui/material-nextjs": "^7.3.6",
     "@mui/stylis-plugin-rtl": "^7.3.6",
     "@mui/x-data-grid": "^8.21.0",
-    "@mui/x-date-pickers": "^8.21.0",
+    "@mui/x-date-pickers": "^8.22.0",
     "@uiw/react-color": "^2.9.2",
     "axios": "^1.13.2",
     "bcrypt": "^6.0.0",
