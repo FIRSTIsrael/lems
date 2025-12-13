@@ -1,5 +1,5 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb, Filter } from 'mongodb';
+import { Db as MongoDb, Filter, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { Rubric, JudgingCategory } from '../schema/documents/rubric';
 
@@ -87,7 +87,7 @@ class RubricsSelector {
     return { ...baseFilter, ...this.additionalFilters };
   }
 
-  async getAll(): Promise<Rubric[]> {
+  async getAll(): Promise<WithId<Rubric>[]> {
     const filter = await this.buildFilter();
     return await this.mongo.collection<Rubric>('rubrics').find(filter).toArray();
   }

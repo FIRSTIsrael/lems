@@ -47,7 +47,7 @@ export async function authorizeRubricAccess(
     );
   }
 
-  const rubric = await db.raw.mongo.collection<Rubric>('rubrics').findOne({ _id: rubricId });
+  const rubric = await db.raw.mongo.collection<Rubric>('rubrics').findOne({ _id: rubricObjectId });
 
   if (!rubric) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Rubric ${rubricId} not found`);
