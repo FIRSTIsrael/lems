@@ -28,11 +28,13 @@ export const LoadMatchButton = () => {
         size="small"
         fullWidth
         disabled={!matchToLoad}
-        onClick={() =>
+        onClick={() => {
+          if (!matchToLoad) return;
+
           loadMatch({
-            variables: { divisionId: currentDivision.id, matchId: matchToLoad!.id }
-          })
-        }
+            variables: { divisionId: currentDivision.id, matchId: matchToLoad.id }
+          });
+        }}
         startIcon={<StartRounded sx={{ fontSize: '1.1rem' }} />}
         sx={{ py: 0.75, fontSize: '0.875rem', fontWeight: 500 }}
       >
