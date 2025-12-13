@@ -35,10 +35,9 @@ const nextConfig = {
     ],
     localPatterns: [
       {
-        pathname: '/assets/**',
-        search: '?v=1'
+        pathname: '/assets/**'
       }
-    ],
+    ]
   },
 
   reactCompiler: true

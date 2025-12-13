@@ -11,7 +11,6 @@ const nextConfig = {
   nx: {},
 
   output: 'standalone',
-  
 
   reactStrictMode: true,
 
@@ -25,7 +24,7 @@ const nextConfig = {
 
   transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
 
-    images: {
+  images: {
     remotePatterns: [
       {
         protocol: 'https',
@@ -34,10 +33,9 @@ const nextConfig = {
     ],
     localPatterns: [
       {
-        pathname: '/assets/**',
-        search: '?v=1'
+        pathname: '/assets/**'
       }
-    ],
+    ]
   },
 
   reactCompiler: true
