@@ -24,18 +24,22 @@ const nextConfig = {
 
   transpilePackages: ['@mui/x-data-grid', '@mui/material-nextjs'],
 
-  images: {
+    images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.nyc3.digitaloceanspaces.com'
-      },
       {
         protocol: 'https',
         hostname: 'emojicdn.elk.sh'
       }
-    ]
-  }
+    ],
+    localPatterns: [
+      {
+        pathname: '/assets/**',
+        search: '?v=1'
+      }
+    ],
+  },
+
+  reactCompiler: true
 };
 
 const plugins = [

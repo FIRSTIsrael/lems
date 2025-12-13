@@ -28,7 +28,7 @@ export type DeckContextType = {
   cancelTransition(): void;
 };
 
-export const DeckContext = createContext<DeckContextType>(null as any);
+export const DeckContext = createContext<DeckContextType>(null as never);
 
 export interface DeckProps {
   id?: string | number;
@@ -129,7 +129,6 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
           slideCount: slideIds.length,
           slideIds,
           navigationDirection,
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
           slidePortalNode: slidePortalNode!,
           initialized: fullyInitialized,
           activeView: {
@@ -155,6 +154,8 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
     );
   }
 );
+
+Deck.displayName = 'Deck';
 
 export type DeckRef = Omit<
   DeckStateAndActions,

@@ -18,6 +18,8 @@ export const useTime = ({ interval: intervalMilliseconds }: UseTimeOptions = {})
 
   useEffect(() => {
     // Update time immediately when offset changes
+    // This syncs with an external state -> It's OK
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCurrentTime(dayjs().add(offset, 'milliseconds'));
 
     // Set up interval updates if specified

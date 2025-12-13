@@ -48,7 +48,7 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
   );
 
   return useMemo(() => {
-    if (!roleInfoType || !volunteerData?.volunteers) return [];
+    if (!divisionData?.division || !roleInfoType || !volunteerData?.volunteers) return [];
 
     let allOptions: RoleInfoOption[] = [];
 
@@ -74,5 +74,5 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
       volunteerData.volunteers.map(v => getRoleInfoValue(v.roleInfo))
     );
     return allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
-  }, [roleInfoType, volunteerData?.volunteers, divisionData, getCategory]);
+  }, [divisionData, getCategory, roleInfoType, volunteerData]);
 };
