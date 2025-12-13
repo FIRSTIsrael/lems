@@ -22,7 +22,7 @@ import {
   scoresheetTeamResolver,
   scoresheetDataResolver,
   scoresheetResolvers
-} from './judging/scoresheet';
+} from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
@@ -140,15 +140,6 @@ export const resolvers = {
       if ('feedback' in obj) return 'RubricFeedbackUpdated';
       if ('status' in obj) return 'RubricStatusUpdated';
       if ('awards' in obj) return 'RubricAwardsUpdated';
-      return null;
-    }
-  },
-  MissionClauseValue: {
-    __resolveType(obj: Record<string, unknown>) {
-      const type = obj.type as string | undefined;
-      if (type === 'boolean') return 'BooleanClauseValue';
-      if (type === 'enum') return 'EnumClauseValue';
-      if (type === 'number') return 'NumberClauseValue';
       return null;
     }
   }

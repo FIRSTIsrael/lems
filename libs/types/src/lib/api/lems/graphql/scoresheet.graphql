@@ -25,41 +25,6 @@ enum MatchStage {
 }
 
 """
-A mission clause value in a scoresheet (boolean variant)
-"""
-type BooleanClauseValue {
-  "Type of the clause"
-  type: String!
-  "The boolean value"
-  value: Boolean!
-}
-
-"""
-A mission clause value in a scoresheet (enum/string variant)
-"""
-type EnumClauseValue {
-  "Type of the clause"
-  type: String!
-  "The string value"
-  value: String!
-}
-
-"""
-A mission clause value in a scoresheet (numeric variant)
-"""
-type NumberClauseValue {
-  "Type of the clause"
-  type: String!
-  "The numeric value"
-  value: Int!
-}
-
-"""
-Union type for mission clause values - can be boolean, enum, or number
-"""
-union MissionClauseValue = BooleanClauseValue | EnumClauseValue | NumberClauseValue
-
-"""
 Data section of a scoresheet
 """
 type ScoresheetData {
@@ -145,8 +110,8 @@ type ScoresheetMissionClauseUpdated {
   missionId: String!
   "The index of the clause within the mission"
   clauseIndex: Int!
-  "The new value for the clause"
-  value: MissionClauseValue!
+  "The new value for the clause as JSON (discriminated union: boolean, string, or number based on type)"
+  value: JSON!
   "Event version for subscription recovery tracking"
   version: Int!
 }

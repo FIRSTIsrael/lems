@@ -121,10 +121,7 @@ export const UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION: TypedDocumentNode<
       scoresheetId
       missionId
       clauseIndex
-      value {
-        type
-        value
-      }
+      value
       version
     }
   }

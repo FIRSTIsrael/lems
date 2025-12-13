@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../database';
 import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
+import { toGraphQLId } from '../../utils/object-id-transformer';
 import { ScoresheetGraphQL } from '../../utils/scoresheet-builder';
 
 /**
@@ -42,7 +43,7 @@ export const scoresheetResolvers = {
     if (!scoresheet.id) {
       throw new Error('Scoresheet ID is missing');
     }
-    return scoresheet.id;
+    return toGraphQLId(scoresheet.id);
   }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, string>,
 
   slug: ((scoresheet: ScoresheetGraphQL) => {

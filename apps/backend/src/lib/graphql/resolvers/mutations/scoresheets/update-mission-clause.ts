@@ -8,9 +8,9 @@ import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeScoresheetAccess, assertScoresheetEditable } from './utils';
 
 type MissionClauseValueOutput =
-  | { __typename: 'BooleanClauseValue'; type: 'boolean'; value: boolean }
-  | { __typename: 'EnumClauseValue'; type: 'enum'; value: string }
-  | { __typename: 'NumberClauseValue'; type: 'number'; value: number };
+  | { type: 'boolean'; value: boolean }
+  | { type: 'enum'; value: string }
+  | { type: 'number'; value: number };
 
 type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
@@ -99,18 +99,11 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   // Publish the update event
   const pubSub = getRedisPubSub();
 
-  const typeNameMap: Record<string, string> = {
-    boolean: 'BooleanClauseValue',
-    enum: 'EnumClauseValue',
-    number: 'NumberClauseValue'
-  };
-
   const eventPayload: ScoresheetMissionClauseUpdatedEvent = {
     scoresheetId,
     missionId,
     clauseIndex,
     value: {
-      __typename: typeNameMap[clause.type],
       type: clause.type,
       value: actualValue
     } as MissionClauseValueOutput,
