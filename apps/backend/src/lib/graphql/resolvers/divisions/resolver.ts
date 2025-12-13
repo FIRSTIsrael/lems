@@ -1,4 +1,4 @@
-import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { ResolverError, ResolverErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
@@ -14,18 +14,18 @@ export const divisionResolver = async (
 ) => {
   // Check authentication
   if (!context.user) {
-    throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+    throw new ResolverError(ResolverErrorCode.UNAUTHORIZED, 'Authentication required');
   }
 
   // Check division assignment
   if (!args.id) {
-    throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Division ID is required');
+    throw new ResolverError(ResolverErrorCode.UNAUTHORIZED, 'Division ID is required');
   }
 
   // Check if user is assigned to the requested division
   if (!context.user.divisions.includes(args.id)) {
-    throw new MutationError(
-      MutationErrorCode.FORBIDDEN,
+    throw new ResolverError(
+      ResolverErrorCode.FORBIDDEN,
       'User is not assigned to this division'
     );
   }
@@ -34,8 +34,8 @@ export const divisionResolver = async (
     const division = await db.divisions.byId(args.id).get();
 
     if (!division) {
-      throw new MutationError(
-        MutationErrorCode.UNAUTHORIZED,
+      throw new ResolverError(
+        ResolverErrorCode.UNAUTHORIZED,
         `Division with ID ${args.id} not found`
       );
     }

@@ -1,9 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
-import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import type { GraphQLContext } from '../../../apollo-server';
-import db from '../../../../database';
 import { buildRubricResult, RubricGraphQL } from '../../../utils/rubric-builder';
+import db from '../../../../database';
 
 interface JudgingWithDivisionId {
   divisionId: string;
@@ -14,8 +12,6 @@ interface RubricsArgs {
   category?: string;
 }
 
-const allowedRoles = new Set(['judge', 'lead-judge', 'judge-advisor']);
-
 /**
  * Resolver for Judging.rubrics field.
  * Fetches rubrics for teams in a division, optionally filtered by team IDs or category.
@@ -23,32 +19,11 @@ const allowedRoles = new Set(['judge', 'lead-judge', 'judge-advisor']);
  */
 export const judgingRubricsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
-  GraphQLContext,
+  unknown,
   RubricsArgs,
   Promise<RubricGraphQL[]>
-> = async (judging: JudgingWithDivisionId, args: RubricsArgs, context: GraphQLContext) => {
+> = async (judging: JudgingWithDivisionId, args: RubricsArgs) => {
   try {
-    // Check authentication
-    if (!context.user) {
-      throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
-    }
-
-    // Check authorization
-    if (!allowedRoles.has(context.user.role)) {
-      throw new MutationError(
-        MutationErrorCode.FORBIDDEN,
-        'User does not have permission to view rubrics.'
-      );
-    }
-
-    // Check division assignment
-    if (!context.user.divisions.includes(judging.divisionId)) {
-      throw new MutationError(
-        MutationErrorCode.FORBIDDEN,
-        'User is not assigned to this division'
-      );
-    }
-
     let rubricsSelector = db.rubrics.byDivision(judging.divisionId);
 
     // Apply category filter if provided
