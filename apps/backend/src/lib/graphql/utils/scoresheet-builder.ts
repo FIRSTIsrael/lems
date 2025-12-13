@@ -1,4 +1,5 @@
 import { Scoresheet as DbScoresheet } from '@lems/database';
+import { WithId } from 'mongodb';
 
 /**
  * Generates a slug for a scoresheet based on its stage and round number.
@@ -43,7 +44,7 @@ export interface ScoresheetGraphQL {
 /**
  * Helper function to build a ScoresheetGraphQL object from a database scoresheet.
  */
-export function buildScoresheetResult(scoresheet: DbScoresheet): ScoresheetGraphQL {
+export function buildScoresheetResult(scoresheet: WithId<DbScoresheet>): ScoresheetGraphQL {
   return {
     id: scoresheet._id?.toString(),
     divisionId: scoresheet.divisionId,

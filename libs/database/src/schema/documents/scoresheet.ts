@@ -6,7 +6,6 @@ interface MissionClause {
 }
 
 export interface Scoresheet {
-  _id?: string; // MongoDB ObjectId
   divisionId: string;
   teamId: string;
   stage: 'PRACTICE' | 'RANKING';

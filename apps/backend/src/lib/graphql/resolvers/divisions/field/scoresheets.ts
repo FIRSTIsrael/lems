@@ -32,7 +32,7 @@ export const fieldScoresheetsResolver: GraphQLFieldResolver<
   try {
     // Get all scoresheets for the division
     const scoresheets = await db.raw.mongo
-      .collection('scoresheets')
+      .collection<Scoresheet>('scoresheets')
       .find({ divisionId: field.divisionId })
       .toArray();
 
@@ -68,7 +68,7 @@ export const fieldScoresheetsResolver: GraphQLFieldResolver<
       filteredScoresheets = filteredScoresheets.filter(s => s.round === args.round);
     }
 
-    return filteredScoresheets.map(s => buildScoresheetResult(s as unknown as Scoresheet));
+    return filteredScoresheets.map(s => buildScoresheetResult(s));
   } catch (error) {
     console.error('Error fetching scoresheets for division:', field.divisionId, error);
     throw error;

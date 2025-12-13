@@ -43,16 +43,14 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   UpdateScoresheetMissionClauseArgs,
   Promise<ScoresheetMissionClauseUpdatedEvent>
 > = async (_root, { divisionId, scoresheetId, missionId, clauseIndex, value }, context) => {
-  const { scoresheet: scoresheetData, scoresheetObjectId } = await authorizeScoresheetAccess(
+  const { scoresheet: dbScoresheet, scoresheetObjectId } = await authorizeScoresheetAccess(
     context,
     divisionId,
     scoresheetId
   );
-
-  const status = (scoresheetData.status as string) || 'empty';
+  const status = (dbScoresheet.status as string) || 'empty';
   assertScoresheetEditable(status, context.user?.role);
 
-  // Find the mission in the schema to validate the clause
   const mission = scoresheet.missions.find(m => m.id === missionId);
   if (!mission) {
     throw new MutationError(
@@ -70,20 +68,30 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
 
   const clause = mission.clauses[clauseIndex];
 
-  // Extract the actual value from the input
   const actualValue = value.value;
 
-  // Validate the value based on clause type
   validateClauseValue(clause, actualValue);
+
+  // Calculate points
+  const { data = {} } = dbScoresheet;
+  if (!('missions' in data)) {
+    // Shoresheet had no data. We are initializing it now.
+    // TODO: update status
+  }
+  data['missions'][missionId]['clauses'][clauseIndex] = {
+    // Type + Value
+  };
+  const points = calculateScore(data);
 
   const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
     { _id: scoresheetObjectId },
     {
       $set: {
-        [`data.missions.${missionId}.clauses.${clauseIndex}`]: {
+        [`data.missions.${missionId}.clauses.[${clauseIndex}]`]: {
           type: clause.type,
           value: actualValue
-        }
+        },
+        'data.score': points
       }
     },
     { returnDocument: 'after' }
@@ -179,4 +187,28 @@ function validateClauseValue(
         `Unknown clause type: ${clause.type}`
       );
   }
+}
+
+/**
+ * Calculates the total score based on mission values
+ */
+function calculateScore(missions: Record<string, any>): number {
+  let points = 0;
+
+  scoresheet.missions.forEach(mission => {
+    const clauses = missions[mission.id];
+    if (!clauses) {
+      return;
+    }
+
+    const clauseValues = clauses.map((clause: any) => clause.value);
+    try {
+      points += mission.calculation(...clauseValues);
+    } catch (error) {
+      // Silently handle calculation errors, score will be partial
+      console.error(`Error calculating score for mission ${mission.id}:`, error);
+    }
+  });
+
+  return points;
 }

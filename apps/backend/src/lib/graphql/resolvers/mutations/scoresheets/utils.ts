@@ -14,7 +14,7 @@ export async function authorizeScoresheetAccess(
   context: GraphQLContext,
   divisionId: string,
   scoresheetId: string
-): Promise<{ scoresheet: Record<string, unknown>; scoresheetObjectId: ObjectId }> {
+): Promise<{ scoresheet: Scoresheet; scoresheetObjectId: ObjectId }> {
   if (!context.user) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
   }
@@ -48,7 +48,7 @@ export async function authorizeScoresheetAccess(
 
   const scoresheet = await db.raw.mongo
     .collection<Scoresheet>('scoresheets')
-    .findOne({ _id: scoresheetId });
+    .findOne({ _id: scoresheetObjectId });
 
   if (!scoresheet) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Scoresheet ${scoresheetId} not found`);
