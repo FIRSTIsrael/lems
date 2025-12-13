@@ -15,6 +15,7 @@ import { RobotGameMatchesRepository } from './repositories/robot-game-matches';
 import { AwardsRepository } from './repositories/awards';
 import { EventUsersRepository } from './repositories/event-users';
 import { RubricsRepository } from './repositories/rubrics';
+import { ScoresheetsRepository } from './repositories/scoresheets';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -64,6 +65,7 @@ export class Database {
 
   public tables: TablesRepository;
   public robotGameMatches: RobotGameMatchesRepository;
+  public scoresheets: ScoresheetsRepository;
 
   public awards: AwardsRepository;
 
@@ -127,6 +129,7 @@ export class Database {
 
     this.tables = new TablesRepository(this.kysely);
     this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
+    this.scoresheets = new ScoresheetsRepository(this.kysely, this.mongoDb);
 
     this.awards = new AwardsRepository(this.kysely);
   }
