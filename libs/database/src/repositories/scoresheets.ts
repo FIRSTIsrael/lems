@@ -1,5 +1,5 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb, Filter } from 'mongodb';
+import { Db as MongoDb, Filter, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { Scoresheet } from '../schema/documents/scoresheet';
 
@@ -9,7 +9,7 @@ class ScoresheetSelector {
     private filter: Filter<Scoresheet>
   ) {}
 
-  async get(): Promise<Scoresheet | null> {
+  async get(): Promise<WithId<Scoresheet> | null> {
     return await this.mongo.collection<Scoresheet>('scoresheets').findOne(this.filter);
   }
 

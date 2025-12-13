@@ -7,22 +7,12 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeScoresheetAccess, assertScoresheetEditable } from './utils';
 
-type MissionClauseValueOutput =
-  | { type: 'boolean'; value: boolean }
-  | { type: 'enum'; value: string }
-  | { type: 'number'; value: number };
-
 type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: MissionClauseValueOutput;
+  value: boolean | string | number | null;
   version: number;
-};
-
-type MissionClauseValueInput = {
-  type: string;
-  value: boolean | string | number;
 };
 
 interface UpdateScoresheetMissionClauseArgs {
@@ -30,7 +20,7 @@ interface UpdateScoresheetMissionClauseArgs {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: MissionClauseValueInput;
+  value: boolean | string | number | null;
 }
 
 /**
@@ -68,29 +58,26 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
 
   const clause = mission.clauses[clauseIndex];
 
-  const actualValue = value.value;
-
-  validateClauseValue(clause, actualValue);
+  validateClauseValue(clause, value);
 
   // Calculate points
   const { data = {} } = dbScoresheet;
   if (!('missions' in data)) {
-    // Shoresheet had no data. We are initializing it now.
+    // Scoresheet had no data. We are initializing it now.
     // TODO: update status
+    data['missions'] = {};
   }
-  data['missions'][missionId]['clauses'][clauseIndex] = {
-    // Type + Value
-  };
-  const points = calculateScore(data);
+  if (!data['missions'][missionId]) {
+    data['missions'][missionId] = {};
+  }
+  data['missions'][missionId][clauseIndex] = value;
+  const points = calculateScore(data['missions']);
 
   const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
     { _id: scoresheetObjectId },
     {
       $set: {
-        [`data.missions.${missionId}.clauses.[${clauseIndex}]`]: {
-          type: clause.type,
-          value: actualValue
-        },
+        [`data.missions.${missionId}.${clauseIndex}`]: value,
         'data.score': points
       }
     },
@@ -111,10 +98,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     scoresheetId,
     missionId,
     clauseIndex,
-    value: {
-      type: clause.type,
-      value: actualValue
-    } as MissionClauseValueOutput,
+    value,
     version: -1
   };
 
@@ -192,16 +176,17 @@ function validateClauseValue(
 /**
  * Calculates the total score based on mission values
  */
-function calculateScore(missions: Record<string, any>): number {
+function calculateScore(
+  missions: Record<string, Record<number, boolean | string | number | null>>
+): number {
   let points = 0;
 
   scoresheet.missions.forEach(mission => {
-    const clauses = missions[mission.id];
-    if (!clauses) {
-      return;
+    const missionData = missions[mission.id];
+    if (!missionData) {
+      return; // Skip if no data for this mission
     }
-
-    const clauseValues = clauses.map((clause: any) => clause.value);
+    const clauseValues = mission.clauses.map((_, index) => missionData[index] ?? null);
     try {
       points += mission.calculation(...clauseValues);
     } catch (error) {

@@ -28,13 +28,7 @@ export interface ScoresheetGraphQL {
   status: string;
   escalated?: boolean;
   data?: {
-    missions: Record<
-      string,
-      Array<{
-        type: 'boolean' | 'enum' | 'number';
-        value: boolean | string | number | null;
-      }>
-    >;
+    missions: Record<string, Record<number, boolean | string | number | null>>;
     signature?: string;
     gp?: { value: 2 | 3 | 4 | null; notes?: string };
     score: number;

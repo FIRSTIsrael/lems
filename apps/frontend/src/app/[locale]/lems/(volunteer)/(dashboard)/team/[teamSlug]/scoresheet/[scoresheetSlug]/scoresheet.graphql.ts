@@ -1,13 +1,8 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { getEmptyScoresheet } from './scoresheet-utils';
 
-export type ScoresheetMissionClause =
-  | { type: 'boolean'; value: boolean }
-  | { type: 'enum'; value: string }
-  | { type: 'number'; value: number };
-
 export interface ScoresheetData {
-  missions: Record<string, { clauses: ScoresheetMissionClause[] }>;
+  missions: Record<string, Record<number, boolean | string | number | null>>;
   signature?: string;
   gp: {
     value: number | null;
@@ -50,7 +45,7 @@ type MissionClauseMutationResult = {
     scoresheetId: string;
     missionId: string;
     clauseIndex: number;
-    value: ScoresheetMissionClause;
+    value: boolean | string | number | null;
     version: number;
   };
 };
@@ -60,7 +55,7 @@ type MissionClauseMutationVariables = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: ScoresheetMissionClause;
+  value: boolean | string | number | null;
 };
 
 /**
@@ -109,7 +104,7 @@ export const UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION: TypedDocumentNode<
     $scoresheetId: String!
     $missionId: String!
     $clauseIndex: Int!
-    $value: MissionClauseValueInput!
+    $value: JSON!
   ) {
     updateScoresheetMissionClause(
       divisionId: $divisionId

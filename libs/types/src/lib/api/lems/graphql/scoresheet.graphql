@@ -110,20 +110,10 @@ type ScoresheetMissionClauseUpdated {
   missionId: String!
   "The index of the clause within the mission"
   clauseIndex: Int!
-  "The new value for the clause as JSON (discriminated union: boolean, string, or number based on type)"
+  "The new value for the clause (boolean, string, or number)"
   value: JSON!
   "Event version for subscription recovery tracking"
   version: Int!
-}
-
-"""
-Input type for mission clause values
-"""
-input MissionClauseValueInput {
-  "Type of the clause (boolean, enum, or number)"
-  type: String!
-  "The value as JSON (can be boolean, string, or number)"
-  value: JSON!
 }
 
 extend type Mutation {
@@ -140,6 +130,6 @@ extend type Mutation {
     "The index of the clause within the mission"
     clauseIndex: Int!
     "The new value for the clause (boolean, string, or number)"
-    value: MissionClauseValueInput!
+    value: JSON!
   ): ScoresheetMissionClauseUpdated!
 }

@@ -1,10 +1,5 @@
 export type ScoresheetStatus = 'empty' | 'draft' | 'completed' | 'gp' | 'submitted';
 
-interface MissionClause {
-  type: 'boolean' | 'enum' | 'number';
-  value: boolean | string | number | null;
-}
-
 export interface Scoresheet {
   divisionId: string;
   teamId: string;
@@ -15,16 +10,16 @@ export interface Scoresheet {
   data?: {
     /**
      * Mission clause values.
-     * Format: { [missionId: string]: Array<MissionClause> }
-     * Each mission clause contains a type and a corresponding value.
+     * Format: { [missionId: string]: { [clauseIndex: number]: boolean | string | number | null } }
+     * Each mission clause contains a corresponding value.
      *
      * @example
      * {
-     * "mission1": [{ type: 'boolean', value: true }, { type: 'number', value: 5 }],
-     * "mission2": [{ type: 'enum', value: 'option1' }]
+     * "mission1": { 0: true, 1: 5 },
+     * "mission2": { 0: 'option1' }
      * }
      */
-    missions: Record<string, Array<MissionClause>>;
+    missions: Record<string, Record<number, boolean | string | number | null>>;
 
     /**
      * Signature data as encoded PNG string.

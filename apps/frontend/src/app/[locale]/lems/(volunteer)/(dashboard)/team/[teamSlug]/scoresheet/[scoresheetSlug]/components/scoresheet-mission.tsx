@@ -44,19 +44,12 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
   }, []);
 
   const missionData = scoresheet.data?.missions[mission.id];
-  const clauses = missionData?.clauses ?? [];
 
   const handleClauseChange = async (
     clauseIndex: number,
     newValue: string | number | boolean | null
   ) => {
     if (newValue === null) return; // Don't send null values
-
-    const clause = mission.clauses[clauseIndex];
-    const value = {
-      type: clause.type,
-      value: newValue
-    } as Parameters<typeof updateMissionClause>[0]['variables']['value'];
 
     try {
       await updateMissionClause({
@@ -65,7 +58,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           scoresheetId: scoresheet.id,
           missionId: mission.id,
           clauseIndex,
-          value
+          value: newValue
         }
       });
     } catch (error) {
@@ -112,8 +105,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           </Grid>
         )}
         {mission.clauses.map((clause, index) => {
-          const clauseValue = clauses[index];
-          const value = clauseValue?.value ?? null;
+          const value = missionData?.[index] ?? null;
 
           return (
             <MissionClause
