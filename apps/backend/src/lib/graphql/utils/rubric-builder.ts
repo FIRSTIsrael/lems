@@ -1,3 +1,4 @@
+import { WithId } from 'mongodb';
 import { Rubric as DbRubric } from '@lems/database';
 import db from '../../database';
 
@@ -29,7 +30,7 @@ export interface CategorizedRubricsGraphQL {
 /**
  * Helper function to build a RubricGraphQL object from a database rubric.
  */
-export function buildRubricResult(rubric: DbRubric): RubricGraphQL {
+export function buildRubricResult(rubric: WithId<DbRubric>): RubricGraphQL {
   return {
     id: rubric._id?.toString(),
     divisionId: rubric.divisionId,
@@ -73,13 +74,7 @@ export async function buildCategorizedRubrics(
       coreValues: rubricMap.get('core-values') || null
     };
   } catch (error) {
-    console.error(
-      'Error fetching rubrics for team:',
-      teamId,
-      'in division:',
-      divisionId,
-      error
-    );
+    console.error('Error fetching rubrics for team:', teamId, 'in division:', divisionId, error);
     throw error;
   }
 }
