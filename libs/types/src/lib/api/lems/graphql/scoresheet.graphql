@@ -25,28 +25,39 @@ enum MatchStage {
 }
 
 """
-A mission clause value in a scoresheet
+A mission clause value in a scoresheet (boolean variant)
 """
-type MissionClauseValue {
-  "Type of the clause (boolean, enum, or number)"
+type BooleanClauseValue {
+  "Type of the clause"
   type: String!
-  "The value of the clause (for boolean or numeric types)"
-  value: Boolean
-  "The string value for enum clauses"
-  stringValue: String
-  "The numeric value for number clauses"
-  numericValue: Int
+  "The boolean value"
+  value: Boolean!
 }
 
 """
-Mission data in a scoresheet
+A mission clause value in a scoresheet (enum/string variant)
 """
-type ScoresheetMission {
-  "Mission identifier"
-  id: String!
-  "Clause values for this mission"
-  clauses: [MissionClauseValue!]!
+type EnumClauseValue {
+  "Type of the clause"
+  type: String!
+  "The string value"
+  value: String!
 }
+
+"""
+A mission clause value in a scoresheet (numeric variant)
+"""
+type NumberClauseValue {
+  "Type of the clause"
+  type: String!
+  "The numeric value"
+  value: Int!
+}
+
+"""
+Union type for mission clause values - can be boolean, enum, or number
+"""
+union MissionClauseValue = BooleanClauseValue | EnumClauseValue | NumberClauseValue
 
 """
 Data section of a scoresheet
@@ -122,4 +133,48 @@ extend type Field {
     "Filter scoresheets by round number"
     round: Int
   ): [Scoresheet!]!
+}
+
+"""
+Response type for scoresheet mission clause update
+"""
+type ScoresheetMissionClauseUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The mission ID containing the clause"
+  missionId: String!
+  "The index of the clause within the mission"
+  clauseIndex: Int!
+  "The new value for the clause"
+  value: MissionClauseValue!
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Input type for mission clause values
+"""
+input MissionClauseValueInput {
+  "Type of the clause (boolean, enum, or number)"
+  type: String!
+  "The value as JSON (can be boolean, string, or number)"
+  value: JSON!
+}
+
+extend type Mutation {
+  """
+  Update a single clause value in a scoresheet mission.
+  """
+  updateScoresheetMissionClause(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to update"
+    scoresheetId: String!
+    "The ID of the mission containing the clause"
+    missionId: String!
+    "The index of the clause within the mission"
+    clauseIndex: Int!
+    "The new value for the clause (boolean, string, or number)"
+    value: MissionClauseValueInput!
+  ): ScoresheetMissionClauseUpdated!
 }

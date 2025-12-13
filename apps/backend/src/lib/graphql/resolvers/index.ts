@@ -142,5 +142,14 @@ export const resolvers = {
       if ('awards' in obj) return 'RubricAwardsUpdated';
       return null;
     }
+  },
+  MissionClauseValue: {
+    __resolveType(obj: Record<string, unknown>) {
+      const type = obj.type as string | undefined;
+      if (type === 'boolean') return 'BooleanClauseValue';
+      if (type === 'enum') return 'EnumClauseValue';
+      if (type === 'number') return 'NumberClauseValue';
+      return null;
+    }
   }
 };

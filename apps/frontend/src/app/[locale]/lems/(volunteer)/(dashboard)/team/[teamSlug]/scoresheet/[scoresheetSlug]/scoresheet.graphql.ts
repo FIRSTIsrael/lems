@@ -1,12 +1,10 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { getEmptyScoresheet } from './scoresheet-utils';
 
-export interface ScoresheetMissionClause {
-  type: string;
-  value: boolean | string | number | null;
-  stringValue?: string | null;
-  numericValue?: number | null;
-}
+export type ScoresheetMissionClause =
+  | { type: 'boolean'; value: boolean }
+  | { type: 'enum'; value: string }
+  | { type: 'number'; value: number };
 
 export interface ScoresheetData {
   missions: Record<string, { clauses: ScoresheetMissionClause[] }>;
@@ -47,6 +45,24 @@ type QueryVariables = {
   slug: string;
 };
 
+type MissionClauseMutationResult = {
+  updateScoresheetMissionClause: {
+    scoresheetId: string;
+    missionId: string;
+    clauseIndex: number;
+    value: ScoresheetMissionClause;
+    version: number;
+  };
+};
+
+type MissionClauseMutationVariables = {
+  divisionId: string;
+  scoresheetId: string;
+  missionId: string;
+  clauseIndex: number;
+  value: ScoresheetMissionClause;
+};
+
 /**
  * Query to fetch a single scoresheet for a team and match
  */
@@ -77,6 +93,39 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
           }
         }
       }
+    }
+  }
+`;
+
+/**
+ * Mutation to update a mission clause value in a scoresheet
+ */
+export const UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION: TypedDocumentNode<
+  MissionClauseMutationResult,
+  MissionClauseMutationVariables
+> = gql`
+  mutation UpdateScoresheetMissionClause(
+    $divisionId: String!
+    $scoresheetId: String!
+    $missionId: String!
+    $clauseIndex: Int!
+    $value: MissionClauseValueInput!
+  ) {
+    updateScoresheetMissionClause(
+      divisionId: $divisionId
+      scoresheetId: $scoresheetId
+      missionId: $missionId
+      clauseIndex: $clauseIndex
+      value: $value
+    ) {
+      scoresheetId
+      missionId
+      clauseIndex
+      value {
+        type
+        value
+      }
+      version
     }
   }
 `;

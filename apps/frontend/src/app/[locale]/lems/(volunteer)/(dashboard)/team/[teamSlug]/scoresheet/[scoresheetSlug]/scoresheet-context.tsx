@@ -14,15 +14,8 @@ interface ScoresheetProviderProps {
   children: React.ReactNode;
 }
 
-export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({
-  scoresheet,
-  children
-}) => {
-  return (
-    <ScoresheetContext.Provider value={{ scoresheet }}>
-      {children}
-    </ScoresheetContext.Provider>
-  );
+export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({ scoresheet, children }) => {
+  return <ScoresheetContext.Provider value={{ scoresheet }}>{children}</ScoresheetContext.Provider>;
 };
 
 export function useScoresheet(): ScoresheetContextValue {

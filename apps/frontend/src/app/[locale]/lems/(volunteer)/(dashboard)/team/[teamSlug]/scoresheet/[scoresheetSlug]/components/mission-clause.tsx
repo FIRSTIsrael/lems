@@ -109,21 +109,23 @@ interface MissionClauseProps {
   value: string | number | boolean | null;
   maxWidth?: number;
   disabled?: boolean;
+  onChange?: (value: string | number | boolean | null) => void;
 }
 
-const MissionClause: React.FC<MissionClauseProps> = ({
+export const MissionClause: React.FC<MissionClauseProps> = ({
   missionId,
   missionIndex,
   clauseIndex,
   clause,
   value,
   maxWidth = 550,
-  disabled = false
+  disabled = false,
+  onChange
 }) => {
   const { description } = useScoresheetClauseTranslations(missionId, clauseIndex);
 
-  const handleChange = () => {
-    // No-op for disabled state
+  const handleChange = (newValue: string | number | boolean | null) => {
+    onChange?.(newValue);
   };
 
   return (
@@ -166,5 +168,3 @@ const MissionClause: React.FC<MissionClauseProps> = ({
     </React.Fragment>
   );
 };
-
-export default MissionClause;

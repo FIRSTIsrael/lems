@@ -459,7 +459,8 @@
     "scoresheet": {
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
-      "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה"
+      "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
+      "error-failed-to-update": "עדכון דף הניקוד נכשל"
     }
   }
 }

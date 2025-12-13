@@ -459,7 +459,8 @@
     "scoresheet": {
       "error-match-not-found": "Match not found",
       "error-match-not-completed": "Match not completed",
-      "error-not-assigned-to-table": "No permission to access this scoresheet"
+      "error-not-assigned-to-table": "No permission to access this scoresheet",
+      "error-failed-to-update": "Failed to update scoresheet"
     }
   }
 }
