@@ -3,7 +3,11 @@ import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
-import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
+import {
+  volunteersResolver,
+  volunteerDivisionsResolver,
+  RoleInfoResolver
+} from './events/volunteers';
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
@@ -34,6 +38,8 @@ import { matchParticipantsResolver } from './divisions/field/match-participants'
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
+import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
+import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -126,30 +132,7 @@ export const resolvers = {
   Volunteer: {
     divisions: volunteerDivisionsResolver
   },
-  RoleInfo: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('tableId' in obj) return 'TableRoleInfo';
-      if ('roomId' in obj) return 'RoomRoleInfo';
-      if ('category' in obj) return 'CategoryRoleInfo';
-      return null;
-    }
-  },
-  RubricUpdatedEvent: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('fieldId' in obj) return 'RubricValueUpdated';
-      if ('feedback' in obj) return 'RubricFeedbackUpdated';
-      if ('status' in obj) return 'RubricStatusUpdated';
-      if ('awards' in obj) return 'RubricAwardsUpdated';
-      return null;
-    }
-  },
-  ScoresheetUpdatedEvent: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('missionId' in obj && 'clauseIndex' in obj) return 'ScoresheetMissionClauseUpdated';
-      if ('status' in obj && !('escalated' in obj)) return 'ScoresheetStatusUpdated';
-      if ('gpValue' in obj || 'notes' in obj) return 'ScoresheetGPUpdated';
-      if ('escalated' in obj) return 'ScoresheetEscalatedUpdated';
-      return null;
-    }
-  }
+  RoleInfo: RoleInfoResolver,
+  RubricUpdatedEvent: RubricUpdatedEventResolver,
+  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver
 };

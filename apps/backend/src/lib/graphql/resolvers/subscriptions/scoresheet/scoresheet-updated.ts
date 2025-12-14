@@ -104,28 +104,18 @@ export const scoresheetUpdatedResolver = {
       (args.lastSeenVersion as number) || 0
     );
   },
-  resolve: processScoresheetUpdatedEvent,
-  resolveType: (obj: unknown): string => {
-    const event = obj as Record<string, unknown>;
+  resolve: processScoresheetUpdatedEvent
+};
 
-    if ('missionId' in event && 'clauseIndex' in event) {
-      return 'ScoresheetMissionClauseUpdated';
-    }
-
-    if ('status' in event && !('escalated' in event)) {
-      return 'ScoresheetStatusUpdated';
-    }
-
-    if ('gpValue' in event || 'notes' in event) {
-      return 'ScoresheetGPUpdated';
-    }
-
-    if ('escalated' in event) {
-      return 'ScoresheetEscalatedUpdated';
-    }
-
-    throw new Error(
-      `Unable to determine type for scoresheet updated event: ${JSON.stringify(event)}`
-    );
+/**
+ * Type resolver for ScoresheetUpdatedEvent union type
+ */
+export const ScoresheetUpdatedEventResolver = {
+  __resolveType(obj: Record<string, unknown>) {
+    if ('missionId' in obj && 'clauseIndex' in obj) return 'ScoresheetMissionClauseUpdated';
+    if ('status' in obj && !('escalated' in obj)) return 'ScoresheetStatusUpdated';
+    if ('gpValue' in obj || 'notes' in obj) return 'ScoresheetGPUpdated';
+    if ('escalated' in obj) return 'ScoresheetEscalatedUpdated';
+    return null;
   }
 };
