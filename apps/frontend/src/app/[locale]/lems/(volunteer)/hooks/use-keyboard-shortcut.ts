@@ -15,7 +15,7 @@ export default function useKeyboardShortcut(
   shortcutAction: ShortcutAction,
   config: ShortcutConfig
 ) {
-  const targetElement = config.shortcutTarget || document;
+  const targetElement = typeof document !== 'undefined' ? config.shortcutTarget || document : null;
 
   const eventHandler: EventListener = useCallback(
     evt => {
@@ -32,6 +32,7 @@ export default function useKeyboardShortcut(
   );
 
   useEffect(() => {
+    if (!targetElement) return;
     targetElement.addEventListener('keydown', eventHandler);
     return () => targetElement.removeEventListener('keydown', eventHandler);
   }, [targetElement, eventHandler]);
