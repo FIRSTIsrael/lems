@@ -1,15 +1,5 @@
-import { gql, TypedDocumentNode } from '@apollo/client';
-
-export interface PitMapData {
-  division?: {
-    id: string;
-    pitMapUrl: string | null;
-  } | null;
-}
-
-export interface PitMapVars {
-  divisionId: string;
-}
+import { gql, type TypedDocumentNode } from '@apollo/client';
+import type { PitMapData, PitMapVars } from './types';
 
 export const GET_DIVISION_PIT_MAP: TypedDocumentNode<PitMapData, PitMapVars> = gql`
   query GetDivisionPitMap($divisionId: String!) {
@@ -23,3 +13,5 @@ export const GET_DIVISION_PIT_MAP: TypedDocumentNode<PitMapData, PitMapVars> = g
 export function parsePitMapUrl(data: PitMapData): string | null {
   return data.division?.pitMapUrl ?? null;
 }
+
+export type { PitMapData, PitMapVars };

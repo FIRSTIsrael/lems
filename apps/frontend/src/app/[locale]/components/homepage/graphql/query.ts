@@ -1,30 +1,5 @@
-import { gql } from '@apollo/client';
-import type { TypedDocumentNode } from '@apollo/client';
-
-export interface HomepageEvent {
-  id: string;
-  name: string;
-  slug: string;
-  startDate: string;
-  endDate: string;
-  isFullySetUp: boolean;
-  location: string;
-  region: string;
-  seasonId: string;
-}
-
-// Query result types
-type GetEventsQuery = {
-  events: HomepageEvent[];
-};
-
-type GetEventsQueryVariables = {
-  fullySetUp?: boolean;
-  startAfter?: string;
-  startBefore?: string;
-  endAfter?: string;
-  endBefore?: string;
-};
+import { gql, type TypedDocumentNode } from '@apollo/client';
+import type { GetEventsQuery, GetEventsQueryVariables } from './types';
 
 export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryVariables> = gql`
   query GetEvents(
@@ -49,6 +24,9 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       isFullySetUp
       location
       region
+      seasonId
     }
   }
 `;
+
+export type { GetEventsQuery, GetEventsQueryVariables };

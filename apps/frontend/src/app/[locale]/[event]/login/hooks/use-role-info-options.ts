@@ -3,9 +3,9 @@
 import { useSuspenseQuery, skipToken } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { RoleInfo } from '../graphql/volunteers.graphql';
+import { RoleInfo } from '../graphql/volunteers';
 import { useVolunteer } from '../components/volunteer-context';
-import { GET_DIVISION_VENUE_QUERY } from '../graphql/role-info-step.graphql';
+import { GET_DIVISION_VENUE_QUERY } from '../graphql/venue';
 
 type RoleInfoType = 'table' | 'room' | 'category';
 

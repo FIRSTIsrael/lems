@@ -1,23 +1,5 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
-
-type GetVolunteerEventDataQuery = {
-  event: {
-    id: string;
-    name: string;
-    volunteers: Array<{
-      divisions: Array<{
-        id: string;
-        name: string;
-        color: string;
-      }>;
-    }>;
-  } | null;
-};
-
-type GetVolunteerEventDataQueryVariables = {
-  eventId: string;
-  userId: string;
-};
+import type { GetVolunteerEventDataQuery, GetVolunteerEventDataQueryVariables } from './types';
 
 export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
   GetVolunteerEventDataQuery,

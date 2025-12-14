@@ -14,7 +14,7 @@ import {
 } from '@mui/material';
 import { EmojiEvents, ExpandMore } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
-import { Award } from '../awards-list.graphql';
+import { Award } from '../graphql';
 
 interface AwardCardProps {
   name: string;

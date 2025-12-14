@@ -7,7 +7,7 @@ import { redirect, useParams } from 'next/navigation';
 import { useEvent } from '../../../components/event-context';
 import { useUser } from '../../../../components/user-context';
 import { TeamProvider } from './components/team-context';
-import { GET_TEAM_DATA_QUERY } from './layout.graphql';
+import { GET_TEAM_DATA_QUERY } from './graphql';
 
 interface TeamLayoutProps {
   children: React.ReactNode;
