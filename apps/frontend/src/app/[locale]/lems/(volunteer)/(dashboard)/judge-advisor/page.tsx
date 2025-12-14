@@ -16,7 +16,7 @@ import {
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
   parseDivisionSessions
-} from './judge-advisor.graphql';
+} from './graphql';
 
 export default function JudgeAdvisorPage() {
   const t = useTranslations('pages.judge-advisor');

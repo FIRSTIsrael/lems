@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingSession } from '../judge-advisor.graphql';
+import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
