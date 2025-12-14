@@ -3,7 +3,11 @@ import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
-import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
+import {
+  volunteersResolver,
+  volunteerDivisionsResolver,
+  RoleInfoResolver
+} from './events/volunteers';
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
@@ -18,6 +22,11 @@ import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
 import { rubricTeamResolver, rubricDataResolver, rubricResolvers } from './judging/rubric';
+import {
+  scoresheetTeamResolver,
+  scoresheetDataResolver,
+  scoresheetResolvers
+} from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { mutationResolvers } from './mutations';
@@ -28,6 +37,9 @@ import { currentStageResolver } from './divisions/field/current-stage';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
+import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
+import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
+import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -88,7 +100,8 @@ export const resolvers = {
   Field: {
     matches: matchesResolver,
     matchLength: matchLengthResolver,
-    currentStage: currentStageResolver
+    currentStage: currentStageResolver,
+    scoresheets: fieldScoresheetsResolver
   },
   Match: {
     participants: matchParticipantsResolver
@@ -111,24 +124,15 @@ export const resolvers = {
     team: rubricTeamResolver,
     data: rubricDataResolver
   },
+  Scoresheet: {
+    ...scoresheetResolvers,
+    team: scoresheetTeamResolver,
+    data: scoresheetDataResolver
+  },
   Volunteer: {
     divisions: volunteerDivisionsResolver
   },
-  RoleInfo: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('tableId' in obj) return 'TableRoleInfo';
-      if ('roomId' in obj) return 'RoomRoleInfo';
-      if ('category' in obj) return 'CategoryRoleInfo';
-      return null;
-    }
-  },
-  RubricUpdatedEvent: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('fieldId' in obj) return 'RubricValueUpdated';
-      if ('feedback' in obj) return 'RubricFeedbackUpdated';
-      if ('status' in obj) return 'RubricStatusUpdated';
-      if ('awards' in obj) return 'RubricAwardsUpdated';
-      return null;
-    }
-  }
+  RoleInfo: RoleInfoResolver,
+  RubricUpdatedEvent: RubricUpdatedEventResolver,
+  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver
 };

@@ -320,7 +320,11 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
  * If the rubric has no data, creates an empty rubric.
  */
 export function parseRubricData(queryData: QueryResult): RubricItem {
-  const rubric = queryData.division?.judging?.rubrics?.[0];
+  const rubric = queryData.division.judging.rubrics[0];
+
+  if (!rubric) {
+    throw new Error('Rubric not found');
+  }
 
   if (!rubric.data) {
     return {
