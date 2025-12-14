@@ -9,6 +9,7 @@ import { GET_AUDIENCE_DISPLAY_DATA, parseAudienceDisplayData } from './audience-
 import { AudienceDisplayProvider } from './components/audience-display-context';
 import { LogoDisplay } from './components/logo-display';
 import { MessageDisplay } from './components/message-display';
+import { SponsorsDisplay } from './components/sponsors-display';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -51,6 +52,7 @@ export default function AudienceDisplayPage() {
     <AudienceDisplayProvider data={data}>
       {activeDisplay === 'logo' && <LogoDisplay />}
       {activeDisplay === 'message' && <MessageDisplay />}
+      {activeDisplay === 'sponsors' && <SponsorsDisplay />}
     </AudienceDisplayProvider>
   );
 }
