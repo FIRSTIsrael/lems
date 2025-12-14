@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Flag } from '@lems/shared';
-import type { Team } from '../pit-admin.graphql';
+import type { Team } from '../graphql';
 
 interface TeamArrivalInputProps {
   teams: Team[];
