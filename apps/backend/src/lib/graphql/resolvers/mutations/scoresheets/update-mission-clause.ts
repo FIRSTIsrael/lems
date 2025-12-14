@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { scoresheet } from '@lems/shared/scoresheet';
+import { scoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -11,7 +11,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  clauseValue: boolean | string | number | null;
+  clauseValue: ScoresheetClauseValue;
   version: number;
 };
 
@@ -20,7 +20,7 @@ interface UpdateScoresheetMissionClauseArgs {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: boolean | string | number | null;
+  value: ScoresheetClauseValue;
 }
 
 /**
@@ -130,7 +130,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
  */
 function validateClauseValue(
   clause: (typeof scoresheet.missions)[number]['clauses'][number],
-  value: boolean | string | number | null
+  value: ScoresheetClauseValue
 ): void {
   if (value === null) {
     return; // null is always valid to clear a value
@@ -147,17 +147,42 @@ function validateClauseValue(
       break;
 
     case 'enum':
-      if (typeof value !== 'string') {
-        throw new MutationError(
-          MutationErrorCode.UNAUTHORIZED,
-          `Clause expects string value, got ${typeof value}`
-        );
-      }
-      if (clause.options && !clause.options.includes(value)) {
-        throw new MutationError(
-          MutationErrorCode.UNAUTHORIZED,
-          `Value "${value}" is not a valid option. Valid options: ${clause.options.join(', ')}`
-        );
+      // Handle multi-select enums (arrays) vs single-select enums (strings)
+      if (clause.multiSelect) {
+        if (!Array.isArray(value)) {
+          throw new MutationError(
+            MutationErrorCode.UNAUTHORIZED,
+            `Clause expects array value for multi-select enum, got ${typeof value}`
+          );
+        }
+        // Validate each option in the array
+        for (const option of value) {
+          if (typeof option !== 'string') {
+            throw new MutationError(
+              MutationErrorCode.UNAUTHORIZED,
+              `Multi-select enum values must be strings, got ${typeof option}`
+            );
+          }
+          if (clause.options && !clause.options.includes(option)) {
+            throw new MutationError(
+              MutationErrorCode.UNAUTHORIZED,
+              `Value "${option}" is not a valid option. Valid options: ${clause.options.join(', ')}`
+            );
+          }
+        }
+      } else {
+        if (typeof value !== 'string') {
+          throw new MutationError(
+            MutationErrorCode.UNAUTHORIZED,
+            `Clause expects string value, got ${typeof value}`
+          );
+        }
+        if (clause.options && !clause.options.includes(value)) {
+          throw new MutationError(
+            MutationErrorCode.UNAUTHORIZED,
+            `Value "${value}" is not a valid option. Valid options: ${clause.options.join(', ')}`
+          );
+        }
       }
       break;
 
@@ -193,9 +218,7 @@ function validateClauseValue(
 /**
  * Calculates the total score based on mission values
  */
-function calculateScore(
-  missions: Record<string, Record<number, boolean | string | number | null>>
-): number {
+function calculateScore(missions: Record<string, Record<number, ScoresheetClauseValue>>): number {
   let points = 0;
 
   scoresheet.missions.forEach(mission => {
@@ -203,12 +226,14 @@ function calculateScore(
     if (!missionData) {
       return; // Skip if no data for this mission
     }
-    const clauseValues = mission.clauses.map((_, index) => missionData[index] ?? null);
+    const clauseValues = mission.clauses.map(
+      (_, index) => (missionData[index] ?? null) as ScoresheetClauseValue
+    );
     try {
       points += mission.calculation(...clauseValues);
-    } catch (error) {
+    } catch {
       // Silently handle calculation errors, score will be partial
-      console.error(`Error calculating score for mission ${mission.id}:`, error);
+      console.error(`Error calculating score for mission ${mission.id}`);
     }
   });
 
@@ -249,7 +274,7 @@ function determineScoresheetCompletionStatus(data: Record<string, unknown>): 'dr
     if (!missionData) continue;
 
     const clauseValues = mission.clauses.map(
-      (_, index) => (missionData[index] ?? null) as boolean | string | number | null
+      (_, index) => (missionData[index] ?? null) as ScoresheetClauseValue
     );
     try {
       mission.calculation(...clauseValues);
@@ -265,10 +290,12 @@ function determineScoresheetCompletionStatus(data: Record<string, unknown>): 'dr
   }
 
   // Check for global validator errors
-  const validatorArgs: Record<string, Array<boolean | string | number | null>> = Object.fromEntries(
+  const validatorArgs: Record<string, Array<ScoresheetClauseValue>> = Object.fromEntries(
     scoresheet.missions.map(mission => [
       mission.id,
-      mission.clauses.map((_, index) => (missionsData[mission.id]?.[index] ?? null) as boolean | string | number | null)
+      mission.clauses.map(
+        (_, index) => (missionsData[mission.id]?.[index] ?? null) as ScoresheetClauseValue
+      )
     ])
   );
 

@@ -1,10 +1,11 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, updateById, type Reconciler } from '@lems/shared/utils';
+import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import { getEmptyScoresheet } from './scoresheet-utils';
 
 export interface ScoresheetData {
-  missions: Record<string, Record<number, boolean | string | number | null>>;
+  missions: Record<string, Record<number, ScoresheetClauseValue>>;
   signature?: string;
   gp: {
     value: number | null;
@@ -82,7 +83,7 @@ type MissionClauseMutationVariables = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: boolean | string | number | null;
+  value: ScoresheetClauseValue;
 };
 
 type StatusMutationVariables = {
@@ -109,7 +110,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  clauseValue: boolean | string | number | null;
+  clauseValue: ScoresheetClauseValue;
   version: number;
 };
 

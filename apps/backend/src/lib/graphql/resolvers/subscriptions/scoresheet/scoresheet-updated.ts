@@ -1,4 +1,5 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
@@ -11,7 +12,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  clauseValue: boolean | string | number | null;
+  clauseValue: ScoresheetClauseValue;
   version: number;
 };
 
@@ -56,7 +57,7 @@ async function processScoresheetUpdatedEvent(
   if ('missionId' in eventData && 'clauseIndex' in eventData && 'clauseValue' in eventData) {
     const missionId = (eventData.missionId as string) || '';
     const clauseIndex = (eventData.clauseIndex as number) ?? -1;
-    const clauseValue = eventData.clauseValue as boolean | string | number | null;
+    const clauseValue = eventData.clauseValue as ScoresheetClauseValue;
 
     return missionId !== '' && clauseIndex >= 0
       ? ({
