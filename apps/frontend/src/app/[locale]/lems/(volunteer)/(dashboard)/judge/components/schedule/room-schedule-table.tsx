@@ -15,7 +15,7 @@ import {
   Box,
   useTheme
 } from '@mui/material';
-import { JudgingSession } from '../../judge.graphql';
+import { JudgingSession } from '../../graphql';
 import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';

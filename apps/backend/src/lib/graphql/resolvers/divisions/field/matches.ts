@@ -24,6 +24,8 @@ interface MatchesArgs {
   ids?: string[];
   stage?: string;
   matchNumbers?: number[];
+  round?: number;
+  teamIds?: string[];
 }
 
 /**
@@ -54,6 +56,17 @@ export const matchesResolver: GraphQLFieldResolver<
     if (args.matchNumbers && args.matchNumbers.length > 0) {
       const numbersSet = new Set(args.matchNumbers);
       matches = matches.filter(match => numbersSet.has(match.number));
+    }
+
+    // Filter by round if provided
+    if (args.round !== undefined) {
+      matches = matches.filter(match => match.round === args.round);
+    }
+
+    // Filter by team IDs if provided
+    if (args.teamIds && args.teamIds.length > 0) {
+      const teamIdsSet = new Set(args.teamIds);
+      matches = matches.filter(match => match.participants.some(p => teamIdsSet.has(p.team_id)));
     }
 
     // Fetch state data from MongoDB for all matches

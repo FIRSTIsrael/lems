@@ -1,29 +1,6 @@
 import { ObjectId } from 'mongodb';
 import * as db from '@lems/database';
 
-export const handleRegisterTeam = async (namespace, divisionId, teamId, callback) => {
-  let team = await db.getTeam({
-    divisionId: new ObjectId(divisionId),
-    _id: new ObjectId(teamId)
-  });
-  if (!team) {
-    callback({ ok: false, error: `Could not find team ${teamId} in division ${divisionId}!` });
-    return;
-  }
-  if (team.registered) {
-    callback({ ok: false, error: `Team ${teamId} is already registered!` });
-    return;
-  }
-
-  console.log(`📝 Registered team ${teamId} in division ${divisionId}`);
-
-  await db.updateTeam({ _id: team._id }, { registered: true });
-  team = await db.getTeam({ _id: new ObjectId(teamId) });
-
-  callback({ ok: true });
-  namespace.to('pit-admin').emit('teamRegistered', team);
-};
-
 export const handleCreateTicket = async (
   namespace,
   divisionId,

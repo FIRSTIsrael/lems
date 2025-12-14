@@ -199,48 +199,7 @@ const Page: NextPage<Props> = ({
                 <BadgeTab label="טפסי CV" showBadge={openCVForms > 0} value="3" />
               </Tabs>
             </Paper>
-            <TabPanel value="1">
-              <Paper sx={{ borderRadius: 2, mb: 4, boxShadow: 2, p: 2 }}>
-                <RubricStatusReferences />
-              </Paper>
-              {rooms.map(room => (
-                <Paper key={room._id.toString()} sx={{ borderRadius: 3, mb: 4, boxShadow: 2 }}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      p: 3,
-                      pb: 1
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: '#ede9fe',
-                        color: '#a78bfa',
-                        width: '2rem',
-                        height: '2rem',
-                        mr: 1
-                      }}
-                    >
-                      <JudgingRoomIcon sx={{ fontSize: '1rem' }} />
-                    </Avatar>
-                    <Typography variant="h2" fontSize="1.25rem">
-                      חדר שיפוט {room.name}
-                    </Typography>
-                  </Box>
-                  <JudgingRoomSchedule
-                    sessions={sessions.filter(s => s.roomId === room._id)}
-                    division={division}
-                    room={room}
-                    teams={teams}
-                    user={user}
-                    socket={socket}
-                    rubrics={rubrics}
-                  />
-                </Paper>
-              ))}
-            </TabPanel>
+            <TabPanel value="1">{/* Already exists on LEMS 3 */}</TabPanel>
             <TabPanel value="2">
               <AwardsPanel
                 division={division}

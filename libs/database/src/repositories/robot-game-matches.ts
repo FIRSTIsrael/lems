@@ -40,7 +40,7 @@ export class RobotGameMatchSelector {
     return this.db.selectFrom('robot_game_matches').selectAll().where('id', '=', this.id);
   }
 
-  async state() {
+  state() {
     return new RobotGameMatchStateSelector(this.mongo, this.id);
   }
 

@@ -1,6 +1,6 @@
 import { apiFetch } from '@lems/shared';
 import { LoginFormValues, LoginStep } from './types';
-import type { VolunteerByRoleGraphQLData } from './graphql/volunteers.graphql';
+import type { VolunteerByRoleGraphQLData } from './graphql/volunteers';
 
 export const validateForm = (values: LoginFormValues, currentStep: LoginStep) => {
   const errors: Partial<Record<keyof LoginFormValues, boolean>> = {};

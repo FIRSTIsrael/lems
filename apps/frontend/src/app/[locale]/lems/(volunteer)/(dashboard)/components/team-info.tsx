@@ -1,6 +1,14 @@
 import { Box, Avatar, Stack, Typography } from '@mui/material';
-import { Team } from '../judge/judge.graphql';
 import { Flag } from '@lems/shared';
+
+interface Team {
+  name: string;
+  number: string | number;
+  affiliation: string;
+  city: string;
+  region: string;
+  logoUrl?: string | null;
+}
 
 interface TeamInfoProps {
   team: Team;

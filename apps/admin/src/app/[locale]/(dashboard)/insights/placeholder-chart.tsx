@@ -37,17 +37,12 @@ export default function PlaceholderChart() {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis />
-          <Legend
-            wrapperStyle={{ color: colorThree, fontWeight: 500 }}
-            payload={[
-              { value: 'Top score', type: 'square', id: 'score', color: colorThree },
-              { value: 'Average', type: 'line', id: 'teams', color: colorTwo }
-            ]}
-          />
+          <Legend wrapperStyle={{ color: colorThree, fontWeight: 500 }} />
           <Bar dataKey="score" fill={colorOne} name="Top score" radius={[4, 4, 0, 0]} />
           <Line
             type="monotone"
             dataKey="teams"
+            name="Average"
             stroke={colorTwo}
             strokeWidth={3}
             dot={{ r: 4, stroke: colorTwo, fill: colorOne }}

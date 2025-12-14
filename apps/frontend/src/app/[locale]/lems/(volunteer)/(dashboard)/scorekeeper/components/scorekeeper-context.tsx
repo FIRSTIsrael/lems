@@ -3,7 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import { Match, MatchStage, ScorekeeperData } from '../scorekeeper.graphql';
+import { Match, MatchStage, ScorekeeperData } from '../graphql';
 
 interface ScorekeeperContextType {
   matches: Match[];

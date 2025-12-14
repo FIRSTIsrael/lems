@@ -110,3 +110,16 @@ export const volunteersResolver: GraphQLFieldResolver<
     throw error;
   }
 };
+
+/**
+ * Type resolver for RoleInfo union type
+ * Discriminates between TableRoleInfo, RoomRoleInfo, and CategoryRoleInfo
+ */
+export const RoleInfoResolver = {
+  __resolveType(obj: Record<string, unknown>) {
+    if ('tableId' in obj) return 'TableRoleInfo';
+    if ('roomId' in obj) return 'RoomRoleInfo';
+    if ('category' in obj) return 'CategoryRoleInfo';
+    return null;
+  }
+};

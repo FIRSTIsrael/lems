@@ -1,7 +1,7 @@
 'use client';
 
 import { Typography, Box, Tooltip } from '@mui/material';
-import { Match } from '../../scorekeeper.graphql';
+import { Match } from '../../graphql';
 
 interface TeamsCellProps {
   participants: Match['participants'];

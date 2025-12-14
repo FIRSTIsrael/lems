@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Button, Chip } from '@mui/material';
 import { PlayArrow, CheckCircle } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { JudgingSession } from '../../judge.graphql';
+import { JudgingSession } from '../../graphql';
 
 interface StartSessionButtonProps {
   session: JudgingSession;

@@ -1,7 +1,7 @@
 import { rubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types/judging';
 import { Rubric } from '@lems/database';
-import type { RubricFieldValue } from './types';
+import type { RubricFieldValue } from './graphql';
 
 export const getEmptyRubric = (category: JudgingCategory): Rubric['data'] => {
   const schema = rubrics[category];

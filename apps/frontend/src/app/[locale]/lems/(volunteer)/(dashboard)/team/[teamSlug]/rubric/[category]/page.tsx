@@ -16,11 +16,7 @@ import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
-import {
-  GET_RUBRIC_QUERY,
-  parseRubricData,
-  createRubricUpdatedSubscription
-} from './rubric.graphql';
+import { GET_RUBRIC_QUERY, parseRubricData, createRubricUpdatedSubscription } from './graphql';
 import { ValidationAlert } from './components/validation-alert';
 import { SubmitRubricButton } from './components/submit-rubric-button';
 

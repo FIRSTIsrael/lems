@@ -82,31 +82,10 @@ export interface WSServerEmittedEvents {
 }
 
 export interface WSClientEmittedEvents {
-  startJudgingSession: (
-    divisionId: string,
-    roomId: string,
-    sessionId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  abortJudgingSession: (
-    divisionId: string,
-    roomId: string,
-    sessionId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
   updateJudgingSessionTeam: (
     divisionId: string,
     sessionId: string,
     teamId: string | null,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  updateJudgingSession: (
-    divisionId: string,
-    sessionId: string,
-    data: Partial<Pick<JudgingSession, 'called' | 'queued'>>,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
@@ -173,23 +152,6 @@ export interface WSClientEmittedEvents {
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
-  updateRubric: (
-    divisionId: string,
-    teamId: string,
-    rubricId: string,
-    rubricData: Partial<Rubric<JudgingCategory>>,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  joinRoom: (
-    room: WSRoomName | Array<WSRoomName>,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  pingRooms: (
-    callback: (response: { rooms: Array<string>; ok: boolean; error?: string }) => void
-  ) => void;
-
   createTicket: (
     divisionId: string,
     teamId: string | null,
@@ -203,29 +165,6 @@ export interface WSClientEmittedEvents {
     teamId: string | null,
     ticketId: string,
     ticketData: Partial<Ticket>,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  loadMatch: (
-    divisionId: string,
-    matchId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  startMatch: (
-    divisionId: string,
-    matchId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  startTestMatch: (
-    divisionId: string,
-    callback: (response: { ok: boolean; error?: string }) => void
-  ) => void;
-
-  abortMatch: (
-    divisionId: string,
-    matchId: string,
     callback: (response: { ok: boolean; error?: string }) => void
   ) => void;
 
