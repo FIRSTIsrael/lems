@@ -1,6 +1,6 @@
 import { RubricStatus } from '@lems/database';
 import type { JudgingCategory } from '@lems/types/judging';
-import { JudgingSession } from '../lead-judge.graphql';
+import { JudgingSession } from '../graphql';
 
 export type RubricStatusStat = {
   empty: number;

@@ -1,6 +1,6 @@
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { JudgingSession } from '../lead-judge.graphql';
+import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { StatusFilterSelector } from './status-filter-selector';
 
