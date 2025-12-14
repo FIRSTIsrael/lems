@@ -9,9 +9,9 @@ import {
   UPDATE_RUBRIC_VALUE_MUTATION,
   UPDATE_RUBRIC_FEEDBACK_MUTATION,
   createUpdateRubricValueCacheUpdate,
-  createUpdateRubricFeedbackCacheUpdate
-} from './rubric.graphql';
-import { RubricItem } from './types';
+  createUpdateRubricFeedbackCacheUpdate,
+  RubricItem
+} from './graphql';
 import { validateRubric, ValidationResult } from './rubric-validation';
 
 interface RubricContextValue {
