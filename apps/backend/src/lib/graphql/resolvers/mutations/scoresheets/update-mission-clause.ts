@@ -62,24 +62,29 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
 
   // Calculate points
   const { data = {} } = dbScoresheet;
-  if (!('missions' in data)) {
-    // Scoresheet had no data. We are initializing it now.
-    // TODO: update status
-    data['missions'] = {};
-  }
-  if (!data['missions'][missionId]) {
-    data['missions'][missionId] = {};
-  }
+  data['missions'] ??= {};
+  data['missions'][missionId] ??= {};
   data['missions'][missionId][clauseIndex] = value;
   const points = calculateScore(data['missions']);
+
+  // Determine new status based on completion criteria
+  const newStatus = determineScoresheetCompletionStatus(data);
+
+  const updateFields: Record<string, unknown> = {
+    [`data.missions.${missionId}.${clauseIndex}`]: value,
+    'data.score': points
+  };
+
+  // Update status if it has changed
+  const statusChanged = newStatus !== status;
+  if (statusChanged) {
+    updateFields['status'] = newStatus;
+  }
 
   const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
     { _id: scoresheetObjectId },
     {
-      $set: {
-        [`data.missions.${missionId}.${clauseIndex}`]: value,
-        'data.score': points
-      }
+      $set: updateFields
     },
     { returnDocument: 'after' }
   );
@@ -102,7 +107,20 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     version: -1
   };
 
-  pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);
+  const publishTasks = [
+    pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload)
+  ];
+
+  if (statusChanged) {
+    publishTasks.push(
+      pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_STATUS_CHANGED, {
+        scoresheetId,
+        status: newStatus
+      })
+    );
+  }
+
+  await Promise.all(publishTasks);
 
   return eventPayload;
 };
@@ -195,4 +213,74 @@ function calculateScore(
   });
 
   return points;
+}
+
+/**
+ * Determines the completion status of a scoresheet based on whether all missions are complete
+ * and if there are no validation or calculation errors
+ * Returns 'completed' only if all missions have all clauses filled AND no errors exist
+ * Otherwise returns 'draft'
+ */
+function determineScoresheetCompletionStatus(data: Record<string, unknown>): 'draft' | 'completed' {
+  const missionsData = (data['missions'] as Record<string, Record<number, unknown>>) || {};
+
+  // Check if all missions have all their clauses filled
+  const allMissionsComplete = scoresheet.missions.every(mission => {
+    const missionData = missionsData[mission.id];
+    if (!missionData) {
+      return false; // Mission has no data
+    }
+
+    // Check if all clauses have values (not null)
+    return mission.clauses.every(
+      (_, index) => missionData[index] !== undefined && missionData[index] !== null
+    );
+  });
+
+  if (!allMissionsComplete) {
+    return 'draft';
+  }
+
+  // Check for mission calculation errors
+  let hasErrors = false;
+
+  for (const mission of scoresheet.missions) {
+    const missionData = missionsData[mission.id];
+    if (!missionData) continue;
+
+    const clauseValues = mission.clauses.map(
+      (_, index) => (missionData[index] ?? null) as boolean | string | number | null
+    );
+    try {
+      mission.calculation(...clauseValues);
+    } catch {
+      // Mission calculation threw an error - scoresheet is invalid
+      hasErrors = true;
+      break;
+    }
+  }
+
+  if (hasErrors) {
+    return 'draft';
+  }
+
+  // Check for global validator errors
+  const validatorArgs: Record<string, Array<boolean | string | number | null>> = Object.fromEntries(
+    scoresheet.missions.map(mission => [
+      mission.id,
+      mission.clauses.map((_, index) => (missionsData[mission.id]?.[index] ?? null) as boolean | string | number | null)
+    ])
+  );
+
+  for (const validator of scoresheet.validators) {
+    try {
+      validator(validatorArgs);
+    } catch {
+      // Validator threw an error - scoresheet is invalid
+      hasErrors = true;
+      break;
+    }
+  }
+
+  return hasErrors ? 'draft' : 'completed';
 }

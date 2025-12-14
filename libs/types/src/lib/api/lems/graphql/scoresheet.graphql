@@ -231,4 +231,15 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): ScoresheetUpdatedEvent!
+
+  """
+  Subscribe to scoresheet status changes in a division.
+  Fires when a scoresheet's status changes (e.g., empty -> draft -> completed).
+  """
+  scoresheetStatusChanged(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): ScoresheetStatusUpdated!
 }

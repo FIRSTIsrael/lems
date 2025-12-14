@@ -13,6 +13,7 @@ import {
 } from './matches';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 import { scoresheetUpdatedResolver } from './scoresheet/scoresheet-updated';
+import { scoresheetStatusChangedResolver } from './scoresheet/scoresheet-status-changed';
 
 /**
  * GraphQL Subscription resolvers
@@ -30,5 +31,6 @@ export const subscriptionResolvers = {
   matchAborted: matchAbortedResolver,
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver,
-  scoresheetUpdated: scoresheetUpdatedResolver
+  scoresheetUpdated: scoresheetUpdatedResolver,
+  scoresheetStatusChanged: scoresheetStatusChangedResolver
 };
