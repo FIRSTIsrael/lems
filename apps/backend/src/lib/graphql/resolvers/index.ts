@@ -142,5 +142,14 @@ export const resolvers = {
       if ('awards' in obj) return 'RubricAwardsUpdated';
       return null;
     }
+  },
+  ScoresheetUpdatedEvent: {
+    __resolveType(obj: Record<string, unknown>) {
+      if ('missionId' in obj && 'clauseIndex' in obj) return 'ScoresheetMissionClauseUpdated';
+      if ('status' in obj && !('escalated' in obj)) return 'ScoresheetStatusUpdated';
+      if ('gpValue' in obj || 'notes' in obj) return 'ScoresheetGPUpdated';
+      if ('escalated' in obj) return 'ScoresheetEscalatedUpdated';
+      return null;
+    }
   }
 };

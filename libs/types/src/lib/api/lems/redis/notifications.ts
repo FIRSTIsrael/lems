@@ -13,5 +13,6 @@ export enum RedisEventTypes {
   MATCH_COMPLETED = 'matchCompleted',
   MATCH_ABORTED = 'matchAborted',
   RUBRIC_UPDATED = 'rubricUpdated',
-  RUBRIC_STATUS_CHANGED = 'rubricStatusChanged'
+  RUBRIC_STATUS_CHANGED = 'rubricStatusChanged',
+  SCORESHEET_UPDATED = 'scoresheetUpdated'
 }

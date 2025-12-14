@@ -11,7 +11,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   clauseIndex: number;
-  value: boolean | string | number | null;
+  clauseValue: boolean | string | number | null;
   version: number;
 };
 
@@ -98,12 +98,11 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     scoresheetId,
     missionId,
     clauseIndex,
-    value,
+    clauseValue: value,
     version: -1
   };
 
-  // TODO: Enable Redis publishing once subscribers are set up
-  // pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_MISSION_CLAUSE_UPDATED, eventPayload);
+  pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);
 
   return eventPayload;
 };

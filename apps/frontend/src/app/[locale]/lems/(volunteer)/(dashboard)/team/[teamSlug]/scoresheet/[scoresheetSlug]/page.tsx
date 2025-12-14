@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Container, Box, CircularProgress } from '@mui/material';
@@ -10,7 +11,11 @@ import { useEvent } from '../../../../../components/event-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
-import { GET_SCORESHEET_QUERY, parseScoresheetData } from './scoresheet.graphql';
+import {
+  GET_SCORESHEET_QUERY,
+  parseScoresheetData,
+  createScoresheetUpdatedSubscription
+} from './scoresheet.graphql';
 
 export default function ScoresheetPage() {
   const t = useTranslations('pages.scoresheet');
@@ -19,6 +24,11 @@ export default function ScoresheetPage() {
   const { currentDivision } = useEvent();
   const { scoresheetSlug } = useParams();
 
+  const subscriptions = useMemo(
+    () => [createScoresheetUpdatedSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const { data: scoresheet, loading } = usePageData(
     GET_SCORESHEET_QUERY,
     {
@@ -26,7 +36,8 @@ export default function ScoresheetPage() {
       teamId: team.id,
       slug: scoresheetSlug as string
     },
-    parseScoresheetData
+    parseScoresheetData,
+    subscriptions
   );
 
   if (loading || !scoresheet) {
