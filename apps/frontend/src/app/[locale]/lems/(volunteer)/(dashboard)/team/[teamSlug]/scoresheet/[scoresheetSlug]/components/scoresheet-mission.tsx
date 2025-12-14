@@ -8,7 +8,7 @@ import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@apollo/client/react';
 import { useScoresheetMissionTranslations } from '@lems/localization';
-import { MissionSchema } from '@lems/shared/scoresheet';
+import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { useScoresheet } from '../scoresheet-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../scoresheet.graphql';
@@ -45,10 +45,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
 
   const missionData = scoresheet.data?.missions[mission.id];
 
-  const handleClauseChange = async (
-    clauseIndex: number,
-    newValue: string | number | boolean | null
-  ) => {
+  const handleClauseChange = async (clauseIndex: number, newValue: ScoresheetClauseValue) => {
     if (newValue === null) return; // Don't send null values
 
     try {

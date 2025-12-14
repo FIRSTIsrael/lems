@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
-import { MissionClauseSchema } from '@lems/shared/scoresheet';
+import { MissionClauseSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import {
   useScoresheetGeneralTranslations,
   useScoresheetClauseTranslations
@@ -106,10 +106,10 @@ interface MissionClauseProps {
   missionIndex: number;
   clauseIndex: number;
   clause: MissionClauseSchema;
-  value: string | number | boolean | null;
+  value: ScoresheetClauseValue;
   maxWidth?: number;
   disabled?: boolean;
-  onChange?: (value: string | number | boolean | null) => void;
+  onChange?: (value: ScoresheetClauseValue) => void;
 }
 
 export const MissionClause: React.FC<MissionClauseProps> = ({
