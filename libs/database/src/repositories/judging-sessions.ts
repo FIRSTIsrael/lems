@@ -1,5 +1,5 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb } from 'mongodb';
+import { Db as MongoDb, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   InsertableJudgingSession,
@@ -14,7 +14,7 @@ export class JudgingSessionStateSelector {
     private id: string
   ) {}
 
-  async get() {
+  async get(): Promise<WithId<JudgingSessionState> | null> {
     return this.db
       .collection<JudgingSessionState>('judging_session_states')
       .findOne({ sessionId: this.id });

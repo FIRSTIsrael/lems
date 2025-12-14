@@ -460,7 +460,12 @@
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
       "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
-      "error-failed-to-update": "עדכון דף הניקוד נכשל"
+      "error-failed-to-update": "עדכון דף הניקוד נכשל",
+      "incomplete-title": "דף הניקוד אינו מלא",
+      "incomplete-message": "אנא נקדו את כל המשימות.",
+      "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
+      "incomplete-action": "מעבר למשימה",
+      "points-unit": "נק'"
     }
   }
 }
