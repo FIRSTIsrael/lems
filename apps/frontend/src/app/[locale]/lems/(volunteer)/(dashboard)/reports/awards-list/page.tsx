@@ -6,7 +6,7 @@ import { Stack, Container, Box, Typography } from '@mui/material';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { GET_DIVISION_AWARDS, parseDivisionAwards, Award } from './awards-list.graphql';
+import { GET_DIVISION_AWARDS, parseDivisionAwards, Award } from './graphql';
 import { AwardsList } from './components/awards-list';
 import { ErrorState } from './components/error-state';
 import { EmptyState } from './components/empty-state';

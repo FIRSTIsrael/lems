@@ -281,11 +281,11 @@
     "judge-advisor": {
       "page-title": "שופט ראשי",
       "summary": {
-        "title": "סיכום",
         "status": {
           "empty": "ריק",
           "draft": "טיוטה",
-          "completed": "הסתיים"
+          "completed": "הסתיים",
+          "approved": "מאושר"
         }
       },
       "grid": {
@@ -297,11 +297,11 @@
           "status": "סטטוס"
         },
         "rubric-status": {
-          "empty": "לא התחיל",
-          "draft": "בתהליך",
-          "approved": "אושר",
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "completed": "הושלם",
           "locked": "נעול",
-          "completed": "הושלם"
+          "approved": "מאושר"
         },
         "session-status": {
           "not-started": "לא התחיל",
@@ -408,6 +408,57 @@
       "active-match": {
         "teams": "קבוצות"
       }
+    },
+    "lead-judge": {
+      "page-title": "שופט מוביל",
+      "summary": {
+        "status": {
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "completed": "הסתיים",
+          "approved": "מאושר"
+        }
+      },
+      "list": {
+        "empty-state": "לא נמצאו סבבי שיפוט",
+        "column": {
+          "session": "סבב שיפוט",
+          "room": "חדר",
+          "team": "קבוצה",
+          "status": "סטטוס"
+        },
+        "rubric-status": {
+          "empty": "ריק",
+          "draft": "טיוטה",
+          "approved": "אושר",
+          "locked": "נעול",
+          "completed": "הושלם"
+        },
+        "session-status": {
+          "not-started": "לא התחיל",
+          "in-progress": "בתהליך",
+          "completed": "הושלם"
+        },
+        "filter": {
+          "team": "קבוצה",
+          "team-placeholder": "חפש לפי מספר, שם או שיוך...",
+          "status": "סטטוס",
+          "all-statuses": "כל הסטטוסים",
+          "results": "תוצאות"
+        },
+        "sort": {
+          "room": "מיין לפי חדר",
+          "session": "מיין לפי סבב"
+        },
+        "session": "סבב",
+        "room": "חדר"
+      },
+      "team-info-cell": {
+        "not-arrived": "לא הגיעה"
+      }
+    },
+    "scoresheet": {
+      "title": "קבוצה #{teamNumber} | סבב {stage} {round}"
     }
   },
   "components": {
@@ -433,6 +484,12 @@
     "rubric": {
       "error-not-authorized": "אין לך הרשאות לגשת למחוון זה",
       "error-team-not-judged": "הקבוצה עוד לא סיימה את מפגש השיפוט"
+    },
+    "scoresheet": {
+      "error-match-not-found": "מקצה לא נמצא",
+      "error-match-not-completed": "מקצה לא הושלם",
+      "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
+      "error-failed-to-update": "עדכון דף הניקוד נכשל"
     }
   }
 }

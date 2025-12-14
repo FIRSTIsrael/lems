@@ -8,7 +8,7 @@ import { useUser } from '../../../../../../components/user-context';
 import { authorizeUserRole } from '../../../../../../lib/role-authorizer';
 import { useEvent } from '../../../../../components/event-context';
 import { useTeam } from '../../components/team-context';
-import { GET_TEAM_SESSION_QUERY } from './layout.graphql';
+import { GET_TEAM_SESSION_QUERY } from './graphql';
 
 interface RubricLayoutProps {
   children: React.ReactNode;

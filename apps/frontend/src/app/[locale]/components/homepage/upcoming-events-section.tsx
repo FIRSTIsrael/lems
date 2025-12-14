@@ -7,7 +7,7 @@ import { Box, Typography, Stack } from '@mui/material';
 import { CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
-import { GET_EVENTS_QUERY, HomepageEvent } from './events.graphql';
+import { GET_EVENTS_QUERY, HomepageEvent } from './graphql';
 
 export const UpcomingEventsSection: React.FC = () => {
   const { endOfDay, endOfWeek } = useMemo(() => {

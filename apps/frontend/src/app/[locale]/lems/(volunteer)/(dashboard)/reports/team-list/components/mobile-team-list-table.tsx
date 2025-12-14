@@ -4,9 +4,13 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Box, Stack, Typography, Chip, useTheme } from '@mui/material';
 import { Flag } from '@lems/shared';
-import { TeamListTableProps } from './types';
+import { Team } from '../graphql';
 
-export const MobileTeamListTable: React.FC<TeamListTableProps> = ({ teams }) => {
+interface MobileTeamListTableProps {
+  teams: Team[];
+}
+
+export const MobileTeamListTable: React.FC<MobileTeamListTableProps> = ({ teams }) => {
   const t = useTranslations('pages.reports.team-list');
   const theme = useTheme();
 

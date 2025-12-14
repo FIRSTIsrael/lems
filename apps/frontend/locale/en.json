@@ -281,11 +281,11 @@
     "judge-advisor": {
       "page-title": "Judge Advisor",
       "summary": {
-        "title": "Summary",
         "status": {
           "empty": "Empty",
           "draft": "Draft",
-          "completed": "Completed"
+          "completed": "Completed",
+          "approved": "Approved"
         }
       },
       "grid": {
@@ -408,6 +408,57 @@
       "active-match": {
         "teams": "Teams"
       }
+    },
+    "lead-judge": {
+      "page-title": "Lead Judge",
+      "summary": {
+        "status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "completed": "Completed",
+          "approved": "Approved"
+        }
+      },
+      "list": {
+        "empty-state": "Judging Sessions were not found",
+        "column": {
+          "session": "Judging Session",
+          "room": "Room",
+          "team": "Team",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "approved": "Approved",
+          "locked": "Locked",
+          "completed": "Completed"
+        },
+        "session-status": {
+          "not-started": "Not Started",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "filter": {
+          "team": "Team",
+          "team-placeholder": "Search by number, name, or affiliation...",
+          "status": "Status",
+          "all-statuses": "All Statuses",
+          "results": "Results"
+        },
+        "sort": {
+          "room": "Sort by Room",
+          "session": "Sort by Session"
+        },
+        "session": "Session",
+        "room": "Room"
+      },
+      "team-info-cell": {
+        "not-arrived": "Not Arrived"
+      }
+    },
+    "scoresheet": {
+      "title": "Team #{teamNumber}, {stage} round {round}"
     }
   },
   "components": {
@@ -433,6 +484,12 @@
     "rubric": {
       "error-not-authorized": "Unauthorized to access rubric",
       "error-team-not-judged": "This team has not completed judging yet"
+    },
+    "scoresheet": {
+      "error-match-not-found": "Match not found",
+      "error-match-not-completed": "Match not completed",
+      "error-not-assigned-to-table": "No permission to access this scoresheet",
+      "error-failed-to-update": "Failed to update scoresheet"
     }
   }
 }

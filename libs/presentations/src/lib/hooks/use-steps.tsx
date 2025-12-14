@@ -65,21 +65,24 @@ export function useSteps(
     }
   });
 
-  const placeholderProps: any = {
-    ref: placeholderRef,
+  const basePlaceholderProps = {
+    ref: placeholderRef as React.RefObject<HTMLDivElement>,
     className: PLACEHOLDER_CLASS_NAME,
-    style: { display: 'none' },
+    style: { display: 'none' } as const,
     'data-step-id': stepId,
     'data-step-count': numSteps
   };
 
+  type PlaceholderProps = typeof basePlaceholderProps & { 'data-priority'?: number };
+
+  let placeholderProps: PlaceholderProps = basePlaceholderProps;
   if (priority !== undefined) {
-    placeholderProps['data-priority'] = priority;
+    placeholderProps = { ...basePlaceholderProps, 'data-priority': priority };
   } else if (stepIndex !== undefined) {
     console.warn(
       '`options.stepIndex` option to `useSteps` is deprecated- please use `priority` option instead.'
     );
-    placeholderProps['data-priority'] = stepIndex;
+    placeholderProps = { ...basePlaceholderProps, 'data-priority': stepIndex };
   }
 
   return {
@@ -141,6 +144,8 @@ export function useCollectSteps() {
         [{}, 1] as [ActivationThresholds, number]
       );
 
+    // Set state here is OK, no risk of cascading updates
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActivationThresholds(thresholds);
     setFinalStepIndex(numSteps - 1);
   }, [stepContainer]);

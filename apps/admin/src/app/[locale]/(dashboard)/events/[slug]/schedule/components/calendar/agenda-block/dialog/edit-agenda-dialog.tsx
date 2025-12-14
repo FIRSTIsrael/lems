@@ -35,9 +35,10 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
   const [title, setTitle] = useState('');
   const [visibility, setVisibility] = useState<AgendaBlockVisibility>('public');
 
-  // Sync form state with block data when dialog opens
   useEffect(() => {
     if (block && open) {
+      // Sync with external state -> this is OK.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(block.title || '');
       setVisibility(block.visibilty ?? 'public');
     }

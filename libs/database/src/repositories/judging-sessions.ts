@@ -37,7 +37,7 @@ export class JudgingSessionSelector {
     return session || null;
   }
 
-  async state() {
+  state() {
     return new JudgingSessionStateSelector(this.mongo, this.id);
   }
 

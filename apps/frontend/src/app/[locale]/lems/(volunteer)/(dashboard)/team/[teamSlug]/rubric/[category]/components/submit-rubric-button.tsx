@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
 import { useRubric } from '../rubric-context';
-import { UPDATE_RUBRIC_STATUS_MUTATION } from '../rubric.graphql';
+import { UPDATE_RUBRIC_STATUS_MUTATION } from '../graphql';
 import { useUser } from '../../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
 
