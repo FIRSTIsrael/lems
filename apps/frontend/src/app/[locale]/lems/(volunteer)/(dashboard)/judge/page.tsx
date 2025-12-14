@@ -20,7 +20,7 @@ import {
   ABORT_JUDGING_SESSION_MUTATION,
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription
-} from './judge.graphql';
+} from './graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
 import { JudgingSessionProvider } from './components/timer/judging-session-context';

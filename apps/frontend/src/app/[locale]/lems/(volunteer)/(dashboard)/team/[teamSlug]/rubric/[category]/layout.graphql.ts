@@ -1,5 +1,5 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
-import { Judging } from '../../../../judge/judge.graphql';
+import { Judging } from '../../../../judge/graphql';
 
 type QueryData = { division?: { id: string; judging: Judging } | null };
 type QueryVars = { divisionId: string; teamId: string };
