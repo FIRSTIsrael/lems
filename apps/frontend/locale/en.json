@@ -460,7 +460,11 @@
       "error-match-not-found": "Match not found",
       "error-match-not-completed": "Match not completed",
       "error-not-assigned-to-table": "No permission to access this scoresheet",
-      "error-failed-to-update": "Failed to update scoresheet"
+      "error-failed-to-update": "Failed to update scoresheet",
+      "incomplete-title": "Scoresheet is incomplete",
+      "incomplete-message": "Please fill out all missions before submitting the scoresheet.",
+      "incomplete-with-errors": "There are errors in the scoresheet that need to be corrected.",
+      "incomplete-action": "Go to the issue"
     }
   }
 }
