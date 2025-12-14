@@ -6,7 +6,7 @@ import { StartRounded } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useScorekeeperData } from '../scorekeeper-context';
-import { LOAD_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { LOAD_MATCH_MUTATION } from '../../graphql';
 import { useEvent } from '../../../../components/event-context';
 
 export const LoadMatchButton = () => {

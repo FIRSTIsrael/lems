@@ -4,11 +4,11 @@ import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { TeamEvent } from '../types';
 import type { QueryData } from '../query';
 
-export interface SubscriptionData {
+interface SubscriptionData {
   teamArrivalUpdated: TeamEvent;
 }
 
-export interface SubscriptionVars {
+interface SubscriptionVars {
   divisionId: string;
   lastSeenVersion?: number;
 }
@@ -50,9 +50,6 @@ export function createTeamArrivalSubscription(
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: teamArrivalReconciler as (
-      prev: QueryData,
-      subscriptionData: { data?: unknown }
-    ) => QueryData
+    updateQuery: teamArrivalReconciler
   } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
 }

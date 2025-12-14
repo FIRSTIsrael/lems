@@ -2,11 +2,11 @@ import { gql, TypedDocumentNode, ApolloCache } from '@apollo/client';
 import { merge, updateById } from '@lems/shared/utils';
 import type { TeamEvent, Team } from '../types';
 
-export interface TeamArrivedMutationData {
+interface TeamArrivedMutationData {
   teamArrived: TeamEvent;
 }
 
-export interface TeamArrivedMutationVars {
+interface TeamArrivedMutationVars {
   teamId: string;
   divisionId: string;
 }

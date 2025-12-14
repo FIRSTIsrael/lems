@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { VideogameAssetRounded } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
-import { START_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { START_MATCH_MUTATION } from '../../graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { useEvent } from '../../../../components/event-context';
 

@@ -6,7 +6,7 @@ import {
   HelpOutline,
   HorizontalRuleRounded
 } from '@mui/icons-material';
-import { Match } from '../../scorekeeper.graphql';
+import { Match } from '../../graphql';
 
 export type TeamReadinessStatus = 'ready' | 'no-show' | 'queued' | 'conflict' | 'missing' | 'empty';
 

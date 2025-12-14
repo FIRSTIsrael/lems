@@ -15,7 +15,7 @@ import {
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
   createTeamArrivalSubscription
-} from './scorekeeper.graphql';
+} from './graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
 import { LoadedMatchDisplay } from './components/loaded-match/loaded-match-display';
