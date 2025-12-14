@@ -8,6 +8,7 @@ import { useScoresheet } from '../scoresheet-context';
 import { validateScoresheet, type ScoresheetValidationResult } from '../scoresheet-validation';
 import ScoresheetMission from './scoresheet-mission';
 import { ScoresheetIncompleteAlert } from './scoresheet-alert';
+import { ScoreFloater } from './score-floater';
 
 export const ScoresheetForm: React.FC = () => {
   const { scoresheet: scoresheetData } = useScoresheet();
@@ -40,6 +41,8 @@ export const ScoresheetForm: React.FC = () => {
       )}
 
       <ScoresheetIncompleteAlert validation={validation} />
+
+      <ScoreFloater score={validation.score} />
     </Stack>
   );
 };

@@ -464,7 +464,8 @@
       "incomplete-title": "דף הניקוד אינו מלא",
       "incomplete-message": "אנא נקדו את כל המשימות.",
       "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
-      "incomplete-action": "מעבר למשימה"
+      "incomplete-action": "מעבר למשימה",
+      "points-unit": "נק'"
     }
   }
 }
