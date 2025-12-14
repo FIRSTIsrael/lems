@@ -8,6 +8,7 @@ import { usePageData } from '../hooks/use-page-data';
 import { GET_AUDIENCE_DISPLAY_DATA, parseAudienceDisplayData } from './audience-display.graphql';
 import { AudienceDisplayProvider } from './components/audience-display-context';
 import { LogoDisplay } from './components/logo-display';
+import { MessageDisplay } from './components/message-display';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -44,11 +45,12 @@ export default function AudienceDisplayPage() {
     return null;
   }
 
+  const activeDisplay = data.activeDisplay;
+
   return (
     <AudienceDisplayProvider data={data}>
-      <LogoDisplay />
+      {activeDisplay === 'logo' && <LogoDisplay />}
+      {activeDisplay === 'message' && <MessageDisplay />}
     </AudienceDisplayProvider>
   );
-
-  // return <AudienceDisplayProvider data={data}>{JSON.stringify(data)}</AudienceDisplayProvider>;
 }
