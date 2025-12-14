@@ -1,5 +1,5 @@
 import { scoresheet } from '@lems/shared/scoresheet';
-import type { ScoresheetData } from './scoresheet.graphql';
+import type { ScoresheetData } from './graphql';
 
 /**
  * Creates an empty scoresheet data object with all missions initialized.

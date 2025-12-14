@@ -13,7 +13,7 @@ import {
   type GetTeamMatchQueryData,
   type GetTeamMatchQueryVars,
   type MatchData
-} from './layout.graphql';
+} from './graphql';
 
 const parseScoresheetSlug = (scoresheetSlug: string) => {
   const stageInitial = scoresheetSlug.charAt(0);

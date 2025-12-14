@@ -15,7 +15,7 @@ import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
   createScoresheetUpdatedSubscription
-} from './scoresheet.graphql';
+} from './graphql';
 
 export default function ScoresheetPage() {
   const t = useTranslations('pages.scoresheet');

@@ -11,7 +11,7 @@ import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { useScoresheet } from '../scoresheet-context';
 import { useEvent } from '../../../../../../components/event-context';
-import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../scoresheet.graphql';
+import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../graphql';
 import { MissionClause } from './mission-clause';
 
 interface ScoresheetMissionProps {

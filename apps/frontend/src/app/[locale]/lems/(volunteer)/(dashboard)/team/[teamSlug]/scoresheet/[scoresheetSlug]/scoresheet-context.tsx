@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import type { ScoresheetItem } from './scoresheet.graphql';
+import type { ScoresheetItem } from './graphql';
 
 interface ScoresheetContextValue {
   scoresheet: ScoresheetItem;
