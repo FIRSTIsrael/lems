@@ -24,16 +24,6 @@ export interface Match {
   participants: MatchParticipant[];
 }
 
-export interface ScorekeeperData {
-  division: {
-    id: string;
-    field: {
-      matches: Match[];
-      loadedMatch: string | null;
-    };
-  };
-}
-
 export interface MatchPreviewVars {
   divisionId: string;
   matchId: string;
