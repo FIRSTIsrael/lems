@@ -5,7 +5,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { Box, Typography, useTheme, Chip, Stack, Card, CardContent } from '@mui/material';
-import { JudgingSession } from '../lead-judge.graphql';
+import { JudgingSession } from '../graphql';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
 

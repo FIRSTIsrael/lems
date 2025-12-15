@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { JudgingSession } from '../judge-advisor.graphql';
+import { JudgingSession } from '../graphql';
 
 export function useFilteredSessions(
   sessions: JudgingSession[],

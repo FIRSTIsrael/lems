@@ -19,7 +19,7 @@ import {
   createTeamArrivalSubscription,
   getLeadJudgeCategory,
   parseDivisionSessions
-} from './lead-judge.graphql';
+} from './graphql';
 
 export default function LeadJudgePage() {
   const t = useTranslations('pages.lead-judge');

@@ -1,4 +1,4 @@
-import { Team } from '../team-list.graphql';
+import { Team } from '../graphql';
 
 export type SortField = 'number' | 'name' | 'affiliation' | 'city' | 'region' | 'arrived';
 export type SortDirection = 'asc' | 'desc';

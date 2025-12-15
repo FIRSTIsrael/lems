@@ -116,3 +116,16 @@ export const rubricUpdatedResolver = {
   },
   resolve: processRubricUpdatedEvent
 };
+
+/**
+ * Type resolver for RubricUpdatedEvent union type
+ */
+export const RubricUpdatedEventResolver = {
+  __resolveType(obj: Record<string, unknown>) {
+    if ('fieldId' in obj) return 'RubricValueUpdated';
+    if ('feedback' in obj) return 'RubricFeedbackUpdated';
+    if ('status' in obj) return 'RubricStatusUpdated';
+    if ('awards' in obj) return 'RubricAwardsUpdated';
+    return null;
+  }
+};

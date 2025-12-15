@@ -1,5 +1,5 @@
 import { ObjectId } from 'mongodb';
-import { JudgingCategory } from '@lems/database';
+import { JudgingCategory, Rubric } from '@lems/database';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { rubrics } from '@lems/shared/rubrics';
 import type { GraphQLContext } from '../../../apollo-server';
@@ -47,9 +47,7 @@ export async function authorizeRubricAccess(
     );
   }
 
-  const rubric = await db.raw.mongo
-    .collection<{ _id?: ObjectId; divisionId: string; status: string; teamId?: string }>('rubrics')
-    .findOne({ _id: rubricObjectId });
+  const rubric = await db.raw.mongo.collection<Rubric>('rubrics').findOne({ _id: rubricObjectId });
 
   if (!rubric) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Rubric ${rubricId} not found`);
@@ -63,7 +61,31 @@ export async function authorizeRubricAccess(
     );
   }
 
-  // Check 5: For judges only - verify team is in a session in their room
+  // Check 5: Verify that the team session has been completed
+  const teamId = (rubric.teamId as string | undefined) || '';
+  if (!teamId) {
+    throw new MutationError(MutationErrorCode.FORBIDDEN, 'Rubric does not have a team assignment');
+  }
+
+  const session = await db.judgingSessions.byDivision(divisionId).getByTeam(teamId);
+
+  if (!session) {
+    throw new MutationError(
+      MutationErrorCode.FORBIDDEN,
+      'Team does not have a judging session in this division'
+    );
+  }
+
+  const sessionState = await db.judgingSessions.byId(session.id).state().get();
+
+  if (sessionState?.status !== 'completed') {
+    throw new MutationError(
+      MutationErrorCode.FORBIDDEN,
+      'Cannot access rubric before the team session is completed'
+    );
+  }
+
+  // Check 6: For judges only - verify team is in a session in their room
   if (context.user.role === 'judge') {
     const userRoomId = (context.user.roleInfo as Record<string, string> | null)?.roomId;
     if (!userRoomId) {
@@ -72,17 +94,6 @@ export async function authorizeRubricAccess(
         'Judge must have a room assignment in their roleInfo'
       );
     }
-
-    const teamId = (rubric.teamId as string | undefined) || '';
-    if (!teamId) {
-      throw new MutationError(
-        MutationErrorCode.FORBIDDEN,
-        'Rubric does not have a team assignment'
-      );
-    }
-
-    // Find if the team has a session in the judge's room
-    const session = await db.judgingSessions.byDivision(divisionId).getByTeam(teamId);
 
     if (!session || session.room_id !== userRoomId) {
       throw new MutationError(

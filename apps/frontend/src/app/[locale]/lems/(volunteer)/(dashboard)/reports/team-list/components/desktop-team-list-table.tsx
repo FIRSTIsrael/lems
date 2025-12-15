@@ -20,9 +20,13 @@ import { visuallyHidden } from '@mui/utils';
 import { Flag } from '@lems/shared';
 import { sortTeams, getNextSortDirection, SortField, SortDirection } from '../lib/sorting';
 import { COLUMN_DEFINITIONS } from '../lib/column-definitions';
-import { TeamListTableProps } from './types';
+import { Team } from '../graphql';
 
-export function DesktopTeamListTable({ teams }: TeamListTableProps) {
+interface DesktopTeamListTableProps {
+  teams: Team[];
+}
+
+export const DesktopTeamListTable: React.FC<DesktopTeamListTableProps> = ({ teams }) => {
   const t = useTranslations('pages.reports.team-list');
   const theme = useTheme();
 
@@ -124,4 +128,4 @@ export function DesktopTeamListTable({ teams }: TeamListTableProps) {
       </Paper>
     </>
   );
-}
+};

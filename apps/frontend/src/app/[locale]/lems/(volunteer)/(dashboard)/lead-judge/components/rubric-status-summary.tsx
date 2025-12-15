@@ -15,7 +15,7 @@ import {
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingSession } from '../lead-judge.graphql';
+import { JudgingSession } from '../graphql';
 import { getRubricStatusStats } from './utils';
 import { SessionFilters } from './session-filters';
 

@@ -16,7 +16,7 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { range } from '@lems/shared/utils';
-import { JudgingSession } from '../judge-advisor.graphql';
+import { JudgingSession } from '../graphql';
 import { getRubricStatusStats } from './utils';
 
 interface RubricStatusSummaryProps {

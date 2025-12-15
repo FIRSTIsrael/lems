@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { JudgingCategory } from '@lems/types/judging';
 import { range } from '@lems/shared/utils';
 import { Paper, Box, Typography, useTheme, Stack } from '@mui/material';
-import { JudgingSession } from '../lead-judge.graphql';
+import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamSessionCard } from './team-session-card';
 

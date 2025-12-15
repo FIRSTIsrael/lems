@@ -16,7 +16,7 @@ import toast from 'react-hot-toast';
 import { useMutation } from '@apollo/client/react';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
-import { ABORT_MATCH_MUTATION, START_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { ABORT_MATCH_MUTATION, START_MATCH_MUTATION } from '../../graphql';
 import { useEvent } from '../../../../components/event-context';
 
 export const StartStopMatchButton = () => {

@@ -1,5 +1,5 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb, Filter } from 'mongodb';
+import { Db as MongoDb, Filter, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { Rubric, JudgingCategory } from '../schema/documents/rubric';
 
@@ -9,7 +9,7 @@ class RubricSelector {
     private filter: Filter<Rubric>
   ) {}
 
-  async get(): Promise<Rubric | null> {
+  async get(): Promise<WithId<Rubric> | null> {
     return await this.mongo.collection<Rubric>('rubrics').findOne(this.filter);
   }
 
@@ -87,7 +87,7 @@ class RubricsSelector {
     return { ...baseFilter, ...this.additionalFilters };
   }
 
-  async getAll(): Promise<Rubric[]> {
+  async getAll(): Promise<WithId<Rubric>[]> {
     const filter = await this.buildFilter();
     return await this.mongo.collection<Rubric>('rubrics').find(filter).toArray();
   }
@@ -106,14 +106,12 @@ class RubricsSelector {
     });
   }
 
-  async get(): Promise<Rubric | null> {
+  async get(): Promise<WithId<Rubric> | null> {
     const filter = await this.buildFilter();
     return new RubricSelector(this.mongo, filter).get();
   }
 
-  async upsert(
-    rubric: Partial<Omit<Rubric, 'divisionId' | 'teamId' | 'category'>>
-  ): Promise<Rubric> {
+  async upsert(rubric: Partial<Omit<Rubric, 'divisionId' | 'teamId' | 'category'>>) {
     const filter = await this.buildFilter();
     return new RubricSelector(this.mongo, filter).upsert(rubric);
   }
@@ -144,16 +142,12 @@ export class RubricsRepository {
     return new RubricsSelector(this.db, this.mongo, { type: 'room', roomId });
   }
 
-  async create(rubric: Rubric): Promise<Rubric> {
-    await this.mongo.collection<Rubric>('rubrics').insertOne(rubric);
-    return rubric;
+  async create(rubric: Rubric) {
+    return await this.mongo.collection<Rubric>('rubrics').insertOne(rubric);
   }
 
-  async createMany(rubrics: Rubric[]): Promise<Rubric[]> {
-    if (rubrics.length === 0) {
-      return [];
-    }
-    await this.mongo.collection<Rubric>('rubrics').insertMany(rubrics);
-    return rubrics;
+  async createMany(rubrics: Rubric[]) {
+    if (rubrics.length === 0) return null;
+    return await this.mongo.collection<Rubric>('rubrics').insertMany(rubrics);
   }
 }

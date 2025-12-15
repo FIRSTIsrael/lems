@@ -3,7 +3,7 @@
 import { Chip, Stack } from '@mui/material';
 import WarningIcon from '@mui/icons-material/Warning';
 import { useTranslations } from 'next-intl';
-import { Team } from '../judge-advisor.graphql';
+import { Team } from '../graphql';
 import { TeamInfo } from '../../components/team-info';
 
 interface TeamInfoCellProps {

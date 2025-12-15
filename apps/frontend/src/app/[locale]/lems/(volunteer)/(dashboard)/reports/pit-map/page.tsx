@@ -5,7 +5,7 @@ import { Container, Stack, Box, Typography } from '@mui/material';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { GET_DIVISION_PIT_MAP, parsePitMapUrl } from './pit-map.graphql';
+import { GET_DIVISION_PIT_MAP, parsePitMapUrl } from './graphql';
 
 export default function PitMapReportPage() {
   const t = useTranslations('pages.reports.pit-map');

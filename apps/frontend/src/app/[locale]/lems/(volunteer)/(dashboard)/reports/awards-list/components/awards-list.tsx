@@ -1,7 +1,7 @@
 'use client';
 
 import { Stack } from '@mui/material';
-import { Award } from '../awards-list.graphql';
+import { Award } from '../graphql';
 import { AwardCard } from './award-card';
 
 interface AwardsListProps {

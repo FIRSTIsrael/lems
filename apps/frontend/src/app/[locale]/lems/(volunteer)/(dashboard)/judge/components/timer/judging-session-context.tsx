@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { JudgingSession } from '../../judge.graphql';
+import { JudgingSession } from '../../graphql';
 
 interface JudgingSessionContextType {
   session: JudgingSession;

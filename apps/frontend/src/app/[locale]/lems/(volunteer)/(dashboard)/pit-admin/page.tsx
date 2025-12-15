@@ -15,7 +15,7 @@ import {
   parseDivisionTeams,
   createTeamArrivalSubscription,
   createTeamArrivedCacheUpdate
-} from './pit-admin.graphql';
+} from './graphql';
 import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
 

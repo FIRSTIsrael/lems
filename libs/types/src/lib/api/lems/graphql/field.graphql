@@ -93,6 +93,12 @@ type Field {
 
     "Filter matches by match numbers"
     matchNumbers: [Int!]
+
+    "Filter matches by round number"
+    round: Int
+
+    "Filter matches by team IDs participating in the match"
+    teamIds: [String!]
   ): [Match!]!
 
   "Length of each match in seconds"

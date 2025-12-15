@@ -6,7 +6,7 @@ import { StartRounded } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useScorekeeperData } from '../scorekeeper-context';
-import { LOAD_MATCH_MUTATION } from '../../scorekeeper.graphql';
+import { LOAD_MATCH_MUTATION } from '../../graphql';
 import { useEvent } from '../../../../components/event-context';
 
 export const LoadMatchButton = () => {
@@ -28,11 +28,13 @@ export const LoadMatchButton = () => {
         size="small"
         fullWidth
         disabled={!matchToLoad}
-        onClick={() =>
+        onClick={() => {
+          if (!matchToLoad) return;
+
           loadMatch({
-            variables: { divisionId: currentDivision.id, matchId: matchToLoad!.id }
-          })
-        }
+            variables: { divisionId: currentDivision.id, matchId: matchToLoad.id }
+          });
+        }}
         startIcon={<StartRounded sx={{ fontSize: '1.1rem' }} />}
         sx={{ py: 0.75, fontSize: '0.875rem', fontWeight: 500 }}
       >

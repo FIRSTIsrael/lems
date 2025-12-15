@@ -151,7 +151,24 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
 
     await db.robotGameMatches.createMany(allMatches);
 
-    // TODO: Scoresheets here
+    const scoresheets = [];
+
+    for (const { match, participants } of matchesWithParticipants) {
+      for (const participant of participants) {
+        if (participant.team_id) {
+          scoresheets.push({
+            divisionId: req.divisionId,
+            teamId: participant.team_id,
+            stage: match.stage as 'PRACTICE' | 'RANKING',
+            round: match.round,
+            status: 'empty' as const,
+            escalated: false
+          });
+        }
+      }
+    }
+
+    await db.scoresheets.createMany(scoresheets);
 
     res.status(200).json({ ok: true });
   } catch (error) {
@@ -204,6 +221,7 @@ router.delete('/schedule', async (req: SchedulerRequest, res) => {
     await Promise.all([
       db.judgingSessions.byDivision(req.divisionId).deleteAll(),
       db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
+      db.scoresheets.byDivision(req.divisionId).deleteAll(),
       db.divisions.byId(req.divisionId).update({ has_schedule: false, schedule_settings: null })
     ]);
 
