@@ -50,6 +50,7 @@ export type ScoresheetMissionClauseUpdatedEvent = {
   missionId: string;
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
+  score: number;
   version: number;
 };
 
