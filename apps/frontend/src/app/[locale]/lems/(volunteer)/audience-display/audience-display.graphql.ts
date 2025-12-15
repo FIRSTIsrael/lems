@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export type AudienceDisplayScreen =
   | 'scoreboard'
-  | 'match-preview'
+  | 'match_preview'
   | 'sponsors'
   | 'logo'
   | 'message'

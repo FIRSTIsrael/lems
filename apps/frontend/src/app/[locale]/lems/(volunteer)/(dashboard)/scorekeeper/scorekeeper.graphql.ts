@@ -12,6 +12,7 @@ export interface MatchParticipant {
     affiliation: string;
     city: string;
     arrived: boolean;
+    logoUrl?: string;
   } | null;
   table: {
     id: string;

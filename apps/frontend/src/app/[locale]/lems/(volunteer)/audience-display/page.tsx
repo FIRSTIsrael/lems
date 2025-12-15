@@ -10,6 +10,7 @@ import { AudienceDisplayProvider } from './components/audience-display-context';
 import { LogoDisplay } from './components/logo-display';
 import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
+import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -39,7 +40,7 @@ export default function AudienceDisplayPage() {
   );
 
   if (error) {
-    throw error || new Error('Failed to load scorekeeper data');
+    throw error || new Error('Failed to load audience display data');
   }
 
   if (loading || !data) {
@@ -53,6 +54,7 @@ export default function AudienceDisplayPage() {
       {activeDisplay === 'logo' && <LogoDisplay />}
       {activeDisplay === 'message' && <MessageDisplay />}
       {activeDisplay === 'sponsors' && <SponsorsDisplay />}
+      {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
     </AudienceDisplayProvider>
   );
 }

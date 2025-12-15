@@ -361,7 +361,12 @@
           "message": "Message",
           "awards": "Awards"
         },
-        "status-label": "Current Mode"
+        "status-label": "Current Mode",
+        "match-preview": {
+          "round": "Round",
+          "match": "Match",
+          "table": "Table"
+        }
       },
       "schedule": {
         "title": "Match Schedule",

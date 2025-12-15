@@ -361,7 +361,12 @@
           "message": "הודעה",
           "awards": "פרסים"
         },
-        "status-label": "מצב נוכחי"
+        "status-label": "מצב נוכחי",
+        "match-preview": {
+          "round": "סבב",
+          "match": "מקצה",
+          "table": "שולחן"
+        }
       },
       "schedule": {
         "title": "לו״ז מקצים",
