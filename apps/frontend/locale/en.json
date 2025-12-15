@@ -366,6 +366,11 @@
           "round": "Round",
           "match": "Match",
           "table": "Table"
+        },
+        "scoreboard": {
+          "current-match": "Current Match",
+          "test-match": "Test Match",
+          "no-match": "-"
         }
       },
       "schedule": {

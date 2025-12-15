@@ -11,6 +11,7 @@ export const GET_SCOREBOARD_DATA: TypedDocumentNode<ScoreboardData, ScoreboardVa
           stage
           round
           number
+          startTime
           participants {
             team {
               id

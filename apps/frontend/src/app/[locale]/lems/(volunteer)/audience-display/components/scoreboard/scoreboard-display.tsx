@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { Box } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import {
@@ -14,6 +15,7 @@ import {
   parseScoreboardData
 } from './graphql';
 import { ScoreboardProvider } from './scoreboard-context';
+import { ActiveMatch } from './active-match';
 
 export const ScoreboardDisplay = () => {
   const { currentDivision } = useEvent();
@@ -47,5 +49,47 @@ export const ScoreboardDisplay = () => {
     return null;
   }
 
-  return <ScoreboardProvider fieldData={data}>{JSON.stringify(data)}</ScoreboardProvider>;
+  return (
+    <ScoreboardProvider fieldData={data}>
+      <Box
+        sx={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          position: 'relative',
+          overflow: 'hidden',
+          p: 4
+        }}
+      >
+        <Box
+          maxWidth="xl"
+          sx={{
+            position: 'relative',
+            zIndex: 1,
+            width: '100%',
+            animation: 'fadeIn 0.6s ease-out'
+          }}
+        >
+          <ActiveMatch />
+        </Box>
+
+        <style>{`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
+        }
+      `}</style>
+      </Box>
+    </ScoreboardProvider>
+  );
 };

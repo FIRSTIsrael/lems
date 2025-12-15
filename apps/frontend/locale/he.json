@@ -366,6 +366,11 @@
           "round": "סבב",
           "match": "מקצה",
           "table": "שולחן"
+        },
+        "scoreboard": {
+          "current-match": "מקצה נוכחי",
+          "test-match": "מקצה בדיקה",
+          "no-match": "-"
         }
       },
       "schedule": {
