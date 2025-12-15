@@ -3,11 +3,11 @@ import { merge } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import type { MatchEvent, ScoreboardData } from '../types';
 
-export interface MatchLoadedSubscriptionData {
+interface MatchLoadedSubscriptionData {
   matchLoaded: MatchEvent;
 }
 
-export interface SubscriptionVars {
+interface SubscriptionVars {
   divisionId: string;
   lastSeenVersion?: number;
 }

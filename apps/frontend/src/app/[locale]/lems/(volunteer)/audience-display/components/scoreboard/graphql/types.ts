@@ -56,7 +56,7 @@ export type ScoresheetUpdatedEvent =
 
 export interface Scoresheet {
   id: string;
-  teamId: string;
+  team: { id: string };
   stage: MatchStage;
   round: number;
   status: ScoresheetStatus;
@@ -68,17 +68,19 @@ export interface ScoreboardVars {
   divisionId: string;
 }
 
+export interface FieldData {
+  matches: Match[];
+  scoresheets: Scoresheet[];
+  currentStage: MatchStage;
+  loadedMatch: string | null;
+  activeMatch: string | null;
+  matchLength: number;
+}
+
 export interface ScoreboardData {
   division: {
     id: string;
-    field: {
-      matches: Match[];
-      scoresheets: Scoresheet[];
-      currentStage: MatchStage;
-      loadedMatch: string | null;
-      activeMatch: string | null;
-      matchLength: number;
-    };
+    field: FieldData;
   };
 }
 

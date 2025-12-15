@@ -1,6 +1,6 @@
 export * from './types';
 
-export { GET_MATCH_PREVIEW_DATA, parseMatchPreviewData } from './query';
-export type { MatchPreviewData, MatchPreviewVars } from './types';
+export { GET_SCOREBOARD_DATA, parseScoreboardData } from './query';
+export type { ScoreboardData, ScoreboardVars } from './types';
 
 export * from './subscriptions';

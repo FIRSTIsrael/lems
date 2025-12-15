@@ -3,12 +3,12 @@ import { merge, updateById, type Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import type { ScoreboardData, ScoresheetUpdatedEvent } from '../types';
 
-export interface SubscriptionVars {
+interface SubscriptionVars {
   divisionId: string;
   lastSeenVersion?: number;
 }
 
-export type SubscriptionResult = {
+type SubscriptionResult = {
   scoresheetUpdated: ScoresheetUpdatedEvent;
 };
 

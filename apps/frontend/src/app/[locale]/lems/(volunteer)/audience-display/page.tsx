@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation';
 import { useEvent } from '../components/event-context';
 import useKeyboardShortcut from '../hooks/use-keyboard-shortcut';
 import { usePageData } from '../hooks/use-page-data';
-import { GET_AUDIENCE_DISPLAY_DATA, parseAudienceDisplayData } from './audience-display.graphql';
 import { AudienceDisplayProvider } from './components/audience-display-context';
 import { LogoDisplay } from './components/logo-display';
 import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
+import { GET_AUDIENCE_DISPLAY_DATA, parseAudienceDisplayData } from './graphql';
+import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -55,6 +56,7 @@ export default function AudienceDisplayPage() {
       {activeDisplay === 'message' && <MessageDisplay />}
       {activeDisplay === 'sponsors' && <SponsorsDisplay />}
       {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
+      {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
     </AudienceDisplayProvider>
   );
 }

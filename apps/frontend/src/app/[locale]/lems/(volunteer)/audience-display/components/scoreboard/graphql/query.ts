@@ -29,7 +29,9 @@ export const GET_SCOREBOARD_DATA: TypedDocumentNode<ScoreboardData, ScoreboardVa
         }
         scoresheets {
           id
-          teamId
+          team {
+            id
+          }
           stage
           round
           status
