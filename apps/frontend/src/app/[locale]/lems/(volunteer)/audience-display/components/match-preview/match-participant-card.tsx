@@ -1,6 +1,6 @@
 import { Grid, Stack, alpha, Box, Avatar, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { MatchParticipant } from '../../../(dashboard)/scorekeeper/scorekeeper.graphql';
+import { MatchParticipant } from './graphql';
 
 interface MatchParticipantCardProps {
   participant: MatchParticipant;

@@ -11,7 +11,7 @@ import {
   createMatchLoadedSubscription,
   GET_MATCH_PREVIEW_DATA,
   parseMatchPreviewData
-} from './match-preview.graphql';
+} from './graphql';
 import { MatchParticipantCard } from './match-participant-card';
 
 export const MatchPreviewDisplay = () => {
