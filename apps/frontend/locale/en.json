@@ -376,6 +376,11 @@
             "match": "Match",
             "disclaimer": "Scores are not final and may change at any time",
             "under-review": "Under Review"
+          },
+          "scores-table": {
+            "rank": "Rank",
+            "team": "Team",
+            "highest-score": "Highest Score"
           }
         }
       },

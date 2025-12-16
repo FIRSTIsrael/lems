@@ -376,6 +376,11 @@
             "match": "מקצה",
             "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
             "under-review": "בבדיקה"
+          },
+          "scores-table": {
+            "rank": "דירוג",
+            "team": "קבוצה",
+            "highest-score": "ניקוד גבוה"
           }
         }
       },

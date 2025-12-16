@@ -18,6 +18,7 @@ import {
 import { ScoreboardProvider } from './scoreboard-context';
 import { ActiveMatch } from './active-match';
 import { PreviousMatch } from './previous-match';
+import { ScoresTable } from './scores-table';
 import { SponsorsRow } from './sponsors-row';
 import { useFieldSounds } from './hooks/use-field-sounds';
 
@@ -73,14 +74,17 @@ export const ScoreboardDisplay = () => {
         }}
       >
         <Stack
-          maxWidth="xl"
+          maxWidth="80vw"
           spacing={2}
           sx={{
             animation: 'fadeIn 0.6s ease-out'
           }}
+          height="90%"
+          width="100%"
         >
           <ActiveMatch />
           <PreviousMatch />
+          <ScoresTable />
           <SponsorsRow />
         </Stack>
 

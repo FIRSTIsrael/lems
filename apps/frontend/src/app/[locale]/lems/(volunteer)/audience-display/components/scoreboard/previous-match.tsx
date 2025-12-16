@@ -28,12 +28,7 @@ export const PreviousMatch = () => {
       : Math.ceil(filteredParticipants.length / 2);
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        mt: 2
-      }}
-    >
+    <>
       <Paper
         sx={{
           p: 2,
@@ -42,7 +37,6 @@ export const PreviousMatch = () => {
         }}
       >
         <Stack spacing={1.5}>
-          {/* Header */}
           <Box>
             <Typography
               sx={{
@@ -103,7 +97,6 @@ export const PreviousMatch = () => {
           </Grid>
         </Stack>
       </Paper>
-
       <style>{`
         @keyframes fadeIn {
           0% {
@@ -114,6 +107,6 @@ export const PreviousMatch = () => {
           }
         }
       `}</style>
-    </Box>
+    </>
   );
 };
