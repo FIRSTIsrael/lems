@@ -27,6 +27,16 @@ interface EventsArgs {
   endBefore?: string;
 }
 
+interface DivisionVenueArgs {
+  id: string;
+}
+
+export interface DivisionVenue {
+  id: string;
+  tables: { id: string; name: string }[];
+  rooms: { id: string; name: string }[];
+}
+
 export const eventResolvers = {
   Query: {
     events: (async (_parent, args: EventsArgs) => {
@@ -54,7 +64,33 @@ export const eventResolvers = {
         console.error('Error fetching event:', error);
         throw error;
       }
-    }) as GraphQLFieldResolver<unknown, unknown, EventArgs, Promise<EventGraphQL | null>>
+    }) as GraphQLFieldResolver<unknown, unknown, EventArgs, Promise<EventGraphQL | null>>,
+
+    divisionVenue: (async (_parent, args: DivisionVenueArgs) => {
+      if (!args.id) {
+        throw new Error('Division ID is required');
+      }
+
+      try {
+        const division = await db.divisions.byId(args.id).get();
+
+        if (!division) {
+          throw new Error(`Division with ID ${args.id} not found`);
+        }
+
+        const tables = await db.tables.byDivisionId(args.id).getAll();
+        const rooms = await db.rooms.byDivisionId(args.id).getAll();
+
+        return {
+          id: division.id,
+          tables: tables.map(t => ({ id: t.id, name: t.name })),
+          rooms: rooms.map(r => ({ id: r.id, name: r.name }))
+        };
+      } catch (error) {
+        console.error('Error fetching division venue:', error);
+        throw error;
+      }
+    }) as GraphQLFieldResolver<unknown, unknown, DivisionVenueArgs, Promise<DivisionVenue>>
   }
 };
 

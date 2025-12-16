@@ -62,6 +62,7 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
+    divisionVenue: eventResolvers.Query.divisionVenue,
     division: divisionResolver
   },
   Mutation: mutationResolvers,

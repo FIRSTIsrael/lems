@@ -48,14 +48,14 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
   );
 
   return useMemo(() => {
-    if (!divisionData?.division || !roleInfoType || !volunteerData?.volunteers) return [];
+    if (!divisionData?.divisionVenue || !roleInfoType || !volunteerData?.volunteers) return [];
 
     let allOptions: RoleInfoOption[] = [];
 
     if (roleInfoType === 'table' || roleInfoType === 'room') {
-      if (divisionData?.division) {
+      if (divisionData?.divisionVenue) {
         const items =
-          roleInfoType === 'table' ? divisionData.division.tables : divisionData.division.rooms;
+          roleInfoType === 'table' ? divisionData.divisionVenue.tables : divisionData.divisionVenue.rooms;
         allOptions = items.map((item: { id: string; name: string }) => ({
           id: item.id,
           name: item.name

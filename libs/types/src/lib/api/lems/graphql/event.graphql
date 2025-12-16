@@ -70,4 +70,24 @@ extend type Query {
     "Event slug to retrieve (alternative to ID)"
     slug: String
   ): Event
+
+  """
+  Get division venue information (tables and rooms) by division ID.
+  This query does not require authentication and is used during login.
+  """
+  divisionVenue("Division ID to retrieve venue information for" id: String!): DivisionVenue
+}
+
+"""
+Division venue information (tables and rooms)
+"""
+type DivisionVenue {
+  "Unique identifier for the division"
+  id: String!
+
+  "Competition tables assigned to this division"
+  tables: [Table!]!
+
+  "Judging rooms assigned to this division"
+  rooms: [Room!]!
 }
