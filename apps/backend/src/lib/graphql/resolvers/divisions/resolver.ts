@@ -1,19 +1,43 @@
+import { ResolverError, ResolverErrorCode } from '@lems/types/api/lems';
+import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
 /**
  * Query resolver for fetching a single division by ID.
- * @throws Error if division ID is not provided or division not found
+ * Requires user authentication and verified division assignment.
+ * @throws Error if division ID is not provided, division not found, or user not authorized
  */
-export const divisionResolver = async (_parent: unknown, args: { id: string }) => {
+export const divisionResolver = async (
+  _parent: unknown,
+  args: { id: string },
+  context: GraphQLContext
+) => {
+  // Check authentication
+  if (!context.user) {
+    throw new ResolverError(ResolverErrorCode.UNAUTHORIZED, 'Authentication required');
+  }
+
+  // Check division assignment
   if (!args.id) {
-    throw new Error('Division ID is required');
+    throw new ResolverError(ResolverErrorCode.UNAUTHORIZED, 'Division ID is required');
+  }
+
+  // Check if user is assigned to the requested division
+  if (!context.user.divisions.includes(args.id)) {
+    throw new ResolverError(
+      ResolverErrorCode.FORBIDDEN,
+      'User is not assigned to this division'
+    );
   }
 
   try {
     const division = await db.divisions.byId(args.id).get();
 
     if (!division) {
-      throw new Error(`Division with ID ${args.id} not found`);
+      throw new ResolverError(
+        ResolverErrorCode.UNAUTHORIZED,
+        `Division with ID ${args.id} not found`
+      );
     }
 
     return {

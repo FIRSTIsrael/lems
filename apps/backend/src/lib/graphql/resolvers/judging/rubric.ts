@@ -1,9 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { hyphensToUnderscores } from '@lems/shared/utils';
+import { ResolverError, ResolverErrorCode } from '@lems/types/api/lems';
 import db from '../../../database';
 import { toGraphQLId } from '../../utils/object-id-transformer';
 import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 import { RubricGraphQL } from '../../utils/rubric-builder';
+import { GraphQLContext } from '../../apollo-server';
 
 /**
  * Resolver for Rubric.team field.
@@ -22,16 +24,26 @@ export const rubricTeamResolver: GraphQLFieldResolver<
   return buildTeamGraphQL(team, rubric.divisionId);
 };
 
+const allowedRubricDataRoles = new Set(['judge', 'lead-judge', 'judge-advisor']);
+
 /**
  * Resolver for Rubric.data field.
  * Returns the rubric data if it exists.
+ * Only accessible to users with specific roles.
  */
 export const rubricDataResolver: GraphQLFieldResolver<
   RubricGraphQL,
-  unknown,
+  GraphQLContext,
   unknown,
   RubricGraphQL['data'] | null
-> = (rubric: RubricGraphQL) => {
+> = (rubric: RubricGraphQL, context: GraphQLContext) => {
+    if (!allowedRubricDataRoles.has(context.user.role)) {
+      throw new ResolverError(
+        ResolverErrorCode.FORBIDDEN,
+        'User does not have permission to view rubrics data.'
+      );
+    }
+
   return rubric.data || null;
 };
 

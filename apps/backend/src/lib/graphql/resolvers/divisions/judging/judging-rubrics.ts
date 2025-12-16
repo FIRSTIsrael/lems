@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
-import db from '../../../../database';
 import { buildRubricResult, RubricGraphQL } from '../../../utils/rubric-builder';
+import db from '../../../../database';
 
 interface JudgingWithDivisionId {
   divisionId: string;
@@ -15,6 +15,7 @@ interface RubricsArgs {
 /**
  * Resolver for Judging.rubrics field.
  * Fetches rubrics for teams in a division, optionally filtered by team IDs or category.
+ * Only accessible to lead-judge and judge-advisor roles.
  */
 export const judgingRubricsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
