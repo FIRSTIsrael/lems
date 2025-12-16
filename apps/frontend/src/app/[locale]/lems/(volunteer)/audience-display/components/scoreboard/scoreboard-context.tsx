@@ -14,6 +14,8 @@ interface ScoreboardProviderProps {
 }
 
 export const ScoreboardProvider: React.FC<ScoreboardProviderProps> = ({ fieldData, children }) => {
+  console.log(fieldData);
+
   const previousMatch = useMemo(() => {
     const matches = [...fieldData.matches].reverse();
     return (

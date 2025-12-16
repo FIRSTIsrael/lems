@@ -370,7 +370,13 @@
         "scoreboard": {
           "current-match": "Current Match",
           "test-match": "Test Match",
-          "no-match": "-"
+          "no-match": "-",
+          "previous-match": {
+            "title": "Previous Match",
+            "match": "Match",
+            "disclaimer": "Scores are not final and may change at any time",
+            "under-review": "Under Review"
+          }
         }
       },
       "schedule": {

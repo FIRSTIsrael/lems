@@ -370,7 +370,13 @@
         "scoreboard": {
           "current-match": "מקצה נוכחי",
           "test-match": "מקצה בדיקה",
-          "no-match": "-"
+          "no-match": "-",
+          "previous-match": {
+            "title": "מקצה קודם",
+            "match": "מקצה",
+            "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
+            "under-review": "בבדיקה"
+          }
         }
       },
       "schedule": {

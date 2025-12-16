@@ -16,6 +16,7 @@ import {
 } from './graphql';
 import { ScoreboardProvider } from './scoreboard-context';
 import { ActiveMatch } from './active-match';
+import { PreviousMatch } from './previous-match';
 
 export const ScoreboardDisplay = () => {
   const { currentDivision } = useEvent();
@@ -73,10 +74,14 @@ export const ScoreboardDisplay = () => {
             position: 'relative',
             zIndex: 1,
             width: '100%',
-            animation: 'fadeIn 0.6s ease-out'
+            animation: 'fadeIn 0.6s ease-out',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 3
           }}
         >
           <ActiveMatch />
+          <PreviousMatch />
         </Box>
 
         <style>{`
