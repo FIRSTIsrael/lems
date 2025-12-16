@@ -75,11 +75,20 @@ export type ScoresheetEscalatedUpdatedEvent = {
   version: number;
 };
 
+export type ScoresheetSignatureUpdatedEvent = {
+  __typename: 'ScoresheetSignatureUpdated';
+  scoresheetId: string;
+  signature: string | null;
+  status: string;
+  version: number;
+};
+
 export type ScoresheetUpdatedEvent =
   | ScoresheetMissionClauseUpdatedEvent
   | ScoresheetStatusUpdatedEvent
   | ScoresheetGPUpdatedEvent
-  | ScoresheetEscalatedUpdatedEvent;
+  | ScoresheetEscalatedUpdatedEvent
+  | ScoresheetSignatureUpdatedEvent;
 
 export type SubscriptionResult = {
   scoresheetUpdated: ScoresheetUpdatedEvent;

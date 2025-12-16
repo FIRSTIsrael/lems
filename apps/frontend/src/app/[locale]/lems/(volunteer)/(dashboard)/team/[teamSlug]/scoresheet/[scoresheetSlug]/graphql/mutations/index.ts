@@ -5,3 +5,5 @@ export { UPDATE_SCORESHEET_STATUS_MUTATION } from './status';
 export { UPDATE_SCORESHEET_GP_MUTATION } from './gp';
 
 export { UPDATE_SCORESHEET_ESCALATED_MUTATION } from './escalated';
+
+export { SUBMIT_SCORESHEET_WITH_SIGNATURE_MUTATION } from './submit-signature';
