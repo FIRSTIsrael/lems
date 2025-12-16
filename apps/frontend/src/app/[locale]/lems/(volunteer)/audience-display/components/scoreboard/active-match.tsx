@@ -38,13 +38,13 @@ export const ActiveMatch = () => {
   );
 
   return (
-    <Grid container spacing={3} alignItems="center">
+    <Grid container spacing={1.5} alignItems="center">
       <Grid size={2} display="flex" justifyContent="center">
         <Box
           sx={{
             position: 'relative',
             width: '100%',
-            height: '100px'
+            height: '80px'
           }}
         >
           <Image
@@ -59,10 +59,10 @@ export const ActiveMatch = () => {
       <Grid size={8}>
         <Stack
           component={Paper}
-          p={3}
+          p={1.5}
           borderRadius={2}
           sx={{ bgcolor: theme => alpha(theme.palette.background.paper, 0.98) }}
-          spacing={4}
+          spacing={2}
           alignItems="flex-start"
           direction="row"
         >
@@ -70,7 +70,7 @@ export const ActiveMatch = () => {
             <Typography
               variant="overline"
               sx={{
-                fontSize: { xs: '0.8rem', md: '0.95rem', lg: '1rem' },
+                fontSize: { xs: '0.7rem', md: '0.8rem', lg: '0.85rem' },
                 fontWeight: 600,
                 color: 'text.secondary'
               }}
@@ -79,10 +79,11 @@ export const ActiveMatch = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: '2rem', md: '2.75rem', lg: '3.5rem' },
+                fontSize: { xs: '1.5rem', md: '2rem', lg: '2.5rem' },
                 whiteSpace: 'nowrap',
                 fontWeight: 700,
-                color: 'primary.main'
+                color: 'primary.main',
+                lineHeight: 1.2
               }}
             >
               {activeMatch?.number
@@ -93,15 +94,16 @@ export const ActiveMatch = () => {
             </Typography>
           </Box>
           {activeMatch && (
-            <Stack alignItems="flex-end" spacing={1} width="100%">
+            <Stack alignItems="flex-end" spacing={0.5} width="100%">
               <Countdown
                 targetDate={matchEnd!.toDate()}
                 sx={{
-                  fontSize: { xs: '2rem', md: '2.75rem', lg: '3.5rem' },
+                  fontSize: { xs: '1.5rem', md: '2rem', lg: '2.5rem' },
                   fontWeight: 700,
                   fontFamily: 'monospace',
                   color: percentLeft <= 20 ? 'error.main' : 'primary.main',
-                  transition: 'color 0.3s ease'
+                  transition: 'color 0.3s ease',
+                  lineHeight: 1.2
                 }}
               />
               <LinearProgress
@@ -109,7 +111,7 @@ export const ActiveMatch = () => {
                 value={percentLeft}
                 sx={{
                   width: '100%',
-                  height: 12,
+                  height: 10,
                   borderRadius: 1,
                   backgroundColor: alpha('#ccc', 0.3),
                   '& .MuiLinearProgress-bar': {
@@ -129,7 +131,7 @@ export const ActiveMatch = () => {
           sx={{
             position: 'relative',
             width: '100%',
-            height: '100px'
+            height: '80px'
           }}
         >
           <Image

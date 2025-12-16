@@ -117,7 +117,7 @@ export const ScoresTable = () => {
             transition: 'background-color 0.2s'
           }}
         >
-          <TableCell align="center" sx={{ fontWeight: 600, py: 1.25 }}>
+          <TableCell align="center" sx={{ fontWeight: 600, py: 1.25, fontSize: '0.95rem' }}>
             {team.rank}
           </TableCell>
           <TableCell sx={{ py: 1.25 }}>
@@ -133,21 +133,28 @@ export const ScoresTable = () => {
                 }}
               />
               <Box sx={{ minWidth: 0, flex: 1 }}>
-                <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>
+                <Typography sx={{ fontWeight: 700, fontSize: '1.15rem' }}>
                   #{team.number} | {team.name}
                 </Typography>
-                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
+                <Typography sx={{ fontSize: '0.9rem', color: 'text.secondary' }}>
                   {team.affiliation}, {team.city}
                 </Typography>
               </Box>
             </Box>
           </TableCell>
           {team.scores.map((score, scoreIndex) => (
-            <TableCell key={`score-${team.teamId}-${scoreIndex}`} align="center" sx={{ py: 1.25 }}>
+            <TableCell
+              key={`score-${team.teamId}-${scoreIndex}`}
+              align="center"
+              sx={{ py: 1.25, fontSize: '1rem', fontWeight: 500 }}
+            >
               {renderScoreCell(score)}
             </TableCell>
           ))}
-          <TableCell align="center" sx={{ fontWeight: 700, py: 1.25, color: 'primary.main' }}>
+          <TableCell
+            align="center"
+            sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.1rem' }}
+          >
             {team.maxScore}
           </TableCell>
         </TableRow>
@@ -169,23 +176,23 @@ export const ScoresTable = () => {
         <Table stickyHeader>
           <TableHead sx={{ bgcolor: theme => alpha(theme.palette.primary.main, 0.08) }}>
             <TableRow sx={{ bgcolor: theme => alpha(theme.palette.primary.main, 0.08) }}>
-              <TableCell align="center" sx={{ fontWeight: 700, py: 1.5 }}>
+              <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}>
                 {t('rank')}
               </TableCell>
-              <TableCell sx={{ fontWeight: 700, py: 1.5 }} width="35%">
+              <TableCell sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }} width="35%">
                 {t('team')}
               </TableCell>
               {rounds.map(round => (
                 <TableCell
                   key={`round-${round.stage}-${round.round}`}
                   align="center"
-                  sx={{ fontWeight: 700, py: 1.5 }}
+                  sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}
                 >
                   {round.stage === 'PRACTICE' ? 'P' : 'R'}
                   {round.round}
                 </TableCell>
               ))}
-              <TableCell align="center" sx={{ fontWeight: 700, py: 1.5 }}>
+              <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}>
                 {t('highest-score')}
               </TableCell>
             </TableRow>

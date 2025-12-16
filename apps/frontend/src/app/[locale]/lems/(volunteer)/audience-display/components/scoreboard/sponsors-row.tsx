@@ -33,11 +33,7 @@ export const SponsorsRow = () => {
               display: 'flex',
               height: '80px',
               animation: 'scroll-left 40s linear infinite',
-              willChange: 'transform',
-
-              '&:hover': {
-                animationPlayState: 'paused'
-              }
+              willChange: 'transform'
             }}
           >
             {/* First set of sponsors */}

@@ -31,19 +31,19 @@ export const PreviousMatch = () => {
     <>
       <Paper
         sx={{
-          p: 2,
+          p: 1.5,
           bgcolor: theme => alpha(theme.palette.background.paper, 0.95),
           borderRadius: 1.5
         }}
       >
-        <Stack spacing={1.5}>
+        <Stack spacing={1}>
           <Box>
             <Typography
               sx={{
-                fontSize: { xs: '0.9rem', md: '1rem', lg: '1.1rem' },
+                fontSize: { xs: '0.75rem', md: '0.85rem', lg: '0.9rem' },
                 fontWeight: 600,
                 color: 'text.secondary',
-                mb: 0.5,
+                mb: 0.25,
                 textTransform: 'uppercase',
                 letterSpacing: 0.5
               }}
@@ -52,17 +52,18 @@ export const PreviousMatch = () => {
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: '1.25rem', md: '1.5rem', lg: '1.75rem' },
+                fontSize: { xs: '1rem', md: '1.25rem', lg: '1.5rem' },
                 fontWeight: 700,
                 color: 'primary.main',
-                mb: 1
+                mb: 0.5,
+                lineHeight: 1.2
               }}
             >
               {match?.number ? `${t('previous-match.match')} #${match.number}` : t('no-match')}
             </Typography>
             <Typography
               sx={{
-                fontSize: { xs: '0.8rem', md: '0.9rem', lg: '1rem' },
+                fontSize: { xs: '0.7rem', md: '0.8rem', lg: '0.85rem' },
                 color: 'text.secondary',
                 fontStyle: 'italic'
               }}
@@ -73,7 +74,7 @@ export const PreviousMatch = () => {
 
           <Grid
             container
-            spacing={1.5}
+            spacing={1}
             columns={columns}
             sx={{
               animation: 'fadeIn 0.6s ease-out'
