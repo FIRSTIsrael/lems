@@ -37,10 +37,6 @@ export const ActiveMatch = () => {
     [timeRemaining, matchLength]
   );
 
-  if (!activeMatch) {
-    return null;
-  }
-
   return (
     <Box sx={{ width: '100%' }}>
       <Grid container spacing={3} alignItems="center" sx={{ mb: 3 }}>
@@ -90,40 +86,42 @@ export const ActiveMatch = () => {
                   color: 'primary.main'
                 }}
               >
-                {activeMatch.number
+                {activeMatch?.number
                   ? `${getStage(activeMatch.stage)} #${activeMatch.number}`
-                  : activeMatch.stage === 'TEST'
+                  : activeMatch?.stage === 'TEST'
                     ? t('test-match')
                     : t('no-match')}
               </Typography>
             </Box>
-            <Stack alignItems="flex-end" spacing={1} width="100%">
-              <Countdown
-                targetDate={matchEnd!.toDate()}
-                sx={{
-                  fontSize: { xs: '2rem', md: '2.75rem', lg: '3.5rem' },
-                  fontWeight: 700,
-                  fontFamily: 'monospace',
-                  color: percentLeft <= 20 ? 'error.main' : 'primary.main',
-                  transition: 'color 0.3s ease'
-                }}
-              />
-              <LinearProgress
-                variant="determinate"
-                value={percentLeft}
-                sx={{
-                  width: '100%',
-                  height: 12,
-                  borderRadius: 1,
-                  backgroundColor: alpha('#ccc', 0.3),
-                  '& .MuiLinearProgress-bar': {
-                    backgroundColor: percentLeft <= 20 ? 'error.main' : 'primary.main',
+            {activeMatch && (
+              <Stack alignItems="flex-end" spacing={1} width="100%">
+                <Countdown
+                  targetDate={matchEnd!.toDate()}
+                  sx={{
+                    fontSize: { xs: '2rem', md: '2.75rem', lg: '3.5rem' },
+                    fontWeight: 700,
+                    fontFamily: 'monospace',
+                    color: percentLeft <= 20 ? 'error.main' : 'primary.main',
+                    transition: 'color 0.3s ease'
+                  }}
+                />
+                <LinearProgress
+                  variant="determinate"
+                  value={percentLeft}
+                  sx={{
+                    width: '100%',
+                    height: 12,
                     borderRadius: 1,
-                    transition: 'background-color 0.3s ease'
-                  }
-                }}
-              />
-            </Stack>
+                    backgroundColor: alpha('#ccc', 0.3),
+                    '& .MuiLinearProgress-bar': {
+                      backgroundColor: percentLeft <= 20 ? 'error.main' : 'primary.main',
+                      borderRadius: 1,
+                      transition: 'background-color 0.3s ease'
+                    }
+                  }}
+                />
+              </Stack>
+            )}
           </Stack>
         </Grid>
 
