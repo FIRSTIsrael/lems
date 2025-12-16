@@ -7,7 +7,10 @@ import {
   updateRubricStatusResolver,
   updateRubricAwardsResolver
 } from './rubrics';
-import { updateScoresheetMissionClauseResolver } from './scoresheets';
+import {
+  updateScoresheetMissionClauseResolver,
+  updateScoresheetSignatureResolver
+} from './scoresheets';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -20,5 +23,6 @@ export const mutationResolvers = {
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
   updateRubricAwards: updateRubricAwardsResolver,
-  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver
+  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
+  updateScoresheetSignature: updateScoresheetSignatureResolver
 };

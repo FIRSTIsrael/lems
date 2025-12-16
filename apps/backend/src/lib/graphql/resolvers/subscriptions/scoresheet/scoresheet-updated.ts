@@ -35,11 +35,19 @@ type ScoresheetEscalatedUpdatedEvent = {
   version: number;
 };
 
+type ScoresheetSignatureUpdatedEvent = {
+  scoresheetId: string;
+  signature: string | null;
+  status: string;
+  version: number;
+};
+
 type ScoresheetUpdatedEventType =
   | ScoresheetMissionClauseUpdatedEvent
   | ScoresheetStatusUpdatedEvent
   | ScoresheetGPUpdatedEvent
-  | ScoresheetEscalatedUpdatedEvent;
+  | ScoresheetEscalatedUpdatedEvent
+  | ScoresheetSignatureUpdatedEvent;
 
 async function processScoresheetUpdatedEvent(
   event: Record<string, unknown>
@@ -92,6 +100,20 @@ async function processScoresheetUpdatedEvent(
     return { scoresheetId, escalated, version } as ScoresheetEscalatedUpdatedEvent;
   }
 
+  if ('signature' in eventData) {
+    const signature = (eventData.signature as string) || null;
+    const status = (eventData.status as string) || '';
+
+    return status
+      ? ({
+          scoresheetId,
+          signature,
+          status,
+          version
+        } as ScoresheetSignatureUpdatedEvent)
+      : null;
+  }
+
   return null;
 }
 
@@ -114,6 +136,7 @@ export const scoresheetUpdatedResolver = {
 export const ScoresheetUpdatedEventResolver = {
   __resolveType(obj: Record<string, unknown>) {
     if ('missionId' in obj && 'clauseIndex' in obj) return 'ScoresheetMissionClauseUpdated';
+    if ('signature' in obj) return 'ScoresheetSignatureUpdated';
     if ('status' in obj && !('escalated' in obj)) return 'ScoresheetStatusUpdated';
     if ('gpValue' in obj || 'notes' in obj) return 'ScoresheetGPUpdated';
     if ('escalated' in obj) return 'ScoresheetEscalatedUpdated';
