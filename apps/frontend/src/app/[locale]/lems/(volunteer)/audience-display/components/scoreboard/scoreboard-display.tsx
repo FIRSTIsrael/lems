@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import {
@@ -18,6 +18,7 @@ import {
 import { ScoreboardProvider } from './scoreboard-context';
 import { ActiveMatch } from './active-match';
 import { PreviousMatch } from './previous-match';
+import { SponsorsRow } from './sponsors-row';
 import { useFieldSounds } from './hooks/use-field-sounds';
 
 export const ScoreboardDisplay = () => {
@@ -68,25 +69,20 @@ export const ScoreboardDisplay = () => {
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative',
-          overflow: 'hidden',
-          p: 4
+          overflow: 'hidden'
         }}
       >
-        <Box
+        <Stack
           maxWidth="xl"
+          spacing={2}
           sx={{
-            position: 'relative',
-            zIndex: 1,
-            width: '100%',
-            animation: 'fadeIn 0.6s ease-out',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3
+            animation: 'fadeIn 0.6s ease-out'
           }}
         >
           <ActiveMatch />
           <PreviousMatch />
-        </Box>
+          <SponsorsRow />
+        </Stack>
 
         <style>{`
         @keyframes fadeIn {
