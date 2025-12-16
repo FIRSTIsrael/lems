@@ -7,6 +7,7 @@ import { usePageData } from '../../../hooks/use-page-data';
 import {
   createMatchAbortedSubscription,
   createMatchCompletedSubscription,
+  createMatchEndgameTriggeredSubscription,
   createMatchLoadedSubscription,
   createMatchStageAdvancedSubscription,
   createMatchStartedSubscription,
@@ -17,20 +18,23 @@ import {
 import { ScoreboardProvider } from './scoreboard-context';
 import { ActiveMatch } from './active-match';
 import { PreviousMatch } from './previous-match';
+import { useFieldSounds } from './hooks/use-field-sounds';
 
 export const ScoreboardDisplay = () => {
   const { currentDivision } = useEvent();
+  const playSound = useFieldSounds();
 
   const subscriptions = useMemo(
     () => [
       createMatchLoadedSubscription(currentDivision.id),
-      createMatchAbortedSubscription(currentDivision.id),
-      createMatchCompletedSubscription(currentDivision.id),
+      createMatchStartedSubscription(currentDivision.id, () => playSound('start')),
+      createMatchAbortedSubscription(currentDivision.id, () => playSound('abort')),
+      createMatchEndgameTriggeredSubscription(currentDivision.id, () => playSound('endgame')),
+      createMatchCompletedSubscription(currentDivision.id, () => playSound('end')),
       createMatchStageAdvancedSubscription(currentDivision.id),
-      createScoresheetUpdatedSubscription(currentDivision.id),
-      createMatchStartedSubscription(currentDivision.id)
+      createScoresheetUpdatedSubscription(currentDivision.id)
     ],
-    [currentDivision.id]
+    [currentDivision.id, playSound]
   );
 
   const { data, loading, error } = usePageData(

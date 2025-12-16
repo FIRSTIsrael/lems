@@ -173,6 +173,17 @@ type MatchCompletedEvent {
 }
 
 """
+Represents an event when a match endgame is triggered
+"""
+type MatchEndgameTriggeredEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
 Represents an event when a match has been aborted
 """
 type MatchAbortedEvent {
@@ -257,6 +268,16 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): MatchCompletedEvent!
+
+  """
+  Subscribe to events when a match endgame is triggered in a division.
+  """
+  matchEndgameTriggered(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchEndgameTriggeredEvent!
 
   """
   Subscribe to events when a match is aborted in a division.
