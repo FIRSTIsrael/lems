@@ -7,7 +7,7 @@ interface MatchParticipantCardProps {
 }
 
 export const MatchParticipantCard: React.FC<MatchParticipantCardProps> = ({ participant }) => {
-  const t = useTranslations('pages.scorekeeper.audience-display.match-preview');
+  const t = useTranslations('pages.audience-display.match-preview');
 
   if (!participant.team) {
     return <></>;

@@ -362,26 +362,8 @@
           "awards": "Awards"
         },
         "status-label": "Current Mode",
-        "match-preview": {
-          "round": "Round",
-          "match": "Match",
-          "table": "Table"
-        },
-        "scoreboard": {
-          "current-match": "Current Match",
-          "test-match": "Test Match",
-          "no-match": "-",
-          "previous-match": {
-            "title": "Previous Match",
-            "match": "Match",
-            "disclaimer": "Scores are not final and may change at any time",
-            "under-review": "Under Review"
-          },
-          "scores-table": {
-            "rank": "Rank",
-            "team": "Team",
-            "highest-score": "Highest Score"
-          }
+        "errors": {
+          "audience-display-switch": "Failed to switch audience display."
         }
       },
       "schedule": {
@@ -399,6 +381,29 @@
       },
       "active-match": {
         "teams": "Teams"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "Round",
+        "match": "Match",
+        "table": "Table"
+      },
+      "scoreboard": {
+        "current-match": "Current Match",
+        "test-match": "Test Match",
+        "no-match": "-",
+        "previous-match": {
+          "title": "Previous Match",
+          "match": "Match",
+          "disclaimer": "Scores are not final and may change at any time",
+          "under-review": "Under Review"
+        },
+        "scores-table": {
+          "rank": "Rank",
+          "team": "Team",
+          "highest-score": "Highest Score"
+        }
       }
     },
     "lead-judge": {

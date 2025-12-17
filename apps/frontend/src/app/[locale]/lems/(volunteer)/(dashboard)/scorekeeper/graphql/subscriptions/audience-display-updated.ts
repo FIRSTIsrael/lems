@@ -1,7 +1,7 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, Reconciler } from '@lems/shared/utils';
-import type { SubscriptionConfig } from '../../../hooks/use-page-data';
-import type { AudienceDisplayScreen, AudienceDisplayData } from '../types';
+import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
+import type { AudienceDisplayScreen, ScorekeeperData } from '../types';
 
 interface AudienceDisplaySwitchedEvent {
   activeDisplay: AudienceDisplayScreen;
@@ -30,7 +30,7 @@ export const AUDIENCE_DISPLAY_SWITCHED_SUBSCRIPTION: TypedDocumentNode<
 `;
 
 const audienceDisplaySwitchedReconciler: Reconciler<
-  AudienceDisplayData,
+  ScorekeeperData,
   AudienceDisplaySwitchedSubscriptionData
 > = (prev, { data }) => {
   if (!data?.audienceDisplaySwitched) return prev;
@@ -51,15 +51,15 @@ const audienceDisplaySwitchedReconciler: Reconciler<
 
 export function createAudienceDisplaySwitchedSubscription(
   divisionId: string
-): SubscriptionConfig<unknown, AudienceDisplayData, SubscriptionVars> {
+): SubscriptionConfig<unknown, ScorekeeperData, SubscriptionVars> {
   return {
     subscription: AUDIENCE_DISPLAY_SWITCHED_SUBSCRIPTION,
     subscriptionVariables: {
       divisionId
     },
     updateQuery: audienceDisplaySwitchedReconciler as (
-      prev: AudienceDisplayData,
+      prev: ScorekeeperData,
       subscriptionData: { data?: unknown }
-    ) => AudienceDisplayData
+    ) => ScorekeeperData
   };
 }

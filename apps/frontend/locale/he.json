@@ -362,26 +362,8 @@
           "awards": "פרסים"
         },
         "status-label": "מצב נוכחי",
-        "match-preview": {
-          "round": "סבב",
-          "match": "מקצה",
-          "table": "שולחן"
-        },
-        "scoreboard": {
-          "current-match": "מקצה נוכחי",
-          "test-match": "מקצה בדיקה",
-          "no-match": "-",
-          "previous-match": {
-            "title": "מקצה קודם",
-            "match": "מקצה",
-            "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
-            "under-review": "בבדיקה"
-          },
-          "scores-table": {
-            "rank": "דירוג",
-            "team": "קבוצה",
-            "highest-score": "ניקוד גבוה"
-          }
+        "errors": {
+          "audience-display-switch": "החלפת תצוגת הקהל נכשלה."
         }
       },
       "schedule": {
@@ -399,6 +381,29 @@
       },
       "active-match": {
         "teams": "קבוצות"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "סבב",
+        "match": "מקצה",
+        "table": "שולחן"
+      },
+      "scoreboard": {
+        "current-match": "מקצה נוכחי",
+        "test-match": "מקצה בדיקה",
+        "no-match": "-",
+        "previous-match": {
+          "title": "מקצה קודם",
+          "match": "מקצה",
+          "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
+          "under-review": "בבדיקה"
+        },
+        "scores-table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "highest-score": "ניקוד גבוה"
+        }
       }
     },
     "lead-judge": {

@@ -194,6 +194,17 @@ type MatchAbortedEvent {
   version: Int!
 }
 
+"""
+Represents an event when a match has been aborted
+"""
+type AudienceDisplaySwitchedEvent {
+  "New active display"
+  activeDisplay: AudienceDisplayScreen!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
   Load a match to make it the currently loaded match.
@@ -226,6 +237,16 @@ extend type Mutation {
     "The ID of the match to abort"
     matchId: String!
   ): MatchAbortedEvent!
+
+  """
+  Switch the audience display to a different screen.
+  """
+  switchActiveDisplay(
+    "The ID of the division containing the audience display"
+    divisionId: String!
+    "The screen to switch the audience display to"
+    newDisplay: AudienceDisplayScreen!
+  ): AudienceDisplaySwitchedEvent!
 }
 
 extend type Subscription {
@@ -288,4 +309,14 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): MatchAbortedEvent!
+
+  """
+  Subscribe to events when the audience display is switched in a division.
+  """
+  audienceDisplaySwitched(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): AudienceDisplaySwitchedEvent!
 }

@@ -10,20 +10,26 @@ import {
   AnnouncementRounded,
   EmojiEventsRounded
 } from '@mui/icons-material';
-
-export type AudienceDisplayMode =
-  | 'scoreboard'
-  | 'match-preview'
-  | 'sponsors'
-  | 'logo'
-  | 'message'
-  | 'awards';
+import toast from 'react-hot-toast';
+import { useMutation } from '@apollo/client/react';
+import { AudienceDisplayScreen, SWITCH_AUDIENCE_DISPLAY_MUTATION } from '../graphql';
+import { useEvent } from '../../../components/event-context';
+import { useScorekeeperData } from './scorekeeper-context';
 
 export function AudienceDisplayControl() {
+  const { currentDivision } = useEvent();
+
   const t = useTranslations('pages.scorekeeper.audience-display');
   const theme = useTheme();
+  const { audienceDisplay } = useScorekeeperData();
 
-  const currentMode = 'scoreboard'; // TODO: Get from state
+  const [switchAudienceDisplay] = useMutation(SWITCH_AUDIENCE_DISPLAY_MUTATION, {
+    onError: () => {
+      toast.error(t('errors.audience-display-switch'));
+    }
+  });
+
+  const currentMode = audienceDisplay?.activeDisplay || 'scoreboard';
 
   return (
     <Paper
@@ -36,8 +42,13 @@ export function AudienceDisplayControl() {
       <ToggleButtonGroup
         value={currentMode}
         exclusive
-        onChange={(_, newMode: AudienceDisplayMode) => {
-          console.log('Change audience display mode to:', newMode);
+        onChange={(_, newDisplay: AudienceDisplayScreen) => {
+          switchAudienceDisplay({
+            variables: {
+              divisionId: currentDivision.id,
+              newDisplay
+            }
+          });
         }}
         disabled={false}
         size="small"
@@ -77,25 +88,25 @@ export function AudienceDisplayControl() {
             {t('modes.scoreboard')}
           </Typography>
         </ToggleButton>
-        <ToggleButton value="match-preview" aria-label="match-preview">
+        <ToggleButton value="match_preview" aria-label="match-preview">
           <VisibilityRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.match-preview')}
           </Typography>
         </ToggleButton>
-        <ToggleButton value="sponsors" aria-label="sponsors" disabled>
+        <ToggleButton value="sponsors" aria-label="sponsors">
           <BusinessRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.sponsors')}
           </Typography>
         </ToggleButton>
-        <ToggleButton value="logo" aria-label="logo" disabled>
+        <ToggleButton value="logo" aria-label="logo">
           <ImageRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.logo')}
           </Typography>
         </ToggleButton>
-        <ToggleButton value="message" aria-label="message" disabled>
+        <ToggleButton value="message" aria-label="message">
           <AnnouncementRounded sx={{ fontSize: '1.15rem' }} />
           <Typography variant="caption" sx={{ fontWeight: 600 }}>
             {t('modes.message')}

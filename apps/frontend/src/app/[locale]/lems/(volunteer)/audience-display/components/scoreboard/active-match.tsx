@@ -13,7 +13,7 @@ import { useScoreboard } from './scoreboard-context';
 export const ActiveMatch = () => {
   const { getStage } = useMatchTranslations();
   const { activeMatch: activeMatchId, matches, matchLength } = useScoreboard();
-  const t = useTranslations('pages.scorekeeper.audience-display.scoreboard');
+  const t = useTranslations('pages.audience-display.scoreboard');
 
   const currentTime = useTime({ interval: 1000 });
 

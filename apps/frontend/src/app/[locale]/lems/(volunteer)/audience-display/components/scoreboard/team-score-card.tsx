@@ -16,7 +16,7 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
   status,
   escalated
 }) => {
-  const t = useTranslations('pages.scorekeeper.audience-display.scoreboard');
+  const t = useTranslations('pages.audience-display.scoreboard');
 
   let statusColor = '#757575'; // grey
   let backgroundColor = 'rgba(117, 117, 117, 0.08)';

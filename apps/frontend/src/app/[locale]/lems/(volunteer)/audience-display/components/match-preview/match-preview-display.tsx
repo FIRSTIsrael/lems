@@ -17,7 +17,7 @@ import { MatchParticipantCard } from './match-participant-card';
 export const MatchPreviewDisplay = () => {
   const { currentDivision } = useEvent();
   const { getStage } = useMatchTranslations();
-  const t = useTranslations('pages.scorekeeper.audience-display.match-preview');
+  const t = useTranslations('pages.audience-display.match-preview');
 
   const subscriptions = useMemo(
     () => [createMatchLoadedSubscription(currentDivision.id)],

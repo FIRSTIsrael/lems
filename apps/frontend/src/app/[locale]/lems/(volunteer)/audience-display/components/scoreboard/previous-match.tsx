@@ -8,7 +8,7 @@ import { TeamScoreCard } from './team-score-card';
 
 export const PreviousMatch = () => {
   const { previousMatch, matches, scoresheets } = useScoreboard();
-  const t = useTranslations('pages.scorekeeper.audience-display.scoreboard');
+  const t = useTranslations('pages.audience-display.scoreboard');
 
   const match = useMemo(() => {
     if (!previousMatch) return null;

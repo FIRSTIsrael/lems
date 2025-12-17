@@ -1,7 +1,8 @@
 'use client';
 
-import { apiFetch } from '@lems/shared';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
+import { apiFetch } from '@lems/shared';
 import { useEvent } from '../components/event-context';
 import useKeyboardShortcut from '../hooks/use-keyboard-shortcut';
 import { usePageData } from '../hooks/use-page-data';
@@ -10,8 +11,12 @@ import { LogoDisplay } from './components/logo-display';
 import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
-import { GET_AUDIENCE_DISPLAY_DATA, parseAudienceDisplayData } from './graphql';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
+import {
+  createAudienceDisplaySwitchedSubscription,
+  GET_AUDIENCE_DISPLAY_DATA,
+  parseAudienceDisplayData
+} from './graphql';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -32,12 +37,18 @@ export default function AudienceDisplayPage() {
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
+  const subscriptions = useMemo(
+    () => [createAudienceDisplaySwitchedSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const { data, loading, error } = usePageData(
     GET_AUDIENCE_DISPLAY_DATA,
     {
       divisionId: currentDivision.id
     },
-    parseAudienceDisplayData
+    parseAudienceDisplayData,
+    subscriptions
   );
 
   if (error) {
@@ -49,6 +60,8 @@ export default function AudienceDisplayPage() {
   }
 
   const activeDisplay = data.activeDisplay;
+
+  console.log(activeDisplay);
 
   return (
     <AudienceDisplayProvider data={data}>

@@ -19,7 +19,7 @@ import { useTranslations } from 'next-intl';
 import { useScoreboard } from './scoreboard-context';
 
 export const ScoresTable = () => {
-  const t = useTranslations('pages.scorekeeper.audience-display.scoreboard.scores-table');
+  const t = useTranslations('pages.audience-display.scoreboard.scores-table');
   const { matches, scoresheets, currentStage } = useScoreboard();
 
   const rounds = useMemo(() => {
