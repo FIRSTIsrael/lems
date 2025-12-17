@@ -8,7 +8,10 @@ import {
   updateRubricAwardsResolver
 } from './rubrics';
 import { updateScoresheetMissionClauseResolver } from './scoresheets';
-import { switchActiveDisplayResolver } from './audience-display';
+import {
+  switchActiveDisplayResolver,
+  updateAudienceDisplaySettingResolver
+} from './audience-display';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -18,6 +21,7 @@ export const mutationResolvers = {
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
+  updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,

@@ -15,7 +15,8 @@ import {
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
   createTeamArrivalSubscription,
-  createAudienceDisplaySwitchedSubscription
+  createAudienceDisplaySwitchedSubscription,
+  createAudienceDisplaySettingUpdatedSubscription
 } from './graphql';
 import { MatchScheduleTable } from './components/schedule/match-schedule-table';
 import { ActiveMatchDisplay } from './components/active-match/active-match-display';
@@ -38,7 +39,8 @@ export default function ScorekeeperPage() {
       createMatchStageAdvancedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchAbortedSubscription(currentDivision.id),
-      createAudienceDisplaySwitchedSubscription(currentDivision.id)
+      createAudienceDisplaySwitchedSubscription(currentDivision.id),
+      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

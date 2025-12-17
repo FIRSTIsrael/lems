@@ -1,1 +1,2 @@
-export * from './audience-display-updated';
+export * from './audience-display-switched';
+export * from './audience-display-setting-updated';

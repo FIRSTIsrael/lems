@@ -4,4 +4,5 @@ export * from './match-started';
 export * from './match-stage-advanced';
 export * from './match-completed';
 export * from './match-aborted';
-export * from './audience-display-updated';
+export * from './audience-display-switched';
+export * from './audience-display-setting-updated';

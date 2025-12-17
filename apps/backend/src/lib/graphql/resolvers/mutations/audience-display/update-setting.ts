@@ -7,35 +7,39 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeAudienceDisplayAccess } from './utils';
 
-interface SwitchActiveDisplayArgs {
+interface UpdateAudienceDisplaySettingArgs {
   divisionId: string;
-  newDisplay: AudienceDisplayScreen;
+  display: AudienceDisplayScreen;
+  settingKey: string;
+  settingValue: unknown;
 }
 
-interface SwitchAudienceDisplayEvent {
-  activeDisplay: AudienceDisplayScreen;
+interface UpdateAudienceDisplaySettingEvent {
+  display: AudienceDisplayScreen;
+  settingKey: string;
+  settingValue: unknown;
   version: number;
 }
 
 /**
- * Resolver for Mutation.switchActiveDisplay
- * Switches the active display for a division.
+ * Resolver for Mutation.updateAudienceDisplaySetting
+ * Updates a setting for the audience display in a division.
  */
-export const switchActiveDisplayResolver: GraphQLFieldResolver<
+export const updateAudienceDisplaySettingResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  SwitchActiveDisplayArgs,
-  Promise<SwitchAudienceDisplayEvent>
-> = async (_root, { divisionId, newDisplay }, context) => {
+  UpdateAudienceDisplaySettingArgs,
+  Promise<UpdateAudienceDisplaySettingEvent>
+> = async (_root, { divisionId, display, settingKey, settingValue }, context) => {
   try {
     await authorizeAudienceDisplayAccess(context, divisionId);
 
-    // Update the division's active display in MongoDB
+    // Update the division's settings in MongoDB
     const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
       { divisionId },
       {
         $set: {
-          'audienceDisplay.activeDisplay': newDisplay
+          [`audienceDisplay.settings.${display}.${settingKey}`]: settingValue
         }
       },
       { returnDocument: 'after' }
@@ -50,11 +54,13 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
 
     // Publish event to notify subscribers
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED, {
-      activeDisplay: newDisplay
+    await pubSub.publish(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SETTING_UPDATED, {
+      display,
+      settingKey,
+      settingValue
     });
 
-    return { activeDisplay: newDisplay, version: -1 };
+    return { display, settingKey, settingValue, version: -1 };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

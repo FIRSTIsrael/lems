@@ -195,11 +195,28 @@ type MatchAbortedEvent {
 }
 
 """
-Represents an event when a match has been aborted
+Represents an event when the audience display has switched
 """
 type AudienceDisplaySwitchedEvent {
   "New active display"
   activeDisplay: AudienceDisplayScreen!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when the audience display settings was updated
+"""
+type AudienceDisplaySettingEvent {
+  "The screen that was updated"
+  screenUpdated: AudienceDisplayScreen!
+
+  "The setting key that was updated"
+  settingKey: String!
+
+  "The new value for the setting"
+  settingValue: JSON!
 
   "Event version for subscription recovery tracking"
   version: Int!
@@ -247,6 +264,20 @@ extend type Mutation {
     "The screen to switch the audience display to"
     newDisplay: AudienceDisplayScreen!
   ): AudienceDisplaySwitchedEvent!
+
+  """
+  Update a setting for a screen in the audience display.
+  """
+  updateAudienceDisplaySetting(
+    "The ID of the division containing the audience display"
+    divisionId: String!
+    "The screen to update the setting for"
+    display: AudienceDisplayScreen!
+    "The setting key to update"
+    settingKey: String!
+    "The new value for the setting"
+    settingValue: JSON!
+  ): AudienceDisplaySettingEvent!
 }
 
 extend type Subscription {
@@ -319,4 +350,14 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): AudienceDisplaySwitchedEvent!
+
+  """
+  Subscribe to events when an audience display setting is updated in a division.
+  """
+  audienceDisplaySettingUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): AudienceDisplaySettingEvent!
 }

@@ -13,6 +13,7 @@ import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
 import {
+  createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
   GET_AUDIENCE_DISPLAY_DATA,
   parseAudienceDisplayData
@@ -38,7 +39,10 @@ export default function AudienceDisplayPage() {
   );
 
   const subscriptions = useMemo(
-    () => [createAudienceDisplaySwitchedSubscription(currentDivision.id)],
+    () => [
+      createAudienceDisplaySwitchedSubscription(currentDivision.id),
+      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

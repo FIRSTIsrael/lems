@@ -15,7 +15,10 @@ import {
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 import { scoresheetUpdatedResolver } from './scoresheet/scoresheet-updated';
 import { scoresheetStatusChangedResolver } from './scoresheet/scoresheet-status-changed';
-import { audienceDisplaySwitchedResolver } from './audience-display';
+import {
+  audienceDisplaySettingUpdatedResolver,
+  audienceDisplaySwitchedResolver
+} from './audience-display';
 
 /**
  * GraphQL Subscription resolvers
@@ -33,6 +36,7 @@ export const subscriptionResolvers = {
   matchCompleted: matchCompletedResolver,
   matchAborted: matchAbortedResolver,
   audienceDisplaySwitched: audienceDisplaySwitchedResolver,
+  audienceDisplaySettingUpdated: audienceDisplaySettingUpdatedResolver,
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver,
   scoresheetUpdated: scoresheetUpdatedResolver,
