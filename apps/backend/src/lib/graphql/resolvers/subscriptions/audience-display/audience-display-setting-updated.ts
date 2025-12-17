@@ -25,7 +25,7 @@ const processAudienceDisplaySettingUpdatedEvent = async (
 
   const eventData = event.data as Record<string, unknown>;
 
-  if (!eventData.display || !eventData.settingKey || !eventData.settingValue) {
+  if (!eventData.display || !eventData.settingKey) {
     return null;
   }
 

@@ -362,8 +362,26 @@
           "awards": "Awards"
         },
         "status-label": "Current Mode",
+        "settings-button-title": "Audience Display Settings",
         "errors": {
           "audience-display-switch": "Failed to switch audience display."
+        },
+        "settings-modal": {
+          "title": "Audience Display Settings",
+          "close": "Close",
+          "sections": {
+            "message": "Message Settings",
+            "scoreboard": "Scoreboard Settings"
+          },
+          "fields": {
+            "message-placeholder": "Enter message text",
+            "show-active-match": "Show Current Match",
+            "show-previous-match": "Show Previous Match",
+            "show-sponsors-row": "Show Sponsors Row"
+          },
+          "errors": {
+            "update-failed": "Failed to update audience display setting."
+          }
         }
       },
       "schedule": {

@@ -362,8 +362,26 @@
           "awards": "פרסים"
         },
         "status-label": "מצב נוכחי",
+        "settings-button-title": "הגדרות תצוגת קהל",
         "errors": {
           "audience-display-switch": "החלפת תצוגת הקהל נכשלה."
+        },
+        "settings-modal": {
+          "title": "הגדרות תצוגת קהל",
+          "close": "סגירה",
+          "sections": {
+            "message": "הגדרות הודעה",
+            "scoreboard": "הגדרות לוח ניקוד"
+          },
+          "fields": {
+            "message-placeholder": "הזינו טקסט",
+            "show-active-match": "הצג מקצה נוכחי",
+            "show-previous-match": "הצג מקצה קודם",
+            "show-sponsors-row": "הצג שורת ספונסרים"
+          },
+          "errors": {
+            "update-failed": "עדכון הגדרת תצוגת הקהל נכשל."
+          }
         }
       },
       "schedule": {

@@ -210,7 +210,7 @@ Represents an event when the audience display settings was updated
 """
 type AudienceDisplaySettingEvent {
   "The screen that was updated"
-  screenUpdated: AudienceDisplayScreen!
+  display: AudienceDisplayScreen!
 
   "The setting key that was updated"
   settingKey: String!

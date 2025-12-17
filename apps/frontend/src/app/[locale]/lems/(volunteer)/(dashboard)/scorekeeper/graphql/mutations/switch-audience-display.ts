@@ -1,8 +1,13 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { AudienceDisplayScreen, MatchEvent } from '../types';
+import type { AudienceDisplayScreen } from '../types';
+
+interface SwitchAudienceDisplayEvent {
+  divisionId: string;
+  version: number;
+}
 
 interface SwitchAudienceDisplayMutationData {
-  switchAudienceDisplay: MatchEvent;
+  switchAudienceDisplay: SwitchAudienceDisplayEvent;
 }
 
 interface SwitchAudienceDisplayMutationVars {
