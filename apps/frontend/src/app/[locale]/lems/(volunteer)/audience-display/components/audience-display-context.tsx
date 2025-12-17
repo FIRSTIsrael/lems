@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { AudienceDisplayState } from '../audience-display.graphql';
+import { AudienceDisplayState } from '../graphql';
 
 const AudienceDisplayContext = createContext<AudienceDisplayState | null>(null);
 

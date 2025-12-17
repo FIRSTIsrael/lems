@@ -65,8 +65,6 @@ export default function AudienceDisplayPage() {
 
   const activeDisplay = data.activeDisplay;
 
-  console.log(activeDisplay);
-
   return (
     <AudienceDisplayProvider data={data}>
       {activeDisplay === 'logo' && <LogoDisplay />}
