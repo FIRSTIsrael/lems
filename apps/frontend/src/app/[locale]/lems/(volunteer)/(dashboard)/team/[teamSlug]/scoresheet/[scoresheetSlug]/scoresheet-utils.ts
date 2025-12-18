@@ -14,5 +14,5 @@ export const getEmptyScoresheet = (): ScoresheetData => {
     });
   });
 
-  return { missions, score: 0, gp: { value: null } };
+  return { missions, score: 0, gp: { value: null, notes: undefined }, signature: undefined };
 };

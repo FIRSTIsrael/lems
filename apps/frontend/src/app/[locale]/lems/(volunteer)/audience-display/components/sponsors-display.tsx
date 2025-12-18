@@ -18,6 +18,7 @@ export const SponsorsDisplay = () => {
 
     return () => clearTimeout(timeout);
   }, [index, sponsorsData.length]);
+
   const currentSponsor = useMemo(() => {
     if (sponsorsData.length === 0) return null;
     const sponsorKey = sponsorsData[index];
