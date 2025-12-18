@@ -18,6 +18,7 @@ import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
 import { getWorkerManager } from './lib/queues/worker-manager';
 import { handleSessionCompleted } from './lib/queues/handlers/session-completed';
 import { handleMatchCompleted } from './lib/queues/handlers/match-completed';
+import { handleMatchEndgameTriggered } from './lib/queues/handlers/match-endgame-triggered';
 import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
@@ -61,6 +62,9 @@ try {
 
   // Register match completion handler
   workerManager.registerHandler('match-completed', handleMatchCompleted);
+
+  // Register match endgame triggered handler
+  workerManager.registerHandler('match-endgame-triggered', handleMatchEndgameTriggered);
 
   // Start the unified worker
   await workerManager.start();

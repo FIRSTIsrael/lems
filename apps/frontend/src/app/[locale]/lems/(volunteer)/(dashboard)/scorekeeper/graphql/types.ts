@@ -1,5 +1,12 @@
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
+export type AudienceDisplayScreen =
+  | 'scoreboard'
+  | 'match_preview'
+  | 'sponsors'
+  | 'logo'
+  | 'message'
+  | 'awards';
 
 export interface MatchParticipant {
   team: {
@@ -31,11 +38,17 @@ export interface Match {
   participants: MatchParticipant[];
 }
 
+export interface AudienceDisplayState {
+  activeDisplay: AudienceDisplayScreen;
+  settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
+}
+
 export interface ScorekeeperData {
   division: {
     id: string;
     field: {
       matches: Match[];
+      audienceDisplay: AudienceDisplayState | null;
       currentStage: MatchStage;
       loadedMatch: string | null;
       activeMatch: string | null;

@@ -13,6 +13,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   missionId: string;
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
+  score: number;
   version: number;
 };
 
@@ -58,6 +59,7 @@ async function processScoresheetUpdatedEvent(
     const missionId = (eventData.missionId as string) || '';
     const clauseIndex = (eventData.clauseIndex as number) ?? -1;
     const clauseValue = eventData.clauseValue as ScoresheetClauseValue;
+    const score = (eventData.score as number) || 0;
 
     return missionId !== '' && clauseIndex >= 0
       ? ({
@@ -65,6 +67,7 @@ async function processScoresheetUpdatedEvent(
           missionId,
           clauseIndex,
           clauseValue,
+          score,
           version
         } as ScoresheetMissionClauseUpdatedEvent)
       : null;

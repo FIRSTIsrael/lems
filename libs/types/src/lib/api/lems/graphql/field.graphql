@@ -1,4 +1,27 @@
 """
+Display screen type for audience display
+"""
+enum AudienceDisplayScreen {
+  scoreboard
+  match_preview
+  sponsors
+  logo
+  message
+  awards
+}
+
+"""
+Audience display configuration
+"""
+type AudienceDisplay {
+  "Currently active display screen"
+  activeDisplay: AudienceDisplayScreen!
+
+  "Settings for each display screen"
+  settings: JSON
+}
+
+"""
 A robot game match in a division
 """
 type Match {
@@ -87,6 +110,9 @@ type Field {
   "ID of the currently active match, null if none"
   activeMatch: String
 
+  "Audience display state, null if none"
+  audienceDisplay: AudienceDisplay
+
   "Current stage of the field (PRACTICE or RANKING)"
   currentStage: String!
 }
@@ -147,11 +173,50 @@ type MatchCompletedEvent {
 }
 
 """
+Represents an event when a match endgame is triggered
+"""
+type MatchEndgameTriggeredEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
 Represents an event when a match has been aborted
 """
 type MatchAbortedEvent {
   "Match identifier"
   matchId: String!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when the audience display has switched
+"""
+type AudienceDisplaySwitchedEvent {
+  "New active display"
+  activeDisplay: AudienceDisplayScreen!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
+Represents an event when the audience display settings was updated
+"""
+type AudienceDisplaySettingEvent {
+  "The screen that was updated"
+  display: AudienceDisplayScreen!
+
+  "The setting key that was updated"
+  settingKey: String!
+
+  "The new value for the setting"
+  settingValue: JSON!
 
   "Event version for subscription recovery tracking"
   version: Int!
@@ -189,6 +254,30 @@ extend type Mutation {
     "The ID of the match to abort"
     matchId: String!
   ): MatchAbortedEvent!
+
+  """
+  Switch the audience display to a different screen.
+  """
+  switchActiveDisplay(
+    "The ID of the division containing the audience display"
+    divisionId: String!
+    "The screen to switch the audience display to"
+    newDisplay: AudienceDisplayScreen!
+  ): AudienceDisplaySwitchedEvent!
+
+  """
+  Update a setting for a screen in the audience display.
+  """
+  updateAudienceDisplaySetting(
+    "The ID of the division containing the audience display"
+    divisionId: String!
+    "The screen to update the setting for"
+    display: AudienceDisplayScreen!
+    "The setting key to update"
+    settingKey: String!
+    "The new value for the setting"
+    settingValue: JSON!
+  ): AudienceDisplaySettingEvent!
 }
 
 extend type Subscription {
@@ -233,6 +322,16 @@ extend type Subscription {
   ): MatchCompletedEvent!
 
   """
+  Subscribe to events when a match endgame is triggered in a division.
+  """
+  matchEndgameTriggered(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): MatchEndgameTriggeredEvent!
+
+  """
   Subscribe to events when a match is aborted in a division.
   """
   matchAborted(
@@ -241,4 +340,24 @@ extend type Subscription {
     "The last seen version for message recovery support"
     lastSeenVersion: Int
   ): MatchAbortedEvent!
+
+  """
+  Subscribe to events when the audience display is switched in a division.
+  """
+  audienceDisplaySwitched(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): AudienceDisplaySwitchedEvent!
+
+  """
+  Subscribe to events when an audience display setting is updated in a division.
+  """
+  audienceDisplaySettingUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): AudienceDisplaySettingEvent!
 }
