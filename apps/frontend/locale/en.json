@@ -361,7 +361,28 @@
           "message": "Message",
           "awards": "Awards"
         },
-        "status-label": "Current Mode"
+        "status-label": "Current Mode",
+        "settings-button-title": "Audience Display Settings",
+        "errors": {
+          "audience-display-switch": "Failed to switch audience display."
+        },
+        "settings-modal": {
+          "title": "Audience Display Settings",
+          "close": "Close",
+          "sections": {
+            "message": "Message Settings",
+            "scoreboard": "Scoreboard Settings"
+          },
+          "fields": {
+            "message-placeholder": "Enter message text",
+            "show-active-match": "Show Current Match",
+            "show-previous-match": "Show Previous Match",
+            "show-sponsors-row": "Show Sponsors Row"
+          },
+          "errors": {
+            "update-failed": "Failed to update audience display setting."
+          }
+        }
       },
       "schedule": {
         "title": "Match Schedule",
@@ -378,6 +399,29 @@
       },
       "active-match": {
         "teams": "Teams"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "Round",
+        "match": "Match",
+        "table": "Table"
+      },
+      "scoreboard": {
+        "current-match": "Current Match",
+        "test-match": "Test Match",
+        "no-match": "-",
+        "previous-match": {
+          "title": "Previous Match",
+          "match": "Match",
+          "disclaimer": "Scores are not final and may change at any time",
+          "under-review": "Under Review"
+        },
+        "scores-table": {
+          "rank": "Rank",
+          "team": "Team",
+          "highest-score": "Highest Score"
+        }
       }
     },
     "lead-judge": {

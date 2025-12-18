@@ -12,6 +12,7 @@ type ScoresheetMissionClauseUpdatedEvent = {
   missionId: string;
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
+  score: number;
   version: number;
 };
 
@@ -104,6 +105,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     missionId,
     clauseIndex,
     clauseValue: value,
+    score: points,
     version: -1
   };
 

@@ -50,6 +50,17 @@ export const abortMatchResolver: GraphQLFieldResolver<
       // The dequeue failure should be monitored separately
     }
 
+    try {
+      await dequeueScheduledEvent('match-endgame-triggered', divisionId, { matchId });
+    } catch (error) {
+      console.error(
+        `Failed to dequeue match endgame trigger for ${matchId}, but continuing with abort:`,
+        error
+      );
+      // Don't fail the mutation - we'll still abort the match
+      // The dequeue failure should be monitored separately
+    }
+
     const divisionStateResult = await db.raw.mongo
       .collection<DivisionState>('division_states')
       .findOneAndUpdate(

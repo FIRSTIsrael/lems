@@ -37,6 +37,7 @@ import { currentStageResolver } from './divisions/field/current-stage';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
+import { audienceDisplayResolver } from './divisions/field/audience-display';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
 import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
@@ -98,6 +99,7 @@ export const resolvers = {
     rubrics: judgingRubricsResolver
   },
   Field: {
+    audienceDisplay: audienceDisplayResolver,
     matches: matchesResolver,
     matchLength: matchLengthResolver,
     currentStage: currentStageResolver,

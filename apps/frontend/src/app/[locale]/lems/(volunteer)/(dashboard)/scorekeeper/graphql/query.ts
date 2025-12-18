@@ -33,6 +33,10 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
             ready
           }
         }
+        audienceDisplay {
+          activeDisplay
+          settings
+        }
         currentStage
         loadedMatch
         activeMatch
