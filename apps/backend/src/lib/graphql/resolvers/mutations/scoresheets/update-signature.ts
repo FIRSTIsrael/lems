@@ -13,21 +13,21 @@ type ScoresheetSignatureUpdatedEvent = {
   version: number;
 };
 
-interface SubmitScoresheetWithSignatureArgs {
+interface UpdateScoresheetSignatureArgs {
   divisionId: string;
   scoresheetId: string;
   signature: string;
 }
 
 /**
- * Resolver for Mutation.submitScoresheetWithSignature
+ * Resolver for Mutation.updateScoresheetSignature
  * Updates the signature and status of a scoresheet to 'submitted'
  * This mutation combines signature storage with status transition
  */
 export const updateScoresheetSignatureResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  SubmitScoresheetWithSignatureArgs,
+  UpdateScoresheetSignatureArgs,
   Promise<ScoresheetSignatureUpdatedEvent>
 > = async (_root, { divisionId, scoresheetId, signature }, context) => {
   const { scoresheet: dbScoresheet, scoresheetObjectId } = await authorizeScoresheetAccess(

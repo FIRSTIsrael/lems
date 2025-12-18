@@ -35,7 +35,12 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
   const [missionWidth, setMissionWidth] = useState(0);
 
-  const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION);
+  const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION, {
+    onError: error => {
+      console.error('Failed to update mission clause:', error);
+      toast.error(t('error-failed-to-update'));
+    }
+  });
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -54,20 +59,15 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const handleClauseChange = async (clauseIndex: number, newValue: ScoresheetClauseValue) => {
     if (newValue === null) return; // Don't send null values
 
-    try {
-      await updateMissionClause({
-        variables: {
-          divisionId: currentDivision.id,
-          scoresheetId: scoresheet.id,
-          missionId: mission.id,
-          clauseIndex,
-          value: newValue
-        }
-      });
-    } catch (error) {
-      console.error('Failed to update mission clause:', error);
-      toast.error(t('error-failed-to-update'));
-    }
+    await updateMissionClause({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        missionId: mission.id,
+        clauseIndex,
+        value: newValue
+      }
+    });
   };
 
   return (

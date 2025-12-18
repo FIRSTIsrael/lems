@@ -2,7 +2,7 @@
 
 import { useRef, forwardRef, useImperativeHandle } from 'react';
 import { Box, useTheme } from '@mui/material';
-import SignaturePad from '@uiw/react-signature';
+import SignaturePad, { type SignatureRef } from '@uiw/react-signature';
 
 export interface SignatureCanvasHandle {
   clear: () => void;
@@ -13,28 +13,27 @@ export interface SignatureCanvasHandle {
 interface SignatureCanvasProps {
   disabled?: boolean;
   height?: number;
+  onPointerDown?: () => void;
 }
 
-type SignaturePadInstance = {
-  clear: () => void;
-  isEmpty: () => boolean;
-  toDataURL: () => string;
-};
-
 export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvasProps>(
-  ({ disabled = false, height = 200 }, ref) => {
+  ({ disabled = false, height = 200, onPointerDown }, ref) => {
     const theme = useTheme();
-    const signaturePadRef = useRef<SignaturePadInstance | null>(null);
+    const signaturePadRef = useRef<SignatureRef>(null);
 
     useImperativeHandle(ref, () => ({
       clear: () => {
         signaturePadRef.current?.clear();
       },
       isEmpty: () => {
-        return signaturePadRef.current?.isEmpty() ?? true;
+        return !signaturePadRef.current?.svg;
       },
       getSignature: () => {
-        return signaturePadRef.current?.toDataURL() ?? '';
+        const svgElement = signaturePadRef.current?.svg;
+        if (!svgElement) return '';
+        
+        const svgString = new XMLSerializer().serializeToString(svgElement);
+        return `data:image/svg+xml;base64,${btoa(svgString)}`;
       }
     }));
 
@@ -47,25 +46,29 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
           backgroundColor: disabled ? theme.palette.action.disabledBackground : '#ffffff',
           cursor: disabled ? 'not-allowed' : 'crosshair',
           transition: 'all 0.2s ease-in-out',
-          '&:hover': !disabled && {
-            borderColor: theme.palette.primary.dark,
-            boxShadow: theme.shadows[2]
-          }
+          '&:hover': disabled
+            ? undefined
+            : {
+                borderColor: theme.palette.primary.dark,
+                boxShadow: theme.shadows[2]
+              }
         }}
       >
         <SignaturePad
           ref={signaturePadRef}
-          width={undefined}
           height={height}
-          bgColor={disabled ? theme.palette.action.disabledBackground : '#ffffff'}
-          penColor={theme.palette.primary.main}
-          dotSize={2}
-          minWidth={1}
-          maxWidth={3}
-          throttle={16}
           readonly={disabled}
-          onEnd={() => {
-            // Optional: you can add custom behavior here
+          onPointer={points => {
+            if (points.length > 0 && onPointerDown) {
+              onPointerDown();
+            }
+          }}
+          options={{
+            size: 3,
+            thinning: 0.7,
+            smoothing: 0.5,
+            streamline: 0.5,
+            simulatePressure: true
           }}
         />
       </Box>

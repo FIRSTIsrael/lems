@@ -474,19 +474,13 @@
     },
     "scoresheet": {
       "title": "Team #{teamNumber}, {stage} round {round}",
-      "add-signature": "Add Your Signature",
-      "signature-instructions": "Sign in the box below using your mouse, stylus, or touchscreen",
-      "signature-confirmed": "Signature confirmed",
       "clear-signature": "Clear Signature",
       "form-complete": "Form Complete",
       "form-incomplete": "Form Incomplete",
       "complete-form-to-sign": "Complete the form and fix any errors to sign this scoresheet",
       "complete-form-to-proceed": "Complete all missions and resolve all errors before you can sign and submit the scoresheet",
-      "signature-required-to-submit": "Please sign the scoresheet to submit it",
       "submit-scoresheet": "Submit Scoresheet",
       "submitting": "Submitting...",
-      "scoresheet-submitted": "Scoresheet Submitted",
-      "scoresheet-submission-complete": "This scoresheet has been successfully submitted",
       "error-signature-required": "A signature is required to submit the scoresheet",
       "error-failed-to-submit": "Failed to submit scoresheet"
     }

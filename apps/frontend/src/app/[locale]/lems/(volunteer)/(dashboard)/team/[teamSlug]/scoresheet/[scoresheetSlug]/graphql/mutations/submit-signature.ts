@@ -1,7 +1,7 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 
 type SubmitSignatureMutationResult = {
-  submitScoresheetWithSignature: {
+  updateScoresheetSignature: {
     scoresheetId: string;
     signature: string;
     status: string;
@@ -15,16 +15,12 @@ type SubmitSignatureMutationVariables = {
   signature: string;
 };
 
-export const SUBMIT_SCORESHEET_WITH_SIGNATURE_MUTATION: TypedDocumentNode<
+export const SUBMIT_SCORESHEET_MUTATION: TypedDocumentNode<
   SubmitSignatureMutationResult,
   SubmitSignatureMutationVariables
 > = gql`
-  mutation SubmitScoresheetWithSignature(
-    $divisionId: String!
-    $scoresheetId: String!
-    $signature: String!
-  ) {
-    submitScoresheetWithSignature(
+  mutation SubmitScoresheet($divisionId: String!, $scoresheetId: String!, $signature: String!) {
+    updateScoresheetSignature(
       divisionId: $divisionId
       scoresheetId: $scoresheetId
       signature: $signature
