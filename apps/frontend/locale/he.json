@@ -482,7 +482,15 @@
       "submit-scoresheet": "הגש דף ניקוד",
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
-      "error-failed-to-submit": "הגשת דף הניקוד נכשלה"
+      "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
+      "gp-selector": {
+        "title": "דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט",
+        "level-2": "מתפתחת",
+        "level-3": "מיומנת",
+        "level-4": "מצטיינת",
+        "notes-placeholder-2": "נמקו מדוע נתתם לקבוצה ציון מתפתחת",
+        "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת"
+      }
     }
   },
   "components": {

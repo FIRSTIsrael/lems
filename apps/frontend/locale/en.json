@@ -482,7 +482,15 @@
       "submit-scoresheet": "Submit Scoresheet",
       "submitting": "Submitting...",
       "error-signature-required": "A signature is required to submit the scoresheet",
-      "error-failed-to-submit": "Failed to submit scoresheet"
+      "error-failed-to-submit": "Failed to submit scoresheet",
+      "gp-selector": {
+        "title": "Rate the team's Gracious Professionalism displayed during the match",
+        "level-2": "DEVELOPING",
+        "level-3": "ACCOMPLISHED",
+        "level-4": "EXCEEDS",
+        "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
+        "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score"
+      }
     }
   },
   "components": {
