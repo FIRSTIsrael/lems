@@ -1,5 +1,4 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
@@ -36,19 +35,11 @@ const allowedRoles = new Set(['judge-advisor', 'lead-judge']);
  */
 export const divisionAwardsResolver: GraphQLFieldResolver<
   DivisionWithId,
-  GraphQLContext,
+  null,
   AwardsArgs,
   Promise<AwardGraphQL[]>
-> = async (division: DivisionWithId, args: AwardsArgs, context: GraphQLContext) => {
+> = async (division: DivisionWithId, args: AwardsArgs) => {
   try {
-    // Check authorization
-    if (!allowedRoles.has(context.user.role)) {
-      throw new MutationError(
-        MutationErrorCode.FORBIDDEN,
-        'User does not have permission to view awards.'
-      );
-    }
-
     let awards = await db.awards.byDivisionId(division.id).getAll();
 
     // Filter by allowNominations if specified
@@ -91,7 +82,7 @@ export const divisionAwardsWinnersResolver: GraphQLFieldResolver<
     const areAwardsClosed = false; // Placeholder for actual check
     const canViewWinners = areAwardsClosed || allowedRoles.has(context.user.role);
 
-    return awards.map(award => ({ 
+    return awards.map(award => ({
       id: award.id,
       name: award.name,
       index: award.index,
@@ -104,7 +95,6 @@ export const divisionAwardsWinnersResolver: GraphQLFieldResolver<
         winnerId: award.winner_id
       })
     }));
-
   } catch (error) {
     console.error('Error fetching awards with winners for division:', division.id, error);
     throw error;

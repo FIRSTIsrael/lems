@@ -15,7 +15,6 @@ interface RubricsArgs {
 /**
  * Resolver for Judging.rubrics field.
  * Fetches rubrics for teams in a division, optionally filtered by team IDs or category.
- * Only accessible to lead-judge and judge-advisor roles.
  */
 export const judgingRubricsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
