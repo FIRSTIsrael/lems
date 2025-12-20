@@ -7,7 +7,13 @@ import {
   updateRubricStatusResolver,
   updateRubricAwardsResolver
 } from './rubrics';
-import { updateScoresheetMissionClauseResolver } from './scoresheets';
+import {
+  updateScoresheetMissionClauseResolver,
+  updateScoresheetGPResolver,
+  updateScoresheetStatusResolver,
+  updateScoresheetEscalatedResolver,
+  updateScoresheetSignatureResolver
+} from './scoresheets';
 import {
   switchActiveDisplayResolver,
   updateAudienceDisplaySettingResolver
@@ -26,5 +32,9 @@ export const mutationResolvers = {
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
   updateRubricAwards: updateRubricAwardsResolver,
-  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver
+  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
+  updateScoresheetGP: updateScoresheetGPResolver,
+  updateScoresheetEscalated: updateScoresheetEscalatedResolver,
+  updateScoresheetSignature: updateScoresheetSignatureResolver,
+  updateScoresheetStatus: updateScoresheetStatusResolver
 };

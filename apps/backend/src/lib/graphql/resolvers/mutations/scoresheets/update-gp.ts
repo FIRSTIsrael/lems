@@ -39,15 +39,6 @@ export const updateScoresheetGPResolver: GraphQLFieldResolver<
     );
   }
 
-  if (value === 3 && notes) {
-    throw new MutationError(MutationErrorCode.INVALID_INPUT, `GP value 3 should not have notes`);
-  } else if (value !== 3 && !notes) {
-    throw new MutationError(
-      MutationErrorCode.INVALID_INPUT,
-      `GP values other than 3 require notes`
-    );
-  }
-
   const gpUpdate: Record<string, unknown> = { value };
   if (notes !== undefined) {
     gpUpdate['notes'] = notes;

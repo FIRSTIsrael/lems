@@ -1,22 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
 import { Stack, Alert, Typography } from '@mui/material';
 import { scoresheet } from '@lems/shared/scoresheet';
 import { useScoresheetTranslations } from '@lems/localization';
 import { useScoresheet } from '../scoresheet-context';
-import { validateScoresheet, type ScoresheetValidationResult } from '../scoresheet-validation';
 import ScoresheetMission from './scoresheet-mission';
 import { ScoresheetIncompleteAlert } from './scoresheet-alert';
 import { ScoreFloater } from './score-floater';
+import { ScoresheetSubmission } from './scoresheet-submission';
 
 export const ScoresheetForm: React.FC = () => {
-  const { scoresheet: scoresheetData } = useScoresheet();
+  const { validation } = useScoresheet();
   const { getError } = useScoresheetTranslations();
-
-  const validation = useMemo((): ScoresheetValidationResult => {
-    return validateScoresheet(scoresheetData.data);
-  }, [scoresheetData.data]);
 
   return (
     <Stack spacing={4} mt={4} mb={16}>
@@ -41,6 +36,8 @@ export const ScoresheetForm: React.FC = () => {
       )}
 
       <ScoresheetIncompleteAlert validation={validation} />
+
+      <ScoresheetSubmission />
 
       <ScoreFloater score={validation.score} />
     </Stack>
