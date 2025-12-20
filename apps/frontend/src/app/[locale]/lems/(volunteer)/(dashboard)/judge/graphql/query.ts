@@ -29,13 +29,13 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
             location
           }
           rubrics {
-            innovationProject {
+            innovation_project {
               ...RubricFields
             }
-            robotDesign {
+            robot_design {
               ...RubricFields
             }
-            coreValues {
+            core_values {
               ...RubricFields
             }
           }

@@ -22,9 +22,9 @@ export interface RubricGraphQL {
  * GraphQL CategorizedRubrics type for team/session rubrics organized by category.
  */
 export interface CategorizedRubricsGraphQL {
-  innovationProject: RubricGraphQL | null;
-  robotDesign: RubricGraphQL | null;
-  coreValues: RubricGraphQL | null;
+  innovation_project: RubricGraphQL | null;
+  robot_design: RubricGraphQL | null;
+  core_values: RubricGraphQL | null;
 }
 
 /**
@@ -55,9 +55,9 @@ export async function buildCategorizedRubrics(
   // If there's no team, return empty rubrics
   if (!teamId) {
     return {
-      innovationProject: null,
-      robotDesign: null,
-      coreValues: null
+      innovation_project: null,
+      robot_design: null,
+      core_values: null
     };
   }
 
@@ -69,9 +69,9 @@ export async function buildCategorizedRubrics(
     const rubricMap = new Map(rubrics.map(r => [r.category, buildRubricResult(r)]));
 
     return {
-      innovationProject: rubricMap.get('innovation-project') || null,
-      robotDesign: rubricMap.get('robot-design') || null,
-      coreValues: rubricMap.get('core-values') || null
+      innovation_project: rubricMap.get('innovation-project') || null,
+      robot_design: rubricMap.get('robot-design') || null,
+      core_values: rubricMap.get('core-values') || null
     };
   } catch (error) {
     console.error('Error fetching rubrics for team:', teamId, 'in division:', divisionId, error);

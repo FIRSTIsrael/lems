@@ -32,11 +32,18 @@ type RubricAwardsUpdatedEvent = {
   version: number;
 };
 
+type RubricResetEvent = {
+  rubricId: string;
+  reset: boolean;
+  version: number;
+};
+
 type RubricUpdatedEventType =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
   | RubricStatusUpdatedEvent
-  | RubricAwardsUpdatedEvent;
+  | RubricAwardsUpdatedEvent
+  | RubricResetEvent;
 
 async function processRubricUpdatedEvent(
   event: Record<string, unknown>
@@ -101,6 +108,18 @@ async function processRubricUpdatedEvent(
       : null;
   }
 
+  // Handle RubricReset events
+  if ('reset' in eventData) {
+    const reset = eventData.reset as boolean;
+    return reset
+      ? ({
+          rubricId,
+          reset,
+          version
+        } as RubricResetEvent)
+      : null;
+  }
+
   return null;
 }
 
@@ -126,6 +145,7 @@ export const RubricUpdatedEventResolver = {
     if ('feedback' in obj) return 'RubricFeedbackUpdated';
     if ('status' in obj) return 'RubricStatusUpdated';
     if ('awards' in obj) return 'RubricAwardsUpdated';
+    if ('reset' in obj) return 'RubricReset';
     return null;
   }
 };

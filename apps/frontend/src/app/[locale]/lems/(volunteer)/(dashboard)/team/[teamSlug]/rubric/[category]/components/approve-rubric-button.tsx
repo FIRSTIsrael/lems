@@ -10,8 +10,7 @@ import {
   DialogContentText,
   DialogActions
 } from '@mui/material';
-import { CheckCircle as CheckCircleIcon } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { CheckCircle as ApproveIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
 import { useRubric } from '../rubric-context';
@@ -20,27 +19,27 @@ import { useUser } from '../../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
 
-interface SubmitRubricButtonProps {
+interface ApproveRubricButtonProps {
   disabled?: boolean;
 }
 
-export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled = false }) => {
+export const ApproveRubricButton: React.FC<ApproveRubricButtonProps> = ({ disabled = false }) => {
   const t = useTranslations('pages.rubric');
-  const { rubric, validation } = useRubric();
-  const router = useRouter();
+  const { rubric } = useRubric();
   const user = useUser();
   const { currentDivision } = useEvent();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-  const isDisabled = disabled || !validation.isValid;
+  const isLocked = rubric.status === 'locked';
+  const isButtonDisabled = disabled || !isLocked;
 
-  const [submitRubricMutation] = useMutation(UPDATE_RUBRIC_STATUS_MUTATION, {
+  const [approveRubricMutation] = useMutation(UPDATE_RUBRIC_STATUS_MUTATION, {
     onError: () => {
-      toast.error(t('errors.submit'));
+      toast.error(t('toasts.approve-error'));
     },
     onCompleted: () => {
       setOpenConfirmDialog(false);
-      router.push(`/lems/${user.role}`);
+      toast.success(t('toasts.approve-success'));
     }
   });
 
@@ -52,28 +51,28 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
     setOpenConfirmDialog(false);
   }, []);
 
-  const handleConfirmSubmit = useCallback(() => {
-    submitRubricMutation({
+  const handleConfirmApprove = useCallback(() => {
+    approveRubricMutation({
       variables: {
         divisionId: currentDivision.id,
         rubricId: rubric.id,
-        status: 'locked'
+        status: 'approved'
       }
     });
-  }, [currentDivision.id, rubric.id, submitRubricMutation]);
+  }, [currentDivision.id, rubric.id, approveRubricMutation]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="judge">
+    <RoleAuthorizer user={user} allowedRoles="judge-advisor">
       <>
         <Button
           variant="contained"
-          color="primary"
+          color="success"
           size="large"
-          disabled={isDisabled}
+          disabled={isButtonDisabled}
           onClick={handleOpenConfirm}
-          startIcon={<CheckCircleIcon />}
+          startIcon={<ApproveIcon />}
           sx={{
-            minWidth: 200,
+            minWidth: 150,
             py: 1.5,
             borderRadius: 2,
             textTransform: 'none',
@@ -81,7 +80,7 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
             fontWeight: 600
           }}
         >
-          {t('actions.submit-rubric')}
+          {t('actions.approve-rubric')}
         </Button>
 
         <Dialog
@@ -89,15 +88,21 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
           onClose={handleCloseConfirm}
           maxWidth="sm"
           fullWidth
-          aria-labelledby="submit-dialog-title"
-          aria-describedby="submit-dialog-description"
+          aria-labelledby="approve-dialog-title"
+          aria-describedby="approve-dialog-description"
         >
-          <DialogTitle id="submit-dialog-title" sx={{ pb: 1 }}>
-            {t('submit-dialog.title')}
+          <DialogTitle id="approve-dialog-title" sx={{ pb: 1 }}>
+            {t('approve-dialog.title')}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="submit-dialog-description" sx={{ mt: 1 }}>
-              {t('submit-dialog.description')}
+            <DialogContentText
+              id="approve-dialog-description"
+              sx={{ mt: 1, color: 'warning.main', fontWeight: 500 }}
+            >
+              {t('approve-dialog.warning')}
+            </DialogContentText>
+            <DialogContentText sx={{ mt: 1.5 }}>
+              {t('approve-dialog.description')}
             </DialogContentText>
           </DialogContent>
           <DialogActions sx={{ p: 2, pt: 1 }}>
@@ -106,15 +111,15 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
               color="inherit"
               sx={{ textTransform: 'none', fontSize: '0.95rem' }}
             >
-              {t('submit-dialog.cancel')}
+              {t('approve-dialog.cancel')}
             </Button>
             <Button
-              onClick={handleConfirmSubmit}
+              onClick={handleConfirmApprove}
               variant="contained"
-              color="primary"
+              color="success"
               sx={{ textTransform: 'none', fontSize: '0.95rem' }}
             >
-              {t('submit-dialog.confirm')}
+              {t('approve-dialog.confirm')}
             </Button>
           </DialogActions>
         </Dialog>

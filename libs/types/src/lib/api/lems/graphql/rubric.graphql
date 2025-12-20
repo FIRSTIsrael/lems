@@ -83,11 +83,11 @@ Categorized rubrics for a team across all judging categories
 """
 type CategorizedRubrics {
   "Innovation Project rubric"
-  innovationProject: Rubric
+  innovation_project: Rubric
   "Robot Design rubric"
-  robotDesign: Rubric
+  robot_design: Rubric
   "Core Values rubric"
-  coreValues: Rubric
+  core_values: Rubric
 }
 
 """
@@ -152,6 +152,20 @@ type RubricAwardsUpdated {
   version: Int!
 }
 
+"""
+Response type for rubric reset
+"""
+type RubricReset {
+  "The ID of the rubric that was reset"
+  rubricId: String!
+
+  "Whether the rubric was successfully reset"
+  reset: Boolean!
+
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
 extend type Mutation {
   """
   Update a single value in a rubric.
@@ -206,6 +220,16 @@ extend type Mutation {
     "The award names the team is nominated for"
     awards: JSON!
   ): RubricAwardsUpdated!
+
+  """
+  Reset a rubric to empty state.
+  """
+  resetRubric(
+    "The ID of the division containing the rubric"
+    divisionId: String!
+    "The ID of the rubric to reset"
+    rubricId: String!
+  ): RubricReset!
 }
 
 """
@@ -216,6 +240,7 @@ union RubricUpdatedEvent =
   | RubricFeedbackUpdated
   | RubricStatusUpdated
   | RubricAwardsUpdated
+  | RubricReset
 
 extend type Subscription {
   """
