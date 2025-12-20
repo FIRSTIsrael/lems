@@ -206,16 +206,16 @@ export function updateNested<T = any>(
  * @example
  * ```ts
  * const rubrics = {
- *   innovationProject: { id: '1', status: 'empty' },
- *   robotDesign: { id: '2', status: 'empty' },
- *   coreValues: null
+ *   innovation_project: { id: '1', status: 'empty' },
+ *   robot_design: { id: '2', status: 'empty' },
+ *   core_values: null
  * };
  * const updated = updateObjectKeysBy(
  *   rubrics,
  *   rubric => rubric?.id === '2',
  *   rubric => ({ ...rubric, status: 'completed' })
  * );
- * // { innovationProject: { id: '1', status: 'empty' }, robotDesign: { id: '2', status: 'completed' }, coreValues: null }
+ * // { innovation_project: { id: '1', status: 'empty' }, robot_design: { id: '2', status: 'completed' }, core_values: null }
  * ```
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -248,12 +248,12 @@ export function updateObjectKeysBy<T = any>(
  * @example
  * ```ts
  * const rubrics = {
- *   innovationProject: { id: '1', status: 'empty' },
- *   robotDesign: { id: '2', status: 'empty' },
- *   coreValues: null
+ *   innovation_project: { id: '1', status: 'empty' },
+ *   robot_design: { id: '2', status: 'empty' },
+ *   core_values: null
  * };
  * const updated = updateObjectKeysById(rubrics, '2', rubric => ({ ...rubric, status: 'completed' }));
- * // { innovationProject: { id: '1', status: 'empty' }, robotDesign: { id: '2', status: 'completed' }, coreValues: null }
+ * // { innovation_project: { id: '1', status: 'empty' }, robot_design: { id: '2', status: 'completed' }, core_values: null }
  * ```
  */
 export function updateObjectKeysById<T extends { id: string } = { id: string }>(

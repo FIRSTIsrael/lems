@@ -222,10 +222,10 @@
       },
       "actions": {
         "save-draft": "Save as Draft",
-        "submit-review": "Submit for Review",
         "reset": "Reset",
         "submit-rubric": "Submit and lock",
-        "unlock-rubric": "Unlock"
+        "unlock-rubric": "Unlock",
+        "approve-rubric": "Approve"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
@@ -241,6 +241,13 @@
         "cancel": "Cancel",
         "confirm": "Reset Rubric"
       },
+      "approve-dialog": {
+        "title": "Approve Rubric",
+        "warning": "This action is final and cannot be undone!",
+        "description": "Once you approve this rubric, it will be locked and no further changes can be made. Please ensure the rubric is complete and accurate before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Approve Rubric"
+      },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
         "notes-update-error": "Failed to save notes. Please try again.",
@@ -250,7 +257,9 @@
         "unlock-success": "Rubric has been unlocked.",
         "unlock-error": "Failed to unlock rubric. Please try again.",
         "submit-success": "Rubric has been submitted and locked.",
-        "submit-error": "Failed to submit rubric. Please try again."
+        "submit-error": "Failed to submit rubric. Please try again.",
+        "approve-success": "Rubric has been approved.",
+        "approve-error": "Failed to approve rubric. Please try again."
       },
       "validation": {
         "title": "Rubric Incomplete",

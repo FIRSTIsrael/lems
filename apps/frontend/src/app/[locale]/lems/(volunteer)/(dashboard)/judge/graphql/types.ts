@@ -22,9 +22,9 @@ export interface CategorizedRubrics extends Record<
   string,
   { id: string; status: RubricStatus } | null
 > {
-  innovationProject: { id: string; status: RubricStatus } | null;
-  robotDesign: { id: string; status: RubricStatus } | null;
-  coreValues: { id: string; status: RubricStatus } | null;
+  innovation_project: { id: string; status: RubricStatus } | null;
+  robot_design: { id: string; status: RubricStatus } | null;
+  core_values: { id: string; status: RubricStatus } | null;
 }
 
 export interface JudgingSession {
