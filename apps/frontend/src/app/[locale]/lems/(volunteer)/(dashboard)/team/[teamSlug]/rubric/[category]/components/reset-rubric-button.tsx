@@ -13,14 +13,11 @@ import {
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
-import { underscoresToHyphens } from '@lems/shared/utils';
-import { JudgingCategory } from '@lems/types/judging';
 import { useRubric } from '../rubric-context';
 import { RESET_RUBRIC_MUTATION } from '../graphql/mutations/reset';
 import { useUser } from '../../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
-import { getEmptyRubric } from '../rubric-utils';
 
 interface ResetRubricButtonProps {
   disabled?: boolean;
@@ -52,18 +49,13 @@ export const ResetRubricButton: React.FC<ResetRubricButtonProps> = ({ disabled =
   }, []);
 
   const handleConfirmReset = useCallback(() => {
-    const emptyRubric = getEmptyRubric(
-      underscoresToHyphens(rubric.category) as JudgingCategory
-    ) as Record<string, unknown>;
-
     resetRubricMutation({
       variables: {
         divisionId: currentDivision.id,
-        rubricId: rubric.id,
-        data: emptyRubric
+        rubricId: rubric.id
       }
     });
-  }, [rubric.category, rubric.id, resetRubricMutation, currentDivision.id]);
+  }, [rubric.id, resetRubricMutation, currentDivision.id]);
 
   return (
     <RoleAuthorizer

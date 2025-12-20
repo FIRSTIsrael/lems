@@ -37,11 +37,7 @@ type RubricAwardsUpdatedEvent = {
 type RubricResetEvent = {
   __typename: 'RubricReset';
   rubricId: string;
-  data: {
-    fields: Record<string, { value: number; notes?: string }>;
-    feedback?: { greatJob: string; thinkAbout: string };
-    awards?: Record<string, boolean>;
-  };
+  reset: boolean;
   version: number;
 };
 
@@ -97,7 +93,7 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       }
       ... on RubricReset {
         rubricId
-        data
+        reset
         version
       }
     }
@@ -162,9 +158,11 @@ const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (pr
           }
 
           if (event.__typename === 'RubricReset') {
-            return merge(rubric, {
-              data: event.data
-            });
+            if (!event.reset) return rubric;
+
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { data, ...restRubric } = rubric;
+            return restRubric;
           }
 
           return rubric;

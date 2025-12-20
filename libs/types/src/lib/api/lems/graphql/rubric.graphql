@@ -159,8 +159,8 @@ type RubricReset {
   "The ID of the rubric that was reset"
   rubricId: String!
 
-  "The new rubric data after reset"
-  data: JSON!
+  "Whether the rubric was successfully reset"
+  reset: Boolean!
 
   "Event version for subscription recovery tracking"
   version: Int!
@@ -229,10 +229,6 @@ extend type Mutation {
     divisionId: String!
     "The ID of the rubric to reset"
     rubricId: String!
-    """
-    The new rubric data
-    """
-    data: JSON!
   ): RubricReset!
 }
 

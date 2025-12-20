@@ -8,14 +8,13 @@ import { authorizeRubricAccess, assertRubricEditable } from './utils';
 
 type RubricResetEvent = {
   rubricId: string;
-  data: Record<string, unknown>;
+  reset: boolean;
   version: number;
 };
 
 interface ResetRubricArgs {
   divisionId: string;
   rubricId: string;
-  data: Record<string, unknown>;
 }
 
 /**
@@ -27,7 +26,7 @@ export const resetRubricResolver: GraphQLFieldResolver<
   GraphQLContext,
   ResetRubricArgs,
   Promise<RubricResetEvent>
-> = async (_root, { divisionId, rubricId, data }, context) => {
+> = async (_root, { divisionId, rubricId }, context) => {
   const { rubric, rubricObjectId } = await authorizeRubricAccess(context, divisionId, rubricId);
 
   assertRubricEditable(rubric.status as string, context.user?.role);
@@ -35,8 +34,8 @@ export const resetRubricResolver: GraphQLFieldResolver<
   const result = await db.raw.mongo.collection('rubrics').findOneAndUpdate(
     { _id: rubricObjectId },
     {
+      $unset: { data: '' },
       $set: {
-        data,
         status: 'empty'
       }
     },
@@ -51,7 +50,7 @@ export const resetRubricResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   const eventPayload = {
     rubricId,
-    data,
+    reset: true,
     version: -1
   };
   await Promise.all([

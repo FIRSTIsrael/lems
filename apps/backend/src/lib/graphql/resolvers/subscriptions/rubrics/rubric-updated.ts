@@ -145,7 +145,7 @@ export const RubricUpdatedEventResolver = {
     if ('feedback' in obj) return 'RubricFeedbackUpdated';
     if ('status' in obj) return 'RubricStatusUpdated';
     if ('awards' in obj) return 'RubricAwardsUpdated';
-    if ('data' in obj) return 'RubricReset';
+    if ('reset' in obj) return 'RubricReset';
     return null;
   }
 };
