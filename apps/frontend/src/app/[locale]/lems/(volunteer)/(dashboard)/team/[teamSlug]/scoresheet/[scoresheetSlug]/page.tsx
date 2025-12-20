@@ -11,6 +11,7 @@ import { useEvent } from '../../../../../components/event-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
+import { GPSelector } from './components/gp-selector';
 import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
@@ -67,7 +68,8 @@ export default function ScoresheetPage() {
 
       <ScoresheetProvider scoresheet={scoresheet}>
         <Container maxWidth="md" sx={{ mt: 2 }}>
-          <ScoresheetForm />
+          {scoresheet.status !== 'gp' && <ScoresheetForm />}
+          {scoresheet.status === 'gp' && <GPSelector />}
         </Container>
       </ScoresheetProvider>
     </>

@@ -1,10 +1,12 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
+import React, { createContext, useContext, useMemo } from 'react';
 import type { ScoresheetItem } from './graphql';
+import { validateScoresheet, type ScoresheetValidationResult } from './scoresheet-validation';
 
 interface ScoresheetContextValue {
   scoresheet: ScoresheetItem;
+  validation: ScoresheetValidationResult;
 }
 
 const ScoresheetContext = createContext<ScoresheetContextValue | undefined>(undefined);
@@ -15,7 +17,15 @@ interface ScoresheetProviderProps {
 }
 
 export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({ scoresheet, children }) => {
-  return <ScoresheetContext.Provider value={{ scoresheet }}>{children}</ScoresheetContext.Provider>;
+  const validation = useMemo(() => {
+    return validateScoresheet(scoresheet.data);
+  }, [scoresheet.data]);
+
+  return (
+    <ScoresheetContext.Provider value={{ scoresheet, validation }}>
+      {children}
+    </ScoresheetContext.Provider>
+  );
 };
 
 export function useScoresheet(): ScoresheetContextValue {

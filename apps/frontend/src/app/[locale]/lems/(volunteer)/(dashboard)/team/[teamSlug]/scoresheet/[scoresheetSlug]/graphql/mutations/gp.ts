@@ -3,7 +3,7 @@ import { gql, type TypedDocumentNode } from '@apollo/client';
 type GPMutationResult = {
   updateScoresheetGP: {
     scoresheetId: string;
-    value: number | null;
+    gpValue: number | null;
     notes?: string;
     version: number;
   };
@@ -23,7 +23,7 @@ export const UPDATE_SCORESHEET_GP_MUTATION: TypedDocumentNode<
   mutation UpdateScoresheetGP(
     $divisionId: String!
     $scoresheetId: String!
-    $value: JSON
+    $value: Int
     $notes: String
   ) {
     updateScoresheetGP(
@@ -33,7 +33,7 @@ export const UPDATE_SCORESHEET_GP_MUTATION: TypedDocumentNode<
       notes: $notes
     ) {
       scoresheetId
-      value
+      gpValue
       notes
       version
     }

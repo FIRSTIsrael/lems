@@ -3,6 +3,9 @@
 #.env files
 **/.env.local
 
+# DataGrip queries
+queries
+
 # compiled output
 dist
 tmp

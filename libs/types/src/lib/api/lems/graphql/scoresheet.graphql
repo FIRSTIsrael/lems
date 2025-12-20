@@ -155,6 +155,20 @@ type ScoresheetEscalatedUpdated {
 }
 
 """
+Response type for scoresheet signature update
+"""
+type ScoresheetSignatureUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The signature data as encoded PNG string"
+  signature: String
+  "The new status after signature completion (should be 'gp')"
+  status: ScoresheetStatus!
+  "Event version for subscription recovery tracking"
+  version: Int!
+}
+
+"""
 Union type for all scoresheet update events
 """
 union ScoresheetUpdatedEvent =
@@ -162,6 +176,7 @@ union ScoresheetUpdatedEvent =
   | ScoresheetStatusUpdated
   | ScoresheetGPUpdated
   | ScoresheetEscalatedUpdated
+  | ScoresheetSignatureUpdated
 
 extend type Mutation {
   """
@@ -217,6 +232,19 @@ extend type Mutation {
     "Whether the scoresheet has been escalated"
     escalated: Boolean!
   ): ScoresheetEscalatedUpdated!
+
+  """
+  Submit a scoresheet with a signature.
+  Updates both the signature and changes the status to 'submitted'.
+  """
+  updateScoresheetSignature(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to submit"
+    scoresheetId: String!
+    "The signature data as encoded PNG string"
+    signature: String!
+  ): ScoresheetSignatureUpdated!
 }
 
 extend type Subscription {
