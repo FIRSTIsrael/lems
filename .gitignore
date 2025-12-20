@@ -47,6 +47,7 @@ Thumbs.db
 
 # Backend log
 http-log.log
+logs/
 
 .nx/cache
 .nx/workspace-data

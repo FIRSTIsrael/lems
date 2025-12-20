@@ -11,6 +11,7 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
+import { logger } from './lib/logger';
 import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
@@ -23,6 +24,8 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
+
+logger.info('🧪 Logger test - pino logging is working!');
 
 const app = express();
 const server = http.createServer(app);
@@ -142,11 +145,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
-console.log('💫 Starting server...');
+logger.info('💫 Starting server...');
 const port = 3333;
 server.listen(port, () => {
-  console.log(`✅ Server started on port ${port}.`);
-  console.log(`🚀 GraphQL endpoint: http://localhost:${port}/lems/graphql`);
+  logger.info({ port }, '✅ Server started on port');
+  logger.info({ endpoint: `http://localhost:${port}/lems/graphql` }, '🚀 GraphQL endpoint');
 });
 
 server.on('error', console.error);
