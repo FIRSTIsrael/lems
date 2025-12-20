@@ -34,11 +34,23 @@ type RubricAwardsUpdatedEvent = {
   version: number;
 };
 
+type RubricResetEvent = {
+  __typename: 'RubricReset';
+  rubricId: string;
+  data: {
+    fields: Record<string, { value: number; notes?: string }>;
+    feedback?: { greatJob: string; thinkAbout: string };
+    awards?: Record<string, boolean>;
+  };
+  version: number;
+};
+
 type RubricUpdatedEvent =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
   | RubricStatusUpdatedEvent
-  | RubricAwardsUpdatedEvent;
+  | RubricAwardsUpdatedEvent
+  | RubricResetEvent;
 
 type SubscriptionResult = {
   rubricUpdated: RubricUpdatedEvent;
@@ -81,6 +93,11 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       ... on RubricAwardsUpdated {
         rubricId
         awards
+        version
+      }
+      ... on RubricReset {
+        rubricId
+        data
         version
       }
     }
@@ -141,6 +158,12 @@ const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (pr
                   awards: event.awards
                 }
               )
+            });
+          }
+
+          if (event.__typename === 'RubricReset') {
+            return merge(rubric, {
+              data: event.data
             });
           }
 

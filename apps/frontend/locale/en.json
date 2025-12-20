@@ -233,10 +233,19 @@
         "cancel": "Cancel",
         "confirm": "Submit and Lock"
       },
+      "reset-dialog": {
+        "title": "Reset Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this rubric? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Rubric"
+      },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
         "notes-update-error": "Failed to save notes. Please try again.",
-        "feedback-update-error": "Failed to save feedback. Please try again."
+        "feedback-update-error": "Failed to save feedback. Please try again.",
+        "reset-error": "Failed to reset rubric. Please try again.",
+        "reset-success": "Rubric has been reset successfully."
       },
       "validation": {
         "title": "Rubric Incomplete",

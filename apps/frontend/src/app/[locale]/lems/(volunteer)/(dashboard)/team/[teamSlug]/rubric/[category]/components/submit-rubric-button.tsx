@@ -3,7 +3,6 @@
 import React, { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-  Box,
   Button,
   Dialog,
   DialogTitle,
@@ -64,33 +63,24 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
 
   return (
     <>
-      <Box
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        disabled={isDisabled}
+        onClick={handleOpenConfirm}
+        startIcon={<CheckCircleIcon />}
         sx={{
-          display: 'flex',
-          justifyContent: 'flex-end',
-          mt: 3,
-          mb: 2
+          minWidth: 200,
+          py: 1.5,
+          borderRadius: 2,
+          textTransform: 'none',
+          fontSize: '1rem',
+          fontWeight: 600
         }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          disabled={isDisabled}
-          onClick={handleOpenConfirm}
-          startIcon={<CheckCircleIcon />}
-          sx={{
-            minWidth: 200,
-            py: 1.5,
-            borderRadius: 2,
-            textTransform: 'none',
-            fontSize: '1rem',
-            fontWeight: 600
-          }}
-        >
-          {t('actions.submit-rubric')}
-        </Button>
-      </Box>
+        {t('actions.submit-rubric')}
+      </Button>
 
       <Dialog
         open={openConfirmDialog}
