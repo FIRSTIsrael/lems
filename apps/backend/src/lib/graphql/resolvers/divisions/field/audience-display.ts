@@ -7,7 +7,7 @@ interface FieldWithDivisionId {
 }
 
 /**
- * Resolver for Division.field field.
+ * Resolver for Division.audienceDisplay field.
  * Fetches field information for a division from the division_states collection.
  */
 export const audienceDisplayResolver: GraphQLFieldResolver<

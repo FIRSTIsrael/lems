@@ -56,7 +56,7 @@ const audienceDisplaySwitchedSubscribe = (
 };
 
 /**
- * Subscription resolver object for judgingSessionAborted
+ * Subscription resolver object for audeinceDisplaySwitched
  * GraphQL subscriptions require a subscribe function
  */
 export const audienceDisplaySwitchedResolver = {

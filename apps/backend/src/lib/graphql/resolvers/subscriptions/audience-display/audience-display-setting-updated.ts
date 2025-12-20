@@ -59,7 +59,7 @@ const audienceDisplaySettingUpdatedSubscribe = (
 };
 
 /**
- * Subscription resolver object for judgingSessionAborted
+ * Subscription resolver object for audienceDisplaySettingUpdated
  * GraphQL subscriptions require a subscribe function
  */
 export const audienceDisplaySettingUpdatedResolver = {
