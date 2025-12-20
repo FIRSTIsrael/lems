@@ -1,6 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { useMutation } from '@apollo/client/react';
+import { useState } from 'react';
 import {
   Paper,
   Radio,
@@ -12,17 +14,19 @@ import {
   TableRow,
   Typography,
   TextField,
+  Button,
+  Box,
   useTheme
 } from '@mui/material';
 import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
+import { useEvent } from '../../../../../../components/event-context';
+import { useScoresheet } from '../scoresheet-context';
+import { UPDATE_SCORESHEET_GP_MUTATION } from '../graphql';
+import { UPDATE_SCORESHEET_STATUS_MUTATION } from '../graphql/mutations/status';
 
 interface GPSelectorProps {
-  value?: number;
-  notes?: string;
   disabled?: boolean;
-  onValueChange?: (value: number) => void;
-  onNotesChange?: (notes: string) => void;
 }
 
 const columns = [
@@ -31,15 +35,56 @@ const columns = [
   { value: 4, color: '#E4928B' }
 ];
 
-export const GPSelector: React.FC<GPSelectorProps> = ({
-  value,
-  notes = '',
-  disabled = false,
-  onValueChange,
-  onNotesChange
-}) => {
+export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
   const t = useTranslations('pages.scoresheet.gp-selector');
   const theme = useTheme();
+  const { currentDivision } = useEvent();
+  const { scoresheet } = useScoresheet();
+  const [updateGP] = useMutation(UPDATE_SCORESHEET_GP_MUTATION);
+  const [updateStatus] = useMutation(UPDATE_SCORESHEET_STATUS_MUTATION);
+  const [localNotes, setLocalNotes] = useState(scoresheet.data?.gp?.notes || '');
+
+  const value = scoresheet.data?.gp?.value;
+  const notes = scoresheet.data?.gp?.notes || '';
+
+  const handleGPValueChange = (newValue: number) => {
+    updateGP({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        value: newValue,
+        notes: notes
+      }
+    });
+  };
+
+  const handleNotesBlur = () => {
+    updateGP({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        value: value,
+        notes: localNotes
+      }
+    });
+  };
+
+  const isFormValid = () => {
+    if (!value) return false;
+    if ((value === 2 || value === 4) && !localNotes.trim()) return false;
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (!isFormValid()) return;
+    updateStatus({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        status: 'submitted'
+      }
+    });
+  };
 
   return (
     <Paper sx={{ p: 4, mt: 2, borderRadius: 2 }}>
@@ -103,7 +148,7 @@ export const GPSelector: React.FC<GPSelectorProps> = ({
                     }
                     checkedIcon={<CheckedIcon sx={{ fontSize: '1.5em', color: '#0071e3' }} />}
                     checked={value === column.value}
-                    onChange={() => onValueChange?.(column.value)}
+                    onChange={() => handleGPValueChange(column.value)}
                     disabled={disabled}
                   />
                 </TableCell>
@@ -126,8 +171,9 @@ export const GPSelector: React.FC<GPSelectorProps> = ({
                     multiline
                     rows={4}
                     placeholder={t(`notes-placeholder-${value}`)}
-                    value={notes}
-                    onChange={e => onNotesChange?.(e.target.value)}
+                    value={localNotes}
+                    onChange={e => setLocalNotes(e.target.value)}
+                    onBlur={handleNotesBlur}
                     disabled={disabled}
                     variant="outlined"
                     size="small"
@@ -158,6 +204,18 @@ export const GPSelector: React.FC<GPSelectorProps> = ({
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleSubmit}
+          disabled={!isFormValid() || disabled}
+          size="large"
+        >
+          {t('submit-button')}
+        </Button>
+      </Box>
     </Paper>
   );
 };

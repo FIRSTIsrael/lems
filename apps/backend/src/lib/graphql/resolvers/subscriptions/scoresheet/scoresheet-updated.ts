@@ -86,13 +86,12 @@ async function processScoresheetUpdatedEvent(
     return status ? ({ scoresheetId, status, version } as ScoresheetStatusUpdatedEvent) : null;
   }
 
-  if ('gp' in eventData) {
-    const gp = eventData.gp as Record<string, unknown>;
-    return gp
+  if ('gpValue' in eventData || 'notes' in eventData) {
+    return eventData.gpValue
       ? ({
           scoresheetId,
-          gpValue: (gp.value as number | null) ?? null,
-          notes: (gp.notes as string) || undefined,
+          gpValue: (eventData.gpValue as number | null) ?? null,
+          notes: (eventData.notes as string) || undefined,
           version
         } as ScoresheetGPUpdatedEvent)
       : null;

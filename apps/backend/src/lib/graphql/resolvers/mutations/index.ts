@@ -9,6 +9,9 @@ import {
 } from './rubrics';
 import {
   updateScoresheetMissionClauseResolver,
+  updateScoresheetGPResolver,
+  updateScoresheetStatusResolver,
+  updateScoresheetEscalatedResolver,
   updateScoresheetSignatureResolver
 } from './scoresheets';
 import {
@@ -30,5 +33,8 @@ export const mutationResolvers = {
   updateRubricStatus: updateRubricStatusResolver,
   updateRubricAwards: updateRubricAwardsResolver,
   updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
-  updateScoresheetSignature: updateScoresheetSignatureResolver
+  updateScoresheetGP: updateScoresheetGPResolver,
+  updateScoresheetEscalated: updateScoresheetEscalatedResolver,
+  updateScoresheetSignature: updateScoresheetSignatureResolver,
+  updateScoresheetStatus: updateScoresheetStatusResolver
 };

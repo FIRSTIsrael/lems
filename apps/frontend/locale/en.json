@@ -489,7 +489,8 @@
         "level-3": "ACCOMPLISHED",
         "level-4": "EXCEEDS",
         "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
-        "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score"
+        "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
+        "submit-button": "Submit"
       }
     }
   },
