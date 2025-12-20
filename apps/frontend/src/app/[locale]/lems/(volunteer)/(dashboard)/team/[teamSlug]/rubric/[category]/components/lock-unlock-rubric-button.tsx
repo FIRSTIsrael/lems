@@ -47,7 +47,7 @@ export const LockUnlockRubricButton: React.FC<LockUnlockRubricButtonProps> = ({
   });
 
   const handleAction = useCallback(() => {
-    const newStatus = isLocked ? 'draft' : 'locked';
+    const newStatus = isLocked ? 'completed' : 'locked';
 
     updateStatusMutation({
       variables: {
