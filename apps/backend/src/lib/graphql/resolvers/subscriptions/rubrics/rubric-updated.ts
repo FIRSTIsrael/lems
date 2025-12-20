@@ -34,7 +34,7 @@ type RubricAwardsUpdatedEvent = {
 
 type RubricResetEvent = {
   rubricId: string;
-  data: Record<string, unknown>;
+  reset: boolean;
   version: number;
 };
 
@@ -109,12 +109,12 @@ async function processRubricUpdatedEvent(
   }
 
   // Handle RubricReset events
-  if ('data' in eventData) {
-    const data = eventData.data as Record<string, unknown>;
-    return data
+  if ('reset' in eventData) {
+    const reset = eventData.reset as boolean;
+    return reset
       ? ({
           rubricId,
-          data,
+          reset,
           version
         } as RubricResetEvent)
       : null;

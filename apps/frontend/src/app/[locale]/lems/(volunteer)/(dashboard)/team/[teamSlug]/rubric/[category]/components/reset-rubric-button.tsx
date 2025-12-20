@@ -13,6 +13,7 @@ import {
 import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import { useRubric } from '../rubric-context';
 import { RESET_RUBRIC_MUTATION } from '../graphql/mutations/reset';
 import { useUser } from '../../../../../../../components/user-context';
@@ -62,7 +63,7 @@ export const ResetRubricButton: React.FC<ResetRubricButtonProps> = ({ disabled =
       user={user}
       allowedRoles="judge-advisor"
       conditionalRoles="lead-judge"
-      conditions={{ roleInfo: { category: rubric.category } }}
+      conditions={{ roleInfo: { category: underscoresToHyphens(rubric.category) } }}
     >
       <>
         <Button

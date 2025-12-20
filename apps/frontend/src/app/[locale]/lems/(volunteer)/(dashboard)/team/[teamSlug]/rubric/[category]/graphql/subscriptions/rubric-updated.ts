@@ -160,9 +160,9 @@ const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (pr
           if (event.__typename === 'RubricReset') {
             if (!event.reset) return rubric;
 
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { data, ...restRubric } = rubric;
-            return restRubric;
+            return merge(rubric, {
+              data: null
+            });
           }
 
           return rubric;
