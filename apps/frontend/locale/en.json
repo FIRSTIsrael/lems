@@ -224,7 +224,8 @@
         "save-draft": "Save as Draft",
         "submit-review": "Submit for Review",
         "reset": "Reset",
-        "submit-rubric": "Submit and lock"
+        "submit-rubric": "Submit and lock",
+        "unlock-rubric": "Unlock"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
@@ -245,7 +246,11 @@
         "notes-update-error": "Failed to save notes. Please try again.",
         "feedback-update-error": "Failed to save feedback. Please try again.",
         "reset-error": "Failed to reset rubric. Please try again.",
-        "reset-success": "Rubric has been reset successfully."
+        "reset-success": "Rubric has been reset successfully.",
+        "unlock-success": "Rubric has been unlocked.",
+        "unlock-error": "Failed to unlock rubric. Please try again.",
+        "submit-success": "Rubric has been submitted and locked.",
+        "submit-error": "Failed to submit rubric. Please try again."
       },
       "validation": {
         "title": "Rubric Incomplete",
