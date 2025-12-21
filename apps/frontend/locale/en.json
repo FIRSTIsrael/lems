@@ -551,6 +551,9 @@
       "incomplete-with-errors": "There are errors in the scoresheet that need to be corrected.",
       "incomplete-action": "Go to the issue",
       "points-unit": "pts."
+    },
+    "deliberation": {
+      "error-not-authorized": "Unauthorized to access deliberation"
     }
   }
 }
