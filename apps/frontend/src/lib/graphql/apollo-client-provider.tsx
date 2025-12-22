@@ -10,11 +10,7 @@ import {
   useRef
 } from 'react';
 import { HttpLink, ApolloLink } from '@apollo/client';
-import {
-  ApolloClient,
-  ApolloNextAppProvider,
-  InMemoryCache
-} from '@apollo/client-integration-nextjs';
+import { ApolloClient, ApolloNextAppProvider } from '@apollo/client-integration-nextjs';
 import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client/errors';
 import { RetryLink } from '@apollo/client/link/retry';
@@ -22,6 +18,7 @@ import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient, Client as WsClient } from 'graphql-ws';
 import { OperationTypeNode } from 'graphql';
 import { getApiBase } from '@lems/shared';
+import { createApolloCache } from './cache-config';
 
 export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting' | 'error' | 'idle';
 
@@ -38,9 +35,10 @@ const ConnectionStateContext = createContext<ConnectionStateContextType | undefi
  * Integrates with the connection state context to track WebSocket status
  */
 function makeClient(
-  setState: (state: ConnectionState) => void,
+  setConnectionState: (state: ConnectionState) => void,
   setError: (error: Error | null) => void,
-  wsClientRef: { current: WsClient | null }
+  wsClientRef: { current: WsClient | null },
+  isResettingRef: { current: boolean }
 ) {
   const apiBase = getApiBase() || 'http://localhost:3333';
 
@@ -63,22 +61,27 @@ function makeClient(
       keepAlive: 2_500, // Send ping every 2.5 seconds
       on: {
         connected: () => {
-          setState('connected');
-          setError(null);
           console.log('[GraphQL WS] Connected');
+          setConnectionState('connected');
+          setError(null);
         },
         connecting: () => {
-          setState('reconnecting');
           console.log('[GraphQL WS] Connecting...');
+          setConnectionState('reconnecting');
         },
         error: (error: unknown) => {
-          setState('error');
+          console.log('[GraphQL WS] Connection error:', error);
+          setConnectionState('error');
           setError(error instanceof Error ? error : new Error(String(error)));
-          console.warn('[GraphQL WS] Connection error:', error);
         },
         closed: () => {
-          setState('disconnected');
-          console.log('[GraphQL WS] Connection closed');
+          // Only set to 'disconnected' if we're not intentionally resetting
+          if (!isResettingRef.current) {
+            console.log('[GraphQL WS] Connection closed');
+            setConnectionState('disconnected');
+          } else {
+            console.log('[GraphQL WS] Connection reset');
+          }
         }
       }
     })
@@ -141,23 +144,7 @@ function makeClient(
 
   return new ApolloClient({
     link: splitLink,
-    cache: new InMemoryCache({
-      typePolicies: {
-        Event: { keyFields: ['id'] },
-        Division: { keyFields: ['id'] },
-        Team: { keyFields: ['id'] },
-        Volunteer: {
-          // Use id when available, otherwise don't normalize
-          keyFields: object => (object.id ? ['id'] : false)
-        },
-        Table: { keyFields: ['id'] },
-        Room: { keyFields: ['id'] },
-        Rubric: { keyFields: ['id'] },
-        Judging: { keyFields: ['divisionId'] },
-        Field: { keyFields: ['divisionId'] },
-        MatchParticipant: { keyFields: ['tableId', 'matchId'] }
-      }
-    }),
+    cache: createApolloCache(),
     defaultOptions: {
       watchQuery: {
         fetchPolicy: 'cache-and-network',
@@ -177,12 +164,50 @@ function makeClient(
 export function ApolloClientProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ConnectionState>('idle');
   const [lastError, setLastError] = useState<Error | null>(null);
+
   const wsClientRef = useRef<WsClient | null>(null);
   const clientRef = useRef<ApolloClient | null>(null);
   const isResettingRef = useRef(false);
 
+  // Use callbacks to capture current setState functions
+  // These are called by WebSocket events and always get the latest setState
+  const setConnectionState = useCallback((newState: ConnectionState) => {
+    console.log('[Apollo] Setting connection state to:', newState);
+    setState(newState);
+  }, []);
+
+  const setError = useCallback((error: Error | null) => {
+    setLastError(error);
+  }, []);
+
+  // Create a stable makeClient function that uses the callbacks
+  // This function is called once by ApolloNextAppProvider
+  const makeClientWithState = useCallback(() => {
+    console.log('[Apollo] makeClientWithState called');
+
+    // If client already exists, return it (ApolloNextAppProvider caches it)
+    if (clientRef.current) {
+      console.log('[Apollo] Client already exists, returning cached instance');
+      return clientRef.current;
+    }
+
+    console.log('[Apollo] Creating new Apollo Client');
+
+    // Dispose old WebSocket if it exists
+    if (wsClientRef.current) {
+      console.log('[Apollo] Disposing old WebSocket');
+      wsClientRef.current.dispose();
+      wsClientRef.current = null;
+    }
+
+    // Create new client with stable callback functions
+    const client = makeClient(setConnectionState, setError, wsClientRef, isResettingRef);
+    clientRef.current = client;
+    return client;
+  }, [setConnectionState, setError]);
+
+  // Stable reset function
   const resetConnection = useCallback(() => {
-    // Prevent duplicate resets within 100ms
     if (isResettingRef.current) {
       console.log('[Apollo] Reset already in progress, skipping duplicate');
       return;
@@ -191,27 +216,19 @@ export function ApolloClientProvider({ children }: { children: ReactNode }) {
     isResettingRef.current = true;
     console.log('[Apollo] Resetting WebSocket connection');
 
-    // Dispose of WebSocket client to force reconnection
     if (wsClientRef.current) {
-      wsClientRef.current.dispose();
-      wsClientRef.current = null;
+      wsClientRef.current.terminate();
+      console.log('[Apollo] WebSocket terminated');
     }
 
-    // Reset state to idle - will trigger reconnection on next operation
-    setState('idle');
-    setLastError(null);
+    setConnectionState('idle');
+    isResettingRef.current = false;
+    setError(null);
 
-    // No need to manually evict cache entries anymore since all types are now normalized
-    // Apollo will handle cache updates properly through normalization
     if (clientRef.current) {
       clientRef.current.cache.gc();
     }
-
-    // Allow resets again after a short delay
-    setTimeout(() => {
-      isResettingRef.current = false;
-    }, 100);
-  }, []);
+  }, [setConnectionState, setError]);
 
   const value: ConnectionStateContextType = useMemo(
     () => ({
@@ -221,12 +238,6 @@ export function ApolloClientProvider({ children }: { children: ReactNode }) {
     }),
     [state, lastError, resetConnection]
   );
-
-  const makeClientWithState = useCallback(() => {
-    const client = makeClient(setState, setLastError, wsClientRef);
-    clientRef.current = client;
-    return client;
-  }, []);
 
   return (
     <ApolloNextAppProvider makeClient={makeClientWithState}>
