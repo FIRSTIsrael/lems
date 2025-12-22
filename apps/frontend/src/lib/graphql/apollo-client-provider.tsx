@@ -166,7 +166,7 @@ function makeClient(
         errorPolicy: 'all'
       },
       query: {
-        fetchPolicy: 'cache-and-network',
+        fetchPolicy: 'cache-first',
         errorPolicy: 'all'
       },
       mutate: {
