@@ -148,6 +148,8 @@ type MatchStartedEvent {
 Represents an event when the match stage has advanced in a division
 """
 type MatchStageAdvancedEvent {
+  "Placeholder field - this event type carries no data"
+  _placeholder: String
 }
 
 """
