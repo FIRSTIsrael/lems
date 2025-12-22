@@ -1,6 +1,14 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useMemo,
+  useCallback,
+  useRef
+} from 'react';
 import { HttpLink, ApolloLink } from '@apollo/client';
 import {
   ApolloClient,
@@ -11,7 +19,7 @@ import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client/errors';
 import { RetryLink } from '@apollo/client/link/retry';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { createClient } from 'graphql-ws';
+import { createClient, Client as WsClient } from 'graphql-ws';
 import { OperationTypeNode } from 'graphql';
 import { getApiBase } from '@lems/shared';
 
@@ -20,6 +28,7 @@ export type ConnectionState = 'connected' | 'disconnected' | 'reconnecting' | 'e
 interface ConnectionStateContextType {
   state: ConnectionState;
   lastError: Error | null;
+  resetConnection: () => void;
 }
 
 const ConnectionStateContext = createContext<ConnectionStateContextType | undefined>(undefined);
@@ -30,7 +39,8 @@ const ConnectionStateContext = createContext<ConnectionStateContextType | undefi
  */
 function makeClient(
   setState: (state: ConnectionState) => void,
-  setError: (error: Error | null) => void
+  setError: (error: Error | null) => void,
+  wsClientRef: { current: WsClient | null }
 ) {
   const apiBase = getApiBase() || 'http://localhost:3333';
 
@@ -50,13 +60,16 @@ function makeClient(
       url: `${apiBase.replace(/^https?/, 'ws')}/lems/graphql`,
       retryAttempts: Infinity, // Retry indefinitely
       shouldRetry: () => true, // Retry on all connection failures
+      keepAlive: 2_500, // Send ping every 2.5 seconds
       on: {
         connected: () => {
           setState('connected');
           setError(null);
+          console.log('[GraphQL WS] Connected');
         },
         connecting: () => {
           setState('reconnecting');
+          console.log('[GraphQL WS] Connecting...');
         },
         error: (error: unknown) => {
           setState('error');
@@ -65,11 +78,18 @@ function makeClient(
         },
         closed: () => {
           setState('disconnected');
-          console.warn('[GraphQL WS] Connection closed');
+          console.log('[GraphQL WS] Connection closed');
         }
       }
     })
   );
+
+  // Store the WS client for later disposal
+  // GraphQLWsLink exposes the underlying client but it's not in the public type
+  const linkWithClient = wsLink as GraphQLWsLink & { client?: WsClient };
+  if (linkWithClient.client) {
+    wsClientRef.current = linkWithClient.client;
+  }
 
   const errorLink = new ErrorLink(({ error, operation }) => {
     if (CombinedGraphQLErrors.is(error)) {
@@ -133,31 +153,9 @@ function makeClient(
         Table: { keyFields: ['id'] },
         Room: { keyFields: ['id'] },
         Rubric: { keyFields: ['id'] },
-        Judging: {
-          // Judging doesn't have an id field, so don't normalize it
-          keyFields: false,
-          // Custom merge function to safely merge Judging objects fetched with different arguments
-          merge(existing = {}, incoming) {
-            // Merge the objects, allowing multiple field queries to coexist
-            // e.g., { sessions: [...], rubrics: [...] }
-            return { ...existing, ...incoming };
-          }
-        },
-        Field: {
-          // Field doesn't have an id field, so don't normalize it
-          keyFields: false,
-          // Custom merge function to safely merge Field objects fetched with different arguments
-          merge(existing = {}, incoming) {
-            // Merge the objects, allowing multiple field queries to coexist
-            // e.g., { matches: [...], matchLength: ..., currentStage: ... }
-            return { ...existing, ...incoming };
-          }
-        },
-        MatchParticipant: {
-          // MatchParticipant doesn't have an id field
-          // Don't normalize it to avoid cache issues
-          keyFields: false
-        }
+        Judging: { keyFields: ['divisionId'] },
+        Field: { keyFields: ['divisionId'] },
+        MatchParticipant: { keyFields: ['tableId', 'matchId'] }
       }
     }),
     defaultOptions: {
@@ -166,7 +164,7 @@ function makeClient(
         errorPolicy: 'all'
       },
       query: {
-        fetchPolicy: 'cache-first',
+        fetchPolicy: 'network-only',
         errorPolicy: 'all'
       },
       mutate: {
@@ -179,16 +177,56 @@ function makeClient(
 export function ApolloClientProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<ConnectionState>('idle');
   const [lastError, setLastError] = useState<Error | null>(null);
+  const wsClientRef = useRef<WsClient | null>(null);
+  const clientRef = useRef<ApolloClient | null>(null);
+  const isResettingRef = useRef(false);
+
+  const resetConnection = useCallback(() => {
+    // Prevent duplicate resets within 100ms
+    if (isResettingRef.current) {
+      console.log('[Apollo] Reset already in progress, skipping duplicate');
+      return;
+    }
+
+    isResettingRef.current = true;
+    console.log('[Apollo] Resetting WebSocket connection');
+
+    // Dispose of WebSocket client to force reconnection
+    if (wsClientRef.current) {
+      wsClientRef.current.dispose();
+      wsClientRef.current = null;
+    }
+
+    // Reset state to idle - will trigger reconnection on next operation
+    setState('idle');
+    setLastError(null);
+
+    // No need to manually evict cache entries anymore since all types are now normalized
+    // Apollo will handle cache updates properly through normalization
+    if (clientRef.current) {
+      clientRef.current.cache.gc();
+    }
+
+    // Allow resets again after a short delay
+    setTimeout(() => {
+      isResettingRef.current = false;
+    }, 100);
+  }, []);
 
   const value: ConnectionStateContextType = useMemo(
     () => ({
       state,
-      lastError
+      lastError,
+      resetConnection
     }),
-    [state, lastError]
+    [state, lastError, resetConnection]
   );
 
-  const makeClientWithState = useMemo(() => () => makeClient(setState, setLastError), []);
+  const makeClientWithState = useCallback(() => {
+    const client = makeClient(setState, setLastError, wsClientRef);
+    clientRef.current = client;
+    return client;
+  }, []);
 
   return (
     <ApolloNextAppProvider makeClient={makeClientWithState}>

@@ -80,6 +80,8 @@ export function usePageData<
   const initialized = useRef(false);
   const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
   const hiddenSinceRef = useRef<number | null>(null);
+  const previousVariablesRef = useRef<OperationVariables | undefined>(variables);
+  const unsubscribersRef = useRef<Array<() => void>>([]);
 
   const refetchIntervalMs = options?.refetchIntervalMs ?? DEFAULT_REFETCH_INTERVAL_MS;
 
@@ -101,6 +103,34 @@ export function usePageData<
     fetchPolicy: 'network-only',
     notifyOnNetworkStatusChange: true // Track loading states accurately
   });
+
+  // Detect if key variables (like divisionId) have changed and clean up old subscriptions
+  useEffect(() => {
+    const variablesChanged =
+      JSON.stringify(previousVariablesRef.current) !== JSON.stringify(variables);
+
+    if (variablesChanged && previousVariablesRef.current !== undefined) {
+      console.log('[usePageData] Key variables changed, cleaning up old subscriptions', {
+        previous: previousVariablesRef.current,
+        current: variables
+      });
+
+      // Unsubscribe from all existing subscriptions
+      unsubscribersRef.current.forEach(unsub => {
+        try {
+          unsub();
+        } catch (err) {
+          console.error('[usePageData] Error unsubscribing:', err);
+        }
+      });
+      unsubscribersRef.current = [];
+
+      // Clear data to prevent stale data from previous context
+      setData(undefined);
+    }
+
+    previousVariablesRef.current = variables;
+  }, [variables]);
 
   // Initialize data when query data arrives
   useEffect(() => {
@@ -188,7 +218,15 @@ export function usePageData<
       return;
     }
 
-    const unsubscribers: Array<() => void> = [];
+    // Clean up previous subscriptions before setting up new ones
+    unsubscribersRef.current.forEach(unsub => {
+      try {
+        unsub();
+      } catch (err) {
+        console.error('[usePageData] Error unsubscribing:', err);
+      }
+    });
+    unsubscribersRef.current = [];
 
     subscriptions.forEach((config, index) => {
       console.debug('[usePageData] Setting up subscription', index);
@@ -211,11 +249,18 @@ export function usePageData<
         }
       } as Parameters<typeof subscribeToMore>[0]);
 
-      unsubscribers.push(unsubscribe);
+      unsubscribersRef.current.push(unsubscribe);
     });
 
     return () => {
-      unsubscribers.forEach(unsub => unsub());
+      unsubscribersRef.current.forEach(unsub => {
+        try {
+          unsub();
+        } catch (err) {
+          console.error('[usePageData] Error unsubscribing on cleanup:', err);
+        }
+      });
+      unsubscribersRef.current = [];
     };
 
     // queryData does not need to by in the dependency array

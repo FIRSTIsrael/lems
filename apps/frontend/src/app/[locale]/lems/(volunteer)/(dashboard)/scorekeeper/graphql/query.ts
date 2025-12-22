@@ -6,6 +6,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
     division(id: $divisionId) {
       id
       field {
+        divisionId
         matches {
           id
           slug
@@ -16,6 +17,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
           startTime
           status
           participants {
+            matchId
             team {
               id
               name

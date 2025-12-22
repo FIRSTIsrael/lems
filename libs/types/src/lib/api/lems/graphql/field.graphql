@@ -77,12 +77,18 @@ type MatchParticipant {
 
   "Whether the referee marked their table as ready"
   ready: Boolean!
+
+  "ID of the match this participant is in"
+  matchId: String!
 }
 
 """
 Field-related information for a division
 """
 type Field {
+  "ID of the division this field data belongs to"
+  divisionId: String!
+
   "Matches in this division, optionally filtered"
   matches(
     "Filter matches by their IDs"
