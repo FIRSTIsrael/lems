@@ -45,6 +45,7 @@ import { audienceDisplayResolver } from './divisions/field/audience-display';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
 import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
+import { DeliberationUpdatedEventResolver } from './subscriptions/deliberations/deliberation-updated';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -144,5 +145,6 @@ export const resolvers = {
   },
   RoleInfo: RoleInfoResolver,
   RubricUpdatedEvent: RubricUpdatedEventResolver,
-  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver
+  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
+  DeliberationUpdatedEvent: DeliberationUpdatedEventResolver
 };
