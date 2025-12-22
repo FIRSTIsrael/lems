@@ -18,7 +18,6 @@ interface UpdateAudienceDisplaySettingEvent {
   display: AudienceDisplayScreen;
   settingKey: string;
   settingValue: unknown;
-  version: number;
 }
 
 /**
@@ -60,7 +59,7 @@ export const updateAudienceDisplaySettingResolver: GraphQLFieldResolver<
       settingValue
     });
 
-    return { display, settingKey, settingValue, version: -1 };
+    return { display, settingKey, settingValue };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

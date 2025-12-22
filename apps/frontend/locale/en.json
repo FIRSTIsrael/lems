@@ -222,9 +222,10 @@
       },
       "actions": {
         "save-draft": "Save as Draft",
-        "submit-review": "Submit for Review",
         "reset": "Reset",
-        "submit-rubric": "Submit and lock"
+        "submit-rubric": "Submit and lock",
+        "unlock-rubric": "Unlock",
+        "approve-rubric": "Approve"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
@@ -233,10 +234,32 @@
         "cancel": "Cancel",
         "confirm": "Submit and Lock"
       },
+      "reset-dialog": {
+        "title": "Reset Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this rubric? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Rubric"
+      },
+      "approve-dialog": {
+        "title": "Approve Rubric",
+        "warning": "This action is final and cannot be undone!",
+        "description": "Once you approve this rubric, it will be locked and no further changes can be made. Please ensure the rubric is complete and accurate before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Approve Rubric"
+      },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
         "notes-update-error": "Failed to save notes. Please try again.",
-        "feedback-update-error": "Failed to save feedback. Please try again."
+        "feedback-update-error": "Failed to save feedback. Please try again.",
+        "reset-error": "Failed to reset rubric. Please try again.",
+        "reset-success": "Rubric has been reset successfully.",
+        "unlock-success": "Rubric has been unlocked.",
+        "unlock-error": "Failed to unlock rubric. Please try again.",
+        "submit-success": "Rubric has been submitted and locked.",
+        "submit-error": "Failed to submit rubric. Please try again.",
+        "approve-success": "Rubric has been approved.",
+        "approve-error": "Failed to approve rubric. Please try again."
       },
       "validation": {
         "title": "Rubric Incomplete",

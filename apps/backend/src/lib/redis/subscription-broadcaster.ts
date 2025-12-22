@@ -7,7 +7,6 @@ export interface RedisEvent {
   divisionId: string;
   timestamp: number;
   data: Record<string, unknown>;
-  version?: number;
 }
 
 /**

@@ -125,10 +125,10 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                         variant="body2"
                         fontWeight={600}
                         sx={{
-                          color: completed + locked === total ? '#4caf50' : 'inherit'
+                          color: completed + locked + approved === total ? '#4caf50' : 'inherit'
                         }}
                       >
-                        {completed + locked}
+                        {completed + locked + approved}
                       </Typography>
                     </Box>
                   </Grid>

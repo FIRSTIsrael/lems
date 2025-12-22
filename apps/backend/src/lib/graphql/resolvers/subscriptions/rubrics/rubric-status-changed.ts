@@ -1,40 +1,30 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface RubricStatusChangedSubscribeArgs {
+  divisionId: string;
+}
 
 type RubricStatusUpdatedEvent = {
   rubricId: string;
   status: string;
-  version: number;
 };
 
 async function processRubricStatusChangedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricStatusUpdatedEvent>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
-
-  const { eventData, rubricId, version } = extractEventBase(event);
+): Promise<RubricStatusUpdatedEvent | null> {
+  const eventData = event.data as Record<string, unknown>;
+  const rubricId = (eventData.rubricId as string) || '';
   const status = (eventData.status as string) || '';
 
-  return rubricId && status ? { rubricId, status, version } : null;
+  return rubricId && status ? { rubricId, status } : null;
 }
 
 export const rubricStatusChangedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
+  subscribe: (_root: unknown, { divisionId }: RubricStatusChangedSubscribeArgs) => {
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.RUBRIC_STATUS_CHANGED,
-      (args.lastSeenVersion as number) || 0
-    );
+    const pubSub = getRedisPubSub();
+    return pubSub.asyncIterator(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED);
   },
   resolve: processRubricStatusChangedEvent
 };

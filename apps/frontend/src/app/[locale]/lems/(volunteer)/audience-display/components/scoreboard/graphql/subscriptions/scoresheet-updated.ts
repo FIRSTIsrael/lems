@@ -5,7 +5,6 @@ import type { ScoreboardData, ScoresheetUpdatedEvent } from '../types';
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 type SubscriptionResult = {
@@ -16,24 +15,21 @@ export const SCORESHEET_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionResult,
   SubscriptionVars
 > = gql`
-  subscription ScoresheetUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    scoresheetUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription ScoresheetUpdated($divisionId: String!) {
+    scoresheetUpdated(divisionId: $divisionId) {
       ... on ScoresheetMissionClauseUpdated {
         scoresheetId
         missionId
         clauseIndex
         clauseValue
-        version
       }
       ... on ScoresheetStatusUpdated {
         scoresheetId
         status
-        version
       }
       ... on ScoresheetEscalatedUpdated {
         scoresheetId
         escalated
-        version
       }
     }
   }

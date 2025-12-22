@@ -6,62 +6,57 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeRubricAccess, assertRubricEditable } from './utils';
 
-type RubricAwardsUpdatedEvent = {
+type RubricResetEvent = {
   rubricId: string;
-  awards: Record<string, boolean>;
+  reset: boolean;
 };
 
-interface UpdateRubricAwardsArgs {
+interface ResetRubricArgs {
   divisionId: string;
   rubricId: string;
-  awards: Record<string, boolean>;
 }
 
 /**
- * Resolver for Mutation.updateRubricAwards
- * Updates the award nominations for a rubric
+ * Resolver for Mutation.resetRubric
+ * Resets the rubric to the provided data
  */
-export const updateRubricAwardsResolver: GraphQLFieldResolver<
+export const resetRubricResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  UpdateRubricAwardsArgs,
-  Promise<RubricAwardsUpdatedEvent>
-> = async (_root, { divisionId, rubricId, awards }, context) => {
+  ResetRubricArgs,
+  Promise<RubricResetEvent>
+> = async (_root, { divisionId, rubricId }, context) => {
   const { rubric, rubricObjectId } = await authorizeRubricAccess(context, divisionId, rubricId);
 
-  const status = (rubric.status as string) || 'empty';
-  const wasEmpty = status === 'empty';
-  assertRubricEditable(status, context.user?.role);
+  assertRubricEditable(rubric.status as string, context.user?.role);
 
   const result = await db.raw.mongo.collection('rubrics').findOneAndUpdate(
     { _id: rubricObjectId },
     {
+      $unset: { data: '' },
       $set: {
-        'data.awards': awards,
-        // Update status to draft if it's empty
-        ...(wasEmpty && { status: 'draft' })
+        status: 'empty'
       }
     },
     { returnDocument: 'after' }
   );
 
   if (!result) {
-    throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Failed to update rubric ${rubricId}`);
+    throw new MutationError(MutationErrorCode.UNAUTHORIZED, `Failed to reset rubric ${rubricId}`);
   }
 
   // Publish the update event
   const pubSub = getRedisPubSub();
   const eventPayload = {
     rubricId,
-    awards
+    reset: true
   };
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload),
-    wasEmpty &&
-      pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, {
-        rubricId,
-        status: 'draft'
-      })
+    pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, {
+      rubricId,
+      status: 'empty'
+    })
   ]);
 
   return eventPayload;

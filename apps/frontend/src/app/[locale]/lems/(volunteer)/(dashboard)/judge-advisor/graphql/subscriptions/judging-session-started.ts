@@ -6,7 +6,6 @@ import type { SubscriptionVars, QueryData, JudgingSession } from '../types';
 interface SubscriptionData {
   judgingSessionStarted: {
     sessionId: string;
-    version: number;
     startTime: string;
     startDelta: number;
   };
@@ -16,10 +15,9 @@ export const JUDGING_SESSION_STARTED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription JudgingSessionStarted($divisionId: String!, $lastSeenVersion: Int) {
-    judgingSessionStarted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription JudgingSessionStarted($divisionId: String!) {
+    judgingSessionStarted(divisionId: $divisionId) {
       sessionId
-      version
       startTime
       startDelta
     }

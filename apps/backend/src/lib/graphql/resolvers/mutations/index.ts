@@ -5,7 +5,8 @@ import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
   updateRubricStatusResolver,
-  updateRubricAwardsResolver
+  updateRubricAwardsResolver,
+  resetRubricResolver
 } from './rubrics';
 import {
   updateScoresheetMissionClauseResolver,
@@ -32,6 +33,7 @@ export const mutationResolvers = {
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
   updateRubricAwards: updateRubricAwardsResolver,
+  resetRubric: resetRubricResolver,
   updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
   updateScoresheetGP: updateScoresheetGPResolver,
   updateScoresheetEscalated: updateScoresheetEscalatedResolver,

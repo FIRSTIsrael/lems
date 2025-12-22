@@ -8,30 +8,26 @@ export const SCORESHEET_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionResult,
   SubscriptionVariables
 > = gql`
-  subscription ScoresheetUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    scoresheetUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription ScoresheetUpdated($divisionId: String!) {
+    scoresheetUpdated(divisionId: $divisionId) {
       ... on ScoresheetMissionClauseUpdated {
         scoresheetId
         missionId
         clauseIndex
         clauseValue
-        version
       }
       ... on ScoresheetStatusUpdated {
         scoresheetId
         status
-        version
       }
       ... on ScoresheetGPUpdated {
         scoresheetId
         gpValue
         notes
-        version
       }
       ... on ScoresheetEscalatedUpdated {
         scoresheetId
         escalated
-        version
       }
     }
   }

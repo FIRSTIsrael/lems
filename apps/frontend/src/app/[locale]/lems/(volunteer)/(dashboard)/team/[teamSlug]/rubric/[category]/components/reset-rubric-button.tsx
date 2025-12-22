@@ -10,37 +10,34 @@ import {
   DialogContentText,
   DialogActions
 } from '@mui/material';
-import { CheckCircle as CheckCircleIcon } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { Refresh as RefreshIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import { useRubric } from '../rubric-context';
-import { UPDATE_RUBRIC_STATUS_MUTATION } from '../graphql';
+import { RESET_RUBRIC_MUTATION } from '../graphql/mutations/reset';
 import { useUser } from '../../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
 
-interface SubmitRubricButtonProps {
+interface ResetRubricButtonProps {
   disabled?: boolean;
 }
 
-export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled = false }) => {
+export const ResetRubricButton: React.FC<ResetRubricButtonProps> = ({ disabled = false }) => {
   const t = useTranslations('pages.rubric');
-  const { rubric, validation } = useRubric();
-  const router = useRouter();
+  const { rubric } = useRubric();
   const user = useUser();
   const { currentDivision } = useEvent();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-  const isDisabled = disabled || !validation.isValid;
-
-  const [submitRubricMutation] = useMutation(UPDATE_RUBRIC_STATUS_MUTATION, {
+  const [resetRubricMutation] = useMutation(RESET_RUBRIC_MUTATION, {
     onError: () => {
-      toast.error(t('errors.submit'));
+      toast.error(t('toasts.reset-error'));
     },
     onCompleted: () => {
       setOpenConfirmDialog(false);
-      router.push(`/lems/${user.role}`);
+      toast.success(t('toasts.reset-success'));
     }
   });
 
@@ -52,28 +49,32 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
     setOpenConfirmDialog(false);
   }, []);
 
-  const handleConfirmSubmit = useCallback(() => {
-    submitRubricMutation({
+  const handleConfirmReset = useCallback(() => {
+    resetRubricMutation({
       variables: {
         divisionId: currentDivision.id,
-        rubricId: rubric.id,
-        status: 'locked'
+        rubricId: rubric.id
       }
     });
-  }, [currentDivision.id, rubric.id, submitRubricMutation]);
+  }, [rubric.id, resetRubricMutation, currentDivision.id]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="judge">
+    <RoleAuthorizer
+      user={user}
+      allowedRoles="judge-advisor"
+      conditionalRoles="lead-judge"
+      conditions={{ roleInfo: { category: underscoresToHyphens(rubric.category) } }}
+    >
       <>
         <Button
-          variant="contained"
-          color="primary"
+          variant="outlined"
+          color="error"
           size="large"
-          disabled={isDisabled}
+          disabled={disabled}
           onClick={handleOpenConfirm}
-          startIcon={<CheckCircleIcon />}
+          startIcon={<RefreshIcon />}
           sx={{
-            minWidth: 200,
+            minWidth: 150,
             py: 1.5,
             borderRadius: 2,
             textTransform: 'none',
@@ -81,7 +82,7 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
             fontWeight: 600
           }}
         >
-          {t('actions.submit-rubric')}
+          {t('actions.reset')}
         </Button>
 
         <Dialog
@@ -89,32 +90,32 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
           onClose={handleCloseConfirm}
           maxWidth="sm"
           fullWidth
-          aria-labelledby="submit-dialog-title"
-          aria-describedby="submit-dialog-description"
+          aria-labelledby="reset-dialog-title"
+          aria-describedby="reset-dialog-description"
         >
-          <DialogTitle id="submit-dialog-title" sx={{ pb: 1 }}>
-            {t('submit-dialog.title')}
+          <DialogTitle id="reset-dialog-title" sx={{ pb: 1 }}>
+            {t('reset-dialog.title')}
           </DialogTitle>
           <DialogContent>
-            <DialogContentText id="submit-dialog-description" sx={{ mt: 1 }}>
-              {t('submit-dialog.description')}
+            <DialogContentText
+              id="reset-dialog-description"
+              sx={{ mt: 1, color: 'warning.main', fontWeight: 500 }}
+            >
+              {t('reset-dialog.warning')}
             </DialogContentText>
+            <DialogContentText sx={{ mt: 1.5 }}>{t('reset-dialog.description')}</DialogContentText>
           </DialogContent>
           <DialogActions sx={{ p: 2, pt: 1 }}>
-            <Button
-              onClick={handleCloseConfirm}
-              color="inherit"
-              sx={{ textTransform: 'none', fontSize: '0.95rem' }}
-            >
-              {t('submit-dialog.cancel')}
+            <Button onClick={handleCloseConfirm} color="inherit" sx={{ fontSize: '0.95rem' }}>
+              {t('reset-dialog.cancel')}
             </Button>
             <Button
-              onClick={handleConfirmSubmit}
+              onClick={handleConfirmReset}
               variant="contained"
-              color="primary"
-              sx={{ textTransform: 'none', fontSize: '0.95rem' }}
+              color="error"
+              sx={{ fontSize: '0.95rem' }}
             >
-              {t('submit-dialog.confirm')}
+              {t('reset-dialog.confirm')}
             </Button>
           </DialogActions>
         </Dialog>

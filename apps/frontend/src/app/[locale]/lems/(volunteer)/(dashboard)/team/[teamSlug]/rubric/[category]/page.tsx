@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { Container, CircularProgress, Box } from '@mui/material';
+import { Container, CircularProgress, Box, Stack } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { rubrics } from '@lems/shared/rubrics';
 import { hyphensToUnderscores } from '@lems/shared/utils';
@@ -16,6 +16,9 @@ import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
 import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
+import { ResetRubricButton } from './components/reset-rubric-button';
+import { LockUnlockRubricButton } from './components/lock-unlock-rubric-button';
+import { ApproveRubricButton } from './components/approve-rubric-button';
 import { GET_RUBRIC_QUERY, parseRubricData, createRubricUpdatedSubscription } from './graphql';
 import { ValidationAlert } from './components/validation-alert';
 import { SubmitRubricButton } from './components/submit-rubric-button';
@@ -95,7 +98,13 @@ export default function RubricPage() {
             category={category as JudgingCategory}
             disabled={!isEditable}
           />
-          <SubmitRubricButton disabled={!isEditable} />
+
+          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+            <ResetRubricButton disabled={!isEditable} />
+            <LockUnlockRubricButton disabled={!isEditable} />
+            <ApproveRubricButton disabled={!isEditable} />
+            <SubmitRubricButton disabled={!isEditable} />
+          </Stack>
         </RubricProvider>
       </Container>
     </>

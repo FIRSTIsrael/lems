@@ -8,15 +8,14 @@ export type { RedisEvent }; // Re-export for convenience
 let pubSubInstance: RedisPubSub | null = null;
 
 /**
- * Handles publishing events via Redis Pub/Sub with message buffering and recovery.
+ * Handles publishing events via Redis Pub/Sub.
  */
 export class RedisPubSub {
   private publisher: Redis;
   private subscriptionManager: SubscriptionManager;
 
-  private readonly messageRetentionMs = 30 * 1000; // 30 seconds
-  private readonly maxRecoverySize = 1000;
   private readonly idleTimeoutMs = 60 * 60 * 1000; // 1 hour of inactivity will close the subscription
+  private readonly maxQueueSize = 100; // Maximum queued events before disconnecting slow client
 
   constructor() {
     this.publisher = getRedisClient();
@@ -24,7 +23,7 @@ export class RedisPubSub {
   }
 
   /**
-   * Publish an event via Pub/Sub and buffer it for recovery.
+   * Publish an event via Pub/Sub.
    */
   async publish(
     divisionId: string,
@@ -32,46 +31,16 @@ export class RedisPubSub {
     data: Record<string, unknown>
   ): Promise<void> {
     try {
-      const versionKey = this.getVersionKey(divisionId, eventType);
-      const version = await this.publisher.incr(versionKey);
-
-      // Set TTL on version key (60 seconds) to prevent unbounded growth
-      // 30 seconds recovery window + 30 seconds buffer
-      await this.publisher.expire(versionKey, 60);
-
       const timestamp = Date.now();
       const event: RedisEvent = {
         type: eventType,
         divisionId,
         timestamp,
-        data,
-        version
+        data
       };
 
       const channel = this.getChannelName(divisionId, eventType);
-
-      const pipeline = this.publisher.pipeline();
-      pipeline.publish(channel, JSON.stringify(event));
-
-      // Buffer event for recovery
-      const bufferKey = `buffer:${divisionId}:${eventType}`;
-      pipeline.zadd(bufferKey, timestamp, JSON.stringify(event));
-      pipeline.zremrangebyscore(bufferKey, '-inf', timestamp - this.messageRetentionMs);
-
-      // Set TTL on buffer (60 seconds) to prevent unbounded growth
-      // 30 seconds recovery window + 30 seconds buffer
-      pipeline.expire(bufferKey, 60);
-
-      const results = await pipeline.exec();
-
-      // Check each command for errors to prevent version drift
-      if (results) {
-        for (const [error] of results) {
-          if (error) {
-            throw new Error(`Pipeline command failed: ${error.message}`);
-          }
-        }
-      }
+      await this.publisher.publish(channel, JSON.stringify(event));
     } catch (error) {
       console.error(
         `[Redis:publish] Failed to publish event ${eventType} for division ${divisionId}:`,
@@ -82,13 +51,12 @@ export class RedisPubSub {
   }
 
   /**
-   * Subscribe to division events with optional message recovery.
-   * Includes backpressure handling for slow consumers.
+   * Subscribe to division events.
+   * Includes backpressure handling for slow consumers and idle timeout.
    */
   async *asyncIterator(
     divisionId: string,
-    eventType: RedisEventTypes,
-    clientLastVersion?: number
+    eventType: RedisEventTypes
   ): AsyncGenerator<RedisEvent, void, unknown> {
     const broadcaster = await this.subscriptionManager.getBroadcaster(divisionId, eventType);
     broadcaster.incrementSubscribers();
@@ -101,10 +69,10 @@ export class RedisPubSub {
     const messageHandler = (event: RedisEvent) => {
       if (!isActive) return;
 
-      // Disconnect slow consumers, they should refetch initial data
-      if (messageQueue.length >= this.maxRecoverySize) {
+      // Backpressure: disconnect slow clients to protect server memory
+      if (messageQueue.length >= this.maxQueueSize) {
         console.warn(
-          `[Redis:backpressure] Client exceeded queue limit for division ${divisionId}, disconnecting`
+          `[Redis:backpressure] Client exceeded ${this.maxQueueSize} queued events for division ${divisionId}, disconnecting`
         );
         isActive = false;
         broadcaster.removeListener('event', messageHandler);
@@ -132,27 +100,6 @@ export class RedisPubSub {
 
     try {
       broadcaster.on('event', messageHandler);
-
-      // Recover missed events (new events queue up in parallel)
-      let recovered: RedisEvent[] = [];
-      if (clientLastVersion !== undefined) {
-        recovered = await this.recoverMissedEvents(divisionId, eventType, clientLastVersion);
-        for (const event of recovered) {
-          yield event;
-        }
-      }
-
-      // Deduplicate: skip queued events with versions <= last recovered
-      const lastRecoveredVersion =
-        recovered.length > 0 ? recovered[recovered.length - 1].version : 0;
-      const dedupedQueue: RedisEvent[] = [];
-      for (const event of messageQueue) {
-        if (!event.version || event.version > (lastRecoveredVersion || 0)) {
-          dedupedQueue.push(event);
-        }
-      }
-      messageQueue.length = 0;
-      messageQueue.push(...dedupedQueue);
 
       // Stream events
       while (isActive) {
@@ -197,59 +144,6 @@ export class RedisPubSub {
    */
   private getChannelName(divisionId: string, eventType: RedisEventTypes): string {
     return `division:${divisionId}:${eventType}`;
-  }
-
-  /**
-   * Get the version map key for a division and event type
-   */
-  private getVersionKey(divisionId: string, eventType: RedisEventTypes): string {
-    return `${divisionId}:${eventType}`;
-  }
-
-  /**
-   * Recover missed events from buffer for a specific event type.
-   */
-  private async recoverMissedEvents(
-    divisionId: string,
-    eventType: RedisEventTypes,
-    clientLastVersion: number
-  ): Promise<RedisEvent[]> {
-    const bufferKey = `buffer:${divisionId}:${eventType}`;
-    const versionKey = this.getVersionKey(divisionId, eventType);
-
-    const serverVersionStr = await this.publisher.get(versionKey);
-    const serverVersion = serverVersionStr ? parseInt(serverVersionStr, 10) : 0;
-
-    // If gap is too large, send gap marker, signal client to refetch
-    if (serverVersion - clientLastVersion > this.maxRecoverySize) {
-      return [
-        {
-          type: eventType,
-          divisionId,
-          timestamp: Date.now(),
-          data: { _gap: true },
-          version: serverVersion
-        }
-      ];
-    }
-
-    // Retrieve buffered events
-    const bufferedData = await this.publisher.zrange(bufferKey, 0, -1);
-    const events: RedisEvent[] = [];
-
-    for (const data of bufferedData) {
-      try {
-        const event = JSON.parse(data) as RedisEvent;
-        if ((event.version || 0) > clientLastVersion) {
-          events.push(event);
-        }
-      } catch (error) {
-        console.error(`[Redis:recovery] Failed to parse buffered event:`, error);
-        // Skip corrupted event and continue
-      }
-    }
-
-    return events;
   }
 }
 

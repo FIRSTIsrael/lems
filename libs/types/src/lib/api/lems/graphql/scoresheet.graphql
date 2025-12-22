@@ -112,8 +112,6 @@ type ScoresheetMissionClauseUpdated {
   clauseIndex: Int!
   "The new value for the clause (boolean, string, or number)"
   clauseValue: JSON!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -124,8 +122,6 @@ type ScoresheetStatusUpdated {
   scoresheetId: String!
   "The new status of the scoresheet"
   status: ScoresheetStatus!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -138,8 +134,6 @@ type ScoresheetGPUpdated {
   gpValue: Int
   "Optional notes about the rating if value is 2 or 4"
   notes: String
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -150,8 +144,6 @@ type ScoresheetEscalatedUpdated {
   scoresheetId: String!
   "Whether the scoresheet has been escalated"
   escalated: Boolean!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -164,8 +156,6 @@ type ScoresheetSignatureUpdated {
   signature: String
   "The new status after signature completion (should be 'gp')"
   status: ScoresheetStatus!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -256,8 +246,6 @@ extend type Subscription {
   scoresheetUpdated(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): ScoresheetUpdatedEvent!
 
   """
@@ -267,7 +255,5 @@ extend type Subscription {
   scoresheetStatusChanged(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): ScoresheetStatusUpdated!
 }

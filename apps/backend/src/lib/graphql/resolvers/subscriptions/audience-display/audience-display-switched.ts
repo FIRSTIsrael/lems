@@ -1,26 +1,18 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { AudienceDisplayScreen } from '@lems/database';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface AudienceDisplaySwitchedSubscribeArgs {
+  divisionId: string;
+}
 
 interface AudienceDisplaySwitchedEvent {
   activeDisplay: AudienceDisplayScreen;
-  version: number;
 }
 
 const processAudienceDisplaySwitchedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<AudienceDisplaySwitchedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[AudienceDisplaySwitched] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
+): Promise<AudienceDisplaySwitchedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const activeDisplay = (eventData.activeDisplay as AudienceDisplayScreen) || '';
 
@@ -29,8 +21,7 @@ const processAudienceDisplaySwitchedEvent = async (
   }
 
   const result: AudienceDisplaySwitchedEvent = {
-    activeDisplay,
-    version: (event.version as number) ?? 0
+    activeDisplay
   };
 
   return result;
@@ -38,21 +29,11 @@ const processAudienceDisplaySwitchedEvent = async (
 
 const audienceDisplaySwitchedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: AudienceDisplaySwitchedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for audienceDisplaySwitched subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED,
-    lastSeenVersion
-  );
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED);
 };
 
 /**
@@ -61,9 +42,5 @@ const audienceDisplaySwitchedSubscribe = (
  */
 export const audienceDisplaySwitchedResolver = {
   subscribe: audienceDisplaySwitchedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<AudienceDisplaySwitchedEvent>> => {
-    return processAudienceDisplaySwitchedEvent(event);
-  }
+  resolve: processAudienceDisplaySwitchedEvent
 };

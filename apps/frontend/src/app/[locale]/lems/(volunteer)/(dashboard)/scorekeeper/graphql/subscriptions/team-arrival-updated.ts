@@ -5,7 +5,6 @@ import type { ScorekeeperData } from '../types';
 
 interface TeamEvent {
   teamId: string;
-  version: number;
 }
 
 interface TeamArrivalSubscriptionData {
@@ -14,17 +13,15 @@ interface TeamArrivalSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   TeamArrivalSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription TeamArrivalUpdated($divisionId: String!) {
+    teamArrivalUpdated(divisionId: $divisionId) {
       teamId
-      version
     }
   }
 `;

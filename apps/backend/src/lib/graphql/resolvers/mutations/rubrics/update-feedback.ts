@@ -17,7 +17,6 @@ type RubricFeedbackUpdatedEvent = {
     greatJob: string;
     thinkAbout: string;
   };
-  version: number;
 };
 
 interface UpdateRubricFeedbackArgs {
@@ -75,8 +74,7 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   const eventPayload = {
     rubricId,
-    feedback: feedbackUpdate,
-    version: -1
+    feedback: feedbackUpdate
   };
 
   const publishTasks = [pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload)];

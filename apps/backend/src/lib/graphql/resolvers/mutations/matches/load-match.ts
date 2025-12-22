@@ -14,7 +14,6 @@ interface LoadMatchArgs {
 
 interface MatchEvent {
   matchId: string;
-  version: number;
 }
 
 /**
@@ -78,7 +77,7 @@ export const loadMatchResolver: GraphQLFieldResolver<
       matchId
     });
 
-    return { matchId, version: -1 };
+    return { matchId };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }
