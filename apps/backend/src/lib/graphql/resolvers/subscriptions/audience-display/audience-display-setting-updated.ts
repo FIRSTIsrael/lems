@@ -3,26 +3,18 @@ import { AudienceDisplayScreen } from '@lems/database';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
 interface AudienceDisplaySettingUpdatedEvent {
   display: AudienceDisplayScreen;
   settingKey: string;
   settingValue: unknown;
-  version: number;
 }
 
 const processAudienceDisplaySettingUpdatedEvent = async (
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<AudienceDisplaySettingUpdatedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[AudienceDisplaySettingUpdated] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
   const eventData = event.data as Record<string, unknown>;
 
   if (!eventData.display || !eventData.settingKey) {
@@ -32,8 +24,7 @@ const processAudienceDisplaySettingUpdatedEvent = async (
   const result: AudienceDisplaySettingUpdatedEvent = {
     display: eventData.display as AudienceDisplayScreen,
     settingKey: eventData.settingKey as string,
-    settingValue: eventData.settingValue as unknown,
-    version: (event.version as number) ?? 0
+    settingValue: eventData.settingValue as unknown
   };
 
   return result;
@@ -50,12 +41,7 @@ const audienceDisplaySettingUpdatedSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.AUDIENCE_DISPLAY_SETTING_UPDATED,
-    lastSeenVersion
-  );
+  return createSubscriptionIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SETTING_UPDATED);
 };
 
 /**

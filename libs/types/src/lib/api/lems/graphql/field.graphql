@@ -128,9 +128,6 @@ Represents an event when a match has been loaded
 type MatchLoadedEvent {
   "Match identifier"
   matchId: String!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -145,17 +142,12 @@ type MatchStartedEvent {
 
   "Difference in seconds between scheduled and actual start time"
   startDelta: Int!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
 Represents an event when the match stage has advanced in a division
 """
 type MatchStageAdvancedEvent {
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -167,9 +159,6 @@ type MatchCompletedEvent {
 
   "ID of the automatically loaded next match, if one was eligible (starts within 15 minutes)"
   autoLoadedMatchId: String
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -178,9 +167,6 @@ Represents an event when a match endgame is triggered
 type MatchEndgameTriggeredEvent {
   "Match identifier"
   matchId: String!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -189,9 +175,6 @@ Represents an event when a match has been aborted
 type MatchAbortedEvent {
   "Match identifier"
   matchId: String!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -200,9 +183,6 @@ Represents an event when the audience display has switched
 type AudienceDisplaySwitchedEvent {
   "New active display"
   activeDisplay: AudienceDisplayScreen!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -217,9 +197,6 @@ type AudienceDisplaySettingEvent {
 
   "The new value for the setting"
   settingValue: JSON!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 extend type Mutation {
@@ -287,8 +264,6 @@ extend type Subscription {
   matchLoaded(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchLoadedEvent!
 
   """
@@ -297,8 +272,6 @@ extend type Subscription {
   matchStarted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchStartedEvent!
 
   """
@@ -307,8 +280,6 @@ extend type Subscription {
   matchStageAdvanced(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchStageAdvancedEvent!
 
   """
@@ -317,8 +288,6 @@ extend type Subscription {
   matchCompleted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchCompletedEvent!
 
   """
@@ -327,8 +296,6 @@ extend type Subscription {
   matchEndgameTriggered(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchEndgameTriggeredEvent!
 
   """
@@ -337,8 +304,6 @@ extend type Subscription {
   matchAborted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): MatchAbortedEvent!
 
   """
@@ -347,8 +312,6 @@ extend type Subscription {
   audienceDisplaySwitched(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): AudienceDisplaySwitchedEvent!
 
   """
@@ -357,7 +320,5 @@ extend type Subscription {
   audienceDisplaySettingUpdated(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): AudienceDisplaySettingEvent!
 }

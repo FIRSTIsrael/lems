@@ -3,8 +3,7 @@ import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 import { extractEventBase } from './utils';
 
@@ -14,33 +13,28 @@ type ScoresheetMissionClauseUpdatedEvent = {
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
   score: number;
-  version: number;
 };
 
 type ScoresheetStatusUpdatedEvent = {
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 type ScoresheetGPUpdatedEvent = {
   scoresheetId: string;
   gpValue: number | null;
   notes?: string;
-  version: number;
 };
 
 type ScoresheetEscalatedUpdatedEvent = {
   scoresheetId: string;
   escalated: boolean;
-  version: number;
 };
 
 type ScoresheetSignatureUpdatedEvent = {
   scoresheetId: string;
   signature: string | null;
   status: string;
-  version: number;
 };
 
 type ScoresheetUpdatedEventType =
@@ -53,11 +47,7 @@ type ScoresheetUpdatedEventType =
 async function processScoresheetUpdatedEvent(
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<ScoresheetUpdatedEventType>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
-
-  const { eventData, scoresheetId, version } = extractEventBase(event);
+  const { eventData, scoresheetId } = extractEventBase(event);
 
   if (!scoresheetId) {
     return null;
@@ -75,15 +65,14 @@ async function processScoresheetUpdatedEvent(
           missionId,
           clauseIndex,
           clauseValue,
-          score,
-          version
+          score
         } as ScoresheetMissionClauseUpdatedEvent)
       : null;
   }
 
   if ('status' in eventData && !('escalated' in eventData)) {
     const status = (eventData.status as string) || '';
-    return status ? ({ scoresheetId, status, version } as ScoresheetStatusUpdatedEvent) : null;
+    return status ? ({ scoresheetId, status } as ScoresheetStatusUpdatedEvent) : null;
   }
 
   if ('gpValue' in eventData || 'notes' in eventData) {
@@ -91,15 +80,14 @@ async function processScoresheetUpdatedEvent(
       ? ({
           scoresheetId,
           gpValue: (eventData.gpValue as number | null) ?? null,
-          notes: (eventData.notes as string) || undefined,
-          version
+          notes: (eventData.notes as string) || undefined
         } as ScoresheetGPUpdatedEvent)
       : null;
   }
 
   if ('escalated' in eventData) {
     const escalated = (eventData.escalated as boolean) ?? false;
-    return { scoresheetId, escalated, version } as ScoresheetEscalatedUpdatedEvent;
+    return { scoresheetId, escalated } as ScoresheetEscalatedUpdatedEvent;
   }
 
   if ('signature' in eventData) {
@@ -110,8 +98,7 @@ async function processScoresheetUpdatedEvent(
       ? ({
           scoresheetId,
           signature,
-          status,
-          version
+          status
         } as ScoresheetSignatureUpdatedEvent)
       : null;
   }
@@ -123,11 +110,7 @@ export const scoresheetUpdatedResolver = {
   subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
     const divisionId = args.divisionId as string;
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.SCORESHEET_UPDATED,
-      (args.lastSeenVersion as number) || 0
-    );
+    return createSubscriptionIterator(divisionId, RedisEventTypes.SCORESHEET_UPDATED);
   },
   resolve: processScoresheetUpdatedEvent
 };

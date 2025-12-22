@@ -2,13 +2,11 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
 interface MatchStartedEvent {
   matchId: string;
-  version: number;
   startTime: string;
   startDelta: number;
 }
@@ -16,12 +14,6 @@ interface MatchStartedEvent {
 const processMatchStartedEvent = async (
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<MatchStartedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchStarted] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
   const startTime = (eventData.startTime as string) || '';
@@ -34,8 +26,7 @@ const processMatchStartedEvent = async (
   const result: MatchStartedEvent = {
     matchId,
     startTime,
-    startDelta,
-    version: (event.version as number) ?? 0
+    startDelta
   };
 
   return result;
@@ -52,8 +43,7 @@ const matchStartedSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_STARTED, lastSeenVersion);
+  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_STARTED);
 };
 
 /**

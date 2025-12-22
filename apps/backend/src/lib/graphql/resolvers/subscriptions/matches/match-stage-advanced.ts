@@ -2,28 +2,11 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
-interface MatchStageAdvancedEvent {
-  version: number;
-}
-
-const processMatchStageAdvancedEvent = async (
-  event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchStageAdvancedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchStageAdvanced] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
-  const result: MatchStageAdvancedEvent = {
-    version: (event.version as number) ?? 0
-  };
-
-  return result;
+const processMatchStageAdvancedEvent = async (): Promise<SubscriptionResult<never>> => {
+  return;
 };
 
 const matchStageAdvancedSubscribe = (
@@ -37,12 +20,7 @@ const matchStageAdvancedSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.MATCH_STAGE_ADVANCED,
-    lastSeenVersion
-  );
+  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_STAGE_ADVANCED);
 };
 
 /**
@@ -51,9 +29,7 @@ const matchStageAdvancedSubscribe = (
  */
 export const matchStageAdvancedResolver = {
   subscribe: matchStageAdvancedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchStageAdvancedEvent>> => {
-    return processMatchStageAdvancedEvent(event);
+  resolve: async (): Promise<SubscriptionResult<never>> => {
+    return processMatchStageAdvancedEvent();
   }
 };

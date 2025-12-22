@@ -2,24 +2,16 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
 interface MatchEndgameTriggeredEvent {
   matchId: string;
-  version: number;
 }
 
 const processMatchEndgameTriggeredEvent = async (
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<MatchEndgameTriggeredEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchEndgameTriggered] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -28,8 +20,7 @@ const processMatchEndgameTriggeredEvent = async (
   }
 
   const result: MatchEndgameTriggeredEvent = {
-    matchId,
-    version: (event.version as number) ?? 0
+    matchId
   };
 
   return result;
@@ -46,12 +37,7 @@ const matchEndgameTriggeredSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.MATCH_ENDGAME_TRIGGERED,
-    lastSeenVersion
-  );
+  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_ENDGAME_TRIGGERED);
 };
 
 /**

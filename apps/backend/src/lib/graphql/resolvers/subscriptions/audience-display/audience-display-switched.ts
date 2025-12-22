@@ -3,24 +3,16 @@ import { AudienceDisplayScreen } from '@lems/database';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
 interface AudienceDisplaySwitchedEvent {
   activeDisplay: AudienceDisplayScreen;
-  version: number;
 }
 
 const processAudienceDisplaySwitchedEvent = async (
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<AudienceDisplaySwitchedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[AudienceDisplaySwitched] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
   const eventData = event.data as Record<string, unknown>;
   const activeDisplay = (eventData.activeDisplay as AudienceDisplayScreen) || '';
 
@@ -29,8 +21,7 @@ const processAudienceDisplaySwitchedEvent = async (
   }
 
   const result: AudienceDisplaySwitchedEvent = {
-    activeDisplay,
-    version: (event.version as number) ?? 0
+    activeDisplay
   };
 
   return result;
@@ -47,12 +38,7 @@ const audienceDisplaySwitchedSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED,
-    lastSeenVersion
-  );
+  return createSubscriptionIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED);
 };
 
 /**

@@ -42,9 +42,6 @@ Result of an event affecting a team
 type TeamEvent {
   "Team identifier"
   teamId: String!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 extend type Mutation {
@@ -64,10 +61,5 @@ extend type Subscription {
   """
   Subscribe to events when teams arrive at a specific division.
   """
-  teamArrivalUpdated(
-    "The division ID to listen for updates in"
-    divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
-  ): TeamEvent!
+  teamArrivalUpdated("The division ID to listen for updates in" divisionId: String!): TeamEvent!
 }

@@ -2,13 +2,11 @@ import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import {
   createSubscriptionIterator,
   SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
+  BaseSubscriptionArgs
 } from '../base-subscription';
 
 interface JudgingSessionEvent {
   sessionId: string;
-  version: number;
 }
 
 const judgingSessionCompletedSubscribe = (
@@ -22,23 +20,12 @@ const judgingSessionCompletedSubscribe = (
     throw new Error(errorMsg);
   }
 
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.JUDGING_SESSION_COMPLETED,
-    lastSeenVersion
-  );
+  return createSubscriptionIterator(divisionId, RedisEventTypes.JUDGING_SESSION_COMPLETED);
 };
 
 const processJudgingSessionEvent = async (
   event: Record<string, unknown>
 ): Promise<SubscriptionResult<JudgingSessionEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[JudgingSessionAborted] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
   const eventData = event.data as Record<string, unknown>;
   const sessionId = (eventData.sessionId as string) || '';
 
@@ -47,8 +34,7 @@ const processJudgingSessionEvent = async (
   }
 
   const result: JudgingSessionEvent = {
-    sessionId,
-    version: (event.version as number) ?? 0
+    sessionId
   };
 
   return result;
