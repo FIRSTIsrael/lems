@@ -263,18 +263,12 @@ extend type Subscription {
   """
   Subscribe to events when a match is loaded in a division.
   """
-  matchLoaded(
-    "The division ID to listen for updates in"
-    divisionId: String!
-  ): MatchLoadedEvent!
+  matchLoaded("The division ID to listen for updates in" divisionId: String!): MatchLoadedEvent!
 
   """
   Subscribe to events when a match starts in a division.
   """
-  matchStarted(
-    "The division ID to listen for updates in"
-    divisionId: String!
-  ): MatchStartedEvent!
+  matchStarted("The division ID to listen for updates in" divisionId: String!): MatchStartedEvent!
 
   """
   Subscribe to events when the match stage advances in a division.
@@ -303,10 +297,7 @@ extend type Subscription {
   """
   Subscribe to events when a match is aborted in a division.
   """
-  matchAborted(
-    "The division ID to listen for updates in"
-    divisionId: String!
-  ): MatchAbortedEvent!
+  matchAborted("The division ID to listen for updates in" divisionId: String!): MatchAbortedEvent!
 
   """
   Subscribe to events when the audience display is switched in a division.
