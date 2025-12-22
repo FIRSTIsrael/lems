@@ -39,3 +39,130 @@ extend type Judging {
     category: JudgingCategory!
   ): JudgingDeliberation
 }
+
+"""
+Result type for starting a deliberation
+"""
+type DeliberationStartedResult {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "The new status of the deliberation"
+  status: DeliberationStatus!
+
+  "The timestamp when the deliberation was started"
+  startTime: String!
+
+  "Event version for tracking"
+  version: Int!
+}
+
+"""
+Result type for updating deliberation picklist
+"""
+type DeliberationPicklistUpdatedResult {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "The updated ordered list of team IDs"
+  picklist: [String!]!
+
+  "Event version for tracking"
+  version: Int!
+}
+
+extend type Mutation {
+  """
+  Start a deliberation for a specific category.
+  Changes status from NOT_STARTED to IN_PROGRESS and sets the start time.
+  """
+  startDeliberation(
+    "The ID of the division containing the deliberation"
+    divisionId: String!
+    "The judging category to start deliberation for"
+    category: JudgingCategory!
+  ): DeliberationStartedResult!
+
+  """
+  Update the ordered picklist of team IDs for a deliberation.
+  """
+  updateDeliberationPicklist(
+    "The ID of the division containing the deliberation"
+    divisionId: String!
+    "The judging category to update"
+    category: JudgingCategory!
+    "The new ordered list of team IDs"
+    picklist: [String!]!
+  ): DeliberationPicklistUpdatedResult!
+}
+
+"""
+Event fired when a deliberation is started
+"""
+type DeliberationStarted {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "The new start time"
+  startTime: String!
+
+  "Event version for message recovery"
+  version: Int!
+}
+
+"""
+Event fired when a deliberation picklist is updated
+"""
+type DeliberationPicklistUpdated {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "The updated ordered list of team IDs"
+  picklist: [String!]!
+
+  "Event version for message recovery"
+  version: Int!
+}
+
+"""
+Event fired when deliberation status changes
+"""
+type DeliberationStatusChanged {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "The new status"
+  status: DeliberationStatus!
+
+  "Event version for message recovery"
+  version: Int!
+}
+
+"""
+Union type for all deliberation update events
+"""
+union DeliberationUpdatedEvent = DeliberationStarted | DeliberationPicklistUpdated
+
+extend type Subscription {
+  """
+  Subscribe to all deliberation updates in a division.
+  Fires when a deliberation is started or the picklist is updated.
+  """
+  deliberationUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): DeliberationUpdatedEvent!
+
+  """
+  Subscribe to deliberation status changes in a division.
+  Fires when the deliberation status changes.
+  """
+  deliberationStatusChanged(
+    "The division ID to listen for updates in"
+    divisionId: String!
+    "The last seen version for message recovery support"
+    lastSeenVersion: Int
+  ): DeliberationStatusChanged!
+}
