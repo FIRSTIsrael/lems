@@ -29,6 +29,9 @@ import {
 } from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
+import { teamJudgingSessionResolver } from './divisions/team-judging-session';
+import { teamScoresheetsResolver } from './divisions/team-scoresheets';
+import { teamDisqualifiedResolver } from './divisions/team-disqualified';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
 import { matchesResolver } from './divisions/field/matches';
@@ -119,7 +122,10 @@ export const resolvers = {
   },
   Team: {
     arrived: teamArrivalResolver,
-    rubrics: teamRubricsResolver
+    rubrics: teamRubricsResolver,
+    judgingSession: teamJudgingSessionResolver,
+    scoresheets: teamScoresheetsResolver,
+    disqualified: teamDisqualifiedResolver
   },
   Rubric: {
     ...rubricResolvers,
