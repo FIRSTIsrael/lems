@@ -75,7 +75,7 @@ export class JudgingDeliberationsRepository {
     return new JudgingDeliberationSelector(this.db, id);
   }
 
-  division(divisionId: string) {
+  byDivision(divisionId: string) {
     return new JudgingDeliberationsSelector(this.db, divisionId);
   }
 
