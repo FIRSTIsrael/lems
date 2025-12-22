@@ -5,7 +5,6 @@ type GPMutationResult = {
     scoresheetId: string;
     gpValue: number | null;
     notes?: string;
-    version: number;
   };
 };
 
@@ -35,7 +34,6 @@ export const UPDATE_SCORESHEET_GP_MUTATION: TypedDocumentNode<
       scoresheetId
       gpValue
       notes
-      version
     }
   }
 `;

@@ -5,7 +5,6 @@ type SubmitSignatureMutationResult = {
     scoresheetId: string;
     signature: string;
     status: string;
-    version: number;
   };
 };
 
@@ -28,7 +27,6 @@ export const SUBMIT_SCORESHEET_MUTATION: TypedDocumentNode<
       scoresheetId
       signature
       status
-      version
     }
   }
 `;

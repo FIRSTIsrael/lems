@@ -41,7 +41,6 @@ export interface MatchPreviewData {
 
 export interface MatchEvent {
   matchId: string;
-  version: number;
   startTime?: string;
   startDelta?: number;
 }

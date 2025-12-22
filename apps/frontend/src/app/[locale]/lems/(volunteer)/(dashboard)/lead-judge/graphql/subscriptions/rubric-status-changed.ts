@@ -8,7 +8,6 @@ interface SubscriptionData {
   rubricStatusChanged: {
     rubricId: string;
     status: RubricStatus;
-    version: number;
   };
 }
 
@@ -16,11 +15,10 @@ export const RUBRIC_STATUS_CHANGED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription RubricStatusChanged($divisionId: String!, $lastSeenVersion: Int) {
-    rubricStatusChanged(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription RubricStatusChanged($divisionId: String!) {
+    rubricStatusChanged(divisionId: $divisionId) {
       rubricId
       status
-      version
     }
   }
 `;
