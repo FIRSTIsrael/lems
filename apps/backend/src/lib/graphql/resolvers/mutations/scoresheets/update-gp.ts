@@ -10,7 +10,6 @@ type ScoresheetGPUpdatedEvent = {
   scoresheetId: string;
   gpValue: number | null;
   notes?: string;
-  version: number;
 };
 
 interface UpdateScoresheetGPArgs {
@@ -67,8 +66,7 @@ export const updateScoresheetGPResolver: GraphQLFieldResolver<
   const eventPayload: ScoresheetGPUpdatedEvent = {
     scoresheetId,
     gpValue: value,
-    notes,
-    version: -1
+    notes
   };
 
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);

@@ -1,26 +1,21 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 
-const processMatchStageAdvancedEvent = async (): Promise<SubscriptionResult<never>> => {
+interface MatchStageAdvancedSubscribeArgs {
+  divisionId: string;
+}
+
+const processMatchStageAdvancedEvent = async (): Promise<void> => {
   return;
 };
 
 const matchStageAdvancedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: MatchStageAdvancedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchStageAdvanced subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_STAGE_ADVANCED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_STAGE_ADVANCED);
 };
 
 /**
@@ -29,7 +24,5 @@ const matchStageAdvancedSubscribe = (
  */
 export const matchStageAdvancedResolver = {
   subscribe: matchStageAdvancedSubscribe,
-  resolve: async (): Promise<SubscriptionResult<never>> => {
-    return processMatchStageAdvancedEvent();
-  }
+  resolve: processMatchStageAdvancedEvent
 };

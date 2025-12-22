@@ -1,9 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface MatchAbortedSubscribeArgs {
+  divisionId: string;
+}
 
 interface MatchAbortedEvent {
   matchId: string;
@@ -11,7 +11,7 @@ interface MatchAbortedEvent {
 
 const processMatchAbortedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchAbortedEvent>> => {
+): Promise<MatchAbortedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -26,18 +26,10 @@ const processMatchAbortedEvent = async (
   return result;
 };
 
-const matchAbortedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchAborted subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_ABORTED);
+const matchAbortedSubscribe = (_root: unknown, { divisionId }: MatchAbortedSubscribeArgs) => {
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_ABORTED);
 };
 
 /**
@@ -46,9 +38,5 @@ const matchAbortedSubscribe = (
  */
 export const matchAbortedResolver = {
   subscribe: matchAbortedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchAbortedEvent>> => {
-    return processMatchAbortedEvent(event);
-  }
+  resolve: processMatchAbortedEvent
 };

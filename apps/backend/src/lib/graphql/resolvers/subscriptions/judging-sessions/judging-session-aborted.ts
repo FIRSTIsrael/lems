@@ -1,9 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface JudgingSessionAbortedSubscribeArgs {
+  divisionId: string;
+}
 
 interface JudgingSessionEvent {
   sessionId: string;
@@ -11,7 +11,7 @@ interface JudgingSessionEvent {
 
 const processJudgingSessionEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<JudgingSessionEvent>> => {
+): Promise<JudgingSessionEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const sessionId = (eventData.sessionId as string) || '';
 
@@ -28,16 +28,11 @@ const processJudgingSessionEvent = async (
 
 const judgingSessionAbortedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: JudgingSessionAbortedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for judgingSessionAborted subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.JUDGING_SESSION_ABORTED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.JUDGING_SESSION_ABORTED);
 };
 
 /**
@@ -46,9 +41,5 @@ const judgingSessionAbortedSubscribe = (
  */
 export const judgingSessionAbortedResolver = {
   subscribe: judgingSessionAbortedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<JudgingSessionEvent>> => {
-    return processJudgingSessionEvent(event);
-  }
+  resolve: processJudgingSessionEvent
 };

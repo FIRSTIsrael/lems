@@ -1,10 +1,10 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { AudienceDisplayScreen } from '@lems/database';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface AudienceDisplaySettingUpdatedSubscribeArgs {
+  divisionId: string;
+}
 
 interface AudienceDisplaySettingUpdatedEvent {
   display: AudienceDisplayScreen;
@@ -14,7 +14,7 @@ interface AudienceDisplaySettingUpdatedEvent {
 
 const processAudienceDisplaySettingUpdatedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<AudienceDisplaySettingUpdatedEvent>> => {
+): Promise<AudienceDisplaySettingUpdatedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
 
   if (!eventData.display || !eventData.settingKey) {
@@ -32,16 +32,11 @@ const processAudienceDisplaySettingUpdatedEvent = async (
 
 const audienceDisplaySettingUpdatedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: AudienceDisplaySettingUpdatedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for audienceDisplaySettingUpdated subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SETTING_UPDATED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SETTING_UPDATED);
 };
 
 /**
@@ -50,9 +45,5 @@ const audienceDisplaySettingUpdatedSubscribe = (
  */
 export const audienceDisplaySettingUpdatedResolver = {
   subscribe: audienceDisplaySettingUpdatedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<AudienceDisplaySettingUpdatedEvent>> => {
-    return processAudienceDisplaySettingUpdatedEvent(event);
-  }
+  resolve: processAudienceDisplaySettingUpdatedEvent
 };

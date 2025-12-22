@@ -14,7 +14,6 @@ interface SwitchActiveDisplayArgs {
 
 interface SwitchAudienceDisplayEvent {
   activeDisplay: AudienceDisplayScreen;
-  version: number;
 }
 
 /**
@@ -54,7 +53,7 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
       activeDisplay: newDisplay
     });
 
-    return { activeDisplay: newDisplay, version: -1 };
+    return { activeDisplay: newDisplay };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

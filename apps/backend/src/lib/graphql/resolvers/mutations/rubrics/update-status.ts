@@ -18,7 +18,6 @@ const VALID_STATUSES: Set<RubricStatus> = new Set([
 type RubricStatusUpdatedEvent = {
   rubricId: string;
   status: RubricStatus;
-  version: number;
 };
 
 interface UpdateRubricStatusArgs {
@@ -53,7 +52,7 @@ export const updateRubricStatusResolver: GraphQLFieldResolver<
   }
 
   // Publish both events (RUBRIC_UPDATED and RUBRIC_STATUS_CHANGED)
-  const eventPayload = { rubricId, status, version: -1 };
+  const eventPayload = { rubricId, status };
   const pubSub = getRedisPubSub();
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.RUBRIC_STATUS_CHANGED, eventPayload),

@@ -1,11 +1,10 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface ScoresheetUpdatedSubscribeArgs {
+  divisionId: string;
+}
 
 type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
@@ -46,8 +45,9 @@ type ScoresheetUpdatedEventType =
 
 async function processScoresheetUpdatedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<ScoresheetUpdatedEventType>> {
-  const { eventData, scoresheetId } = extractEventBase(event);
+): Promise<ScoresheetUpdatedEventType | null> {
+  const eventData = event.data as Record<string, unknown>;
+  const scoresheetId = (eventData.scoresheetId as string) || '';
 
   if (!scoresheetId) {
     return null;
@@ -107,10 +107,10 @@ async function processScoresheetUpdatedEvent(
 }
 
 export const scoresheetUpdatedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
+  subscribe: (_root: unknown, { divisionId }: ScoresheetUpdatedSubscribeArgs) => {
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(divisionId, RedisEventTypes.SCORESHEET_UPDATED);
+    const pubSub = getRedisPubSub();
+    return pubSub.asyncIterator(divisionId, RedisEventTypes.SCORESHEET_UPDATED);
   },
   resolve: processScoresheetUpdatedEvent
 };

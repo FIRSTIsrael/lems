@@ -1,10 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface RubricUpdatedSubscribeArgs {
+  divisionId: string;
+}
 
 type RubricValueUpdatedEvent = {
   rubricId: string;
@@ -41,8 +40,9 @@ type RubricUpdatedEventType =
 
 async function processRubricUpdatedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricUpdatedEventType>> {
-  const { eventData, rubricId } = extractEventBase(event);
+): Promise<RubricUpdatedEventType | null> {
+  const eventData = event.data as Record<string, unknown>;
+  const rubricId = (eventData.rubricId as string) || '';
 
   if (!rubricId) {
     return null;
@@ -110,10 +110,10 @@ async function processRubricUpdatedEvent(
 }
 
 export const rubricUpdatedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
+  subscribe: (_root: unknown, { divisionId }: RubricUpdatedSubscribeArgs) => {
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(divisionId, RedisEventTypes.RUBRIC_UPDATED);
+    const pubSub = getRedisPubSub();
+    return pubSub.asyncIterator(divisionId, RedisEventTypes.RUBRIC_UPDATED);
   },
   resolve: processRubricUpdatedEvent
 };

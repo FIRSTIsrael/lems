@@ -1,9 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface MatchCompletedSubscribeArgs {
+  divisionId: string;
+}
 
 interface MatchCompletedEvent {
   matchId: string;
@@ -12,7 +12,7 @@ interface MatchCompletedEvent {
 
 const processMatchCompletedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchCompletedEvent>> => {
+): Promise<MatchCompletedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -28,18 +28,10 @@ const processMatchCompletedEvent = async (
   return result;
 };
 
-const matchCompletedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchCompleted subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_COMPLETED);
+const matchCompletedSubscribe = (_root: unknown, { divisionId }: MatchCompletedSubscribeArgs) => {
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_COMPLETED);
 };
 
 /**
@@ -48,9 +40,5 @@ const matchCompletedSubscribe = (
  */
 export const matchCompletedResolver = {
   subscribe: matchCompletedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchCompletedEvent>> => {
-    return processMatchCompletedEvent(event);
-  }
+  resolve: processMatchCompletedEvent
 };

@@ -1,10 +1,10 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { AudienceDisplayScreen } from '@lems/database';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface AudienceDisplaySwitchedSubscribeArgs {
+  divisionId: string;
+}
 
 interface AudienceDisplaySwitchedEvent {
   activeDisplay: AudienceDisplayScreen;
@@ -12,7 +12,7 @@ interface AudienceDisplaySwitchedEvent {
 
 const processAudienceDisplaySwitchedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<AudienceDisplaySwitchedEvent>> => {
+): Promise<AudienceDisplaySwitchedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const activeDisplay = (eventData.activeDisplay as AudienceDisplayScreen) || '';
 
@@ -29,16 +29,11 @@ const processAudienceDisplaySwitchedEvent = async (
 
 const audienceDisplaySwitchedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: AudienceDisplaySwitchedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for audienceDisplaySwitched subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED);
 };
 
 /**
@@ -47,9 +42,5 @@ const audienceDisplaySwitchedSubscribe = (
  */
 export const audienceDisplaySwitchedResolver = {
   subscribe: audienceDisplaySwitchedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<AudienceDisplaySwitchedEvent>> => {
-    return processAudienceDisplaySwitchedEvent(event);
-  }
+  resolve: processAudienceDisplaySwitchedEvent
 };

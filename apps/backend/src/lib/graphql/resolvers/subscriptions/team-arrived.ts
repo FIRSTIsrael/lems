@@ -1,12 +1,12 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from './base-subscription';
+import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
 interface TeamEvent {
   teamId: string;
+}
+
+interface TeamArrivalUpdatedSubscribeArgs {
+  divisionId: string;
 }
 
 /**
@@ -14,16 +14,11 @@ interface TeamEvent {
  */
 const teamArrivalUpdatedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: TeamArrivalUpdatedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for teamArrivalUpdated subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.TEAM_ARRIVED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.TEAM_ARRIVED);
 };
 
 /**
@@ -31,7 +26,7 @@ const teamArrivalUpdatedSubscribe = (
  */
 const processTeamArrivalEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<TeamEvent>> => {
+): Promise<TeamEvent | null> => {
   const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';
 
   if (!teamId) {
@@ -51,7 +46,5 @@ const processTeamArrivalEvent = async (
  */
 export const teamArrivalUpdatedResolver = {
   subscribe: teamArrivalUpdatedSubscribe,
-  resolve: async (event: Record<string, unknown>): Promise<SubscriptionResult<TeamEvent>> => {
-    return processTeamArrivalEvent(event);
-  }
+  resolve: processTeamArrivalEvent
 };

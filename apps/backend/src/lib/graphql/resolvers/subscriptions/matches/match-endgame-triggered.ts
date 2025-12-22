@@ -1,9 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface MatchEndgameTriggeredSubscribeArgs {
+  divisionId: string;
+}
 
 interface MatchEndgameTriggeredEvent {
   matchId: string;
@@ -11,7 +11,7 @@ interface MatchEndgameTriggeredEvent {
 
 const processMatchEndgameTriggeredEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchEndgameTriggeredEvent>> => {
+): Promise<MatchEndgameTriggeredEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -28,16 +28,11 @@ const processMatchEndgameTriggeredEvent = async (
 
 const matchEndgameTriggeredSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: MatchEndgameTriggeredSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchEndgameTriggered subscription';
-    throw new Error(errorMsg);
-  }
-
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_ENDGAME_TRIGGERED);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_ENDGAME_TRIGGERED);
 };
 
 /**
@@ -47,9 +42,5 @@ const matchEndgameTriggeredSubscribe = (
  */
 export const matchEndgameTriggeredResolver = {
   subscribe: matchEndgameTriggeredSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchEndgameTriggeredEvent>> => {
-    return processMatchEndgameTriggeredEvent(event);
-  }
+  resolve: processMatchEndgameTriggeredEvent
 };
