@@ -9,7 +9,6 @@ import { authorizeScoresheetAccess } from './utils';
 type ScoresheetStatusUpdatedEvent = {
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 interface UpdateScoresheetStatusArgs {
@@ -40,7 +39,7 @@ export const updateScoresheetStatusResolver: GraphQLFieldResolver<
   }
 
   if (dbScoresheet.status === status) {
-    return { scoresheetId, status, version: -1 };
+    return { scoresheetId, status };
   }
 
   const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
@@ -64,8 +63,7 @@ export const updateScoresheetStatusResolver: GraphQLFieldResolver<
 
   const eventPayload: ScoresheetStatusUpdatedEvent = {
     scoresheetId,
-    status,
-    version: -1
+    status
   };
 
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);

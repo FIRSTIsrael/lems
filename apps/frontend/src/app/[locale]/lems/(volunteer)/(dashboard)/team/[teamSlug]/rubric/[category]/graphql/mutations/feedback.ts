@@ -4,7 +4,6 @@ type FeedbackMutationResult = {
   updateRubricFeedback: {
     rubricId: string;
     feedback: { greatJob: string; thinkAbout: string };
-    version: number;
   };
 };
 
@@ -36,7 +35,6 @@ export const UPDATE_RUBRIC_FEEDBACK_MUTATION: TypedDocumentNode<
         greatJob
         thinkAbout
       }
-      version
     }
   }
 `;

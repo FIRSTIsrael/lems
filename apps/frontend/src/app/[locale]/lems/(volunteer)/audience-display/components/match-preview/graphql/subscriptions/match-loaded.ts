@@ -3,17 +3,16 @@ import { merge } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import type { MatchEvent, MatchPreviewData } from '../types';
 
-type SubscriptionVars = { divisionId: string; lastSeenVersion?: number };
+type SubscriptionVars = { divisionId: string };
 type MatchLoadedSubscriptionData = { matchLoaded: MatchEvent };
 
 export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
   MatchLoadedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchLoaded($divisionId: String!, $lastSeenVersion: Int) {
-    matchLoaded(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription MatchLoaded($divisionId: String!) {
+    matchLoaded(divisionId: $divisionId) {
       matchId
-      version
     }
   }
 `;

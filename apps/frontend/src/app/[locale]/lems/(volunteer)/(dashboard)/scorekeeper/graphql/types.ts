@@ -63,7 +63,6 @@ export interface ScorekeeperVars {
 
 export interface MatchEvent {
   matchId: string;
-  version: number;
   startTime?: string;
   startDelta?: number;
 }

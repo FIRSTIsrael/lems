@@ -5,7 +5,6 @@ import type { MatchStatus, ScoreboardData } from '../types';
 
 interface MatchAbortedEvent {
   matchId: string;
-  version: number;
 }
 
 interface MatchAbortedSubscriptionData {
@@ -14,17 +13,15 @@ interface MatchAbortedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const MATCH_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   MatchAbortedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchAborted($divisionId: String!, $lastSeenVersion: Int) {
-    matchAborted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription MatchAborted($divisionId: String!) {
+    matchAborted(divisionId: $divisionId) {
       matchId
-      version
     }
   }
 `;

@@ -18,7 +18,6 @@ type RubricValueUpdatedEvent = {
     value: number;
     notes?: string;
   };
-  version: number;
 };
 
 interface UpdateRubricValueArgs {
@@ -89,8 +88,7 @@ export const updateRubricValueResolver: GraphQLFieldResolver<
   const eventPayload = {
     rubricId,
     fieldId,
-    value: fieldUpdate,
-    version: -1
+    value: fieldUpdate
   };
 
   const publishTasks = [pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload)];

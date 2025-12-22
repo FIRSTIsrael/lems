@@ -5,7 +5,6 @@ interface UpdateAudienceDisplaySettingEvent {
   display: AudienceDisplayScreen;
   settingKey: string;
   settingValue: unknown;
-  version: number;
 }
 
 interface UpdateAudienceDisplaySettingMutationData {
@@ -38,7 +37,6 @@ export const UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION: TypedDocumentNode<
       display
       settingKey
       settingValue
-      version
     }
   }
 `;

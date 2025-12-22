@@ -1,54 +1,34 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface JudgingSessionCompletedSubscribeArgs {
+  divisionId: string;
+}
 
 interface JudgingSessionEvent {
   sessionId: string;
-  version: number;
 }
 
 const judgingSessionCompletedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: JudgingSessionCompletedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for judgingSessionCompleted subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.JUDGING_SESSION_COMPLETED,
-    lastSeenVersion
-  );
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.JUDGING_SESSION_COMPLETED);
 };
 
 const processJudgingSessionEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<JudgingSessionEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[JudgingSessionAborted] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
-  const eventData = event.data as Record<string, unknown>;
-  const sessionId = (eventData.sessionId as string) || '';
+): Promise<JudgingSessionEvent | null> => {
+  const sessionId = ((event.data as Record<string, unknown>).sessionId as string) || '';
 
   if (!sessionId) {
     return null;
   }
 
   const result: JudgingSessionEvent = {
-    sessionId,
-    version: (event.version as number) ?? 0
+    sessionId
   };
 
   return result;
@@ -56,9 +36,5 @@ const processJudgingSessionEvent = async (
 
 export const judgingSessionCompletedResolver = {
   subscribe: judgingSessionCompletedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<JudgingSessionEvent>> => {
-    return processJudgingSessionEvent(event);
-  }
+  resolve: processJudgingSessionEvent
 };

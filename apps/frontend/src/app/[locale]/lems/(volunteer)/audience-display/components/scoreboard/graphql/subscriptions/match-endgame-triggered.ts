@@ -12,17 +12,15 @@ interface MatchEndgameTriggeredSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const MATCH_ENDGAME_TRIGGERED_SUBSCRIPTION: TypedDocumentNode<
   MatchEndgameTriggeredSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchEndgameTriggered($divisionId: String!, $lastSeenVersion: Int) {
-    matchEndgameTriggered(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription MatchEndgameTriggered($divisionId: String!) {
+    matchEndgameTriggered(divisionId: $divisionId) {
       matchId
-      version
     }
   }
 `;

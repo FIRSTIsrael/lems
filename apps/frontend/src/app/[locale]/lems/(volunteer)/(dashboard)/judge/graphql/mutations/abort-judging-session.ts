@@ -3,7 +3,6 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 interface AbortJudgingSessionMutationData {
   abortJudgingSession: {
     sessionId: string;
-    version: number;
   };
 }
 
@@ -19,7 +18,6 @@ export const ABORT_JUDGING_SESSION_MUTATION: TypedDocumentNode<
   mutation AbortJudgingSession($divisionId: String!, $sessionId: String!) {
     abortJudgingSession(divisionId: $divisionId, sessionId: $sessionId) {
       sessionId
-      version
     }
   }
 `;

@@ -10,35 +10,30 @@ type RubricValueUpdatedEvent = {
   rubricId: string;
   fieldId: string;
   value: { value: number; notes?: string };
-  version: number;
 };
 
 type RubricFeedbackUpdatedEvent = {
   __typename: 'RubricFeedbackUpdated';
   rubricId: string;
   feedback: { greatJob: string; thinkAbout: string };
-  version: number;
 };
 
 type RubricStatusUpdatedEvent = {
   __typename: 'RubricStatusUpdated';
   rubricId: string;
   status: string;
-  version: number;
 };
 
 type RubricAwardsUpdatedEvent = {
   __typename: 'RubricAwardsUpdated';
   rubricId: string;
   awards: Record<string, boolean>;
-  version: number;
 };
 
 type RubricResetEvent = {
   __typename: 'RubricReset';
   rubricId: string;
   reset: boolean;
-  version: number;
 };
 
 type RubricUpdatedEvent =
@@ -54,15 +49,14 @@ type SubscriptionResult = {
 
 type SubscriptionVariables = {
   divisionId: string;
-  lastSeenVersion?: number;
 };
 
 export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionResult,
   SubscriptionVariables
 > = gql`
-  subscription RubricUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    rubricUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription RubricUpdated($divisionId: String!) {
+    rubricUpdated(divisionId: $divisionId) {
       __typename
       ... on RubricValueUpdated {
         rubricId
@@ -71,7 +65,6 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
           value
           notes
         }
-        version
       }
       ... on RubricFeedbackUpdated {
         rubricId
@@ -79,22 +72,18 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
           greatJob
           thinkAbout
         }
-        version
       }
       ... on RubricStatusUpdated {
         rubricId
         status
-        version
       }
       ... on RubricAwardsUpdated {
         rubricId
         awards
-        version
       }
       ... on RubricReset {
         rubricId
         reset
-        version
       }
     }
   }

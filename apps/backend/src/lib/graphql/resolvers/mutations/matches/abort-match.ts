@@ -15,7 +15,6 @@ interface AbortMatchArgs {
 
 interface MatchEvent {
   matchId: string;
-  version: number;
 }
 
 /**
@@ -107,7 +106,7 @@ export const abortMatchResolver: GraphQLFieldResolver<
       matchId
     });
 
-    return { matchId, version: -1 };
+    return { matchId };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

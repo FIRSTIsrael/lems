@@ -7,7 +7,6 @@ import type { SubscriptionVars, QueryData } from '../types';
 interface RubricStatusChangedEvent {
   rubricId: string;
   status: RubricStatus;
-  version: number;
 }
 
 interface RubricStatusChangedSubscriptionData {
@@ -18,11 +17,10 @@ export const RUBRIC_STATUS_CHANGED_SUBSCRIPTION: TypedDocumentNode<
   RubricStatusChangedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription RubricStatusChanged($divisionId: String!, $lastSeenVersion: Int) {
-    rubricStatusChanged(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription RubricStatusChanged($divisionId: String!) {
+    rubricStatusChanged(divisionId: $divisionId) {
       rubricId
       status
-      version
     }
   }
 `;

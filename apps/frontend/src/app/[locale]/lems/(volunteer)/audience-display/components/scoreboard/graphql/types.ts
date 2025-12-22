@@ -32,21 +32,18 @@ export type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
   missionId: string;
   score: number;
-  version: number;
 };
 
 export type ScoresheetStatusUpdatedEvent = {
   __typename: 'ScoresheetStatusUpdated';
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 export type ScoresheetEscalatedUpdatedEvent = {
   __typename: 'ScoresheetEscalatedUpdated';
   scoresheetId: string;
   escalated: boolean;
-  version: number;
 };
 
 export type ScoresheetUpdatedEvent =
@@ -86,6 +83,5 @@ export interface ScoreboardData {
 
 export interface MatchEvent {
   matchId: string;
-  version: number;
   startTime?: string;
 }
