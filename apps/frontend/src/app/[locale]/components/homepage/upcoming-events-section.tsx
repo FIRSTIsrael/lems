@@ -23,7 +23,8 @@ export const UpcomingEventsSection: React.FC = () => {
       fullySetUp: true,
       startAfter: endOfDay,
       endBefore: endOfWeek
-    }
+    },
+    fetchPolicy: 'cache-and-network'
   });
 
   const upcomingEvents: Event[] =
