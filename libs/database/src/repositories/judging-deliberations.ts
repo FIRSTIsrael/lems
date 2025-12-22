@@ -4,7 +4,7 @@ import {
   JudgingDeliberation,
   NewJudgingDeliberation,
   JudgingDeliberationUpdate
-} from '../schema/documents/judging-deliberation';
+} from '../schema/tables/judging-deliberation';
 
 export class JudgingDeliberationSelector {
   constructor(
@@ -103,9 +103,7 @@ export class JudgingDeliberationsRepository {
         picklist: [],
         ...updates
       })
-      .onConflict(oc =>
-        oc.columns(['division_id', 'category']).doUpdateSet(updates)
-      )
+      .onConflict(oc => oc.columns(['division_id', 'category']).doUpdateSet(updates))
       .returningAll()
       .executeTakeFirstOrThrow();
 

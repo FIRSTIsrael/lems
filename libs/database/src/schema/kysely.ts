@@ -17,7 +17,7 @@ import { RobotGameMatchesTable } from './tables/robot-game-matches';
 import { RobotGameMatchParticipantsTable } from './tables/robot-game-match-participants';
 import { AwardsTable } from './tables/awards';
 import { AgendaEventsTable } from './tables/agenda-events';
-import { JudgingDeliberationsTable } from './documents/judging-deliberation';
+import { JudgingDeliberationsTable } from './tables/judging-deliberation';
 
 export interface KyselyDatabaseSchema {
   admins: AdminsTable;

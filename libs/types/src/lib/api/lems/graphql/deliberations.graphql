@@ -1,0 +1,41 @@
+"""
+Status of a judging deliberation
+"""
+enum DeliberationStatus {
+  "Deliberation has not started yet"
+  NOT_STARTED
+
+  "Deliberation is currently in progress"
+  IN_PROGRESS
+
+  "Deliberation has been completed"
+  COMPLETED
+}
+
+"""
+A category-specific judging deliberation where judges discuss and rank teams
+"""
+type JudgingDeliberation {
+  "Unique identifier for the deliberation"
+  id: String!
+
+  "The judging category this deliberation is for"
+  category: JudgingCategory!
+
+  "Current status of the deliberation"
+  status: DeliberationStatus!
+
+  "Timestamp when the deliberation was started (ISO 8601)"
+  startTime: String
+
+  "Ordered list of team IDs representing the deliberation picklist"
+  picklist: [String!]!
+}
+
+extend type Judging {
+  "Get a specific category deliberation"
+  deliberation(
+    "The judging category to get deliberation for"
+    category: JudgingCategory!
+  ): JudgingDeliberation
+}
