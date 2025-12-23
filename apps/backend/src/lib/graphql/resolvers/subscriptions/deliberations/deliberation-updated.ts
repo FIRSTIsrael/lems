@@ -1,34 +1,25 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 
-type DeliberationPicklistUpdatedEvent = {
-  deliberationId: string;
-  picklist: string[];
-  version: number;
-};
+interface DeliberationUpdatedSubscribeArgs {
+  divisionId: string;
+}
 
-type DeliberationStartedEvent = {
-  deliberationId: string;
-  startTime: string;
-  version: number;
-};
+type DeliberationUpdatedEvent =
+  | {
+      deliberationId: string;
+      picklist: string[];
+    }
+  | {
+      deliberationId: string;
+      startTime: string;
+    };
 
-type DeliberationUpdatedEventType = DeliberationPicklistUpdatedEvent | DeliberationStartedEvent;
-
-async function processDeliberationUpdatedEvent(
+const processDeliberationUpdatedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<DeliberationUpdatedEventType>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
-
-  const { eventData, deliberationId, version } = extractEventBase(event);
+): Promise<DeliberationUpdatedEvent | null> => {
+  const eventData = event.data as Record<string, unknown>;
+  const deliberationId = (eventData.deliberationId as string) || '';
 
   if (!deliberationId) {
     return null;
@@ -38,11 +29,10 @@ async function processDeliberationUpdatedEvent(
   if ('picklist' in eventData) {
     const picklist = (eventData.picklist as string[]) || [];
     return picklist.length > 0
-      ? ({
+      ? {
           deliberationId,
-          picklist,
-          version
-        } as DeliberationPicklistUpdatedEvent)
+          picklist
+        }
       : null;
   }
 
@@ -50,27 +40,27 @@ async function processDeliberationUpdatedEvent(
   if ('startTime' in eventData) {
     const startTime = (eventData.startTime as string) || '';
     return startTime
-      ? ({
+      ? {
           deliberationId,
-          startTime,
-          version
-        } as DeliberationStartedEvent)
+          startTime
+        }
       : null;
   }
 
   return null;
-}
+};
+
+const deliberationUpdatedSubscribe = (
+  _root: unknown,
+  { divisionId }: DeliberationUpdatedSubscribeArgs
+) => {
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.DELIBERATION_UPDATED);
+};
 
 export const deliberationUpdatedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
-    if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.DELIBERATION_UPDATED,
-      (args.lastSeenVersion as number) || 0
-    );
-  },
+  subscribe: deliberationUpdatedSubscribe,
   resolve: processDeliberationUpdatedEvent
 };
 
@@ -78,7 +68,7 @@ export const deliberationUpdatedResolver = {
  * Type resolver for DeliberationUpdatedEvent union type
  */
 export const DeliberationUpdatedEventResolver = {
-  __resolveType: (event: DeliberationUpdatedEventType) => {
+  __resolveType: (event: DeliberationUpdatedEvent) => {
     if ('picklist' in event) {
       return 'DeliberationPicklistUpdated';
     }

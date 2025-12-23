@@ -52,9 +52,6 @@ type DeliberationStartedResult {
 
   "The timestamp when the deliberation was started"
   startTime: String!
-
-  "Event version for tracking"
-  version: Int!
 }
 
 """
@@ -66,9 +63,6 @@ type DeliberationPicklistUpdatedResult {
 
   "The updated ordered list of team IDs"
   picklist: [String!]!
-
-  "Event version for tracking"
-  version: Int!
 }
 
 extend type Mutation {
@@ -105,9 +99,6 @@ type DeliberationStarted {
 
   "The new start time"
   startTime: String!
-
-  "Event version for message recovery"
-  version: Int!
 }
 
 """
@@ -119,9 +110,6 @@ type DeliberationPicklistUpdated {
 
   "The updated ordered list of team IDs"
   picklist: [String!]!
-
-  "Event version for message recovery"
-  version: Int!
 }
 
 """
@@ -133,9 +121,6 @@ type DeliberationStatusChanged {
 
   "The new status"
   status: DeliberationStatus!
-
-  "Event version for message recovery"
-  version: Int!
 }
 
 """
@@ -151,8 +136,6 @@ extend type Subscription {
   deliberationUpdated(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): DeliberationUpdatedEvent!
 
   """
@@ -162,7 +145,5 @@ extend type Subscription {
   deliberationStatusChanged(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): DeliberationStatusChanged!
 }

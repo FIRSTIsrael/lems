@@ -2,56 +2,45 @@ import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler } from '@lems/shared/utils';
 import type { CategoryDeliberationData, DeliberationStatus } from '../types';
 
-type DeliberationPicklistUpdatedEvent = {
-  __typename: 'DeliberationPicklistUpdated';
-  deliberationId: string;
-  picklist: string[];
-  version: number;
-};
-
-type DeliberationStartedEvent = {
-  __typename: 'DeliberationStarted';
-  deliberationId: string;
-  startTime: string;
-  version: number;
-};
-
-type DeliberationUpdatedEvent = DeliberationPicklistUpdatedEvent | DeliberationStartedEvent;
-
-type SubscriptionResult = {
-  deliberationUpdated: DeliberationUpdatedEvent;
-};
-
-type SubscriptionVariables = {
-  divisionId: string;
-  lastSeenVersion?: number;
-};
+type DeliberationUpdatedEvent =
+  | {
+      __typename: 'DeliberationPicklistUpdated';
+      deliberationId: string;
+      picklist: string[];
+    }
+  | {
+      __typename: 'DeliberationStarted';
+      deliberationId: string;
+      startTime: string;
+    };
 
 export const DELIBERATION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  SubscriptionResult,
-  SubscriptionVariables
+  {
+    deliberationUpdated: DeliberationUpdatedEvent;
+  },
+  {
+    divisionId: string;
+  }
 > = gql`
-  subscription DeliberationUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    deliberationUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription DeliberationUpdated($divisionId: String!) {
+    deliberationUpdated(divisionId: $divisionId) {
       __typename
       ... on DeliberationPicklistUpdated {
         deliberationId
         picklist
-        version
       }
       ... on DeliberationStarted {
         deliberationId
         startTime
-        version
       }
     }
   }
 `;
 
-const deliberationUpdatedReconciler: Reconciler<CategoryDeliberationData, SubscriptionResult> = (
-  prev,
-  { data }
-) => {
+const deliberationUpdatedReconciler: Reconciler<
+  CategoryDeliberationData,
+  { deliberationUpdated: DeliberationUpdatedEvent }
+> = (prev, { data }) => {
   if (!data?.deliberationUpdated) return prev;
 
   const event = data.deliberationUpdated;

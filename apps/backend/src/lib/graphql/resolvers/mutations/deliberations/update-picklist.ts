@@ -7,12 +7,6 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeDeliberationAccess, assertDeliberationEditable } from './utils';
 
-type DeliberationPicklistUpdatedEvent = {
-  deliberationId: string;
-  picklist: string[];
-  version: number;
-};
-
 interface UpdateDeliberationPicklistArgs {
   divisionId: string;
   category: JudgingCategory;
@@ -27,7 +21,10 @@ export const updateDeliberationPicklistResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
   UpdateDeliberationPicklistArgs,
-  Promise<DeliberationPicklistUpdatedEvent>
+  Promise<{
+    deliberationId: string;
+    picklist: string[];
+  }>
 > = async (_root, { divisionId, category, picklist }, context) => {
   const deliberation = await authorizeDeliberationAccess(context, divisionId, category);
 
@@ -74,13 +71,11 @@ export const updateDeliberationPicklistResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   await pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {
     deliberationId: updated.id,
-    picklist: updated.picklist,
-    version: -1
+    picklist: updated.picklist
   });
 
   return {
     deliberationId: updated.id,
-    picklist: updated.picklist,
-    version: 1
+    picklist: updated.picklist
   };
 };

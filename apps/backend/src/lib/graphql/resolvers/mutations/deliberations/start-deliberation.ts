@@ -7,13 +7,6 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeDeliberationAccess, assertDeliberationEditable } from './utils';
 
-type DeliberationStartedEvent = {
-  deliberationId: string;
-  status: string;
-  startTime: string;
-  version: number;
-};
-
 interface StartDeliberationArgs {
   divisionId: string;
   category: JudgingCategory;
@@ -27,7 +20,11 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
   StartDeliberationArgs,
-  Promise<DeliberationStartedEvent>
+  Promise<{
+    deliberationId: string;
+    status: string;
+    startTime: string;
+  }>
 > = async (_root, { divisionId, category }, context) => {
   const deliberation = await authorizeDeliberationAccess(context, divisionId, category);
 
@@ -60,20 +57,17 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {
       deliberationId: updated.id,
-      startTime: updated.start_time,
-      version: -1
+      startTime: updated.start_time
     }),
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_STATUS_CHANGED, {
       deliberationId: updated.id,
-      status: updated.status,
-      version: -1
+      status: updated.status
     })
   ]);
 
   return {
     deliberationId: updated.id,
     status: updated.status,
-    startTime: updated.start_time || new Date().toISOString(),
-    version: 1
+    startTime: updated.start_time || new Date().toISOString()
   };
 };
