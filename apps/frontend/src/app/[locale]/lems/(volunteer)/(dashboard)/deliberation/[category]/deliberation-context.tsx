@@ -1,0 +1,219 @@
+'use client';
+
+import { createContext, useContext, useMemo, ReactNode, useCallback } from 'react';
+import { useMutation } from '@apollo/client/react';
+import { JudgingCategory } from '@lems/types/judging';
+import { hyphensToUnderscores } from '@lems/shared/utils';
+import {
+  START_DELIBERATION_MUTATION,
+  UPDATE_DELIBERATION_PICKLIST_MUTATION
+} from './graphql/mutations';
+import type { DeliberationContextValue, EnrichedTeam } from './types';
+import type { Division } from './graphql/types';
+import {
+  computeTeamScores,
+  computeRoomMetrics,
+  computeNormalizedScores,
+  computeRanks,
+  computeEligibility,
+  getFlattenedRubricFields,
+  PICKLIST_LIMIT_MULTIPLIER,
+  MAX_PICKLIST_LIMIT
+} from './deliberation-computation';
+
+const DeliberationContext = createContext<DeliberationContextValue | null>(null);
+
+interface DeliberationProviderProps {
+  divisionId: string;
+  category: JudgingCategory;
+  division: Division;
+  children?: ReactNode;
+}
+
+export function CategoryDeliberationProvider({
+  divisionId,
+  category,
+  division,
+  children
+}: DeliberationProviderProps) {
+  const deliberation = division.judging.deliberation;
+
+  // Mutations
+  const [startDeliberation] = useMutation(START_DELIBERATION_MUTATION);
+  const [updateDeliberationPicklist] = useMutation(UPDATE_DELIBERATION_PICKLIST_MUTATION);
+
+  // Helper functions for mutations - use useCallback to ensure stable references
+  const handleStartDeliberation = useCallback(async () => {
+    await startDeliberation({
+      variables: { divisionId, category }
+    });
+  }, [startDeliberation, divisionId, category]);
+
+  const handleUpdatePicklist = useCallback(
+    async (teamIds: string[]) => {
+      await updateDeliberationPicklist({
+        variables: { divisionId, category, picklist: teamIds }
+      });
+    },
+    [updateDeliberationPicklist, divisionId, category]
+  );
+
+  const handleAddToPicklist = useCallback(
+    async (teamId: string) => {
+      const currentPicklist = deliberation?.picklist ?? [];
+      const newPicklist = [...currentPicklist, teamId];
+      await handleUpdatePicklist(newPicklist);
+    },
+    [deliberation, handleUpdatePicklist]
+  );
+
+  const handleRemoveFromPicklist = useCallback(
+    async (teamId: string) => {
+      const currentPicklist = deliberation?.picklist ?? [];
+      const newPicklist = currentPicklist.filter((id: string) => id !== teamId);
+      await handleUpdatePicklist(newPicklist);
+    },
+    [deliberation, handleUpdatePicklist]
+  );
+
+  const handleReorderPicklist = useCallback(
+    async (sourceIndex: number, destIndex: number) => {
+      const currentPicklist = deliberation?.picklist ?? [];
+      const newPicklist = [...currentPicklist];
+      const [removed] = newPicklist.splice(sourceIndex, 1);
+      newPicklist.splice(destIndex, 0, removed);
+      await handleUpdatePicklist(newPicklist);
+    },
+    [deliberation, handleUpdatePicklist]
+  );
+
+  const value = useMemo<DeliberationContextValue>(() => {
+    // Convert hyphenated category to underscore format for GraphQL keys
+    const categoryKey = hyphensToUnderscores(category) as
+      | 'innovation_project'
+      | 'robot_design'
+      | 'core_values';
+
+    // Step 1: Compute base team scores (category scores and GP)
+    const teamScores = division.teams.map(team => computeTeamScores(team));
+
+    // Step 2: Compute room metrics (aggregated scores per room)
+    const roomMetrics = computeRoomMetrics(teamScores, division.teams);
+
+    // Step 3: Compute normalized scores and ranks
+    const enrichedTeams = division.teams.map((team, index) => {
+      const scores = teamScores[index];
+      const normalizedScores = computeNormalizedScores(
+        scores,
+        roomMetrics,
+        team.judgingSession?.room.id
+      );
+      const ranks = computeRanks(scores, teamScores);
+      const isEligible = computeEligibility(team, deliberation);
+      const rubricFields = getFlattenedRubricFields(team, categoryKey);
+
+      return {
+        id: team.id,
+        number: team.number,
+        name: team.name,
+        affiliation: team.affiliation,
+        city: team.city,
+        region: team.region,
+        arrived: team.arrived,
+        disqualified: team.disqualified,
+        slug: team.slug,
+        room: team.judgingSession?.room ?? null,
+        scores,
+        normalizedScores,
+        ranks,
+        eligible: isEligible,
+        rubricFields,
+        rubricIds: {
+          'innovation-project': team.rubrics.innovation_project?.id ?? null,
+          'robot-design': team.rubrics.robot_design?.id ?? null,
+          'core-values': team.rubrics.core_values?.id ?? null
+        },
+        awardNominations: team.rubrics.core_values?.data?.awards ?? {},
+        gpScores: (team.scoresheets || [])
+          .map(s => ({ round: s.round, score: s.data?.gp?.value ?? 3 }))
+          .sort((a, b) => a.round - b.round)
+      } as EnrichedTeam;
+    });
+
+    // Step 3a: Compute picklist and availability
+    const picklistLimit = Math.min(
+      MAX_PICKLIST_LIMIT,
+      Math.ceil(division.teams.length * PICKLIST_LIMIT_MULTIPLIER)
+    );
+    const picklistTeamIds = deliberation?.picklist ?? [];
+    const picklistTeams = picklistTeamIds
+      .map(id => enrichedTeams.find(t => t.id === id))
+      .filter((t): t is EnrichedTeam => t !== undefined);
+    const eligibleTeams = enrichedTeams.filter(t => t.eligible).map(t => t.id);
+    const availableTeams = eligibleTeams.filter(id => !picklistTeamIds.includes(id));
+
+    // Step 3b: Find suggested team (top-scoring available team)
+    let suggestedTeam: EnrichedTeam | null = null;
+    if (availableTeams.length > 0) {
+      const availableEnriched = availableTeams
+        .map(id => enrichedTeams.find(t => t.id === id))
+        .filter((t): t is EnrichedTeam => t !== undefined);
+
+      // Sort by score descending, tiebreak by normalized score
+      availableEnriched.sort((a, b) => {
+        const scoreDiff = b.scores[category] - a.scores[category];
+        if (scoreDiff !== 0) return scoreDiff;
+        return b.normalizedScores[category] - a.normalizedScores[category];
+      });
+
+      // Check if there's a clear top team (no tie)
+      if (availableEnriched.length > 1) {
+        const topTeam = availableEnriched[0];
+        const secondTeam = availableEnriched[1];
+        const isTie =
+          topTeam.scores[category] === secondTeam.scores[category] &&
+          topTeam.normalizedScores[category] === secondTeam.normalizedScores[category];
+        if (!isTie) {
+          suggestedTeam = topTeam;
+        }
+      } else if (availableEnriched.length === 1) {
+        suggestedTeam = availableEnriched[0];
+      }
+    }
+
+    return {
+      division,
+      deliberation: deliberation ?? null,
+      teams: enrichedTeams,
+      eligibleTeams,
+      availableTeams,
+      picklistTeams,
+      suggestedTeam,
+      picklistLimit,
+      startDeliberation: handleStartDeliberation,
+      updatePicklist: handleUpdatePicklist,
+      addToPicklist: handleAddToPicklist,
+      removeFromPicklist: handleRemoveFromPicklist,
+      reorderPicklist: handleReorderPicklist
+    };
+  }, [
+    division,
+    deliberation,
+    category,
+    handleStartDeliberation,
+    handleUpdatePicklist,
+    handleAddToPicklist,
+    handleRemoveFromPicklist,
+    handleReorderPicklist
+  ]);
+
+  return <DeliberationContext.Provider value={value}>{children}</DeliberationContext.Provider>;
+}
+
+export function useCategoryDeliberation(): DeliberationContextValue {
+  const context = useContext(DeliberationContext);
+  if (!context) {
+    throw new Error('useCategoryDeliberation must be used within a CategoryDeliberationProvider');
+  }
+  return context;
+}
