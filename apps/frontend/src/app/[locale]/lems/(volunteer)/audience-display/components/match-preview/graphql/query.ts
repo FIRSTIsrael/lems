@@ -6,6 +6,7 @@ export const GET_MATCH_PREVIEW_DATA: TypedDocumentNode<MatchPreviewData, MatchPr
     division(id: $divisionId) {
       id
       field {
+        divisionId
         matches {
           id
           stage

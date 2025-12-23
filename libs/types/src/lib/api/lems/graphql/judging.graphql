@@ -37,6 +37,9 @@ type JudgingSession {
 Judging-related information for a division
 """
 type Judging {
+  "ID of the division this judging data belongs to"
+  divisionId: String!
+
   "Judging sessions in this division, optionally filtered"
   sessions(
     "Filter sessions by their IDs"

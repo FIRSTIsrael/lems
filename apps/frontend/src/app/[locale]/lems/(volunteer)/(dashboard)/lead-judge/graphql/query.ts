@@ -10,6 +10,7 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
         name
       }
       judging {
+        divisionId
         sessions {
           id
           number
