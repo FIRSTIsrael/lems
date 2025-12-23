@@ -55,7 +55,7 @@ function makeClient(
 
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: `${apiBase.replace(/^https?/, 'ws')}/lems/graphql`,
+      url: `${apiBase.replace(/^http/, 'ws')}/lems/graphql`,
       retryAttempts: Infinity, // Retry indefinitely
       shouldRetry: () => true, // Retry on all connection failures
       keepAlive: 2_500, // Send ping every 2.5 seconds
