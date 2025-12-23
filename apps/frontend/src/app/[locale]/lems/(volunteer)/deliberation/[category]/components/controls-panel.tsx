@@ -65,10 +65,10 @@ export function ControlsPanel() {
             startIcon={<PlayArrow />}
             onClick={handleStartDeliberation}
             sx={{
-              bgcolor: 'white',
+              bgcolor: '#fff',
               color: theme.palette.primary.main,
               '&:hover': {
-                bgcolor: alpha('white', 0.9)
+                bgcolor: alpha('#fff', 0.9)
               },
               fontWeight: 600
             }}
