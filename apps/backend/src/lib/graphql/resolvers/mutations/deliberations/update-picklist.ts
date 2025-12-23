@@ -31,11 +31,6 @@ export const updateDeliberationPicklistResolver: GraphQLFieldResolver<
   // Check if deliberation is editable (not completed)
   assertDeliberationEditable(deliberation.status);
 
-  // Validate that picklist is not empty
-  if (!picklist || picklist.length === 0) {
-    throw new MutationError(MutationErrorCode.INVALID_INPUT, 'Picklist cannot be empty');
-  }
-
   // Fetch all teams in the division to validate team IDs
   const division = await db.divisions.byId(divisionId).get();
   if (!division) {

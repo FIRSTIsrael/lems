@@ -32,8 +32,6 @@ export const judgingDeliberationResolver: GraphQLFieldResolver<
   try {
     const category = underscoresToHyphens(args.category);
 
-    console.log(judging.divisionId, category);
-
     const deliberation = await db.judgingDeliberations
       .byDivision(judging.divisionId)
       .getByCategory(category);
@@ -41,14 +39,6 @@ export const judgingDeliberationResolver: GraphQLFieldResolver<
     if (!deliberation) {
       return null;
     }
-
-    console.log('Deliberation object:', {
-      id: deliberation.id,
-      category: deliberation.category,
-      status: deliberation.status,
-      start_time: deliberation.start_time,
-      picklist: deliberation.picklist
-    });
 
     return {
       id: deliberation.id,

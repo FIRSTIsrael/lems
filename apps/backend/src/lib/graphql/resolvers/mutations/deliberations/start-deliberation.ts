@@ -68,6 +68,6 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   return {
     deliberationId: updated.id,
     status: updated.status,
-    startTime: updated.start_time || new Date().toISOString()
+    startTime: updated.start_time || now
   };
 };
