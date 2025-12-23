@@ -19,6 +19,7 @@ export interface RubricData {
 
 export interface Rubric {
   id: string;
+  category: string;
   status: RubricStatus;
   data?: RubricData;
 }

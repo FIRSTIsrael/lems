@@ -43,6 +43,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
         rubrics {
           innovation_project {
             id
+            category
             status
             data {
               fields
@@ -54,6 +55,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
           }
           robot_design {
             id
+            category
             status
             data {
               fields
@@ -65,6 +67,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
           }
           core_values {
             id
+            category
             status
             data {
               fields

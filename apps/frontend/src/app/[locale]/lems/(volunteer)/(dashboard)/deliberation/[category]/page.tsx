@@ -29,7 +29,10 @@ import { usePageData } from '../../../hooks/use-page-data';
 import {
   GET_CATEGORY_DELIBERATION,
   parseCategoryDeliberationData,
-  createDeliberationUpdatedSubscription
+  createDeliberationUpdatedSubscription,
+  createTeamArrivalUpdatedSubscription,
+  createRubricUpdatedSubscription,
+  createScoresheetUpdatedSubscription
 } from './graphql';
 
 export default function CategoryDeliberationPage() {
@@ -41,7 +44,12 @@ export default function CategoryDeliberationPage() {
   const categoryEnum = hyphensToUnderscores(category) as JudgingCategory;
 
   const subscriptions = useMemo(
-    () => [createDeliberationUpdatedSubscription(currentDivision.id)],
+    () => [
+      createDeliberationUpdatedSubscription(currentDivision.id),
+      createTeamArrivalUpdatedSubscription(currentDivision.id),
+      createRubricUpdatedSubscription(currentDivision.id),
+      createScoresheetUpdatedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 
