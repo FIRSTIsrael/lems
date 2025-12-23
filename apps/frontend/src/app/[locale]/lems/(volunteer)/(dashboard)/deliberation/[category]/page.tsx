@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
 import {
   Container,
   CircularProgress,
@@ -36,7 +35,6 @@ import {
 } from './graphql';
 
 export default function CategoryDeliberationPage() {
-  const t = useTranslations('pages.deliberation');
   const { getCategory } = useJudgingCategoryTranslations();
   const { currentDivision } = useEvent();
   const { category }: { category: JudgingCategory } = useParams();
@@ -87,18 +85,14 @@ export default function CategoryDeliberationPage() {
 
   return (
     <>
-      <PageHeader
-        title={t('page-title', {
-          category: getCategory(category as string)
-        })}
-      />
+      <PageHeader title={getCategory(category as string)} />
 
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Stack spacing={4}>
           {/* Division Information */}
           <Paper sx={{ p: 3, bgcolor: division.color, color: 'white' }}>
             <Typography variant="h5" component="h2">
-              {t('division')}
+              Division
             </Typography>
             <Typography variant="body1" sx={{ mt: 1 }}>
               {division.name}
@@ -109,13 +103,13 @@ export default function CategoryDeliberationPage() {
           {deliberation && (
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                {t('deliberation')}
+                Deliberation
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Grid container spacing={3}>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Typography variant="body2" color="textSecondary" gutterBottom>
-                    {t('id')}
+                    ID
                   </Typography>
                   <Typography variant="body1" sx={{ wordBreak: 'break-all' }}>
                     {deliberation.id}
@@ -123,7 +117,7 @@ export default function CategoryDeliberationPage() {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Typography variant="body2" color="textSecondary" gutterBottom>
-                    {t('status')}
+                    Status
                   </Typography>
                   <Chip
                     label={deliberation.status || 'not-started'}
@@ -134,13 +128,13 @@ export default function CategoryDeliberationPage() {
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Typography variant="body2" color="textSecondary" gutterBottom>
-                    {t('category')}
+                    Category
                   </Typography>
                   <Typography variant="body1">{deliberation.category}</Typography>
                 </Grid>
                 <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                   <Typography variant="body2" color="textSecondary" gutterBottom>
-                    {t('started-at')}
+                    Started at
                   </Typography>
                   <Typography variant="body1">
                     {deliberation.startTime
@@ -156,7 +150,7 @@ export default function CategoryDeliberationPage() {
           {deliberation?.picklist && deliberation.picklist.length > 0 && (
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
-                {t('picklist')} ({deliberation.picklist.length})
+                Picklist ({deliberation.picklist.length})
               </Typography>
               <Divider sx={{ my: 2 }} />
               <Stack spacing={1}>
@@ -179,7 +173,7 @@ export default function CategoryDeliberationPage() {
           {/* Teams Data */}
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              {t('teams')} ({division.teams.length})
+              Teams ({division.teams.length})
             </Typography>
             <Divider sx={{ my: 2 }} />
             <Stack spacing={3}>
@@ -199,25 +193,25 @@ export default function CategoryDeliberationPage() {
                   <Grid container spacing={2} sx={{ mb: 2 }}>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('team-number')}
+                        Team number
                       </Typography>
                       <Typography variant="body1">{team.number}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('team-name')}
+                        Team name
                       </Typography>
                       <Typography variant="body1">{team.name}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('affiliation')}
+                        Afiliation
                       </Typography>
                       <Typography variant="body1">{team.affiliation}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('slug')}
+                        Slug
                       </Typography>
                       <Typography
                         variant="body1"
@@ -228,19 +222,19 @@ export default function CategoryDeliberationPage() {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('city')}
+                        City
                       </Typography>
                       <Typography variant="body1">{team.city}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('region')}
+                        Region
                       </Typography>
                       <Typography variant="body1">{team.region}</Typography>
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('arrived')}
+                        Arrived
                       </Typography>
                       <Chip
                         label={team.arrived ? 'Yes' : 'No'}
@@ -251,7 +245,7 @@ export default function CategoryDeliberationPage() {
                     </Grid>
                     <Grid size={{ xs: 12, sm: 6, md: 3 }}>
                       <Typography variant="body2" color="textSecondary" gutterBottom>
-                        {t('disqualified')}
+                        Disqualified
                       </Typography>
                       <Chip
                         label={team.disqualified ? 'Yes' : 'No'}
@@ -267,7 +261,7 @@ export default function CategoryDeliberationPage() {
                     <>
                       <Divider sx={{ my: 2 }} />
                       <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                        {t('judging-session')}
+                        Judging Session
                       </Typography>
                       <Grid container spacing={2}>
                         <Grid size={{ xs: 12, sm: 6 }}>
@@ -283,7 +277,7 @@ export default function CategoryDeliberationPage() {
                         </Grid>
                         <Grid size={{ xs: 12, sm: 6 }}>
                           <Typography variant="body2" color="textSecondary" gutterBottom>
-                            {t('room')}
+                            Room
                           </Typography>
                           <Typography variant="body1">
                             {team.judgingSession.room.name} (ID: {team.judgingSession.room.id})
@@ -298,15 +292,15 @@ export default function CategoryDeliberationPage() {
                     <>
                       <Divider sx={{ my: 2 }} />
                       <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                        {t('scoresheets')} ({team.scoresheets.length})
+                        Scoresheete ({team.scoresheets.length})
                       </Typography>
                       <TableContainer sx={{ maxHeight: 300 }}>
                         <Table size="small">
                           <TableHead>
                             <TableRow sx={{ bgcolor: 'grey.100' }}>
-                              <TableCell>{t('round')}</TableCell>
-                              <TableCell>{t('slug')}</TableCell>
-                              <TableCell align="right">{t('score')}</TableCell>
+                              <TableCell>Round</TableCell>
+                              <TableCell>Slug</TableCell>
+                              <TableCell align="right">Score</TableCell>
                               <TableCell align="right">GP</TableCell>
                             </TableRow>
                           </TableHead>
@@ -347,7 +341,7 @@ export default function CategoryDeliberationPage() {
                     <>
                       <Divider sx={{ my: 2 }} />
                       <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-                        {t('rubrics')}
+                        Rubrics
                       </Typography>
                       <Stack spacing={2}>
                         {['innovation_project', 'robot_design', 'core_values'].map(rubricType => {
