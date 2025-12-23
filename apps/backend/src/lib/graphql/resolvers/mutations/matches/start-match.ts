@@ -16,7 +16,6 @@ interface StartMatchArgs {
 
 interface MatchEvent {
   matchId: string;
-  version: number;
 }
 
 /**
@@ -156,7 +155,7 @@ export const startMatchResolver: GraphQLFieldResolver<
       // The queue failure should be monitored separately
     }
 
-    return { matchId, version: -1, startTime, startDelta };
+    return { matchId, startTime, startDelta };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

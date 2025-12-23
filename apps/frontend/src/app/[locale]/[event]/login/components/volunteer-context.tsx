@@ -44,8 +44,7 @@ export function VolunteerProvider({ eventSlug, children }: VolunteerProviderProp
     GET_VOLUNTEER_BY_ROLE_QUERY,
     {
       variables: { slug: eventSlug, role: selectedRole! },
-      skip: !selectedRole,
-      fetchPolicy: 'cache-and-network'
+      skip: !selectedRole
     }
   );
 

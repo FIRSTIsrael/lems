@@ -6,6 +6,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
     division(id: $divisionId) {
       id
       judging {
+        divisionId
         sessions(roomId: $roomId) {
           id
           number

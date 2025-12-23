@@ -1,9 +1,10 @@
-import { ApolloClient, InMemoryCache, HttpLink, ApolloLink } from '@apollo/client';
+import { ApolloClient, HttpLink, ApolloLink } from '@apollo/client';
 import { ErrorLink } from '@apollo/client/link/error';
 import { CombinedGraphQLErrors, CombinedProtocolErrors } from '@apollo/client/errors';
 import { RetryLink } from '@apollo/client/link/retry';
 import { registerApolloClient } from '@apollo/client-integration-nextjs';
 import { getApiBase } from '@lems/shared';
+import { createApolloCache } from './cache-config';
 
 /**
  * Creates and registers an Apollo Client instance for server-side use
@@ -64,30 +65,7 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
   const link = ApolloLink.from([errorLink, retryLink, httpLink]);
 
   return new ApolloClient({
-    cache: new InMemoryCache({
-      typePolicies: {
-        Event: { keyFields: ['id'] },
-        Division: { keyFields: ['id'] },
-        Team: { keyFields: ['id'] },
-        RootTeam: { keyFields: ['id'] },
-        Volunteer: {
-          // Use id when available, otherwise don't normalize
-          keyFields: object => (object.id ? ['id'] : false)
-        },
-        Table: { keyFields: ['id'] },
-        Room: { keyFields: ['id'] },
-        Judging: {
-          // Judging doesn't have an id field, so don't normalize it
-          keyFields: false,
-          // Custom merge function to safely merge Judging objects fetched with different arguments
-          merge(existing = {}, incoming) {
-            // Merge the objects, allowing multiple field queries to coexist
-            // e.g., { sessions: [...], rubrics: [...] }
-            return { ...existing, ...incoming };
-          }
-        }
-      }
-    }),
+    cache: createApolloCache(),
     link,
     defaultOptions: {
       query: {

@@ -5,7 +5,6 @@ import type { MatchStatus, ScorekeeperData } from '../types';
 
 interface MatchCompletedEvent {
   matchId: string;
-  version: number;
   autoLoadedMatchId?: string;
 }
 
@@ -15,17 +14,15 @@ interface MatchCompletedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   MatchCompletedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchCompleted($divisionId: String!, $lastSeenVersion: Int) {
-    matchCompleted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription MatchCompleted($divisionId: String!) {
+    matchCompleted(divisionId: $divisionId) {
       matchId
-      version
       autoLoadedMatchId
     }
   }

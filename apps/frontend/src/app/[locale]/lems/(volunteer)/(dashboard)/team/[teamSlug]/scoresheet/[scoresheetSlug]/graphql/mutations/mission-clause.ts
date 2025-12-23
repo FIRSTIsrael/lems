@@ -7,7 +7,6 @@ type MissionClauseMutationResult = {
     missionId: string;
     clauseIndex: number;
     clauseValue: boolean | string | number | null;
-    version: number;
   };
 };
 
@@ -41,7 +40,6 @@ export const UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION: TypedDocumentNode<
       missionId
       clauseIndex
       clauseValue
-      version
     }
   }
 `;

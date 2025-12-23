@@ -9,19 +9,17 @@ interface MatchStartedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const MATCH_STARTED_SUBSCRIPTION: TypedDocumentNode<
   MatchStartedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchStarted($divisionId: String!, $lastSeenVersion: Int) {
-    matchStarted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription MatchStarted($divisionId: String!) {
+    matchStarted(divisionId: $divisionId) {
       matchId
       startTime
       startDelta
-      version
     }
   }
 `;

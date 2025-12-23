@@ -3,7 +3,6 @@ import type { AudienceDisplayScreen } from '../types';
 
 interface SwitchAudienceDisplayEvent {
   divisionId: string;
-  version: number;
 }
 
 interface SwitchAudienceDisplayMutationData {
@@ -22,7 +21,6 @@ export const SWITCH_AUDIENCE_DISPLAY_MUTATION: TypedDocumentNode<
   mutation SwitchAudienceDisplay($divisionId: String!, $newDisplay: AudienceDisplayScreen!) {
     switchActiveDisplay(divisionId: $divisionId, newDisplay: $newDisplay) {
       activeDisplay
-      version
     }
   }
 `;

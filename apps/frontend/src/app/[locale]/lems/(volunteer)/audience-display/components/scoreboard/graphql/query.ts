@@ -6,6 +6,7 @@ export const GET_SCOREBOARD_DATA: TypedDocumentNode<ScoreboardData, ScoreboardVa
     division(id: $divisionId) {
       id
       field {
+        divisionId
         matches {
           id
           stage

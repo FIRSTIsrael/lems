@@ -5,7 +5,6 @@ import type { AudienceDisplayScreen, ScorekeeperData } from '../types';
 
 interface AudienceDisplaySwitchedEvent {
   activeDisplay: AudienceDisplayScreen;
-  version: number;
 }
 
 interface AudienceDisplaySwitchedSubscriptionData {
@@ -14,17 +13,15 @@ interface AudienceDisplaySwitchedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const AUDIENCE_DISPLAY_SWITCHED_SUBSCRIPTION: TypedDocumentNode<
   AudienceDisplaySwitchedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription AudienceDisplaySwitched($divisionId: String!, $lastSeenVersion: Int) {
-    audienceDisplaySwitched(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription AudienceDisplaySwitched($divisionId: String!) {
+    audienceDisplaySwitched(divisionId: $divisionId) {
       activeDisplay
-      version
     }
   }
 `;

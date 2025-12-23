@@ -10,7 +10,6 @@ type ScoresheetSignatureUpdatedEvent = {
   scoresheetId: string;
   signature: string | null;
   status: string;
-  version: number;
 };
 
 interface UpdateScoresheetSignatureArgs {
@@ -78,8 +77,7 @@ export const updateScoresheetSignatureResolver: GraphQLFieldResolver<
   const eventPayload: ScoresheetSignatureUpdatedEvent = {
     scoresheetId,
     signature,
-    status: 'gp',
-    version: -1
+    status: 'gp'
   };
 
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);

@@ -1,25 +1,17 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface MatchAbortedSubscribeArgs {
+  divisionId: string;
+}
 
 interface MatchAbortedEvent {
   matchId: string;
-  version: number;
 }
 
 const processMatchAbortedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchAbortedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchAborted] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
+): Promise<MatchAbortedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -28,26 +20,16 @@ const processMatchAbortedEvent = async (
   }
 
   const result: MatchAbortedEvent = {
-    matchId,
-    version: (event.version as number) ?? 0
+    matchId
   };
 
   return result;
 };
 
-const matchAbortedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchAborted subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_ABORTED, lastSeenVersion);
+const matchAbortedSubscribe = (_root: unknown, { divisionId }: MatchAbortedSubscribeArgs) => {
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_ABORTED);
 };
 
 /**
@@ -56,9 +38,5 @@ const matchAbortedSubscribe = (
  */
 export const matchAbortedResolver = {
   subscribe: matchAbortedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchAbortedEvent>> => {
-    return processMatchAbortedEvent(event);
-  }
+  resolve: processMatchAbortedEvent
 };

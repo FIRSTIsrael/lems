@@ -4,7 +4,6 @@ type ResetRubricMutationResult = {
   resetRubric: {
     rubricId: string;
     reset: boolean;
-    version: number;
   };
 };
 
@@ -21,7 +20,6 @@ export const RESET_RUBRIC_MUTATION: TypedDocumentNode<
     resetRubric(divisionId: $divisionId, rubricId: $rubricId) {
       rubricId
       reset
-      version
     }
   }
 `;

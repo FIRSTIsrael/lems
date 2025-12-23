@@ -1,40 +1,29 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface ScoresheetStatusChangedSubscribeArgs {
+  divisionId: string;
+}
 
 type ScoresheetStatusUpdatedEvent = {
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 async function processScoresheetStatusChangedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<ScoresheetStatusUpdatedEvent>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
+): Promise<ScoresheetStatusUpdatedEvent | null> {
+  const scoresheetId = ((event.data as Record<string, unknown>).scoresheetId as string) || '';
+  const status = ((event.data as Record<string, unknown>).status as string) || '';
 
-  const { eventData, scoresheetId, version } = extractEventBase(event);
-  const status = (eventData.status as string) || '';
-
-  return scoresheetId && status ? { scoresheetId, status, version } : null;
+  return scoresheetId && status ? { scoresheetId, status } : null;
 }
 
 export const scoresheetStatusChangedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
+  subscribe: (_root: unknown, { divisionId }: ScoresheetStatusChangedSubscribeArgs) => {
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.SCORESHEET_STATUS_CHANGED,
-      (args.lastSeenVersion as number) || 0
-    );
+    const pubSub = getRedisPubSub();
+    return pubSub.asyncIterator(divisionId, RedisEventTypes.SCORESHEET_STATUS_CHANGED);
   },
   resolve: processScoresheetStatusChangedEvent
 };

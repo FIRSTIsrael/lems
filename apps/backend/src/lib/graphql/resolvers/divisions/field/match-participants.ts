@@ -13,6 +13,7 @@ export interface MatchParticipantGraphQL {
   present: boolean;
   ready: boolean;
   divisionId: string;
+  matchId: string;
 }
 
 /**
@@ -63,7 +64,8 @@ export const matchParticipantsResolver: GraphQLFieldResolver<
         queued: !!participantState.queued,
         present: !!participantState.present,
         ready: !!participantState.ready,
-        divisionId: match.divisionId
+        divisionId: match.divisionId,
+        matchId: match.id
       };
     });
   } catch (error) {

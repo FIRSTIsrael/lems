@@ -41,7 +41,6 @@ export type QueryVariables = {
 
 export type SubscriptionVariables = {
   divisionId: string;
-  lastSeenVersion?: number;
 };
 
 export type ScoresheetMissionClauseUpdatedEvent = {
@@ -51,14 +50,12 @@ export type ScoresheetMissionClauseUpdatedEvent = {
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
   score: number;
-  version: number;
 };
 
 export type ScoresheetStatusUpdatedEvent = {
   __typename: 'ScoresheetStatusUpdated';
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 export type ScoresheetGPUpdatedEvent = {
@@ -66,14 +63,12 @@ export type ScoresheetGPUpdatedEvent = {
   scoresheetId: string;
   gpValue: number | null;
   notes?: string;
-  version: number;
 };
 
 export type ScoresheetEscalatedUpdatedEvent = {
   __typename: 'ScoresheetEscalatedUpdated';
   scoresheetId: string;
   escalated: boolean;
-  version: number;
 };
 
 export type ScoresheetSignatureUpdatedEvent = {
@@ -81,7 +76,6 @@ export type ScoresheetSignatureUpdatedEvent = {
   scoresheetId: string;
   signature: string | null;
   status: string;
-  version: number;
 };
 
 export type ScoresheetUpdatedEvent =

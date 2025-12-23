@@ -6,6 +6,7 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
     division(id: $divisionId) {
       id
       field {
+        divisionId
         audienceDisplay {
           activeDisplay
           settings

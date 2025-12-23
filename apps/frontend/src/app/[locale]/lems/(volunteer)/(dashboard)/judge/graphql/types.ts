@@ -57,5 +57,4 @@ export interface QueryVars {
 
 export interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }

@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { Language, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon, Locale, Locales } from '@lems/localization';
-import { useRouter } from '../../../../../../../i18n/navigation';
 
 interface LanguageSubmenuProps {
   anchorEl: HTMLButtonElement | null;
@@ -102,7 +101,6 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) => {
-  const router = useRouter();
   const theme = useTheme();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
@@ -122,12 +120,12 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
   const handleLanguageChange = useCallback(
     (locale: Locale) => {
       document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
-      router.refresh();
+      window.location.reload(); // Reload using window to fix GQL issue
 
       setSubmenuOpen(false);
       onClose?.();
     },
-    [onClose, router]
+    [onClose]
   );
 
   return (

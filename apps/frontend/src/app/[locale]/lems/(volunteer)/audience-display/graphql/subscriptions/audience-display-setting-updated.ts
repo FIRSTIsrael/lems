@@ -7,7 +7,6 @@ interface AudienceDisplaySettingUpdatedEvent {
   display: AudienceDisplayScreen;
   settingKey: string;
   settingValue: unknown;
-  version: number;
 }
 
 interface AudienceDisplaySettingUpdatedSubscriptionData {
@@ -16,19 +15,17 @@ interface AudienceDisplaySettingUpdatedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const AUDIENCE_DISPLAY_SETTING_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   AudienceDisplaySettingUpdatedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription AudienceDisplaySettingUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    audienceDisplaySettingUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription AudienceDisplaySettingUpdated($divisionId: String!) {
+    audienceDisplaySettingUpdated(divisionId: $divisionId) {
       display
       settingKey
       settingValue
-      version
     }
   }
 `;

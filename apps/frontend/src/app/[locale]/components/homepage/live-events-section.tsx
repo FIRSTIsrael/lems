@@ -24,8 +24,7 @@ export const LiveEventsSection: React.FC = () => {
       startAfter: oneDayAgo,
       startBefore: now,
       endAfter: now
-    },
-    fetchPolicy: 'cache-and-network'
+    }
   });
 
   const liveEvents: Event[] =

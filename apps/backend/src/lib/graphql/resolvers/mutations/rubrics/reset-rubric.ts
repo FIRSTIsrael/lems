@@ -9,7 +9,6 @@ import { authorizeRubricAccess, assertRubricEditable } from './utils';
 type RubricResetEvent = {
   rubricId: string;
   reset: boolean;
-  version: number;
 };
 
 interface ResetRubricArgs {
@@ -50,8 +49,7 @@ export const resetRubricResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   const eventPayload = {
     rubricId,
-    reset: true,
-    version: -1
+    reset: true
   };
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload),

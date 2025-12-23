@@ -15,7 +15,6 @@ interface AbortJudgingSessionArgs {
 
 interface JudgingEvent {
   sessionId: string;
-  version: number;
 }
 
 /**
@@ -74,7 +73,7 @@ export const abortJudgingSessionResolver: GraphQLFieldResolver<
       sessionId
     });
 
-    return { sessionId, version: -1 };
+    return { sessionId };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

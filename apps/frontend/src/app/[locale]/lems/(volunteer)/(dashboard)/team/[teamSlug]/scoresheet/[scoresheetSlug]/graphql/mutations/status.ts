@@ -4,7 +4,6 @@ type StatusMutationResult = {
   updateScoresheetStatus: {
     scoresheetId: string;
     status: string;
-    version: number;
   };
 };
 
@@ -26,7 +25,6 @@ export const UPDATE_SCORESHEET_STATUS_MUTATION: TypedDocumentNode<
     updateScoresheetStatus(divisionId: $divisionId, scoresheetId: $scoresheetId, status: $status) {
       scoresheetId
       status
-      version
     }
   }
 `;

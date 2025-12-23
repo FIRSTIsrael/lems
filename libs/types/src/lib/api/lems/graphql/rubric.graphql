@@ -100,8 +100,6 @@ type RubricValueUpdated {
   fieldId: String!
   "The new value for the field"
   value: RubricValue!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -112,8 +110,6 @@ type RubricStatusChanged {
   rubricId: String!
   "The new status of the rubric"
   status: RubricStatus!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -124,8 +120,6 @@ type RubricFeedbackUpdated {
   rubricId: String!
   "The new feedback data"
   feedback: RubricFeedback!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -136,8 +130,6 @@ type RubricStatusUpdated {
   rubricId: String!
   "The new status of the rubric"
   status: RubricStatus!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -148,8 +140,6 @@ type RubricAwardsUpdated {
   rubricId: String!
   "The award names that the team is nominated for"
   awards: JSON!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -161,9 +151,6 @@ type RubricReset {
 
   "Whether the rubric was successfully reset"
   reset: Boolean!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 extend type Mutation {
@@ -248,12 +235,7 @@ extend type Subscription {
   Fires when any field value, notes, feedback, or status are updated in any rubric in the division.
   Returns RubricValueUpdated, RubricFeedbackUpdated, or RubricStatusUpdated.
   """
-  rubricUpdated(
-    "The division ID to listen for updates in"
-    divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
-  ): RubricUpdatedEvent!
+  rubricUpdated("The division ID to listen for updates in" divisionId: String!): RubricUpdatedEvent!
 
   """
   Subscribe to rubric status changes in a division.
@@ -263,7 +245,5 @@ extend type Subscription {
   rubricStatusChanged(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): RubricStatusChanged!
 }

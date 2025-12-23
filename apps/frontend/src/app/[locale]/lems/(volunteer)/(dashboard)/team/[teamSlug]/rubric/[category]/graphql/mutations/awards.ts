@@ -4,7 +4,6 @@ type AwardsMutationResult = {
   updateRubricAwards: {
     rubricId: string;
     awards: Record<string, boolean>;
-    version: number;
   };
 };
 
@@ -22,7 +21,6 @@ export const UPDATE_RUBRIC_AWARDS_MUTATION: TypedDocumentNode<
     updateRubricAwards(divisionId: $divisionId, rubricId: $rubricId, awards: $awards) {
       rubricId
       awards
-      version
     }
   }
 `;

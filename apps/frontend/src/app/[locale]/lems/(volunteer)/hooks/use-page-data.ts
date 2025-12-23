@@ -4,57 +4,14 @@ import { OperationVariables, TypedDocumentNode } from '@apollo/client';
 import { useConnectionState } from '../../../../../lib/graphql/apollo-client-provider';
 
 /**
- * Maximum time (in milliseconds) the client can recover from events.
- * If disconnected for longer than this, a full refetch is required.
+ * Default interval (in milliseconds) for periodic background data validation.
  */
-const RECOVERY_WINDOW_MS = 30_000; // 30 seconds
+const DEFAULT_REFETCH_INTERVAL_MS = 60_000; // 60 seconds
 
 /**
- * Detects if a subscription data object contains a gap marker.
- * Gap markers indicate a potential data inconsistency that requires a refetch.
- *
- * @param data - The subscription data object
- * @returns true if a gap marker is detected, false otherwise
+ * Minimum time (in milliseconds) a tab must be hidden before triggering a refetch on visibility change.
  */
-const isGapMarker = (data: unknown): boolean => {
-  if (!data || typeof data !== 'object') {
-    return false;
-  }
-
-  // Check for _gap property on any top-level value in the data object
-  for (const value of Object.values(data)) {
-    if (value && typeof value === 'object' && '_gap' in value) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-/**
- * Extracts the version number from subscription data.
- * Searches for a 'version' field in any top-level object property.
- *
- * @param data - The subscription data object
- * @returns The version number, or undefined if not found
- */
-const extractVersionFromData = (data: unknown): number | undefined => {
-  if (!data || typeof data !== 'object') {
-    return undefined;
-  }
-
-  // Search for version field in top-level object values
-  for (const value of Object.values(data)) {
-    if (value && typeof value === 'object' && 'version' in value) {
-      const version = (value as Record<string, unknown>).version;
-      if (typeof version === 'number') {
-        return version;
-      }
-    }
-  }
-
-  return undefined;
-};
+const VISIBILITY_REFETCH_THRESHOLD_MS = 10_000; // 10 seconds
 
 /**
  * Configuration for a single subscription event using subscribeToMore
@@ -85,9 +42,17 @@ export interface UsePageDataResult<TData> {
   refetch: () => Promise<unknown>;
 }
 
+export interface UsePageDataOptions {
+  /**
+   * Interval (in milliseconds) for periodic background refetches.
+   * Set to 0 to disable periodic refetches.
+   * @default 60000 (60 seconds)
+   */
+  refetchIntervalMs?: number;
+}
+
 /**
  * Generic hook for managing page data with support for multiple subscriptions.
- *
  * IMPORTANT: The subscriptions array must remain constant between renders.
  * Do not create a new array on each render - pass a memoized or static reference.
  *
@@ -95,6 +60,7 @@ export interface UsePageDataResult<TData> {
  * @param variables - Variables for the initial query
  * @param dataParser - Optional function to transform query data into page data
  * @param subscriptions - Optional array of subscription configurations for real-time updates (must be stable)
+ * @param options - Optional configuration for refetch behavior
  * @returns Page data, loading state, error, and refetch function
  */
 export function usePageData<
@@ -106,17 +72,18 @@ export function usePageData<
   graphqlQuery: TypedDocumentNode<TResult, TVariables>,
   variables?: OperationVariables,
   dataParser?: (data: TResult) => TData,
-  subscriptions?: SubscriptionConfig<unknown, TResult, TSubVars>[]
+  subscriptions?: SubscriptionConfig<unknown, TResult, TSubVars>[],
+  options?: UsePageDataOptions
 ): UsePageDataResult<TData> {
   const [data, setData] = useState<TData | undefined>(undefined);
-  const eventVersionsRef = useRef<Map<number, number>>(new Map());
-
   const { state: connectionState } = useConnectionState();
   const initialized = useRef(false);
-  const disconnectionTimeRef = useRef<number | null>(null);
-
-  const [resubscribe, setResubscribe] = useState(0); // Update to re-run subscriptions
   const subscriptionCountRef = useRef<number | undefined>(subscriptions?.length);
+  const hiddenSinceRef = useRef<number | null>(null);
+  const previousVariablesRef = useRef<OperationVariables | undefined>(variables);
+  const unsubscribersRef = useRef<Array<() => void>>([]);
+
+  const refetchIntervalMs = options?.refetchIntervalMs ?? DEFAULT_REFETCH_INTERVAL_MS;
 
   if (subscriptions?.length !== subscriptionCountRef.current) {
     throw new Error(
@@ -133,47 +100,44 @@ export function usePageData<
     subscribeToMore
   } = useQuery(graphqlQuery, {
     variables,
-    fetchPolicy: 'network-only'
+    fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true // Track loading states accurately
   });
 
-  // Trigger refetch if disconnected for too long
+  // Detect if key variables (like divisionId) have changed and clean up old subscriptions
   useEffect(() => {
-    if (connectionState === 'connected') {
-      initialized.current = true;
+    const variablesChanged =
+      JSON.stringify(previousVariablesRef.current) !== JSON.stringify(variables);
 
-      if (disconnectionTimeRef.current !== null) {
-        const disconnectionDuration = Date.now() - disconnectionTimeRef.current;
+    if (variablesChanged && previousVariablesRef.current !== undefined) {
+      console.log('[usePageData] Key variables changed, cleaning up old subscriptions', {
+        previous: previousVariablesRef.current,
+        current: variables
+      });
 
-        if (disconnectionDuration > RECOVERY_WINDOW_MS) {
-          console.warn(
-            `[usePageData] Connection restored after ${disconnectionDuration}ms (> ${RECOVERY_WINDOW_MS}ms recovery window) - triggering refetch`
-          );
-
-          // Clear versions to force full resubscription
-          eventVersionsRef.current.clear();
-
-          refetchData().catch(err =>
-            console.error('[usePageData] Failed to refetch after reconnection:', err)
-          );
-        } else {
-          // Recover potentially missed events
-          setResubscribe(prev => prev + 1);
+      // Unsubscribe from all existing subscriptions
+      unsubscribersRef.current.forEach(unsub => {
+        try {
+          unsub();
+        } catch (err) {
+          console.error('[usePageData] Error unsubscribing:', err);
         }
+      });
+      unsubscribersRef.current = [];
 
-        disconnectionTimeRef.current = null;
-      }
-    } else {
-      if (initialized.current && disconnectionTimeRef.current === null) {
-        disconnectionTimeRef.current = Date.now();
-        console.log('[usePageData] Connection lost');
-      }
+      // Clear data to prevent stale data from previous context
+      setData(undefined);
     }
-  }, [connectionState, refetchData, subscriptions]);
+
+    previousVariablesRef.current = variables;
+  }, [variables]);
 
   // Initialize data when query data arrives
   useEffect(() => {
+    if (!queryData) return;
+
     let parsedData: TData;
-    if (dataParser && queryData) {
+    if (dataParser) {
       parsedData = dataParser(queryData);
     } else {
       parsedData = queryData as unknown as TData;
@@ -182,32 +146,94 @@ export function usePageData<
     setData(parsedData);
   }, [dataParser, queryData]);
 
+  // Refetch on reconnection after disconnection
+  useEffect(() => {
+    if (connectionState === 'connected' && initialized.current) {
+      console.log('[usePageData] Connection restored - triggering refetch');
+      refetchData().catch(err =>
+        console.error('[usePageData] Failed to refetch after reconnection:', err)
+      );
+    }
+
+    if (connectionState === 'connected') {
+      initialized.current = true;
+    }
+  }, [connectionState, refetchData]);
+
+  // Periodic background refetch for data validation
+  useEffect(() => {
+    if (refetchIntervalMs <= 0) {
+      return; // Periodic refetch disabled
+    }
+
+    console.log(`[usePageData] Setting up periodic refetch every ${refetchIntervalMs}ms`);
+
+    const intervalId = setInterval(() => {
+      console.log('[usePageData] Periodic refetch triggered');
+      refetchData().catch(err =>
+        console.error('[usePageData] Failed to refetch during periodic validation:', err)
+      );
+    }, refetchIntervalMs);
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [refetchData, refetchIntervalMs]);
+
+  // Refetch when tab becomes visible after being hidden for 10+ seconds
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        const now = Date.now();
+        if (hiddenSinceRef.current !== null) {
+          const hiddenDuration = now - hiddenSinceRef.current;
+          if (hiddenDuration >= VISIBILITY_REFETCH_THRESHOLD_MS) {
+            console.log(
+              `[usePageData] Tab became visible after ${hiddenDuration}ms hidden - triggering refetch`
+            );
+            refetchData().catch(err =>
+              console.error('[usePageData] Failed to refetch after visibility change:', err)
+            );
+          }
+          hiddenSinceRef.current = null;
+        }
+      } else {
+        // Tab became hidden
+        if (hiddenSinceRef.current === null) {
+          hiddenSinceRef.current = Date.now();
+        }
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [refetchData]);
+
   // Set up subscriptions using subscribeToMore
-  // Only set up subscriptions once when the component mounts and queryData arrives
   useEffect(() => {
     if (!subscriptions || subscriptions.length === 0 || !queryData) {
       return;
     }
 
-    const unsubscribers: Array<() => void> = [];
+    // Clean up previous subscriptions before setting up new ones
+    unsubscribersRef.current.forEach(unsub => {
+      try {
+        unsub();
+      } catch (err) {
+        console.error('[usePageData] Error unsubscribing:', err);
+      }
+    });
+    unsubscribersRef.current = [];
 
     subscriptions.forEach((config, index) => {
-      const lastSeenVersion = eventVersionsRef.current.get(index);
-
-      console.debug(
-        '[usePageData] Setting up subscription',
-        index,
-        'with lastSeenVersion:',
-        lastSeenVersion
-      );
-
-      const subscriptionVariables = lastSeenVersion
-        ? { ...config.subscriptionVariables, lastSeenVersion }
-        : config.subscriptionVariables;
+      console.debug('[usePageData] Setting up subscription', index);
 
       const unsubscribe = subscribeToMore({
         document: config.subscription,
-        variables: subscriptionVariables,
+        variables: config.subscriptionVariables,
         updateQuery: (
           prev: TResult,
           { subscriptionData }: { subscriptionData: { data?: unknown } }
@@ -216,43 +242,30 @@ export function usePageData<
             return prev;
           }
 
-          const hasGapMarker = isGapMarker(subscriptionData.data);
-          if (hasGapMarker) {
-            console.warn('[usePageData] Recovery gap detected - triggering refetch');
-
-            // Reset version tracking on gap
-            eventVersionsRef.current.delete(index);
-
-            // Refetch full data to recover from gap
-            refetchData().catch(err =>
-              console.error('[usePageData] Failed to refetch after gap detection:', err)
-            );
-            return prev;
-          }
-
-          // Call the user's updateQuery function and ensure we return the result
+          // Call the user's updateQuery function
           const updated = config.updateQuery(prev, subscriptionData as { data?: unknown });
-
-          // Extract and persist version automatically
-          const newVersion = extractVersionFromData(subscriptionData.data);
-          if (newVersion !== undefined) {
-            eventVersionsRef.current.set(index, newVersion);
-          }
 
           return updated || prev;
         }
       } as Parameters<typeof subscribeToMore>[0]);
 
-      unsubscribers.push(unsubscribe);
+      unsubscribersRef.current.push(unsubscribe);
     });
 
     return () => {
-      unsubscribers.forEach(unsub => unsub());
+      unsubscribersRef.current.forEach(unsub => {
+        try {
+          unsub();
+        } catch (err) {
+          console.error('[usePageData] Error unsubscribing on cleanup:', err);
+        }
+      });
+      unsubscribersRef.current = [];
     };
 
     // queryData does not need to by in the dependency array
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [subscriptions, subscribeToMore, refetchData, !!queryData, resubscribe]);
+  }, [subscriptions, subscribeToMore, !!queryData]);
 
   return {
     data,

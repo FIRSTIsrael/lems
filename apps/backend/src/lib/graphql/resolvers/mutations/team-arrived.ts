@@ -12,7 +12,6 @@ interface TeamArrivedArgs {
 
 interface TeamEvent {
   teamId: string;
-  version: number;
 }
 
 /**
@@ -71,7 +70,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
 
-    return { teamId, version: -1 };
+    return { teamId };
   } catch (error) {
     console.error(
       'Error updating team arrival status for team:',
