@@ -1,5 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import type { JudgingCategory, DeliberationStatus } from '@lems/database';
+import { underscoresToHyphens, hyphensToUnderscores } from '@lems/shared/utils';
 import db from '../../../../database';
 
 export interface JudgingDeliberationGraphQL {
@@ -29,17 +30,29 @@ export const judgingDeliberationResolver: GraphQLFieldResolver<
   Promise<JudgingDeliberationGraphQL | null>
 > = async (judging: JudgingWithDivisionId, args: DeliberationArgs) => {
   try {
+    const category = underscoresToHyphens(args.category);
+
+    console.log(judging.divisionId, category);
+
     const deliberation = await db.judgingDeliberations
       .byDivision(judging.divisionId)
-      .getByCategory(args.category);
+      .getByCategory(category);
 
     if (!deliberation) {
       return null;
     }
 
+    console.log('Deliberation object:', {
+      id: deliberation.id,
+      category: deliberation.category,
+      status: deliberation.status,
+      start_time: deliberation.start_time,
+      picklist: deliberation.picklist
+    });
+
     return {
       id: deliberation.id,
-      category: deliberation.category as JudgingCategory,
+      category: hyphensToUnderscores(deliberation.category) as JudgingCategory,
       status: deliberation.status,
       startTime: deliberation.start_time,
       picklist: deliberation.picklist

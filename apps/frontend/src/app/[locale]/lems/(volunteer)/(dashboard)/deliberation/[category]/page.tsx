@@ -130,12 +130,12 @@ export default function CategoryDeliberationPage() {
                     {t('status')}
                   </Typography>
                   <Chip
-                    label={deliberation?.status || 'NOT_STARTED'}
-                    color={statusColor[deliberation?.status || 'NOT_STARTED']}
+                    label={deliberation?.status || 'not-started'}
+                    color={statusColor[deliberation?.status || 'not-started']}
                     variant="filled"
                   />
                 </Box>
-                {deliberation?.status === 'NOT_STARTED' && (
+                {deliberation?.status === 'not-started' && (
                   <Button
                     variant="contained"
                     color="primary"
@@ -201,7 +201,7 @@ export default function CategoryDeliberationPage() {
           </Paper>
 
           {/* Picklist */}
-          {deliberation?.status === 'IN_PROGRESS' && (
+          {deliberation?.status === 'in-progress' && (
             <Paper sx={{ p: 3 }}>
               <Typography variant="h6" gutterBottom>
                 {t('picklist')}

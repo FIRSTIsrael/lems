@@ -104,6 +104,10 @@ export function usePageData<
     notifyOnNetworkStatusChange: true // Track loading states accurately
   });
 
+  useEffect(() => {
+    console.log('[GraphQL Query Error]', queryError);
+  }, [queryError]);
+
   // Detect if key variables (like divisionId) have changed and clean up old subscriptions
   useEffect(() => {
     const variablesChanged =

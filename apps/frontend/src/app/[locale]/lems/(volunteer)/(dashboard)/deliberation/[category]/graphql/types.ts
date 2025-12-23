@@ -71,7 +71,7 @@ export interface Team {
   rubrics: CategorizedRubrics;
 }
 
-export type DeliberationStatus = 'NOT_STARTED' | 'IN_PROGRESS' | 'COMPLETED';
+export type DeliberationStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface JudgingDeliberation {
   id: string;

@@ -9,7 +9,7 @@ interface RubricLayoutProps {
   children: React.ReactNode;
 }
 
-export default function RubricLayout({ children }: RubricLayoutProps) {
+export default function CategoryDeliberationLayout({ children }: RubricLayoutProps) {
   const t = useTranslations('layouts.deliberation');
 
   const user = useUser();

@@ -1,18 +1,4 @@
 """
-Status of a judging deliberation
-"""
-enum DeliberationStatus {
-  "Deliberation has not started yet"
-  NOT_STARTED
-
-  "Deliberation is currently in progress"
-  IN_PROGRESS
-
-  "Deliberation has been completed"
-  COMPLETED
-}
-
-"""
 A category-specific judging deliberation where judges discuss and rank teams
 """
 type JudgingDeliberation {
@@ -22,8 +8,8 @@ type JudgingDeliberation {
   "The judging category this deliberation is for"
   category: JudgingCategory!
 
-  "Current status of the deliberation"
-  status: DeliberationStatus!
+  "Current status of the match (e.g., 'not-started', 'in-progress', 'completed')"
+  status: String!
 
   "Timestamp when the deliberation was started (ISO 8601)"
   startTime: String
@@ -48,7 +34,7 @@ type DeliberationStartedResult {
   deliberationId: String!
 
   "The new status of the deliberation"
-  status: DeliberationStatus!
+  status: String!
 
   "The timestamp when the deliberation was started"
   startTime: String!
@@ -120,7 +106,7 @@ type DeliberationStatusChanged {
   deliberationId: String!
 
   "The new status"
-  status: DeliberationStatus!
+  status: String!
 }
 
 """

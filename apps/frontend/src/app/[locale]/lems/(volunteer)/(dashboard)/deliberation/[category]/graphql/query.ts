@@ -79,6 +79,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
       }
 
       judging {
+        divisionId
         deliberation(category: $category) {
           id
           category
