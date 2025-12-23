@@ -18,6 +18,7 @@ import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
+import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -29,6 +30,9 @@ import {
 } from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
+import { teamJudgingSessionResolver } from './divisions/team-judging-session';
+import { teamScoresheetsResolver } from './divisions/team-scoresheets';
+import { teamDisqualifiedResolver } from './divisions/team-disqualified';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
 import { matchesResolver } from './divisions/field/matches';
@@ -41,6 +45,7 @@ import { audienceDisplayResolver } from './divisions/field/audience-display';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
 import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
+import { DeliberationUpdatedEventResolver } from './subscriptions/deliberations/deliberation-updated';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -96,7 +101,8 @@ export const resolvers = {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
-    rubrics: judgingRubricsResolver
+    rubrics: judgingRubricsResolver,
+    deliberation: judgingDeliberationResolver
   },
   Field: {
     audienceDisplay: audienceDisplayResolver,
@@ -119,7 +125,10 @@ export const resolvers = {
   },
   Team: {
     arrived: teamArrivalResolver,
-    rubrics: teamRubricsResolver
+    rubrics: teamRubricsResolver,
+    judgingSession: teamJudgingSessionResolver,
+    scoresheets: teamScoresheetsResolver,
+    disqualified: teamDisqualifiedResolver
   },
   Rubric: {
     ...rubricResolvers,
@@ -136,5 +145,6 @@ export const resolvers = {
   },
   RoleInfo: RoleInfoResolver,
   RubricUpdatedEvent: RubricUpdatedEventResolver,
-  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver
+  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
+  DeliberationUpdatedEvent: DeliberationUpdatedEventResolver
 };

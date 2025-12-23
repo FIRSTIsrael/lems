@@ -19,6 +19,7 @@ import {
   switchActiveDisplayResolver,
   updateAudienceDisplaySettingResolver
 } from './audience-display';
+import { startDeliberationResolver, updateDeliberationPicklistResolver } from './deliberations';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -38,5 +39,7 @@ export const mutationResolvers = {
   updateScoresheetGP: updateScoresheetGPResolver,
   updateScoresheetEscalated: updateScoresheetEscalatedResolver,
   updateScoresheetSignature: updateScoresheetSignatureResolver,
-  updateScoresheetStatus: updateScoresheetStatusResolver
+  updateScoresheetStatus: updateScoresheetStatusResolver,
+  startDeliberation: startDeliberationResolver,
+  updateDeliberationPicklist: updateDeliberationPicklistResolver
 };

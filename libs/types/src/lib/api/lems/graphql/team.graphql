@@ -32,8 +32,17 @@ type Team {
   "URL to the team's logo image"
   logoUrl: String
 
+  "Whether the team has been disqualified in this division"
+  disqualified: Boolean!
+
   "Rubrics for this team categorized by judging category"
   rubrics: CategorizedRubrics
+
+  "Judging session for this team in the division"
+  judgingSession: JudgingSession
+
+  "Scoresheets for this team in the division, optionally filtered"
+  scoresheets("Filter scoresheets by stage (PRACTICE, RANKING)" stage: MatchStage): [Scoresheet!]!
 }
 
 """

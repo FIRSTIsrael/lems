@@ -551,6 +551,9 @@
       "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
       "incomplete-action": "מעבר למשימה",
       "points-unit": "נק'"
+    },
+    "deliberation": {
+      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה"
     }
   }
 }

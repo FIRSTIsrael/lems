@@ -19,6 +19,7 @@ import {
   audienceDisplaySettingUpdatedResolver,
   audienceDisplaySwitchedResolver
 } from './audience-display';
+import { deliberationUpdatedResolver, deliberationStatusChangedResolver } from './deliberations';
 
 /**
  * GraphQL Subscription resolvers
@@ -40,5 +41,7 @@ export const subscriptionResolvers = {
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver,
   scoresheetUpdated: scoresheetUpdatedResolver,
-  scoresheetStatusChanged: scoresheetStatusChangedResolver
+  scoresheetStatusChanged: scoresheetStatusChangedResolver,
+  deliberationUpdated: deliberationUpdatedResolver,
+  deliberationStatusChanged: deliberationStatusChangedResolver
 };

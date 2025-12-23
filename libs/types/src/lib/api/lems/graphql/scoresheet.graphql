@@ -112,6 +112,8 @@ type ScoresheetMissionClauseUpdated {
   clauseIndex: Int!
   "The new value for the clause (boolean, string, or number)"
   clauseValue: JSON!
+  "New score value after clause update"
+  score: Int!
 }
 
 """

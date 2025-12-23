@@ -23,7 +23,8 @@ export function loadLemsGraphQLSchema(): string[] {
     'judging',
     'field',
     'rubric',
-    'scoresheet'
+    'scoresheet',
+    'deliberations'
   ];
   const schemaDir = getLemsGraphQLSchemaDir();
 
