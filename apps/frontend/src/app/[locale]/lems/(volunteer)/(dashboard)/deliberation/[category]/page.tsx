@@ -4,10 +4,13 @@ import { useMemo } from 'react';
 import { useParams } from 'next/navigation';
 import { CircularProgress, Box } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
+import { ResponsiveComponent } from '@lems/shared';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { CategoryDeliberationProvider } from './deliberation-context';
+import { SmallScreenBlock } from './components/small-screen-block';
+import { DeliberationGrid } from './components/deliberation-grid';
 import {
   GET_CATEGORY_DELIBERATION,
   parseCategoryDeliberationData,
@@ -16,7 +19,6 @@ import {
   createRubricUpdatedSubscription,
   createScoresheetUpdatedSubscription
 } from './graphql';
-import CategoryDeliberationPageContent from './page-content';
 
 export default function CategoryDeliberationPage() {
   const { currentDivision } = useEvent();
@@ -65,7 +67,11 @@ export default function CategoryDeliberationPage() {
       category={categoryEnum}
       division={division}
     >
-      <CategoryDeliberationPageContent category={category} />
+      <ResponsiveComponent
+        mobileBreakpoint="lg"
+        desktop={<DeliberationGrid />}
+        mobile={<SmallScreenBlock />}
+      />
     </CategoryDeliberationProvider>
   );
 }
