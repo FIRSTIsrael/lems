@@ -1,8 +1,10 @@
 import baseConfig from '../../eslint.config.mjs';
 
-export default [
+const config = [
   {
     ignores: ['**/dist']
   },
   ...baseConfig
 ];
+
+export default config;

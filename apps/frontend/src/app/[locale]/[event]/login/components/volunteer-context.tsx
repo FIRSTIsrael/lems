@@ -6,7 +6,7 @@ import {
   GET_VOLUNTEER_ROLES_QUERY,
   GET_VOLUNTEER_BY_ROLE_QUERY,
   VolunteerByRoleGraphQLData
-} from '../graphql/volunteers.graphql';
+} from '../graphql/volunteers';
 
 interface VolunteerContextType {
   allRoles: string[];

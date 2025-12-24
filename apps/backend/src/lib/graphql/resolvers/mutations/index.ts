@@ -5,8 +5,21 @@ import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
   updateRubricStatusResolver,
-  updateRubricAwardsResolver
+  updateRubricAwardsResolver,
+  resetRubricResolver
 } from './rubrics';
+import {
+  updateScoresheetMissionClauseResolver,
+  updateScoresheetGPResolver,
+  updateScoresheetStatusResolver,
+  updateScoresheetEscalatedResolver,
+  updateScoresheetSignatureResolver
+} from './scoresheets';
+import {
+  switchActiveDisplayResolver,
+  updateAudienceDisplaySettingResolver
+} from './audience-display';
+import { startDeliberationResolver, updateDeliberationPicklistResolver } from './deliberations';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -15,8 +28,18 @@ export const mutationResolvers = {
   loadMatch: loadMatchResolver,
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
+  switchActiveDisplay: switchActiveDisplayResolver,
+  updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
-  updateRubricAwards: updateRubricAwardsResolver
+  updateRubricAwards: updateRubricAwardsResolver,
+  resetRubric: resetRubricResolver,
+  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
+  updateScoresheetGP: updateScoresheetGPResolver,
+  updateScoresheetEscalated: updateScoresheetEscalatedResolver,
+  updateScoresheetSignature: updateScoresheetSignatureResolver,
+  updateScoresheetStatus: updateScoresheetStatusResolver,
+  startDeliberation: startDeliberationResolver,
+  updateDeliberationPicklist: updateDeliberationPicklistResolver
 };

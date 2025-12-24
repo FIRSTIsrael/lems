@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -16,18 +16,20 @@ import {
   Chip,
   TextField,
   Stack,
-  MenuItem,
   Button,
   ButtonGroup
 } from '@mui/material';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
-import { JudgingSessionAdvisor } from '../judge-advisor.graphql';
+import { useJudgingCategoryTranslations } from '@lems/localization';
+import { hyphensToUnderscores } from '@lems/shared/utils';
+import { JudgingSession } from '../graphql';
+import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
-import { useJudgingCategoryTranslations } from '@lems/localization';
+import { StatusFilterSelector } from './status-filter-selector';
 
 interface RubricStatusGridProps {
-  sessions: JudgingSessionAdvisor[];
+  sessions: JudgingSession[];
   loading?: boolean;
 }
 
@@ -40,37 +42,16 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
   const theme = useTheme();
 
   const [teamFilter, setTeamFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'room' | 'session'>('room');
 
-  const sortedAndFilteredSessions : JudgingSessionAdvisor[]= useMemo(() => {
-    let filtered = [...sessions];
+  const statuses = ['not-started', 'in-progress', 'completed'];
 
-    if (teamFilter) {
-      const lowerFilter = teamFilter.toLowerCase();
-      filtered = filtered.filter(
-        session =>
-          session.team.number.toLowerCase().includes(lowerFilter) ||
-          session.team.name.toLowerCase().includes(lowerFilter) ||
-          session.team.affiliation.toLowerCase().includes(lowerFilter)
-      );
-    }
-
-    if (statusFilter) {
-      filtered = filtered.filter(session => session.status === statusFilter);
-    }
-
-    if (sortBy === 'room') {
-      return filtered.sort((a, b) => {
-        if (a.room.name !== b.room.name) {
-          return a.room.name.localeCompare(b.room.name);
-        }
-        return a.number - b.number;
-      });
-    } else {
-      return filtered.sort((a, b) => a.number - b.number);
-    }
-  }, [sessions, teamFilter, statusFilter, sortBy]);
+  const sortedAndFilteredSessions = useFilteredSessions(sessions, {
+    teamFilter,
+    statusFilter,
+    sortBy
+  });
 
   const getSessionStatusColor = (status: string) => {
     switch (status) {
@@ -120,19 +101,11 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
             size="small"
             sx={{ flex: 1, minWidth: 200 }}
           />
-          <TextField
-            select
-            label={t('filter.status')}
-            value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value)}
-            size="small"
-            sx={{ flex: 1, minWidth: 200 }}
-          >
-            <MenuItem value="">{t('filter.all-statuses')}</MenuItem>
-            <MenuItem value="not-started">{t('session-status.not-started')}</MenuItem>
-            <MenuItem value="in-progress">{t('session-status.in-progress')}</MenuItem>
-            <MenuItem value="completed">{t('session-status.completed')}</MenuItem>
-          </TextField>
+          <StatusFilterSelector
+            statuses={statuses}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
+          />
           <ButtonGroup size="small" variant="outlined">
             <Button
               onClick={() => setSortBy('room')}
@@ -147,7 +120,7 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
               {t('sort.session')}
             </Button>
           </ButtonGroup>
-          {(teamFilter || statusFilter) && (
+          {(teamFilter || statusFilter.length > 0) && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="textSecondary">
                 {t('filter.results')}: {sortedAndFilteredSessions.length}
@@ -157,101 +130,95 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
         </Stack>
       </Paper>
 
-    <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: 'hidden' }}>
-      <Table sx={{ minWidth: 900 }}>
-        <TableHead
-          sx={{
-            backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
-            borderBottom: `2px solid ${theme.palette.divider}`
-          }}
-        >
-          <TableRow>
-            <TableCell sx={{ fontWeight: 600, width: '13%' }}>
-              {t('column.session')}
-            </TableCell>
-            <TableCell sx={{ fontWeight: 600, width: '12%' }}>
-              {t('column.room')}
-            </TableCell>
-            <TableCell sx={{ fontWeight: 600, width: '20%' }}>
-              {t('column.team')}
-            </TableCell>
-            <TableCell sx={{ fontWeight: 600, width: '12%' }} align="center">
-              {t('column.status')}
-            </TableCell>
-            {JUDGING_CATEGORIES.map(category => (
-              <TableCell
-                key={category}
-                sx={{
-                  fontWeight: 600,
-                  width: '14%',
-                  textAlign: 'center',
-                  fontSize: '0.85rem'
-                }}
-              >
-                {getCategory(category)}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {sortedAndFilteredSessions.map((session, idx) => (
-            <TableRow
-              key={session.id}
-              sx={{
-                backgroundColor:
-                  idx % 2 === 0
-                    ? 'transparent'
-                    : theme.palette.mode === 'dark'
-                      ? 'rgba(255, 255, 255, 0.02)'
-                      : 'rgba(0, 0, 0, 0.01)',
-                '&:hover': {
-                  backgroundColor:
-                    theme.palette.mode === 'dark'
-                      ? 'rgba(255, 255, 255, 0.05)'
-                      : 'rgba(0, 0, 0, 0.02)'
-                },
-                borderBottom: `1px solid ${theme.palette.divider}`
-              }}
-            >
-              <TableCell>
-                <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                  #{session.number}
-                </Typography>
-              </TableCell>
-              <TableCell>
-                <Typography variant="body2">{session.room.name}</Typography>
-              </TableCell>
-              <TableCell>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <TeamInfoCell team={session.team} />
-                </Box>
-              </TableCell>
-              <TableCell align="center">
-                <Chip
-                  label={getSessionStatusLabel(session.status)}
-                  size="small"
-                  sx={{
-                    backgroundColor: getSessionStatusColor(session.status),
-                    color: 'white',
-                    fontWeight: 600
-                  }}
-                />
+      <TableContainer component={Paper} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+        <Table sx={{ minWidth: 900 }}>
+          <TableHead
+            sx={{
+              backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#f5f5f5',
+              borderBottom: `2px solid ${theme.palette.divider}`
+            }}
+          >
+            <TableRow>
+              <TableCell sx={{ fontWeight: 600, width: '13%' }}>{t('column.session')}</TableCell>
+              <TableCell sx={{ fontWeight: 600, width: '12%' }}>{t('column.room')}</TableCell>
+              <TableCell sx={{ fontWeight: 600, width: '20%' }}>{t('column.team')}</TableCell>
+              <TableCell sx={{ fontWeight: 600, width: '12%' }} align="center">
+                {t('column.status')}
               </TableCell>
               {JUDGING_CATEGORIES.map(category => (
-                <TableCell key={category} align="center" sx={{ p: 1 }}>
-                  <RubricStatusButton
-                    category={category}
-                    status={session.rubrics[category]?.status || 'empty'}
-                    label={getCategory(category)}
-                    teamSlug={session.team.slug}
-                  />
+                <TableCell
+                  key={category}
+                  sx={{
+                    fontWeight: 600,
+                    width: '14%',
+                    textAlign: 'center',
+                    fontSize: '0.85rem'
+                  }}
+                >
+                  {getCategory(category)}
                 </TableCell>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {sortedAndFilteredSessions.map((session, idx) => (
+              <TableRow
+                key={session.id}
+                sx={{
+                  backgroundColor:
+                    idx % 2 === 0
+                      ? 'transparent'
+                      : theme.palette.mode === 'dark'
+                        ? 'rgba(255, 255, 255, 0.02)'
+                        : 'rgba(0, 0, 0, 0.01)',
+                  '&:hover': {
+                    backgroundColor:
+                      theme.palette.mode === 'dark'
+                        ? 'rgba(255, 255, 255, 0.05)'
+                        : 'rgba(0, 0, 0, 0.02)'
+                  },
+                  borderBottom: `1px solid ${theme.palette.divider}`
+                }}
+              >
+                <TableCell>
+                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                    #{session.number}
+                  </Typography>
+                </TableCell>
+                <TableCell>
+                  <Typography variant="body2">{session.room.name}</Typography>
+                </TableCell>
+                <TableCell>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <TeamInfoCell team={session.team} />
+                  </Box>
+                </TableCell>
+                <TableCell align="center">
+                  <Chip
+                    label={getSessionStatusLabel(session.status)}
+                    size="small"
+                    sx={{
+                      backgroundColor: getSessionStatusColor(session.status),
+                      color: 'white',
+                      fontWeight: 600
+                    }}
+                  />
+                </TableCell>
+                {JUDGING_CATEGORIES.map(category => (
+                  <TableCell key={category} align="center" sx={{ p: 1 }}>
+                    <RubricStatusButton
+                      category={category}
+                      status={session.rubrics[hyphensToUnderscores(category)]?.status || 'empty'}
+                      label={getCategory(category)}
+                      teamSlug={session.team.slug}
+                    />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </>
   );
 };

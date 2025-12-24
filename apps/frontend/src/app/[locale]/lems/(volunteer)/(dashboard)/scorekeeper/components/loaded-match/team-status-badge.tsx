@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Box, Tooltip } from '@mui/material';
-import { Match } from '../../scorekeeper.graphql';
+import { Match } from '../../graphql';
 import { getStatusIcon, type TeamReadinessStatus } from './utils';
 
 const getStatus = (participant: Match['participants'][number]): TeamReadinessStatus => {

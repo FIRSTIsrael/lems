@@ -10,8 +10,15 @@ export enum RedisEventTypes {
   MATCH_LOADED = 'matchLoaded',
   MATCH_STARTED = 'matchStarted',
   MATCH_STAGE_ADVANCED = 'matchStageAdvanced',
+  MATCH_ENDGAME_TRIGGERED = 'matchEndgameTriggered',
   MATCH_COMPLETED = 'matchCompleted',
   MATCH_ABORTED = 'matchAborted',
+  AUDIENCE_DISPLAY_SWITCHED = 'audienceDisplaySwitched',
+  AUDIENCE_DISPLAY_SETTING_UPDATED = 'audienceDisplaySettingUpdated',
   RUBRIC_UPDATED = 'rubricUpdated',
-  RUBRIC_STATUS_CHANGED = 'rubricStatusChanged'
+  RUBRIC_STATUS_CHANGED = 'rubricStatusChanged',
+  SCORESHEET_UPDATED = 'scoresheetUpdated',
+  SCORESHEET_STATUS_CHANGED = 'scoresheetStatusChanged',
+  DELIBERATION_UPDATED = 'deliberationUpdated',
+  DELIBERATION_STATUS_CHANGED = 'deliberationStatusChanged'
 }

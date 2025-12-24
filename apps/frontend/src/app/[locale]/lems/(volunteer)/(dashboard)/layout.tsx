@@ -2,10 +2,13 @@
 
 import { Container, Box } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
+import { useConnectionResetOnNavigation } from '../../../../../lib/graphql/use-connection-reset-on-navigation';
 import { DesktopAppBar } from './components/desktop/app-bar';
 import { MobileAppBar } from './components/mobile/app-bar';
 
 export default function VolunteerDashboardLayout({ children }: { children: React.ReactNode }) {
+  useConnectionResetOnNavigation();
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <ResponsiveComponent

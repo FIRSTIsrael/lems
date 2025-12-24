@@ -15,7 +15,7 @@ import {
   Chip
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import { MatchStatus } from '../../scorekeeper.graphql';
+import { MatchStatus } from '../../graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamsCell } from './match-schedule-teams-cell';
 import { LoadMatchButton } from './load-match-button';

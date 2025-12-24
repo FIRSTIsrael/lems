@@ -8,7 +8,7 @@ import GroupIcon from '@mui/icons-material/Group';
 import WarningIcon from '@mui/icons-material/Warning';
 import { Locale, Locales } from '@lems/localization';
 import { ResponsiveComponent } from '@lems/shared';
-import type { Team } from '../pit-admin.graphql';
+import type { Team } from '../graphql';
 
 interface ArrivalsStatsProps {
   teams: Team[];

@@ -7,7 +7,7 @@ import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { merge } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
-import { LOAD_MATCH_MUTATION, Match } from '../../scorekeeper.graphql';
+import { LOAD_MATCH_MUTATION, Match } from '../../graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { useEvent } from '../../../../components/event-context';
 
@@ -25,8 +25,7 @@ export const LoadMatchButton = ({ match }: LoadMatchButtonProps) => {
   const [loadMatch] = useMutation(LOAD_MATCH_MUTATION, {
     optimisticResponse: {
       loadMatch: {
-        matchId: match.id,
-        version: -1
+        matchId: match.id
       }
     },
     update: (cache, { data }) => {

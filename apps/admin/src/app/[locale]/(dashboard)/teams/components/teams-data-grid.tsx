@@ -2,8 +2,8 @@
 
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Avatar, Box, Chip } from '@mui/material';
+import { DataGrid, GridActionsCell, GridColDef } from '@mui/x-data-grid';
+import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
@@ -18,6 +18,7 @@ interface TeamsDataGridProps {
 export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
+  const theme = useTheme();
 
   const { data: teams } = useSWR<Team[]>('/admin/teams', {
     fallbackData: initialTeams
@@ -147,10 +148,12 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       headerName: t('columns.actions'),
       width: 120,
       sortable: false,
-      getActions: params => [
-        <UpdateTeamButton team={params.row} />,
-        <DeleteTeamButton team={params.row} />
-      ]
+      renderCell: (params) => (
+        <GridActionsCell {...params}>
+          <UpdateTeamButton team={params.row} />
+          <DeleteTeamButton team={params.row} />
+        </GridActionsCell> 
+      )
     }
   ];
 
@@ -162,6 +165,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
         <DataGrid
           rows={filteredTeams}
           columns={columns}
+          disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }

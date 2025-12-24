@@ -27,17 +27,32 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
   );
 
   const { currentStageIndex, stageTimeRemaining } = useMemo(() => {
+    let result: { currentStageIndex: number; stageTimeRemaining: number };
+
     let elapsedTime = sessionLength - (minutes * 60 + seconds);
-    for (let i = 0; i < JUDGING_STAGES.length; i++) {
-      if (elapsedTime < JUDGING_STAGES[i].duration) {
-        return {
-          currentStageIndex: i,
-          stageTimeRemaining: JUDGING_STAGES[i].duration - elapsedTime
-        };
-      }
-      elapsedTime -= JUDGING_STAGES[i].duration;
+
+    for (const stage of JUDGING_STAGES) {
+      result = { currentStageIndex: 0, stageTimeRemaining: stage.duration };
     }
-    return { currentStageIndex: JUDGING_STAGES.length - 1, stageTimeRemaining: 0 };
+
+    for (let i = 0; i < JUDGING_STAGES.length; i++) {
+      if (elapsedTime >= JUDGING_STAGES[i].duration) {
+        elapsedTime -= JUDGING_STAGES[i].duration;
+        continue;
+      }
+
+      // Only reached if in current stage, return current stage info
+      // This uses a "break" statement to get around react compiler quirk
+      // where if a memo returns an object it can only have one return statement
+      result = {
+        currentStageIndex: i,
+        stageTimeRemaining: JUDGING_STAGES[i].duration - elapsedTime
+      };
+      break;
+    }
+
+    result = { currentStageIndex: JUDGING_STAGES.length - 1, stageTimeRemaining: 0 };
+    return result;
   }, [minutes, seconds, sessionLength]);
 
   const playSound = useJudgingSounds();

@@ -1,6 +1,6 @@
 import { rubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types/judging';
-import { RubricItem } from './types';
+import { RubricItem } from './graphql';
 
 export type ValidationError =
   | 'missing-field-value'

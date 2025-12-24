@@ -11,7 +11,6 @@ const nextConfig = {
   nx: {},
 
   output: 'standalone',
-  
 
   reactStrictMode: true,
 
@@ -29,14 +28,17 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**.nyc3.digitaloceanspaces.com'
-      },
-      {
-        protocol: 'https',
         hostname: 'emojicdn.elk.sh'
       }
+    ],
+    localPatterns: [
+      {
+        pathname: '/assets/**'
+      }
     ]
-  }
+  },
+
+  reactCompiler: true
 };
 
 const plugins = [

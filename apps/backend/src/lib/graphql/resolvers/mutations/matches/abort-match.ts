@@ -15,7 +15,6 @@ interface AbortMatchArgs {
 
 interface MatchEvent {
   matchId: string;
-  version: number;
 }
 
 /**
@@ -44,6 +43,17 @@ export const abortMatchResolver: GraphQLFieldResolver<
     } catch (error) {
       console.error(
         `Failed to dequeue match completion for ${matchId}, but continuing with abort:`,
+        error
+      );
+      // Don't fail the mutation - we'll still abort the match
+      // The dequeue failure should be monitored separately
+    }
+
+    try {
+      await dequeueScheduledEvent('match-endgame-triggered', divisionId, { matchId });
+    } catch (error) {
+      console.error(
+        `Failed to dequeue match endgame trigger for ${matchId}, but continuing with abort:`,
         error
       );
       // Don't fail the mutation - we'll still abort the match
@@ -96,7 +106,7 @@ export const abortMatchResolver: GraphQLFieldResolver<
       matchId
     });
 
-    return { matchId, version: -1 };
+    return { matchId };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

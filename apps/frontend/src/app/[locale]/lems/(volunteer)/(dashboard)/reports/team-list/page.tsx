@@ -11,7 +11,7 @@ import {
   GET_DIVISION_TEAMS,
   parseDivisionTeams,
   createTeamRegistrationSubscription
-} from './team-list.graphql';
+} from './graphql';
 import { MobileTeamListTable } from './components/mobile-team-list-table';
 import { DesktopTeamListTable } from './components/desktop-team-list-table';
 import { ArrivalStats } from './components/arrival-stats';

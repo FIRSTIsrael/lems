@@ -10,7 +10,7 @@ import {
   GET_AWARD_OPTIONS_QUERY,
   parseAwardOptions,
   UPDATE_RUBRIC_AWARDS_MUTATION
-} from '../rubric.graphql';
+} from '../graphql';
 import { useRubric } from '../rubric-context';
 
 interface AwardNominationsProps {

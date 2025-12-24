@@ -1,3 +1,77 @@
+'use client';
+
+import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
+import { useParams } from 'next/navigation';
+import { Container, Box, CircularProgress } from '@mui/material';
+import { useMatchTranslations } from '@lems/localization';
+import { PageHeader } from '../../../../components/page-header';
+import { useTeam } from '../../components/team-context';
+import { useEvent } from '../../../../../components/event-context';
+import { usePageData } from '../../../../../hooks/use-page-data';
+import { ScoresheetProvider } from './scoresheet-context';
+import { ScoresheetForm } from './components/scoresheet-form';
+import { GPSelector } from './components/gp-selector';
+import {
+  GET_SCORESHEET_QUERY,
+  parseScoresheetData,
+  createScoresheetUpdatedSubscription
+} from './graphql';
+
 export default function ScoresheetPage() {
-  return <div>Scoresheet Page</div>;
+  const t = useTranslations('pages.scoresheet');
+  const { getStage } = useMatchTranslations();
+  const team = useTeam();
+  const { currentDivision } = useEvent();
+  const { scoresheetSlug } = useParams();
+
+  const subscriptions = useMemo(
+    () => [createScoresheetUpdatedSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
+  const { data: scoresheet, loading } = usePageData(
+    GET_SCORESHEET_QUERY,
+    {
+      divisionId: currentDivision.id,
+      teamId: team.id,
+      slug: scoresheetSlug as string
+    },
+    parseScoresheetData,
+    subscriptions
+  );
+
+  if (loading || !scoresheet) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '50vh'
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  return (
+    <>
+      <PageHeader
+        title={t('title', {
+          teamNumber: team.number,
+          stage: getStage(scoresheet.stage),
+          round: scoresheet.round
+        })}
+      />
+
+      <ScoresheetProvider scoresheet={scoresheet}>
+        <Container maxWidth="md" sx={{ mt: 2 }}>
+          {scoresheet.status !== 'gp' && <ScoresheetForm />}
+          {scoresheet.status === 'gp' && <GPSelector />}
+        </Container>
+      </ScoresheetProvider>
+    </>
+  );
 }

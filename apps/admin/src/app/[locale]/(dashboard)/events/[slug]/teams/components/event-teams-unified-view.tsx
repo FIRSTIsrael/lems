@@ -1,9 +1,8 @@
 'use client';
 
-import { useMemo, useState, useEffect } from 'react';
-import { apiFetch } from '@lems/shared';
+import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import { Avatar, Box, Chip, Menu, MenuItem } from '@mui/material';
+import { Avatar, Box, Chip } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
@@ -20,6 +19,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   divisions
 }) => {
   const t = useTranslations('pages.events.teams.unified');
+  const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
   const [menuAnchor, setMenuAnchor] = useState<null | HTMLElement>(null);
   const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
@@ -180,8 +180,10 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           key="edit"
           icon={<Edit />}
           label="Edit team"
-          disabled={divisionsWithSchedule.has(params.row.division.id)}
+          // eslint-disable-next-line no-constant-binary-expression
+          disabled={true || divisionsWithSchedule.has(params.row.division.id)}
           onClick={() => {
+            // TODO: Implement edit functionality
             console.log('Edit team:', params.row.id);
           }}
         />,
@@ -201,6 +203,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <DataGrid
           rows={filteredTeams}
           columns={columns}
+          disableVirtualization={theme.direction === 'rtl'} // Workaround for MUI issue with RTL virtualization
           initialState={{
             pagination: {
               paginationModel: { page: 0, pageSize: 50 }

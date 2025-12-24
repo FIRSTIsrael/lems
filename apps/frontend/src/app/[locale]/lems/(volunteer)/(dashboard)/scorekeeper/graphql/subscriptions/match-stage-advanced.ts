@@ -1,0 +1,40 @@
+import { gql, TypedDocumentNode } from '@apollo/client';
+import { merge } from '@lems/shared/utils';
+import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
+import type { MatchStage, ScorekeeperData } from '../types';
+
+interface MatchStageAdvancedEvent {}
+
+interface MatchStageAdvancedSubscriptionData {
+  matchStageAdvanced: MatchStageAdvancedEvent;
+}
+
+interface SubscriptionVars {
+  divisionId: string;
+}
+
+export const MATCH_STAGE_ADVANCED_SUBSCRIPTION: TypedDocumentNode<
+  MatchStageAdvancedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription MatchStageAdvanced($divisionId: String!) {
+    matchStageAdvanced(divisionId: $divisionId)
+  }
+`;
+
+export function createMatchStageAdvancedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_STAGE_ADVANCED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      return merge(prev, {
+        division: {
+          field: {
+            currentStage: 'RANKING' as MatchStage
+          }
+        }
+      });
+    }
+  } as SubscriptionConfig<unknown, ScorekeeperData, SubscriptionVars>;
+}

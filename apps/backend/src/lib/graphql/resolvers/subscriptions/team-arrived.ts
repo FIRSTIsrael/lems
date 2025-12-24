@@ -1,14 +1,12 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from './base-subscription';
+import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
 interface TeamEvent {
   teamId: string;
-  version: number;
+}
+
+interface TeamArrivalUpdatedSubscribeArgs {
+  divisionId: string;
 }
 
 /**
@@ -16,17 +14,11 @@ interface TeamEvent {
  */
 const teamArrivalUpdatedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: TeamArrivalUpdatedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for teamArrivalUpdated subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.TEAM_ARRIVED, lastSeenVersion);
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.TEAM_ARRIVED);
 };
 
 /**
@@ -34,13 +26,7 @@ const teamArrivalUpdatedSubscribe = (
  */
 const processTeamArrivalEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<TeamEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[TeamArrival] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
+): Promise<TeamEvent | null> => {
   const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';
 
   if (!teamId) {
@@ -48,8 +34,7 @@ const processTeamArrivalEvent = async (
   }
 
   const result: TeamEvent = {
-    teamId,
-    version: (event.version as number) ?? 0
+    teamId
   };
 
   return result;
@@ -61,7 +46,5 @@ const processTeamArrivalEvent = async (
  */
 export const teamArrivalUpdatedResolver = {
   subscribe: teamArrivalUpdatedSubscribe,
-  resolve: async (event: Record<string, unknown>): Promise<SubscriptionResult<TeamEvent>> => {
-    return processTeamArrivalEvent(event);
-  }
+  resolve: processTeamArrivalEvent
 };

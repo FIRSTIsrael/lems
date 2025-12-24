@@ -1,5 +1,5 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb } from 'mongodb';
+import { Db as MongoDb, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   InsertableRobotGameMatch,
@@ -22,8 +22,8 @@ export class RobotGameMatchStateSelector {
     private id: string
   ) {}
 
-  async get() {
-    return this.db
+  async get(): Promise<WithId<RobotGameMatchState> | null> {
+    return await this.db
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOne({ matchId: this.id });
   }
@@ -40,7 +40,7 @@ export class RobotGameMatchSelector {
     return this.db.selectFrom('robot_game_matches').selectAll().where('id', '=', this.id);
   }
 
-  async state() {
+  state() {
     return new RobotGameMatchStateSelector(this.mongo, this.id);
   }
 

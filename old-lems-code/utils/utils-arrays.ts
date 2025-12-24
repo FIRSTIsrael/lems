@@ -31,16 +31,6 @@ export const rankArray = (sortedArray: any[], evaluate: (i: any) => number, rank
   return _arr;
 };
 
-export const range = (n: number) => [...Array(n).keys()];
-
-export const average = (arr: Array<number>) => {
-  return arr.reduce((acc, value) => acc + value, 0) / arr.length;
-};
-
-export const sum = (arr: Array<number>) => {
-  return arr.reduce((acc, value) => acc + value, 0);
-};
-
 export const getCounts = (arr: Array<any>) => {
   return arr.reduce((acc, value) => {
     if (value in acc) {
