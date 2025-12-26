@@ -32,6 +32,9 @@ router.post(
     await db.awards.byDivisionId(req.divisionId).deleteAll();
 
     for (const awardData of awards) {
+      
+      const showPlaces = awardData.isOptional;
+
       await db.awards.create({
         division_id: req.divisionId,
         name: awardData.name,
@@ -39,6 +42,7 @@ router.post(
         place: awardData.place,
         type: awardData.type,
         is_optional: awardData.isOptional,
+        show_places: showPlaces,
         allow_nominations: awardData.allowNominations,
         automatic_assignment: awardData.automaticAssignment,
         winner_id: null,
