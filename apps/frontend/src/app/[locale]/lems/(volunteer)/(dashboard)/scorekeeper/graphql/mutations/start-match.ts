@@ -19,7 +19,6 @@ export const START_MATCH_MUTATION: TypedDocumentNode<
       matchId
       startTime
       startDelta
-      version
     }
   }
 `;
