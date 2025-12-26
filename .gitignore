@@ -50,6 +50,7 @@ Thumbs.db
 
 # Backend log
 http-log.log
+logs/
 
 .nx/cache
 .nx/workspace-data
@@ -62,3 +63,5 @@ http-log.log
 /.cursor\rules\nx-rules.mdc
 /.github/instructions/nx.instructions.md
 .cursor/rules/nx-rules.mdc
+/.cursor/
+/WARP.md

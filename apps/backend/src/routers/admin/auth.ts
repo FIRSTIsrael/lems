@@ -8,6 +8,7 @@ import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
 import { makeAdminUserResponse } from './users/util';
+import { logger } from '../../lib/logger';
 
 const router = express.Router({ mergeParams: true });
 
@@ -35,12 +36,13 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   if (process.env.RECAPTCHA === 'true') {
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
     if (!captcha.success || captcha['error-codes']?.length > 0) {
-      console.log(`Captcha failure: ${captcha['error-codes'] || []}`);
+      logger.warn({ component: 'auth', action: 'login', errorCodes: captcha['error-codes'] || [] }, 'Captcha failure');
       res.status(500).json({ error: 'CAPTCHA_FAILED' });
       return;
     }
 
     if (captcha.action != 'submit' || captcha.score < 0.5) {
+      logger.warn({ component: 'auth', action: 'login', score: captcha.score }, 'Captcha score too low');
       res.status(429).json({ error: 'TOO_MANY_REQUESTS' });
       return;
     }
@@ -55,7 +57,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
     const adminUser = await db.admins.byUsername(loginDetails.username).get();
 
     if (!adminUser) {
-      console.log(`🔑 Admin login failed - user not found: ${loginDetails.username}`);
+      logger.warn({ component: 'auth', action: 'login', username: loginDetails.username, reason: 'user_not_found' }, 'Admin login failed - user not found');
       res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
@@ -63,12 +65,12 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
     const isValidPassword = await verifyPassword(loginDetails.password, adminUser.password_hash);
 
     if (!isValidPassword) {
-      console.log(`🔑 Admin login failed - invalid password: ${loginDetails.username}`);
+      logger.warn({ component: 'auth', action: 'login', username: loginDetails.username, userId: adminUser.id, reason: 'invalid_password' }, 'Admin login failed - invalid password');
       res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
 
-    console.log(`🔑 Admin login successful: ${loginDetails.username}`);
+    logger.info({ component: 'auth', action: 'login', username: loginDetails.username, userId: adminUser.id }, 'Admin login successful');
     await db.admins.byId(adminUser.id).updateLastLogin();
 
     const expires = dayjs().add(7, 'days');
@@ -102,13 +104,13 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
       loginTime: new Date()
     });
   } catch (err) {
-    console.error('Admin login error:', err);
+    logger.error({ component: 'auth', action: 'login', error: err instanceof Error ? err.message : String(err) }, 'Admin login error');
     next(err);
   }
 });
 
 router.post('/logout', (req: Request, res: Response) => {
-  console.log(`🔒 Admin logout successful`);
+  logger.info({ component: 'auth', action: 'logout', userType: 'admin' }, 'Admin logout successful');
   res.clearCookie('admin-auth-token');
   res.json({ ok: true });
 });

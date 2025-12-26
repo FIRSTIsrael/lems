@@ -1,4 +1,5 @@
 import Redis from 'ioredis';
+import { logger } from '../logger';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -23,19 +24,19 @@ const createRedisClient = (): Redis => {
   });
 
   redisClient.on('connect', () => {
-    console.log('✅ Redis client connected');
+    logger.info({ component: 'redis' }, 'Redis client connected');
   });
 
   redisClient.on('error', err => {
-    console.error('❌ Redis client error:', err);
+    logger.error({ component: 'redis', error: err.message }, 'Redis client error');
   });
 
   redisClient.on('close', () => {
-    console.warn('⚠️  Redis client connection closed');
+    logger.warn({ component: 'redis' }, 'Redis client connection closed');
   });
 
   redisClient.on('reconnecting', () => {
-    console.log('🔄 Redis client reconnecting...');
+    logger.info({ component: 'redis' }, 'Redis client reconnecting');
   });
 
   return redisClient;
@@ -52,6 +53,6 @@ export const closeRedisClient = async (): Promise<void> => {
   if (redisClient) {
     await redisClient.quit();
     redisClient = null;
-    console.log('✅ Redis client closed');
+    logger.info({ component: 'redis' }, 'Redis client closed');
   }
 };
