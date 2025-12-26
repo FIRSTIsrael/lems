@@ -15,7 +15,6 @@ export const LOAD_MATCH_MUTATION: TypedDocumentNode<LoadMatchMutationData, LoadM
     mutation LoadMatch($divisionId: String!, $matchId: String!) {
       loadMatch(divisionId: $divisionId, matchId: $matchId) {
         matchId
-        version
       }
     }
   `;

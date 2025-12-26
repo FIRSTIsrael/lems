@@ -17,7 +17,6 @@ interface TeamEvent {
 /**
  * Resolver for Mutation.teamArrived
  * Marks that a team arrived at a division and publishes an event.
- * Returns minimal response containing only teamId and version.
  */
 export const teamArrivedResolver: GraphQLFieldResolver<
   unknown,
