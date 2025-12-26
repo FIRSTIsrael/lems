@@ -23,6 +23,12 @@ type Division {
   "Awards configured for this division, optionally filtered by allowNominations"
   awards("Filter awards by whether they allow nominations" allowNominations: Boolean): [Award!]!
 
+  "Agenda events for this division, optionally filtered by visibility"
+  agenda(
+    "Filter events by visibility (public, field, judging)"
+    visibility: [String!]
+  ): [AgendaEvent!]!
+
   "Teams registered in this division, optionally filtered by IDs or slugs"
   teams(
     "Filter teams by their IDs"
@@ -53,6 +59,26 @@ type Room {
 
   "Display name of the room (e.g., 'Room A', 'Innovation Lab')"
   name: String!
+}
+
+"""
+An agenda event in the division schedule
+"""
+type AgendaEvent {
+  "Unique identifier for the agenda event"
+  id: String!
+
+  "Title/name of the agenda event"
+  title: String!
+
+  "Start time of the event (ISO 8601 format)"
+  startTime: String!
+
+  "Duration of the event in seconds"
+  duration: Int!
+
+  "Visibility of the event (public, field, judging)"
+  visibility: String!
 }
 
 """
