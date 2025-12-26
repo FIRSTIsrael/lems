@@ -63,6 +63,18 @@ export class FinalDeliberationSelector {
 export class FinalDeliberationsRepository {
   constructor(private mongoDb: Db) {}
 
+  async create(divisionId: string): Promise<FinalDeliberation> {
+    return this.byDivision(divisionId).upsert({
+      divisionId,
+      stage: 'champions',
+      status: 'not-started',
+      startTime: null,
+      completionTime: null,
+      awards: {},
+      stageData: {}
+    });
+  }
+
   byDivision(divisionId: string): FinalDeliberationSelector {
     return new FinalDeliberationSelector(this.mongoDb, divisionId);
   }
