@@ -23,6 +23,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
         slug
         judgingSession {
           id
+          status
           room {
             id
             name
