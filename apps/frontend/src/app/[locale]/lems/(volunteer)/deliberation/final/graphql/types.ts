@@ -72,7 +72,7 @@ export interface Team {
   rubrics: CategorizedRubrics;
 }
 
-export type FinalDeliberationStage = 'CHAMPIONS' | 'CORE_AWARDS' | 'OPTIONAL_AWARDS' | 'REVIEW';
+export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
 export type FinalDeliberationStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface FinalDeliberation {

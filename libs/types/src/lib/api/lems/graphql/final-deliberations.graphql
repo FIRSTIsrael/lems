@@ -1,29 +1,12 @@
 """
-Stage of the final deliberation process
-"""
-enum FinalDeliberationStage {
-  "Champions award and robot performance selection"
-  CHAMPIONS
-
-  "Core awards selection (IP, RD, CV)"
-  CORE_AWARDS
-
-  "Optional awards selection (breakthrough, motivate, etc.)"
-  OPTIONAL_AWARDS
-
-  "Final review before completion"
-  REVIEW
-}
-
-"""
 Final deliberation for selecting division awards
 """
 type FinalDeliberation {
   "The division ID this deliberation is for"
   divisionId: String!
 
-  "Current stage of the deliberation"
-  stage: FinalDeliberationStage!
+  "Current stage of the deliberation (not-started, champions, core-awards, optional-awards, review)"
+  stage: String!
 
   "Current status (not-started, in-progress, completed)"
   status: String!
