@@ -1,5 +1,12 @@
 import { Award as ApiAward } from '@lems/types/api/admin';
-import { AwardSchema, Award, CORE_VALUES_AWARDS, OPTIONAL_AWARDS, PERSONAL_AWARDS } from '../types';
+import {
+  AwardSchema,
+  Award,
+  CORE_VALUES_AWARDS,
+  OPTIONAL_AWARDS,
+  PERSONAL_AWARDS,
+  AUTOMATIC_ASSIGNMENT_AWARDS
+} from '../types';
 
 /**
  * Converts an array of API award responses to an AwardSchema object
@@ -69,6 +76,7 @@ export function parseSchemaToApiRequest(
     const isPersonal = (PERSONAL_AWARDS as readonly string[]).includes(award);
     const isOptional = !(OPTIONAL_AWARDS as readonly string[]).includes(award);
     const allowNominations = (CORE_VALUES_AWARDS as readonly string[]).includes(award);
+    const automaticAssignment = (AUTOMATIC_ASSIGNMENT_AWARDS as readonly string[]).includes(award);
 
     for (let place = 1; place <= schemaItem.count; place++) {
       awards.push({
@@ -77,7 +85,8 @@ export function parseSchemaToApiRequest(
         place: place,
         type: isPersonal ? 'PERSONAL' : 'TEAM',
         isOptional,
-        allowNominations
+        allowNominations,
+        automaticAssignment
       });
     }
   });
