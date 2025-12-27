@@ -38,23 +38,23 @@ export function ControlsPanel() {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        p: 2,
-        gap: 2
+        p: 1.75,
+        gap: 1.5
       }}
     >
       {/* Status Card */}
       <Box
         sx={{
-          p: 2,
+          p: 1.5,
           background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
           color: 'white',
           borderRadius: 1
         }}
       >
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 1 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.75 }}>
           Status
         </Typography>
-        <Typography variant="body2" sx={{ mb: 2 }}>
+        <Typography variant="caption" sx={{ display: 'block', mb: 1.25, opacity: 0.9 }}>
           {deliberation?.status === 'in-progress' ? 'In Progress' : 'Not Started'}
         </Typography>
 
@@ -64,6 +64,7 @@ export function ControlsPanel() {
             fullWidth
             startIcon={<PlayArrow />}
             onClick={handleStartDeliberation}
+            size="small"
             sx={{
               bgcolor: '#fff',
               color: theme.palette.primary.main,
@@ -73,7 +74,7 @@ export function ControlsPanel() {
               fontWeight: 600
             }}
           >
-            Start Deliberation
+            Start
           </Button>
         ) : (
           <Button
@@ -81,13 +82,14 @@ export function ControlsPanel() {
             fullWidth
             startIcon={<Lock />}
             disabled
+            size="small"
             sx={{
               bgcolor: alpha('white', 0.3),
               color: 'white',
               fontWeight: 600
             }}
           >
-            Deliberation Active
+            Active
           </Button>
         )}
       </Box>
@@ -95,20 +97,19 @@ export function ControlsPanel() {
       {/* Comparison Card */}
       <Box
         sx={{
-          p: 2,
+          p: 1.5,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 1,
-          flex: 1,
           display: 'flex',
           flexDirection: 'column',
           gap: 1
         }}
       >
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
           Compare Teams
         </Typography>
 
-        <Box sx={{ display: 'flex', gap: 1 }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
           <Autocomplete
             options={teamOptions}
             value={teamOptions.find(o => o.value === selectedTeam1) || null}
@@ -116,7 +117,6 @@ export function ControlsPanel() {
             renderInput={params => <TextField {...params} label="Team 1" size="small" />}
             size="small"
             fullWidth
-            sx={{ flex: 1 }}
           />
           <Autocomplete
             options={teamOptions}
@@ -125,14 +125,13 @@ export function ControlsPanel() {
             renderInput={params => <TextField {...params} label="Team 2" size="small" />}
             size="small"
             fullWidth
-            sx={{ flex: 1 }}
           />
         </Box>
 
-        <Button variant="outlined" fullWidth disabled sx={{ mt: 'auto' }}>
+        <Button variant="outlined" fullWidth disabled size="small" sx={{ mt: 0.75 }}>
           Compare
         </Button>
-        <Typography variant="caption" color="textSecondary">
+        <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
           Coming Soon
         </Typography>
       </Box>
@@ -140,7 +139,7 @@ export function ControlsPanel() {
       {/* Available Teams Pool */}
       <Box
         sx={{
-          p: 2,
+          p: 1.5,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 1,
           flex: 1,
@@ -150,22 +149,26 @@ export function ControlsPanel() {
           minHeight: 0
         }}
       >
-        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-          Available Teams
+        <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
+          Available ({availableTeams.length})
         </Typography>
 
         <Box
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            gap: 0.5,
+            gap: 0.75,
             overflowY: 'auto',
             flex: 1,
             minHeight: 0
           }}
         >
           {availableTeams.length === 0 ? (
-            <Typography variant="caption" color="textSecondary" sx={{ py: 2, textAlign: 'center' }}>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              sx={{ py: 1.5, textAlign: 'center' }}
+            >
               No available teams
             </Typography>
           ) : (

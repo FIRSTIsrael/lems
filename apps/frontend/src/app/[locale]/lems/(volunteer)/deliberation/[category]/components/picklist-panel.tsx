@@ -57,23 +57,28 @@ export function PicklistPanel() {
           height: '100%',
           display: 'flex',
           flexDirection: 'column',
-          p: 2,
-          gap: 1.5
+          p: 1.75,
+          gap: 1.25
         }}
       >
         {/* Header */}
-        <Typography variant="h6" sx={{ fontWeight: 600 }}>
-          Picklist
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '0.975rem' }}>
+            Picklist
+          </Typography>
+          <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+            {picklistTeams.length} / {picklistLimit}
+          </Typography>
+        </Box>
 
         {/* Suggested team slot */}
         {suggestedTeam && canAddMore && !picklistTeams.find(t => t.id === suggestedTeam.id) && (
           <Paper
             sx={{
-              p: 1.5,
+              p: 1,
               bgcolor: alpha(theme.palette.success.main, 0.08),
               border: `2px dashed ${theme.palette.success.main}`,
-              borderRadius: 1,
+              borderRadius: 0.75,
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center'
@@ -83,7 +88,7 @@ export function PicklistPanel() {
               <Typography variant="caption" color="textSecondary">
                 Suggested
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+              <Typography variant="caption" sx={{ fontWeight: 600, display: 'block' }}>
                 {suggestedTeam.number}
               </Typography>
             </Box>
@@ -109,12 +114,12 @@ export function PicklistPanel() {
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: 1,
-                p: 1,
+                gap: 0.75,
+                p: 0.75,
                 bgcolor: snapshot.isDraggingOver
                   ? alpha(theme.palette.primary.main, 0.05)
                   : 'transparent',
-                borderRadius: 1,
+                borderRadius: 0.75,
                 border: `1px solid ${theme.palette.divider}`,
                 overflowY: 'auto',
                 minHeight: 0
@@ -124,9 +129,16 @@ export function PicklistPanel() {
                 <Typography
                   variant="caption"
                   color="textSecondary"
-                  sx={{ py: 2, textAlign: 'center' }}
+                  sx={{
+                    py: 1.5,
+                    textAlign: 'center',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%'
+                  }}
                 >
-                  Drag teams here or use the Add button
+                  Drag or add teams
                 </Typography>
               ) : (
                 picklistTeams.map((team, index) => (
@@ -135,18 +147,21 @@ export function PicklistPanel() {
                       <Paper
                         ref={provided.innerRef}
                         {...provided.draggableProps}
-                        elevation={snapshot.isDragging ? 4 : 1}
+                        elevation={snapshot.isDragging ? 3 : 0}
                         sx={{
-                          p: 1.5,
+                          p: 1,
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'center',
+                          backgroundColor: snapshot.isDragging
+                            ? alpha(theme.palette.primary.main, 0.1)
+                            : 'transparent',
                           border: snapshot.isDragging
                             ? `2px solid ${theme.palette.primary.main}`
-                            : '1px solid transparent',
+                            : `1px solid ${theme.palette.divider}`,
+                          borderRadius: 0.75,
                           transition: 'all 0.2s',
-                          cursor: snapshot.isDragging ? 'grabbing' : 'grab',
-                          opacity: snapshot.isDragging ? 1 : 1
+                          cursor: snapshot.isDragging ? 'grabbing' : 'grab'
                         }}
                       >
                         <Box
@@ -154,37 +169,51 @@ export function PicklistPanel() {
                           sx={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: 1,
+                            gap: 0.75,
                             flex: 1,
-                            cursor: snapshot.isDragging ? 'grabbing' : 'grab'
+                            cursor: snapshot.isDragging ? 'grabbing' : 'grab',
+                            minWidth: 0
                           }}
                         >
                           {index < 3 && (
                             <EmojiEvents
                               sx={{
                                 color: MEDAL_COLORS[index as 0 | 1 | 2],
-                                fontSize: '1.25rem'
+                                fontSize: '1.1rem',
+                                flexShrink: 0
                               }}
                             />
                           )}
                           {index >= 3 && (
                             <Box
                               sx={{
-                                minWidth: '20px',
+                                minWidth: '18px',
                                 textAlign: 'center',
-                                fontSize: '0.875rem',
-                                fontWeight: 600,
+                                fontSize: '0.8rem',
+                                fontWeight: 700,
                                 color: theme.palette.text.secondary
                               }}
                             >
                               {index + 1}
                             </Box>
                           )}
-                          <Box>
-                            <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          <Box sx={{ minWidth: 0, flex: 1 }}>
+                            <Typography
+                              variant="caption"
+                              sx={{ fontWeight: 600, display: 'block' }}
+                            >
                               {team.number}
                             </Typography>
-                            <Typography variant="caption" color="textSecondary">
+                            <Typography
+                              variant="caption"
+                              color="textSecondary"
+                              sx={{
+                                display: 'block',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis',
+                                whiteSpace: 'nowrap'
+                              }}
+                            >
                               {team.name}
                             </Typography>
                           </Box>
@@ -193,7 +222,7 @@ export function PicklistPanel() {
                           <IconButton
                             size="small"
                             onClick={() => removeFromPicklist(team.id)}
-                            sx={{ color: theme.palette.error.main }}
+                            sx={{ color: theme.palette.error.main, flexShrink: 0 }}
                           >
                             <Close fontSize="small" />
                           </IconButton>
@@ -208,11 +237,6 @@ export function PicklistPanel() {
           )}
         </Droppable>
 
-        {/* Limit indicator */}
-        <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
-          {picklistTeams.length} / {picklistLimit}
-        </Typography>
-
         {/* Trash zone */}
         <Droppable droppableId="picklist-trash">
           {(provided, snapshot) => (
@@ -220,20 +244,20 @@ export function PicklistPanel() {
               ref={provided.innerRef}
               {...provided.droppableProps}
               sx={{
-                minHeight: '50px',
-                p: 1,
+                minHeight: '45px',
+                p: 0.75,
                 bgcolor: snapshot.isDraggingOver
-                  ? alpha(theme.palette.error.main, 0.15)
-                  : alpha(theme.palette.error.main, 0.05),
+                  ? alpha(theme.palette.error.main, 0.12)
+                  : alpha(theme.palette.error.main, 0.04),
                 border: `2px dashed ${theme.palette.error.main}`,
-                borderRadius: 1,
+                borderRadius: 0.75,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 transition: 'all 0.2s'
               }}
             >
-              <Typography variant="caption" color="error">
+              <Typography variant="caption" color="error" sx={{ fontWeight: 500 }}>
                 Drop to Remove
               </Typography>
               {provided.placeholder}

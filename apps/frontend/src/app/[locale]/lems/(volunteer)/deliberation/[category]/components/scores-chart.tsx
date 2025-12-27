@@ -60,7 +60,7 @@ export function ScoresChart() {
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center', mb: 2 }}>
+      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary' }}>
         Room Scores Distribution
       </Typography>
 
