@@ -222,9 +222,6 @@ type ParticipantStatusUpdatedEvent {
 
   "Timestamp when the participant was marked as ready (null if not ready)"
   ready: String
-
-  "Timestamp of when the status was updated"
-  timestamp: String!
 }
 
 extend type Mutation {

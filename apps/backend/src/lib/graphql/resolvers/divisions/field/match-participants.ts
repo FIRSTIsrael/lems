@@ -7,7 +7,7 @@ interface ParticipantsArgs {
 }
 
 export interface MatchParticipantGraphQL {
-  id: string; // UUID identifier from robot_game_match_participants.id
+  id: string;
   tableId: string;
   teamId: string | null;
   queued: boolean;

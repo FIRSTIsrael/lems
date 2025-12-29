@@ -9,7 +9,6 @@ interface ParticipantStatusUpdatedEvent {
   participantId: string;
   present: Date | null;
   ready: Date | null;
-  timestamp: Date;
 }
 
 const processParticipantStatusUpdatedEvent = async (
@@ -19,7 +18,6 @@ const processParticipantStatusUpdatedEvent = async (
   const participantId = (eventData.participantId as string) || '';
   const present = (eventData.present as string | null) || null;
   const ready = (eventData.ready as string | null) || null;
-  const timestamp = (eventData.timestamp as string) || new Date().toISOString();
 
   if (!participantId) {
     return null;
@@ -28,8 +26,7 @@ const processParticipantStatusUpdatedEvent = async (
   const result: ParticipantStatusUpdatedEvent = {
     participantId,
     present: present ? new Date(present) : null,
-    ready: ready ? new Date(ready) : null,
-    timestamp: new Date(timestamp)
+    ready: ready ? new Date(ready) : null
   };
 
   return result;

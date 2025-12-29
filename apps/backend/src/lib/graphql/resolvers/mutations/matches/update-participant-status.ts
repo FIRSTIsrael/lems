@@ -18,7 +18,6 @@ interface ParticipantStatusEvent {
   participantId: string;
   present: Date | null;
   ready: Date | null;
-  timestamp: Date;
 }
 
 /**
@@ -31,7 +30,7 @@ interface ParticipantStatusEvent {
  * 2. User is assigned to the division
  * 3. Match exists and is in the division
  * 4. Participant exists in the match
- * 5. Match is not completed
+ * 5. Match is not-started
  */
 export const updateParticipantStatusResolver: GraphQLFieldResolver<
   unknown,
@@ -85,7 +84,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    // Check 6: Get current match state and validate match is not completed
+    // Check 6: Get current match state and validate match is not-started
     const matchState = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOne({ matchId });
@@ -97,26 +96,26 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    if (matchState.status === 'completed') {
+    if (matchState.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
-        'Cannot update participant status for completed match'
+        'Cannot update participant status for match that is not in not-started status'
       );
     }
 
     // Prepare update object - set to current time if true, null if false
+    // Tech debt: Participants in mongo are keyed by table ID
     const now = new Date();
     const updateData: Partial<Record<string, Date | null>> = {};
 
     if (present !== undefined && present !== null) {
-      updateData[`participants.${participantId}.present`] = present ? now : null;
+      updateData[`participants.${participant.table_id}.present`] = present ? now : null;
     }
 
     if (ready !== undefined && ready !== null) {
-      updateData[`participants.${participantId}.ready`] = ready ? now : null;
+      updateData[`participants.${participant.table_id}.ready`] = ready ? now : null;
     }
 
-    // If no fields to update, return error
     if (Object.keys(updateData).length === 0) {
       throw new MutationError(
         MutationErrorCode.INVALID_INPUT,
@@ -124,7 +123,6 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    // Update match state in MongoDB
     const result = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOneAndUpdate(
@@ -143,7 +141,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     }
 
     // Publish event to notify subscribers
-    const participantState = result.participants?.[participantId] || {
+    const participantState = result.participants?.[participant.table_id] || {
       present: null,
       ready: null
     };
@@ -152,15 +150,13 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     await pubSub.publish(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED, {
       participantId,
       present: participantState.present,
-      ready: participantState.ready,
-      timestamp: now
+      ready: participantState.ready
     });
 
     return {
       participantId,
       present: participantState.present || null,
-      ready: participantState.ready || null,
-      timestamp: now
+      ready: participantState.ready || null
     };
   } catch (error) {
     console.error(
