@@ -17,6 +17,7 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
           startTime
           status
           participants {
+            id
             matchId
             team {
               id

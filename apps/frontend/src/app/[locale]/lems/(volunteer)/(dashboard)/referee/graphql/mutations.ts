@@ -1,18 +1,18 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 
 interface UpdateParticipantStatusVars {
+  divisionId: string;
   matchId: string;
-  teamId: string;
-  present: boolean;
-  ready: boolean;
+  participantId: string;
+  present?: boolean | null;
+  ready?: boolean | null;
 }
 
 interface UpdateParticipantStatusResult {
-  updateMatchParticipant: {
-    matchId: string;
-    teamId: string;
-    present: boolean;
-    ready: boolean;
+  updateParticipantStatus: {
+    participantId: string;
+    present: string | null;
+    ready: string | null;
   };
 }
 
@@ -21,14 +21,20 @@ export const UPDATE_PARTICIPANT_STATUS: TypedDocumentNode<
   UpdateParticipantStatusVars
 > = gql`
   mutation UpdateParticipantStatus(
+    $divisionId: String!
     $matchId: String!
-    $teamId: String!
-    $present: Boolean!
-    $ready: Boolean!
+    $participantId: String!
+    $present: Boolean
+    $ready: Boolean
   ) {
-    updateMatchParticipant(matchId: $matchId, teamId: $teamId, present: $present, ready: $ready) {
-      matchId
-      teamId
+    updateParticipantStatus(
+      divisionId: $divisionId
+      matchId: $matchId
+      participantId: $participantId
+      present: $present
+      ready: $ready
+    ) {
+      participantId
       present
       ready
     }

@@ -52,6 +52,19 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  { participantStatusUpdated: import('./types').ParticipantStatusUpdatedEvent },
+  SubscriptionVars
+> = gql`
+  subscription ParticipantStatusUpdated($divisionId: String!) {
+    participantStatusUpdated(divisionId: $divisionId) {
+      participantId
+      present
+      ready
+    }
+  }
+`;
+
 export function createMatchStartedSubscription(divisionId: string) {
   return {
     subscription: MATCH_STARTED_SUBSCRIPTION,
@@ -130,6 +143,37 @@ export function createTeamArrivedSubscription(divisionId: string) {
                   }
                 : _match
             )
+          }
+        }
+      });
+    }
+  } as SubscriptionConfig<unknown, RefereeData, SubscriptionVars>;
+}
+
+export function createParticipantStatusUpdatedSubscription(divisionId: string) {
+  return {
+    subscription: PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: RefereeData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      const event = (
+        data as { participantStatusUpdated: import('./types').ParticipantStatusUpdatedEvent }
+      ).participantStatusUpdated;
+      return merge(prev, {
+        division: {
+          field: {
+            matches: prev.division.field.matches.map(_match => ({
+              ..._match,
+              participants: _match.participants.map(p =>
+                p.id === event.participantId
+                  ? {
+                      ...p,
+                      present: !!event.present,
+                      ready: !!event.ready
+                    }
+                  : p
+              )
+            }))
           }
         }
       });

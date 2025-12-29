@@ -14,7 +14,8 @@ import {
   parseRefereeData,
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
-  createTeamArrivedSubscription
+  createTeamArrivedSubscription,
+  createParticipantStatusUpdatedSubscription
 } from './graphql';
 import {
   RefereeProvider,
@@ -95,7 +96,8 @@ export default function RefereePage() {
     () => [
       createTeamArrivedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
-      createMatchCompletedSubscription(currentDivision.id)
+      createMatchCompletedSubscription(currentDivision.id),
+      createParticipantStatusUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

@@ -3,6 +3,7 @@ import { RobotGameMatch, RobotGameMatchStage } from '@lems/database';
 export type RobotGameMatchStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface MatchParticipant {
+  id: string;
   matchId: string;
   team: {
     id: string;
@@ -73,4 +74,10 @@ export interface MatchCompletedEvent {
   matchId: string;
   status: RobotGameMatchStatus;
   completedAt: string;
+}
+
+export interface ParticipantStatusUpdatedEvent {
+  participantId: string;
+  present: string | null;
+  ready: string | null;
 }

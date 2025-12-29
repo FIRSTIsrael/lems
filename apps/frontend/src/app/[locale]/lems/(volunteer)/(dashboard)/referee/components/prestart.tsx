@@ -14,6 +14,7 @@ import { useCallback } from 'react';
 import { useMutation } from '@apollo/client/react';
 import type { RefereeMatch } from '../graphql/types';
 import { UPDATE_PARTICIPANT_STATUS } from '../graphql';
+import { useEvent } from '../../../components/event-context';
 import { useReferee } from './referee-context';
 
 interface RefereePrestartProps {
@@ -22,23 +23,24 @@ interface RefereePrestartProps {
 
 export function RefereePrestart({ match }: RefereePrestartProps) {
   const t = useTranslations('pages.referee');
+  const { currentDivision } = useEvent();
   const { setInspectionStartTime } = useReferee();
   const [updateParticipant] = useMutation(UPDATE_PARTICIPANT_STATUS);
 
   const teams = match.participants.filter(p => p.team);
 
   const handleParticipantStatusChange = useCallback(
-    (teamId: string, present: boolean, ready: boolean) => {
+    (participantId: string, field: 'present' | 'ready', value: boolean) => {
       updateParticipant({
         variables: {
+          divisionId: currentDivision.id,
           matchId: match.id,
-          teamId,
-          present,
-          ready
+          participantId,
+          [field]: value
         }
       });
     },
-    [match.id, updateParticipant]
+    [match.id, currentDivision.id, updateParticipant]
   );
 
   const handleStartInspection = useCallback(() => {
@@ -98,11 +100,7 @@ export function RefereePrestart({ match }: RefereePrestartProps) {
               exclusive
               onChange={(_, value) => {
                 if (value !== null) {
-                  handleParticipantStatusChange(
-                    participant.team!.id,
-                    value === 'present',
-                    participant.ready
-                  );
+                  handleParticipantStatusChange(participant.id, 'present', value === 'present');
                 }
               }}
               fullWidth
@@ -122,9 +120,9 @@ export function RefereePrestart({ match }: RefereePrestartProps) {
                 variant={participant.ready ? 'contained' : 'outlined'}
                 fullWidth
                 size="small"
-                onClick={() =>
-                  handleParticipantStatusChange(participant.team!.id, true, !participant.ready)
-                }
+                onClick={() => {
+                  handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
+                }}
               >
                 {participant.ready ? t('ready-confirmed') : t('mark-ready')}
               </Button>
