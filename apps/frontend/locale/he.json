@@ -331,6 +331,26 @@
         "not-arrived": "לא הגיעה"
       }
     },
+    "referee": {
+      "page-title": "לוח בקרת שופט",
+      "match-running": "משחק בעדכון",
+      "match-slug": "משחק",
+      "prestart-title": "הכנה למשחק",
+      "inspection-timer": "בדיקת ציוד",
+      "start-inspection": "התחל בדיקה",
+      "stop-inspection": "עצור בדיקה",
+      "present": "נוכח",
+      "absent": "לא נוכח",
+      "ready-confirmed": "מוכן ✓",
+      "mark-ready": "סמנו כמוכן",
+      "no-match-title": "אין משחק משויך",
+      "no-match-description": "מחכה להשמת המשחק הבא לשולחן שלך.",
+      "no-match-instructions": "בדוק את לוח הזמנים למטה כדי לראות משחקים קרובים.",
+      "no-upcoming-matches": "אין משחקים מתוכננים.",
+      "match": "משחק",
+      "scheduled-time": "שעה מתוכננת",
+      "teams": "קבוצות"
+    },
     "scorekeeper": {
       "page-title": "סקורקיפר",
       "common": {
