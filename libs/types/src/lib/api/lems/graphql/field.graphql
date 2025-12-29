@@ -63,6 +63,9 @@ type Match {
 A team or empty slot participating in a match at a specific table
 """
 type MatchParticipant {
+  "Unique identifier for this participant"
+  id: String!
+
   "Team at this table, null if no team assigned"
   team: Team
 
@@ -207,6 +210,23 @@ type AudienceDisplaySettingEvent {
   settingValue: JSON!
 }
 
+"""
+Represents an event when a participant's status (present/ready) is updated
+"""
+type ParticipantStatusUpdatedEvent {
+  "Participant identifier"
+  participantId: String!
+
+  "Timestamp when the participant was marked as present (null if not present)"
+  present: String
+
+  "Timestamp when the participant was marked as ready (null if not ready)"
+  ready: String
+
+  "Timestamp of when the status was updated"
+  timestamp: String!
+}
+
 extend type Mutation {
   """
   Load a match to make it the currently loaded match.
@@ -263,6 +283,23 @@ extend type Mutation {
     "The new value for the setting"
     settingValue: JSON!
   ): AudienceDisplaySettingEvent!
+
+  """
+  Update a participant's status (present/ready) in a match.
+  Called by referees to mark teams as present or ready before the match starts.
+  """
+  updateParticipantStatus(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "The ID of the participant"
+    participantId: String!
+    "Whether the participant is present (true/false to set/clear)"
+    present: Boolean
+    "Whether the participant is ready (true/false to set/clear)"
+    ready: Boolean
+  ): ParticipantStatusUpdatedEvent!
 }
 
 extend type Subscription {
@@ -320,4 +357,13 @@ extend type Subscription {
     "The division ID to listen for updates in"
     divisionId: String!
   ): AudienceDisplaySettingEvent!
+
+  """
+  Subscribe to events when a participant's status is updated in a match.
+  Emitted when a referee marks a team as present or ready.
+  """
+  participantStatusUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): ParticipantStatusUpdatedEvent!
 }

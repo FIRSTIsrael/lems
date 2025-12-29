@@ -35,6 +35,7 @@ export const makeAdminRobotGameMatchResponse = (match: DbMatchWithParticipants):
     scheduledTime: match.scheduled_time,
     participants: match.participants.map(
       (participant): MatchParticipant => ({
+        id: participant.id,
         teamId: participant.team_id,
         tableId: participant.table_id,
         matchId: participant.match_id
