@@ -17,7 +17,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
           startTime
           status
           participants {
-            matchId
+            id
             team {
               id
               name

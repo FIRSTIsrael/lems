@@ -13,6 +13,7 @@ export const GET_MATCH_PREVIEW_DATA: TypedDocumentNode<MatchPreviewData, MatchPr
           round
           number
           participants {
+            id
             team {
               id
               name
