@@ -3,6 +3,7 @@ export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
 export type ScoresheetStatus = 'empty' | 'draft' | 'completed' | 'gp' | 'submitted';
 
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
     name: string;

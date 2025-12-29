@@ -91,6 +91,7 @@ export type SubscriptionResult = {
 
 // Layout query types
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
   } | null;
