@@ -9,6 +9,7 @@ export type AudienceDisplayScreen =
   | 'awards';
 
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
     name: string;
