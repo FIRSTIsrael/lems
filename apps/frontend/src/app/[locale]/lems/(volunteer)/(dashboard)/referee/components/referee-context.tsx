@@ -95,7 +95,7 @@ export function RefereeProvider({ data, children }: RefereeProviderProps) {
 
     for (const match of completedMatchesWithPresence) {
       const participant = match.participants.find(p => p.table.id === tableId && p.team);
-      if (!participant?.team || !participant.team.arrived) continue;
+      if (!participant?.team || !participant.team.arrived || !participant.present) continue;
 
       const scoresheet = participant.scoresheet;
       if (scoresheet && scoresheet.status !== 'submitted' && !scoresheet.escalated) {
