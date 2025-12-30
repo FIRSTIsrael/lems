@@ -25,6 +25,7 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
               affiliation
               city
               arrived
+              slug
             }
             table {
               id

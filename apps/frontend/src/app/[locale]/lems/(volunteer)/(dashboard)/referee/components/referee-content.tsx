@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import { Stack } from '@mui/material';
 import {
   useReferee,
@@ -14,16 +12,7 @@ import {
 
 // Content component that uses the referee context
 export const RefereeContent = () => {
-  const router = useRouter();
   const { activeMatch, loadedMatch } = useReferee();
-
-  // Auto-navigate to scoresheet when match completes
-  useEffect(() => {
-    if (activeMatch && activeMatch.status === 'completed') {
-      // Navigate to scoresheet for this match
-      router.push(`/lems/scoresheet/${activeMatch.id}`);
-    }
-  }, [activeMatch, router]);
 
   // Determine what to display
   if (activeMatch && activeMatch.status === 'in-progress') {

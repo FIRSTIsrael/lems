@@ -128,7 +128,7 @@ export function createMatchCompletedSubscription(divisionId: string) {
               _match.id === match.matchId
                 ? {
                     ..._match,
-                    status: match.status as RobotGameMatchStatus
+                    status: 'completed' as RobotGameMatchStatus
                   }
                 : _match
             )
