@@ -98,6 +98,7 @@ export function RefereePrestart({ match }: RefereePrestartProps) {
             <ToggleButtonGroup
               value={participant.present ? 'present' : 'absent'}
               exclusive
+              disabled={participant.ready}
               onChange={(_, value) => {
                 if (value !== null) {
                   handleParticipantStatusChange(participant.id, 'present', value === 'present');
@@ -115,18 +116,16 @@ export function RefereePrestart({ match }: RefereePrestartProps) {
               </ToggleButton>
             </ToggleButtonGroup>
 
-            {participant.present && (
-              <Button
-                variant={participant.ready ? 'contained' : 'outlined'}
-                fullWidth
-                size="small"
-                onClick={() => {
-                  handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
-                }}
-              >
-                {participant.ready ? t('ready-confirmed') : t('mark-ready')}
-              </Button>
-            )}
+            <Button
+              variant={participant.ready ? 'contained' : 'outlined'}
+              fullWidth
+              size="small"
+              onClick={() => {
+                handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
+              }}
+            >
+              {participant.ready ? t('ready-confirmed') : t('mark-ready')}
+            </Button>
           </Paper>
         ))}
       </Box>
