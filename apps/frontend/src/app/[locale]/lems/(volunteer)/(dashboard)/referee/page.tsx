@@ -1,7 +1,6 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Container, Box } from '@mui/material';
 import { useEvent } from '../../components/event-context';

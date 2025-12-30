@@ -34,6 +34,12 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
             queued
             present
             ready
+            scoresheet {
+              id
+              slug
+              status
+              escalated
+            }
           }
         }
         currentStage

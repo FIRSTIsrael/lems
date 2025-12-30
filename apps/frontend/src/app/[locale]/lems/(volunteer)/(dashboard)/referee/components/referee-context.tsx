@@ -5,6 +5,13 @@ import { useTime } from '../../../../../../../lib/time/hooks';
 import type { RefereeMatch, RefereeFieldData } from '../graphql/types';
 import { useUser } from '../../../../components/user-context';
 
+export type RefereeDisplayState = 'scoresheet' | 'timer' | 'prestart' | 'none';
+
+interface ScoresheetRedirect {
+  teamSlug: string;
+  scoresheetSlug: string;
+}
+
 interface RefereeContextType {
   matches: RefereeMatch[];
   loadedMatch: RefereeMatch | null;
@@ -15,6 +22,8 @@ interface RefereeContextType {
   inspectionStartTime: number | null;
   setInspectionStartTime: (time: number | null) => void;
   inspectionTimeRemaining: number | undefined;
+  displayState: RefereeDisplayState;
+  scoresheetRedirect: ScoresheetRedirect | null;
 }
 
 const RefereeContext = createContext<RefereeContextType | null>(null);
@@ -72,6 +81,44 @@ export function RefereeProvider({ data, children }: RefereeProviderProps) {
 
     const next = nextIndex < sortedMatches.length ? sortedMatches[nextIndex] : null;
 
+    // Determine display state and scoresheet redirect
+    let displayState: RefereeDisplayState = 'none';
+    let scoresheetRedirect: ScoresheetRedirect | null = null;
+
+    // Check for unsubmitted scoresheets from completed matches (highest priority)
+    const completedMatchesWithPresence = sortedMatches
+      .filter(match => match.status === 'completed')
+      .filter(match => {
+        const participant = match.participants.find(p => p.table.id === tableId);
+        return participant?.present && participant?.team;
+      });
+
+    for (const match of completedMatchesWithPresence) {
+      const participant = match.participants.find(p => p.table.id === tableId && p.team);
+      if (!participant?.team) continue;
+
+      const scoresheet = participant.scoresheet;
+      if (scoresheet && scoresheet.status !== 'submitted' && !scoresheet.escalated) {
+        displayState = 'scoresheet';
+        scoresheetRedirect = {
+          teamSlug: participant.team.slug,
+          scoresheetSlug: scoresheet.slug
+        };
+        break;
+      }
+    }
+
+    // If no scoresheet redirect, determine other states
+    if (displayState !== 'scoresheet') {
+      if (activeWithTeam && activeWithTeam.status === 'in-progress') {
+        displayState = 'timer';
+      } else if (loadedWithTeam) {
+        displayState = 'prestart';
+      } else {
+        displayState = 'none';
+      }
+    }
+
     return {
       matches: sortedMatches,
       activeMatch: activeWithTeam,
@@ -81,7 +128,9 @@ export function RefereeProvider({ data, children }: RefereeProviderProps) {
       tableId,
       inspectionStartTime,
       setInspectionStartTime,
-      inspectionTimeRemaining
+      inspectionTimeRemaining,
+      displayState,
+      scoresheetRedirect
     };
   }, [
     sortedMatches,

@@ -21,6 +21,12 @@ export interface MatchParticipant {
   queued: boolean;
   present: boolean;
   ready: boolean;
+  scoresheet: {
+    id: string;
+    slug: string;
+    status: string;
+    escalated: boolean;
+  } | null;
 }
 
 export interface RefereeMatch extends Omit<RobotGameMatch, 'stage'> {

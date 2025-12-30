@@ -2,8 +2,7 @@
 
 import { Box, Paper, Typography, LinearProgress } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { useMemo, useEffect } from 'react';
+import { useMemo } from 'react';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useReferee } from './referee-context';
@@ -11,7 +10,6 @@ import { useReferee } from './referee-context';
 export const RefereeMatchTimer = () => {
   const t = useTranslations('pages.referee');
   const router = useRouter();
-
   const currentTime = useTime({ interval: 1000 });
   const { activeMatch, matchLength } = useReferee();
 
@@ -27,16 +25,6 @@ export const RefereeMatchTimer = () => {
   const targetDate = useMemo(() => {
     return new Date(currentTime.valueOf() + timeRemaining * 1000);
   }, [timeRemaining, currentTime]);
-
-  // Auto-navigate to scoresheet when match completes
-  useEffect(() => {
-    if (activeMatch && timeRemaining === 0) {
-      // Navigate to scoresheet for this match
-      router.push(
-        `/lems/team/${activeMatch.participants?.[0]?.team?.slug}/scoresheet/${activeMatch.slug}`
-      );
-    }
-  }, [timeRemaining, activeMatch, router]);
 
   return (
     <Paper
