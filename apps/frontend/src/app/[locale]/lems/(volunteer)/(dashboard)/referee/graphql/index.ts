@@ -5,11 +5,13 @@ export {
   TEAM_ARRIVED_SUBSCRIPTION,
   PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
   MATCH_LOADED_SUBSCRIPTION,
+  MATCH_ABORTED_SUBSCRIPTION,
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createTeamArrivedSubscription,
   createParticipantStatusUpdatedSubscription,
-  createMatchLoadedSubscription
+  createMatchLoadedSubscription,
+  createMatchAbortedSubscription
 } from './subscriptions';
 export { UPDATE_PARTICIPANT_STATUS } from './mutations';
 export type * from './types';

@@ -86,3 +86,7 @@ export interface MatchLoadedEvent {
   matchId: string;
   loadedAt: string;
 }
+
+export interface MatchAbortedEvent {
+  matchId: string;
+}

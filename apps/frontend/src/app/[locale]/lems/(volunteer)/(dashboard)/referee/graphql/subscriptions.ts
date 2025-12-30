@@ -72,6 +72,17 @@ export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
+export const MATCH_ABORTED_SUBSCRIPTION: TypedDocumentNode<
+  { matchAborted: import('./types').MatchAbortedEvent },
+  SubscriptionVars
+> = gql`
+  subscription MatchAborted($divisionId: String!) {
+    matchAborted(divisionId: $divisionId) {
+      matchId
+    }
+  }
+`;
+
 export function createMatchStartedSubscription(divisionId: string) {
   return {
     subscription: MATCH_STARTED_SUBSCRIPTION,
@@ -199,6 +210,36 @@ export function createMatchLoadedSubscription(divisionId: string) {
         division: {
           field: {
             loadedMatch: event.matchId
+          }
+        }
+      });
+    }
+  } as SubscriptionConfig<unknown, RefereeData, SubscriptionVars>;
+}
+
+export function createMatchAbortedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_ABORTED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: RefereeData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      const event = (data as { matchAborted: import('./types').MatchAbortedEvent }).matchAborted;
+      const match = prev.division.field.matches.find(_match => _match.id === event.matchId);
+      if (!match) return prev;
+      return merge(prev, {
+        division: {
+          field: {
+            activeMatch: null,
+            loadedMatch: match.stage === 'TEST' ? null : match.id,
+            matches: prev.division.field.matches.map(m =>
+              m.id === event.matchId
+                ? {
+                    ...m,
+                    status: 'not-started' as RobotGameMatchStatus,
+                    startTime: null
+                  }
+                : m
+            )
           }
         }
       });

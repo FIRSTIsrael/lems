@@ -15,7 +15,8 @@ import {
   createMatchCompletedSubscription,
   createTeamArrivedSubscription,
   createParticipantStatusUpdatedSubscription,
-  createMatchLoadedSubscription
+  createMatchLoadedSubscription,
+  createMatchAbortedSubscription
 } from './graphql';
 import { RefereeProvider, RefereeContent } from './components';
 
@@ -39,7 +40,8 @@ export default function RefereePage() {
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id),
-      createMatchLoadedSubscription(currentDivision.id)
+      createMatchLoadedSubscription(currentDivision.id),
+      createMatchAbortedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode, useState } from 'react';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import type { RefereeMatch, RefereeFieldData } from '../graphql/types';
+import { useUser } from '../../../../components/user-context';
 
 interface RefereeContextType {
   matches: RefereeMatch[];
@@ -24,13 +25,9 @@ interface RefereeProviderProps {
 }
 
 export function RefereeProvider({ data, children }: RefereeProviderProps) {
-  const {
-    matches,
-    matchLength,
-    loadedMatch: loadedMatchId,
-    activeMatch: activeMatchId,
-    tableId
-  } = data;
+  const { roleInfo } = useUser();
+  const tableId = String(roleInfo?.tableId);
+  const { matches, matchLength, loadedMatch: loadedMatchId, activeMatch: activeMatchId } = data;
 
   const currentTime = useTime({ interval: 1000 });
   const [inspectionStartTime, setInspectionStartTime] = useState<number | null>(null);
@@ -49,26 +46,36 @@ export function RefereeProvider({ data, children }: RefereeProviderProps) {
   }, [inspectionStartTime, currentTime, inspectionDuration]);
 
   const value = useMemo<RefereeContextType>(() => {
+    // Helper function to check if a match has a participant with a team on this table
+    const matchHasTeamOnTable = (match: RefereeMatch): boolean => {
+      const participant = match.participants.find(p => p.table.id === tableId);
+      return !!participant?.team;
+    };
+
     const active = activeMatchId
       ? sortedMatches.find(match => match.id === activeMatchId) || null
       : null;
+    // Return null if the active match doesn't have a participant on this table
+    const activeWithTeam = active && matchHasTeamOnTable(active) ? active : null;
 
     const loaded = loadedMatchId
       ? sortedMatches.find(match => match.id === loadedMatchId) || null
       : null;
+    // Return null if the loaded match doesn't have a participant on this table
+    const loadedWithTeam = loaded && matchHasTeamOnTable(loaded) ? loaded : null;
 
-    const nextIndex = active
-      ? sortedMatches.findIndex(match => match.id === active.id) + 1
-      : loaded
-        ? sortedMatches.findIndex(match => match.id === loaded.id) + 1
+    const nextIndex = activeWithTeam
+      ? sortedMatches.findIndex(match => match.id === activeWithTeam.id) + 1
+      : loadedWithTeam
+        ? sortedMatches.findIndex(match => match.id === loadedWithTeam.id) + 1
         : 0;
 
     const next = nextIndex < sortedMatches.length ? sortedMatches[nextIndex] : null;
 
     return {
       matches: sortedMatches,
-      activeMatch: active,
-      loadedMatch: loaded,
+      activeMatch: activeWithTeam,
+      loadedMatch: loadedWithTeam,
       nextMatch: next,
       matchLength,
       tableId,
