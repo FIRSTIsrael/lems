@@ -7,7 +7,7 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
       id
       field {
         divisionId
-        matches(tableId: $tableId) {
+        matches {
           id
           slug
           stage
@@ -16,9 +16,8 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
           scheduledTime
           startTime
           status
-          participants {
+          participants(tableIds: [$tableId]) {
             id
-            matchId
             team {
               id
               name

@@ -33,8 +33,6 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      status
-      completedAt
     }
   }
 `;
@@ -44,10 +42,8 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionVars
 > = gql`
   subscription TeamArrived($divisionId: String!) {
-    teamArrived(divisionId: $divisionId) {
+    teamArrivalUpdated(divisionId: $divisionId) {
       teamId
-      matchId
-      arrived
     }
   }
 `;
@@ -61,6 +57,17 @@ export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       participantId
       present
       ready
+    }
+  }
+`;
+
+export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
+  { matchLoaded: import('./types').MatchLoadedEvent },
+  SubscriptionVars
+> = gql`
+  subscription MatchLoaded($divisionId: String!) {
+    matchLoaded(divisionId: $divisionId) {
+      matchId
     }
   }
 `;
@@ -174,6 +181,24 @@ export function createParticipantStatusUpdatedSubscription(divisionId: string) {
                   : p
               )
             }))
+          }
+        }
+      });
+    }
+  } as SubscriptionConfig<unknown, RefereeData, SubscriptionVars>;
+}
+
+export function createMatchLoadedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_LOADED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: RefereeData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      const event = (data as { matchLoaded: import('./types').MatchLoadedEvent }).matchLoaded;
+      return merge(prev, {
+        division: {
+          field: {
+            loadedMatch: event.matchId
           }
         }
       });

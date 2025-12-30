@@ -81,3 +81,8 @@ export interface ParticipantStatusUpdatedEvent {
   present: string | null;
   ready: string | null;
 }
+
+export interface MatchLoadedEvent {
+  matchId: string;
+  loadedAt: string;
+}

@@ -3,10 +3,9 @@
 import { useMemo, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Container, Stack, Box } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
-import { useTime } from '../../../../../../lib/time/hooks';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
@@ -15,68 +14,10 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createTeamArrivedSubscription,
-  createParticipantStatusUpdatedSubscription
+  createParticipantStatusUpdatedSubscription,
+  createMatchLoadedSubscription
 } from './graphql';
-import {
-  RefereeProvider,
-  useReferee,
-  RefereeMatchTimer,
-  RefereePrestart,
-  RefereeSchedule,
-  RefereeNoMatch,
-  InspectionTimer
-} from './components';
-
-// Content component that uses the referee context
-function RefereeContent() {
-  const router = useRouter();
-  const { activeMatch, loadedMatch } = useReferee();
-  const currentTime = useTime({ interval: 1000 });
-
-  // Auto-navigate to scoresheet when match completes
-  useEffect(() => {
-    if (activeMatch && activeMatch.status === 'completed') {
-      // Navigate to scoresheet for this match
-      router.push(`/lems/scoresheet/${activeMatch.id}`);
-    }
-  }, [activeMatch, router]);
-
-  // Calculate elapsed seconds for active match
-  const elapsedSeconds = useMemo(() => {
-    if (!activeMatch?.startTime) return 0;
-    const startTime = new Date(activeMatch.startTime).getTime();
-    return Math.floor((currentTime.valueOf() - startTime) / 1000);
-  }, [activeMatch, currentTime]);
-
-  // Determine what to display
-  if (activeMatch && activeMatch.status === 'in-progress') {
-    return (
-      <Stack spacing={3}>
-        <RefereeMatchTimer match={activeMatch} elapsedSeconds={elapsedSeconds} />
-        <RefereeSchedule matches={[activeMatch, ...(loadedMatch ? [loadedMatch] : [])]} limit={3} />
-      </Stack>
-    );
-  }
-
-  if (loadedMatch) {
-    return (
-      <Stack spacing={3}>
-        <InspectionTimer />
-        <RefereePrestart match={loadedMatch} />
-        <RefereeSchedule matches={[loadedMatch]} limit={5} />
-      </Stack>
-    );
-  }
-
-  return (
-    <Stack spacing={3}>
-      <RefereeNoMatch />
-      <Box>
-        <RefereeSchedule matches={[]} limit={5} />
-      </Box>
-    </Stack>
-  );
-}
+import { RefereeProvider, RefereeContent } from './components';
 
 // Main page component
 export default function RefereePage() {
@@ -97,7 +38,8 @@ export default function RefereePage() {
       createTeamArrivedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
-      createParticipantStatusUpdatedSubscription(currentDivision.id)
+      createParticipantStatusUpdatedSubscription(currentDivision.id),
+      createMatchLoadedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

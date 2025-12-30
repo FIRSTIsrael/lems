@@ -5,21 +5,21 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import type { RefereeMatch } from '../graphql/types';
+import { useReferee } from './referee-context';
 
-interface RefereeMatchTimerProps {
-  match: RefereeMatch;
-  elapsedSeconds: number;
-}
-
-export function RefereeMatchTimer({ match, elapsedSeconds }: RefereeMatchTimerProps) {
+export const RefereeMatchTimer = () => {
   const t = useTranslations('pages.referee');
   const currentTime = useTime({ interval: 1000 });
+  const { activeMatch, matchLength } = useReferee();
 
-  // Assuming match length is around 150 seconds (standard FRC match)
-  const matchDuration = 150;
-  const timeRemaining = Math.max(0, matchDuration - elapsedSeconds);
-  const progress = (elapsedSeconds / matchDuration) * 100;
+  const elapsedSeconds = useMemo(() => {
+    if (!activeMatch?.startTime) return 0;
+    const startTime = new Date(activeMatch.startTime).getTime();
+    return Math.floor((currentTime.valueOf() - startTime) / 1000);
+  }, [activeMatch, currentTime]);
+
+  const timeRemaining = Math.max(0, matchLength - elapsedSeconds);
+  const progress = (elapsedSeconds / matchLength) * 100;
 
   const targetDate = useMemo(() => {
     return new Date(currentTime.valueOf() + timeRemaining * 1000);
@@ -58,8 +58,8 @@ export function RefereeMatchTimer({ match, elapsedSeconds }: RefereeMatchTimerPr
       />
 
       <Typography variant="caption" sx={{ mt: 2, display: 'block', opacity: 0.8 }}>
-        {t('match-slug')}: {match.slug}
+        {t('match-slug')}: {activeMatch?.slug}
       </Typography>
     </Paper>
   );
-}
+};
