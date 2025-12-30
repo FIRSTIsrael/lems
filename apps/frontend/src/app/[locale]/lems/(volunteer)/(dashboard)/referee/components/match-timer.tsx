@@ -9,7 +9,6 @@ import { useReferee } from './referee-context';
 
 export const RefereeMatchTimer = () => {
   const t = useTranslations('pages.referee');
-  const router = useRouter();
   const currentTime = useTime({ interval: 1000 });
   const { activeMatch, matchLength } = useReferee();
 

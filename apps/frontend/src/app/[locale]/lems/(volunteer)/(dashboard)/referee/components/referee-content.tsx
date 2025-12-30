@@ -15,7 +15,7 @@ import {
 // Content component that uses the referee context
 export const RefereeContent = () => {
   const router = useRouter();
-  const { displayState, scoresheetRedirect, activeMatch, loadedMatch } = useReferee();
+  const { displayState, scoresheetRedirect, loadedMatch } = useReferee();
 
   // Redirect to scoresheet if needed
   useEffect(() => {

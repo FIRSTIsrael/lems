@@ -48,13 +48,14 @@ export default function ScoresheetPage() {
   // If we are a referee and this scoresheet is submitted (or escalated)
   // We need to redirect back to the homepage since we are not supposed to be here
   useEffect(() => {
+    console.log(user.role, scoresheet);
     if (user.role !== 'referee') return;
-    if (!scoresheet?.escalated || !scoresheet?.status || loading) return;
+    if (!scoresheet || loading) return;
 
     if (scoresheet.status === 'submitted' || scoresheet.escalated) {
       router.push(`/lems/${user.role}`);
     }
-  }, [router, scoresheet?.escalated, scoresheet?.status, loading, user.role]);
+  }, [router, scoresheet, loading, user.role]);
 
   if (loading || !scoresheet) {
     return (
