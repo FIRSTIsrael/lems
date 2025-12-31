@@ -519,6 +519,13 @@
       "submitting": "Submitting...",
       "error-signature-required": "A signature is required to submit the scoresheet",
       "error-failed-to-submit": "Failed to submit scoresheet",
+      "escalate": "Escalate",
+      "de-escalate": "De-escalate",
+      "reset": "Reset Scoresheet",
+      "processing": "Processing...",
+      "error-failed-to-escalate": "Failed to update escalation status",
+      "error-failed-to-reset": "Failed to reset scoresheet",
+      "confirm-reset": "Are you sure you want to reset this scoresheet? This will clear all data and cannot be undone.",
       "gp-selector": {
         "title": "Rate the team's Gracious Professionalism displayed during the match",
         "level-2": "DEVELOPING",

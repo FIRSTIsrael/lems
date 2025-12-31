@@ -519,6 +519,13 @@
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
+      "escalate": "העבר לראש השופטים",
+      "de-escalate": "בטל העברה",
+      "reset": "אפס דף ניקוד",
+      "processing": "מעבד...",
+      "error-failed-to-escalate": "העברה נכשלה",
+      "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "confirm-reset": "האם אתה בטוח שברצונך לאפס את דף הניקוד? פעולה זו תמחק את כל הנתונים ולא ניתן לבטלה.",
       "gp-selector": {
         "title": "דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט",
         "level-2": "מתפתחת",
