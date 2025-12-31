@@ -1,5 +1,5 @@
 export type GetDivisionVenueQuery = {
-  division: {
+  publicDivisionVenue: {
     id: string;
     tables: { id: string; name: string }[];
     rooms: { id: string; name: string }[];

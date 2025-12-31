@@ -6,7 +6,7 @@ export const GET_DIVISION_VENUE_QUERY: TypedDocumentNode<
   GetDivisionVenueQueryVariables
 > = gql`
   query GetDivisionVenue($id: String!) {
-    division(id: $id) {
+    publicDivisionVenue(id: $id) {
       id
       tables {
         id

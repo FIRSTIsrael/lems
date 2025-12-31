@@ -1,5 +1,7 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
+import type { GraphQLContext } from '../../apollo-server';
+import { requireAuthAndDivisionAccess } from '../../utils/auth-helpers';
 
 interface TeamEvent {
   teamId: string;
@@ -14,9 +16,12 @@ interface TeamArrivalUpdatedSubscribeArgs {
  */
 const teamArrivalUpdatedSubscribe = (
   _root: unknown,
-  { divisionId }: TeamArrivalUpdatedSubscribeArgs
+  { divisionId }: TeamArrivalUpdatedSubscribeArgs,
+  context: GraphQLContext
 ) => {
   if (!divisionId) throw new Error('divisionId is required');
+  // Require authentication and division access (any role)
+  requireAuthAndDivisionAccess(context.user, divisionId);
   const pubSub = getRedisPubSub();
   return pubSub.asyncIterator(divisionId, RedisEventTypes.TEAM_ARRIVED);
 };

@@ -3,6 +3,11 @@ import db from '../../../database';
 import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 import { toGraphQLId } from '../../utils/object-id-transformer';
 import { ScoresheetGraphQL } from '../../utils/scoresheet-builder';
+import type { GraphQLContext } from '../../apollo-server';
+import { requireAuthDivisionAndRole } from '../../utils/auth-helpers';
+
+// Allowed roles for accessing scoresheet data
+const SCORESHEET_ALLOWED_ROLES = ['referee', 'head-referee'];
 
 /**
  * Resolver for Scoresheet.team field.
@@ -24,13 +29,17 @@ export const scoresheetTeamResolver: GraphQLFieldResolver<
 /**
  * Resolver for Scoresheet.data field.
  * Returns the scoresheet data if it exists.
+ * Requires user to be a referee or head-referee in the division.
  */
 export const scoresheetDataResolver: GraphQLFieldResolver<
   ScoresheetGraphQL,
-  unknown,
+  GraphQLContext,
   unknown,
   ScoresheetGraphQL['data'] | null
-> = (scoresheet: ScoresheetGraphQL) => {
+> = (scoresheet: ScoresheetGraphQL, _args: unknown, context: GraphQLContext) => {
+  // Check authentication, division access, and role permissions
+  requireAuthDivisionAndRole(context.user, scoresheet.divisionId, SCORESHEET_ALLOWED_ROLES);
+
   return scoresheet.data || null;
 };
 

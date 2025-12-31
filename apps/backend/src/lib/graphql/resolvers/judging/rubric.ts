@@ -4,6 +4,11 @@ import db from '../../../database';
 import { toGraphQLId } from '../../utils/object-id-transformer';
 import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 import { RubricGraphQL } from '../../utils/rubric-builder';
+import type { GraphQLContext } from '../../apollo-server';
+import { requireAuthDivisionAndRole } from '../../utils/auth-helpers';
+
+// Allowed roles for accessing rubric data
+const RUBRIC_ALLOWED_ROLES = ['judge', 'lead-judge', 'judge-advisor'];
 
 /**
  * Resolver for Rubric.team field.
@@ -25,13 +30,17 @@ export const rubricTeamResolver: GraphQLFieldResolver<
 /**
  * Resolver for Rubric.data field.
  * Returns the rubric data if it exists.
+ * Requires user to be a judge, lead-judge, or judge-advisor in the division.
  */
 export const rubricDataResolver: GraphQLFieldResolver<
   RubricGraphQL,
-  unknown,
+  GraphQLContext,
   unknown,
   RubricGraphQL['data'] | null
-> = (rubric: RubricGraphQL) => {
+> = (rubric: RubricGraphQL, _args: unknown, context: GraphQLContext) => {
+  // Check authentication, division access, and role permissions
+  requireAuthDivisionAndRole(context.user, rubric.divisionId, RUBRIC_ALLOWED_ROLES);
+
   return rubric.data || null;
 };
 
