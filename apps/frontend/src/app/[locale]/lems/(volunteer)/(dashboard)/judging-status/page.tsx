@@ -49,13 +49,13 @@ export default function JudgingStatusPage() {
   const currentSessionNumber = useMemo(() => {
     const inProgressSession = sessions.find(s => s.status === 'in-progress');
     if (inProgressSession) return inProgressSession.number;
-    
+
     // If no in-progress, find the lowest not-started session
     const notStartedSessions = sessions.filter(s => s.status === 'not-started');
     if (notStartedSessions.length > 0) {
       return Math.min(...notStartedSessions.map(s => s.number));
     }
-    
+
     return 0;
   }, [sessions]);
 
@@ -83,19 +83,19 @@ export default function JudgingStatusPage() {
 
   const teamsOnField = useMemo(() => {
     const teamIds = new Set<string>();
-    
+
     if (activeMatch) {
       activeMatch.participants.forEach(p => {
         if (p.team) teamIds.add(p.team.id);
       });
     }
-    
+
     if (loadedMatch) {
       loadedMatch.participants.forEach(p => {
         if (p.team) teamIds.add(p.team.id);
       });
     }
-    
+
     // Also include teams in called matches that haven't started
     matches
       .filter(m => m.called && m.status === 'not-started')
@@ -104,7 +104,7 @@ export default function JudgingStatusPage() {
           if (p.team) teamIds.add(p.team.id);
         });
       });
-    
+
     return teamIds;
   }, [activeMatch, loadedMatch, matches]);
 

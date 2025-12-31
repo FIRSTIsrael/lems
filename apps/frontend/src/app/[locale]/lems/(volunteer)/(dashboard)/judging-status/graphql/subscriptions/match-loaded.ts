@@ -9,14 +9,13 @@ interface SubscriptionData {
   };
 }
 
-export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> =
-  gql`
-    subscription MatchLoaded($divisionId: String!) {
-      matchLoaded(divisionId: $divisionId) {
-        matchId
-      }
+export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> = gql`
+  subscription MatchLoaded($divisionId: String!) {
+    matchLoaded(divisionId: $divisionId) {
+      matchId
     }
-  `;
+  }
+`;
 
 export function createMatchLoadedSubscription(
   divisionId: string

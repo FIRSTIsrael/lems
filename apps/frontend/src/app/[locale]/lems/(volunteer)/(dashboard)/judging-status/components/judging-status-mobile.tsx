@@ -100,11 +100,7 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
     );
   }
 
-  const renderSessionCard = (
-    session: JudgingSession,
-    room: Room,
-    isCurrentRound: boolean
-  ) => {
+  const renderSessionCard = (session: JudgingSession, room: Room, isCurrentRound: boolean) => {
     const team = session.team;
     const isTeamOnField = team ? teamsOnField.has(team.id) : false;
 
