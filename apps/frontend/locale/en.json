@@ -169,7 +169,8 @@
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
-        "event-agenda": "Event Agenda"
+        "event-agenda": "Event Agenda",
+        "field-timer": "Field Timer"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -219,6 +220,19 @@
           "judging": "Judging",
           "field": "Field"
         }
+      },
+      "field-timer": {
+        "page-title": "Field Timer",
+        "no-active-match": "No Active Match",
+        "loading": "Loading match data...",
+        "error-loading": "Failed to load field data. Please try again.",
+        "test-match": "Test Match",
+        "stages": {
+          "PRACTICE": "Practice",
+          "RANKING": "Ranking",
+          "TEST": "Test"
+        },
+        "match-info": "{stage} Round #{round} Match #{number}"
       }
     },
     "rubric": {

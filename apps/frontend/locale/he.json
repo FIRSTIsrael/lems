@@ -169,7 +169,8 @@
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
-        "event-agenda": "לו״ז אירוע"
+        "event-agenda": "לו״ז אירוע",
+        "field-timer": "שעון זמן מגרש"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,8 +219,19 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
-        }
-      }
+        }      },
+      "field-timer": {
+        "page-title": "שעון זמן מגרש",
+        "no-active-match": "אין מקצה פעיל",
+        "loading": "טוען נתוני מקצה...",
+        "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
+        "test-match": "מקצה בדיקה",
+        "stages": {
+          "PRACTICE": "אימון",
+          "RANKING": "דירוג",
+          "TEST": "בדיקה"
+        },
+        "match-info": "מקצה {stage} סיבוב #{round} מקצה #{number}"      }
     },
     "rubric": {
       "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
