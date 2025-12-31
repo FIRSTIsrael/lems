@@ -33,15 +33,11 @@ export default function FieldTimerPage() {
     [currentDivision.id]
   );
 
-  const {
-    data,
-    loading,
-    error
-  } = usePageData(
+  const { data, loading, error } = usePageData(
     GET_ACTIVE_MATCH_DATA,
-    { 
+    {
       divisionId: currentDivision.id,
-      activeMatchId: null 
+      activeMatchId: null
     },
     parseActiveMatchData,
     subscriptions
@@ -139,10 +135,7 @@ export default function FieldTimerPage() {
 
   return (
     <Container maxWidth="xl" disableGutters>
-      <ResponsiveComponent
-        desktop={renderContent(true)}
-        mobile={renderContent(false)}
-      />
+      <ResponsiveComponent desktop={renderContent(true)} mobile={renderContent(false)} />
     </Container>
   );
 }

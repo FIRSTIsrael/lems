@@ -1,11 +1,7 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
-import type {
-  QueryData,
-  MatchAbortedSubscriptionData,
-  SubscriptionVars
-} from '../types';
+import type { QueryData, MatchAbortedSubscriptionData, SubscriptionVars } from '../types';
 
 export const MATCH_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   MatchAbortedSubscriptionData,
