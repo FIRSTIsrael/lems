@@ -13,17 +13,11 @@ import {
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import type { RefereeMatch } from '../graphql/types';
+import { useReferee } from './referee-context';
 
-interface RefereeScheduleProps {
-  matches: RefereeMatch[];
-  limit?: number;
-}
-
-export function RefereeSchedule({ matches, limit = 5 }: RefereeScheduleProps) {
+export function RefereeSchedule() {
   const t = useTranslations('pages.referee');
-
-  const upcomingMatches = matches.filter(m => m.status === 'not-started').slice(0, limit);
+  const { upcomingMatches } = useReferee();
 
   if (upcomingMatches.length === 0) {
     return (

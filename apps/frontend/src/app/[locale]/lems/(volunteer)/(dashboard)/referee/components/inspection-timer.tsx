@@ -5,21 +5,19 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import { useReferee } from './referee-context';
 
-export function InspectionTimer() {
+interface InspectionTimerProps {
+  timeRemaining: number | undefined;
+}
+
+export function InspectionTimer({ timeRemaining }: InspectionTimerProps) {
   const t = useTranslations('pages.referee');
-  const { inspectionStartTime, inspectionTimeRemaining } = useReferee();
   const currentTime = useTime({ interval: 1000 });
 
   const targetDate = useMemo(() => {
-    if (!inspectionTimeRemaining) return new Date();
-    return new Date(currentTime.valueOf() + inspectionTimeRemaining * 1000);
-  }, [inspectionTimeRemaining, currentTime]);
-
-  if (!inspectionStartTime) {
-    return null;
-  }
+    if (!timeRemaining) return new Date();
+    return new Date(currentTime.valueOf() + timeRemaining * 1000);
+  }, [timeRemaining, currentTime]);
 
   return (
     <Paper

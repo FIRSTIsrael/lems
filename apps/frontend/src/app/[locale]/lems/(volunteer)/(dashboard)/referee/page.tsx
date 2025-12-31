@@ -19,13 +19,11 @@ import {
 } from './graphql';
 import { RefereeProvider, RefereeContent } from './components';
 
-// Main page component
 export default function RefereePage() {
   const t = useTranslations('pages.referee');
   const { currentDivision } = useEvent();
   const user = useUser();
 
-  // Get referee's assigned table from roleInfo
   const tableId = useMemo(() => {
     if (user.role === 'referee' && user.roleInfo?.tableId) {
       return user.roleInfo.tableId as string;
