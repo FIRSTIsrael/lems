@@ -19,7 +19,13 @@ import {
   audienceDisplaySettingUpdatedResolver,
   audienceDisplaySwitchedResolver
 } from './audience-display';
-import { deliberationUpdatedResolver, deliberationStatusChangedResolver } from './deliberations';
+import {
+  deliberationUpdatedResolver,
+  deliberationStatusChangedResolver,
+  finalDeliberationUpdatedResolver,
+  finalDeliberationStatusChangedResolver,
+  finalDeliberationStageChangedResolver
+} from './deliberations';
 
 /**
  * GraphQL Subscription resolvers
@@ -43,5 +49,8 @@ export const subscriptionResolvers = {
   scoresheetUpdated: scoresheetUpdatedResolver,
   scoresheetStatusChanged: scoresheetStatusChangedResolver,
   deliberationUpdated: deliberationUpdatedResolver,
-  deliberationStatusChanged: deliberationStatusChangedResolver
+  deliberationStatusChanged: deliberationStatusChangedResolver,
+  finalDeliberationUpdated: finalDeliberationUpdatedResolver,
+  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver,
+  finalDeliberationStageChanged: finalDeliberationStageChangedResolver
 };

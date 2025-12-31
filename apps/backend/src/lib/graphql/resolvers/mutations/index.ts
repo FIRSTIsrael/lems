@@ -19,7 +19,15 @@ import {
   switchActiveDisplayResolver,
   updateAudienceDisplaySettingResolver
 } from './audience-display';
-import { startDeliberationResolver, updateDeliberationPicklistResolver } from './deliberations';
+import {
+  startDeliberationResolver,
+  updateDeliberationPicklistResolver,
+  startFinalDeliberationResolver,
+  advanceFinalDeliberationStageResolver,
+  updateFinalDeliberationAwardsResolver,
+  updateManualEligibilityResolver,
+  completeFinalDeliberationResolver
+} from './deliberations';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -41,5 +49,10 @@ export const mutationResolvers = {
   updateScoresheetSignature: updateScoresheetSignatureResolver,
   updateScoresheetStatus: updateScoresheetStatusResolver,
   startDeliberation: startDeliberationResolver,
-  updateDeliberationPicklist: updateDeliberationPicklistResolver
+  updateDeliberationPicklist: updateDeliberationPicklistResolver,
+  startFinalDeliberation: startFinalDeliberationResolver,
+  advanceFinalDeliberationStage: advanceFinalDeliberationStageResolver,
+  updateFinalDeliberationAwards: updateFinalDeliberationAwardsResolver,
+  updateManualEligibility: updateManualEligibilityResolver,
+  completeFinalDeliberation: completeFinalDeliberationResolver
 };
