@@ -7,3 +7,5 @@ export { UPDATE_SCORESHEET_GP_MUTATION } from './gp';
 export { UPDATE_SCORESHEET_ESCALATED_MUTATION } from './escalated';
 
 export { SUBMIT_SCORESHEET_MUTATION } from './submit-signature';
+
+export { RESET_SCORESHEET_MUTATION } from './reset';

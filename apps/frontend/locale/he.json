@@ -519,6 +519,19 @@
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
+      "escalate": "העבר לשופט ראשי",
+      "de-escalate": "החזר לשופט זירה",
+      "reset": "אפס דף ניקוד",
+      "processing": "מעבד...",
+      "error-failed-to-escalate": "העברה נכשלה",
+      "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "reset-dialog": {
+        "title": "איפוס דף ניקוד",
+        "warning": "לא ניתן לבטל פעולה זו!",
+        "description": "האם אתה בטוח שברצונך לאפס את דף הניקוד? כל הנתונים יימחקו.",
+        "cancel": "ביטול",
+        "confirm": "אפס דף ניקוד"
+      },
       "gp-selector": {
         "title": "דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט",
         "level-2": "מתפתחת",
