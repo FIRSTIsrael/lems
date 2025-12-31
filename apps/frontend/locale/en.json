@@ -331,6 +331,30 @@
         "not-arrived": "Not Arrived"
       }
     },
+    "judging-status": {
+      "page-title": "Judging Status",
+      "table": {
+        "time": "Time",
+        "room": "Room {name}",
+        "current-round": "Current Round",
+        "next-round": "Next Round",
+        "started-at": "Started at {time}",
+        "ends-at": "Ends at {time}"
+      },
+      "status": {
+        "not-started": "Not Started",
+        "in-progress": "In Progress",
+        "completed": "Completed",
+        "queued": "Queued"
+      },
+      "warnings": {
+        "on-field": "Team is on the field!"
+      },
+      "empty-state": {
+        "message": "No judging sessions scheduled",
+        "no-team": "No team assigned"
+      }
+    },
     "scorekeeper": {
       "page-title": "Scorekeeper",
       "common": {
