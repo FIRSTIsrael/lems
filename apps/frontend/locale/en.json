@@ -348,7 +348,10 @@
       "no-upcoming-matches": "No upcoming matches scheduled.",
       "match": "Match",
       "scheduled-time": "Scheduled Time",
-      "teams": "Teams"
+      "teams": "Teams",
+      "round": "Round",
+      "no-show-title": "Team Did Not Arrive",
+      "no-show-description": "This team has not arrived at the event and will not participate in this match."
     },
     "scorekeeper": {
       "page-title": "Scorekeeper",

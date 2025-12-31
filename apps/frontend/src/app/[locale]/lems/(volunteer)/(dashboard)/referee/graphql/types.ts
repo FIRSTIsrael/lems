@@ -11,6 +11,8 @@ export interface MatchParticipant {
     number: string;
     affiliation: string;
     city: string;
+    region: string;
+    logoUrl: string | null;
     arrived: boolean;
     slug: string;
   } | null;

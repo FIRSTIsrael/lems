@@ -7,13 +7,18 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Button,
-  Chip
+  Chip,
+  Stack,
+  Alert
 } from '@mui/material';
+import { CheckCircle, Warning, Cancel } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
 import { useMutation } from '@apollo/client/react';
+import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useEvent } from '../../../components/event-context';
+import { TeamInfo } from '../../components/team-info';
 import { UPDATE_PARTICIPANT_STATUS } from '../graphql';
 import { useReferee } from './referee-context';
 import { InspectionTimer } from './inspection-timer';
@@ -22,6 +27,7 @@ const INSPECTION_DURATION = 5 * 60; // 5 minutes in seconds
 
 export function RefereePrestart() {
   const t = useTranslations('pages.referee');
+  const { getStage } = useMatchTranslations();
   const { currentDivision } = useEvent();
   const { loadedMatch } = useReferee();
   const [updateParticipant] = useMutation(UPDATE_PARTICIPANT_STATUS);
@@ -78,85 +84,147 @@ export function RefereePrestart() {
   return (
     <>
       <Paper
-        elevation={2}
+        elevation={3}
         sx={{
-          p: 3,
+          p: 4,
           borderRadius: 2,
-          border: '2px solid #667eea'
+          borderLeft: '6px solid',
+          borderColor: 'primary.main'
         }}
       >
-        <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
-          {t('prestart-title')} - {loadedMatch.slug}
-        </Typography>
+        <Stack spacing={3}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
+              {t('prestart-title')}
+            </Typography>
+            <Typography variant="h6" color="text.secondary">
+              {getStage(loadedMatch.stage)} #{loadedMatch.number}
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              {t('round')} {loadedMatch.round}
+            </Typography>
+          </Box>
 
-        <Box sx={{ mb: 3, display: 'flex', flexDirection: 'column', gap: 2 }}>
-          {teams.map(participant => (
-            <Paper
-              variant="outlined"
-              key={participant.team!.id}
-              sx={{
-                p: 2,
-                backgroundColor: participant.present ? '#e8f5e9' : '#fff3e0'
-              }}
-            >
-              <Box
+          <Stack spacing={3}>
+            {teams.map(participant => (
+              <Paper
+                key={participant.team!.id}
+                elevation={2}
                 sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  mb: 2
+                  p: 3,
+                  borderRadius: 2,
+                  borderLeft: '4px solid',
+                  borderColor: !participant.team!.arrived
+                    ? 'error.main'
+                    : participant.ready
+                      ? 'success.main'
+                      : participant.present
+                        ? 'primary.main'
+                        : 'warning.main',
+                  backgroundColor: !participant.team!.arrived
+                    ? 'error.50'
+                    : participant.present
+                      ? 'success.50'
+                      : 'grey.50'
                 }}
               >
-                <Box>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                    {participant.team!.number} - {participant.team!.name}
-                  </Typography>
-                  <Typography variant="caption" sx={{ color: '#666' }}>
-                    {participant.team!.affiliation} • {participant.team!.city}
-                  </Typography>
-                </Box>
-                <Chip
-                  label={participant.present ? t('present') : t('absent')}
-                  color={participant.present ? 'success' : 'warning'}
-                  variant="filled"
-                  size="small"
-                />
-              </Box>
+                <Stack spacing={3}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
+                    <TeamInfo team={participant.team!} size="lg" />
+                    <Chip
+                      icon={
+                        !participant.team!.arrived ? (
+                          <Cancel />
+                        ) : participant.ready ? (
+                          <CheckCircle />
+                        ) : participant.present ? (
+                          <CheckCircle />
+                        ) : (
+                          <Warning />
+                        )
+                      }
+                      label={
+                        !participant.team!.arrived
+                          ? t('no-show-title')
+                          : participant.ready
+                            ? t('ready-confirmed')
+                            : participant.present
+                              ? t('present')
+                              : t('absent')
+                      }
+                      color={
+                        !participant.team!.arrived
+                          ? 'error'
+                          : participant.ready
+                            ? 'success'
+                            : participant.present
+                              ? 'primary'
+                              : 'warning'
+                      }
+                      sx={{ fontSize: '1rem', py: 3, px: 2 }}
+                    />
+                  </Box>
 
-              <ToggleButtonGroup
-                value={participant.present ? 'present' : 'absent'}
-                exclusive
-                disabled={participant.ready || !participant.present}
-                onChange={(_, value) => {
-                  if (value !== null) {
-                    handleParticipantStatusChange(participant.id, 'present', value === 'present');
-                  }
-                }}
-                fullWidth
-                size="small"
-                sx={{ mb: 1 }}
-              >
-                <ToggleButton value="present" sx={{ flex: 1 }}>
-                  {t('present')}
-                </ToggleButton>
-                <ToggleButton value="absent" sx={{ flex: 1 }}>
-                  {t('absent')}
-                </ToggleButton>
-              </ToggleButtonGroup>
+                  {!participant.team!.arrived ? (
+                    <Alert severity="error" sx={{ fontSize: '1rem' }}>
+                      {t('no-show-description')}
+                    </Alert>
+                  ) : (
+                    <>
+                      <ToggleButtonGroup
+                        value={participant.present ? 'present' : 'absent'}
+                        exclusive
+                        disabled={participant.ready}
+                        onChange={(_, value) => {
+                          if (value !== null) {
+                            handleParticipantStatusChange(
+                              participant.id,
+                              'present',
+                              value === 'present'
+                            );
+                          }
+                        }}
+                        fullWidth
+                        sx={{
+                          '& .MuiToggleButton-root': {
+                            py: 2,
+                            fontSize: '1.1rem',
+                            fontWeight: 500
+                          }
+                        }}
+                      >
+                        <ToggleButton value="present">{t('present')}</ToggleButton>
+                        <ToggleButton value="absent">{t('absent')}</ToggleButton>
+                      </ToggleButtonGroup>
 
-              <Button
-                variant={participant.ready ? 'contained' : 'outlined'}
-                fullWidth
-                size="small"
-                onClick={() => {
-                  handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
-                }}
-              >
-                {participant.ready ? t('ready-confirmed') : t('mark-ready')}
-              </Button>
-            </Paper>
-          ))}
-        </Box>
+                      <Button
+                        variant={participant.ready ? 'contained' : 'outlined'}
+                        fullWidth
+                        size="large"
+                        onClick={() => {
+                          handleParticipantStatusChange(
+                            participant.id,
+                            'ready',
+                            !participant.ready
+                          );
+                        }}
+                        sx={{
+                          py: 2,
+                          fontSize: '1.1rem',
+                          fontWeight: 600
+                        }}
+                      >
+                        {participant.ready ? t('ready-confirmed') : t('mark-ready')}
+                      </Button>
+                    </>
+                  )}
+                </Stack>
+              </Paper>
+            ))}
+          </Stack>
+        </Stack>
       </Paper>
 
       {inspectionStartTime && <InspectionTimer timeRemaining={inspectionTimeRemaining} />}

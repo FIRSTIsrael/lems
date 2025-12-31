@@ -348,7 +348,10 @@
       "no-upcoming-matches": "אין משחקים מתוכננים.",
       "match": "משחק",
       "scheduled-time": "שעה מתוכננת",
-      "teams": "קבוצות"
+      "teams": "קבוצות",
+      "round": "סבב",
+      "no-show-title": "הקבוצה לא הגיעה",
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
     },
     "scorekeeper": {
       "page-title": "סקורקיפר",

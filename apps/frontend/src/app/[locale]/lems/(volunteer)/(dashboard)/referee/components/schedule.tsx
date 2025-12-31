@@ -9,20 +9,23 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Box
+  Stack
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import { useMatchTranslations } from '@lems/localization';
+import { TeamInfo } from '../../components/team-info';
 import { useReferee } from './referee-context';
 
 export function RefereeSchedule() {
   const t = useTranslations('pages.referee');
+  const { getStage } = useMatchTranslations();
   const { upcomingMatches } = useReferee();
 
   if (upcomingMatches.length === 0) {
     return (
-      <Paper sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="body2" sx={{ color: '#999' }}>
+      <Paper elevation={2} sx={{ p: 4, textAlign: 'center' }}>
+        <Typography variant="body1" sx={{ color: 'text.secondary' }}>
           {t('no-upcoming-matches')}
         </Typography>
       </Paper>
@@ -30,13 +33,15 @@ export function RefereeSchedule() {
   }
 
   return (
-    <TableContainer component={Paper}>
-      <Table size="small">
-        <TableHead sx={{ backgroundColor: '#f5f5f5' }}>
+    <TableContainer component={Paper} elevation={2}>
+      <Table>
+        <TableHead sx={{ backgroundColor: 'grey.100' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600 }}>{t('match')}</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>{t('scheduled-time')}</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>{t('teams')}</TableCell>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>{t('match')}</TableCell>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>
+              {t('scheduled-time')}
+            </TableCell>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>{t('teams')}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -45,19 +50,37 @@ export function RefereeSchedule() {
               key={match.id}
               hover
               sx={{
-                '&:last-child td': { border: 0 }
+                '&:last-child td': { border: 0 },
+                '& td': { py: 2 }
               }}
             >
-              <TableCell sx={{ fontWeight: 500 }}>{match.slug}</TableCell>
-              <TableCell>{dayjs(match.scheduledTime).format('HH:mm')}</TableCell>
               <TableCell>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {match.participants.map(p => (
-                    <Typography key={p.team?.id || 'empty'} variant="caption">
-                      {p.team?.number || '-'}
-                    </Typography>
-                  ))}
-                </Box>
+                <Stack spacing={0.25}>
+                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                    {getStage(match.stage)} #{match.number}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {t('round')} {match.round}
+                  </Typography>
+                </Stack>
+              </TableCell>
+              <TableCell>
+                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                  {dayjs(match.scheduledTime).format('HH:mm')}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                <Stack spacing={1.5}>
+                  {match.participants.map(p =>
+                    p.team ? (
+                      <TeamInfo key={p.team.id} team={p.team} size="sm" />
+                    ) : (
+                      <Typography key="empty" variant="body2" color="text.secondary">
+                        -
+                      </Typography>
+                    )
+                  )}
+                </Stack>
               </TableCell>
             </TableRow>
           ))}
