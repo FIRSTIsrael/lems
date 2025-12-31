@@ -1,11 +1,11 @@
 'use client';
 
-import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Typography, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { useRealtimePortalData } from '../../../../../lib/hooks/use-realtime-portal-data';
 import { useDivision } from '../../division-data-context';
 import { MobileScoreboard } from './mobile-scoreboard';
 import { DesktopScoreboard } from './desktop-scoreboard';
@@ -18,9 +18,8 @@ export const ScoreboardTab = () => {
 
   const division = useDivision();
 
-  const { data: scoreboard } = useSWR<ScoreboardEntry[]>(
-    `/portal/divisions/${division.id}/scoreboard`,
-    { suspense: true }
+  const { data: scoreboard } = useRealtimePortalData<ScoreboardEntry[]>(
+    `/divisions/${division.id}/scoreboard`
   );
 
   if (!scoreboard) {

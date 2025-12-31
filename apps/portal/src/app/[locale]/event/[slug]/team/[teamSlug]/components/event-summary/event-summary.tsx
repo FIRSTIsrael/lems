@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Grid, Box } from '@mui/material';
 import { TeamRobotPerformance } from '@lems/types/api/portal';
+import { useRealtimePortalData } from '../../../../../../lib/hooks/use-realtime-portal-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 import { AwardsSection } from './awards-section';
 import { PerformanceMetrics } from './performance';
@@ -15,9 +15,8 @@ export const EventSummary: React.FC = () => {
 
   const { event, team } = useTeamAtEvent();
 
-  const { data: robotPerformance } = useSWR<TeamRobotPerformance>(
-    `/portal/events/${event.slug}/teams/${team.slug}/robot-performance`,
-    { suspense: true }
+  const { data: robotPerformance } = useRealtimePortalData<TeamRobotPerformance>(
+    `/events/${event.slug}/teams/${team.slug}/robot-performance`
   );
 
   if (!robotPerformance) {

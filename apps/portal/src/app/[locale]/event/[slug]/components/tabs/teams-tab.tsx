@@ -1,6 +1,5 @@
 'use client';
 
-import useSWR from 'swr';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -19,6 +18,7 @@ import {
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { Flag } from '@lems/shared';
+import { useRealtimePortalData } from '../../../../lib/hooks/use-realtime-portal-data';
 import { useDivision } from '../division-data-context';
 
 export const TeamsTab: React.FC = () => {
@@ -29,9 +29,7 @@ export const TeamsTab: React.FC = () => {
 
   const division = useDivision();
 
-  const { data: teams } = useSWR(`/portal/divisions/${division.id}/teams`, {
-    suspense: true
-  });
+  const { data: teams } = useRealtimePortalData(`/divisions/${division.id}/teams`);
 
   if (!teams) {
     return null; // Should be handled by suspense fallback

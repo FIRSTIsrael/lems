@@ -1,10 +1,10 @@
 'use client';
 
-import useSWR from 'swr';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Paper, Box, Divider, Stack } from '@mui/material';
 import { Award } from '@lems/types/api/portal';
+import { useRealtimePortalData } from '../../../../../lib/hooks/use-realtime-portal-data';
 import { useDivision } from '../../division-data-context';
 import { AwardRow } from './award-row';
 
@@ -13,13 +13,9 @@ export const AwardsTab: React.FC = () => {
 
   const division = useDivision();
 
-  const { data: awards } = useSWR<Award[]>(`/portal/divisions/${division.id}/awards`, {
-    suspense: true
-  });
+  const { data: awards } = useRealtimePortalData<Award[]>(`/divisions/${division.id}/awards`);
 
-  const { data: teams } = useSWR(`/portal/divisions/${division.id}/teams`, {
-    suspense: true
-  });
+  const { data: teams } = useRealtimePortalData(`/divisions/${division.id}/teams`);
 
   // Group awards by name, then sort by place
   const awardsByName = useMemo(() => {

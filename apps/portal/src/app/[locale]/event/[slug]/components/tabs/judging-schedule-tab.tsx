@@ -1,6 +1,5 @@
 'use client';
 
-import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
@@ -21,6 +20,7 @@ import {
 } from '@mui/material';
 import NextLink from 'next/link';
 import { JudgingSession } from '@lems/types/api/portal';
+import { useRealtimePortalData } from '../../../../lib/hooks/use-realtime-portal-data';
 import { groupSessionsByTime } from '../utils';
 import { useDivision } from '../division-data-context';
 
@@ -35,9 +35,8 @@ export const JudgingScheduleTab = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { data: sessions } = useSWR<JudgingSession[]>(
-    `/portal/divisions/${division.id}/schedule/judging`,
-    { suspense: true }
+  const { data: sessions } = useRealtimePortalData<JudgingSession[]>(
+    `/divisions/${division.id}/schedule/judging`
   );
 
   if (!sessions) {

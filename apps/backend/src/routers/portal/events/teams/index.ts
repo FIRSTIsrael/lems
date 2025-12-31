@@ -52,9 +52,64 @@ router.get('/:teamSlug/awards', async (req: PortalTeamAtEventRequest, res: Respo
 });
 
 router.get('/:teamSlug/robot-performance', async (req: PortalTeamAtEventRequest, res: Response) => {
-  const scores = [];
-  const highestScore = 0;
-  const robotGameRank = 1;
+  const scoresheets = await db.scoresheets
+    .byDivision(req.divisionId)
+    .byTeamId(req.teamId)
+    .byStage('RANKING')
+    .getAll();
+
+  // Only consider submitted scoresheets for public display
+  const submittedScoresheets = scoresheets.filter(s => s.status === 'submitted');
+
+  // Sort by round to maintain order
+  submittedScoresheets.sort((a, b) => a.round - b.round);
+
+  // Extract scores (use null for rounds without submitted scoresheets)
+  const scores = submittedScoresheets.map(s => s.data?.score ?? null);
+  const validScores = scores.filter((s): s is number => s !== null);
+  const highestScore = validScores.length > 0 ? Math.max(...validScores) : null;
+
+  // Calculate robot game rank if there's a valid score
+  let robotGameRank: number | null = null;
+  if (highestScore !== null) {
+    // Get all teams in the division
+    const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+    const allScoresheets = await db.scoresheets
+      .byDivision(req.divisionId)
+      .byStage('RANKING')
+      .getAll();
+
+    const allSubmittedScoresheets = allScoresheets.filter(s => s.status === 'submitted');
+
+    // Calculate max score for each team
+    const teamMaxScores = teams
+      .map(team => {
+        const teamScores = allSubmittedScoresheets
+          .filter(s => s.teamId === team.id)
+          .map(s => s.data?.score ?? null)
+          .filter((s): s is number => s !== null);
+
+        return {
+          teamId: team.id,
+          maxScore: teamScores.length > 0 ? Math.max(...teamScores) : null
+        };
+      })
+      .filter(t => t.maxScore !== null)
+      .sort((a, b) => (b.maxScore as number) - (a.maxScore as number));
+
+    // Find rank (teams with same score get same rank)
+    const currentTeamIndex = teamMaxScores.findIndex(t => t.teamId === req.teamId);
+    if (currentTeamIndex !== -1) {
+      // Count how many teams have a better score
+      let rank = 1;
+      for (let i = 0; i < currentTeamIndex; i++) {
+        if (teamMaxScores[i].maxScore !== highestScore) {
+          rank = i + 1;
+        }
+      }
+      robotGameRank = rank;
+    }
+  }
 
   res.status(200).json({
     scores,

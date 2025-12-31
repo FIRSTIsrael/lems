@@ -45,26 +45,74 @@ router.get('/:divisionId/schedule/field', async (req: PortalDivisionRequest, res
   res.status(200).json(matches);
 });
 
-// TODO: Implement this properly
 router.get('/:divisionId/scoreboard', async (req: PortalDivisionRequest, res: Response) => {
   const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+  const scoresheets = await db.scoresheets.byDivision(req.divisionId).byStage('RANKING').getAll();
 
-  const scoreboard = teams.map((team, index) => ({
-    team: {
-      id: team.id,
-      name: team.name,
-      number: team.number,
-      affiliation: team.affiliation,
-      city: team.city,
-      region: team.region,
-      slug: `${team.region}-${team.number}`.toUpperCase()
-    },
-    robotGameRank: index + 1,
-    maxScore: 0,
-    scores: [0, 0, 0]
-  }));
+  // Only consider submitted scoresheets for public display
+  const submittedScoresheets = scoresheets.filter(s => s.status === 'submitted');
 
-  res.status(200).json(scoreboard);
+  // Group scoresheets by team
+  const teamScoresMap = new Map<string, { scores: (number | null)[]; maxScore: number | null }>();
+
+  for (const team of teams) {
+    const teamScoresheets = submittedScoresheets.filter(s => s.teamId === team.id);
+
+    // Sort by round to maintain order
+    teamScoresheets.sort((a, b) => a.round - b.round);
+
+    // Extract scores from each round
+    const scores = teamScoresheets.map(s => s.data?.score ?? null);
+    const validScores = scores.filter((s): s is number => s !== null);
+    const maxScore = validScores.length > 0 ? Math.max(...validScores) : null;
+
+    teamScoresMap.set(team.id, { scores, maxScore });
+  }
+
+  // Build scoreboard entries
+  const scoreboard = teams.map(team => {
+    const teamScores = teamScoresMap.get(team.id) || { scores: [], maxScore: null };
+
+    return {
+      team: {
+        id: team.id,
+        name: team.name,
+        number: team.number,
+        affiliation: team.affiliation,
+        city: team.city,
+        region: team.region,
+        slug: `${team.region}-${team.number}`.toUpperCase()
+      },
+      maxScore: teamScores.maxScore,
+      scores: teamScores.scores
+    };
+  });
+
+  // Sort by max score (descending), then by team number
+  scoreboard.sort((a, b) => {
+    if (a.maxScore === null && b.maxScore === null) return a.team.number - b.team.number;
+    if (a.maxScore === null) return 1;
+    if (b.maxScore === null) return -1;
+    if (a.maxScore !== b.maxScore) return b.maxScore - a.maxScore;
+    return a.team.number - b.team.number;
+  });
+
+  // Assign ranks (teams with same max score get same rank)
+  let currentRank = 1;
+  let previousMaxScore: number | null = null;
+  const scoreboardWithRanks = scoreboard.map((entry, index) => {
+    if (entry.maxScore !== previousMaxScore) {
+      currentRank = index + 1;
+      previousMaxScore = entry.maxScore;
+    }
+
+    return {
+      ...entry,
+      robotGameRank: entry.maxScore !== null ? currentRank : null
+    };
+  });
+
+  res.status(200).json(scoreboardWithRanks);
 });
 
 router.get('/:divisionId/awards', async (req: PortalDivisionRequest, res: Response) => {

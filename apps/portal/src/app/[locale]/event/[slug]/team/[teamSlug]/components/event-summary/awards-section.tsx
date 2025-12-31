@@ -4,15 +4,14 @@ import React from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
-import useSWR from 'swr';
+import { useRealtimePortalData } from '../../../../../../lib/hooks/use-realtime-portal-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 
 export const AwardsSection: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
-  const { data: awards, isLoading } = useSWR<Award[] | null>(
-    `/portal/events/${event.slug}/teams/${team.slug}/awards`,
-    { suspense: true, fallbackData: null }
+  const { data: awards, isLoading } = useRealtimePortalData<Award[] | null>(
+    `/events/${event.slug}/teams/${team.slug}/awards`
   );
 
   if (!awards || isLoading) {

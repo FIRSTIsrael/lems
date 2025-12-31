@@ -3,7 +3,6 @@
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import useSWR from 'swr';
 import {
   TableContainer,
   Table,
@@ -24,6 +23,7 @@ import {
 import NextLink from 'next/link';
 import { RobotGameMatch } from '@lems/types/api/portal';
 import { useMatchTranslations } from '@lems/localization';
+import { useRealtimePortalData } from '../../../../lib/hooks/use-realtime-portal-data';
 import { useDivision } from '../division-data-context';
 
 export const FieldScheduleTab: React.FC = () => {
@@ -38,9 +38,8 @@ export const FieldScheduleTab: React.FC = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { data: fieldSchedule } = useSWR<RobotGameMatch[]>(
-    `/portal/divisions/${division.id}/schedule/field`,
-    { suspense: true }
+  const { data: fieldSchedule } = useRealtimePortalData<RobotGameMatch[]>(
+    `/divisions/${division.id}/schedule/field`
   );
 
   if (!fieldSchedule) {
