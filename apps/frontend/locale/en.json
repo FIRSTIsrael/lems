@@ -166,6 +166,7 @@
     "reports": {
       "page-title": "Reports",
       "menu": {
+        "field-status": "Field Status",
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",

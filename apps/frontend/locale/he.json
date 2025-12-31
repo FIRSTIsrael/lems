@@ -166,6 +166,7 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
+        "field-status": "מצב הזירה",
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
