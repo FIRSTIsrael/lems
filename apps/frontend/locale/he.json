@@ -330,8 +330,35 @@
       "team-info-cell": {
         "not-arrived": "לא הגיעה"
       }
-    },
-    "scorekeeper": {
+    },    "mc": {
+      "page-title": "ממשק מנחה",
+      "current-match": {
+        "no-match": "אין מקצה טעון",
+        "no-match-description": "ממתינים לשומר הזמן לטעון את המקצה הבא",
+        "round": "סיבוב",
+        "no-team": "אין קבוצה משובצת",
+        "not-arrived": "לא הגיעה",
+        "status": {
+          "loaded": "טעון",
+          "in-progress": "מתנהל"
+        }
+      },
+      "schedule": {
+        "title": "מקצים קרובים",
+        "match-number": "מקצה",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "round": "סיבוב",
+        "no-matches": "אין מקצים קרובים",
+        "no-team": "אין קבוצה",
+        "not-arrived": "לא הגיעה"
+      },
+      "awards": {
+        "title": "טקס פרסים",
+        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב."
+      }
+    },    "scorekeeper": {
       "page-title": "סקורקיפר",
       "common": {
         "loading": "טוען...",
