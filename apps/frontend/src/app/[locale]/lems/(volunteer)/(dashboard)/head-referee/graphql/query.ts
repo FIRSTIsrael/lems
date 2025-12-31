@@ -52,10 +52,10 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
             }
           }
         }
-        tables {
-          id
-          name
-        }
+      }
+      tables {
+        id
+        name
       }
     }
   }
