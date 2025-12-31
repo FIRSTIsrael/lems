@@ -579,7 +579,35 @@
       "points-unit": "pts."
     },
     "deliberation": {
-      "error-not-authorized": "Unauthorized to access deliberation"
+      "error-not-authorized": "Unauthorized to access deliberation",
+      "compare": {
+        "title": "Compare Teams",
+        "no-teams-selected": "No Teams Selected",
+        "no-teams-description": "Select teams from the deliberation page to compare their performance.",
+        "back-to-deliberation": "Back to Deliberation",
+        "error-loading-teams": "Failed to load team data. Please try again.",
+        "teams-not-found": "The selected teams could not be found.",
+        "field-comparison": "Field Comparison",
+        "wins": "Wins",
+        "ties": "Ties",
+        "losses": "Losses",
+        "rubric-scores": "Rubric Scores",
+        "no-rubric-data": "No rubric data available",
+        "exceeding-notes": "Exceeding Notes",
+        "nominations": "Award Nominations",
+        "gp-scores": "Gracious Professionalism",
+        "round": "Round",
+        "feedback": "Feedback",
+        "great-job": "Great Job",
+        "think-about": "Think About",
+        "awards": {
+          "breakthrough": "Breakthrough Award",
+          "rising-all-star": "Rising All-Star",
+          "judges-award": "Judges Award",
+          "motivate": "Motivate Award",
+          "impact": "Impact Award"
+        }
+      }
     }
   }
 }

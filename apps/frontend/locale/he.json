@@ -579,7 +579,35 @@
       "points-unit": "נק'"
     },
     "deliberation": {
-      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה"
+      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה",
+      "compare": {
+        "title": "השוואת קבוצות",
+        "no-teams-selected": "לא נבחרו קבוצות",
+        "no-teams-description": "בחרו קבוצות מדף הדיונים כדי להשוות את הביצועים שלהן.",
+        "back-to-deliberation": "חזרה לדיונים",
+        "error-loading-teams": "שגיאה בטעינת נתוני הקבוצות. אנא נסו שוב.",
+        "teams-not-found": "הקבוצות שנבחרו לא נמצאו.",
+        "field-comparison": "השוואת שדות",
+        "wins": "ניצחונות",
+        "ties": "תיקו",
+        "losses": "הפסדים",
+        "rubric-scores": "ניקוד רוברייקות",
+        "no-rubric-data": "אין נתוני רוברייקה זמינים",
+        "exceeding-notes": "הערות מעבר לציפייה",
+        "nominations": "מועמדויות לפרסים",
+        "gp-scores": "התנהגות מקצועית",
+        "round": "סבב",
+        "feedback": "משוב",
+        "great-job": "לשימור",
+        "think-about": "לשיפור",
+        "awards": {
+          "breakthrough": "פרס פריצת דרך",
+          "rising-all-star": "כוכב עולה",
+          "judges-award": "פרס השופטים",
+          "motivate": "פרס המניע",
+          "impact": "פרס ההשפעה"
+        }
+      }
     }
   }
 }
