@@ -14,15 +14,14 @@ interface SubscriptionData {
   };
 }
 
-export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> =
-  gql`
-    subscription TeamArrived($divisionId: String!) {
-      teamArrived(divisionId: $divisionId) {
-        teamId
-        arrived
-      }
+export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> = gql`
+  subscription TeamArrived($divisionId: String!) {
+    teamArrived(divisionId: $divisionId) {
+      teamId
+      arrived
     }
-  `;
+  }
+`;
 
 const teamArrivedReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
   if (!data) return prev;
@@ -31,9 +30,7 @@ const teamArrivedReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { 
 
   return merge(prev, {
     division: {
-      teams: prev.division.teams.map(team =>
-        team.id === teamId ? merge(team, { arrived }) : team
-      )
+      teams: prev.division.teams.map(team => (team.id === teamId ? merge(team, { arrived }) : team))
     }
   });
 };

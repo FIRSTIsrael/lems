@@ -39,8 +39,10 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({
   const sortedMatches = [...matches].sort((a, b) => a.number - b.number);
 
   // Insert agenda events between matches based on scheduled time
-  const rowsWithEvents: Array<{ type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }> = [];
-  
+  const rowsWithEvents: Array<
+    { type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }
+  > = [];
+
   sortedMatches.forEach((match, index) => {
     // Check for agenda events that should appear before this match
     const matchTime = dayjs(match.scheduledTime);
@@ -48,12 +50,9 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({
 
     agendaEvents.forEach(event => {
       const eventStart = dayjs(event.start);
-      
+
       // Insert event if it falls between previous match and current match
-      if (
-        eventStart.isAfter(previousMatchTime || dayjs(0)) &&
-        eventStart.isBefore(matchTime)
-      ) {
+      if (eventStart.isAfter(previousMatchTime || dayjs(0)) && eventStart.isBefore(matchTime)) {
         rowsWithEvents.push({ type: 'event', data: event });
       }
     });
@@ -95,12 +94,7 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({
         <TableBody>
           {rowsWithEvents.map((row, index) =>
             row.type === 'match' ? (
-              <MatchRow
-                key={row.data.id}
-                match={row.data}
-                tables={tables}
-                teams={teams}
-              />
+              <MatchRow key={row.data.id} match={row.data} tables={tables} teams={teams} />
             ) : (
               <AgendaEventRow
                 key={`event-${row.data.id}-${index}`}

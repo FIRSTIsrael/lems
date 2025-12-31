@@ -14,17 +14,15 @@ interface SubscriptionData {
   };
 }
 
-export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
-  SubscriptionData,
-  SubscriptionVars
-> = gql`
-  subscription MatchCompleted($divisionId: String!) {
-    matchCompleted(divisionId: $divisionId) {
-      matchId
-      autoLoadedMatchId
+export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> =
+  gql`
+    subscription MatchCompleted($divisionId: String!) {
+      matchCompleted(divisionId: $divisionId) {
+        matchId
+        autoLoadedMatchId
+      }
     }
-  }
-`;
+  `;
 
 const matchCompletedReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
   if (!data) return prev;
