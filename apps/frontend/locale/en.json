@@ -525,7 +525,13 @@
       "processing": "Processing...",
       "error-failed-to-escalate": "Failed to update escalation status",
       "error-failed-to-reset": "Failed to reset scoresheet",
-      "confirm-reset": "Are you sure you want to reset this scoresheet? This will clear all data and cannot be undone.",
+      "reset-dialog": {
+        "title": "Reset Scoresheet",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this scoresheet? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Scoresheet"
+      },
       "gp-selector": {
         "title": "Rate the team's Gracious Professionalism displayed during the match",
         "level-2": "DEVELOPING",

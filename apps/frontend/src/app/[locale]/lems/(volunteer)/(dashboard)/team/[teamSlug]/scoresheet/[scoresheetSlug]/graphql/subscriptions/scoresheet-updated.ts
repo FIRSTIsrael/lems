@@ -88,9 +88,11 @@ const scoresheetUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> =
           }
 
           if (event.__typename === 'ScoresheetResetEvent') {
-            return merge(scoresheet, {
-              status: event.status
-            });
+            return {
+              ...scoresheet,
+              status: event.status,
+              data: getEmptyScoresheet()
+            };
           }
 
           return scoresheet;

@@ -8,7 +8,6 @@ import ScoresheetMission from './scoresheet-mission';
 import { ScoresheetIncompleteAlert } from './scoresheet-alert';
 import { ScoreFloater } from './score-floater';
 import { ScoresheetSubmission } from './scoresheet-submission';
-import { ScoresheetActions } from './scoresheet-actions';
 
 export const ScoresheetForm: React.FC = () => {
   const { validation } = useScoresheet();
@@ -39,8 +38,6 @@ export const ScoresheetForm: React.FC = () => {
       <ScoresheetIncompleteAlert validation={validation} />
 
       <ScoresheetSubmission />
-
-      <ScoresheetActions />
 
       <ScoreFloater score={validation.score} />
     </Stack>
