@@ -437,6 +437,72 @@
         "teams": "קבוצות"
       }
     },
+    "head-referee": {
+      "page-title": "לוח בקרה - שופט ראשי",
+      "escalation-alert": "דף ניקוד הועבר לטיפולך!",
+      "points": "נקודות",
+      "round": "סבב",
+      "match-number": "M{number}",
+      "stage": {
+        "practice": "אימון",
+        "ranking": "דירוג"
+      },
+      "escalated-count": "{count} הועברו",
+      "escalated-panel": {
+        "title": "{count, plural, one {דף ניקוד אחד הועבר לטיפולך} other {# דפי ניקוד הועברו לטיפולך}}",
+        "view-scoresheet": "צפה בדף ניקוד"
+      },
+      "filters": {
+        "search-label": "חיפוש קבוצות",
+        "search-placeholder": "מספר או שם קבוצה",
+        "all-statuses": "כל הסטטוסים",
+        "statuses-selected": "{count} סטטוסים נבחרו",
+        "escalated-only": "הועברו בלבד"
+      },
+      "scoresheet-status": {
+        "empty": "ריק",
+        "draft": "בתהליך",
+        "completed": "הושלם",
+        "gp": "ממתין ל-GP",
+        "submitted": "נשלח"
+      },
+      "scoresheet-button": {
+        "team-not-registered": "הקבוצה לא הגיעה",
+        "escalated-tooltip": "הועבר לטיפול - דורש עיון שופט ראשי"
+      },
+      "legend": {
+        "title": "מקרא סטטוסי דף ניקוד",
+        "aria-label": "הצג מקרא סטטוסים",
+        "empty": {
+          "label": "ריק",
+          "description": "לא הוזן מידע בדף הניקוד"
+        },
+        "draft": {
+          "label": "בתהליך",
+          "description": "דף הניקוד בתהליך מילוי"
+        },
+        "completed": {
+          "label": "הושלם",
+          "description": "ניקוד המשימות הושלם"
+        },
+        "gp": {
+          "label": "ממתין ל-GP",
+          "description": "ממתין לדירוג Gracious Professionalism"
+        },
+        "submitted": {
+          "label": "נשלח",
+          "description": "דף הניקוד אושר ונשלח"
+        },
+        "escalated": {
+          "label": "הועבר לטיפול",
+          "description": "דורש עיון שופט ראשי - גובר על סטטוסים אחרים"
+        }
+      },
+      "table": {
+        "match": "מקצה",
+        "scheduled-time": "שעה"
+      }
+    },
     "audience-display": {
       "match-preview": {
         "round": "סבב",

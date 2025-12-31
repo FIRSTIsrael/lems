@@ -437,6 +437,72 @@
         "teams": "Teams"
       }
     },
+    "head-referee": {
+      "page-title": "Head Referee Dashboard",
+      "escalation-alert": "A scoresheet has been escalated to you for review",
+      "points": "points",
+      "round": "Round",
+      "match-number": "M{number}",
+      "stage": {
+        "practice": "Practice",
+        "ranking": "Ranking"
+      },
+      "escalated-count": "{count} escalated",
+      "escalated-panel": {
+        "title": "{count, plural, one {# Escalated Scoresheet} other {# Escalated Scoresheets}}",
+        "view-scoresheet": "View Scoresheet"
+      },
+      "filters": {
+        "search-label": "Search Teams",
+        "search-placeholder": "Team number or name",
+        "all-statuses": "All Statuses",
+        "statuses-selected": "{count} statuses selected",
+        "escalated-only": "Escalated Only"
+      },
+      "scoresheet-status": {
+        "empty": "Empty",
+        "draft": "In Progress",
+        "completed": "Completed",
+        "gp": "Awaiting GP",
+        "submitted": "Submitted"
+      },
+      "scoresheet-button": {
+        "team-not-registered": "Team has not arrived",
+        "escalated-tooltip": "Escalated - Requires head referee review"
+      },
+      "legend": {
+        "title": "Scoresheet Status Legend",
+        "aria-label": "Show scoresheet status legend",
+        "empty": {
+          "label": "Empty",
+          "description": "No scoresheet data has been entered"
+        },
+        "draft": {
+          "label": "In Progress",
+          "description": "Scoresheet is being filled out"
+        },
+        "completed": {
+          "label": "Completed",
+          "description": "Mission scoring is complete"
+        },
+        "gp": {
+          "label": "Awaiting GP",
+          "description": "Waiting for Gracious Professionalism rating"
+        },
+        "submitted": {
+          "label": "Submitted",
+          "description": "Scoresheet has been finalized and submitted"
+        },
+        "escalated": {
+          "label": "Escalated",
+          "description": "Requires head referee review - overrides other statuses"
+        }
+      },
+      "table": {
+        "match": "Match",
+        "scheduled-time": "Time"
+      }
+    },
     "audience-display": {
       "match-preview": {
         "round": "Round",
