@@ -109,20 +109,14 @@ function validateFinalAwards(deliberation: { awards: FinalDeliberationAwards }):
 
   // Validate champions (at least 1st place)
   if (!awards.champions || !awards.champions['1']) {
-    throw new MutationError(
-      MutationErrorCode.FORBIDDEN,
-      'Champions 1st place must be assigned'
-    );
+    throw new MutationError(MutationErrorCode.FORBIDDEN, 'Champions 1st place must be assigned');
   }
 
   // Validate core awards
   const requiredCoreAwards = ['innovation-project', 'robot-design', 'core-values'];
   for (const awardName of requiredCoreAwards) {
     if (!awards[awardName] || awards[awardName].length === 0) {
-      throw new MutationError(
-        MutationErrorCode.FORBIDDEN,
-        `${awardName} award must be assigned`
-      );
+      throw new MutationError(MutationErrorCode.FORBIDDEN, `${awardName} award must be assigned`);
     }
   }
 

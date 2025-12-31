@@ -16,18 +16,18 @@ export function checkChampionsEligibility(
   advancementPercent: number = ADVANCEMENT_PERCENTAGE
 ): boolean {
   const advancingCount = Math.round(teams.length * advancementPercent);
-  
+
   const eligibleTeams = teams
     .filter(t => !disqualifiedTeamIds.includes(t.id))
     .sort((a, b) => {
       // Primary sort: total rank
       let diff = a.totalRank - b.totalRank;
       if (diff !== 0) return diff;
-      
+
       // Tiebreaker 1: Core Values rank
       diff = a.ranks['core-values'] - b.ranks['core-values'];
       if (diff !== 0) return diff;
-      
+
       // Tiebreaker 2: Team number (lower is better)
       return a.number - b.number;
     })
@@ -40,13 +40,10 @@ export function checkChampionsEligibility(
  * Checks if a team is eligible for the core awards stage
  * Teams are eligible if they are ranked within the picklist limit for ANY category
  */
-export function checkCoreAwardsEligibility(
-  team: DeliberationTeam,
-  picklistLimit: number
-): boolean {
+export function checkCoreAwardsEligibility(team: DeliberationTeam, picklistLimit: number): boolean {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { 'robot-game': _, ...categoryRanks } = team.ranks;
-  return Object.values(categoryRanks).some((rank) => (rank as number) <= picklistLimit);
+  return Object.values(categoryRanks).some(rank => (rank as number) <= picklistLimit);
 }
 
 /**
@@ -85,7 +82,7 @@ export function getEligibleTeams(
   availableAwards: string[] = []
 ): DeliberationTeam[] {
   const picklistLimit = getDefaultPicklistLimit(teams.length);
-  
+
   return teams.filter(team => {
     // Manually added teams are always eligible
     if (manualEligibility.includes(team.id)) {
@@ -100,13 +97,13 @@ export function getEligibleTeams(
     switch (stage) {
       case 'champions':
         return checkChampionsEligibility(team, teams, disqualifiedTeamIds, advancementPercent);
-      
+
       case 'core-awards':
         return checkCoreAwardsEligibility(team, picklistLimit);
-      
+
       case 'optional-awards':
         return checkOptionalAwardsEligibility(team, availableAwards);
-      
+
       default:
         return true; // Review stage - show all teams
     }

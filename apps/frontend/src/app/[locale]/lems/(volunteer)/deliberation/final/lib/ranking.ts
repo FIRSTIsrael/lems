@@ -24,7 +24,7 @@ export function calculateTeamRanks(
   category: JudgingCategory | 'robot-game'
 ): Map<string, number> {
   const ranksMap = new Map<string, number>();
-  
+
   // Sort teams by score (descending - highest score gets rank 1)
   const sorted = [...teams].sort((a, b) => {
     const aScore = a.scores[category] || 0;
@@ -44,9 +44,7 @@ export function calculateTeamRanks(
  * Calculates all category ranks for all teams
  * Returns a map of teamId -> ranks object
  */
-export function calculateAllRanks(
-  teams: DeliberationTeam[]
-): Map<string, TeamRanks> {
+export function calculateAllRanks(teams: DeliberationTeam[]): Map<string, TeamRanks> {
   const allRanksMap = new Map<string, TeamRanks>();
 
   // Initialize ranks for each team
@@ -60,10 +58,7 @@ export function calculateAllRanks(
   });
 
   // Calculate ranks for each category
-  const categories: Array<JudgingCategory | 'robot-game'> = [
-    ...JUDGING_CATEGORIES,
-    'robot-game'
-  ];
+  const categories: Array<JudgingCategory | 'robot-game'> = [...JUDGING_CATEGORIES, 'robot-game'];
 
   categories.forEach(category => {
     const categoryRanks = calculateTeamRanks(teams, category);
@@ -103,10 +98,7 @@ export function sortByTotalRank(teams: DeliberationTeam[]): DeliberationTeam[] {
  * Finds teams that should be flagged as anomalies
  * Anomalies are teams ranked high in a category but low overall (or vice versa)
  */
-export function findAnomalies(
-  teams: DeliberationTeam[],
-  threshold: number = 5
-): string[] {
+export function findAnomalies(teams: DeliberationTeam[], threshold: number = 5): string[] {
   const anomalies: Set<string> = new Set();
   const totalRanks = sortByTotalRank(teams).map(t => t.id);
 
@@ -116,12 +108,12 @@ export function findAnomalies(
     // Check each judging category
     JUDGING_CATEGORIES.forEach(category => {
       const categoryRank = team.ranks[category];
-      
+
       // If team is ranked high in category but low overall
       if (categoryRank <= threshold && totalRankPosition > threshold + 5) {
         anomalies.add(team.id);
       }
-      
+
       // If team is ranked low in category but high overall
       if (totalRankPosition <= threshold && categoryRank > threshold + 5) {
         anomalies.add(team.id);

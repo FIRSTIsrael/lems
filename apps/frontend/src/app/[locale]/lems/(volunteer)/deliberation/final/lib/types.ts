@@ -28,25 +28,25 @@ export interface DeliberationTeam {
   number: number;
   name: string;
   affiliation: string;
-  
+
   // Scores (normalized 0-1 or 0-100 depending on category)
   scores: TeamScores;
-  
+
   // Rankings (1 = best)
   ranks: TeamRanks;
-  
+
   // Total rank across all judging categories
   totalRank: number;
-  
+
   // Robot game specific data
   gpScores: number[];
   highestGpScore: number;
   avgGpScore: number;
   robotConsistency: number; // Relative standard deviation
-  
+
   // Optional award nominations from rubrics
   optionalAwardNominations: OptionalAwardNominations;
-  
+
   // Flags
   disqualified: boolean;
   arrived: boolean;

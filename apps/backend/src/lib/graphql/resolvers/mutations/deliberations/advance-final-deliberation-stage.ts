@@ -168,9 +168,7 @@ async function validateStageCompletion(
 /**
  * Handles advancement award creation when leaving champions stage
  */
-async function handleChampionsStageCompletion(
-  divisionId: string
-): Promise<void> {
+async function handleChampionsStageCompletion(divisionId: string): Promise<void> {
   // Get division to check if advancement is enabled
   const division = await db.divisions.byId(divisionId).get();
   if (!division) return;

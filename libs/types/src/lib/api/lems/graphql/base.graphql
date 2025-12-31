@@ -23,12 +23,19 @@ type Mutation {
   """
   Update award assignments in the final deliberation
   """
-  updateFinalDeliberationAwards(divisionId: String!, awards: String!): FinalDeliberationAwardsResult!
+  updateFinalDeliberationAwards(
+    divisionId: String!
+    awards: String!
+  ): FinalDeliberationAwardsResult!
 
   """
   Update manual eligibility for a specific stage
   """
-  updateManualEligibility(divisionId: String!, stage: String!, teamIds: [String!]!): ManualEligibilityResult!
+  updateManualEligibility(
+    divisionId: String!
+    stage: String!
+    teamIds: [String!]!
+  ): ManualEligibilityResult!
 
   """
   Complete and lock the final deliberation
@@ -89,4 +96,3 @@ type FinalDeliberationUpdatedEvent {
   awards: String
   stageData: String
 }
-
