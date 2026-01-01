@@ -235,7 +235,9 @@
           "practice": "סבב אימון",
           "ranking": "סבב דירוג",
           "test": "סבב ניסוי"
-        }
+        },
+        "not-arrived": "לא הגיעה",
+        "loading": "טוען מקצים..."
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",

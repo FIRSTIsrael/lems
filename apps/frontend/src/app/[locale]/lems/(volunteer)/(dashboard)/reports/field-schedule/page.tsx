@@ -9,23 +9,19 @@ import { PageHeader } from '../../components/page-header';
 import {
   GET_FIELD_SCHEDULE,
   parseFieldScheduleData,
-  createMatchCompletedSubscription,
-  createMatchStartedSubscription,
   createTeamArrivedSubscription
 } from './graphql';
 import { RoundSchedule } from './components/round-schedule';
 import { EmptyState } from './components/empty-state';
+import { ErrorState } from './components/error-state';
+import { LoadingState } from './components/loading-state';
 
 export default function FieldSchedulePage() {
   const t = useTranslations('pages.reports.field-schedule');
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [
-      createMatchCompletedSubscription(currentDivision.id),
-      createMatchStartedSubscription(currentDivision.id),
-      createTeamArrivedSubscription(currentDivision.id)
-    ],
+    () => [createTeamArrivedSubscription(currentDivision.id)],
     [currentDivision.id]
   );
 
@@ -36,43 +32,34 @@ export default function FieldSchedulePage() {
     subscriptions
   );
 
-  // Group matches by round (stage + round number)
-  const roundMatches = useMemo(() => {
-    if (!data) return {};
-
-    return data.matches
-      .filter(m => m.stage !== 'test')
-      .reduce(
-        (result: { [key: string]: typeof data.matches }, match) => {
-          const roundKey = `${match.stage}-${match.round}`;
-          (result[roundKey] = result[roundKey] || []).push(match);
-          return result;
-        },
-        {} as { [key: string]: typeof data.matches }
-      );
-  }, [data]);
+  const hasData = data && Object.keys(data.roundMatches).length > 0;
 
   return (
-    <Container maxWidth="lg" disableGutters>
+    <Container maxWidth="xl" disableGutters>
       <Stack spacing={{ xs: 3, sm: 4, md: 5 }}>
         <PageHeader title={t('page-title')} />
 
-        <Box sx={{ px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3, md: 4 } }}>
-          {error && (
-            <Box sx={{ textAlign: 'center', py: 4, color: 'error.main' }}>{t('error-loading')}</Box>
-          )}
+        <Box
+          sx={{
+            px: { xs: 0, sm: 1 },
+            py: { xs: 2, sm: 3, md: 4 }
+          }}
+        >
+          {loading && !error && <LoadingState />}
 
-          {!error && !loading && data && Object.keys(roundMatches).length === 0 && <EmptyState />}
+          {error && <ErrorState />}
 
-          {!error && data && Object.keys(roundMatches).length > 0 && (
+          {!error && !hasData && !loading && <EmptyState />}
+
+          {!error && !loading && hasData && (
             <Grid container spacing={2}>
-              {Object.entries(roundMatches).map(([key, matches]) => (
+              {Object.entries(data.roundMatches).map(([key, matches]) => (
                 <Grid key={key} size={{ xs: 12, xl: 6 }}>
                   <RoundSchedule
                     matches={matches}
                     tables={data.tables}
                     teams={data.teams}
-                    agendaEvents={data.agendaEvents}
+                    rows={data.roundRowsMap[key]}
                   />
                 </Grid>
               ))}

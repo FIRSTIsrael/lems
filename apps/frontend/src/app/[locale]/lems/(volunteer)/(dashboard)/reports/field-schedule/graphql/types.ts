@@ -32,7 +32,7 @@ export interface RobotGameMatchParticipant {
 export interface RobotGameMatch {
   id: string;
   slug: string;
-  stage: 'practice' | 'ranking' | 'test';
+  stage: 'PRACTICE' | 'RANKING' | 'TEST';
   round: number;
   number: number;
   scheduledTime: string;
@@ -43,10 +43,10 @@ export interface RobotGameMatch {
 
 export interface AgendaEvent {
   id: string;
-  start: string;
-  end: string;
   title: string;
-  visibility: 'public' | 'judging' | 'field';
+  startTime: string;
+  duration: number;
+  visibility: string;
 }
 
 export interface QueryVars {
@@ -58,7 +58,7 @@ export interface QueryData {
     id: string;
     teams: Team[];
     tables: RobotGameTable[];
-    agendaEvents: AgendaEvent[];
+    agenda: AgendaEvent[];
     field: {
       matches: RobotGameMatch[];
     };

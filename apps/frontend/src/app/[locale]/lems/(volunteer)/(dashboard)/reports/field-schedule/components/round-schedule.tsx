@@ -6,10 +6,11 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Typography
+  Typography,
+  useMediaQuery,
+  useTheme
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
 import type { AgendaEvent, RobotGameMatch, RobotGameTable, Team } from '../graphql/types';
 import { MatchRow } from './match-row';
 import { AgendaEventRow } from './agenda-event-row';
@@ -18,16 +19,13 @@ interface RoundScheduleProps {
   matches: RobotGameMatch[];
   tables: RobotGameTable[];
   teams: Team[];
-  agendaEvents: AgendaEvent[];
+  rows: Array<{ type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }>;
 }
 
-export const RoundSchedule: React.FC<RoundScheduleProps> = ({
-  matches,
-  tables,
-  teams,
-  agendaEvents
-}) => {
+export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, teams, rows }) => {
   const t = useTranslations('pages.reports.field-schedule');
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   if (matches.length === 0) return null;
 
@@ -35,64 +33,51 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({
   const stageKey = firstMatch.stage.toLowerCase() as 'practice' | 'ranking' | 'test';
   const roundTitle = `${t(`stages.${stageKey}`)} ${firstMatch.round}`;
 
-  // Sort matches by number
-  const sortedMatches = [...matches].sort((a, b) => a.number - b.number);
-
-  // Insert agenda events between matches based on scheduled time
-  const rowsWithEvents: Array<
-    { type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }
-  > = [];
-
-  sortedMatches.forEach((match, index) => {
-    // Check for agenda events that should appear before this match
-    const matchTime = dayjs(match.scheduledTime);
-    const previousMatchTime = index > 0 ? dayjs(sortedMatches[index - 1].scheduledTime) : null;
-
-    agendaEvents.forEach(event => {
-      const eventStart = dayjs(event.start);
-
-      // Insert event if it falls between previous match and current match
-      if (eventStart.isAfter(previousMatchTime || dayjs(0)) && eventStart.isBefore(matchTime)) {
-        rowsWithEvents.push({ type: 'event', data: event });
-      }
-    });
-
-    rowsWithEvents.push({ type: 'match', data: match });
-  });
-
-  // Check for events after last match
-  const lastMatchTime = dayjs(sortedMatches[sortedMatches.length - 1].scheduledTime);
-  agendaEvents.forEach(event => {
-    const eventStart = dayjs(event.start);
-    if (eventStart.isAfter(lastMatchTime)) {
-      rowsWithEvents.push({ type: 'event', data: event });
-    }
-  });
-
   return (
-    <TableContainer component={Paper} sx={{ mb: 4 }}>
-      <Table size="small">
+    <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', mb: 4 }}>
+      <Table
+        size="small"
+        sx={{
+          tableLayout: 'fixed',
+          width: '100%',
+          minWidth: Math.max(400, 100 + tables.length * 100)
+        }}
+      >
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell colSpan={tables.length + 3}>
-              <Typography variant="h6" fontWeight={600}>
+              <Typography variant="h6" fontWeight={600} fontSize={isMobile ? '0.875rem' : '1rem'}>
                 {roundTitle}
               </Typography>
             </TableCell>
           </TableRow>
-          <TableRow>
-            <TableCell>{t('columns.match')}</TableCell>
-            <TableCell>{t('columns.start-time')}</TableCell>
-            <TableCell>{t('columns.end-time')}</TableCell>
+          <TableRow sx={{ bgcolor: 'grey.100' }}>
+            <TableCell align="center">
+              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                {t('columns.match')}
+              </Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                {t('columns.start-time')}
+              </Typography>
+            </TableCell>
+            <TableCell align="center">
+              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                {t('columns.end-time')}
+              </Typography>
+            </TableCell>
             {tables.map(table => (
               <TableCell key={table.id} align="center">
-                {table.name}
+                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  {table.name}
+                </Typography>
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
-          {rowsWithEvents.map((row, index) =>
+          {rows.map((row, index) =>
             row.type === 'match' ? (
               <MatchRow key={row.data.id} match={row.data} tables={tables} teams={teams} />
             ) : (

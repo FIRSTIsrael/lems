@@ -235,7 +235,9 @@
           "practice": "Practice Round",
           "ranking": "Ranking Round",
           "test": "Test Round"
-        }
+        },
+        "not-arrived": "Not arrived",
+        "loading": "Loading matches..."
       },
       "judging-schedule": {
         "page-title": "Judging Schedule",

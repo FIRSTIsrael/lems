@@ -1,17 +1,16 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Box, Typography } from '@mui/material';
-import { EventNoteOutlined } from '@mui/icons-material';
+import { Box, Typography, CircularProgress } from '@mui/material';
 
-export function EmptyState() {
+export function LoadingState() {
   const t = useTranslations('pages.reports.field-schedule');
 
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
-      <EventNoteOutlined sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
+      <CircularProgress sx={{ mb: 2 }} />
       <Typography variant="h6" color="text.secondary">
-        {t('empty-state')}
+        {t('loading')}
       </Typography>
     </Box>
   );

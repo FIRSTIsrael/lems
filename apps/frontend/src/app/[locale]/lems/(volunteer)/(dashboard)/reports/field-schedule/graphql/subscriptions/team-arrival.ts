@@ -8,7 +8,7 @@ interface SubscriptionVars {
 }
 
 interface SubscriptionData {
-  teamArrived: {
+  teamArrivalUpdated: {
     teamId: string;
     arrived: boolean;
   };
@@ -16,9 +16,8 @@ interface SubscriptionData {
 
 export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, SubscriptionVars> = gql`
   subscription TeamArrived($divisionId: String!) {
-    teamArrived(divisionId: $divisionId) {
+    teamArrivalUpdated(divisionId: $divisionId) {
       teamId
-      arrived
     }
   }
 `;
@@ -26,7 +25,7 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, Subs
 const teamArrivedReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
   if (!data) return prev;
 
-  const { teamId, arrived } = data.teamArrived;
+  const { teamId, arrived } = data.teamArrivalUpdated;
 
   return merge(prev, {
     division: {
