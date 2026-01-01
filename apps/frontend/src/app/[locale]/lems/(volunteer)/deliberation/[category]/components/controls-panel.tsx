@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Stack,
   Box,
@@ -8,7 +9,6 @@ import {
   Button,
   Autocomplete,
   TextField,
-  Chip,
   alpha,
   useTheme
 } from '@mui/material';
@@ -17,7 +17,8 @@ import { useCategoryDeliberation } from '../deliberation-context';
 
 export function ControlsPanel() {
   const theme = useTheme();
-  const { deliberation, teams, startDeliberation, availableTeams } = useCategoryDeliberation();
+  const t = useTranslations('pages.deliberations.category.controls');
+  const { deliberation, teams, startDeliberation } = useCategoryDeliberation();
   const [selectedTeam1, setSelectedTeam1] = useState<string | null>(null);
   const [selectedTeam2, setSelectedTeam2] = useState<string | null>(null);
 
@@ -45,17 +46,17 @@ export function ControlsPanel() {
       {/* Status Card */}
       <Box
         sx={{
-          p: 1.5,
+          p: 1.75,
           background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
           color: 'white',
           borderRadius: 1
         }}
       >
         <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 0.75 }}>
-          Status
+          {t('status')}
         </Typography>
-        <Typography variant="caption" sx={{ display: 'block', mb: 1.25, opacity: 0.9 }}>
-          {deliberation?.status === 'in-progress' ? 'In Progress' : 'Not Started'}
+        <Typography variant="caption" sx={{ display: 'block', mb: 1.5, opacity: 0.9 }}>
+          {deliberation?.status === 'in-progress' ? t('in-progress') : t('not-started')}
         </Typography>
 
         {!isInProgress ? (
@@ -74,7 +75,7 @@ export function ControlsPanel() {
               fontWeight: 600
             }}
           >
-            Start
+            {t('start')}
           </Button>
         ) : (
           <Button
@@ -89,7 +90,7 @@ export function ControlsPanel() {
               fontWeight: 600
             }}
           >
-            Active
+            {t('active')}
           </Button>
         )}
       </Box>
@@ -97,16 +98,16 @@ export function ControlsPanel() {
       {/* Comparison Card */}
       <Box
         sx={{
-          p: 1.5,
+          p: 1.75,
           border: `1px solid ${theme.palette.divider}`,
           borderRadius: 1,
           display: 'flex',
           flexDirection: 'column',
-          gap: 1
+          gap: 1.25
         }}
       >
         <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
-          Compare Teams
+          {t('compare-teams')}
         </Typography>
 
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.75 }}>
@@ -114,7 +115,7 @@ export function ControlsPanel() {
             options={teamOptions}
             value={teamOptions.find(o => o.value === selectedTeam1) || null}
             onChange={(_, value) => setSelectedTeam1(value?.value || null)}
-            renderInput={params => <TextField {...params} label="Team 1" size="small" />}
+            renderInput={params => <TextField {...params} label={t('team-1')} size="small" />}
             size="small"
             fullWidth
           />
@@ -122,72 +123,18 @@ export function ControlsPanel() {
             options={teamOptions}
             value={teamOptions.find(o => o.value === selectedTeam2) || null}
             onChange={(_, value) => setSelectedTeam2(value?.value || null)}
-            renderInput={params => <TextField {...params} label="Team 2" size="small" />}
+            renderInput={params => <TextField {...params} label={t('team-2')} size="small" />}
             size="small"
             fullWidth
           />
         </Box>
 
-        <Button variant="outlined" fullWidth disabled size="small" sx={{ mt: 0.75 }}>
-          Compare
+        <Button variant="outlined" fullWidth disabled size="small" sx={{ mt: 0.5 }}>
+          {t('compare')}
         </Button>
         <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
-          Coming Soon
+          {t('coming-soon')}
         </Typography>
-      </Box>
-
-      {/* Available Teams Pool */}
-      <Box
-        sx={{
-          p: 1.5,
-          border: `1px solid ${theme.palette.divider}`,
-          borderRadius: 1,
-          flex: 1,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
-          minHeight: 0
-        }}
-      >
-        <Typography variant="subtitle2" sx={{ fontWeight: 600, fontSize: '0.875rem' }}>
-          Available ({availableTeams.length})
-        </Typography>
-
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 0.75,
-            overflowY: 'auto',
-            flex: 1,
-            minHeight: 0
-          }}
-        >
-          {availableTeams.length === 0 ? (
-            <Typography
-              variant="caption"
-              color="textSecondary"
-              sx={{ py: 1.5, textAlign: 'center' }}
-            >
-              No available teams
-            </Typography>
-          ) : (
-            availableTeams.map(teamId => {
-              const team = teams.find(t => t.id === teamId);
-              if (!team) return null;
-
-              return (
-                <Chip
-                  key={team.id}
-                  label={`${team.number} - ${(team.normalizedScores.total || 0).toFixed(2)}`}
-                  variant="outlined"
-                  size="small"
-                  sx={{ justifyContent: 'flex-start' }}
-                />
-              );
-            })
-          )}
-        </Box>
       </Box>
     </Stack>
   );

@@ -108,6 +108,7 @@ export function DeliberationTable() {
       rows={teams}
       columns={columns}
       pageSizeOptions={[50]}
+      density="compact"
       initialState={{
         pagination: { paginationModel: { page: 0, pageSize: 50 } },
         sorting: { sortModel: [{ field: 'total', sort: 'desc' }] }

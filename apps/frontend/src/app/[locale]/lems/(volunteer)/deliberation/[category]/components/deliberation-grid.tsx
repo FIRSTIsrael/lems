@@ -2,8 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Grid, Box, Paper, AppBar, Toolbar, IconButton, Typography, Stack } from '@mui/material';
+import { Box, Paper, AppBar, Toolbar, IconButton, Typography } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
+import { useJudgingCategoryTranslations } from '@lems/localization';
+import { underscoresToHyphens } from '@lems/shared/utils';
+import { useCategoryDeliberation } from '../deliberation-context';
 import { DeliberationTable } from './deliberation-table';
 import { PicklistPanel } from './picklist-panel';
 import { ControlsPanel } from './controls-panel';
@@ -11,7 +14,9 @@ import { ScoresChart } from './scores-chart';
 
 export function DeliberationGrid() {
   const router = useRouter();
-  const t = useTranslations();
+  const t = useTranslations('pages.deliberations.category');
+  const { getCategory } = useJudgingCategoryTranslations();
+  const { deliberation } = useCategoryDeliberation();
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
@@ -25,29 +30,27 @@ export function DeliberationGrid() {
         }}
       >
         <Toolbar sx={{ minHeight: 56, gap: 1 }}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => router.back()}
-            aria-label={t('common.back')}
-            sx={{ mr: 1 }}
-          >
+          <IconButton edge="start" color="inherit" onClick={() => router.back()} sx={{ mr: 1 }}>
             <ArrowBack />
           </IconButton>
           <Typography variant="h6" sx={{ flex: 1, color: 'text.primary' }}>
-            {t('deliberation.title')}
+            {t('title', {
+              category: getCategory(underscoresToHyphens(deliberation?.category as string))
+            })}
           </Typography>
         </Toolbar>
       </AppBar>
 
       {/* Main Content Area - Desktop Only */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, p: 2.5, gap: 2 }}>
-        {/* Top Section: Table + Picklist + Controls */}
-        <Box sx={{ flex: 1, minHeight: 0, display: 'flex', gap: 2 }}>
-          {/* Left: Data Table - Primary Focus (65%) */}
+      <Box sx={{ flex: 1, display: 'flex', minHeight: 0, p: 2.5, gap: 2.5 }}>
+        {/* Left Column: Table (top) + Chart (bottom) */}
+        <Box
+          sx={{ flex: '0 1 80%', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}
+        >
+          {/* Data Table - Primary Focus */}
           <Paper
             sx={{
-              flex: '0 1 65%',
+              flex: 1,
               minHeight: 0,
               display: 'flex',
               flexDirection: 'column',
@@ -59,58 +62,57 @@ export function DeliberationGrid() {
             <DeliberationTable />
           </Paper>
 
-          {/* Right Column: Controls + Picklist Stack (35%) */}
-          <Box
+          <Paper
             sx={{
-              flex: '0 1 35%',
+              flex: '0 0 180px',
+              borderRadius: 1.5,
+              boxShadow: theme => theme.shadows[1],
+              p: 2,
               minHeight: 0,
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2
+              overflow: 'auto'
             }}
           >
-            {/* Controls Panel - Compact Header */}
-            <Paper
-              sx={{
-                flex: '0 1 auto',
-                borderRadius: 1.5,
-                boxShadow: theme => theme.shadows[1],
-                overflow: 'hidden'
-              }}
-            >
-              <ControlsPanel />
-            </Paper>
-
-            {/* Picklist Panel - Flexible, Scrollable */}
-            <Paper
-              sx={{
-                flex: '1 1 auto',
-                minHeight: 0,
-                borderRadius: 1.5,
-                boxShadow: theme => theme.shadows[1],
-                display: 'flex',
-                flexDirection: 'column',
-                overflow: 'auto'
-              }}
-            >
-              <PicklistPanel />
-            </Paper>
-          </Box>
+            <ScoresChart />
+          </Paper>
         </Box>
 
-        {/* Bottom Section: Chart & Metrics - Secondary Focus */}
-        <Paper
+        {/* Right Column: Controls (top) + Picklist (bottom, fills remaining space) */}
+        <Box
           sx={{
-            flex: '0 0 260px',
-            borderRadius: 1.5,
-            boxShadow: theme => theme.shadows[1],
-            p: 2,
+            flex: '0 1 20%',
             minHeight: 0,
-            overflow: 'auto'
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2.5
           }}
         >
-          <ScoresChart />
-        </Paper>
+          {/* Controls Panel */}
+          <Paper
+            sx={{
+              flex: '0 0 auto',
+              borderRadius: 1.5,
+              boxShadow: theme => theme.shadows[1],
+              overflow: 'auto'
+            }}
+          >
+            <ControlsPanel />
+          </Paper>
+
+          {/* Picklist Panel - Takes all remaining vertical space */}
+          <Paper
+            sx={{
+              flex: 1,
+              minHeight: 0,
+              borderRadius: 1.5,
+              boxShadow: theme => theme.shadows[1],
+              display: 'flex',
+              flexDirection: 'column',
+              overflow: 'auto'
+            }}
+          >
+            <PicklistPanel />
+          </Paper>
+        </Box>
       </Box>
     </Box>
   );

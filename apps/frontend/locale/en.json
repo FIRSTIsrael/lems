@@ -541,6 +541,38 @@
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
         "submit-button": "Submit"
       }
+    },
+    "deliberations": {
+      "category": {
+        "title": "{category} Deliberation",
+        "controls": {
+          "status": "Status",
+          "in-progress": "In Progress",
+          "not-started": "Not Started",
+          "start": "Start",
+          "active": "Active",
+          "compare-teams": "Compare Teams",
+          "team-1": "Team 1",
+          "team-2": "Team 2",
+          "compare": "Compare",
+          "coming-soon": "Coming Soon",
+          "available": "Available",
+          "no-available-teams": "No available teams"
+        },
+        "scores-chart": {
+          "room-scores-distribution": "Room Scores Distribution",
+          "no-data-available": "No data available",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "aggregate-average": "Aggregate Average"
+        },
+        "small-screen-block": {
+          "title": "Screen Too Small",
+          "message": "The deliberation view requires a larger screen to display all components properly.",
+          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        }
+      }
     }
   },
   "components": {

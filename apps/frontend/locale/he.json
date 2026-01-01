@@ -541,6 +541,38 @@
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
         "submit-button": "הגשת דף ניקוד"
       }
+    },
+    "deliberations": {
+      "category": {
+        "page-title": "דיונים | {category}",
+        "controls": {
+          "status": "סטטוס",
+          "in-progress": "בתהליך",
+          "not-started": "לא התחיל",
+          "start": "התחל",
+          "active": "פעיל",
+          "compare-teams": "השוואת קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השווה",
+          "coming-soon": "בקרוב",
+          "available": "זמינה",
+          "no-available-teams": "אין קבוצות זמינות"
+        },
+        "scores-chart": {
+          "room-scores-distribution": "התפלגות ניקוד חדרים",
+          "no-data-available": "אין נתונים זמינים",
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "aggregate-average": "ממוצע כללי"
+        },
+        "small-screen-block": {
+          "title": "המסך קטן מדי",
+          "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+          "minimum-width": "אנא השתמש בשולחן עבודה או הטה את המכשיר למצב נוף."
+        }
+      }
     }
   },
   "components": {

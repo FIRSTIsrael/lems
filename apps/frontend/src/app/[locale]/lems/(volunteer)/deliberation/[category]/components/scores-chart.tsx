@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ComposedChart,
   Bar,
@@ -19,6 +20,7 @@ import { computeRoomMetrics } from '../deliberation-computation';
 
 export function ScoresChart() {
   const theme = useTheme();
+  const t = useTranslations('pages.deliberations.category.scores-chart');
   const { teams } = useCategoryDeliberation();
 
   // Compute room metrics with useMemo to avoid unnecessary recalculations
@@ -61,7 +63,7 @@ export function ScoresChart() {
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary' }}>
-        Room Scores Distribution
+        {t('room-scores-distribution')}
       </Typography>
 
       {chartData.length === 0 ? (
@@ -73,8 +75,8 @@ export function ScoresChart() {
             justifyContent: 'center'
           }}
         >
-          <Typography variant="body2" color="textSecondary">
-            No data available
+          <Typography variant="body2" color="text.secondary">
+            {t('no-data-available')}
           </Typography>
         </Box>
       ) : (
@@ -119,11 +121,11 @@ export function ScoresChart() {
             <Bar
               dataKey="innovation-project"
               fill={blue[400]}
-              name="Innovation Project"
+              name={t('innovation-project')}
               barSize={16}
             />
-            <Bar dataKey="robot-design" fill={green[400]} name="Robot Design" barSize={16} />
-            <Bar dataKey="core-values" fill={red[400]} name="Core Values" barSize={16} />
+            <Bar dataKey="robot-design" fill={green[400]} name={t('robot-design')} barSize={16} />
+            <Bar dataKey="core-values" fill={red[400]} name={t('core-values')} barSize={16} />
 
             {/* Aggregate line */}
             <Line
@@ -136,7 +138,7 @@ export function ScoresChart() {
                 stroke: theme.palette.primary.main,
                 fill: theme.palette.background.paper
               }}
-              name="Aggregate Average"
+              name={t('aggregate-average')}
             />
           </ComposedChart>
         </ResponsiveContainer>
