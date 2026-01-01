@@ -161,6 +161,16 @@ type ScoresheetSignatureUpdated {
 }
 
 """
+Response type for scoresheet reset
+"""
+type ScoresheetResetEvent {
+  "The ID of the scoresheet that was reset"
+  scoresheetId: String!
+  "The new status after reset (should be 'empty')"
+  status: ScoresheetStatus!
+}
+
+"""
 Union type for all scoresheet update events
 """
 union ScoresheetUpdatedEvent =
@@ -169,6 +179,7 @@ union ScoresheetUpdatedEvent =
   | ScoresheetGPUpdated
   | ScoresheetEscalatedUpdated
   | ScoresheetSignatureUpdated
+  | ScoresheetResetEvent
 
 extend type Mutation {
   """
@@ -237,6 +248,17 @@ extend type Mutation {
     "The signature data as encoded PNG string"
     signature: String!
   ): ScoresheetSignatureUpdated!
+
+  """
+  Reset a scoresheet to empty status and clear escalation.
+  Only available to head-referee role.
+  """
+  resetScoresheet(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to reset"
+    scoresheetId: String!
+  ): ScoresheetResetEvent!
 }
 
 extend type Subscription {

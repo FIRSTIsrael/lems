@@ -2,6 +2,7 @@ export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
 
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
     name: string;

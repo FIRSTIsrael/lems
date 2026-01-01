@@ -69,7 +69,7 @@ export const GET_TEAM_MATCH_QUERY: TypedDocumentNode<GetTeamMatchQueryData, GetT
             status
             round
             participants {
-              matchId
+              id
               team {
                 id
               }

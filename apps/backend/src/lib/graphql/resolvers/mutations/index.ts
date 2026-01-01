@@ -1,6 +1,11 @@
 import { teamArrivedResolver } from './team-arrived';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
-import { loadMatchResolver, startMatchResolver, abortMatchResolver } from './matches/index';
+import {
+  loadMatchResolver,
+  startMatchResolver,
+  abortMatchResolver,
+  updateParticipantStatusResolver
+} from './matches/index';
 import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
@@ -13,7 +18,8 @@ import {
   updateScoresheetGPResolver,
   updateScoresheetStatusResolver,
   updateScoresheetEscalatedResolver,
-  updateScoresheetSignatureResolver
+  updateScoresheetSignatureResolver,
+  resetScoresheetResolver
 } from './scoresheets';
 import {
   switchActiveDisplayResolver,
@@ -28,6 +34,7 @@ export const mutationResolvers = {
   loadMatch: loadMatchResolver,
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
+  updateParticipantStatus: updateParticipantStatusResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
   updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updateRubricValue: updateRubricValueResolver,
@@ -40,6 +47,7 @@ export const mutationResolvers = {
   updateScoresheetEscalated: updateScoresheetEscalatedResolver,
   updateScoresheetSignature: updateScoresheetSignatureResolver,
   updateScoresheetStatus: updateScoresheetStatusResolver,
+  resetScoresheet: resetScoresheetResolver,
   startDeliberation: startDeliberationResolver,
   updateDeliberationPicklist: updateDeliberationPicklistResolver
 };

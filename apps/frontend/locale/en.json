@@ -168,7 +168,9 @@
       "menu": {
         "team-list": "Team List",
         "pit-map": "Pit Map",
-        "awards-list": "Awards list"
+        "awards-list": "Awards list",
+        "event-agenda": "Event Agenda",
+        "judging-schedule": "Judging Schedule"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -206,6 +208,33 @@
         "loading": "Loading pit map...",
         "error-loading": "Failed to load pit map. Please try again.",
         "no-map": "No pit map is available."
+      },
+      "event-agenda": {
+        "page-title": "Event Agenda",
+        "error-loading": "An error occurred while loading the agenda.",
+        "no-events": "No agenda events have been scheduled yet.",
+        "loading": "Loading agenda...",
+        "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
+        "visibility": {
+          "public": "General",
+          "judging": "Judging",
+          "field": "Field"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "Judging Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "no-sessions": "No judging sessions have been scheduled yet.",
+        "loading": "Loading schedule...",
+        "arrived": "Arrived",
+        "not-arrived": "Not arrived",
+        "table": {
+          "time": "Time"
+        },
+        "visibility": {
+          "public": "General",
+          "judging": "Judging"
+        }
       }
     },
     "rubric": {
@@ -506,6 +535,19 @@
       "submitting": "Submitting...",
       "error-signature-required": "A signature is required to submit the scoresheet",
       "error-failed-to-submit": "Failed to submit scoresheet",
+      "escalate": "Escalate",
+      "de-escalate": "De-escalate",
+      "reset": "Reset Scoresheet",
+      "processing": "Processing...",
+      "error-failed-to-escalate": "Failed to update escalation status",
+      "error-failed-to-reset": "Failed to reset scoresheet",
+      "reset-dialog": {
+        "title": "Reset Scoresheet",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this scoresheet? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Scoresheet"
+      },
       "gp-selector": {
         "title": "Rate the team's Gracious Professionalism displayed during the match",
         "level-2": "DEVELOPING",

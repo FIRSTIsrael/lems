@@ -29,6 +29,10 @@ export const SCORESHEET_UPDATED_SUBSCRIPTION: TypedDocumentNode<
         scoresheetId
         escalated
       }
+      ... on ScoresheetResetEvent {
+        scoresheetId
+        status
+      }
     }
   }
 `;
@@ -81,6 +85,14 @@ const scoresheetUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> =
             return merge(scoresheet, {
               escalated: event.escalated
             });
+          }
+
+          if (event.__typename === 'ScoresheetResetEvent') {
+            return {
+              ...scoresheet,
+              status: event.status,
+              data: getEmptyScoresheet()
+            };
           }
 
           return scoresheet;
