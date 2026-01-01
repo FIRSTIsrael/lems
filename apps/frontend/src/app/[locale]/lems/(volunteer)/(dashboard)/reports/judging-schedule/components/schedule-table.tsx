@@ -18,7 +18,7 @@ import {
   Box
 } from '@mui/material';
 import { Block as BlockIcon } from '@mui/icons-material';
-import { Room, ScheduleRow } from '../judging-schedule.graphql';
+import { Room, ScheduleRow } from '../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface ScheduleTableProps {

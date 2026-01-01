@@ -10,7 +10,7 @@ import {
   GET_JUDGING_SCHEDULE,
   parseJudgingSchedule,
   createTeamArrivalSubscription
-} from './judging-schedule.graphql';
+} from './graphql';
 import { ScheduleTable } from './components/schedule-table';
 import { ErrorState } from './components/error-state';
 import { EmptyState } from './components/empty-state';
