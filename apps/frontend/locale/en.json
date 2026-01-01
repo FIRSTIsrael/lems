@@ -170,7 +170,8 @@
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
         "event-agenda": "Event Agenda",
-        "field-schedule": "Field Schedule"
+        "field-schedule": "Field Schedule",
+        "judging-schedule": "Judging Schedule"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -234,6 +235,21 @@
           "practice": "Practice Round",
           "ranking": "Ranking Round",
           "test": "Test Round"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "Judging Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "no-sessions": "No judging sessions have been scheduled yet.",
+        "loading": "Loading schedule...",
+        "arrived": "Arrived",
+        "not-arrived": "Not arrived",
+        "table": {
+          "time": "Time"
+        },
+        "visibility": {
+          "public": "General",
+          "judging": "Judging"
         }
       }
     },
