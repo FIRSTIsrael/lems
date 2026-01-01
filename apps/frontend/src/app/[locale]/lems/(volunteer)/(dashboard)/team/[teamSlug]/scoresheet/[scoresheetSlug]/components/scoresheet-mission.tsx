@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
-import { Paper, Stack, Typography, Grid } from '@mui/material';
+import { Paper, Stack, Typography, Grid, Alert } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@apollo/client/react';
 import { useScoresheetMissionTranslations } from '@lems/localization';
@@ -18,18 +18,29 @@ interface ScoresheetMissionProps {
   missionIndex: number;
   mission: MissionSchema;
   src: string;
+  missionErrors?: string[];
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  missionIndex,
+  mission,
+  src,
+  missionErrors
+}) => {
   const t = useTranslations('layouts.scoresheet');
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
   const { scoresheet } = useScoresheet();
   const { currentDivision } = useEvent();
-  const { title, description, remarks } = useScoresheetMissionTranslations(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
   const [missionWidth, setMissionWidth] = useState(0);
 
-  const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION);
+  const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION, {
+    onError: error => {
+      console.error('Failed to update mission clause:', error);
+      toast.error(t('error-failed-to-update'));
+    }
+  });
 
   useLayoutEffect(() => {
     const element = ref.current;
@@ -48,20 +59,15 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
   const handleClauseChange = async (clauseIndex: number, newValue: ScoresheetClauseValue) => {
     if (newValue === null) return; // Don't send null values
 
-    try {
-      await updateMissionClause({
-        variables: {
-          divisionId: currentDivision.id,
-          scoresheetId: scoresheet.id,
-          missionId: mission.id,
-          clauseIndex,
-          value: newValue
-        }
-      });
-    } catch (error) {
-      console.error('Failed to update mission clause:', error);
-      toast.error(t('error-failed-to-update'));
-    }
+    await updateMissionClause({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        missionId: mission.id,
+        clauseIndex,
+        value: newValue
+      }
+    });
   };
 
   return (
@@ -131,6 +137,18 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
             </Typography>
           ))}
         </Grid>
+
+        {missionErrors && missionErrors.length > 0 && (
+          <Grid size={12} mt={2} ml={3}>
+            <Stack spacing={1}>
+              {missionErrors.map(errorId => (
+                <Alert key={errorId} severity="error">
+                  <Typography fontSize="0.875rem">{getError(errorId)}</Typography>
+                </Alert>
+              ))}
+            </Stack>
+          </Grid>
+        )}
       </Grid>
       <Grid borderRadius={8} p={2} size={{ xs: 0, md: 4 }} display={{ xs: 'none', md: 'block' }}>
         <Image

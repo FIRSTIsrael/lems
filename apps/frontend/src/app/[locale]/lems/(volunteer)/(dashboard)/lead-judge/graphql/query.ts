@@ -10,6 +10,7 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
         name
       }
       judging {
+        divisionId
         sessions {
           id
           number
@@ -31,13 +32,13 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
             arrived
           }
           rubrics {
-            innovationProject {
+            innovation_project {
               ...RubricFields
             }
-            robotDesign {
+            robot_design {
               ...RubricFields
             }
-            coreValues {
+            core_values {
               ...RubricFields
             }
           }

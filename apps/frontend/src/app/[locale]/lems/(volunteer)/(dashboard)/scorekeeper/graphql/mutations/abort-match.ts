@@ -2,7 +2,6 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 
 interface MatchAbortedEvent {
   matchId: string;
-  version: number;
 }
 
 interface AbortMatchMutationData {
@@ -21,7 +20,6 @@ export const ABORT_MATCH_MUTATION: TypedDocumentNode<
   mutation AbortMatch($divisionId: String!, $matchId: String!) {
     abortMatch(divisionId: $divisionId, matchId: $matchId) {
       matchId
-      version
     }
   }
 `;

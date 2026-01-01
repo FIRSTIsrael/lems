@@ -4,7 +4,6 @@ type EscalatedMutationResult = {
   updateScoresheetEscalated: {
     scoresheetId: string;
     escalated: boolean;
-    version: number;
   };
 };
 
@@ -30,7 +29,6 @@ export const UPDATE_SCORESHEET_ESCALATED_MUTATION: TypedDocumentNode<
     ) {
       scoresheetId
       escalated
-      version
     }
   }
 `;

@@ -18,7 +18,6 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
   mutation TeamArrived($teamId: String!, $divisionId: String!) {
     teamArrived(teamId: $teamId, divisionId: $divisionId) {
       teamId
-      version
     }
   }
 `;

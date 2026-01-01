@@ -1,48 +1,21 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 
-interface MatchStageAdvancedEvent {
-  version: number;
+interface MatchStageAdvancedSubscribeArgs {
+  divisionId: string;
 }
 
-const processMatchStageAdvancedEvent = async (
-  event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchStageAdvancedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchStageAdvanced] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
-  const result: MatchStageAdvancedEvent = {
-    version: (event.version as number) ?? 0
-  };
-
-  return result;
+const processMatchStageAdvancedEvent = async (): Promise<void> => {
+  return;
 };
 
 const matchStageAdvancedSubscribe = (
   _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
+  { divisionId }: MatchStageAdvancedSubscribeArgs
 ) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchStageAdvanced subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(
-    divisionId,
-    RedisEventTypes.MATCH_STAGE_ADVANCED,
-    lastSeenVersion
-  );
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_STAGE_ADVANCED);
 };
 
 /**
@@ -51,9 +24,5 @@ const matchStageAdvancedSubscribe = (
  */
 export const matchStageAdvancedResolver = {
   subscribe: matchStageAdvancedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchStageAdvancedEvent>> => {
-    return processMatchStageAdvancedEvent(event);
-  }
+  resolve: processMatchStageAdvancedEvent
 };

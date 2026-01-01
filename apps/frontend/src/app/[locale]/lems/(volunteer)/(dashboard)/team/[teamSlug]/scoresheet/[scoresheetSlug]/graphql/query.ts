@@ -13,6 +13,7 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
     division(id: $divisionId) {
       id
       field {
+        divisionId
         scoresheets(teamIds: [$teamId], slug: $slug) {
           id
           team {
@@ -62,11 +63,13 @@ export const GET_TEAM_MATCH_QUERY: TypedDocumentNode<GetTeamMatchQueryData, GetT
       division(id: $divisionId) {
         id
         field {
+          divisionId
           matches(stage: $stage, round: $round, teamIds: [$teamId]) {
             id
             status
             round
             participants {
+              id
               team {
                 id
               }

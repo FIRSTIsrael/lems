@@ -10,7 +10,6 @@ type ScoresheetGPUpdatedEvent = {
   scoresheetId: string;
   gpValue: number | null;
   notes?: string;
-  version: number;
 };
 
 interface UpdateScoresheetGPArgs {
@@ -36,15 +35,6 @@ export const updateScoresheetGPResolver: GraphQLFieldResolver<
     throw new MutationError(
       MutationErrorCode.INVALID_INPUT,
       `Invalid GP value: ${value}. Must be 2, 3, 4, or null`
-    );
-  }
-
-  if (value === 3 && notes) {
-    throw new MutationError(MutationErrorCode.INVALID_INPUT, `GP value 3 should not have notes`);
-  } else if (value !== 3 && !notes) {
-    throw new MutationError(
-      MutationErrorCode.INVALID_INPUT,
-      `GP values other than 3 require notes`
     );
   }
 
@@ -76,8 +66,7 @@ export const updateScoresheetGPResolver: GraphQLFieldResolver<
   const eventPayload: ScoresheetGPUpdatedEvent = {
     scoresheetId,
     gpValue: value,
-    notes,
-    version: -1
+    notes
   };
 
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);

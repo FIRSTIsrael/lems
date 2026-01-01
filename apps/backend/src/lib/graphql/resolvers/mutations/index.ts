@@ -1,13 +1,31 @@
 import { teamArrivedResolver } from './team-arrived';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
-import { loadMatchResolver, startMatchResolver, abortMatchResolver } from './matches/index';
+import {
+  loadMatchResolver,
+  startMatchResolver,
+  abortMatchResolver,
+  updateParticipantStatusResolver
+} from './matches/index';
 import {
   updateRubricValueResolver,
   updateRubricFeedbackResolver,
   updateRubricStatusResolver,
-  updateRubricAwardsResolver
+  updateRubricAwardsResolver,
+  resetRubricResolver
 } from './rubrics';
-import { updateScoresheetMissionClauseResolver } from './scoresheets';
+import {
+  updateScoresheetMissionClauseResolver,
+  updateScoresheetGPResolver,
+  updateScoresheetStatusResolver,
+  updateScoresheetEscalatedResolver,
+  updateScoresheetSignatureResolver,
+  resetScoresheetResolver
+} from './scoresheets';
+import {
+  switchActiveDisplayResolver,
+  updateAudienceDisplaySettingResolver
+} from './audience-display';
+import { startDeliberationResolver, updateDeliberationPicklistResolver } from './deliberations';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -16,9 +34,20 @@ export const mutationResolvers = {
   loadMatch: loadMatchResolver,
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
+  updateParticipantStatus: updateParticipantStatusResolver,
+  switchActiveDisplay: switchActiveDisplayResolver,
+  updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,
   updateRubricAwards: updateRubricAwardsResolver,
-  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver
+  resetRubric: resetRubricResolver,
+  updateScoresheetMissionClause: updateScoresheetMissionClauseResolver,
+  updateScoresheetGP: updateScoresheetGPResolver,
+  updateScoresheetEscalated: updateScoresheetEscalatedResolver,
+  updateScoresheetSignature: updateScoresheetSignatureResolver,
+  updateScoresheetStatus: updateScoresheetStatusResolver,
+  resetScoresheet: resetScoresheetResolver,
+  startDeliberation: startDeliberationResolver,
+  updateDeliberationPicklist: updateDeliberationPicklistResolver
 };

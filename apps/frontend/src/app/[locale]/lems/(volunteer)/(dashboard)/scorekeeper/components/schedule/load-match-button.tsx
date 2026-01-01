@@ -25,8 +25,7 @@ export const LoadMatchButton = ({ match }: LoadMatchButtonProps) => {
   const [loadMatch] = useMutation(LOAD_MATCH_MUTATION, {
     optimisticResponse: {
       loadMatch: {
-        matchId: match.id,
-        version: -1
+        matchId: match.id
       }
     },
     update: (cache, { data }) => {

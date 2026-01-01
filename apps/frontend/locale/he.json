@@ -251,9 +251,10 @@
       },
       "actions": {
         "save-draft": "שמור כטיוטה",
-        "submit-review": "הגש לבדיקה",
         "reset": "איפוס",
-        "submit-rubric": "הגשה ונעילה"
+        "submit-rubric": "הגשה ונעילה",
+        "unlock-rubric": "שחרור",
+        "approve-rubric": "אישור"
       },
       "submit-dialog": {
         "title": "הגשה ונעילה של המחוון",
@@ -262,10 +263,32 @@
         "cancel": "ביטול",
         "confirm": "הגשה ונעילה"
       },
+      "reset-dialog": {
+        "title": "איפוס המחוון",
+        "warning": "לא ניתן לבטל פעולה זו!",
+        "description": "האם אתם בטוחים שאתם רוצים לאפס את המחוון? כל הנתונים יימחקו ותתחילו מחדש.",
+        "cancel": "ביטול",
+        "confirm": "איפוס המחוון"
+      },
+      "approve-dialog": {
+        "title": "אישור המחוון",
+        "warning": "פעולה זו היא סופית ולא ניתן לבטלה!",
+        "description": "לאחר אישור המחוון, הוא יהיה נעול ולא ניתן יהיה לבצע שינויים נוספים. אנא וודאו שהמחוון מלא ודייק לפני המשך.",
+        "cancel": "ביטול",
+        "confirm": "אישור המחוון"
+      },
       "toasts": {
         "rating-update-error": "נכשל בעדכון הניקוד. אנא נסו שנית.",
         "notes-update-error": "נכשל בשמירת ההערות. אנא נסו שנית.",
-        "feedback-update-error": "נכשל בשמירת המשוב. אנא נסו שנית."
+        "feedback-update-error": "נכשל בשמירת המשוב. אנא נסו שנית.",
+        "reset-error": "נכשל בניסיון איפוס המחוון. אנא נסו שנית.",
+        "reset-success": "המחוון אופס בהצלחה.",
+        "unlock-success": "המחוון שוחרר.",
+        "unlock-error": "נכשל בניסיון שחרור המחוון. אנא נסו שנית.",
+        "submit-success": "המחוון הוגש ונעול.",
+        "submit-error": "נכשל בהגשת המחוון. אנא נסו שנית.",
+        "approve-success": "המחוון אושר.",
+        "approve-error": "נכשל בניסיון אישור המחוון. אנא נסו שנית."
       },
       "validation": {
         "title": "פורם הערכה לא שלם",
@@ -390,7 +413,28 @@
           "message": "הודעה",
           "awards": "פרסים"
         },
-        "status-label": "מצב נוכחי"
+        "status-label": "מצב נוכחי",
+        "settings-button-title": "הגדרות תצוגת קהל",
+        "errors": {
+          "audience-display-switch": "החלפת תצוגת הקהל נכשלה."
+        },
+        "settings-modal": {
+          "title": "הגדרות תצוגת קהל",
+          "close": "סגירה",
+          "sections": {
+            "message": "הגדרות הודעה",
+            "scoreboard": "הגדרות לוח ניקוד"
+          },
+          "fields": {
+            "message-placeholder": "הזינו טקסט",
+            "show-active-match": "הצג מקצה נוכחי",
+            "show-previous-match": "הצג מקצה קודם",
+            "show-sponsors-row": "הצג שורת ספונסרים"
+          },
+          "errors": {
+            "update-failed": "עדכון הגדרת תצוגת הקהל נכשל."
+          }
+        }
       },
       "schedule": {
         "title": "לו״ז מקצים",
@@ -407,6 +451,29 @@
       },
       "active-match": {
         "teams": "קבוצות"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "סבב",
+        "match": "מקצה",
+        "table": "שולחן"
+      },
+      "scoreboard": {
+        "current-match": "מקצה נוכחי",
+        "test-match": "מקצה בדיקה",
+        "no-match": "-",
+        "previous-match": {
+          "title": "מקצה קודם",
+          "match": "מקצה",
+          "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
+          "under-review": "בבדיקה"
+        },
+        "scores-table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "highest-score": "ניקוד גבוה"
+        }
       }
     },
     "lead-judge": {
@@ -458,7 +525,38 @@
       }
     },
     "scoresheet": {
-      "title": "קבוצה #{teamNumber} | סבב {stage} {round}"
+      "title": "קבוצה #{teamNumber} | סבב {stage} {round}",
+      "clear-signature": "נקה חתימה",
+      "form-complete": "הטופס הושלם",
+      "form-incomplete": "הטופס לא שלם",
+      "complete-form-to-sign": "השלם את הטופס ותקן כל שגיאות כדי לחתום על דף הניקוד",
+      "complete-form-to-proceed": "השלם את כל המשימות ותקן את כל השגיאות לפני שתוכל לחתום ולהגיש את דף הניקוד",
+      "submit-scoresheet": "הגש דף ניקוד",
+      "submitting": "מגיש...",
+      "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
+      "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
+      "escalate": "העבר לשופט ראשי",
+      "de-escalate": "החזר לשופט זירה",
+      "reset": "אפס דף ניקוד",
+      "processing": "מעבד...",
+      "error-failed-to-escalate": "העברה נכשלה",
+      "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "reset-dialog": {
+        "title": "איפוס דף ניקוד",
+        "warning": "לא ניתן לבטל פעולה זו!",
+        "description": "האם אתה בטוח שברצונך לאפס את דף הניקוד? כל הנתונים יימחקו.",
+        "cancel": "ביטול",
+        "confirm": "אפס דף ניקוד"
+      },
+      "gp-selector": {
+        "title": "דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט",
+        "level-2": "מתפתחת",
+        "level-3": "מיומנת",
+        "level-4": "מצטיינת",
+        "notes-placeholder-2": "נמקו מדוע נתתם לקבוצה ציון מתפתחת",
+        "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
+        "submit-button": "הגשת דף ניקוד"
+      }
     }
   },
   "components": {
@@ -489,7 +587,15 @@
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
       "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
-      "error-failed-to-update": "עדכון דף הניקוד נכשל"
+      "error-failed-to-update": "עדכון דף הניקוד נכשל",
+      "incomplete-title": "דף הניקוד אינו מלא",
+      "incomplete-message": "אנא נקדו את כל המשימות.",
+      "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
+      "incomplete-action": "מעבר למשימה",
+      "points-unit": "נק'"
+    },
+    "deliberation": {
+      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה"
     }
   }
 }

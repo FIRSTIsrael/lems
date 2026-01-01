@@ -17,6 +17,7 @@ export interface AwardGraphQL {
   type: 'PERSONAL' | 'TEAM';
   isOptional: boolean;
   allowNominations: boolean;
+  automaticAssignment: boolean;
 }
 
 /**
@@ -47,7 +48,8 @@ export const divisionAwardsResolver: GraphQLFieldResolver<
       place: award.place,
       type: award.type,
       isOptional: award.is_optional,
-      allowNominations: award.allow_nominations
+      allowNominations: award.allow_nominations,
+      automaticAssignment: award.automatic_assignment
     }));
   } catch (error) {
     console.error('Error fetching awards for division:', division.id, error);

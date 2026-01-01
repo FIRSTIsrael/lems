@@ -9,7 +9,6 @@ import { authorizeRubricAccess, assertRubricEditable } from './utils';
 type RubricAwardsUpdatedEvent = {
   rubricId: string;
   awards: Record<string, boolean>;
-  version: number;
 };
 
 interface UpdateRubricAwardsArgs {
@@ -54,8 +53,7 @@ export const updateRubricAwardsResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   const eventPayload = {
     rubricId,
-    awards,
-    version: -1
+    awards
   };
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.RUBRIC_UPDATED, eventPayload),

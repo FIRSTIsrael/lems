@@ -17,6 +17,7 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
     division(id: $divisionId) {
       id
       judging {
+        divisionId
         rubrics(teamIds: [$teamId], category: $category) {
           id
           category
@@ -58,6 +59,7 @@ export const GET_TEAM_SESSION_QUERY: TypedDocumentNode<
     division(id: $divisionId) {
       id
       judging {
+        divisionId
         sessions(teamIds: [$teamId]) {
           id
           number

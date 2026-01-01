@@ -15,7 +15,7 @@ class ScoresheetSelector {
 
   async upsert(
     scoresheet: Partial<Omit<Scoresheet, 'divisionId' | 'teamId' | 'stage' | 'round'>>
-  ): Promise<Scoresheet> {
+  ): Promise<WithId<Scoresheet>> {
     const updatedScoresheet = { ...scoresheet };
 
     await this.mongo
@@ -107,7 +107,7 @@ class ScoresheetsSelector {
     return { ...baseFilter, ...this.additionalFilters };
   }
 
-  async getAll(): Promise<Scoresheet[]> {
+  async getAll(): Promise<WithId<Scoresheet>[]> {
     const filter = await this.buildFilter();
     return await this.mongo.collection<Scoresheet>('scoresheets').find(filter).toArray();
   }
@@ -133,14 +133,14 @@ class ScoresheetsSelector {
     });
   }
 
-  async get(): Promise<Scoresheet | null> {
+  async get(): Promise<WithId<Scoresheet> | null> {
     const filter = await this.buildFilter();
     return new ScoresheetSelector(this.mongo, filter).get();
   }
 
   async upsert(
     scoresheet: Partial<Omit<Scoresheet, 'divisionId' | 'teamId' | 'stage' | 'round'>>
-  ): Promise<Scoresheet> {
+  ): Promise<WithId<Scoresheet>> {
     const filter = await this.buildFilter();
     return new ScoresheetSelector(this.mongo, filter).upsert(scoresheet);
   }
@@ -171,16 +171,13 @@ export class ScoresheetsRepository {
     return new ScoresheetsSelector(this.db, this.mongo, { type: 'table', tableId });
   }
 
-  async create(scoresheet: Scoresheet): Promise<Scoresheet> {
-    await this.mongo.collection<Scoresheet>('scoresheets').insertOne(scoresheet);
-    return scoresheet;
+  async create(scoresheet: Scoresheet) {
+    return await this.mongo.collection<Scoresheet>('scoresheets').insertOne(scoresheet);
   }
 
-  async createMany(scoresheets: Scoresheet[]): Promise<Scoresheet[]> {
-    if (scoresheets.length === 0) {
-      return [];
-    }
-    await this.mongo.collection<Scoresheet>('scoresheets').insertMany(scoresheets);
-    return scoresheets;
+  async createMany(scoresheets: Scoresheet[]) {
+    if (scoresheets.length === 0) return null;
+
+    return await this.mongo.collection<Scoresheet>('scoresheets').insertMany(scoresheets);
   }
 }

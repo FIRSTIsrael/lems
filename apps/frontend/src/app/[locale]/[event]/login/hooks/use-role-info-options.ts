@@ -48,7 +48,7 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
   );
 
   return useMemo(() => {
-    if (!divisionData?.division || !roleInfoType || !volunteerData?.volunteers) return [];
+    if (!roleInfoType || !volunteerData?.volunteers) return [];
 
     let allOptions: RoleInfoOption[] = [];
 

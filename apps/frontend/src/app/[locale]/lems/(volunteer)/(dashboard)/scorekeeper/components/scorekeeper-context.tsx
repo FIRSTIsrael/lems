@@ -3,11 +3,11 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import { Match, MatchStage, ScorekeeperData } from '../graphql';
+import { AudienceDisplayState, Match, MatchStage, ScorekeeperData } from '../graphql';
 
 interface ScorekeeperContextType {
   matches: Match[];
-
+  audienceDisplay: AudienceDisplayState | null;
   matchLength: number;
   currentStage: MatchStage;
   loadedMatch: Match | null;
@@ -26,6 +26,7 @@ interface ScorekeeperProviderProps {
 export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps) {
   const {
     matches,
+    audienceDisplay,
     matchLength,
     currentStage,
     loadedMatch: loadedMatchId,
@@ -69,6 +70,7 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
 
     return {
       matches: sortedMatches,
+      audienceDisplay,
       matchLength,
       currentStage,
       loadedMatch,
@@ -76,7 +78,15 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
       testMatch,
       nextMatch
     };
-  }, [activeMatchId, loadedMatchId, sortedMatches, matchLength, currentStage, currentTime]);
+  }, [
+    activeMatchId,
+    loadedMatchId,
+    sortedMatches,
+    matchLength,
+    currentStage,
+    currentTime,
+    audienceDisplay
+  ]);
 
   return <ScorekeeperContext.Provider value={value}>{children}</ScorekeeperContext.Provider>;
 }

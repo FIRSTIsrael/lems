@@ -41,7 +41,6 @@ export type QueryVariables = {
 
 export type SubscriptionVariables = {
   divisionId: string;
-  lastSeenVersion?: number;
 };
 
 export type ScoresheetMissionClauseUpdatedEvent = {
@@ -50,14 +49,13 @@ export type ScoresheetMissionClauseUpdatedEvent = {
   missionId: string;
   clauseIndex: number;
   clauseValue: ScoresheetClauseValue;
-  version: number;
+  score: number;
 };
 
 export type ScoresheetStatusUpdatedEvent = {
   __typename: 'ScoresheetStatusUpdated';
   scoresheetId: string;
   status: string;
-  version: number;
 };
 
 export type ScoresheetGPUpdatedEvent = {
@@ -65,21 +63,34 @@ export type ScoresheetGPUpdatedEvent = {
   scoresheetId: string;
   gpValue: number | null;
   notes?: string;
-  version: number;
 };
 
 export type ScoresheetEscalatedUpdatedEvent = {
   __typename: 'ScoresheetEscalatedUpdated';
   scoresheetId: string;
   escalated: boolean;
-  version: number;
+};
+
+export type ScoresheetSignatureUpdatedEvent = {
+  __typename: 'ScoresheetSignatureUpdated';
+  scoresheetId: string;
+  signature: string | null;
+  status: string;
+};
+
+export type ScoresheetResetEvent = {
+  __typename: 'ScoresheetResetEvent';
+  scoresheetId: string;
+  status: string;
 };
 
 export type ScoresheetUpdatedEvent =
   | ScoresheetMissionClauseUpdatedEvent
   | ScoresheetStatusUpdatedEvent
   | ScoresheetGPUpdatedEvent
-  | ScoresheetEscalatedUpdatedEvent;
+  | ScoresheetEscalatedUpdatedEvent
+  | ScoresheetSignatureUpdatedEvent
+  | ScoresheetResetEvent;
 
 export type SubscriptionResult = {
   scoresheetUpdated: ScoresheetUpdatedEvent;
@@ -87,6 +98,7 @@ export type SubscriptionResult = {
 
 // Layout query types
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
   } | null;

@@ -1,5 +1,6 @@
 import { RubricStatus } from '@lems/database';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
+import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingSession } from '../graphql';
 
 export type RubricStatusStat = {
@@ -17,7 +18,10 @@ export function getRubricStatusStats(
   return JUDGING_CATEGORIES.reduce(
     (acc, category) => {
       const statuses = sessions
-        .map(session => session.rubrics[category]?.status || ('empty' as RubricStatus))
+        .map(
+          session =>
+            session.rubrics[hyphensToUnderscores(category)]?.status || ('empty' as RubricStatus)
+        )
         .filter(Boolean);
 
       const statusCounts = statuses.reduce(

@@ -6,7 +6,6 @@ import type { SubscriptionVars, QueryData, JudgingSession } from '../types';
 interface SubscriptionData {
   judgingSessionAborted: {
     sessionId: string;
-    version: number;
   };
 }
 
@@ -14,10 +13,9 @@ export const JUDGING_SESSION_ABORTED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription JudgingSessionAborted($divisionId: String!, $lastSeenVersion: Int) {
-    judgingSessionAborted(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription JudgingSessionAborted($divisionId: String!) {
+    judgingSessionAborted(divisionId: $divisionId) {
       sessionId
-      version
     }
   }
 `;

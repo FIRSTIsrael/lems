@@ -9,7 +9,6 @@ import { authorizeScoresheetAccess } from './utils';
 type ScoresheetEscalatedUpdatedEvent = {
   scoresheetId: string;
   escalated: boolean;
-  version: number;
 };
 
 interface UpdateScoresheetEscalatedArgs {
@@ -52,8 +51,7 @@ export const updateScoresheetEscalatedResolver: GraphQLFieldResolver<
 
   const eventPayload: ScoresheetEscalatedUpdatedEvent = {
     scoresheetId,
-    escalated,
-    version: -1
+    escalated
   };
 
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);

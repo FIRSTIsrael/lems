@@ -7,12 +7,14 @@ interface ParticipantsArgs {
 }
 
 export interface MatchParticipantGraphQL {
+  id: string;
   tableId: string;
   teamId: string | null;
   queued: boolean;
   present: boolean;
   ready: boolean;
   divisionId: string;
+  matchId: string;
 }
 
 /**
@@ -58,12 +60,14 @@ export const matchParticipantsResolver: GraphQLFieldResolver<
       };
 
       return {
+        id: participant.id,
         teamId: participant.team_id,
         tableId: participant.table_id,
         queued: !!participantState.queued,
         present: !!participantState.present,
         ready: !!participantState.ready,
-        divisionId: match.divisionId
+        divisionId: match.divisionId,
+        matchId: match.id
       };
     });
   } catch (error) {

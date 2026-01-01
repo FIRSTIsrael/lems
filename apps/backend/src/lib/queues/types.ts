@@ -1,4 +1,7 @@
-export type ScheduledEventType = 'session-completed' | 'match-completed';
+export type ScheduledEventType =
+  | 'session-completed'
+  | 'match-completed'
+  | 'match-endgame-triggered';
 
 export interface ScheduledEvent {
   eventType: ScheduledEventType;
