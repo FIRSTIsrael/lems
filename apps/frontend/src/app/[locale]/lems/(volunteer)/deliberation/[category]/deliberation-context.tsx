@@ -16,7 +16,9 @@ import {
   computeNormalizedScores,
   computeRanks,
   computeEligibility,
-  getFlattenedRubricFields,
+  getOrganizedRubricFields,
+  getGPScores,
+  getFieldDisplayLabels,
   PICKLIST_LIMIT_MULTIPLIER,
   MAX_PICKLIST_LIMIT
 } from './deliberation-computation';
@@ -100,6 +102,9 @@ export function CategoryDeliberationProvider({
     // Step 2: Compute room metrics (aggregated scores per room)
     const roomMetrics = computeRoomMetrics(teamScores, division.teams);
 
+    // Step 2a: Get field display labels for this category
+    const fieldDisplayLabels = getFieldDisplayLabels(category);
+
     // Step 3: Compute normalized scores and ranks
     const enrichedTeams = division.teams.map((team, index) => {
       const scores = teamScores[index];
@@ -110,15 +115,13 @@ export function CategoryDeliberationProvider({
       );
       const ranks = computeRanks(scores, teamScores);
       const isEligible = computeEligibility(team, deliberation);
-      const rubricFields = getFlattenedRubricFields(team, categoryKey);
+      const rubricFields = getOrganizedRubricFields(team, category);
+      const gpScores = getGPScores(team);
 
       return {
         id: team.id,
         number: team.number,
         name: team.name,
-        affiliation: team.affiliation,
-        city: team.city,
-        region: team.region,
         arrived: team.arrived,
         disqualified: team.disqualified,
         slug: team.slug,
@@ -128,15 +131,13 @@ export function CategoryDeliberationProvider({
         ranks,
         eligible: isEligible,
         rubricFields,
+        gpScores,
         rubricIds: {
           'innovation-project': team.rubrics.innovation_project?.id ?? null,
           'robot-design': team.rubrics.robot_design?.id ?? null,
           'core-values': team.rubrics.core_values?.id ?? null
         },
-        awardNominations: team.rubrics.core_values?.data?.awards ?? {},
-        gpScores: (team.scoresheets || [])
-          .map(s => ({ round: s.round, score: s.data?.gp?.value ?? 3 }))
-          .sort((a, b) => a.round - b.round)
+        awardNominations: team.rubrics.core_values?.data?.awards ?? {}
       } as EnrichedTeam;
     });
 
@@ -190,6 +191,7 @@ export function CategoryDeliberationProvider({
       picklistTeams,
       suggestedTeam,
       picklistLimit,
+      fieldDisplayLabels,
       startDeliberation: handleStartDeliberation,
       updatePicklist: handleUpdatePicklist,
       addToPicklist: handleAddToPicklist,

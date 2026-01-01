@@ -18,15 +18,24 @@ export interface RoomMetrics {
 export type RoomMetricsMap = Record<string, RoomMetrics>;
 
 /**
+ * Metadata for a single rubric field in a category.
+ */
+export interface FieldMetadata {
+  id: string;
+  category: 'innovation-project' | 'robot-design' | 'core-values';
+  sectionId: string;
+  fieldNumber: number;
+  displayLabel: string; // e.g., 'IP-1', 'RD-5'
+  coreValues: boolean;
+}
+
+/**
  * Enriched team data with all computed values for deliberation.
  */
 export interface EnrichedTeam {
   id: string;
   number: string;
   name: string;
-  affiliation: string;
-  city: string;
-  region: string;
   arrived: boolean;
   disqualified: boolean;
   slug: string;
@@ -39,6 +48,7 @@ export interface EnrichedTeam {
   eligible: boolean;
 
   rubricFields: Record<string, number | null>;
+  gpScores: Record<string, number | null>;
 
   rubricIds: {
     'innovation-project': string | null;
@@ -47,8 +57,6 @@ export interface EnrichedTeam {
   };
 
   awardNominations: Record<string, boolean>;
-
-  gpScores: Array<{ round: number; score: number }>;
 }
 
 export interface DeliberationContextValue {
@@ -63,6 +71,7 @@ export interface DeliberationContextValue {
   suggestedTeam: EnrichedTeam | null;
 
   picklistLimit: number;
+  fieldDisplayLabels: string[];
 
   startDeliberation(): Promise<void>;
   updatePicklist(teamIds: string[]): Promise<void>;

@@ -1,6 +1,7 @@
 import { JudgingCategory } from '@lems/types/judging';
+import { rubrics } from '@lems/shared/lib/rubrics';
 import type { Team, JudgingDeliberation } from './graphql/types';
-import type { MetricPerCategory, RoomMetricsMap } from './types';
+import type { MetricPerCategory, RoomMetricsMap, FieldMetadata } from './types';
 
 /**
  * Maximum picklist limit when using default formula.
@@ -13,6 +14,15 @@ export const MAX_PICKLIST_LIMIT = 12;
  * Picklist limit = min(12, ceil(teamCount * 0.35))
  */
 export const PICKLIST_LIMIT_MULTIPLIER = 0.35;
+
+/**
+ * Category abbreviations for field display labels.
+ */
+const CATEGORY_ABBREVIATIONS = {
+  'innovation-project': 'IP',
+  'robot-design': 'RD',
+  'core-values': 'CV'
+} as const;
 
 /**
  * Computes raw category scores and total score for a team.
@@ -260,4 +270,134 @@ export function getFlattenedRubricFields(
   }
 
   return result;
+}
+
+/**
+ * Builds comprehensive field metadata for a given category.
+ *
+ * Returns an array of field metadata objects with:
+ * - Field ID, category, section info
+ * - Display label (e.g., 'IP-1', 'RD-5')
+ * - Field number within category (1-10)
+ *
+ * @param category - The judging category (hyphenated: 'innovation-project', 'robot-design', 'core-values')
+ * @returns Array of FieldMetadata objects, ordered by field number
+ */
+export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
+  const categoryKey = category.replace(/-/g, '-') as
+    | 'innovation-project'
+    | 'robot-design'
+    | 'core-values';
+  const abbreviation = CATEGORY_ABBREVIATIONS[categoryKey];
+
+  const schema = categoryKey === 'core-values' ? rubrics['core-values'] : rubrics[categoryKey];
+
+  const fields: FieldMetadata[] = [];
+  let fieldNumber = 1;
+
+  schema.sections.forEach(section => {
+    section.fields.forEach(field => {
+      fields.push({
+        id: field.id,
+        category: categoryKey,
+        sectionId: section.id,
+        fieldNumber,
+        displayLabel: `${abbreviation}-${fieldNumber}`,
+        coreValues: field.coreValues ?? false
+      });
+      fieldNumber++;
+    });
+  });
+
+  return fields;
+}
+
+/**
+ * Extracts organized field values with metadata for a team in a specific category.
+ *
+ * Returns field values mapped by their display labels, ordered by field number.
+ * For core-values category, includes both IP and RD fields with their respective prefixes.
+ *
+ * @param team - The team to extract fields from
+ * @param category - The deliberation category (hyphenated)
+ * @returns Object mapping display labels (e.g., 'IP-1') to field values
+ */
+export function getOrganizedRubricFields(
+  team: Team,
+  category: JudgingCategory
+): Record<string, number | null> {
+  const fields = buildFieldMetadata(category);
+  const result: Record<string, number | null> = {};
+
+  const categoryKey = category.replace(/-/g, '_') as
+    | 'innovation_project'
+    | 'robot_design'
+    | 'core_values';
+
+  const categoryMap = {
+    innovation_project: team.rubrics.innovation_project,
+    robot_design: team.rubrics.robot_design,
+    core_values: team.rubrics.core_values
+  } as const;
+
+  if (category === 'core-values') {
+    // For core-values, include both IP and RD fields with prefixes
+    const ipFields = buildFieldMetadata('innovation-project');
+    const rdFields = buildFieldMetadata('robot-design');
+
+    ipFields.forEach(field => {
+      const ipRubric = team.rubrics.innovation_project;
+      const value = ipRubric?.data?.fields?.[field.id]?.value ?? null;
+      result[field.displayLabel] = value;
+    });
+
+    rdFields.forEach(field => {
+      const rdRubric = team.rubrics.robot_design;
+      const value = rdRubric?.data?.fields?.[field.id]?.value ?? null;
+      result[field.displayLabel] = value;
+    });
+  } else {
+    // For IP/RD, include only their own fields
+    fields.forEach(field => {
+      const rubric = categoryMap[categoryKey];
+      const value = rubric?.data?.fields?.[field.id]?.value ?? null;
+      result[field.displayLabel] = value;
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Extracts GP scores with formatted keys for a team.
+ *
+ * @param team - The team to extract GP scores from
+ * @returns Object mapping 'GP-{round}' to score values
+ */
+export function getGPScores(team: Team): Record<string, number | null> {
+  const result: Record<string, number | null> = {};
+
+  (team.scoresheets ?? []).forEach(scoresheet => {
+    result[`GP-${scoresheet.round}`] = scoresheet.data?.gp?.value ?? null;
+  });
+
+  return result;
+}
+
+/**
+ * Gets an ordered list of all field display labels for a category.
+ *
+ * Useful for building table columns in the correct order.
+ *
+ * @param category - The judging category
+ * @returns Array of display labels (e.g., ['IP-1', 'IP-2', ...] or ['IP-1', ..., 'RD-1', ...])
+ */
+export function getFieldDisplayLabels(category: JudgingCategory): string[] {
+  if (category === 'core-values') {
+    const ipLabels = buildFieldMetadata('innovation-project').map(f => f.displayLabel);
+    const rdLabels = buildFieldMetadata('robot-design').map(f => f.displayLabel);
+    return [...ipLabels, ...rdLabels];
+  }
+
+  return buildFieldMetadata(category).map(f => f.displayLabel);
 }

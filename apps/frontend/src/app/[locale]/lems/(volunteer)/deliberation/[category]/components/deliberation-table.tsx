@@ -2,14 +2,19 @@
 
 import { useMemo } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useTheme, alpha, IconButton, Tooltip } from '@mui/material';
+import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
 import { OpenInNew, Add } from '@mui/icons-material';
 import { useCategoryDeliberation } from '../deliberation-context';
 import type { EnrichedTeam } from '../types';
 
+const NUM_COLUMN_WIDTH = 50;
+const FIELD_COLUMN_WIDTH = 60;
+const SCORE_COLUMN_WIDTH = 110;
+
 export function DeliberationTable() {
   const theme = useTheme();
-  const { teams, suggestedTeam, picklistTeams, addToPicklist } = useCategoryDeliberation();
+  const { teams, suggestedTeam, picklistTeams, addToPicklist, fieldDisplayLabels } =
+    useCategoryDeliberation();
 
   const pickedTeamIds = useMemo(() => new Set(picklistTeams.map(t => t.id)), [picklistTeams]);
 
@@ -24,11 +29,21 @@ export function DeliberationTable() {
         renderCell: params => params.row.ranks.total || '-'
       },
       {
-        field: 'number',
-        headerName: 'Team #',
-        width: 100,
-        sortable: true,
-        filterable: false
+        field: 'teamDisplay',
+        headerName: 'Team',
+        width: 120,
+        sortable: false,
+        filterable: false,
+        renderCell: params => {
+          const team = params.row as EnrichedTeam;
+          return (
+            <Tooltip title={team.name}>
+              <Box sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                {team.number}
+              </Box>
+            </Tooltip>
+          );
+        }
       },
       {
         field: 'room',
@@ -38,10 +53,47 @@ export function DeliberationTable() {
         filterable: false,
         renderCell: params => params.row.room?.name || '-'
       },
+
+      // Rubric field columns
+      ...fieldDisplayLabels.map(label => ({
+        field: label,
+        headerName: label,
+        width: FIELD_COLUMN_WIDTH,
+        sortable: false,
+        filterable: false,
+        headerAlign: 'center' as const,
+        align: 'center' as const,
+        renderCell: (params: any) => {
+          const value = params.row.rubricFields[label];
+          return value !== null ? value : '-';
+        }
+      })),
+
+      // GP score columns (only shown for core-values category)
+      ...Object.keys(teams[0]?.gpScores ?? {})
+        .sort((a, b) => {
+          const roundA = parseInt(a.split('-')[1], 10);
+          const roundB = parseInt(b.split('-')[1], 10);
+          return roundA - roundB;
+        })
+        .map(gpKey => ({
+          field: gpKey,
+          headerName: gpKey,
+          width: FIELD_COLUMN_WIDTH,
+          sortable: false,
+          filterable: false,
+          headerAlign: 'center' as const,
+          align: 'center' as const,
+          renderCell: (params: any) => {
+            const value = params.row.gpScores[gpKey];
+            return value !== null ? value : '-';
+          }
+        })),
+
       {
         field: 'innovationProject',
         headerName: 'Innovation',
-        width: 110,
+        width: SCORE_COLUMN_WIDTH,
         sortable: true,
         filterable: false,
         renderCell: params => (params.row.normalizedScores['innovation-project'] || 0).toFixed(2)
@@ -49,7 +101,7 @@ export function DeliberationTable() {
       {
         field: 'robotDesign',
         headerName: 'Robot Design',
-        width: 110,
+        width: SCORE_COLUMN_WIDTH,
         sortable: true,
         filterable: false,
         renderCell: params => (params.row.normalizedScores['robot-design'] || 0).toFixed(2)
@@ -57,7 +109,7 @@ export function DeliberationTable() {
       {
         field: 'coreValues',
         headerName: 'Core Values',
-        width: 110,
+        width: SCORE_COLUMN_WIDTH,
         sortable: true,
         filterable: false,
         renderCell: params => (params.row.normalizedScores['core-values'] || 0).toFixed(2)
@@ -100,7 +152,7 @@ export function DeliberationTable() {
         }
       }
     ],
-    [theme, pickedTeamIds, addToPicklist]
+    [theme, pickedTeamIds, addToPicklist, fieldDisplayLabels, teams]
   );
 
   return (
