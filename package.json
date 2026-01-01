@@ -75,7 +75,7 @@
     "react-hot-toast": "^2.6.0",
     "react-markdown": "^10.1.0",
     "react-scroll": "^1.9.3",
-    "recharts": "^3.5.1",
+    "recharts": "^3.6.0",
     "serve-favicon": "^2.5.1",
     "stylis": "^4.3.6",
     "swr": "^2.3.7",
