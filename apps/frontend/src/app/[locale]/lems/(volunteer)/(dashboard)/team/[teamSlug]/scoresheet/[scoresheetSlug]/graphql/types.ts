@@ -78,12 +78,19 @@ export type ScoresheetSignatureUpdatedEvent = {
   status: string;
 };
 
+export type ScoresheetResetEvent = {
+  __typename: 'ScoresheetResetEvent';
+  scoresheetId: string;
+  status: string;
+};
+
 export type ScoresheetUpdatedEvent =
   | ScoresheetMissionClauseUpdatedEvent
   | ScoresheetStatusUpdatedEvent
   | ScoresheetGPUpdatedEvent
   | ScoresheetEscalatedUpdatedEvent
-  | ScoresheetSignatureUpdatedEvent;
+  | ScoresheetSignatureUpdatedEvent
+  | ScoresheetResetEvent;
 
 export type SubscriptionResult = {
   scoresheetUpdated: ScoresheetUpdatedEvent;
@@ -91,6 +98,7 @@ export type SubscriptionResult = {
 
 // Layout query types
 export interface MatchParticipant {
+  id: string;
   team: {
     id: string;
   } | null;

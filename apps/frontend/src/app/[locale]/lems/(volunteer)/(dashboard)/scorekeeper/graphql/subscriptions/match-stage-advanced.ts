@@ -3,7 +3,9 @@ import { merge } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { MatchStage, ScorekeeperData } from '../types';
 
-interface MatchStageAdvancedEvent {}
+interface MatchStageAdvancedEvent {
+  _placeholder?: string;
+}
 
 interface MatchStageAdvancedSubscriptionData {
   matchStageAdvanced: MatchStageAdvancedEvent;
@@ -18,7 +20,9 @@ export const MATCH_STAGE_ADVANCED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionVars
 > = gql`
   subscription MatchStageAdvanced($divisionId: String!) {
-    matchStageAdvanced(divisionId: $divisionId)
+    matchStageAdvanced(divisionId: $divisionId) {
+      _placeholder
+    }
   }
 `;
 

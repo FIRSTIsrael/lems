@@ -7,6 +7,7 @@ interface ParticipantsArgs {
 }
 
 export interface MatchParticipantGraphQL {
+  id: string;
   tableId: string;
   teamId: string | null;
   queued: boolean;
@@ -59,6 +60,7 @@ export const matchParticipantsResolver: GraphQLFieldResolver<
       };
 
       return {
+        id: participant.id,
         teamId: participant.team_id,
         tableId: participant.table_id,
         queued: !!participantState.queued,
