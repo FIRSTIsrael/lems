@@ -4,7 +4,7 @@ import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { MatchStage, ScorekeeperData } from '../types';
 
 interface MatchStageAdvancedEvent {
-  version: number;
+  _placeholder?: string;
 }
 
 interface MatchStageAdvancedSubscriptionData {
@@ -13,16 +13,15 @@ interface MatchStageAdvancedSubscriptionData {
 
 interface SubscriptionVars {
   divisionId: string;
-  lastSeenVersion?: number;
 }
 
 export const MATCH_STAGE_ADVANCED_SUBSCRIPTION: TypedDocumentNode<
   MatchStageAdvancedSubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription MatchStageAdvanced($divisionId: String!, $lastSeenVersion: Int) {
-    matchStageAdvanced(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
-      version
+  subscription MatchStageAdvanced($divisionId: String!) {
+    matchStageAdvanced(divisionId: $divisionId) {
+      _placeholder
     }
   }
 `;

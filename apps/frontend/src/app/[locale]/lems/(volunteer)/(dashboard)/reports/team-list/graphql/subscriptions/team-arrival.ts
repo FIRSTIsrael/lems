@@ -7,10 +7,9 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   SubscriptionData,
   SubscriptionVars
 > = gql`
-  subscription TeamArrivalUpdated($divisionId: String!, $lastSeenVersion: Int) {
-    teamArrivalUpdated(divisionId: $divisionId, lastSeenVersion: $lastSeenVersion) {
+  subscription TeamArrivalUpdated($divisionId: String!) {
+    teamArrivalUpdated(divisionId: $divisionId) {
       teamId
-      version
     }
   }
 `;

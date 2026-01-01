@@ -116,7 +116,7 @@ export default function JudgePage() {
         </Button>
       </PageHeader>
 
-      <Box sx={{ pt: 3 }}>
+      <Box sx={{ py: 3 }}>
         <RoomScheduleTable
           sessions={sessions || []}
           loading={loading || !sessions}

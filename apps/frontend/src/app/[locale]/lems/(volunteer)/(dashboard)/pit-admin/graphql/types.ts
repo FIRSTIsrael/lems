@@ -10,5 +10,4 @@ export interface Team {
 
 export interface TeamEvent {
   teamId: string;
-  version: number;
 }

@@ -5,7 +5,6 @@ type ValueMutationResult = {
     rubricId: string;
     fieldId: string;
     value: { value: number; notes?: string };
-    version: number;
   };
 };
 
@@ -41,7 +40,6 @@ export const UPDATE_RUBRIC_VALUE_MUTATION: TypedDocumentNode<
         value
         notes
       }
-      version
     }
   }
 `;

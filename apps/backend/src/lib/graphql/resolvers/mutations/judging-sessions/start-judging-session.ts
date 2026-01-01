@@ -16,7 +16,6 @@ interface StartJudgingSessionArgs {
 
 interface JudgingEvent {
   sessionId: string;
-  version: number;
 }
 
 /**
@@ -86,7 +85,7 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
       // The queue failure should be monitored separately
     }
 
-    return { sessionId, version: -1, startTime, startDelta };
+    return { sessionId, startTime, startDelta };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

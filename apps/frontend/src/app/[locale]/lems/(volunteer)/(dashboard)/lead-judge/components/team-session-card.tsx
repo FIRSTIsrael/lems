@@ -5,6 +5,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { Box, Typography, useTheme, Chip, Stack, Card, CardContent } from '@mui/material';
+import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingSession } from '../graphql';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
@@ -104,7 +105,7 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
             <RubricStatusButton
               category={category}
-              status={session.rubrics[category as keyof typeof session.rubrics]?.status || 'empty'}
+              status={session.rubrics[hyphensToUnderscores(category)]?.status || 'empty'}
               label={getCategory(category)}
               teamSlug={session.team.slug}
             />

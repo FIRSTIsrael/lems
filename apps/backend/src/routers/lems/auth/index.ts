@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 import { RecaptchaResponse } from '../../../types/auth';
 import db from '../../../lib/database';
 import { getRecaptchaResponse } from '../../../lib/security/captcha';
+import { logger } from '../../../lib/logger';
 import { makeLemsUserResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -33,12 +34,13 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   if (process.env.RECAPTCHA === 'true') {
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
     if (!captcha.success || captcha['error-codes']?.length > 0) {
-      console.log(`Captcha failure: ${captcha['error-codes'] || []}`);
+      logger.warn({ component: 'auth', action: 'login', userType: 'volunteer', errorCodes: captcha['error-codes'] || [] }, 'Captcha failure');
       res.status(500).json({ error: 'CAPTCHA_FAILED' });
       return;
     }
 
     if (captcha.action != 'submit' || captcha.score < 0.5) {
+      logger.warn({ component: 'auth', action: 'login', userType: 'volunteer', score: captcha.score }, 'Captcha score too low');
       res.status(429).json({ error: 'TOO_MANY_REQUESTS' });
       return;
     }
@@ -53,7 +55,7 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
     const volunteerUser = await db.eventUsers.byId(loginDetails.userId).get();
 
     if (!volunteerUser) {
-      console.log(`🔑 LEMS login failed - user not found: ${loginDetails.userId}`);
+      logger.warn({ component: 'auth', action: 'login', userType: 'volunteer', userId: loginDetails.userId, reason: 'user_not_found' }, 'LEMS login failed - user not found');
       res.status(404).json({ error: 'USER_ID_NOT_FOUND' });
       return;
     }
@@ -61,12 +63,12 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
     const isValidPassword = loginDetails.password == volunteerUser.password;
 
     if (!isValidPassword) {
-      console.log(`🔑 LEMS login failed - invalid password: ${loginDetails.userId}`);
+      logger.warn({ component: 'auth', action: 'login', userType: 'volunteer', userId: loginDetails.userId, reason: 'invalid_password' }, 'LEMS login failed - invalid password');
       res.status(401).json({ error: 'INVALID_CREDENTIALS' });
       return;
     }
 
-    console.log(`🔑 LEMS login successful: ${loginDetails.userId}`);
+    logger.info({ component: 'auth', action: 'login', userType: 'volunteer', userId: loginDetails.userId }, 'LEMS login successful');
 
     const expires = dayjs().endOf('day');
     const expiresInSeconds = expires.diff(dayjs(), 'second');
@@ -95,13 +97,13 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
       loginTime: new Date()
     });
   } catch (error) {
-    console.error('LEMS login error:', error);
+    logger.error({ component: 'auth', action: 'login', userType: 'volunteer', error: error instanceof Error ? error.message : String(error) }, 'LEMS login error');
     next(error);
   }
 });
 
 router.post('/logout', (req: Request, res: Response) => {
-  console.log(`🔒 LEMS logout successful`);
+  logger.info({ component: 'auth', action: 'logout', userType: 'volunteer' }, 'LEMS logout successful');
   res.clearCookie('lems-auth-token');
   res.json({ ok: true });
 });

@@ -112,8 +112,8 @@ type ScoresheetMissionClauseUpdated {
   clauseIndex: Int!
   "The new value for the clause (boolean, string, or number)"
   clauseValue: JSON!
-  "Event version for subscription recovery tracking"
-  version: Int!
+  "New score value after clause update"
+  score: Int!
 }
 
 """
@@ -124,8 +124,6 @@ type ScoresheetStatusUpdated {
   scoresheetId: String!
   "The new status of the scoresheet"
   status: ScoresheetStatus!
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -138,8 +136,6 @@ type ScoresheetGPUpdated {
   gpValue: Int
   "Optional notes about the rating if value is 2 or 4"
   notes: String
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 """
@@ -150,8 +146,28 @@ type ScoresheetEscalatedUpdated {
   scoresheetId: String!
   "Whether the scoresheet has been escalated"
   escalated: Boolean!
-  "Event version for subscription recovery tracking"
-  version: Int!
+}
+
+"""
+Response type for scoresheet signature update
+"""
+type ScoresheetSignatureUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The signature data as encoded PNG string"
+  signature: String
+  "The new status after signature completion (should be 'gp')"
+  status: ScoresheetStatus!
+}
+
+"""
+Response type for scoresheet reset
+"""
+type ScoresheetResetEvent {
+  "The ID of the scoresheet that was reset"
+  scoresheetId: String!
+  "The new status after reset (should be 'empty')"
+  status: ScoresheetStatus!
 }
 
 """
@@ -162,6 +178,8 @@ union ScoresheetUpdatedEvent =
   | ScoresheetStatusUpdated
   | ScoresheetGPUpdated
   | ScoresheetEscalatedUpdated
+  | ScoresheetSignatureUpdated
+  | ScoresheetResetEvent
 
 extend type Mutation {
   """
@@ -217,6 +235,30 @@ extend type Mutation {
     "Whether the scoresheet has been escalated"
     escalated: Boolean!
   ): ScoresheetEscalatedUpdated!
+
+  """
+  Submit a scoresheet with a signature.
+  Updates both the signature and changes the status to 'submitted'.
+  """
+  updateScoresheetSignature(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to submit"
+    scoresheetId: String!
+    "The signature data as encoded PNG string"
+    signature: String!
+  ): ScoresheetSignatureUpdated!
+
+  """
+  Reset a scoresheet to empty status and clear escalation.
+  Only available to head-referee role.
+  """
+  resetScoresheet(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to reset"
+    scoresheetId: String!
+  ): ScoresheetResetEvent!
 }
 
 extend type Subscription {
@@ -228,8 +270,6 @@ extend type Subscription {
   scoresheetUpdated(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): ScoresheetUpdatedEvent!
 
   """
@@ -239,7 +279,5 @@ extend type Subscription {
   scoresheetStatusChanged(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): ScoresheetStatusUpdated!
 }

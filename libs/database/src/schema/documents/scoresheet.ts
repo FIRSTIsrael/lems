@@ -1,3 +1,5 @@
+type ScoresheetClauseValue = number | boolean | string | string[] | null;
+
 export type ScoresheetStatus = 'empty' | 'draft' | 'completed' | 'gp' | 'submitted';
 
 export interface Scoresheet {
@@ -19,7 +21,7 @@ export interface Scoresheet {
      * "mission2": { 0: 'option1' }
      * }
      */
-    missions: Record<string, Record<number, boolean | string | number | null>>;
+    missions: Record<string, Record<number, ScoresheetClauseValue>>;
 
     /**
      * Signature data as encoded PNG string.

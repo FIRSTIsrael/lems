@@ -16,6 +16,7 @@ import { AwardsRepository } from './repositories/awards';
 import { EventUsersRepository } from './repositories/event-users';
 import { RubricsRepository } from './repositories/rubrics';
 import { ScoresheetsRepository } from './repositories/scoresheets';
+import { JudgingDeliberationsRepository } from './repositories/judging-deliberations';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -61,6 +62,7 @@ export class Database {
 
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
+  public judgingDeliberations: JudgingDeliberationsRepository;
   public rubrics: RubricsRepository;
 
   public tables: TablesRepository;
@@ -125,6 +127,7 @@ export class Database {
 
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
+    this.judgingDeliberations = new JudgingDeliberationsRepository(this.kysely);
     this.rubrics = new RubricsRepository(this.kysely, this.mongoDb);
 
     this.tables = new TablesRepository(this.kysely);

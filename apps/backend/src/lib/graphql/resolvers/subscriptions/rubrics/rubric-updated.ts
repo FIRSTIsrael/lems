@@ -1,51 +1,48 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
-import { extractEventBase } from './utils';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface RubricUpdatedSubscribeArgs {
+  divisionId: string;
+}
 
 type RubricValueUpdatedEvent = {
   rubricId: string;
   fieldId: string;
   value: { value: number; notes?: string };
-  version: number;
 };
 
 type RubricFeedbackUpdatedEvent = {
   rubricId: string;
   feedback: { greatJob: string; thinkAbout: string };
-  version: number;
 };
 
 type RubricStatusUpdatedEvent = {
   rubricId: string;
   status: string;
-  version: number;
 };
 
 type RubricAwardsUpdatedEvent = {
   rubricId: string;
   awards: Record<string, boolean>;
-  version: number;
+};
+
+type RubricResetEvent = {
+  rubricId: string;
+  reset: boolean;
 };
 
 type RubricUpdatedEventType =
   | RubricValueUpdatedEvent
   | RubricFeedbackUpdatedEvent
   | RubricStatusUpdatedEvent
-  | RubricAwardsUpdatedEvent;
+  | RubricAwardsUpdatedEvent
+  | RubricResetEvent;
 
 async function processRubricUpdatedEvent(
   event: Record<string, unknown>
-): Promise<SubscriptionResult<RubricUpdatedEventType>> {
-  if (isGapMarker(event.data)) {
-    return event.data;
-  }
-
-  const { eventData, rubricId, version } = extractEventBase(event);
+): Promise<RubricUpdatedEventType | null> {
+  const eventData = event.data as Record<string, unknown>;
+  const rubricId = (eventData.rubricId as string) || '';
 
   if (!rubricId) {
     return null;
@@ -60,8 +57,7 @@ async function processRubricUpdatedEvent(
       ? ({
           rubricId,
           fieldId,
-          value: { value: (value.value as number) ?? 0, notes: value.notes as string },
-          version
+          value: { value: (value.value as number) ?? 0, notes: value.notes as string }
         } as RubricValueUpdatedEvent)
       : null;
   }
@@ -76,8 +72,7 @@ async function processRubricUpdatedEvent(
           feedback: {
             greatJob: (feedback.greatJob as string) || '',
             thinkAbout: (feedback.thinkAbout as string) || ''
-          },
-          version
+          }
         } as RubricFeedbackUpdatedEvent)
       : null;
   }
@@ -85,7 +80,7 @@ async function processRubricUpdatedEvent(
   // Handle RubricStatusUpdated events
   if ('status' in eventData) {
     const status = (eventData.status as string) || '';
-    return status ? ({ rubricId, status, version } as RubricStatusUpdatedEvent) : null;
+    return status ? ({ rubricId, status } as RubricStatusUpdatedEvent) : null;
   }
 
   // Handle RubricAwardsUpdated events
@@ -95,9 +90,19 @@ async function processRubricUpdatedEvent(
     return awards
       ? ({
           rubricId,
-          awards,
-          version
+          awards
         } as RubricAwardsUpdatedEvent)
+      : null;
+  }
+
+  // Handle RubricReset events
+  if ('reset' in eventData) {
+    const reset = eventData.reset as boolean;
+    return reset
+      ? ({
+          rubricId,
+          reset
+        } as RubricResetEvent)
       : null;
   }
 
@@ -105,14 +110,10 @@ async function processRubricUpdatedEvent(
 }
 
 export const rubricUpdatedResolver = {
-  subscribe: (_root: unknown, args: BaseSubscriptionArgs & Record<string, unknown>) => {
-    const divisionId = args.divisionId as string;
+  subscribe: (_root: unknown, { divisionId }: RubricUpdatedSubscribeArgs) => {
     if (!divisionId) throw new Error('divisionId is required');
-    return createSubscriptionIterator(
-      divisionId,
-      RedisEventTypes.RUBRIC_UPDATED,
-      (args.lastSeenVersion as number) || 0
-    );
+    const pubSub = getRedisPubSub();
+    return pubSub.asyncIterator(divisionId, RedisEventTypes.RUBRIC_UPDATED);
   },
   resolve: processRubricUpdatedEvent
 };
@@ -126,6 +127,7 @@ export const RubricUpdatedEventResolver = {
     if ('feedback' in obj) return 'RubricFeedbackUpdated';
     if ('status' in obj) return 'RubricStatusUpdated';
     if ('awards' in obj) return 'RubricAwardsUpdated';
+    if ('reset' in obj) return 'RubricReset';
     return null;
   }
 };

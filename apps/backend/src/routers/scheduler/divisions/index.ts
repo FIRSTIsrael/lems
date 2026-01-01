@@ -6,6 +6,7 @@ import {
   Rubric,
   JudgingCategory
 } from '@lems/database';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import db from '../../../lib/database';
 import { attachDivision } from '../middleware/attach-division';
 import { SchedulerRequest } from '../../../types/express';
@@ -76,6 +77,17 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   }
 
   await db.judgingSessions.createMany(sessions);
+
+  await Promise.all(
+    JUDGING_CATEGORIES.map(category =>
+      db.judgingDeliberations.create({
+        division_id: division.id,
+        category,
+        status: 'not-started',
+        picklist: []
+      })
+    )
+  );
 
   // Create rubrics for each team in the division
   const teamIds = [
@@ -222,6 +234,7 @@ router.delete('/schedule', async (req: SchedulerRequest, res) => {
       db.judgingSessions.byDivision(req.divisionId).deleteAll(),
       db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
       db.scoresheets.byDivision(req.divisionId).deleteAll(),
+      db.judgingDeliberations.byDivision(req.divisionId).deleteAll(),
       db.divisions.byId(req.divisionId).update({ has_schedule: false, schedule_settings: null })
     ]);
 

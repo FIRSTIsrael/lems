@@ -4,7 +4,6 @@ import { RubricStatus } from '@lems/database';
 type RubricStatusMutationResult = {
   rubricId: string;
   status: RubricStatus;
-  version: number;
 };
 
 type RubricStatusMutationVariables = {
@@ -21,7 +20,6 @@ export const UPDATE_RUBRIC_STATUS_MUTATION: TypedDocumentNode<
     updateRubricStatus(divisionId: $divisionId, rubricId: $rubricId, status: $status) {
       rubricId
       status
-      version
     }
   }
 `;
