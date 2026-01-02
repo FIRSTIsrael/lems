@@ -9,7 +9,7 @@ import { TeamsDataGrid } from './components/teams-data-grid';
 export default async function TeamsPage() {
   const t = await getTranslations('pages.teams');
 
-  const result = await apiFetch('/admin/teams', {}, AdminTeamsResponseSchema);
+  const result = await apiFetch('/admin/teams?extraFields=deletable', {}, AdminTeamsResponseSchema);
 
   if (!result.ok) {
     throw new Error('Failed to load teams');
