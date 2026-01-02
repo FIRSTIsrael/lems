@@ -560,7 +560,7 @@
     },
     "deliberations": {
       "category": {
-        "page-title": "דיונים | {category}",
+        "title": "דיונים | {category}",
         "controls": {
           "status": "סטטוס",
           "in-progress": "בתהליך",
@@ -590,10 +590,20 @@
           "compare": "השווה",
           "no-data-available": "אין קבוצות להשוואה"
         },
+        "table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "room": "חדר",
+          "total": "סך הכל",
+          "normalized": "מתוקנן",
+          "actions": "פעולות",
+          "view-rubric": "הצג מחוון",
+          "add-to-picklist": "הוסף לרשימת בחירה"
+        },
         "small-screen-block": {
           "title": "המסך קטן מדי",
           "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
-          "minimum-width": "אנא השתמש בשולחן עבודה או הטה את המכשיר למצב נוף."
+          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
         }
       }
     }

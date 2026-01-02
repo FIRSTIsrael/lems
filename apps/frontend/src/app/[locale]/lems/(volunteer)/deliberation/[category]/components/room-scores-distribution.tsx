@@ -102,13 +102,7 @@ export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistrib
         </Box>
       ) : (
         <ResponsiveContainer>
-          <ComposedChart
-            data={chartData}
-            margin={{ top: 5, right: 30, left: 0, bottom: 0 }}
-            style={{
-              direction: theme.direction === 'rtl' ? 'rtl' : 'ltr'
-            }}
-          >
+          <ComposedChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="aggregateGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor={theme.palette.primary.main} stopOpacity={0.8} />

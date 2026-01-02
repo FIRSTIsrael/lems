@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
 import { OpenInNew, Add, CheckCircleOutline } from '@mui/icons-material';
@@ -13,6 +14,7 @@ const FIELD_COLUMN_WIDTH = 60;
 
 export function DeliberationTable() {
   const theme = useTheme();
+  const t = useTranslations('pages.deliberations.category.table');
   const {
     teams,
     deliberation,
@@ -51,7 +53,7 @@ export function DeliberationTable() {
               <CheckCircleOutline fontSize="small" color="success" />
             </Box>
           ) : (
-            <Tooltip title="Add to Picklist">
+            <Tooltip title={t('add-to-picklist')}>
               <IconButton size="small" onClick={() => addToPicklist(team.id)} color="success">
                 <Add fontSize="small" />
               </IconButton>
@@ -61,7 +63,7 @@ export function DeliberationTable() {
       },
       {
         field: 'rank',
-        headerName: 'Rank',
+        headerName: t('rank'),
         width: 100,
         sortable: true,
         filterable: false,
@@ -70,7 +72,7 @@ export function DeliberationTable() {
       },
       {
         field: 'teamDisplay',
-        headerName: 'Team',
+        headerName: t('team'),
         width: 100,
         sortable: false,
         filterable: false,
@@ -87,7 +89,7 @@ export function DeliberationTable() {
       },
       {
         field: 'room',
-        headerName: 'Room',
+        headerName: t('room'),
         width: 60,
         sortable: true,
         filterable: false,
@@ -141,7 +143,7 @@ export function DeliberationTable() {
         : []),
       {
         field: 'totalScore',
-        headerName: 'Total',
+        headerName: t('total'),
         width: 100,
         sortable: true,
         filterable: false,
@@ -152,7 +154,7 @@ export function DeliberationTable() {
       },
       {
         field: 'normalizedScore',
-        headerName: 'Normalized',
+        headerName: t('normalized'),
         width: 100,
         sortable: true,
         filterable: false,
@@ -163,13 +165,13 @@ export function DeliberationTable() {
       {
         field: 'actions',
         type: 'actions',
-        headerName: 'Actions',
+        headerName: t('actions'),
         width: 80,
         getActions: params => {
           const team = params.row as EnrichedTeam;
 
           return (
-            <Tooltip key="view-rubric" title="View Rubric">
+            <Tooltip key="view-rubric" title={t('view-rubric')}>
               <IconButton
                 href={`/lems/team/${team.slug}/rubric/${hypenatedCategory}`}
                 target="_blank"
@@ -183,7 +185,7 @@ export function DeliberationTable() {
         }
       }
     ],
-    [fieldDisplayLabels, teams, pickedTeamIds, addToPicklist, hypenatedCategory]
+    [fieldDisplayLabels, teams, pickedTeamIds, addToPicklist, hypenatedCategory, t]
   );
 
   return (
