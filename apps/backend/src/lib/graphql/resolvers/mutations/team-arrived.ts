@@ -12,13 +12,11 @@ interface TeamArrivedArgs {
 
 interface TeamEvent {
   teamId: string;
-  version: number;
 }
 
 /**
  * Resolver for Mutation.teamArrived
  * Marks that a team arrived at a division and publishes an event.
- * Returns minimal response containing only teamId and version.
  */
 export const teamArrivedResolver: GraphQLFieldResolver<
   unknown,
@@ -71,7 +69,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
 
-    return { teamId, version: -1 };
+    return { teamId };
   } catch (error) {
     console.error(
       'Error updating team arrival status for team:',

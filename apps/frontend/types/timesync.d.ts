@@ -3,7 +3,7 @@ declare module 'timesync' {
     destroy();
     now(): number;
     on(event: 'change', callback: (offset: number) => void);
-    on(event: 'error', callback: (err: any) => void);
+    on(event: 'error', callback: (err: unknown) => void);
     on(event: 'sync', callback: (value: 'start' | 'end') => void);
     off(event: 'change' | 'error' | 'sync', callback?: () => void);
     sync();

@@ -6,7 +6,9 @@ export const AdminAwardResponseSchema = z.object({
   name: z.string(),
   type: z.enum(['PERSONAL', 'TEAM']),
   isOptional: z.boolean(),
+  showPlaces: z.boolean(),
   allowNominations: z.boolean(),
+  automaticAssignment: z.boolean(),
   place: z.number(),
   index: z.number(),
   winner: z.string().optional()

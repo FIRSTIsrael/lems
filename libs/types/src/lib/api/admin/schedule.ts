@@ -19,6 +19,7 @@ export const AdminRoomResponseSchema = z.object({
 export type Room = z.infer<typeof AdminRoomResponseSchema>;
 
 export const AdminMatchParticipantResponseSchema = z.object({
+  id: z.string(),
   teamId: z.string().nullable(),
   tableId: z.string(),
   matchId: z.string()

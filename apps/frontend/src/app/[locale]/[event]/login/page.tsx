@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
 import { getClient } from '../../../../lib/graphql/ssr-client';
-import { GET_EVENT_BY_SLUG_QUERY, EventDetails } from './graphql/event.graphql';
+import { GET_EVENT_BY_SLUG_QUERY, EventDetails } from './graphql';
 import { LoginPageContent } from './components/login-page-content';
 
 interface LoginPageProps {

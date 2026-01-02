@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { Button, Menu, MenuItem, ListItemText, Typography, Box } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, Language } from '@mui/icons-material';
@@ -23,15 +23,15 @@ export const LanguageSwitcher: React.FC = () => {
     setAnchorEl(null);
   };
 
-  const handleLanguageChange = (locale: Locale) => {
-    // Set the locale cookie
-    document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+  const handleLanguageChange = useCallback(
+    (locale: Locale) => {
+      document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+      router.refresh();
 
-    // Refresh the page to apply the new locale
-    router.refresh();
-
-    handleClose();
-  };
+      handleClose();
+    },
+    [router]
+  );
 
   // Get available locales excluding current one
   const availableLocales = Object.entries(Locales).filter(([key]) => key !== currentLocale) as [

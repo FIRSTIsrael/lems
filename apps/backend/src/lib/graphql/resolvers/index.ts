@@ -3,23 +3,37 @@ import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
-import { volunteersResolver, volunteerDivisionsResolver } from './events/volunteers';
+import {
+  volunteersResolver,
+  volunteerDivisionsResolver,
+  RoleInfoResolver
+} from './events/volunteers';
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
 import { divisionAwardsResolver } from './divisions/division-awards';
+import { divisionAgendaResolver } from './divisions/division-agenda';
 import { divisionFieldResolver } from './divisions/field/field';
 import { divisionJudgingResolver } from './divisions/judging/judging';
 import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
+import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
 import { rubricTeamResolver, rubricDataResolver, rubricResolvers } from './judging/rubric';
+import {
+  scoresheetTeamResolver,
+  scoresheetDataResolver,
+  scoresheetResolvers
+} from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
 import { teamRubricsResolver } from './divisions/team-rubrics';
+import { teamJudgingSessionResolver } from './divisions/team-judging-session';
+import { teamScoresheetsResolver } from './divisions/team-scoresheets';
+import { teamDisqualifiedResolver } from './divisions/team-disqualified';
 import { mutationResolvers } from './mutations';
 import { subscriptionResolvers } from './subscriptions';
 import { matchesResolver } from './divisions/field/matches';
@@ -28,6 +42,11 @@ import { currentStageResolver } from './divisions/field/current-stage';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
+import { audienceDisplayResolver } from './divisions/field/audience-display';
+import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
+import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
+import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
+import { DeliberationUpdatedEventResolver } from './subscriptions/deliberations/deliberation-updated';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -77,18 +96,22 @@ export const resolvers = {
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
-    awards: divisionAwardsResolver
+    awards: divisionAwardsResolver,
+    agenda: divisionAgendaResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
-    rubrics: judgingRubricsResolver
+    rubrics: judgingRubricsResolver,
+    deliberation: judgingDeliberationResolver
   },
   Field: {
+    audienceDisplay: audienceDisplayResolver,
     matches: matchesResolver,
     matchLength: matchLengthResolver,
-    currentStage: currentStageResolver
+    currentStage: currentStageResolver,
+    scoresheets: fieldScoresheetsResolver
   },
   Match: {
     participants: matchParticipantsResolver
@@ -104,31 +127,26 @@ export const resolvers = {
   },
   Team: {
     arrived: teamArrivalResolver,
-    rubrics: teamRubricsResolver
+    rubrics: teamRubricsResolver,
+    judgingSession: teamJudgingSessionResolver,
+    scoresheets: teamScoresheetsResolver,
+    disqualified: teamDisqualifiedResolver
   },
   Rubric: {
     ...rubricResolvers,
     team: rubricTeamResolver,
     data: rubricDataResolver
   },
+  Scoresheet: {
+    ...scoresheetResolvers,
+    team: scoresheetTeamResolver,
+    data: scoresheetDataResolver
+  },
   Volunteer: {
     divisions: volunteerDivisionsResolver
   },
-  RoleInfo: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('tableId' in obj) return 'TableRoleInfo';
-      if ('roomId' in obj) return 'RoomRoleInfo';
-      if ('category' in obj) return 'CategoryRoleInfo';
-      return null;
-    }
-  },
-  RubricUpdatedEvent: {
-    __resolveType(obj: Record<string, unknown>) {
-      if ('fieldId' in obj) return 'RubricValueUpdated';
-      if ('feedback' in obj) return 'RubricFeedbackUpdated';
-      if ('status' in obj) return 'RubricStatusUpdated';
-      if ('awards' in obj) return 'RubricAwardsUpdated';
-      return null;
-    }
-  }
+  RoleInfo: RoleInfoResolver,
+  RubricUpdatedEvent: RubricUpdatedEventResolver,
+  ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
+  DeliberationUpdatedEvent: DeliberationUpdatedEventResolver
 };

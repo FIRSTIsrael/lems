@@ -21,7 +21,8 @@ import {
 } from '@mui/material';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingSession } from '../judge-advisor.graphql';
+import { hyphensToUnderscores } from '@lems/shared/utils';
+import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
@@ -207,7 +208,7 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
                   <TableCell key={category} align="center" sx={{ p: 1 }}>
                     <RubricStatusButton
                       category={category}
-                      status={session.rubrics[category]?.status || 'empty'}
+                      status={session.rubrics[hyphensToUnderscores(category)]?.status || 'empty'}
                       label={getCategory(category)}
                       teamSlug={session.team.slug}
                     />

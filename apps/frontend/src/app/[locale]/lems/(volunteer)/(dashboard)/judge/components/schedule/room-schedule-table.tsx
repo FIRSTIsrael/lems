@@ -15,7 +15,7 @@ import {
   Box,
   useTheme
 } from '@mui/material';
-import { JudgingSession } from '../../judge.graphql';
+import { JudgingSession } from '../../graphql';
 import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
@@ -200,14 +200,14 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                   <Stack direction="row" spacing={1.5} justifyContent="center">
                     <RubricStatusButton
                       category="innovation-project"
-                      status={session.rubrics?.innovationProject?.status}
+                      status={session.rubrics?.innovation_project?.status}
                       label={t('rubric-labels.innovation-project')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
                       category="robot-design"
-                      status={session.rubrics?.robotDesign?.status}
+                      status={session.rubrics?.robot_design?.status}
                       label={t('rubric-labels.robot-design')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}

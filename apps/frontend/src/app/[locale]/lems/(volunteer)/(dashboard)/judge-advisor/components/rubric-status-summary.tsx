@@ -16,7 +16,7 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { range } from '@lems/shared/utils';
-import { JudgingSession } from '../judge-advisor.graphql';
+import { JudgingSession } from '../graphql';
 import { getRubricStatusStats } from './utils';
 
 interface RubricStatusSummaryProps {
@@ -125,10 +125,10 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
                         variant="body2"
                         fontWeight={600}
                         sx={{
-                          color: completed + locked === total ? '#4caf50' : 'inherit'
+                          color: completed + locked + approved === total ? '#4caf50' : 'inherit'
                         }}
                       >
-                        {completed + locked}
+                        {completed + locked + approved}
                       </Typography>
                     </Box>
                   </Grid>

@@ -1,25 +1,17 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import {
-  createSubscriptionIterator,
-  SubscriptionResult,
-  BaseSubscriptionArgs,
-  isGapMarker
-} from '../base-subscription';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+
+interface MatchLoadedSubscribeArgs {
+  divisionId: string;
+}
 
 interface MatchLoadedEvent {
   matchId: string;
-  version: number;
 }
 
 const processMatchLoadedEvent = async (
   event: Record<string, unknown>
-): Promise<SubscriptionResult<MatchLoadedEvent>> => {
-  // Check for gap marker (recovery buffer exceeded)
-  if (isGapMarker(event.data)) {
-    console.warn('[MatchLoaded] Recovery gap detected - client should refetch');
-    return event.data;
-  }
-
+): Promise<MatchLoadedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const matchId = (eventData.matchId as string) || '';
 
@@ -28,26 +20,16 @@ const processMatchLoadedEvent = async (
   }
 
   const result: MatchLoadedEvent = {
-    matchId,
-    version: (event.version as number) ?? 0
+    matchId
   };
 
   return result;
 };
 
-const matchLoadedSubscribe = (
-  _root: unknown,
-  args: BaseSubscriptionArgs & Record<string, unknown>
-) => {
-  const divisionId = args.divisionId as string;
-
-  if (!divisionId) {
-    const errorMsg = 'divisionId is required for matchLoaded subscription';
-    throw new Error(errorMsg);
-  }
-
-  const lastSeenVersion = (args.lastSeenVersion as number) || 0;
-  return createSubscriptionIterator(divisionId, RedisEventTypes.MATCH_LOADED, lastSeenVersion);
+const matchLoadedSubscribe = (_root: unknown, { divisionId }: MatchLoadedSubscribeArgs) => {
+  if (!divisionId) throw new Error('divisionId is required');
+  const pubSub = getRedisPubSub();
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_LOADED);
 };
 
 /**
@@ -56,9 +38,5 @@ const matchLoadedSubscribe = (
  */
 export const matchLoadedResolver = {
   subscribe: matchLoadedSubscribe,
-  resolve: async (
-    event: Record<string, unknown>
-  ): Promise<SubscriptionResult<MatchLoadedEvent>> => {
-    return processMatchLoadedEvent(event);
-  }
+  resolve: processMatchLoadedEvent
 };

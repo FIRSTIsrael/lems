@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, CSSProperties } from 'react';
+import React, { useState, useEffect, CSSProperties } from 'react';
 import { motion } from 'motion/react';
 import {
   Paper,
@@ -44,7 +44,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   const theme = useTheme();
   const [open, setOpen] = useState(false);
   const [hexInput, setHexInput] = useState(hsvaToHex(value));
-  const anchorRef = useRef<HTMLDivElement>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setHexInput(hsvaToHex(value));
@@ -100,7 +100,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <Box ref={anchorRef} display="inline-block">
+    <Box ref={setAnchorEl} display="inline-block">
       <Box
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
@@ -114,7 +114,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
       <Popper
         open={open}
-        anchorEl={anchorRef.current}
+        anchorEl={anchorEl}
         placement="bottom-start"
         modifiers={[
           { name: 'offset', options: { offset: [0, 8] } },

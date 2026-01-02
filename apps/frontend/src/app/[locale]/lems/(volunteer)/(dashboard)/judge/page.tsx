@@ -10,7 +10,7 @@ import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import SoundTestDialog from '../components/sound-test-dialog';
+import { SoundTestDialog } from '../components/sound-test-dialog';
 import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscription,
@@ -20,7 +20,7 @@ import {
   ABORT_JUDGING_SESSION_MUTATION,
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription
-} from './judge.graphql';
+} from './graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
 import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
 import { JudgingSessionProvider } from './components/timer/judging-session-context';
@@ -116,7 +116,7 @@ export default function JudgePage() {
         </Button>
       </PageHeader>
 
-      <Box sx={{ pt: 3 }}>
+      <Box sx={{ py: 3 }}>
         <RoomScheduleTable
           sessions={sessions || []}
           loading={loading || !sessions}

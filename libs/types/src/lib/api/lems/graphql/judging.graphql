@@ -37,6 +37,9 @@ type JudgingSession {
 Judging-related information for a division
 """
 type Judging {
+  "ID of the division this judging data belongs to"
+  divisionId: String!
+
   "Judging sessions in this division, optionally filtered"
   sessions(
     "Filter sessions by their IDs"
@@ -90,9 +93,6 @@ type JudgingStartedEvent {
   "Judging session identifier"
   sessionId: String!
 
-  "Event version for subscription recovery tracking"
-  version: Int!
-
   "Actual timestamp when the session was started"
   startTime: String!
 
@@ -106,9 +106,6 @@ Represents an event when a judging session has changed state
 type JudgingSessionEvent {
   "Judging session identifier"
   sessionId: String!
-
-  "Event version for subscription recovery tracking"
-  version: Int!
 }
 
 extend type Mutation {
@@ -140,8 +137,6 @@ extend type Subscription {
   judgingSessionStarted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): JudgingStartedEvent!
 
   """
@@ -150,8 +145,6 @@ extend type Subscription {
   judgingSessionAborted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): JudgingSessionEvent!
 
   """
@@ -160,7 +153,5 @@ extend type Subscription {
   judgingSessionCompleted(
     "The division ID to listen for updates in"
     divisionId: String!
-    "The last seen version for message recovery support"
-    lastSeenVersion: Int
   ): JudgingSessionEvent!
 }

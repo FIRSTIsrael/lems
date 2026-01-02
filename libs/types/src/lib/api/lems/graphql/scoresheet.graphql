@@ -1,0 +1,283 @@
+"""
+Status of a scoresheet evaluation
+"""
+enum ScoresheetStatus {
+  "Scoresheet has not been filled yet"
+  empty
+  "Scoresheet is partially filled"
+  draft
+  "Scoresheet has been completed"
+  completed
+  "Scoresheet is awaiting Gracious Professionalism rating"
+  gp
+  "Scoresheet has been submitted"
+  submitted
+}
+
+"""
+Stage of a robot game match
+"""
+enum MatchStage {
+  "Practice stage"
+  PRACTICE
+  "Ranking stage"
+  RANKING
+}
+
+"""
+Data section of a scoresheet
+"""
+type ScoresheetData {
+  "Mission data organized by mission ID"
+  missions: JSON!
+  "Signature data as encoded PNG string"
+  signature: String
+  "Gracious Professionalism rating"
+  gp: GraciousProfessionalismRating
+  "Total score for the match"
+  score: Int!
+}
+
+"""
+Gracious Professionalism rating data
+"""
+type GraciousProfessionalismRating {
+  "Rating value (2-4)"
+  value: Int
+  "Optional notes about the rating if value is 2 or 4"
+  notes: String
+}
+
+"""
+A scoresheet evaluation for a team in a specific match
+"""
+type Scoresheet {
+  "Unique identifier for the scoresheet"
+  id: String!
+
+  "The team being evaluated"
+  team: Team!
+
+  "Division this scoresheet belongs to"
+  divisionId: String!
+
+  "URL-friendly slug for the scoresheet (e.g., 'P1' for practice round 1, 'R2' for ranking round 2)"
+  slug: String!
+
+  "Stage of the match (PRACTICE or RANKING)"
+  stage: MatchStage!
+
+  "Round number"
+  round: Int!
+
+  "Current status of the scoresheet"
+  status: ScoresheetStatus!
+
+  "Whether this scoresheet has been escalated"
+  escalated: Boolean
+
+  "Scoresheet data including scores and mission values"
+  data: ScoresheetData
+}
+
+extend type Field {
+  "Scoresheets in this division, optionally filtered"
+  scoresheets(
+    "Filter scoresheets by their IDs"
+    ids: [String!]
+
+    "Filter scoresheets by team IDs"
+    teamIds: [String!]
+
+    "Filter scoresheets by slug (e.g., 'P1', 'R2')"
+    slug: String
+
+    "Filter scoresheets by stage (PRACTICE, RANKING)"
+    stage: MatchStage
+
+    "Filter scoresheets by round number"
+    round: Int
+  ): [Scoresheet!]!
+}
+
+"""
+Response type for scoresheet mission clause update
+"""
+type ScoresheetMissionClauseUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The mission ID containing the clause"
+  missionId: String!
+  "The index of the clause within the mission"
+  clauseIndex: Int!
+  "The new value for the clause (boolean, string, or number)"
+  clauseValue: JSON!
+  "New score value after clause update"
+  score: Int!
+}
+
+"""
+Response type for scoresheet status update
+"""
+type ScoresheetStatusUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The new status of the scoresheet"
+  status: ScoresheetStatus!
+}
+
+"""
+Response type for scoresheet Gracious Professionalism rating update
+"""
+type ScoresheetGPUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The Gracious Professionalism rating value (2-4) or null"
+  gpValue: Int
+  "Optional notes about the rating if value is 2 or 4"
+  notes: String
+}
+
+"""
+Response type for scoresheet escalated flag update
+"""
+type ScoresheetEscalatedUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "Whether the scoresheet has been escalated"
+  escalated: Boolean!
+}
+
+"""
+Response type for scoresheet signature update
+"""
+type ScoresheetSignatureUpdated {
+  "The ID of the scoresheet that was updated"
+  scoresheetId: String!
+  "The signature data as encoded PNG string"
+  signature: String
+  "The new status after signature completion (should be 'gp')"
+  status: ScoresheetStatus!
+}
+
+"""
+Response type for scoresheet reset
+"""
+type ScoresheetResetEvent {
+  "The ID of the scoresheet that was reset"
+  scoresheetId: String!
+  "The new status after reset (should be 'empty')"
+  status: ScoresheetStatus!
+}
+
+"""
+Union type for all scoresheet update events
+"""
+union ScoresheetUpdatedEvent =
+  | ScoresheetMissionClauseUpdated
+  | ScoresheetStatusUpdated
+  | ScoresheetGPUpdated
+  | ScoresheetEscalatedUpdated
+  | ScoresheetSignatureUpdated
+  | ScoresheetResetEvent
+
+extend type Mutation {
+  """
+  Update a single clause value in a scoresheet mission.
+  """
+  updateScoresheetMissionClause(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to update"
+    scoresheetId: String!
+    "The ID of the mission containing the clause"
+    missionId: String!
+    "The index of the clause within the mission"
+    clauseIndex: Int!
+    "The new value for the clause (boolean, string, or number)"
+    value: JSON!
+  ): ScoresheetMissionClauseUpdated!
+
+  """
+  Update the status of a scoresheet.
+  """
+  updateScoresheetStatus(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to update"
+    scoresheetId: String!
+    "The new status (empty, draft, completed, gp, or submitted)"
+    status: ScoresheetStatus!
+  ): ScoresheetStatusUpdated!
+
+  """
+  Update the Gracious Professionalism rating of a scoresheet.
+  """
+  updateScoresheetGP(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to update"
+    scoresheetId: String!
+    "The GP rating value (2, 3, 4, or null to clear)"
+    value: Int
+    "Optional notes if value is 2 or 4"
+    notes: String
+  ): ScoresheetGPUpdated!
+
+  """
+  Update the escalated flag of a scoresheet.
+  """
+  updateScoresheetEscalated(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to update"
+    scoresheetId: String!
+    "Whether the scoresheet has been escalated"
+    escalated: Boolean!
+  ): ScoresheetEscalatedUpdated!
+
+  """
+  Submit a scoresheet with a signature.
+  Updates both the signature and changes the status to 'submitted'.
+  """
+  updateScoresheetSignature(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to submit"
+    scoresheetId: String!
+    "The signature data as encoded PNG string"
+    signature: String!
+  ): ScoresheetSignatureUpdated!
+
+  """
+  Reset a scoresheet to empty status and clear escalation.
+  Only available to head-referee role.
+  """
+  resetScoresheet(
+    "The ID of the division containing the scoresheet"
+    divisionId: String!
+    "The ID of the scoresheet to reset"
+    scoresheetId: String!
+  ): ScoresheetResetEvent!
+}
+
+extend type Subscription {
+  """
+  Subscribe to all scoresheet updates in a division.
+  Fires when any mission clause value, status, GP rating, or escalated flag
+  is updated in any scoresheet within the specified division.
+  """
+  scoresheetUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): ScoresheetUpdatedEvent!
+
+  """
+  Subscribe to scoresheet status changes in a division.
+  Fires when a scoresheet's status changes (e.g., empty -> draft -> completed).
+  """
+  scoresheetStatusChanged(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): ScoresheetStatusUpdated!
+}

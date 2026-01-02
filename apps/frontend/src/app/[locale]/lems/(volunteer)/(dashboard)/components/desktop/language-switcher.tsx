@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useLocale } from 'next-intl';
 import {
   MenuItem,
@@ -14,7 +14,6 @@ import {
 } from '@mui/material';
 import { Language, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon, Locale, Locales } from '@lems/localization';
-import { useRouter } from '../../../../../../../i18n/navigation';
 
 interface LanguageSubmenuProps {
   anchorEl: HTMLButtonElement | null;
@@ -102,12 +101,11 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) => {
-  const router = useRouter();
   const theme = useTheme();
   const currentLocale = useLocale() as Locale;
   const currentLocaleData = Locales[currentLocale];
 
-  const anchorRef = useRef<HTMLButtonElement>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [submenuOpen, setSubmenuOpen] = useState(false);
 
   const handleToggleSubmenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -119,13 +117,16 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
     setSubmenuOpen(false);
   };
 
-  const handleLanguageChange = (locale: Locale) => {
-    document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
-    router.refresh();
+  const handleLanguageChange = useCallback(
+    (locale: Locale) => {
+      document.cookie = `LEMS_LOCALE=${locale}; path=/; max-age=${60 * 60 * 24 * 365}`;
+      window.location.reload(); // Reload using window to fix GQL issue
 
-    setSubmenuOpen(false);
-    onClose?.();
-  };
+      setSubmenuOpen(false);
+      onClose?.();
+    },
+    [onClose]
+  );
 
   return (
     <>
@@ -142,7 +143,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
         }}
       >
         <button
-          ref={anchorRef}
+          ref={setAnchorEl}
           onClick={handleToggleSubmenu}
           style={{
             display: 'flex',
@@ -180,7 +181,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
       </MenuItem>
 
       <LanguageSubmenu
-        anchorEl={submenuOpen ? anchorRef.current : null}
+        anchorEl={submenuOpen ? anchorEl : null}
         onClose={handleCloseSubmenu}
         onChangeLocale={handleLanguageChange}
       />

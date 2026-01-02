@@ -7,6 +7,7 @@ export interface TeamDivisionsTable {
   arrived: Generated<false>; // Default false
   arrived_at: Date | null; // Timestamp when team arrived
   profile_document_url: string | null; // Points to object storage
+  disqualified: Generated<false>; // Default false
 }
 
 export type TeamDivision = Selectable<TeamDivisionsTable>;

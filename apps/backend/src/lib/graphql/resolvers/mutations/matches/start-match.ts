@@ -16,7 +16,6 @@ interface StartMatchArgs {
 
 interface MatchEvent {
   matchId: string;
-  version: number;
 }
 
 /**
@@ -135,7 +134,28 @@ export const startMatchResolver: GraphQLFieldResolver<
       // The queue failure should be monitored separately
     }
 
-    return { matchId, version: -1, startTime, startDelta };
+    // Enqueue match endgame triggered event (at 80% of match duration)
+    try {
+      await enqueueScheduledEvent(
+        {
+          eventType: 'match-endgame-triggered',
+          divisionId,
+          metadata: {
+            matchId
+          }
+        },
+        division.schedule_settings.match_length * 0.8 * 1000
+      );
+    } catch (error) {
+      console.error(
+        `Failed to enqueue match endgame trigger for ${matchId}, but match was started:`,
+        error
+      );
+      // Don't fail the mutation - the match is already started
+      // The queue failure should be monitored separately
+    }
+
+    return { matchId, startTime, startDelta };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

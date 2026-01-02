@@ -1,4 +1,3 @@
-import { useRef } from 'react';
 import {
   Button,
   Dialog,
@@ -18,13 +17,14 @@ interface SoundTestDialogProps {
   setOpen: (newValue: boolean) => void;
 }
 
-const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
+const sounds = [
+  { key: 'start', audio: new Audio('/assets/sounds/judging/judging-start.wav') },
+  { key: 'end', audio: new Audio('/assets/sounds/judging/judging-end.wav') },
+  { key: 'transition', audio: new Audio('/assets/sounds/judging/judging-change.wav') }
+];
+
+export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
   const t = useTranslations('pages.judge.sound-test.dialog');
-  const sounds = useRef([
-    { key: 'start', audio: new Audio('/assets/sounds/judging/judging-start.wav') },
-    { key: 'end', audio: new Audio('/assets/sounds/judging/judging-end.wav') },
-    { key: 'transition', audio: new Audio('/assets/sounds/judging/judging-change.wav') }
-  ]);
 
   return (
     <Dialog
@@ -35,11 +35,9 @@ const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
     >
       <DialogTitle id="sound-test-title">{t('title')}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="delete-data-description">
-          {t('description')}
-        </DialogContentText>
+        <DialogContentText id="delete-data-description">{t('description')}</DialogContentText>
         <Stack justifyContent="space-evenly" width="100%" direction="row" mt={2}>
-          {sounds.current.map(({ key, audio }) => (
+          {sounds.map(({ key, audio }) => (
             <Stack key={key} alignItems="center">
               <IconButton
                 onClick={() => audio.play()}
@@ -61,5 +59,3 @@ const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
     </Dialog>
   );
 };
-
-export default SoundTestDialog;

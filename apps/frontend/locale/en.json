@@ -168,7 +168,9 @@
       "menu": {
         "team-list": "Team List",
         "pit-map": "Pit Map",
-        "awards-list": "Awards list"
+        "awards-list": "Awards list",
+        "event-agenda": "Event Agenda",
+        "judging-schedule": "Judging Schedule"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -206,6 +208,33 @@
         "loading": "Loading pit map...",
         "error-loading": "Failed to load pit map. Please try again.",
         "no-map": "No pit map is available."
+      },
+      "event-agenda": {
+        "page-title": "Event Agenda",
+        "error-loading": "An error occurred while loading the agenda.",
+        "no-events": "No agenda events have been scheduled yet.",
+        "loading": "Loading agenda...",
+        "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
+        "visibility": {
+          "public": "General",
+          "judging": "Judging",
+          "field": "Field"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "Judging Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "no-sessions": "No judging sessions have been scheduled yet.",
+        "loading": "Loading schedule...",
+        "arrived": "Arrived",
+        "not-arrived": "Not arrived",
+        "table": {
+          "time": "Time"
+        },
+        "visibility": {
+          "public": "General",
+          "judging": "Judging"
+        }
       }
     },
     "rubric": {
@@ -222,9 +251,10 @@
       },
       "actions": {
         "save-draft": "Save as Draft",
-        "submit-review": "Submit for Review",
         "reset": "Reset",
-        "submit-rubric": "Submit and lock"
+        "submit-rubric": "Submit and lock",
+        "unlock-rubric": "Unlock",
+        "approve-rubric": "Approve"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
@@ -233,10 +263,32 @@
         "cancel": "Cancel",
         "confirm": "Submit and Lock"
       },
+      "reset-dialog": {
+        "title": "Reset Rubric",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this rubric? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Rubric"
+      },
+      "approve-dialog": {
+        "title": "Approve Rubric",
+        "warning": "This action is final and cannot be undone!",
+        "description": "Once you approve this rubric, it will be locked and no further changes can be made. Please ensure the rubric is complete and accurate before proceeding.",
+        "cancel": "Cancel",
+        "confirm": "Approve Rubric"
+      },
       "toasts": {
         "rating-update-error": "Failed to update score. Please try again.",
         "notes-update-error": "Failed to save notes. Please try again.",
-        "feedback-update-error": "Failed to save feedback. Please try again."
+        "feedback-update-error": "Failed to save feedback. Please try again.",
+        "reset-error": "Failed to reset rubric. Please try again.",
+        "reset-success": "Rubric has been reset successfully.",
+        "unlock-success": "Rubric has been unlocked.",
+        "unlock-error": "Failed to unlock rubric. Please try again.",
+        "submit-success": "Rubric has been submitted and locked.",
+        "submit-error": "Failed to submit rubric. Please try again.",
+        "approve-success": "Rubric has been approved.",
+        "approve-error": "Failed to approve rubric. Please try again."
       },
       "validation": {
         "title": "Rubric Incomplete",
@@ -361,7 +413,28 @@
           "message": "Message",
           "awards": "Awards"
         },
-        "status-label": "Current Mode"
+        "status-label": "Current Mode",
+        "settings-button-title": "Audience Display Settings",
+        "errors": {
+          "audience-display-switch": "Failed to switch audience display."
+        },
+        "settings-modal": {
+          "title": "Audience Display Settings",
+          "close": "Close",
+          "sections": {
+            "message": "Message Settings",
+            "scoreboard": "Scoreboard Settings"
+          },
+          "fields": {
+            "message-placeholder": "Enter message text",
+            "show-active-match": "Show Current Match",
+            "show-previous-match": "Show Previous Match",
+            "show-sponsors-row": "Show Sponsors Row"
+          },
+          "errors": {
+            "update-failed": "Failed to update audience display setting."
+          }
+        }
       },
       "schedule": {
         "title": "Match Schedule",
@@ -378,6 +451,111 @@
       },
       "active-match": {
         "teams": "Teams"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "Round",
+        "match": "Match",
+        "table": "Table"
+      },
+      "scoreboard": {
+        "current-match": "Current Match",
+        "test-match": "Test Match",
+        "no-match": "-",
+        "previous-match": {
+          "title": "Previous Match",
+          "match": "Match",
+          "disclaimer": "Scores are not final and may change at any time",
+          "under-review": "Under Review"
+        },
+        "scores-table": {
+          "rank": "Rank",
+          "team": "Team",
+          "highest-score": "Highest Score"
+        }
+      }
+    },
+    "lead-judge": {
+      "page-title": "Lead Judge",
+      "summary": {
+        "status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "completed": "Completed",
+          "approved": "Approved"
+        }
+      },
+      "list": {
+        "empty-state": "Judging Sessions were not found",
+        "column": {
+          "session": "Judging Session",
+          "room": "Room",
+          "team": "Team",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Empty",
+          "draft": "Draft",
+          "approved": "Approved",
+          "locked": "Locked",
+          "completed": "Completed"
+        },
+        "session-status": {
+          "not-started": "Not Started",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "filter": {
+          "team": "Team",
+          "team-placeholder": "Search by number, name, or affiliation...",
+          "status": "Status",
+          "all-statuses": "All Statuses",
+          "results": "Results"
+        },
+        "sort": {
+          "room": "Sort by Room",
+          "session": "Sort by Session"
+        },
+        "session": "Session",
+        "room": "Room"
+      },
+      "team-info-cell": {
+        "not-arrived": "Not Arrived"
+      }
+    },
+    "scoresheet": {
+      "title": "Team #{teamNumber}, {stage} round {round}",
+      "clear-signature": "Clear Signature",
+      "form-complete": "Form Complete",
+      "form-incomplete": "Form Incomplete",
+      "complete-form-to-sign": "Complete the form and fix any errors to sign this scoresheet",
+      "complete-form-to-proceed": "Complete all missions and resolve all errors before you can sign and submit the scoresheet",
+      "submit-scoresheet": "Submit Scoresheet",
+      "submitting": "Submitting...",
+      "error-signature-required": "A signature is required to submit the scoresheet",
+      "error-failed-to-submit": "Failed to submit scoresheet",
+      "escalate": "Escalate",
+      "de-escalate": "De-escalate",
+      "reset": "Reset Scoresheet",
+      "processing": "Processing...",
+      "error-failed-to-escalate": "Failed to update escalation status",
+      "error-failed-to-reset": "Failed to reset scoresheet",
+      "reset-dialog": {
+        "title": "Reset Scoresheet",
+        "warning": "This action cannot be undone!",
+        "description": "Are you sure you want to reset this scoresheet? All data will be cleared and you will start fresh.",
+        "cancel": "Cancel",
+        "confirm": "Reset Scoresheet"
+      },
+      "gp-selector": {
+        "title": "Rate the team's Gracious Professionalism displayed during the match",
+        "level-2": "DEVELOPING",
+        "level-3": "ACCOMPLISHED",
+        "level-4": "EXCEEDS",
+        "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
+        "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
+        "submit-button": "Submit"
       }
     }
   },
@@ -404,6 +582,20 @@
     "rubric": {
       "error-not-authorized": "Unauthorized to access rubric",
       "error-team-not-judged": "This team has not completed judging yet"
+    },
+    "scoresheet": {
+      "error-match-not-found": "Match not found",
+      "error-match-not-completed": "Match not completed",
+      "error-not-assigned-to-table": "No permission to access this scoresheet",
+      "error-failed-to-update": "Failed to update scoresheet",
+      "incomplete-title": "Scoresheet is incomplete",
+      "incomplete-message": "Please fill out all missions before submitting the scoresheet.",
+      "incomplete-with-errors": "There are errors in the scoresheet that need to be corrected.",
+      "incomplete-action": "Go to the issue",
+      "points-unit": "pts."
+    },
+    "deliberation": {
+      "error-not-authorized": "Unauthorized to access deliberation"
     }
   }
 }

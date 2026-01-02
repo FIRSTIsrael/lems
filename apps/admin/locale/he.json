@@ -1016,7 +1016,8 @@
         "users": "משתמשים",
         "events": "אירועים",
         "teams": "קבוצות",
-        "insights": "תובנות"
+        "insights": "תובנות",
+        "graphql": "GraphQL"
       },
       "user-menu": {
         "logout": "התנתקות"

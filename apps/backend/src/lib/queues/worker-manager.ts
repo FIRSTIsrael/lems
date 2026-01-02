@@ -1,6 +1,7 @@
 import { Worker, Job } from 'bullmq';
 import { getRedisClient } from '../redis/redis-client';
 import { ScheduledEvent } from './types';
+import { logger } from '../logger';
 
 export class WorkerManager {
   private static instance: WorkerManager | null = null;
@@ -97,10 +98,10 @@ export class WorkerManager {
         throw new Error(`No handler registered for event type: ${eventType}`);
       }
 
-      console.log(`[WorkerManager] Routing ${eventType} job for ${divisionId}`);
+      logger.info({ component: 'worker-manager', action: 'process-job', eventType, divisionId, jobId: job.id }, 'Routing job');
       await handler(job);
     } catch (error) {
-      console.error(`[WorkerManager] Error processing ${job.data.eventType} job ${job.id}:`, error);
+      logger.error({ component: 'worker-manager', action: 'process-job', eventType: job.data.eventType, jobId: job.id, error: error instanceof Error ? error.message : String(error) }, 'Error processing job');
       throw error; // Re-throw to trigger retry
     }
   }
@@ -117,12 +118,12 @@ export class WorkerManager {
     this.isShuttingDown = true;
 
     try {
-      console.log('[WorkerManager] Shutting down worker gracefully');
+      logger.info({ component: 'worker-manager', action: 'shutdown' }, 'Shutting down worker gracefully');
       await this.worker.close();
       this.worker = null;
-      console.log('[WorkerManager] Worker stopped');
+      logger.info({ component: 'worker-manager', action: 'shutdown' }, 'Worker stopped');
     } catch (error) {
-      console.error('[WorkerManager] Error during worker shutdown:', error);
+      logger.error({ component: 'worker-manager', action: 'shutdown', error: error instanceof Error ? error.message : String(error) }, 'Error during worker shutdown');
       throw error;
     } finally {
       this.isShuttingDown = false;

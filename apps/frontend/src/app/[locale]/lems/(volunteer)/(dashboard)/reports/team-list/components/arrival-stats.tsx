@@ -2,9 +2,13 @@
 
 import { useTranslations } from 'next-intl';
 import { Stack, Paper, Typography, useTheme } from '@mui/material';
-import { TeamListTableProps } from './types';
+import { Team } from '../graphql';
 
-export function ArrivalStats({ teams }: TeamListTableProps) {
+interface ArrivalStatsProps {
+  teams: Team[];
+}
+
+export const ArrivalStats: React.FC<ArrivalStatsProps> = ({ teams }) => {
   const t = useTranslations('pages.reports.team-list');
   const theme = useTheme();
 
@@ -94,4 +98,4 @@ export function ArrivalStats({ teams }: TeamListTableProps) {
       </Paper>
     </Stack>
   );
-}
+};
