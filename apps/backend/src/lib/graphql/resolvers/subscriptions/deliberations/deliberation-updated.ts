@@ -13,6 +13,10 @@ type DeliberationUpdatedEvent =
   | {
       deliberationId: string;
       startTime: string;
+    }
+  | {
+      deliberationId: string;
+      completed: boolean;
     };
 
 const processDeliberationUpdatedEvent = async (
@@ -50,6 +54,15 @@ const processDeliberationUpdatedEvent = async (
       : null;
   }
 
+  // Handle DeliberationCompleted events
+  if ('completed' in eventData) {
+    const completed = eventData.completed as boolean;
+    return {
+      deliberationId,
+      completed
+    };
+  }
+
   return null;
 };
 
@@ -77,6 +90,9 @@ export const DeliberationUpdatedEventResolver = {
     }
     if ('startTime' in event) {
       return 'DeliberationStarted';
+    }
+    if ('completed' in event) {
+      return 'DeliberationCompleted';
     }
     return null;
   }

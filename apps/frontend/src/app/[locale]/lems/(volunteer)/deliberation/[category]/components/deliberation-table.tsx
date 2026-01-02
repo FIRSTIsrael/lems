@@ -54,7 +54,12 @@ export function DeliberationTable() {
             </Box>
           ) : (
             <Tooltip title={t('add-to-picklist')}>
-              <IconButton size="small" onClick={() => addToPicklist(team.id)} color="success">
+              <IconButton
+                size="small"
+                disabled={deliberation?.status === 'completed'}
+                onClick={() => addToPicklist(team.id)}
+                color="success"
+              >
                 <Add fontSize="small" />
               </IconButton>
             </Tooltip>
@@ -185,7 +190,15 @@ export function DeliberationTable() {
         }
       }
     ],
-    [fieldDisplayLabels, teams, pickedTeamIds, addToPicklist, hypenatedCategory, t]
+    [
+      t,
+      fieldDisplayLabels,
+      hypenatedCategory,
+      teams,
+      pickedTeamIds,
+      deliberation?.status,
+      addToPicklist
+    ]
   );
 
   return (

@@ -1,13 +1,14 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Box, Typography, Button, alpha, useTheme, LinearProgress, Stack } from '@mui/material';
-import { PlayArrow, Lock } from '@mui/icons-material';
+import { PlayArrow, Verified } from '@mui/icons-material';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useCategoryDeliberation } from '../deliberation-context';
+import { CompleteDeliberationModal } from './complete-deliberation-modal';
 
 const DELIBERATION_DURATION_SECONDS = 45 * 60; // 45 minutes
 
@@ -16,17 +17,20 @@ const getProgressColor = (progressPercent: number) => {
   return 'warning';
 };
 
-export function ControlsPanel() {
+export const ControlsPanel: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.category.controls');
-  const { deliberation, startDeliberation } = useCategoryDeliberation();
+  const { deliberation, startDeliberation, picklistTeams, picklistLimit } =
+    useCategoryDeliberation();
   const currentTime = useTime({ interval: 1000 });
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
   const handleStartDeliberation = useCallback(async () => {
     await startDeliberation();
   }, [startDeliberation]);
 
   const isInProgress = useMemo(() => deliberation?.status === 'in-progress', [deliberation]);
+  const isCompleted = useMemo(() => deliberation?.status === 'completed', [deliberation]);
 
   // Calculate timer values
   const timerValues = useMemo(() => {
@@ -69,7 +73,36 @@ export function ControlsPanel() {
         gap: 2
       }}
     >
-      {isInProgress ? (
+      {isCompleted && (
+        <Box
+          sx={{
+            p: 1.5,
+            bgcolor: 'success.50',
+            border: `1px solid ${theme.palette.success.main}`,
+            borderRadius: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0.5
+          }}
+        >
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 700,
+              color: 'success.main',
+              textTransform: 'uppercase',
+              fontSize: '0.75rem',
+              letterSpacing: 0.5
+            }}
+          >
+            {t('completed')}
+          </Typography>
+          <Typography variant="body2" sx={{ fontWeight: 600, color: 'text.primary' }}>
+            {t('deliberation-finalized')}
+          </Typography>
+        </Box>
+      )}
+      {isInProgress && (
         <Stack spacing={1.25} sx={{ flex: 1 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center">
             <Typography
@@ -115,14 +148,15 @@ export function ControlsPanel() {
             }}
           />
         </Stack>
-      ) : (
+      )}
+      {!isInProgress && !isCompleted && (
         <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
           {t('not-started')}
         </Typography>
       )}
 
       <Box sx={{ display: 'flex', gap: 1 }}>
-        {!isInProgress ? (
+        {!isInProgress && !isCompleted ? (
           <Button
             variant="contained"
             fullWidth
@@ -136,22 +170,28 @@ export function ControlsPanel() {
           >
             {t('start')}
           </Button>
-        ) : (
+        ) : isInProgress ? (
           <Button
             variant="contained"
-            color="error"
+            color="success"
             fullWidth
-            startIcon={<Lock />}
-            size="small"
+            disabled={picklistTeams.length < picklistLimit}
+            startIcon={<Verified />}
+            onClick={() => setIsCompleteModalOpen(true)}
             sx={{
               fontWeight: 600,
               textTransform: 'none'
             }}
           >
-            {t('lock')}
+            {t('complete-deliberation')}
           </Button>
-        )}
+        ) : null}
       </Box>
+
+      <CompleteDeliberationModal
+        open={isCompleteModalOpen}
+        onClose={() => setIsCompleteModalOpen(false)}
+      />
     </Box>
   );
-}
+};

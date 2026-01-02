@@ -6,10 +6,6 @@ import { JudgingCategory } from '@lems/types/judging';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import {
-  START_DELIBERATION_MUTATION,
-  UPDATE_DELIBERATION_PICKLIST_MUTATION
-} from './graphql/mutations';
 import type { DeliberationContextValue, EnrichedTeam } from './types';
 import type { Division } from './graphql/types';
 import {
@@ -24,6 +20,7 @@ import {
   PICKLIST_LIMIT_MULTIPLIER,
   MAX_PICKLIST_LIMIT
 } from './deliberation-computation';
+import { START_DELIBERATION_MUTATION, UPDATE_DELIBERATION_PICKLIST_MUTATION } from './graphql';
 
 const DeliberationContext = createContext<DeliberationContextValue | null>(null);
 

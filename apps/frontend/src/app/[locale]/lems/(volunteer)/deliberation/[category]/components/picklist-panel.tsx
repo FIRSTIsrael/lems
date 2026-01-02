@@ -14,10 +14,14 @@ export function PicklistPanel() {
     picklistTeams,
     suggestedTeam,
     picklistLimit,
+    deliberation,
     reorderPicklist,
     addToPicklist,
     removeFromPicklist
   } = useCategoryDeliberation();
+
+  const isEditable =
+    deliberation?.status === 'in-progress' || deliberation?.status === 'not-started';
 
   const handleDragEnd = useCallback(
     async (result: DropResult) => {
@@ -72,6 +76,7 @@ export function PicklistPanel() {
 
         {/* Suggested team slot */}
         {suggestedTeam &&
+          isEditable &&
           canAddMore &&
           !picklistTeams.find(team => team.id === suggestedTeam.id) && (
             <Paper
@@ -124,6 +129,7 @@ export function PicklistPanel() {
                 <IconButton
                   size="small"
                   onClick={() => addToPicklist(suggestedTeam.id)}
+                  disabled={!isEditable}
                   sx={{ color: theme.palette.success.main, flexShrink: 0, p: '0.25rem' }}
                 >
                   <Add sx={{ fontSize: '1rem' }} />
@@ -144,9 +150,10 @@ export function PicklistPanel() {
                 flexDirection: 'column',
                 gap: '0.35rem',
                 p: '0.4rem',
-                bgcolor: snapshot.isDraggingOver
-                  ? alpha(theme.palette.primary.main, 0.05)
-                  : 'transparent',
+                bgcolor:
+                  snapshot.isDraggingOver && isEditable
+                    ? alpha(theme.palette.primary.main, 0.05)
+                    : 'transparent',
                 borderRadius: 0.5,
                 border: `1px solid ${theme.palette.divider}`,
                 overflowY: 'auto',
@@ -171,7 +178,12 @@ export function PicklistPanel() {
                 </Typography>
               ) : (
                 picklistTeams.map((team, index) => (
-                  <Draggable key={team.id} draggableId={`picklist-item-${team.id}`} index={index}>
+                  <Draggable
+                    key={team.id}
+                    draggableId={`picklist-item-${team.id}`}
+                    index={index}
+                    isDragDisabled={!isEditable}
+                  >
                     {(provided, snapshot) => (
                       <Paper
                         ref={provided.innerRef}
@@ -234,6 +246,7 @@ export function PicklistPanel() {
                           <IconButton
                             size="small"
                             onClick={() => removeFromPicklist(team.id)}
+                            disabled={!isEditable}
                             sx={{ color: theme.palette.error.main, flexShrink: 0, p: '0.25rem' }}
                           >
                             <Close sx={{ fontSize: '1rem' }} />

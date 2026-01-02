@@ -12,6 +12,11 @@ type DeliberationUpdatedEvent =
       __typename: 'DeliberationStarted';
       deliberationId: string;
       startTime: string;
+    }
+  | {
+      __typename: 'DeliberationCompleted';
+      deliberationId: string;
+      completed: boolean;
     };
 
 export const DELIBERATION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
@@ -32,6 +37,10 @@ export const DELIBERATION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       ... on DeliberationStarted {
         deliberationId
         startTime
+      }
+      ... on DeliberationCompleted {
+        deliberationId
+        completed
       }
     }
   }
@@ -59,6 +68,9 @@ const deliberationUpdatedReconciler: Reconciler<
       break;
     case 'DeliberationStarted':
       updates = { startTime: event.startTime, status: 'in-progress' };
+      break;
+    case 'DeliberationCompleted':
+      updates = { status: 'completed' };
       break;
   }
 

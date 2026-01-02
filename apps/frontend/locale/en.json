@@ -565,10 +565,21 @@
           "status": "Status",
           "in-progress": "In Progress",
           "not-started": "Not Started",
+          "completed": "Completed",
           "start": "Start",
-          "lock": "Lock",
+          "complete-deliberation": "Complete Deliberation",
+          "deliberation-finalized": "This deliberation has been finalized and is no longer editable.",
           "time-remaining": "Time Remaining",
-          "deliberation-time-expired": "Deliberation time has expired"
+          "complete-modal": {
+            "title": "Complete Deliberation",
+            "description": "Are you sure you want to complete this deliberation? Once confirmed, you will be redirected to the home page.",
+            "warning-text": "This action cannot be undone. Make sure your picklist is finalized before proceeding.",
+            "confirm": "Complete",
+            "cancel": "Cancel",
+            "submitting": "Submitting...",
+            "success-message": "Deliberation completed successfully",
+            "error-message": "Failed to complete deliberation"
+          }
         },
         "picklist": {
           "title": "Picklist",

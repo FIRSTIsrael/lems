@@ -12,7 +12,7 @@ import { PicklistPanel } from './picklist-panel';
 import { ControlsPanel } from './controls-panel';
 import { Metrics } from './metrics';
 
-export function DeliberationGrid() {
+export const DeliberationGrid: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('pages.deliberations.category');
   const { getCategory } = useJudgingCategoryTranslations();
@@ -20,7 +20,6 @@ export function DeliberationGrid() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Header with Back Button */}
       <AppBar
         position="static"
         elevation={1}
@@ -41,13 +40,10 @@ export function DeliberationGrid() {
         </Toolbar>
       </AppBar>
 
-      {/* Main Content Area - Desktop Only */}
       <Box sx={{ flex: 1, display: 'flex', minHeight: 0, p: 2.5, gap: 2.5 }}>
-        {/* Left Column: Table (top) + Chart (bottom) */}
         <Box
           sx={{ flex: '0 1 80%', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}
         >
-          {/* Data Table - Primary Focus */}
           <Paper
             sx={{
               flex: 1,
@@ -65,7 +61,6 @@ export function DeliberationGrid() {
           <Metrics />
         </Box>
 
-        {/* Right Column: Controls (top) + Picklist (bottom, fills remaining space) */}
         <Box
           sx={{
             flex: '0 1 20%',
@@ -75,7 +70,6 @@ export function DeliberationGrid() {
             gap: 2.5
           }}
         >
-          {/* Controls Panel */}
           <Paper
             sx={{
               flex: '0 0 auto',
@@ -87,7 +81,6 @@ export function DeliberationGrid() {
             <ControlsPanel />
           </Paper>
 
-          {/* Picklist Panel - Takes all remaining vertical space */}
           <Paper
             sx={{
               flex: 1,
@@ -105,4 +98,4 @@ export function DeliberationGrid() {
       </Box>
     </Box>
   );
-}
+};
