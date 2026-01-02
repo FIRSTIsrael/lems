@@ -170,6 +170,7 @@
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
         "event-agenda": "לו״ז אירוע",
+        "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט"
       },
       "awards-list": {
@@ -220,6 +221,23 @@
           "judging": "שיפוט",
           "field": "זירה"
         }
+      },
+      "field-schedule": {
+        "page-title": "לו״ז זירה",
+        "error-loading": "אירעה שגיאה בטעינת לו״ז הזירה.",
+        "empty-state": "לא נקבעו קרבות עדיין.",
+        "columns": {
+          "match": "קרב",
+          "start-time": "התחלה",
+          "end-time": "סיום"
+        },
+        "stages": {
+          "practice": "סבב אימון",
+          "ranking": "סבב דירוג",
+          "test": "סבב ניסוי"
+        },
+        "not-arrived": "לא הגיעה",
+        "loading": "טוען מקצים..."
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",
