@@ -1,4 +1,4 @@
-import { ColumnType, Insertable, Selectable, Updateable, Generated } from 'kysely';
+import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
 
 export type AwardType = 'PERSONAL' | 'TEAM';
 
@@ -11,7 +11,7 @@ export interface AwardsTable {
   place: number;
   type: AwardType;
   is_optional: boolean;
-  show_places: Generated<boolean>;
+  show_places: boolean;
   allow_nominations: boolean; // Whether to allow team nominations from the Core Values rubric
   automatic_assignment: boolean; // Whether this award is available for assignment in final deliberation optional awards stage
   winner_id: string | null; // UUID foreign key to teams.id (only for TEAM awards)
@@ -20,4 +20,4 @@ export interface AwardsTable {
 
 export type Award = Selectable<AwardsTable>;
 export type InsertableAward = Insertable<AwardsTable>;
-export type UpdateableAward = Updateable<AwardsTable>;
+export type UpdatableAward = Updateable<AwardsTable>;

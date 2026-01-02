@@ -7,11 +7,23 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('show_places', 'boolean', col => col.notNull().defaultTo(true))
     .execute();
 
+  // Awards to hide places for
+  const shouldHide = [
+    'lead-mentor',
+    'volunteer-of-the-year',
+    'breakthrough',
+    'rising-all-star',
+    'motivate',
+    'judges-award',
+    'impact',
+    'excellence-in-engineering'
+  ];
+
   // Automatically hide places for existing optional or personal awards
   await db
     .updateTable('awards')
     .set({ show_places: false })
-    .where('is_optional', '=', true)
+    .where('name', 'in', shouldHide)
     .execute();
 }
 
