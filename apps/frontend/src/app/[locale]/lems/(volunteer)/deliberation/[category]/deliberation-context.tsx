@@ -3,7 +3,9 @@
 import { createContext, useContext, useMemo, ReactNode, useCallback } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { JudgingCategory } from '@lems/types/judging';
-import { hyphensToUnderscores } from '@lems/shared/utils';
+import { underscoresToHyphens } from '@lems/shared/utils';
+import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import {
   START_DELIBERATION_MUTATION,
   UPDATE_DELIBERATION_PICKLIST_MUTATION
@@ -14,7 +16,7 @@ import {
   computeTeamScores,
   computeRoomMetrics,
   computeNormalizedScores,
-  computeRanks,
+  computeRank,
   computeEligibility,
   getOrganizedRubricFields,
   getGPScores,
@@ -39,6 +41,13 @@ export function CategoryDeliberationProvider({
   children
 }: DeliberationProviderProps) {
   const deliberation = division.judging.deliberation;
+  const t = useTranslations('pages.deliberations.category.picklist');
+  const hypenatedCategory = underscoresToHyphens(category) as JudgingCategory;
+
+  const picklistLimit = Math.min(
+    MAX_PICKLIST_LIMIT,
+    Math.ceil(division.teams.length * PICKLIST_LIMIT_MULTIPLIER)
+  );
 
   // Mutations
   const [startDeliberation] = useMutation(START_DELIBERATION_MUTATION);
@@ -62,11 +71,15 @@ export function CategoryDeliberationProvider({
 
   const handleAddToPicklist = useCallback(
     async (teamId: string) => {
+      if ((deliberation?.picklist?.length ?? 0) >= picklistLimit) {
+        toast.error(t('error-limit-exceeded'));
+        return;
+      }
       const currentPicklist = deliberation?.picklist ?? [];
       const newPicklist = [...currentPicklist, teamId];
       await handleUpdatePicklist(newPicklist);
     },
-    [deliberation, handleUpdatePicklist]
+    [deliberation, handleUpdatePicklist, t, picklistLimit]
   );
 
   const handleRemoveFromPicklist = useCallback(
@@ -90,62 +103,53 @@ export function CategoryDeliberationProvider({
   );
 
   const value = useMemo<DeliberationContextValue>(() => {
-    // Convert hyphenated category to underscore format for GraphQL keys
-    const categoryKey = hyphensToUnderscores(category) as
-      | 'innovation_project'
-      | 'robot_design'
-      | 'core_values';
-
     // Step 1: Compute base team scores (category scores and GP)
     const teamScores = division.teams.map(team => computeTeamScores(team));
 
     // Step 2: Compute room metrics (aggregated scores per room)
-    const roomMetrics = computeRoomMetrics(teamScores, division.teams);
+    const roomMetrics = computeRoomMetrics(
+      teamScores,
+      division.teams.filter(t => t.arrived)
+    );
 
     // Step 2a: Get field display labels for this category
     const fieldDisplayLabels = getFieldDisplayLabels(category);
 
     // Step 3: Compute normalized scores and ranks
-    const enrichedTeams = division.teams.map((team, index) => {
-      const scores = teamScores[index];
-      const normalizedScores = computeNormalizedScores(
-        scores,
-        roomMetrics,
-        team.judgingSession?.room.id
-      );
-      const ranks = computeRanks(scores, teamScores);
-      const isEligible = computeEligibility(team, deliberation);
-      const rubricFields = getOrganizedRubricFields(team, category);
-      const gpScores = getGPScores(team);
+    const enrichedTeams = division.teams
+      .map((team, index) => {
+        const scores = teamScores[index];
+        const normalizedScores = computeNormalizedScores(
+          scores,
+          roomMetrics,
+          team.judgingSession?.room.id
+        );
+        const rank = computeRank(scores, teamScores, category);
+        const isEligible = computeEligibility(team, deliberation);
+        const rubricFields = getOrganizedRubricFields(team, category);
+        const gpScores = getGPScores(team);
 
-      return {
-        id: team.id,
-        number: team.number,
-        name: team.name,
-        arrived: team.arrived,
-        disqualified: team.disqualified,
-        slug: team.slug,
-        room: team.judgingSession?.room ?? null,
-        scores,
-        normalizedScores,
-        ranks,
-        eligible: isEligible,
-        rubricFields,
-        gpScores,
-        rubricIds: {
-          'innovation-project': team.rubrics.innovation_project?.id ?? null,
-          'robot-design': team.rubrics.robot_design?.id ?? null,
-          'core-values': team.rubrics.core_values?.id ?? null
-        },
-        awardNominations: team.rubrics.core_values?.data?.awards ?? {}
-      } as EnrichedTeam;
-    });
+        return {
+          id: team.id,
+          number: team.number,
+          name: team.name,
+          arrived: team.arrived,
+          disqualified: team.disqualified,
+          slug: team.slug,
+          room: team.judgingSession?.room ?? null,
+          scores,
+          normalizedScores,
+          rank,
+          eligible: isEligible,
+          rubricFields,
+          gpScores,
+          rubricId: team.rubrics[hypenatedCategory as keyof typeof team.rubrics]?.id ?? null,
+          awardNominations: team.rubrics.core_values?.data?.awards ?? {}
+        } as EnrichedTeam;
+      })
+      .filter(t => !t.disqualified && t.arrived);
 
     // Step 3a: Compute picklist and availability
-    const picklistLimit = Math.min(
-      MAX_PICKLIST_LIMIT,
-      Math.ceil(division.teams.length * PICKLIST_LIMIT_MULTIPLIER)
-    );
     const picklistTeamIds = deliberation?.picklist ?? [];
     const picklistTeams = picklistTeamIds
       .map(id => enrichedTeams.find(t => t.id === id))
@@ -162,9 +166,9 @@ export function CategoryDeliberationProvider({
 
       // Sort by score descending, tiebreak by normalized score
       availableEnriched.sort((a, b) => {
-        const scoreDiff = b.scores[category] - a.scores[category];
+        const scoreDiff = b.scores[hypenatedCategory] - a.scores[hypenatedCategory];
         if (scoreDiff !== 0) return scoreDiff;
-        return b.normalizedScores[category] - a.normalizedScores[category];
+        return b.normalizedScores[hypenatedCategory] - a.normalizedScores[hypenatedCategory];
       });
 
       // Check if there's a clear top team (no tie)
@@ -172,8 +176,9 @@ export function CategoryDeliberationProvider({
         const topTeam = availableEnriched[0];
         const secondTeam = availableEnriched[1];
         const isTie =
-          topTeam.scores[category] === secondTeam.scores[category] &&
-          topTeam.normalizedScores[category] === secondTeam.normalizedScores[category];
+          topTeam.scores[hypenatedCategory] === secondTeam.scores[hypenatedCategory] &&
+          topTeam.normalizedScores[hypenatedCategory] ===
+            secondTeam.normalizedScores[hypenatedCategory];
         if (!isTie) {
           suggestedTeam = topTeam;
         }
@@ -192,6 +197,7 @@ export function CategoryDeliberationProvider({
       suggestedTeam,
       picklistLimit,
       fieldDisplayLabels,
+      roomMetrics,
       startDeliberation: handleStartDeliberation,
       updatePicklist: handleUpdatePicklist,
       addToPicklist: handleAddToPicklist,
@@ -202,6 +208,8 @@ export function CategoryDeliberationProvider({
     division,
     deliberation,
     category,
+    picklistLimit,
+    hypenatedCategory,
     handleStartDeliberation,
     handleUpdatePicklist,
     handleAddToPicklist,

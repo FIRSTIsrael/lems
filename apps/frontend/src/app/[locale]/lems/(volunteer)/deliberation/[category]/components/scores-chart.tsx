@@ -13,20 +13,17 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { Box, Typography, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
 import { useCategoryDeliberation } from '../deliberation-context';
-import { computeRoomMetrics } from '../deliberation-computation';
 
 export function ScoresChart() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.category.scores-chart');
-  const { teams } = useCategoryDeliberation();
+  const { roomMetrics, teams } = useCategoryDeliberation();
 
   // Compute room metrics with useMemo to avoid unnecessary recalculations
   const chartData = useMemo(() => {
-    const roomMetrics = computeRoomMetrics(teams.map(t => t.scores));
-
     // Transform room metrics into chart-friendly format
     const data = Object.entries(roomMetrics)
       .sort(([, a], [, b]) => a.teamCount - b.teamCount) // Sort by team count for better visualization
@@ -46,7 +43,7 @@ export function ScoresChart() {
       });
 
     return data;
-  }, [teams]);
+  }, [roomMetrics, teams]);
 
   // Calculate domain for Y axis
   const maxScore = useMemo(() => {
@@ -61,8 +58,11 @@ export function ScoresChart() {
   }, [chartData]);
 
   return (
-    <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      <Typography variant="subtitle2" sx={{ fontWeight: 600, mb: 1.5, color: 'text.secondary' }}>
+    <Stack height="100%" width="100%" spacing={2} overflow="hidden">
+      <Typography
+        variant="subtitle2"
+        sx={{ fontWeight: 600, color: 'text.secondary', flexShrink: 0 }}
+      >
         {t('room-scores-distribution')}
       </Typography>
 
@@ -80,11 +80,17 @@ export function ScoresChart() {
           </Typography>
         </Box>
       ) : (
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer
+          style={{
+            flex: 1
+          }}
+        >
           <ComposedChart
             data={chartData}
             margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
-            style={{ direction: theme.direction === 'rtl' ? 'rtl' : 'ltr' }}
+            style={{
+              direction: theme.direction === 'rtl' ? 'rtl' : 'ltr'
+            }}
           >
             <defs>
               <linearGradient id="aggregateGradient" x1="0" y1="0" x2="0" y2="1">
@@ -139,6 +145,6 @@ export function ScoresChart() {
           </ComposedChart>
         </ResponsiveContainer>
       )}
-    </Box>
+    </Stack>
   );
 }

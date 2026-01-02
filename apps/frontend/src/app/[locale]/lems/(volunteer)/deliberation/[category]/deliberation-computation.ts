@@ -1,5 +1,6 @@
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics } from '@lems/shared/lib/rubrics';
+import { rubrics } from '@lems/shared/rubrics';
+import { hyphensToUnderscores, underscoresToHyphens } from '@lems/shared/utils';
 import type { Team, JudgingDeliberation } from './graphql/types';
 import type { MetricPerCategory, RoomMetricsMap, FieldMetadata } from './types';
 
@@ -179,10 +180,16 @@ export function computeNormalizedScores(
  * @param allTeamScores - Scores for all teams (used for relative ranking)
  * @returns MetricPerCategory object with ranks for each category and total
  */
-export function computeRanks(
+export function computeRank(
   teamScores: MetricPerCategory,
-  allTeamScores: MetricPerCategory[]
-): MetricPerCategory {
+  allTeamScores: MetricPerCategory[],
+  category: JudgingCategory | 'total' = 'total'
+): number {
+  const categoryKey = underscoresToHyphens(category) as
+    | 'innovation-project'
+    | 'robot-design'
+    | 'core-values'
+    | 'total';
   // Helper: compute rank by category
   const computeRankByCategory = (category: keyof MetricPerCategory, teamScore: number): number => {
     // Count how many teams have a higher score
@@ -193,15 +200,8 @@ export function computeRanks(
     return higherScoreCount + 1;
   };
 
-  return {
-    'innovation-project': computeRankByCategory(
-      'innovation-project',
-      teamScores['innovation-project']
-    ),
-    'robot-design': computeRankByCategory('robot-design', teamScores['robot-design']),
-    'core-values': computeRankByCategory('core-values', teamScores['core-values']),
-    total: computeRankByCategory('total', teamScores.total)
-  };
+  // return rank for given category
+  return computeRankByCategory(categoryKey, teamScores[categoryKey]);
 }
 
 /**
@@ -234,45 +234,6 @@ export function computeEligibility(team: Team, deliberation: JudgingDeliberation
 }
 
 /**
- * Extracts and flattens rubric field values for grid display.
- *
- * For the current category, returns field values as a flat object.
- * For core-values category, also includes GP scores keyed as 'gp-{round}'.
- *
- * @param team - The team to extract fields from
- * @param categoryKey - The deliberation category (underscore-separated: e.g., 'core_values')
- * @returns Object with field IDs as keys and values as field values
- */
-export function getFlattenedRubricFields(
-  team: Team,
-  categoryKey: 'innovation_project' | 'robot_design' | 'core_values'
-): Record<string, number | null> {
-  const result: Record<string, number | null> = {};
-
-  const categoryMap = {
-    innovation_project: team.rubrics.innovation_project,
-    robot_design: team.rubrics.robot_design,
-    core_values: team.rubrics.core_values
-  } as const;
-
-  const rubric = categoryMap[categoryKey];
-  if (rubric?.data?.fields) {
-    Object.entries(rubric.data.fields).forEach(([fieldId, fieldValue]) => {
-      result[fieldId] = (fieldValue as unknown as { value: number | null }).value ?? null;
-    });
-  }
-
-  // For core-values, add GP scores
-  if (categoryKey === 'core_values') {
-    (team.scoresheets ?? []).forEach(scoresheet => {
-      result[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value ?? null;
-    });
-  }
-
-  return result;
-}
-
-/**
  * Builds comprehensive field metadata for a given category.
  *
  * Returns an array of field metadata objects with:
@@ -284,10 +245,7 @@ export function getFlattenedRubricFields(
  * @returns Array of FieldMetadata objects, ordered by field number
  */
 export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
-  const categoryKey = category.replace(/-/g, '-') as
-    | 'innovation-project'
-    | 'robot-design'
-    | 'core-values';
+  const categoryKey = underscoresToHyphens(category) as JudgingCategory;
   const abbreviation = CATEGORY_ABBREVIATIONS[categoryKey];
 
   const schema = categoryKey === 'core-values' ? rubrics['core-values'] : rubrics[categoryKey];
@@ -329,7 +287,7 @@ export function getOrganizedRubricFields(
   const fields = buildFieldMetadata(category);
   const result: Record<string, number | null> = {};
 
-  const categoryKey = category.replace(/-/g, '_') as
+  const categoryKey = hyphensToUnderscores(category) as
     | 'innovation_project'
     | 'robot_design'
     | 'core_values';
@@ -340,10 +298,10 @@ export function getOrganizedRubricFields(
     core_values: team.rubrics.core_values
   } as const;
 
-  if (category === 'core-values') {
+  if (categoryKey === 'core_values') {
     // For core-values, include both IP and RD fields with prefixes
-    const ipFields = buildFieldMetadata('innovation-project');
-    const rdFields = buildFieldMetadata('robot-design');
+    const ipFields = buildFieldMetadata('innovation-project').filter(f => f.coreValues);
+    const rdFields = buildFieldMetadata('robot-design').filter(f => f.coreValues);
 
     ipFields.forEach(field => {
       const ipRubric = team.rubrics.innovation_project;
@@ -394,8 +352,12 @@ export function getGPScores(team: Team): Record<string, number | null> {
  */
 export function getFieldDisplayLabels(category: JudgingCategory): string[] {
   if (category === 'core-values') {
-    const ipLabels = buildFieldMetadata('innovation-project').map(f => f.displayLabel);
-    const rdLabels = buildFieldMetadata('robot-design').map(f => f.displayLabel);
+    const ipLabels = buildFieldMetadata('innovation-project')
+      .filter(f => f.coreValues)
+      .map(f => f.displayLabel);
+    const rdLabels = buildFieldMetadata('robot-design')
+      .filter(f => f.coreValues)
+      .map(f => f.displayLabel);
     return [...ipLabels, ...rdLabels];
   }
 

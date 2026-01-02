@@ -71,7 +71,6 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
             category
             status
             data {
-              fields
               awards
               feedback {
                 greatJob

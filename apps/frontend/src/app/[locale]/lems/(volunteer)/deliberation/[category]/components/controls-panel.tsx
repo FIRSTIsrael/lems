@@ -82,15 +82,17 @@ export function ControlsPanel() {
             variant="contained"
             fullWidth
             startIcon={<Lock />}
-            disabled
             size="small"
             sx={{
-              bgcolor: alpha('white', 0.3),
-              color: 'white',
+              bgcolor: '#fff',
+              color: theme.palette.primary.main,
+              '&:hover': {
+                bgcolor: alpha('#fff', 0.9)
+              },
               fontWeight: 600
             }}
           >
-            {t('active')}
+            {t('lock')}
           </Button>
         )}
       </Box>
@@ -132,9 +134,6 @@ export function ControlsPanel() {
         <Button variant="outlined" fullWidth disabled size="small" sx={{ mt: 0.5 }}>
           {t('compare')}
         </Button>
-        <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
-          {t('coming-soon')}
-        </Typography>
       </Box>
     </Stack>
   );
