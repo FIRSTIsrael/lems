@@ -571,9 +571,16 @@
           "team-1": "קבוצה 1",
           "team-2": "קבוצה 2",
           "compare": "השווה",
-          "coming-soon": "בקרוב",
           "available": "זמינה",
           "no-available-teams": "אין קבוצות זמינות"
+        },
+        "picklist": {
+          "title": "רשימת בחירה",
+          "suggested": "מוצע",
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "remove": "הסר",
+          "empty-state": "גרור או הוסף קבוצות",
+          "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
         },
         "scores-chart": {
           "room-scores-distribution": "התפלגות ניקוד חדרים",

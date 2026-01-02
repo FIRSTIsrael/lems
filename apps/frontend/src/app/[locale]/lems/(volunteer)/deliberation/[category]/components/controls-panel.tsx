@@ -132,9 +132,6 @@ export function ControlsPanel() {
         <Button variant="outlined" fullWidth disabled size="small" sx={{ mt: 0.5 }}>
           {t('compare')}
         </Button>
-        <Typography variant="caption" color="textSecondary" sx={{ textAlign: 'center' }}>
-          {t('coming-soon')}
-        </Typography>
       </Box>
     </Stack>
   );

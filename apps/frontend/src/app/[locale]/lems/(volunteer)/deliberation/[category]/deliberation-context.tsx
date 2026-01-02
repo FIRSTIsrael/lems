@@ -4,6 +4,8 @@ import { createContext, useContext, useMemo, ReactNode, useCallback } from 'reac
 import { useMutation } from '@apollo/client/react';
 import { JudgingCategory } from '@lems/types/judging';
 import { underscoresToHyphens } from '@lems/shared/utils';
+import { toast } from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import {
   START_DELIBERATION_MUTATION,
   UPDATE_DELIBERATION_PICKLIST_MUTATION
@@ -39,6 +41,12 @@ export function CategoryDeliberationProvider({
   children
 }: DeliberationProviderProps) {
   const deliberation = division.judging.deliberation;
+  const t = useTranslations('pages.deliberations.category.picklist');
+
+  const picklistLimit = Math.min(
+    MAX_PICKLIST_LIMIT,
+    Math.ceil(division.teams.length * PICKLIST_LIMIT_MULTIPLIER)
+  );
 
   // Mutations
   const [startDeliberation] = useMutation(START_DELIBERATION_MUTATION);
@@ -62,11 +70,15 @@ export function CategoryDeliberationProvider({
 
   const handleAddToPicklist = useCallback(
     async (teamId: string) => {
+      if ((deliberation?.picklist?.length ?? 0) >= picklistLimit) {
+        toast.error(t('error-limit-exceeded'));
+        return;
+      }
       const currentPicklist = deliberation?.picklist ?? [];
       const newPicklist = [...currentPicklist, teamId];
       await handleUpdatePicklist(newPicklist);
     },
-    [deliberation, handleUpdatePicklist]
+    [deliberation, handleUpdatePicklist, t, picklistLimit]
   );
 
   const handleRemoveFromPicklist = useCallback(
@@ -132,13 +144,9 @@ export function CategoryDeliberationProvider({
           awardNominations: team.rubrics.core_values?.data?.awards ?? {}
         } as EnrichedTeam;
       })
-      .filter(t => !!t.eligible);
+      .filter(t => !t.disqualified && t.arrived);
 
     // Step 3a: Compute picklist and availability
-    const picklistLimit = Math.min(
-      MAX_PICKLIST_LIMIT,
-      Math.ceil(division.teams.length * PICKLIST_LIMIT_MULTIPLIER)
-    );
     const picklistTeamIds = deliberation?.picklist ?? [];
     const picklistTeams = picklistTeamIds
       .map(id => enrichedTeams.find(t => t.id === id))
@@ -195,6 +203,7 @@ export function CategoryDeliberationProvider({
     division,
     deliberation,
     category,
+    picklistLimit,
     handleStartDeliberation,
     handleUpdatePicklist,
     handleAddToPicklist,
