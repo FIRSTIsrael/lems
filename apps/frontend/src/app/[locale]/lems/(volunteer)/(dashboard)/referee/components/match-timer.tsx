@@ -41,8 +41,8 @@ export const RefereeMatchTimer = () => {
         backgroundColor: 'background.paper'
       }}
     >
-      <Box sx={{ p: 3, textAlign: 'center' }}>
-        <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+      <Box sx={{ p: 3, textAlign: 'center', backgroundColor: 'primary.main' }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: 'white' }}>
           {getStage(activeMatch?.stage || '')} #{activeMatch?.number}: {t('round')}{' '}
           {activeMatch?.round}
         </Typography>
