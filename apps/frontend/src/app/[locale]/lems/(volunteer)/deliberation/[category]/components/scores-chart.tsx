@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import {
   ComposedChart,
   Bar,
-  Line,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -127,17 +127,13 @@ export function ScoresChart() {
             <Bar dataKey="robot-design" fill={green[400]} name={t('robot-design')} barSize={16} />
             <Bar dataKey="core-values" fill={red[400]} name={t('core-values')} barSize={16} />
 
-            {/* Aggregate line */}
-            <Line
+            {/* Aggregate area */}
+            <Area
               type="monotone"
               dataKey="aggregate"
               stroke={theme.palette.primary.main}
-              strokeWidth={3}
-              dot={{
-                r: 4,
-                stroke: theme.palette.primary.main,
-                fill: theme.palette.background.paper
-              }}
+              fill="url(#aggregateGradient)"
+              fillOpacity={1}
               name={t('aggregate-average')}
             />
           </ComposedChart>
