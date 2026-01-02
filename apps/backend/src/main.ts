@@ -11,6 +11,7 @@ import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
+import { logger } from './lib/logger';
 import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
@@ -23,6 +24,8 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
+
+logger.info({ component: 'server' }, 'Backend server initializing');
 
 const app = express();
 const server = http.createServer(app);
@@ -47,9 +50,9 @@ app.use(express.json());
 try {
   const redis = getRedisClient();
   await redis.ping();
-  console.log('✅ Redis initialized and connection verified');
+  logger.info({ component: 'redis' }, 'Redis initialized and connection verified');
 } catch (error) {
-  console.error('⚠️ Failed to initialize Redis:', error);
+  logger.error({ component: 'redis', error: error instanceof Error ? error.message : String(error) }, 'Failed to initialize Redis');
   throw new Error('Redis initialization failed');
 }
 
@@ -68,14 +71,14 @@ try {
 
   // Start the unified worker
   await workerManager.start();
-  console.log('✅ Worker manager started with event handlers');
+  logger.info({ component: 'worker-manager', handlers: ['session-completed', 'match-completed', 'match-endgame-triggered'] }, 'Worker manager started with event handlers');
 } catch (error) {
-  console.error('⚠️ Failed to initialize worker manager:', error);
+  logger.error({ component: 'worker-manager', error: error instanceof Error ? error.message : String(error) }, 'Failed to initialize worker manager');
   throw new Error('Worker manager initialization failed');
 }
 
 // WebSocket: Create WebSocket server for subscriptions
-console.log('[Main] Creating WebSocket server at path /lems/graphql');
+logger.info({ component: 'websocket', path: '/lems/graphql' }, 'Creating WebSocket server');
 const wsServer = new WebSocketServer({
   server,
   path: '/lems/graphql'
@@ -90,26 +93,26 @@ const serverCleanup = useServer(
       return { user };
     },
     onConnect: async () => {
-      console.log('[WebSocket] Client connected');
+      logger.info({ component: 'websocket' }, 'Client connected');
       return true;
     },
     onDisconnect: () => {
-      console.log('[WebSocket] Client disconnected');
+      logger.info({ component: 'websocket' }, 'Client disconnected');
     },
     onError: (ctx, message, errors) => {
-      console.error('[WebSocket] GraphQL Error:', { message, errors });
+      logger.error({ component: 'websocket', message, errors }, 'GraphQL WebSocket error');
     }
   },
   wsServer
 );
-console.log('✅ WebSocket server initialized for subscriptions');
+logger.info({ component: 'websocket' }, 'WebSocket server initialized for subscriptions');
 
 // GraphQL: Initialize Apollo Server and register middleware
 // This must be registered before the routers to ensure /lems/graphql
 // takes precedence over /lems/* routes
 const apolloServer = createApolloServer(server, serverCleanup);
 await apolloServer.start();
-console.log('✅ Apollo Server initialized');
+logger.info({ component: 'graphql' }, 'Apollo Server initialized');
 
 app.use(
   '/lems/graphql',
@@ -132,46 +135,55 @@ app.get('/health', (req, res) => {
 });
 
 app.use((req, res) => {
+  logger.warn({ component: 'http', method: req.method, path: req.path }, 'Route not found');
   res.status(404).json({ error: 'ROUTE_NOT_DEFINED' });
 });
 
 // Error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res, next) => {
-  console.log(err);
+  logger.error({
+    component: 'http',
+    method: req.method,
+    path: req.path,
+    error: err instanceof Error ? err.message : String(err),
+    stack: err instanceof Error ? err.stack : undefined
+  }, 'Unhandled error');
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
-console.log('💫 Starting server...');
+logger.info('Starting server...');
 const port = 3333;
 server.listen(port, () => {
-  console.log(`✅ Server started on port ${port}.`);
-  console.log(`🚀 GraphQL endpoint: http://localhost:${port}/lems/graphql`);
+  logger.info({ port }, 'Server started on port');
+  logger.info({ endpoint: `http://localhost:${port}/lems/graphql` }, 'GraphQL endpoint');
 });
 
-server.on('error', console.error);
+server.on('error', (error) => {
+  logger.error({ component: 'server', error: error.message }, 'Server error');
+});
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  console.log('⚠️  SIGTERM received, shutting down gracefully...');
+  logger.info({ component: 'server', signal: 'SIGTERM' }, 'SIGTERM received, shutting down gracefully');
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
-    console.log('✅ Graceful shutdown complete');
+    logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });
 });
 
 process.on('SIGINT', async () => {
-  console.log('⚠️  SIGINT received, shutting down gracefully...');
+  logger.info({ component: 'server', signal: 'SIGINT' }, 'SIGINT received, shutting down gracefully');
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
-    console.log('✅ Graceful shutdown complete');
+    logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });
 });

@@ -15,6 +15,7 @@ export const GET_SCOREBOARD_DATA: TypedDocumentNode<ScoreboardData, ScoreboardVa
           status
           startTime
           participants {
+            id
             team {
               id
               name

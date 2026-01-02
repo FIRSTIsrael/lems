@@ -22,9 +22,9 @@ import {
 import { JudgingCategory } from '@lems/types/judging';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { PageHeader } from '../../components/page-header';
-import { useEvent } from '../../../components/event-context';
-import { usePageData } from '../../../hooks/use-page-data';
+import { PageHeader } from '../../(dashboard)/components/page-header';
+import { useEvent } from '../../components/event-context';
+import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_CATEGORY_DELIBERATION,
   parseCategoryDeliberationData,

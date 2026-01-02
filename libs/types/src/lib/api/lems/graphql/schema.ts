@@ -23,6 +23,7 @@ export function loadLemsGraphQLSchema(): string[] {
     'judging',
     'field',
     'rubric',
+    'award',
     'scoresheet',
     'deliberations'
   ];
