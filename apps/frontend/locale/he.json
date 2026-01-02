@@ -349,7 +349,7 @@
     },
     "referee": {
       "page-title": "לוח בקרת שופט",
-      "match-running": "משחק בעדכון",
+      "match-running": "מקצה בעיצומו",
       "match-slug": "משחק",
       "prestart-title": "התכוננת למקצה",
       "inspection-timer": "בדיקת ציוד",
@@ -366,6 +366,7 @@
       "scheduled-time": "שעה מתוכננת",
       "teams": "קבוצות",
       "round": "סבב",
+      "team-not-available": "מידע הקבוצה לא זמין",
       "no-show-title": "הקבוצה לא הגיעה",
       "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
     },
