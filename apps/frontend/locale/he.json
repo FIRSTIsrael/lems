@@ -566,7 +566,9 @@
           "in-progress": "בתהליך",
           "not-started": "לא התחיל",
           "start": "התחל",
-          "lock": "נעילה"
+          "lock": "נעילה",
+          "time-remaining": "זמן נותר",
+          "deliberation-time-expired": "הזמן לדיון פג"
         },
         "picklist": {
           "title": "רשימת בחירה",
