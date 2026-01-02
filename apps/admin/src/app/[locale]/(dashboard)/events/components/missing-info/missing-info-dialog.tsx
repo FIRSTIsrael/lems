@@ -90,17 +90,16 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
     <Dialog
       open={open}
       onClose={onClose}
-      maxWidth="sm"
+      maxWidth="xs"
       fullWidth
       PaperProps={{
         sx: {
-          minHeight: '400px',
           maxHeight: '80vh'
         }
       }}
     >
       <DialogTitle>{t('dialog-title')}</DialogTitle>
-      <DialogContent sx={{ minHeight: '300px', pt: 4, pb: 3, overflow: 'visible' }}>
+      <DialogContent sx={{ pt: 3, pb: 2, overflow: 'visible' }}>
         {!hasDetailedData ? (
           <Typography variant="body2" color="text.secondary">
             {t('missing-details')}
