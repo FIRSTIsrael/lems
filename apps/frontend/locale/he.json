@@ -171,7 +171,8 @@
         "awards-list": "רשימת פרסים",
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
-        "judging-schedule": "לו״ז שיפוט"
+        "judging-schedule": "לו״ז שיפוט",
+        "field-timer": "שעון זמן מגרש"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -221,6 +222,14 @@
           "judging": "שיפוט",
           "field": "זירה"
         }
+      },
+      "field-timer": {
+        "page-title": "שעון זמן מגרש",
+        "no-active-match": "אין מקצה פעיל",
+        "loading": "טוען נתוני מקצה...",
+        "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
+        "test-match": "מקצה בדיקה",
+        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}"
       },
       "field-schedule": {
         "page-title": "לו״ז זירה",
