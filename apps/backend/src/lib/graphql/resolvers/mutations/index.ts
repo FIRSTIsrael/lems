@@ -18,7 +18,8 @@ import {
   updateScoresheetGPResolver,
   updateScoresheetStatusResolver,
   updateScoresheetEscalatedResolver,
-  updateScoresheetSignatureResolver
+  updateScoresheetSignatureResolver,
+  resetScoresheetResolver
 } from './scoresheets';
 import {
   switchActiveDisplayResolver,
@@ -46,6 +47,7 @@ export const mutationResolvers = {
   updateScoresheetEscalated: updateScoresheetEscalatedResolver,
   updateScoresheetSignature: updateScoresheetSignatureResolver,
   updateScoresheetStatus: updateScoresheetStatusResolver,
+  resetScoresheet: resetScoresheetResolver,
   startDeliberation: startDeliberationResolver,
   updateDeliberationPicklist: updateDeliberationPicklistResolver
 };

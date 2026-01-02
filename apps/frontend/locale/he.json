@@ -169,7 +169,8 @@
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
-        "event-agenda": "לו״ז אירוע"
+        "event-agenda": "לו״ז אירוע",
+        "judging-schedule": "לו״ז שיפוט"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,6 +219,21 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-sessions": "לא נקבעו מפגשי שיפוט.",
+        "loading": "טוען לו״ז...",
+        "arrived": "הגיעה",
+        "not-arrived": "לא הגיעה",
+        "table": {
+          "time": "שעה"
+        },
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט"
         }
       }
     },
@@ -541,6 +557,19 @@
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
+      "escalate": "העבר לשופט ראשי",
+      "de-escalate": "החזר לשופט זירה",
+      "reset": "אפס דף ניקוד",
+      "processing": "מעבד...",
+      "error-failed-to-escalate": "העברה נכשלה",
+      "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "reset-dialog": {
+        "title": "איפוס דף ניקוד",
+        "warning": "לא ניתן לבטל פעולה זו!",
+        "description": "האם אתה בטוח שברצונך לאפס את דף הניקוד? כל הנתונים יימחקו.",
+        "cancel": "ביטול",
+        "confirm": "אפס דף ניקוד"
+      },
       "gp-selector": {
         "title": "דרגו את המקצועיות האדיבה שהציגה הקבוצה במהלך משחק הרובוט",
         "level-2": "מתפתחת",
