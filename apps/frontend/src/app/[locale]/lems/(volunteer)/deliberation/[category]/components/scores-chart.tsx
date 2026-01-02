@@ -13,7 +13,7 @@ import {
   Legend,
   ResponsiveContainer
 } from 'recharts';
-import { Box, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Typography, useTheme } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
 import { useCategoryDeliberation } from '../deliberation-context';
 
@@ -58,10 +58,10 @@ export function ScoresChart() {
   }, [chartData]);
 
   return (
-    <Stack height="100%" width="100%" spacing={2} overflow="hidden">
+    <Box height="100%" width="100%" display="flex" flexDirection="column" overflow="hidden">
       <Typography
         variant="subtitle2"
-        sx={{ fontWeight: 600, color: 'text.secondary', flexShrink: 0 }}
+        sx={{ fontWeight: 600, color: 'text.secondary', flexShrink: 0, mb: 1 }}
       >
         {t('room-scores-distribution')}
       </Typography>
@@ -80,7 +80,8 @@ export function ScoresChart() {
           </Typography>
         </Box>
       ) : (
-        <ResponsiveContainer width="100%" height="100%">
+        <Box flex={1} overflow="hidden">
+          <ResponsiveContainer width="100%" height="100%">
           <ComposedChart
             data={chartData}
             margin={{ top: 5, right: 30, left: 0, bottom: 80 }}
@@ -139,8 +140,8 @@ export function ScoresChart() {
               name={t('aggregate-average')}
             />
           </ComposedChart>
-        </ResponsiveContainer>
+        </Box>
       )}
-    </Stack>
+    </Box>
   );
 }
