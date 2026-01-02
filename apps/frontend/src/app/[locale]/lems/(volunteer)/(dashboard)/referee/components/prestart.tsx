@@ -205,7 +205,7 @@ export function RefereePrestart() {
         </Stack>
       </Paper>
 
-      {inspectionStartTime && <InspectionTimer timeRemaining={inspectionTimeRemaining} />}
+      {inspectionStartTime && !team?.ready && <InspectionTimer timeRemaining={inspectionTimeRemaining} />}
     </>
   );
 }
