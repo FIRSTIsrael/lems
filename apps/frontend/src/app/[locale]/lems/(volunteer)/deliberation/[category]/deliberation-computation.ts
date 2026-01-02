@@ -1,5 +1,6 @@
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics } from '@lems/shared/lib/rubrics';
+import { rubrics } from '@lems/shared/rubrics';
+import { hyphensToUnderscores, underscoresToHyphens } from '@lems/shared/utils';
 import type { Team, JudgingDeliberation } from './graphql/types';
 import type { MetricPerCategory, RoomMetricsMap, FieldMetadata } from './types';
 
@@ -179,10 +180,16 @@ export function computeNormalizedScores(
  * @param allTeamScores - Scores for all teams (used for relative ranking)
  * @returns MetricPerCategory object with ranks for each category and total
  */
-export function computeRanks(
+export function computeRank(
   teamScores: MetricPerCategory,
-  allTeamScores: MetricPerCategory[]
-): MetricPerCategory {
+  allTeamScores: MetricPerCategory[],
+  category: JudgingCategory | 'total' = 'total'
+): number {
+  const categoryKey = underscoresToHyphens(category) as
+    | 'innovation-project'
+    | 'robot-design'
+    | 'core-values'
+    | 'total';
   // Helper: compute rank by category
   const computeRankByCategory = (category: keyof MetricPerCategory, teamScore: number): number => {
     // Count how many teams have a higher score
@@ -193,15 +200,8 @@ export function computeRanks(
     return higherScoreCount + 1;
   };
 
-  return {
-    'innovation-project': computeRankByCategory(
-      'innovation-project',
-      teamScores['innovation-project']
-    ),
-    'robot-design': computeRankByCategory('robot-design', teamScores['robot-design']),
-    'core-values': computeRankByCategory('core-values', teamScores['core-values']),
-    total: computeRankByCategory('total', teamScores.total)
-  };
+  // return rank for given category
+  return computeRankByCategory(categoryKey, teamScores[categoryKey]);
 }
 
 /**
@@ -284,10 +284,7 @@ export function getFlattenedRubricFields(
  * @returns Array of FieldMetadata objects, ordered by field number
  */
 export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
-  const categoryKey = category.replace(/-/g, '-') as
-    | 'innovation-project'
-    | 'robot-design'
-    | 'core-values';
+  const categoryKey = underscoresToHyphens(category) as JudgingCategory;
   const abbreviation = CATEGORY_ABBREVIATIONS[categoryKey];
 
   const schema = categoryKey === 'core-values' ? rubrics['core-values'] : rubrics[categoryKey];
@@ -329,7 +326,7 @@ export function getOrganizedRubricFields(
   const fields = buildFieldMetadata(category);
   const result: Record<string, number | null> = {};
 
-  const categoryKey = category.replace(/-/g, '_') as
+  const categoryKey = hyphensToUnderscores(category) as
     | 'innovation_project'
     | 'robot_design'
     | 'core_values';

@@ -22,7 +22,7 @@ export type RoomMetricsMap = Record<string, RoomMetrics>;
  */
 export interface FieldMetadata {
   id: string;
-  category: 'innovation-project' | 'robot-design' | 'core-values';
+  category: JudgingCategory;
   sectionId: string;
   fieldNumber: number;
   displayLabel: string; // e.g., 'IP-1', 'RD-5'
@@ -43,18 +43,14 @@ export interface EnrichedTeam {
 
   scores: MetricPerCategory;
   normalizedScores: MetricPerCategory;
-  ranks: MetricPerCategory;
+  rank: number;
 
   eligible: boolean;
 
   rubricFields: Record<string, number | null>;
   gpScores: Record<string, number | null>;
 
-  rubricIds: {
-    'innovation-project': string | null;
-    'robot-design': string | null;
-    'core-values': string | null;
-  };
+  rubricId: string | null;
 
   awardNominations: Record<string, boolean>;
 }

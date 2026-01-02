@@ -3,7 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode, useCallback } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { JudgingCategory } from '@lems/types/judging';
-import { hyphensToUnderscores } from '@lems/shared/utils';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import {
   START_DELIBERATION_MUTATION,
   UPDATE_DELIBERATION_PICKLIST_MUTATION
@@ -14,7 +14,7 @@ import {
   computeTeamScores,
   computeRoomMetrics,
   computeNormalizedScores,
-  computeRanks,
+  computeRank,
   computeEligibility,
   getOrganizedRubricFields,
   getGPScores,
@@ -90,12 +90,6 @@ export function CategoryDeliberationProvider({
   );
 
   const value = useMemo<DeliberationContextValue>(() => {
-    // Convert hyphenated category to underscore format for GraphQL keys
-    const categoryKey = hyphensToUnderscores(category) as
-      | 'innovation_project'
-      | 'robot_design'
-      | 'core_values';
-
     // Step 1: Compute base team scores (category scores and GP)
     const teamScores = division.teams.map(team => computeTeamScores(team));
 
@@ -106,40 +100,39 @@ export function CategoryDeliberationProvider({
     const fieldDisplayLabels = getFieldDisplayLabels(category);
 
     // Step 3: Compute normalized scores and ranks
-    const enrichedTeams = division.teams.map((team, index) => {
-      const scores = teamScores[index];
-      const normalizedScores = computeNormalizedScores(
-        scores,
-        roomMetrics,
-        team.judgingSession?.room.id
-      );
-      const ranks = computeRanks(scores, teamScores);
-      const isEligible = computeEligibility(team, deliberation);
-      const rubricFields = getOrganizedRubricFields(team, category);
-      const gpScores = getGPScores(team);
+    const enrichedTeams = division.teams
+      .map((team, index) => {
+        const scores = teamScores[index];
+        const normalizedScores = computeNormalizedScores(
+          scores,
+          roomMetrics,
+          team.judgingSession?.room.id
+        );
+        const rank = computeRank(scores, teamScores, category);
+        const isEligible = computeEligibility(team, deliberation);
+        const rubricFields = getOrganizedRubricFields(team, category);
+        const gpScores = getGPScores(team);
 
-      return {
-        id: team.id,
-        number: team.number,
-        name: team.name,
-        arrived: team.arrived,
-        disqualified: team.disqualified,
-        slug: team.slug,
-        room: team.judgingSession?.room ?? null,
-        scores,
-        normalizedScores,
-        ranks,
-        eligible: isEligible,
-        rubricFields,
-        gpScores,
-        rubricIds: {
-          'innovation-project': team.rubrics.innovation_project?.id ?? null,
-          'robot-design': team.rubrics.robot_design?.id ?? null,
-          'core-values': team.rubrics.core_values?.id ?? null
-        },
-        awardNominations: team.rubrics.core_values?.data?.awards ?? {}
-      } as EnrichedTeam;
-    });
+        return {
+          id: team.id,
+          number: team.number,
+          name: team.name,
+          arrived: team.arrived,
+          disqualified: team.disqualified,
+          slug: team.slug,
+          room: team.judgingSession?.room ?? null,
+          scores,
+          normalizedScores,
+          rank,
+          eligible: isEligible,
+          rubricFields,
+          gpScores,
+          rubricId:
+            team.rubrics[underscoresToHyphens(category) as keyof typeof team.rubrics]?.id ?? null,
+          awardNominations: team.rubrics.core_values?.data?.awards ?? {}
+        } as EnrichedTeam;
+      })
+      .filter(t => !!t.eligible);
 
     // Step 3a: Compute picklist and availability
     const picklistLimit = Math.min(
