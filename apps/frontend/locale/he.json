@@ -170,6 +170,8 @@
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
         "event-agenda": "לו״ז אירוע",
+        "field-schedule": "לו״ז זירה",
+        "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש"
       },
       "awards-list": {
@@ -219,7 +221,8 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
-        }      },
+        }
+      },
       "field-timer": {
         "page-title": "שעון זמן מגרש",
         "no-active-match": "אין מקצה פעיל",
@@ -231,7 +234,40 @@
           "RANKING": "דירוג",
           "TEST": "בדיקה"
         },
-        "match-info": "מקצה {stage} סיבוב #{round} מקצה #{number}"      }
+        "match-info": "מקצה {stage} סיבוב #{round} מקצה #{number}"
+      },
+      "field-schedule": {
+        "page-title": "לו״ז זירה",
+        "error-loading": "אירעה שגיאה בטעינת לו״ז הזירה.",
+        "empty-state": "לא נקבעו קרבות עדיין.",
+        "columns": {
+          "match": "קרב",
+          "start-time": "התחלה",
+          "end-time": "סיום"
+        },
+        "stages": {
+          "practice": "סבב אימון",
+          "ranking": "סבב דירוג",
+          "test": "סבב ניסוי"
+        },
+        "not-arrived": "לא הגיעה",
+        "loading": "טוען מקצים..."
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-sessions": "לא נקבעו מפגשי שיפוט.",
+        "loading": "טוען לו״ז...",
+        "arrived": "הגיעה",
+        "not-arrived": "לא הגיעה",
+        "table": {
+          "time": "שעה"
+        },
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט"
+        }
+      }
     },
     "rubric": {
       "page-title": "מחוון {category}, קבוצה {teamName} #{teamNumber}",
