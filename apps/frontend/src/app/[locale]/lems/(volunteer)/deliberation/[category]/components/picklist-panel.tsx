@@ -76,33 +76,57 @@ export function PicklistPanel() {
           !picklistTeams.find(team => team.id === suggestedTeam.id) && (
             <Paper
               sx={{
-                p: 0.75,
+                p: '0.4rem 0.6rem',
                 bgcolor: alpha(theme.palette.success.main, 0.08),
                 border: `2px dashed ${theme.palette.success.main}`,
                 borderRadius: 0.5,
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                minHeight: '28px'
               }}
             >
-              <Box>
-                <Typography variant="caption" color="textSecondary" sx={{ fontSize: '0.7rem' }}>
-                  {t('suggested')}
-                </Typography>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem',
+                  flex: 1,
+                  minWidth: 0
+                }}
+              >
+                <Box
+                  sx={{
+                    minWidth: '18px',
+                    textAlign: 'center',
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    color: theme.palette.text.secondary,
+                    flexShrink: 0
+                  }}
+                >
+                  ★
+                </Box>
                 <Typography
                   variant="caption"
-                  sx={{ fontWeight: 600, display: 'block', fontSize: '0.8rem' }}
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
                 >
-                  {suggestedTeam.number}
+                  {suggestedTeam.number} | {suggestedTeam.name}
                 </Typography>
               </Box>
               <Tooltip title={t('add-to-picklist')}>
                 <IconButton
                   size="small"
                   onClick={() => addToPicklist(suggestedTeam.id)}
-                  sx={{ color: theme.palette.success.main, p: 0.5 }}
+                  sx={{ color: theme.palette.success.main, flexShrink: 0, p: '0.25rem' }}
                 >
-                  <Add fontSize="small" />
+                  <Add sx={{ fontSize: '1rem' }} />
                 </IconButton>
               </Tooltip>
             </Paper>

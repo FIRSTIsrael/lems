@@ -33,7 +33,10 @@ const processDeliberationUpdatedEvent = async (
           deliberationId,
           picklist
         }
-      : null;
+      : {
+          deliberationId,
+          picklist: []
+        };
   }
 
   // Handle DeliberationStarted events

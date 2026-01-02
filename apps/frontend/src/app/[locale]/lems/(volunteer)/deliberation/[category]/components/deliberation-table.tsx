@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
-import { OpenInNew, Add } from '@mui/icons-material';
+import { OpenInNew, Add, CheckCircleOutline } from '@mui/icons-material';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/database';
 import { useCategoryDeliberation } from '../deliberation-context';
@@ -13,8 +13,15 @@ const FIELD_COLUMN_WIDTH = 60;
 
 export function DeliberationTable() {
   const theme = useTheme();
-  const { teams, deliberation, suggestedTeam, picklistTeams, addToPicklist, fieldDisplayLabels } =
-    useCategoryDeliberation();
+  const {
+    teams,
+    deliberation,
+    suggestedTeam,
+    picklistTeams,
+    addToPicklist,
+    picklistLimit,
+    fieldDisplayLabels
+  } = useCategoryDeliberation();
 
   const pickedTeamIds = useMemo(() => new Set(picklistTeams.map(t => t.id)), [picklistTeams]);
   const hypenatedCategory = underscoresToHyphens(
@@ -32,14 +39,23 @@ export function DeliberationTable() {
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           const isPicked = pickedTeamIds.has(team.id);
-          return (
-            !isPicked && (
-              <Tooltip key="add-to-picklist" title="Add to Picklist">
-                <IconButton size="small" onClick={() => addToPicklist(team.id)} color="success">
-                  <Add fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )
+          return isPicked ? (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%'
+              }}
+            >
+              <CheckCircleOutline fontSize="small" color="success" />
+            </Box>
+          ) : (
+            <Tooltip title="Add to Picklist">
+              <IconButton size="small" onClick={() => addToPicklist(team.id)} color="success">
+                <Add fontSize="small" />
+              </IconButton>
+            </Tooltip>
           );
         }
       },
@@ -99,28 +115,30 @@ export function DeliberationTable() {
       ),
 
       // GP score columns (only shown for core-values category)
-      ...Object.keys(teams[0]?.gpScores ?? {})
-        .sort((a, b) => {
-          const roundA = parseInt(a.split('-')[1], 10);
-          const roundB = parseInt(b.split('-')[1], 10);
-          return roundA - roundB;
-        })
-        .map(
-          gpKey =>
-            ({
-              field: gpKey,
-              headerName: gpKey,
-              width: FIELD_COLUMN_WIDTH,
-              sortable: false,
-              filterable: false,
-              headerAlign: 'center' as const,
-              align: 'center' as const,
-              renderCell: params => {
-                const value = params.row.gpScores[gpKey];
-                return value !== null ? value : '-';
-              }
-            }) as GridColDef<EnrichedTeam>
-        ),
+      ...(hypenatedCategory === 'core-values'
+        ? Object.keys(teams[0]?.gpScores ?? {})
+            .sort((a, b) => {
+              const roundA = parseInt(a.split('-')[1], 10);
+              const roundB = parseInt(b.split('-')[1], 10);
+              return roundA - roundB;
+            })
+            .map(
+              gpKey =>
+                ({
+                  field: gpKey,
+                  headerName: gpKey,
+                  width: FIELD_COLUMN_WIDTH,
+                  sortable: false,
+                  filterable: false,
+                  headerAlign: 'center' as const,
+                  align: 'center' as const,
+                  renderCell: params => {
+                    const value = params.row.gpScores[gpKey];
+                    return value !== null ? value : '-';
+                  }
+                }) as GridColDef<EnrichedTeam>
+            )
+        : []),
       {
         field: 'totalScore',
         headerName: 'Total',
@@ -129,6 +147,7 @@ export function DeliberationTable() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        cellClassName: 'total-score-cell',
         renderCell: params => params.row.scores[hypenatedCategory].toFixed(2)
       },
       {
@@ -180,27 +199,26 @@ export function DeliberationTable() {
       disableVirtualization={theme.direction === 'rtl'}
       getRowClassName={params => {
         const team = params.row as EnrichedTeam;
-        if (suggestedTeam?.id === team.id) {
+        if (suggestedTeam?.id === team.id && picklistTeams.length < picklistLimit) {
           return 'suggested-team';
-        }
-        if (pickedTeamIds.has(team.id)) {
-          return 'picked-team';
         }
         return '';
       }}
+      disableRowSelectionOnClick
       sx={{
         width: '100%',
         height: '100%',
         '& .suggested-team': {
-          backgroundColor: alpha(theme.palette.warning.main, 0.15),
+          backgroundColor: alpha(theme.palette.success.main, 0.15),
           '&:hover': {
-            backgroundColor: alpha(theme.palette.warning.main, 0.25)
+            backgroundColor: alpha(theme.palette.success.main, 0.25)
           }
         },
-        '& .picked-team': {
+        '& .total-score-cell': {
           backgroundColor: alpha(theme.palette.primary.main, 0.1),
+          fontWeight: 600,
           '&:hover': {
-            backgroundColor: alpha(theme.palette.primary.main, 0.2)
+            backgroundColor: alpha(theme.palette.primary.main, 0.15)
           }
         },
         '& .MuiDataGrid-cell:focus': {

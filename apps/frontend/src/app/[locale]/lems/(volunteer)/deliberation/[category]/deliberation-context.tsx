@@ -42,6 +42,7 @@ export function CategoryDeliberationProvider({
 }: DeliberationProviderProps) {
   const deliberation = division.judging.deliberation;
   const t = useTranslations('pages.deliberations.category.picklist');
+  const hypenatedCategory = underscoresToHyphens(category) as JudgingCategory;
 
   const picklistLimit = Math.min(
     MAX_PICKLIST_LIMIT,
@@ -139,8 +140,7 @@ export function CategoryDeliberationProvider({
           eligible: isEligible,
           rubricFields,
           gpScores,
-          rubricId:
-            team.rubrics[underscoresToHyphens(category) as keyof typeof team.rubrics]?.id ?? null,
+          rubricId: team.rubrics[hypenatedCategory as keyof typeof team.rubrics]?.id ?? null,
           awardNominations: team.rubrics.core_values?.data?.awards ?? {}
         } as EnrichedTeam;
       })
@@ -163,9 +163,9 @@ export function CategoryDeliberationProvider({
 
       // Sort by score descending, tiebreak by normalized score
       availableEnriched.sort((a, b) => {
-        const scoreDiff = b.scores[category] - a.scores[category];
+        const scoreDiff = b.scores[hypenatedCategory] - a.scores[hypenatedCategory];
         if (scoreDiff !== 0) return scoreDiff;
-        return b.normalizedScores[category] - a.normalizedScores[category];
+        return b.normalizedScores[hypenatedCategory] - a.normalizedScores[hypenatedCategory];
       });
 
       // Check if there's a clear top team (no tie)
@@ -173,8 +173,9 @@ export function CategoryDeliberationProvider({
         const topTeam = availableEnriched[0];
         const secondTeam = availableEnriched[1];
         const isTie =
-          topTeam.scores[category] === secondTeam.scores[category] &&
-          topTeam.normalizedScores[category] === secondTeam.normalizedScores[category];
+          topTeam.scores[hypenatedCategory] === secondTeam.scores[hypenatedCategory] &&
+          topTeam.normalizedScores[hypenatedCategory] ===
+            secondTeam.normalizedScores[hypenatedCategory];
         if (!isTie) {
           suggestedTeam = topTeam;
         }
@@ -204,6 +205,7 @@ export function CategoryDeliberationProvider({
     deliberation,
     category,
     picklistLimit,
+    hypenatedCategory,
     handleStartDeliberation,
     handleUpdatePicklist,
     handleAddToPicklist,

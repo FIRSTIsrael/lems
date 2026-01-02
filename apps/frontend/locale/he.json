@@ -576,10 +576,9 @@
         },
         "picklist": {
           "title": "רשימת בחירה",
-          "suggested": "מוצע",
           "add-to-picklist": "הוסף לרשימת בחירה",
           "remove": "הסר",
-          "empty-state": "גרור או הוסף קבוצות",
+          "empty-state": "הוסף קבוצות",
           "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
         },
         "scores-chart": {
