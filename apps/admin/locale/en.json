@@ -257,13 +257,15 @@
         "missing-details": "Some details are missing",
         "missing-details-count": "{count, plural, =1 {1 item missing} other {# items missing}}",
         "show-details": "Show details",
-        "hide-details": "Hide details",
         "missing-items-title": "Missing items",
         "missing-awards": "Awards not configured",
         "missing-users": "Users not assigned",
         "missing-schedule": "Schedule not configured",
-        "filter-divisions": "Filter by divisions",
-        "all-divisions": "All"
+        "dialog-title": "Missing Information",
+        "select-division": "Select Division",
+        "missing-items-for-division": "Missing items for {division}",
+        "division-fully-configured": "This division is fully configured",
+        "close": "Close"
       },
       "create": {
         "title": "Create Event",

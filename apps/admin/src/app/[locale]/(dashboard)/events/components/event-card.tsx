@@ -48,9 +48,8 @@ export const EventCard: React.FC<EventCardProps> = ({
 
   const isAssigned = adminIds.includes(user.id);
 
-  // Fetch detailed division data when user wants to see missing info details
   const { data: detailedDivisions } = useSWR<Division[]>(
-    showDetails && !isFullySetUp ? `/admin/events/${id}/divisions` : null
+    !isFullySetUp ? `/admin/events/${id}/divisions` : null
   );
 
   const handleDelete = () => onDelete?.(id);

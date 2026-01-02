@@ -1,15 +1,13 @@
 'use client';
 
 import { Alert, Box, IconButton, Typography } from '@mui/material';
-import { CheckCircle, ExpandLess, ExpandMore, Warning } from '@mui/icons-material';
+import { CheckCircle, Info, Warning } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
 interface MissingInfoAlertProps {
   isFullySetUp: boolean;
   hasDetailedData: boolean;
   missingItemsCount: number;
-  expanded: boolean;
-  onToggleExpanded: () => void;
   onShowDetails?: () => void;
 }
 
@@ -17,8 +15,6 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
   isFullySetUp,
   hasDetailedData,
   missingItemsCount,
-  expanded,
-  onToggleExpanded,
   onShowDetails
 }) => {
   const t = useTranslations('pages.events.missing-info');
@@ -45,7 +41,7 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
               onClick={onShowDetails}
               aria-label={t('show-details')}
             >
-              <ExpandMore />
+              <Info />
             </IconButton>
           )
         }
@@ -61,14 +57,16 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
       icon={<Warning />}
       sx={{ py: 0.5 }}
       action={
-        <IconButton
-          color="inherit"
-          size="small"
-          onClick={onToggleExpanded}
-          aria-label={expanded ? t('hide-details') : t('show-details')}
-        >
-          {expanded ? <ExpandLess /> : <ExpandMore />}
-        </IconButton>
+        onShowDetails && (
+          <IconButton
+            color="inherit"
+            size="small"
+            onClick={onShowDetails}
+            aria-label={t('show-details')}
+          >
+            <Info />
+          </IconButton>
+        )
       }
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
