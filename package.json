@@ -89,7 +89,7 @@
     "@babel/preset-react": "^7.28.5",
     "@eslint/js": "^9.39.2",
     "@firstisrael/prettier-config": "^1.1.0",
-    "@next/eslint-plugin-next": "^16.0.10",
+    "@next/eslint-plugin-next": "^16.1.1",
     "@nx/devkit": "22.3.3",
     "@nx/eslint": "22.3.3",
     "@nx/eslint-plugin": "22.3.3",
