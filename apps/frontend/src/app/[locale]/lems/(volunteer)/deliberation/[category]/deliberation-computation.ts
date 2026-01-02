@@ -234,45 +234,6 @@ export function computeEligibility(team: Team, deliberation: JudgingDeliberation
 }
 
 /**
- * Extracts and flattens rubric field values for grid display.
- *
- * For the current category, returns field values as a flat object.
- * For core-values category, also includes GP scores keyed as 'gp-{round}'.
- *
- * @param team - The team to extract fields from
- * @param categoryKey - The deliberation category (underscore-separated: e.g., 'core_values')
- * @returns Object with field IDs as keys and values as field values
- */
-export function getFlattenedRubricFields(
-  team: Team,
-  categoryKey: 'innovation_project' | 'robot_design' | 'core_values'
-): Record<string, number | null> {
-  const result: Record<string, number | null> = {};
-
-  const categoryMap = {
-    innovation_project: team.rubrics.innovation_project,
-    robot_design: team.rubrics.robot_design,
-    core_values: team.rubrics.core_values
-  } as const;
-
-  const rubric = categoryMap[categoryKey];
-  if (rubric?.data?.fields) {
-    Object.entries(rubric.data.fields).forEach(([fieldId, fieldValue]) => {
-      result[fieldId] = (fieldValue as unknown as { value: number | null }).value ?? null;
-    });
-  }
-
-  // For core-values, add GP scores
-  if (categoryKey === 'core_values') {
-    (team.scoresheets ?? []).forEach(scoresheet => {
-      result[`gp-${scoresheet.round}`] = scoresheet.data?.gp?.value ?? null;
-    });
-  }
-
-  return result;
-}
-
-/**
  * Builds comprehensive field metadata for a given category.
  *
  * Returns an array of field metadata objects with:
@@ -337,10 +298,10 @@ export function getOrganizedRubricFields(
     core_values: team.rubrics.core_values
   } as const;
 
-  if (category === 'core-values') {
+  if (categoryKey === 'core_values') {
     // For core-values, include both IP and RD fields with prefixes
-    const ipFields = buildFieldMetadata('innovation-project');
-    const rdFields = buildFieldMetadata('robot-design');
+    const ipFields = buildFieldMetadata('innovation-project').filter(f => f.coreValues);
+    const rdFields = buildFieldMetadata('robot-design').filter(f => f.coreValues);
 
     ipFields.forEach(field => {
       const ipRubric = team.rubrics.innovation_project;
@@ -391,8 +352,12 @@ export function getGPScores(team: Team): Record<string, number | null> {
  */
 export function getFieldDisplayLabels(category: JudgingCategory): string[] {
   if (category === 'core-values') {
-    const ipLabels = buildFieldMetadata('innovation-project').map(f => f.displayLabel);
-    const rdLabels = buildFieldMetadata('robot-design').map(f => f.displayLabel);
+    const ipLabels = buildFieldMetadata('innovation-project')
+      .filter(f => f.coreValues)
+      .map(f => f.displayLabel);
+    const rdLabels = buildFieldMetadata('robot-design')
+      .filter(f => f.coreValues)
+      .map(f => f.displayLabel);
     return [...ipLabels, ...rdLabels];
   }
 

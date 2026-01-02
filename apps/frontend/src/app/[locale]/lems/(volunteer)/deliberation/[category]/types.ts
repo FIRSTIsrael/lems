@@ -69,6 +69,8 @@ export interface DeliberationContextValue {
   picklistLimit: number;
   fieldDisplayLabels: string[];
 
+  roomMetrics: RoomMetricsMap;
+
   startDeliberation(): Promise<void>;
   updatePicklist(teamIds: string[]): Promise<void>;
   addToPicklist(teamId: string): Promise<void>;

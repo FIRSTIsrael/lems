@@ -107,7 +107,10 @@ export function CategoryDeliberationProvider({
     const teamScores = division.teams.map(team => computeTeamScores(team));
 
     // Step 2: Compute room metrics (aggregated scores per room)
-    const roomMetrics = computeRoomMetrics(teamScores, division.teams);
+    const roomMetrics = computeRoomMetrics(
+      teamScores,
+      division.teams.filter(t => t.arrived)
+    );
 
     // Step 2a: Get field display labels for this category
     const fieldDisplayLabels = getFieldDisplayLabels(category);
@@ -194,6 +197,7 @@ export function CategoryDeliberationProvider({
       suggestedTeam,
       picklistLimit,
       fieldDisplayLabels,
+      roomMetrics,
       startDeliberation: handleStartDeliberation,
       updatePicklist: handleUpdatePicklist,
       addToPicklist: handleAddToPicklist,

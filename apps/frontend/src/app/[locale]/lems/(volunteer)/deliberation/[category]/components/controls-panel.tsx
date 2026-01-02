@@ -82,15 +82,17 @@ export function ControlsPanel() {
             variant="contained"
             fullWidth
             startIcon={<Lock />}
-            disabled
             size="small"
             sx={{
-              bgcolor: alpha('white', 0.3),
-              color: 'white',
+              bgcolor: '#fff',
+              color: theme.palette.primary.main,
+              '&:hover': {
+                bgcolor: alpha('#fff', 0.9)
+              },
               fontWeight: 600
             }}
           >
-            {t('active')}
+            {t('lock')}
           </Button>
         )}
       </Box>

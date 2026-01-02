@@ -566,13 +566,12 @@
           "in-progress": "In Progress",
           "not-started": "Not Started",
           "start": "Start",
-          "active": "Active",
+          "lock": "Lock",
           "compare-teams": "Compare Teams",
           "team-1": "Team 1",
           "team-2": "Team 2",
           "compare": "Compare",
-          "available": "Available",
-          "no-available-teams": "No available teams"
+          "available": "Available"
         },
         "picklist": {
           "title": "Picklist",

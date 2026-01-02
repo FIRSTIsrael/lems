@@ -566,13 +566,12 @@
           "in-progress": "בתהליך",
           "not-started": "לא התחיל",
           "start": "התחל",
-          "active": "פעיל",
+          "lock": "נעילה",
           "compare-teams": "השוואת קבוצות",
           "team-1": "קבוצה 1",
           "team-2": "קבוצה 2",
           "compare": "השווה",
-          "available": "זמינה",
-          "no-available-teams": "אין קבוצות זמינות"
+          "available": "זמינה"
         },
         "picklist": {
           "title": "רשימת בחירה",
