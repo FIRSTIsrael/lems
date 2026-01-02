@@ -581,11 +581,14 @@
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design",
           "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average",
-          "compare-teams": "Compare Teams",
+          "aggregate-average": "Aggregate Average"
+        },
+        "compare-teams-picker": {
+          "title": "Compare Teams",
           "team-1": "Team 1",
           "team-2": "Team 2",
-          "compare": "Compare"
+          "compare": "Compare",
+          "no-data-available": "No teams to compare"
         },
         "small-screen-block": {
           "title": "Screen Too Small",

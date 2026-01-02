@@ -581,11 +581,14 @@
           "innovation-project": "פרויקט חדשנות",
           "robot-design": "עיצוב רובוט",
           "core-values": "ערכי ליבה",
-          "aggregate-average": "ממוצע כללי",
-          "compare-teams": "השוואת קבוצות",
+          "aggregate-average": "ממוצע כללי"
+        },
+        "compare-teams-picker": {
+          "title": "השוואת קבוצות",
           "team-1": "קבוצה 1",
           "team-2": "קבוצה 2",
-          "compare": "השווה"
+          "compare": "השווה",
+          "no-data-available": "אין קבוצות להשוואה"
         },
         "small-screen-block": {
           "title": "המסך קטן מדי",

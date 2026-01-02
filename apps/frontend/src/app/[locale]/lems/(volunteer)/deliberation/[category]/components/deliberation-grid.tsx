@@ -10,7 +10,7 @@ import { useCategoryDeliberation } from '../deliberation-context';
 import { DeliberationTable } from './deliberation-table';
 import { PicklistPanel } from './picklist-panel';
 import { ControlsPanel } from './controls-panel';
-import { ScoresChart } from './scores-chart';
+import { Metrics } from './metrics';
 
 export function DeliberationGrid() {
   const router = useRouter();
@@ -62,7 +62,7 @@ export function DeliberationGrid() {
             <DeliberationTable />
           </Paper>
 
-          <ScoresChart />
+          <Metrics />
         </Box>
 
         {/* Right Column: Controls (top) + Picklist (bottom, fills remaining space) */}
