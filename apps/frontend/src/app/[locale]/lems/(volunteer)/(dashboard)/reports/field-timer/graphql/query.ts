@@ -1,15 +1,15 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import type { QueryData, QueryVars } from './types';
 
-export const GET_ACTIVE_MATCH_DATA: TypedDocumentNode<QueryData, QueryVars> = gql`
-  query GetActiveMatchData($divisionId: String!, $activeMatchId: String) {
+export const GET_FIELD_TIMER_DATA: TypedDocumentNode<QueryData, QueryVars> = gql`
+  query GetFieldTimerData($divisionId: String!) {
     division(id: $divisionId) {
       id
       field {
         divisionId
         activeMatch
         matchLength
-        matches(ids: $activeMatchId) {
+        matches {
           id
           slug
           stage
@@ -25,18 +25,16 @@ export const GET_ACTIVE_MATCH_DATA: TypedDocumentNode<QueryData, QueryVars> = gq
   }
 `;
 
-export function parseActiveMatchData(data: QueryData) {
+export function parseFieldTimerData(data: QueryData) {
   if (!data.division?.field) {
     return null;
   }
 
   const { field } = data.division;
-  const activeMatch = field.activeMatch
-    ? field.matches.find(m => m.id === field.activeMatch) || null
-    : null;
 
   return {
-    activeMatch,
+    matches: field.matches,
+    activeMatch: field.activeMatch,
     matchLength: field.matchLength
   };
 }

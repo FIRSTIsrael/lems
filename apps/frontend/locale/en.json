@@ -229,11 +229,6 @@
         "loading": "Loading match data...",
         "error-loading": "Failed to load field data. Please try again.",
         "test-match": "Test Match",
-        "stages": {
-          "PRACTICE": "Practice",
-          "RANKING": "Ranking",
-          "TEST": "Test"
-        },
         "match-info": "{stage} Round #{round} Match #{number}"
       },
       "field-schedule": {

@@ -1,16 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { Stack, Container, Box, Typography, Alert } from '@mui/material';
+import { Stack, Container, Box, Typography, Alert, IconButton } from '@mui/material';
+import { Fullscreen, FullscreenExit } from '@mui/icons-material';
 import { ResponsiveComponent } from '@lems/shared';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import {
-  GET_ACTIVE_MATCH_DATA,
-  parseActiveMatchData,
+  GET_FIELD_TIMER_DATA,
+  parseFieldTimerData,
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createMatchAbortedSubscription
@@ -23,6 +24,31 @@ export default function FieldTimerPage() {
   const t = useTranslations('pages.reports.field-timer');
   const { currentDivision } = useEvent();
   const currentTime = useTime({ interval: 100 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const handleFullscreenToggle = useCallback(async () => {
+    const elem = document.documentElement;
+    try {
+      if (!isFullscreen) {
+        await elem.requestFullscreen();
+        setIsFullscreen(true);
+      } else {
+        await document.exitFullscreen();
+        setIsFullscreen(false);
+      }
+    } catch (err) {
+      console.error('Error toggling fullscreen:', err);
+    }
+  }, [isFullscreen]);
+
+  // Listen for fullscreen changes from external triggers (e.g., ESC key)
+  useMemo(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, []);
 
   const subscriptions = useMemo(
     () => [
@@ -34,16 +60,23 @@ export default function FieldTimerPage() {
   );
 
   const { data, loading, error } = usePageData(
-    GET_ACTIVE_MATCH_DATA,
+    GET_FIELD_TIMER_DATA,
     {
-      divisionId: currentDivision.id,
-      activeMatchId: null
+      divisionId: currentDivision.id
     },
-    parseActiveMatchData,
+    parseFieldTimerData,
     subscriptions
   );
 
-  const { activeMatch, matchLength } = data || { activeMatch: null, matchLength: 150 };
+  const {
+    matches,
+    activeMatch: activeMatchId,
+    matchLength
+  } = data || { matches: [], matchLength: 150 };
+
+  const activeMatch = useMemo(() => {
+    return matches.find(m => m.id === activeMatchId) || null;
+  }, [matches, activeMatchId]);
 
   const matchEndTime = useMemo(() => {
     if (!activeMatch?.startTime) return null;
@@ -86,56 +119,87 @@ export default function FieldTimerPage() {
     );
   }
 
-  if (!activeMatch || !matchEndTime) {
-    return (
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: 'calc(100vh - 200px)'
-          }}
-        >
-          <Typography
-            variant="h2"
-            color="text.secondary"
-            fontWeight={300}
-            sx={{
-              textAlign: 'center',
-              opacity: 0.6
-            }}
-          >
-            {t('no-active-match')}
-          </Typography>
-        </Box>
-      </Container>
-    );
-  }
-
   const renderContent = (isDesktop: boolean) => (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        minHeight: 'calc(100vh - 200px)',
-        py: isDesktop ? 8 : 4
+        alignItems: 'center',
+        minHeight: 'calc(100vh - 24px)'
       }}
     >
-      <Stack spacing={isDesktop ? 4 : 2}>
-        <MatchInfo match={activeMatch} isDesktop={isDesktop} />
-        <Box>
-          <TimerDisplay targetDate={matchEndTime} isDesktop={isDesktop} />
-          <ProgressBar percentRemaining={percentRemaining} />
-        </Box>
-      </Stack>
+      {activeMatch === null || matchEndTime === null ? (
+        <Typography
+          variant="h2"
+          color="text.secondary"
+          fontWeight={300}
+          sx={{
+            textAlign: 'center',
+            opacity: 0.6
+          }}
+        >
+          {t('no-active-match')}
+        </Typography>
+      ) : (
+        <Stack spacing={isDesktop ? 4 : 2}>
+          <MatchInfo match={activeMatch} isDesktop={isDesktop} />
+          <Box>
+            <TimerDisplay targetDate={matchEndTime} isDesktop={isDesktop} />
+            <ProgressBar percentRemaining={percentRemaining} />
+          </Box>
+        </Stack>
+      )}
     </Box>
   );
 
   return (
-    <Container maxWidth="xl" disableGutters>
-      <ResponsiveComponent desktop={renderContent(true)} mobile={renderContent(false)} />
-    </Container>
+    <Box
+      sx={
+        isFullscreen
+          ? {
+              position: 'fixed',
+              inset: 0,
+              zIndex: 9998,
+              overflow: 'auto',
+              backgroundColor: 'background.default'
+            }
+          : {}
+      }
+    >
+      <Container sx={isFullscreen ? { minWidth: '100%' } : { minWidth: '100vh' }}>
+        {isFullscreen && (
+          <IconButton
+            onClick={handleFullscreenToggle}
+            sx={{
+              position: 'fixed',
+              top: 16,
+              right: 16,
+              zIndex: 9999,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.7)'
+              }
+            }}
+          >
+            <FullscreenExit />
+          </IconButton>
+        )}
+        {!isFullscreen && (
+          <IconButton
+            onClick={handleFullscreenToggle}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16
+            }}
+          >
+            <Fullscreen />
+          </IconButton>
+        )}
+        <ResponsiveComponent desktop={renderContent(true)} mobile={renderContent(false)} />
+      </Container>
+    </Box>
   );
 }

@@ -1,4 +1,4 @@
-export { GET_ACTIVE_MATCH_DATA, parseActiveMatchData } from './query';
+export { GET_FIELD_TIMER_DATA, parseFieldTimerData } from './query';
 
 export * from './subscriptions';
 

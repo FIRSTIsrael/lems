@@ -1,5 +1,6 @@
-import { Box, Typography, Chip } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useMatchTranslations } from '@lems/localization';
 import type { Match } from '../graphql/types';
 
 interface MatchInfoProps {
@@ -9,13 +10,14 @@ interface MatchInfoProps {
 
 export function MatchInfo({ match, isDesktop }: MatchInfoProps) {
   const t = useTranslations('pages.reports.field-timer');
+  const { getStage } = useMatchTranslations();
 
   const getMatchLabel = () => {
     if (match.stage === 'TEST') {
       return t('test-match');
     }
 
-    const stageName = t(`stages.${match.stage}`);
+    const stageName = getStage(match.stage);
     return t('match-info', {
       stage: stageName,
       round: match.round,
@@ -40,17 +42,6 @@ export function MatchInfo({ match, isDesktop }: MatchInfoProps) {
       >
         {getMatchLabel()}
       </Typography>
-      <Chip
-        label={match.slug}
-        size={isDesktop ? 'medium' : 'small'}
-        sx={{
-          fontFamily: 'Roboto Mono',
-          fontWeight: 600,
-          fontSize: isDesktop ? '1.25rem' : '1rem',
-          px: isDesktop ? 2 : 1,
-          py: isDesktop ? 3 : 2
-        }}
-      />
     </Box>
   );
 }

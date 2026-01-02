@@ -1,5 +1,5 @@
 import { Box, Paper } from '@mui/material';
-import { Countdown } from '../../../../../../lib/time/countdown';
+import { Countdown } from '../../../../../../../../lib/time/countdown';
 
 interface TimerDisplayProps {
   targetDate: Date;
@@ -30,7 +30,7 @@ export function TimerDisplay({ targetDate, isDesktop }: TimerDisplayProps) {
         <Countdown
           targetDate={targetDate}
           expiredText="00:00"
-          fontFamily="Roboto Mono"
+          fontFamily="monospace"
           fontSize={isDesktop ? '15rem' : '8rem'}
           fontWeight={700}
           letterSpacing="-0.02em"
