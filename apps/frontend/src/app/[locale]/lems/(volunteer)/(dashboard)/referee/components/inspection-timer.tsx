@@ -3,22 +3,28 @@
 import { Paper, Typography, Stack } from '@mui/material';
 import { Timer } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
 
+const INSPECTION_DURATION = 1.5 * 60; // 1.5 minutes in seconds
+
 interface InspectionTimerProps {
-  timeRemaining: number | undefined;
+  inspectionStartTime: number | null;
 }
 
-export function InspectionTimer({ timeRemaining }: InspectionTimerProps) {
+export const InspectionTimer: React.FC<InspectionTimerProps> = ({ inspectionStartTime }) => {
   const t = useTranslations('pages.referee');
   const currentTime = useTime({ interval: 1000 });
 
+  const inspectionTimeRemaining = inspectionStartTime
+    ? Math.max(0, INSPECTION_DURATION - (currentTime.valueOf() - inspectionStartTime) / 1000)
+    : undefined;
+
   const targetDate = useMemo(() => {
-    if (!timeRemaining) return new Date();
-    return new Date(currentTime.valueOf() + timeRemaining * 1000);
-  }, [timeRemaining, currentTime]);
+    if (!inspectionTimeRemaining) return new Date();
+    return new Date(currentTime.valueOf() + inspectionTimeRemaining * 1000);
+  }, [inspectionTimeRemaining, currentTime]);
 
   return (
     <Paper
@@ -54,4 +60,4 @@ export function InspectionTimer({ timeRemaining }: InspectionTimerProps) {
       </Stack>
     </Paper>
   );
-}
+};

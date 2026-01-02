@@ -48,7 +48,6 @@ export default function ScoresheetPage() {
   // If we are a referee and this scoresheet is submitted (or escalated)
   // We need to redirect back to the homepage since we are not supposed to be here
   useEffect(() => {
-    console.log(user.role, scoresheet);
     if (user.role !== 'referee') return;
     if (!scoresheet || loading) return;
 

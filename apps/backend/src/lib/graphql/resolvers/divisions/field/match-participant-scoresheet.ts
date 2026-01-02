@@ -35,7 +35,7 @@ export const matchParticipantScoresheetResolver: GraphQLFieldResolver<
     }
 
     // Only PRACTICE and RANKING matches have scoresheets
-    if (match.stage !== 'PRACTICE' && match.stage !== 'RANKING') {
+    if (match.stage === 'TEST') {
       return null;
     }
 

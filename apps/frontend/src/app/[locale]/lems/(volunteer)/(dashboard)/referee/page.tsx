@@ -17,7 +17,8 @@ import {
   createMatchLoadedSubscription,
   createMatchAbortedSubscription
 } from './graphql';
-import { RefereeProvider, RefereeContent } from './components';
+import { RefereeContent } from './components/referee-content';
+import { RefereeProvider } from './components/referee-context';
 
 export default function RefereePage() {
   const t = useTranslations('pages.referee');

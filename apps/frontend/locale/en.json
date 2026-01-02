@@ -356,7 +356,7 @@
       "start-inspection": "Start Inspection",
       "present": "Present",
       "absent": "Absent",
-      "ready-confirmed": "Ready ✓",
+      "ready-confirmed": "Ready ✅",
       "mark-ready": "Mark Ready",
       "no-match-title": "No Match Assigned",
       "no-match-description": "Waiting for the next match to be assigned to your table.",

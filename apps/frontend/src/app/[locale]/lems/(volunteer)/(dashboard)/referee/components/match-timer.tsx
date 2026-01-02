@@ -32,6 +32,11 @@ export const RefereeMatchTimer = () => {
     [activeMatch?.participants]
   );
 
+  if (!activeMatch) {
+    // This should never be rendered without an active match
+    return null;
+  }
+
   return (
     <Paper
       elevation={3}
@@ -43,8 +48,7 @@ export const RefereeMatchTimer = () => {
     >
       <Box sx={{ p: 3, textAlign: 'center', backgroundColor: 'primary.main' }}>
         <Typography variant="h4" sx={{ fontWeight: 700, color: 'white' }}>
-          {getStage(activeMatch?.stage || '')} #{activeMatch?.number}: {t('round')}{' '}
-          {activeMatch?.round}
+          {getStage(activeMatch.stage)} #{activeMatch.number}: {t('round')} {activeMatch.round}
         </Typography>
       </Box>
 
@@ -122,8 +126,7 @@ export const RefereeMatchTimer = () => {
                           {participant.team.name} #{participant.team.number}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                          {participant.team.affiliation && `${participant.team.affiliation}, `}
-                          {participant.team.city}
+                          {participant.team.affiliation}, {participant.team.city}
                         </Typography>
                       </Box>
                     </Box>

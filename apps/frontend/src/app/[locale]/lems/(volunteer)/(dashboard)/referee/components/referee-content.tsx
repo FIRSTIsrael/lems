@@ -4,13 +4,11 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Stack } from '@mui/material';
 import { getUnscoredScoresheets } from '../utils';
-import {
-  useReferee,
-  RefereeMatchTimer,
-  RefereePrestart,
-  RefereeSchedule,
-  RefereeNoMatch
-} from './index';
+import { RefereeMatchTimer } from './match-timer';
+import { RefereeNoMatch } from './no-match';
+import { RefereePrestart } from './prestart';
+import { useReferee } from './referee-context';
+import { RefereeSchedule } from './schedule';
 
 export const RefereeContent = () => {
   const router = useRouter();
@@ -32,12 +30,7 @@ export const RefereeContent = () => {
       return <RefereeMatchTimer />;
 
     case 'prestart':
-      return (
-        <Stack spacing={3}>
-          <RefereePrestart />
-          <RefereeSchedule />
-        </Stack>
-      );
+      return <RefereePrestart />;
 
     case 'scoresheet':
       return null;
