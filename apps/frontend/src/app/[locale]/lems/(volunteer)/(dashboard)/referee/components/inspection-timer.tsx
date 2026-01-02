@@ -22,7 +22,7 @@ export function InspectionTimer({ timeRemaining }: InspectionTimerProps) {
 
   return (
     <Paper
-      elevation={4}
+      elevation={3}
       sx={{
         p: 3,
         display: 'flex',
@@ -48,7 +48,7 @@ export function InspectionTimer({ timeRemaining }: InspectionTimerProps) {
         <Countdown
           targetDate={targetDate}
           expiredText="00:00"
-          variant="h3"
+          variant="h5"
           sx={{ fontFamily: 'monospace', fontWeight: 700, color: 'primary.main' }}
         />
       </Stack>

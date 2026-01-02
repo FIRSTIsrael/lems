@@ -23,7 +23,7 @@ import { UPDATE_PARTICIPANT_STATUS } from '../graphql';
 import { useReferee } from './referee-context';
 import { InspectionTimer } from './inspection-timer';
 
-const INSPECTION_DURATION = 5 * 60; // 5 minutes in seconds
+const INSPECTION_DURATION = 1.5 * 60; // 1.5 minutes in seconds
 
 export function RefereePrestart() {
   const t = useTranslations('pages.referee');
@@ -36,44 +36,24 @@ export function RefereePrestart() {
   const [inspectionStartTime, setInspectionStartTime] = useState<number | null>(null);
   const prevAnyPresentRef = useRef<boolean>(false);
 
-  const teams = useMemo(
-    () => loadedMatch?.participants.filter(p => p.team) || [],
-    [loadedMatch?.participants]
-  );
-
-  const anyPresent = useMemo(() => teams.some(p => p.present), [teams]);
-
-  const inspectionTimeRemaining = useMemo(() => {
-    if (!inspectionStartTime) return undefined;
-    const elapsed = (currentTime.valueOf() - inspectionStartTime) / 1000;
-    return Math.max(0, INSPECTION_DURATION - elapsed);
-  }, [inspectionStartTime, currentTime]);
+  const team = loadedMatch?.participants.find(p => p.team);
+  const inspectionTimeRemaining = inspectionStartTime 
+    ? Math.max(0, INSPECTION_DURATION - (currentTime.valueOf() - inspectionStartTime) / 1000)
+    : undefined;
 
   useEffect(() => {
-    if (!loadedMatch) return;
-
-    if (anyPresent !== prevAnyPresentRef.current) {
-      prevAnyPresentRef.current = anyPresent;
-
-      if (anyPresent) {
-        setTimeout(() => setInspectionStartTime(Date.now()), 0);
-      } else {
-        setTimeout(() => setInspectionStartTime(null), 0);
-      }
-    }
-  }, [anyPresent, loadedMatch]);
+    if (!loadedMatch || !team) return;
+    const isPresent = team.present;
+    if (isPresent === prevAnyPresentRef.current) return;
+    prevAnyPresentRef.current = isPresent;
+    setTimeout(() => setInspectionStartTime(isPresent ? Date.now() : null), 0);
+  }, [team?.present, loadedMatch, team]);
 
   const handleParticipantStatusChange = useCallback(
     (participantId: string, field: 'present' | 'ready', value: boolean) => {
       if (!loadedMatch) return;
-
       updateParticipant({
-        variables: {
-          divisionId: currentDivision.id,
-          matchId: loadedMatch.id,
-          participantId,
-          [field]: value
-        }
+        variables: { divisionId: currentDivision.id, matchId: loadedMatch.id, participantId, [field]: value }
       });
     },
     [loadedMatch, currentDivision.id, updateParticipant]
@@ -86,101 +66,99 @@ export function RefereePrestart() {
       <Paper
         elevation={3}
         sx={{
-          p: 4,
-          borderRadius: 2,
-          borderLeft: '6px solid',
-          borderColor: 'primary.main'
+          p: 3,
+          borderRadius: 3,
+          backgroundColor: 'background.paper'
         }}
       >
-        <Stack spacing={3}>
+        <Stack spacing={2.5}>
           <Box>
-            <Typography variant="h4" sx={{ fontWeight: 600, mb: 1 }}>
-              {t('prestart-title')}
-            </Typography>
-            <Typography variant="h6" color="text.secondary">
-              {getStage(loadedMatch.stage)} #{loadedMatch.number}
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              {t('round')} {loadedMatch.round}
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              {t('prestart-title')}: {t('round')} {loadedMatch.round}
             </Typography>
           </Box>
 
-          <Stack spacing={3}>
-            {teams.map(participant => (
+          <Stack spacing={2.5}>
+            {team && (
               <Paper
-                key={participant.team!.id}
+                key={team.team!.id}
                 elevation={2}
                 sx={{
-                  p: 3,
-                  borderRadius: 2,
-                  borderLeft: '4px solid',
-                  borderColor: !participant.team!.arrived
+                  p: 2.5,
+                  borderRadius: 3,
+                  borderLeft: '5px solid',
+                  borderColor: !team.team!.arrived
                     ? 'error.main'
-                    : participant.ready
+                    : team.ready
                       ? 'success.main'
-                      : participant.present
+                      : team.present
                         ? 'primary.main'
                         : 'warning.main',
-                  backgroundColor: !participant.team!.arrived
+                  backgroundColor: !team.team!.arrived
                     ? 'error.50'
-                    : participant.present
+                    : team.present
                       ? 'success.50'
-                      : 'grey.50'
+                      : 'grey.50',
+                  transition: 'all 0.2s ease-in-out',
+                  '&:hover': {
+                    elevation: 3,
+                    transform: 'translateY(-1px)'
+                  }
                 }}
               >
-                <Stack spacing={3}>
+                <Stack spacing={2.5}>
                   <Box
                     sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
                   >
-                    <TeamInfo team={participant.team!} size="lg" />
+                    <TeamInfo team={team.team!} size="lg" />
                     <Chip
                       icon={
-                        !participant.team!.arrived ? (
+                        !team.team!.arrived ? (
                           <Cancel />
-                        ) : participant.ready ? (
+                        ) : team.ready ? (
                           <CheckCircle />
-                        ) : participant.present ? (
+                        ) : team.present ? (
                           <CheckCircle />
                         ) : (
                           <Warning />
                         )
                       }
                       label={
-                        !participant.team!.arrived
+                        !team.team!.arrived
                           ? t('no-show-title')
-                          : participant.ready
+                          : team.ready
                             ? t('ready-confirmed')
-                            : participant.present
+                            : team.present
                               ? t('present')
                               : t('absent')
                       }
                       color={
-                        !participant.team!.arrived
+                        !team.team!.arrived
                           ? 'error'
-                          : participant.ready
+                          : team.ready
                             ? 'success'
-                            : participant.present
+                            : team.present
                               ? 'primary'
                               : 'warning'
                       }
-                      sx={{ fontSize: '1rem', py: 3, px: 2 }}
+                      sx={{ fontSize: '0.9rem', py: 2.5, px: 1.5, fontWeight: 600 }}
                     />
                   </Box>
 
-                  {!participant.team!.arrived ? (
+                  {!team.team!.arrived ? (
                     <Alert severity="error" sx={{ fontSize: '1rem' }}>
                       {t('no-show-description')}
                     </Alert>
                   ) : (
                     <>
                       <ToggleButtonGroup
-                        value={participant.present ? 'present' : 'absent'}
+                        value={team.present ? 'present' : 'absent'}
                         exclusive
-                        disabled={participant.ready}
+                        disabled={team.ready}
                         onChange={(_, value) => {
                           if (value !== null) {
                             handleParticipantStatusChange(
-                              participant.id,
+                              team.id,
                               'present',
                               value === 'present'
                             );
@@ -189,8 +167,8 @@ export function RefereePrestart() {
                         fullWidth
                         sx={{
                           '& .MuiToggleButton-root': {
-                            py: 2,
-                            fontSize: '1.1rem',
+                            py: 1.5,
+                            fontSize: '1rem',
                             fontWeight: 500
                           }
                         }}
@@ -200,29 +178,29 @@ export function RefereePrestart() {
                       </ToggleButtonGroup>
 
                       <Button
-                        variant={participant.ready ? 'contained' : 'outlined'}
+                        variant={team.ready ? 'contained' : 'outlined'}
                         fullWidth
                         size="large"
                         onClick={() => {
                           handleParticipantStatusChange(
-                            participant.id,
+                            team.id,
                             'ready',
-                            !participant.ready
+                            !team.ready
                           );
                         }}
                         sx={{
-                          py: 2,
-                          fontSize: '1.1rem',
+                          py: 1.5,
+                          fontSize: '1rem',
                           fontWeight: 600
                         }}
                       >
-                        {participant.ready ? t('ready-confirmed') : t('mark-ready')}
+                        {team.ready ? t('ready-confirmed') : t('mark-ready')}
                       </Button>
                     </>
                   )}
                 </Stack>
               </Paper>
-            ))}
+            )}
           </Stack>
         </Stack>
       </Paper>

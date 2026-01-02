@@ -37,11 +37,15 @@ export function RefereeSchedule() {
       <Table>
         <TableHead sx={{ backgroundColor: 'grey.100' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>{t('match')}</TableCell>
-            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2, textAlign: 'center' }}>
+              {t('match')}
+            </TableCell>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2, textAlign: 'center' }}>
               {t('scheduled-time')}
             </TableCell>
-            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2 }}>{t('teams')}</TableCell>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2, textAlign: 'center' }}>
+              {t('teams')}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -54,8 +58,8 @@ export function RefereeSchedule() {
                 '& td': { py: 2 }
               }}
             >
-              <TableCell>
-                <Stack spacing={0.25}>
+              <TableCell sx={{ textAlign: 'center' }}>
+                <Stack spacing={0.25} alignItems="center">
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {getStage(match.stage)} #{match.number}
                   </Typography>
@@ -64,13 +68,13 @@ export function RefereeSchedule() {
                   </Typography>
                 </Stack>
               </TableCell>
-              <TableCell>
+              <TableCell sx={{ textAlign: 'center' }}>
                 <Typography variant="body1" sx={{ fontWeight: 500 }}>
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>
               </TableCell>
-              <TableCell>
-                <Stack spacing={1.5}>
+              <TableCell sx={{ textAlign: 'center' }}>
+                <Stack spacing={1.5} alignItems="center">
                   {match.participants.map(p =>
                     p.team ? (
                       <TeamInfo key={p.team.id} team={p.team} size="sm" />
