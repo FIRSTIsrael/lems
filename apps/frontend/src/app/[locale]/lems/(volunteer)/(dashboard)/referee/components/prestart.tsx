@@ -13,9 +13,8 @@ import {
 } from '@mui/material';
 import { CheckCircle, Warning, Cancel } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { useCallback, useState, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import { useMutation } from '@apollo/client/react';
-import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useEvent } from '../../../components/event-context';
 import { TeamInfo } from '../../components/team-info';
@@ -27,7 +26,6 @@ const INSPECTION_DURATION = 1.5 * 60; // 1.5 minutes in seconds
 
 export function RefereePrestart() {
   const t = useTranslations('pages.referee');
-  const { getStage } = useMatchTranslations();
   const { currentDivision } = useEvent();
   const { loadedMatch } = useReferee();
   const [updateParticipant] = useMutation(UPDATE_PARTICIPANT_STATUS);
@@ -37,7 +35,7 @@ export function RefereePrestart() {
   const prevAnyPresentRef = useRef<boolean>(false);
 
   const team = loadedMatch?.participants.find(p => p.team);
-  const inspectionTimeRemaining = inspectionStartTime 
+  const inspectionTimeRemaining = inspectionStartTime
     ? Math.max(0, INSPECTION_DURATION - (currentTime.valueOf() - inspectionStartTime) / 1000)
     : undefined;
 
@@ -53,7 +51,12 @@ export function RefereePrestart() {
     (participantId: string, field: 'present' | 'ready', value: boolean) => {
       if (!loadedMatch) return;
       updateParticipant({
-        variables: { divisionId: currentDivision.id, matchId: loadedMatch.id, participantId, [field]: value }
+        variables: {
+          divisionId: currentDivision.id,
+          matchId: loadedMatch.id,
+          participantId,
+          [field]: value
+        }
       });
     },
     [loadedMatch, currentDivision.id, updateParticipant]
@@ -157,11 +160,7 @@ export function RefereePrestart() {
                         disabled={team.ready}
                         onChange={(_, value) => {
                           if (value !== null) {
-                            handleParticipantStatusChange(
-                              team.id,
-                              'present',
-                              value === 'present'
-                            );
+                            handleParticipantStatusChange(team.id, 'present', value === 'present');
                           }
                         }}
                         fullWidth
@@ -182,11 +181,7 @@ export function RefereePrestart() {
                         fullWidth
                         size="large"
                         onClick={() => {
-                          handleParticipantStatusChange(
-                            team.id,
-                            'ready',
-                            !team.ready
-                          );
+                          handleParticipantStatusChange(team.id, 'ready', !team.ready);
                         }}
                         sx={{
                           py: 1.5,
@@ -205,7 +200,9 @@ export function RefereePrestart() {
         </Stack>
       </Paper>
 
-      {inspectionStartTime && !team?.ready && <InspectionTimer timeRemaining={inspectionTimeRemaining} />}
+      {inspectionStartTime && !team?.ready && (
+        <InspectionTimer timeRemaining={inspectionTimeRemaining} />
+      )}
     </>
   );
 }

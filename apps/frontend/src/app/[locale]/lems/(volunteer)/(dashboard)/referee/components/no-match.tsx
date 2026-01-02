@@ -1,6 +1,7 @@
 'use client';
 
-import { Paper, Typography, Box, Button } from '@mui/material';
+import { Paper, Typography, Box, Stack, Avatar } from '@mui/material';
+import { Schedule, LocalCafe } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
 export function RefereeNoMatch() {
@@ -8,31 +9,58 @@ export function RefereeNoMatch() {
 
   return (
     <Paper
-      elevation={1}
+      elevation={3}
       sx={{
-        p: 4,
-        textAlign: 'center',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-        borderRadius: 2
+        borderRadius: 3,
+        overflow: 'hidden',
+        backgroundColor: 'background.paper'
       }}
     >
-      <Typography variant="h4" sx={{ mb: 2, fontWeight: 600 }}>
-        {t('no-match-title')}
-      </Typography>
-
-      <Typography variant="body1" sx={{ color: '#666', mb: 3 }}>
-        {t('no-match-description')}
-      </Typography>
-
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h6" sx={{ fontSize: '4rem' }}>
-          ⏳
+      <Box sx={{ p: 3, textAlign: 'center', backgroundColor: 'primary.main' }}>
+        <Typography variant="h4" sx={{ fontWeight: 700, color: 'white' }}>
+          {t('no-match-title')}
         </Typography>
       </Box>
 
-      <Typography variant="caption" sx={{ color: '#999' }}>
-        {t('no-match-instructions')}
-      </Typography>
+      <Box sx={{ p: 4, textAlign: 'center' }}>
+        <Stack spacing={3} alignItems="center">
+          <Avatar
+            sx={{
+              width: 80,
+              height: 80,
+              bgcolor: 'grey.100',
+              color: 'text.secondary'
+            }}
+          >
+            <Schedule sx={{ fontSize: '2.5rem' }} />
+          </Avatar>
+
+          <Stack spacing={1} alignItems="center">
+            <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
+              {t('no-match-instructions')}
+            </Typography>
+          </Stack>
+
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              px: 2,
+              py: 1,
+              borderRadius: 2,
+              backgroundColor: 'grey.50',
+              border: '1px solid',
+              borderColor: 'divider'
+            }}
+          >
+            <LocalCafe sx={{ fontSize: '1.25rem', color: 'text.secondary' }} />
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+              {t('break-message')}
+            </Typography>
+          </Box>
+        </Stack>
+      </Box>
     </Paper>
   );
 }
