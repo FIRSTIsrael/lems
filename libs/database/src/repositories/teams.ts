@@ -2,6 +2,7 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
+import { TeamDivision } from '../schema/tables/team-divisions';
 
 type TeamSelectorType = { type: 'id'; value: string } | { type: 'slug'; value: string };
 
@@ -227,6 +228,11 @@ export class TeamsRepository {
   async numberOfPages(): Promise<number> {
     const count = await this.db.selectFrom('teams').select('id').execute();
     return Math.ceil(count.length / this.TEAMS_PER_PAGE);
+  }
+
+  async getAllTeamDivisions(): Promise<TeamDivision[]> {
+    const teamDivisions = await this.db.selectFrom('team_divisions').selectAll().execute();
+    return teamDivisions;
   }
 
   async search(searchTerm: string, limit: number): Promise<Team[]> {
