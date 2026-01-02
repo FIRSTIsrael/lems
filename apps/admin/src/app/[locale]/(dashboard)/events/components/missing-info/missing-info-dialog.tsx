@@ -36,14 +36,10 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
   useEffect(() => {
     if (open && hasDetailedData && divisions.length > 0) {
       setSelectedDivisionId(divisions[0].id);
-    }
-  }, [open, hasDetailedData, divisions]);
-
-  useEffect(() => {
-    if (!open) {
+    } else if (!open) {
       setSelectedDivisionId('');
     }
-  }, [open]);
+  }, [open, hasDetailedData, divisions]);
 
   const handleDivisionClick = (divisionId: string) => {
     setSelectedDivisionId(divisionId);

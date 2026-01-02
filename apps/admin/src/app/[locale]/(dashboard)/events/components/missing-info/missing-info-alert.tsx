@@ -1,6 +1,6 @@
 'use client';
 
-import { Alert, Box, IconButton, Typography } from '@mui/material';
+import { Alert, IconButton, Typography } from '@mui/material';
 import { CheckCircle, Info, Warning } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
@@ -28,53 +28,19 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
     );
   }
 
-  if (!hasDetailedData) {
-    return (
-      <Alert
-        severity="warning"
-        icon={<Warning />}
-        sx={{ py: 0.5 }}
-        action={
-          onShowDetails && (
-            <IconButton
-              color="inherit"
-              size="small"
-              onClick={onShowDetails}
-              aria-label={t('show-details')}
-            >
-              <Info />
-            </IconButton>
-          )
-        }
-      >
-        <Typography variant="body2">{tCard('missing-details')}</Typography>
-      </Alert>
-    );
-  }
+  const infoButton = onShowDetails && (
+    <IconButton color="inherit" size="small" onClick={onShowDetails} aria-label={t('show-details')}>
+      <Info />
+    </IconButton>
+  );
 
   return (
-    <Alert
-      severity="warning"
-      icon={<Warning />}
-      sx={{ py: 0.5 }}
-      action={
-        onShowDetails && (
-          <IconButton
-            color="inherit"
-            size="small"
-            onClick={onShowDetails}
-            aria-label={t('show-details')}
-          >
-            <Info />
-          </IconButton>
-        )
-      }
-    >
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography variant="body2">
-          {t('missing-details-count', { count: missingItemsCount })}
-        </Typography>
-      </Box>
+    <Alert severity="warning" icon={<Warning />} sx={{ py: 0.5 }} action={infoButton}>
+      <Typography variant="body2">
+        {!hasDetailedData
+          ? tCard('missing-details')
+          : t('missing-details-count', { count: missingItemsCount })}
+      </Typography>
     </Alert>
   );
 };

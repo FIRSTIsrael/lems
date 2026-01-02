@@ -259,8 +259,6 @@
         "missing-users": "Users not assigned",
         "missing-schedule": "Schedule not configured",
         "dialog-title": "Missing Information",
-        "select-division": "Select Division",
-        "missing-items-for-division": "Missing items for {division}",
         "division-fully-configured": "This division is fully configured",
         "close": "Close"
       },

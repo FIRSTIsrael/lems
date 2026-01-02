@@ -259,8 +259,6 @@
         "missing-users": "משתמשים לא הוקצו",
         "missing-schedule": "לוח זמנים לא הוגדר",
         "dialog-title": "מידע חסר",
-        "select-division": "בחר בית",
-        "missing-items-for-division": "פריטים חסרים עבור {division}",
         "division-fully-configured": "בית זה מוגדר במלואו",
         "close": "סגור"
       },

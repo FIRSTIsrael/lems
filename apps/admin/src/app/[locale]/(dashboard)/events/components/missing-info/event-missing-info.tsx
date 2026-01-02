@@ -5,7 +5,6 @@ import { Box } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
 import { MissingInfoAlert } from './missing-info-alert';
 import { MissingInfoDialog } from './missing-info-dialog';
-import { type MissingItem } from './missing-info-item';
 
 interface EventMissingInfoProps {
   divisions: Division[] | { id: string; name: string; color: string }[];
