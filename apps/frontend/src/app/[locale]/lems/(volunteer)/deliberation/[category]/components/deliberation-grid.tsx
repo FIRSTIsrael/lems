@@ -62,18 +62,7 @@ export function DeliberationGrid() {
             <DeliberationTable />
           </Paper>
 
-          <Paper
-            sx={{
-              flex: '0 0 180px',
-              borderRadius: 1.5,
-              boxShadow: theme => theme.shadows[1],
-              p: 2,
-              minHeight: 0,
-              overflow: 'auto'
-            }}
-          >
-            <ScoresChart />
-          </Paper>
+          <ScoresChart />
         </Box>
 
         {/* Right Column: Controls (top) + Picklist (bottom, fills remaining space) */}

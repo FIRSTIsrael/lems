@@ -57,12 +57,13 @@ export const computeTeamScores = (team: Team): MetricPerCategory => {
   );
   const cvScore = cvRubricScore + gpScoresSum;
 
-  const totalScore = ipScore + rdScore + cvScore;
+  const totalScore = ipScore + rdScore + cvRubricScore;
 
   return {
     'innovation-project': ipScore,
     'robot-design': rdScore,
     'core-values': cvScore,
+    'core-values-no-gp': cvRubricScore,
     total: totalScore
   };
 };
@@ -100,6 +101,7 @@ export function computeRoomMetrics(
     const avgIP = scores.reduce((sum, s) => sum + s['innovation-project'], 0) / scores.length;
     const avgRD = scores.reduce((sum, s) => sum + s['robot-design'], 0) / scores.length;
     const avgCV = scores.reduce((sum, s) => sum + s['core-values'], 0) / scores.length;
+    const avgCVNoGP = scores.reduce((sum, s) => sum + s['core-values-no-gp'], 0) / scores.length;
     const avgTotal = scores.reduce((sum, s) => sum + s.total, 0) / scores.length;
 
     result[roomId] = {
@@ -107,6 +109,7 @@ export function computeRoomMetrics(
         'innovation-project': avgIP,
         'robot-design': avgRD,
         'core-values': avgCV,
+        'core-values-no-gp': avgCVNoGP,
         total: avgTotal
       },
       teamCount: scores.length

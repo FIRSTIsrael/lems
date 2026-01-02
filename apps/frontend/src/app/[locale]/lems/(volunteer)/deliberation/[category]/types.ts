@@ -1,7 +1,7 @@
 import { JudgingCategory } from '@lems/types/judging';
 import type { Division, JudgingDeliberation, Room } from './graphql/types';
 
-export type MetricPerCategory = Record<JudgingCategory | 'total', number>;
+export type MetricPerCategory = Record<JudgingCategory | 'total' | 'core-values-no-gp', number>;
 
 /**
  * Metrics aggregated across all teams in a room.

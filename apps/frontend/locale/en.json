@@ -566,12 +566,7 @@
           "in-progress": "In Progress",
           "not-started": "Not Started",
           "start": "Start",
-          "lock": "Lock",
-          "compare-teams": "Compare Teams",
-          "team-1": "Team 1",
-          "team-2": "Team 2",
-          "compare": "Compare",
-          "available": "Available"
+          "lock": "Lock"
         },
         "picklist": {
           "title": "Picklist",
@@ -586,7 +581,11 @@
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design",
           "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average"
+          "aggregate-average": "Aggregate Average",
+          "compare-teams": "Compare Teams",
+          "team-1": "Team 1",
+          "team-2": "Team 2",
+          "compare": "Compare"
         },
         "small-screen-block": {
           "title": "Screen Too Small",

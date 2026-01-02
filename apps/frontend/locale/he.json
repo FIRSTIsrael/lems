@@ -566,12 +566,7 @@
           "in-progress": "בתהליך",
           "not-started": "לא התחיל",
           "start": "התחל",
-          "lock": "נעילה",
-          "compare-teams": "השוואת קבוצות",
-          "team-1": "קבוצה 1",
-          "team-2": "קבוצה 2",
-          "compare": "השווה",
-          "available": "זמינה"
+          "lock": "נעילה"
         },
         "picklist": {
           "title": "רשימת בחירה",
@@ -586,7 +581,11 @@
           "innovation-project": "פרויקט חדשנות",
           "robot-design": "עיצוב רובוט",
           "core-values": "ערכי ליבה",
-          "aggregate-average": "ממוצע כללי"
+          "aggregate-average": "ממוצע כללי",
+          "compare-teams": "השוואת קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השווה"
         },
         "small-screen-block": {
           "title": "המסך קטן מדי",
