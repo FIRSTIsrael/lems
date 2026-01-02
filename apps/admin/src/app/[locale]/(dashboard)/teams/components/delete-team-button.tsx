@@ -1,7 +1,9 @@
+'use client';
+
+import { useState } from 'react';
 import { Delete } from '@mui/icons-material';
 import { GridActionsCellItem } from '@mui/x-data-grid';
 import { Team } from '@lems/types/api/admin';
-import { useState } from 'react';
 import { DeleteTeamDialog } from './delete-team-dialog';
 
 interface DeleteTeamButtonProps {
@@ -17,8 +19,10 @@ export const DeleteTeamButton: React.FC<DeleteTeamButtonProps> = ({ team }) => {
         key="delete"
         icon={<Delete />}
         label="Delete team"
+        disabled={!team.deletable}
         onClick={() => setShowDeletionDialog(true)}
       />
+
       <DeleteTeamDialog
         team={team}
         open={showDeletionDialog}
