@@ -49,10 +49,8 @@ export const computeTeamScores = (team: Team): MetricPerCategory => {
     : 0;
 
   // Compute core-values score (rubric fields + GP scores)
-  const cvRubric = team.rubrics.core_values;
-  const cvRubricScore = cvRubric?.data?.fields
-    ? Object.values(cvRubric.data.fields).reduce((sum, field) => sum + (field.value ?? 0), 0)
-    : 0;
+  const cvRubricValues = getOrganizedRubricFields(team, 'core-values');
+  const cvRubricScore = Object.values(cvRubricValues).reduce((sum, value) => sum + (value ?? 0), 0);
   const gpScoresSum = (team.scoresheets ?? []).reduce(
     (sum, scoresheet) => sum + (scoresheet.data?.gp?.value ?? 3),
     0
@@ -283,9 +281,9 @@ export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
 export function getOrganizedRubricFields(
   team: Team,
   category: JudgingCategory
-): Record<string, number | null> {
+): Record<string, number> {
   const fields = buildFieldMetadata(category);
-  const result: Record<string, number | null> = {};
+  const result: Record<string, number> = {};
 
   const categoryKey = hyphensToUnderscores(category) as
     | 'innovation_project'
@@ -305,20 +303,20 @@ export function getOrganizedRubricFields(
 
     ipFields.forEach(field => {
       const ipRubric = team.rubrics.innovation_project;
-      const value = ipRubric?.data?.fields?.[field.id]?.value ?? null;
+      const value = ipRubric?.data?.fields?.[field.id]?.value ?? 0;
       result[field.displayLabel] = value;
     });
 
     rdFields.forEach(field => {
       const rdRubric = team.rubrics.robot_design;
-      const value = rdRubric?.data?.fields?.[field.id]?.value ?? null;
+      const value = rdRubric?.data?.fields?.[field.id]?.value ?? 0;
       result[field.displayLabel] = value;
     });
   } else {
     // For IP/RD, include only their own fields
     fields.forEach(field => {
       const rubric = categoryMap[categoryKey];
-      const value = rubric?.data?.fields?.[field.id]?.value ?? null;
+      const value = rubric?.data?.fields?.[field.id]?.value ?? 0;
       result[field.displayLabel] = value;
     });
   }
@@ -351,7 +349,7 @@ export function getGPScores(team: Team): Record<string, number | null> {
  * @returns Array of display labels (e.g., ['IP-1', 'IP-2', ...] or ['IP-1', ..., 'RD-1', ...])
  */
 export function getFieldDisplayLabels(category: JudgingCategory): string[] {
-  if (category === 'core-values') {
+  if ((category as string) === 'core_values') {
     const ipLabels = buildFieldMetadata('innovation-project')
       .filter(f => f.coreValues)
       .map(f => f.displayLabel);
