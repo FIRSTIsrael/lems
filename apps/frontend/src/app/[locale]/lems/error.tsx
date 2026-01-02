@@ -36,7 +36,7 @@ export default function LemsError({ error, reset }: ErrorProps) {
 
   const handleGoHome = () => {
     const locale = pathname.split('/')[1];
-    router.push(`/${locale}/lems`);
+    router.push(`/${locale}`);
   };
 
   return (
