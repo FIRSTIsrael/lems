@@ -96,42 +96,29 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
         ) : (
           <Box>
             {divisions.length > 1 && (
-              <Box sx={{ mb: 2 }}>
-                <Typography
-                  variant="caption"
-                  sx={{ mb: 1, display: 'block', color: 'text.secondary' }}
-                >
-                  {t('select-division')}:
-                </Typography>
-                <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  {divisions.map(division => (
-                    <Chip
-                      key={division.id}
-                      label={division.name}
-                      onClick={() => handleDivisionClick(division.id)}
-                      variant={selectedDivisionId === division.id ? 'filled' : 'outlined'}
-                      sx={{
-                        backgroundColor:
-                          selectedDivisionId === division.id
-                            ? `${division.color}40`
-                            : 'transparent',
-                        borderColor: division.color,
-                        color: selectedDivisionId === division.id ? 'white' : division.color,
-                        '&:hover': {
-                          backgroundColor: `${division.color}20`
-                        }
-                      }}
-                    />
-                  ))}
-                </Box>
+              <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                {divisions.map(division => (
+                  <Chip
+                    key={division.id}
+                    label={division.name}
+                    onClick={() => handleDivisionClick(division.id)}
+                    variant={selectedDivisionId === division.id ? 'filled' : 'outlined'}
+                    sx={{
+                      backgroundColor:
+                        selectedDivisionId === division.id ? `${division.color}40` : 'transparent',
+                      borderColor: division.color,
+                      color: selectedDivisionId === division.id ? 'white' : division.color,
+                      '&:hover': {
+                        backgroundColor: `${division.color}20`
+                      }
+                    }}
+                  />
+                ))}
               </Box>
             )}
 
             {selectedDivision && (
               <Box>
-                <Typography variant="subtitle2" gutterBottom>
-                  {t('missing-items-for-division', { division: selectedDivision.name })}:
-                </Typography>
                 {missingItems.length > 0 ? (
                   <List dense sx={{ py: 0 }}>
                     {missingItems.map((item, index) => (
