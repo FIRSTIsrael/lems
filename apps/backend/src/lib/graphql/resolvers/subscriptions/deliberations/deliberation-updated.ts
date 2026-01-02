@@ -41,7 +41,7 @@ const processDeliberationUpdatedEvent = async (
 
   // Handle DeliberationStarted events
   if ('startTime' in eventData) {
-    const startTime = (eventData.startTime as string) || '';
+    const startTime = eventData.startTime as string;
     return startTime
       ? {
           deliberationId,

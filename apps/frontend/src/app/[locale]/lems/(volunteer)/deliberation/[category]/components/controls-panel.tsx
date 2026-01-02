@@ -12,7 +12,7 @@ import { useCategoryDeliberation } from '../deliberation-context';
 const DELIBERATION_DURATION_SECONDS = 45 * 60; // 45 minutes
 
 const getProgressColor = (progressPercent: number) => {
-  if (progressPercent >= 20) return 'info';
+  if (progressPercent >= 20) return 'primary';
   return 'warning';
 };
 
@@ -93,7 +93,7 @@ export function ControlsPanel() {
               sx={{
                 color:
                   timerValues.progressPercent >= 20
-                    ? theme.palette.success.main
+                    ? theme.palette.primary.main
                     : theme.palette.warning.main
               }}
             />

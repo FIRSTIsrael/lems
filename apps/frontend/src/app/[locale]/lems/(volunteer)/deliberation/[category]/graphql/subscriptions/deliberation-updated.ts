@@ -1,6 +1,6 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler } from '@lems/shared/utils';
-import type { CategoryDeliberationData, DeliberationStatus } from '../types';
+import type { CategoryDeliberationData } from '../types';
 
 type DeliberationUpdatedEvent =
   | {
@@ -58,7 +58,7 @@ const deliberationUpdatedReconciler: Reconciler<
       updates = { picklist: event.picklist };
       break;
     case 'DeliberationStarted':
-      updates = { startTime: event.startTime, status: 'IN_PROGRESS' as DeliberationStatus };
+      updates = { startTime: event.startTime, status: 'in-progress' };
       break;
   }
 

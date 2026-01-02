@@ -42,7 +42,7 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   }
 
   // Update the deliberation status and set start time
-  const now = new Date().toISOString();
+  const now = new Date();
   const updated = await db.judgingDeliberations.get(deliberation.id).update({
     status: 'in-progress',
     start_time: now
@@ -59,7 +59,7 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {
       deliberationId: updated.id,
-      startTime: updated.start_time
+      startTime: updated.start_time.toISOString()
     }),
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_STATUS_CHANGED, {
       deliberationId: updated.id,
@@ -70,6 +70,6 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   return {
     deliberationId: updated.id,
     status: updated.status,
-    startTime: updated.start_time || now
+    startTime: updated.start_time.toISOString()
   };
 };
