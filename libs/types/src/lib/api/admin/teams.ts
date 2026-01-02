@@ -9,8 +9,10 @@ export const AdminTeamResponseSchema = z.object({
   city: z.string(),
   coordinates: z.string().nullable(),
   active: z.boolean().optional(),
-  deletable: z.boolean().optional()
   region: z.string(),
+
+  // Optional computed fields
+  deletable: z.boolean().optional()
 });
 
 export type Team = z.infer<typeof AdminTeamResponseSchema>;

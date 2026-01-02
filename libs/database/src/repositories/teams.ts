@@ -2,7 +2,6 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
-import { TeamDivision } from '../schema/tables/team-divisions';
 
 type TeamSelectorType = { type: 'id'; value: string } | { type: 'slug'; value: string };
 
@@ -230,11 +229,6 @@ export class TeamsRepository {
     return Math.ceil(count.length / this.TEAMS_PER_PAGE);
   }
 
-  async getAllTeamDivisions(): Promise<TeamDivision[]> {
-    const teamDivisions = await this.db.selectFrom('team_divisions').selectAll().execute();
-    return teamDivisions;
-  }
-
   async search(searchTerm: string, limit: number): Promise<Team[]> {
     const teams = await this.db
       .selectFrom('teams')
@@ -300,6 +294,17 @@ export class TeamsRepository {
   async create(team: InsertableTeam): Promise<Team> {
     const [createdTeam] = await this.db.insertInto('teams').values(team).returningAll().execute();
     return createdTeam;
+  }
+
+  async getAllUnregistered(): Promise<Team[]> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .leftJoin('team_divisions', 'teams.id', 'team_divisions.team_id')
+      .selectAll('teams')
+      .where('team_divisions.team_id', 'is', null)
+      .orderBy('teams.number', 'asc')
+      .execute();
+    return teams;
   }
 
   async createMany(teams: InsertableTeam[]): Promise<Team[]> {

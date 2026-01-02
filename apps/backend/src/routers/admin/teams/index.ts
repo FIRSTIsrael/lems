@@ -1,5 +1,6 @@
 import express from 'express';
 import fileUpload, { UploadedFile } from 'express-fileupload';
+import { ensureArray } from '@lems/shared/utils';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../middleware/require-permission';
@@ -8,28 +9,24 @@ import { makeAdminTeamResponse, parseTeamList } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminRequest, res) => {
-  const teams = await db.teams.getAllWithActiveStatus();
-  if (!req.query.extraFields) {
-    const response = teams.map(team => makeAdminTeamResponse(team));
-    res.json(response);
-    return;
-  }
-  if (req.query.extraFields == 'deletable') {
-    const teamDivisions = await db.teams.getAllTeamDivisions();
-    const teamIdsInDivisions = new Set(teamDivisions.map(td => td.team_id));
+  let teams = await db.teams.getAllWithActiveStatus();
 
-    const response = teams.map(team => {
-      const baseResponse = makeAdminTeamResponse(team);
+  const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
+
+  if (extraFields.includes('deletable')) {
+    const unregistered = await db.teams.getAllUnregistered();
+    const unregisteredIds = new Set(unregistered.map(t => t.id));
+
+    teams = teams.map(team => {
       return {
-        ...baseResponse,
-        deletable: !teamIdsInDivisions.has(team.id)
+        ...team,
+        deletable: unregisteredIds.has(team.id)
       };
     });
-
-    res.json(response);
-  } else {
-    res.status(400).json({ error: 'Invalid extraFields query' });
   }
+
+  const response = teams.map(team => makeAdminTeamResponse(team));
+  res.json(response);
 });
 
 router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
