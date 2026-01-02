@@ -28,6 +28,7 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
   divisions
 }) => {
   const t = useTranslations('pages.events.missing-info');
+  const tCard = useTranslations('pages.events.card');
   const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
 
   const hasDetailedData = divisions.length > 0 && 'hasAwards' in divisions[0];
@@ -59,25 +60,13 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
     const fullDivision = division as Division;
 
     if (!fullDivision.hasAwards) {
-      missingItems.push({
-        type: 'awards',
-        divisionName: division.name,
-        divisionColor: division.color
-      });
+      missingItems.push({ type: 'awards' });
     }
     if (!fullDivision.hasUsers) {
-      missingItems.push({
-        type: 'users',
-        divisionName: division.name,
-        divisionColor: division.color
-      });
+      missingItems.push({ type: 'users' });
     }
     if (!fullDivision.hasSchedule) {
-      missingItems.push({
-        type: 'schedule',
-        divisionName: division.name,
-        divisionColor: division.color
-      });
+      missingItems.push({ type: 'schedule' });
     }
 
     return missingItems;
@@ -102,7 +91,7 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
       <DialogContent sx={{ pt: 3, pb: 2, overflow: 'visible' }}>
         {!hasDetailedData ? (
           <Typography variant="body2" color="text.secondary">
-            {t('missing-details')}
+            {tCard('missing-details')}
           </Typography>
         ) : (
           <Box>

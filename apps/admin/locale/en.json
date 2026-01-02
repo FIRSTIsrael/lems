@@ -253,8 +253,6 @@
         "copy": "Copy"
       },
       "missing-info": {
-        "fully-set-up": "Fully set up",
-        "missing-details": "Some details are missing",
         "missing-details-count": "{count, plural, =1 {1 item missing} other {# items missing}}",
         "show-details": "Show details",
         "missing-awards": "Awards not configured",

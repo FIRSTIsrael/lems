@@ -18,11 +18,12 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
   onShowDetails
 }) => {
   const t = useTranslations('pages.events.missing-info');
+  const tCard = useTranslations('pages.events.card');
 
   if (isFullySetUp) {
     return (
       <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
-        {t('fully-set-up')}
+        {tCard('fully-set-up')}
       </Alert>
     );
   }
@@ -46,7 +47,7 @@ export const MissingInfoAlert: React.FC<MissingInfoAlertProps> = ({
           )
         }
       >
-        <Typography variant="body2">{t('missing-details')}</Typography>
+        <Typography variant="body2">{tCard('missing-details')}</Typography>
       </Alert>
     );
   }

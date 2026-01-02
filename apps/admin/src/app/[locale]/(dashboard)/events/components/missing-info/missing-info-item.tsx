@@ -6,8 +6,6 @@ import { useTranslations } from 'next-intl';
 
 export interface MissingItem {
   type: 'awards' | 'users' | 'schedule';
-  divisionName: string;
-  divisionColor: string;
 }
 
 interface MissingInfoItemProps {

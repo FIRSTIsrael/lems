@@ -253,8 +253,6 @@
         "copy": "העתק"
       },
       "missing-info": {
-        "fully-set-up": "הוגדר במלואו",
-        "missing-details": "חסרים פרטים",
         "missing-details-count": "{count, plural, =1 {פריט אחד חסר} other {# פריטים חסרים}}",
         "show-details": "הצג פרטים",
         "missing-awards": "פרסים לא הוגדרו",
