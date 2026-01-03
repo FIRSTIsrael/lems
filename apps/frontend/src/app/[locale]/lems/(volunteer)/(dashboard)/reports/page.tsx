@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Stack, Container, Box } from '@mui/material';
-import { Groups, Map, EmojiEvents, EventNote, Stadium, Schedule } from '@mui/icons-material';
+import { Groups, Map, EmojiEvents, EventNote, Stadium, Schedule, Timer } from '@mui/icons-material';
 import { PageHeader } from '../components/page-header';
 import { ReportMenuGrid } from './components/report-menu-grid';
 
@@ -15,7 +15,8 @@ export default function ReportsPage() {
     { path: 'awards-list', label: t('menu.awards-list'), icon: <EmojiEvents /> },
     { path: 'event-agenda', label: t('menu.event-agenda'), icon: <EventNote /> },
     { path: 'field-schedule', label: t('menu.field-schedule'), icon: <Stadium /> },
-    { path: 'judging-schedule', label: t('menu.judging-schedule'), icon: <Schedule /> }
+    { path: 'judging-schedule', label: t('menu.judging-schedule'), icon: <Schedule /> },
+    { path: 'field-timer', label: t('menu.field-timer'), icon: <Timer /> }
   ];
   return (
     <Container maxWidth="lg" disableGutters>
