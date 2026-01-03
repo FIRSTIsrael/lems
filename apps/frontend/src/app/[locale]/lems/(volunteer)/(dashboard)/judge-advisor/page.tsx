@@ -8,6 +8,7 @@ import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { RubricStatusSummary } from './components/rubric-status-summary';
 import { RubricStatusGrid } from './components/rubric-status-grid';
+import { JudgeAdvisorProvider } from './components/judge-advisor-context';
 import {
   GET_ALL_JUDGING_SESSIONS,
   createJudgingSessionStartedSubscription,
@@ -15,6 +16,7 @@ import {
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
+  createTeamDisqualifiedSubscription,
   parseDivisionSessions
 } from './graphql';
 
@@ -28,7 +30,8 @@ export default function JudgeAdvisorPage() {
       createJudgingSessionAbortedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createRubricStatusChangedSubscription(currentDivision.id),
-      createTeamArrivalSubscription(currentDivision.id)
+      createTeamArrivalSubscription(currentDivision.id),
+      createTeamDisqualifiedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -45,10 +48,12 @@ export default function JudgeAdvisorPage() {
   return (
     <>
       <PageHeader title={t('page-title')} />
-      <Stack spacing={3} mt={3}>
-        <RubricStatusSummary sessions={sessions} loading={loading} />
-        <RubricStatusGrid sessions={sessions} loading={loading} />
-      </Stack>
+      <JudgeAdvisorProvider sessions={sessions} sessionLength={sessionLength}>
+        <Stack spacing={3} mt={3}>
+          <RubricStatusSummary sessions={sessions} loading={loading} />
+          <RubricStatusGrid sessions={sessions} loading={loading} divisionId={currentDivision.id} />
+        </Stack>
+      </JudgeAdvisorProvider>
     </>
   );
 }
