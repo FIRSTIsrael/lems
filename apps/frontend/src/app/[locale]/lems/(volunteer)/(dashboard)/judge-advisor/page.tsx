@@ -48,10 +48,10 @@ export default function JudgeAdvisorPage() {
   return (
     <>
       <PageHeader title={t('page-title')} />
-      <JudgeAdvisorProvider sessions={sessions} sessionLength={sessionLength}>
+      <JudgeAdvisorProvider sessions={sessions} loading={loading}>
         <Stack spacing={3} mt={3}>
-          <RubricStatusSummary sessions={sessions} loading={loading} />
-          <RubricStatusGrid sessions={sessions} loading={loading} divisionId={currentDivision.id} />
+          <RubricStatusSummary />
+          <RubricStatusGrid />
         </Stack>
       </JudgeAdvisorProvider>
     </>

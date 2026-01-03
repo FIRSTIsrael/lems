@@ -6,16 +6,18 @@ import type { JudgingSession, Team } from '../graphql/types';
 interface JudgeAdvisorContextType {
   sessions: JudgingSession[];
   disqualifiedTeams: Team[];
+  loading: boolean;
 }
 
 const JudgeAdvisorContext = createContext<JudgeAdvisorContextType | null>(null);
 
 interface JudgeAdvisorProviderProps {
   sessions: JudgingSession[];
+  loading?: boolean;
   children?: ReactNode;
 }
 
-export function JudgeAdvisorProvider({ sessions, children }: JudgeAdvisorProviderProps) {
+export function JudgeAdvisorProvider({ sessions, loading = false, children }: JudgeAdvisorProviderProps) {
   const value = useMemo<JudgeAdvisorContextType>(() => {
     const disqualifiedTeams = new Set(
       sessions
@@ -26,9 +28,10 @@ export function JudgeAdvisorProvider({ sessions, children }: JudgeAdvisorProvide
 
     return {
       sessions,
-      disqualifiedTeams
+      disqualifiedTeams,
+      loading
     };
-  }, [sessions]);
+  }, [sessions, loading]);
 
   return <JudgeAdvisorContext.Provider value={value}>{children}</JudgeAdvisorContext.Provider>;
 }

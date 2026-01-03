@@ -16,18 +16,11 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { range } from '@lems/shared/utils';
-import { JudgingSession } from '../graphql';
 import { getRubricStatusStats } from './utils';
+import { useJudgeAdvisor } from './judge-advisor-context';
 
-interface RubricStatusSummaryProps {
-  sessions: JudgingSession[];
-  loading?: boolean;
-}
-
-export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
-  sessions,
-  loading = false
-}) => {
+export const RubricStatusSummary = () => {
+  const { sessions, loading } = useJudgeAdvisor();
   const t = useTranslations('pages.judge-advisor.summary');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();

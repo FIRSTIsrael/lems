@@ -371,7 +371,8 @@
         }
       },
       "team-info-cell": {
-        "not-arrived": "Not Arrived"
+        "not-arrived": "Not Arrived",
+        "disqualified": "Disqualified"
       }
     },
     "referee": {
