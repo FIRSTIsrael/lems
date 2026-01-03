@@ -374,6 +374,30 @@
         "not-arrived": "Not Arrived"
       }
     },
+    "referee": {
+      "page-title": "Referee Dashboard",
+      "match-running": "Match Running",
+      "match-slug": "Match",
+      "prestart-title": "Match Preparation",
+      "inspection-timer": "Equipment Inspection",
+      "start-inspection": "Start Inspection",
+      "present": "Present",
+      "absent": "Absent",
+      "ready-confirmed": "Ready ✅",
+      "mark-ready": "Mark Ready",
+      "no-match-title": "No Match Assigned",
+      "no-match-description": "Waiting for the next match to be assigned to your table.",
+      "no-match-instructions": "Check the schedule below to see upcoming matches.",
+      "no-upcoming-matches": "No upcoming matches scheduled.",
+      "match": "Match",
+      "scheduled-time": "Scheduled Time",
+      "teams": "Teams",
+      "round": "Round",
+      "team-not-available": "Team information not available",
+      "break-message": "This is a good time to drink water and refresh",
+      "no-show-title": "Team Did Not Arrive",
+      "no-show-description": "This team has not arrived at the event and will not participate in this match."
+    },
     "scorekeeper": {
       "page-title": "Scorekeeper",
       "common": {

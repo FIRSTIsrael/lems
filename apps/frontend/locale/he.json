@@ -374,6 +374,30 @@
         "not-arrived": "לא הגיעה"
       }
     },
+    "referee": {
+      "page-title": "שופט זירה",
+      "match-running": "מקצה פעיל",
+      "match-slug": "צקצה",
+      "prestart-title": "התכוננת למקצה",
+      "inspection-timer": "בדיקת ציוד",
+      "start-inspection": "התחל בדיקה",
+      "present": "נוכח",
+      "absent": "לא נוכח",
+      "ready-confirmed": "מוכן ✅",
+      "mark-ready": "סמנו כמוכן",
+      "no-match-title": "אין מקצה בשולחן כעת",
+      "no-match-description": "מחכה להשמת המשחק הבא לשולחן שלך.",
+      "no-match-instructions": "המקצים הבאים מופיעים בלוח הזמנים מטה",
+      "no-upcoming-matches": "אין משחקים מתוכננים.",
+      "match": "משחק",
+      "scheduled-time": "שעה מתוכננת",
+      "teams": "קבוצות",
+      "round": "סבב",
+      "team-not-available": "מידע הקבוצה לא זמין",
+      "break-message": "זה זמן טוב לשתות מים ולהתרענן",
+      "no-show-title": "הקבוצה לא הגיעה",
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
+    },
     "scorekeeper": {
       "page-title": "סקורקיפר",
       "common": {

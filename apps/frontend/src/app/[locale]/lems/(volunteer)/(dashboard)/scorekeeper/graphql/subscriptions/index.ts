@@ -6,3 +6,4 @@ export * from './match-completed';
 export * from './match-aborted';
 export * from './audience-display-switched';
 export * from './audience-display-setting-updated';
+export * from './participant-status-updated';
