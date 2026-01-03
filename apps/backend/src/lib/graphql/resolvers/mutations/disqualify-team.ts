@@ -67,7 +67,7 @@ export const disqualifyTeamResolver: GraphQLFieldResolver<
 
     await db.raw.sql
       .updateTable('team_divisions')
-      .set({ disqualified: true })
+      .set({ disqualified: true as never }) // TS Quirk with Kysely booleans
       .where('team_id', '=', teamId)
       .where('division_id', '=', divisionId)
       .execute();
