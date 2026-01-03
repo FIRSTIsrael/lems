@@ -113,6 +113,7 @@ export function transformTeam(team: Team): Partial<DeliberationTeam> {
     number: parseInt(team.number, 10),
     name: team.name,
     affiliation: team.affiliation,
+    city: team.city,
     scores,
     optionalAwardNominations,
     ...robotStats,

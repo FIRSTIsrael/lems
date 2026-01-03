@@ -2,6 +2,9 @@
  * Type definitions for final deliberations
  */
 
+export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
+export type FinalDeliberationStatus = 'not-started' | 'in-progress' | 'completed';
+
 export interface TeamRanks {
   'innovation-project': number;
   'robot-design': number;
@@ -28,6 +31,7 @@ export interface DeliberationTeam {
   number: number;
   name: string;
   affiliation: string;
+  city?: string;
 
   // Scores (normalized 0-1 or 0-100 depending on category)
   scores: TeamScores;

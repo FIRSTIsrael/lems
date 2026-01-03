@@ -710,5 +710,78 @@
     "deliberation": {
       "error-not-authorized": "אין לך הרשאות לגשת לדיון זה"
     }
+  },
+  "deliberations": {
+    "final": {
+      "title": "דיון סופי",
+      "error": {
+        "loadingData": "נכשל בטעינת נתוני הדיון",
+        "notFound": "הדיון הסופי לא נמצא"
+      },
+      "stages": {
+        "champions": "בחירת אלופים",
+        "core-awards": "פרסי ליבה",
+        "optional-awards": "פרסים אופציונליים",
+        "review": "סקירה וסיום"
+      },
+      "buttons": {
+        "previous": "שלב קודם",
+        "next": "שלב הבא",
+        "finalize": "סיום דיון"
+      },
+      "teamCard": {
+        "totalRank": "דירוג כולל",
+        "overall": "כולל",
+        "robotGameRank": "דירוג משחק רובוט",
+        "robotGame": "משחק רובוט"
+      },
+      "champions": {
+        "instruction": "בחרו קבוצות למקום ראשון, שני, שלישי ורביעי. קבוצות מדורגות לפי ניקוד השיפוט הכולל.",
+        "championsTitle": "בחירת אלופים",
+        "eligibleTeams": "{count} קבוצות זכאיות",
+        "noEligibleTeams": "אין קבוצות זכאיות לאלופים בשלב זה",
+        "robotPerformanceTitle": "זוכי ביצוע הרובוט",
+        "robotPerformanceDescription": "קבוצות אלו מדורגות אוטומטית לפי ניקוד המשחק הגבוה ביותר שלהן",
+        "maxScore": "ניקוד מקסימום"
+      },
+      "coreAwards": {
+        "instruction": "בחרו זוכים בפרסים לכל קטגוריית שיפוט. קבוצה יכולה לזכות בפרס אחד בלבד לקטגוריה.",
+        "categories": {
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה"
+        },
+        "selectWinners": "בחרו זוכים בפרס עבור {category}",
+        "noEligibleTeams": "אין קבוצות זכאיות לפרס זה",
+        "selectedWinners": "זוכים שנבחרו",
+        "rank": "דירוג",
+        "none": "לא נבחרו"
+      },
+      "optionalAwards": {
+        "instruction": "בחרו קבוצות שהיו מועמדות לפרסים אופציונליים. קבוצה יכולה לקבל מספר פרסים אופציונליים.",
+        "filterByAward": "סננו לפי פרס",
+        "allAwards": "כל הפרסים",
+        "nominatedTeams": "קבוצות עם מועמדויות לפרס אופציונלי",
+        "teamsNominatedFor": "קבוצות שהיו מועמדות ל {award}",
+        "eligibleTeams": "{count} קבוצות מועמדות",
+        "noEligibleTeams": "אין קבוצות עם מועמדויות לפרסים אופציונליים",
+        "selectedWinners": "זוכים שנבחרו",
+        "none": "לא נבחרו"
+      },
+      "review": {
+        "instruction": "סקרו את כל הפרסים שנבחרו מטה. לחצו על 'סיום' כדי להגיש את תוצאות הדיון.",
+        "finalizationWarning": "לאחר סיום לא ניתן יהיה לערוך את הדיון. אנא סקרו את כל הבחירות בעיון לפני המשך.",
+        "champions": "אלופים",
+        "coreAwards": "פרסי ליבה",
+        "optionalAwards": "פרסים אופציונליים",
+        "place": "מקום",
+        "categories": {
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "robot-performance": "ביצוע רובוט"
+        }
+      }
+    }
   }
 }
