@@ -1,7 +1,14 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { Box, Badge, Tooltip, ButtonBase, Typography } from '@mui/material';
+import { useTranslations } from 'next-intl';import {
+  CheckCircle,
+  WarningAmber,
+  HelpOutline,
+  Edit,
+  Send,
+  Diversity1
+} from '@mui/icons-material';
+import { Box, Badge, Tooltip, Typography, useTheme } from '@mui/material';
 import Link from 'next/link';
 import type { ScoresheetStatus } from '../graphql/types';
 
@@ -16,41 +23,48 @@ export interface ScoresheetStatusButtonProps {
   disabled?: boolean;
 }
 
-/**
- * Gets the background color for a scoresheet status.
- * Escalated status overrides all other colors with orange.
- */
-export function getScoresheetStatusColor(status: ScoresheetStatus, escalated: boolean): string {
-  if (escalated) {
-    return '#ff9800'; // Orange
+
+export const getScoresheetStatusIcon =(status: ScoresheetStatus | 'escalated') => {
+  const iconProps = { sx: { fontSize: '1.2rem' } };
+  if (status === 'escalated') {
+    return <WarningAmber {...iconProps} sx={{ ...iconProps.sx, color: 'warning.main' }} />;
   }
 
   switch (status) {
     case 'empty':
-      return 'transparent';
-    case 'draft':
-      return '#e0f2fe'; // Light blue
-    case 'completed':
-      return '#0284c7'; // Blue
+      return <HelpOutline {...iconProps} color="disabled" />;
+    case 'in-progress':
+      return <Edit {...iconProps} color="info" />;
     case 'gp':
-      return '#4338ca'; // Indigo
+      return <Diversity1 {...iconProps} color='error' />;
+    case 'completed':
+    return <CheckCircle {...iconProps} color='success' />;
     case 'submitted':
-      return '#059669'; // Green
+      return <Send {...iconProps} color="success" />;
     default:
-      return 'transparent';
+      return null;
   }
 }
 
-/**
- * Gets the border color for empty scoresheets.
- */
-function getBorderColor(status: ScoresheetStatus, escalated: boolean): string | undefined {
-  if (status === 'empty' && !escalated) {
-    return '#9ca3af'; // Gray
+export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string => {
+  if (status === 'escalated') {
+    return 'warning.main';
   }
-  return undefined;
+  switch (status) {
+    case 'empty':
+      return 'text.disabled';
+    case 'in-progress':
+      return 'info.main'; 
+    case 'gp':
+      return 'error.main';
+    case 'completed':
+      return 'success.main';
+    case 'submitted':
+      return 'success.main';  
+    default:
+      return 'text.primary';
+  }
 }
-
 /**
  * Gets the GP badge color.
  */
@@ -71,10 +85,11 @@ export function ScoresheetStatusButton({
   disabled = false
 }: ScoresheetStatusButtonProps) {
   const t = useTranslations('pages.head-referee');
+  const theme = useTheme();
 
-  const bgcolor = getScoresheetStatusColor(status, escalated);
-  const borderColor = getBorderColor(status, escalated);
-  const textColor = status === 'empty' || status === 'draft' ? 'text.primary' : 'white';
+  const statusColor = getStatusColor(escalated ? 'escalated' : status);
+  const isCompleted = status === 'completed';
+  const isDraft = status === 'in-progress';
 
   const tooltipTitle = disabled
     ? t('scoresheet-button.team-not-registered')
@@ -96,36 +111,49 @@ export function ScoresheetStatusButton({
         }
       }}
     >
-      <ButtonBase
-        disabled={disabled}
-        sx={{
-          minWidth: 50,
-          minHeight: 36,
-          px: 1.5,
+      <Box
+      sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 0.75,
+          px: 1.25,
           py: 0.75,
-          borderRadius: 1,
-          bgcolor,
-          border: borderColor ? `2px solid ${borderColor}` : 'none',
-          color: textColor,
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          transition: 'all 0.2s',
-          '&:hover': disabled
-            ? {}
-            : {
-                opacity: 0.8,
-                transform: 'scale(1.05)'
-              },
-          '&:disabled': {
-            opacity: 0.5,
-            cursor: 'not-allowed'
-          }
+          borderRadius: 1.5,
+          backgroundColor:
+            isCompleted || isDraft
+              ? theme.palette.mode === 'dark'
+                ? `${statusColor}20`
+                : `${statusColor}12`
+              : 'transparent',
+          border: '1.5px solid',
+          borderColor: statusColor,
+          cursor: disabled ? 'default' : 'pointer',
+          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+          width: 'auto',
+          opacity: disabled ? 0.5 : 1,
+          ...(!disabled && {
+            '&:hover': {
+              backgroundColor:
+                theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,
+              boxShadow: `0 2px 8px ${statusColor}30`
+            },
+            '&:active': {
+              transform: 'scale(0.98)'
+            }
+          })
         }}
       >
-        <Typography variant="caption" fontWeight={600}>
+        {getScoresheetStatusIcon(escalated ? 'escalated' : status)}
+        <Typography variant="caption" sx={{
+            fontWeight: 600,
+            fontSize: '0.8rem',
+            flex: 0,
+            color: statusColor
+          }}
+          >
           #{teamNumber}
         </Typography>
-      </ButtonBase>
+      </Box>
     </Badge>
   );
 

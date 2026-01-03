@@ -477,7 +477,7 @@
       },
       "scoresheet-status": {
         "empty": "Empty",
-        "draft": "In Progress",
+        "in-progress": "In Progress",
         "completed": "Completed",
         "gp": "Awaiting GP",
         "submitted": "Submitted"
@@ -493,7 +493,7 @@
           "label": "Empty",
           "description": "No scoresheet data has been entered"
         },
-        "draft": {
+        "in-progress": {
           "label": "In Progress",
           "description": "Scoresheet is being filled out"
         },

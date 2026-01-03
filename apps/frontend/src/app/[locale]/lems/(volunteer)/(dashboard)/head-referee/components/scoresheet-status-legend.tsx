@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconButton, Popover, Box, Typography, Stack, Divider, useTheme } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { getScoresheetStatusColor } from './scoresheet-status-button';
 import type { ScoresheetStatus } from '../graphql/types';
+import { getScoresheetStatusIcon } from './scoresheet-status-button';
 
 const STATUS_ITEMS: Array<ScoresheetStatus | 'escalated'> = [
   'empty',
-  'draft',
+  'in-progress',
   'completed',
   'gp',
   'submitted',
@@ -130,20 +130,7 @@ export function ScoresheetStatusLegend() {
                     pt: 0.25
                   }}
                 >
-                  <Box
-                    sx={{
-                      width: 20,
-                      height: 20,
-                      borderRadius: 1,
-                      bgcolor: getScoresheetStatusColor(
-                        status === 'escalated' ? 'empty' : (status as ScoresheetStatus),
-                        status === 'escalated'
-                      ),
-                      border: status === 'empty' ? '2px solid' : 'none',
-                      borderColor: 'grey.400',
-                      boxShadow: 1
-                    }}
-                  />
+                  {getScoresheetStatusIcon(status)}
                 </Box>
                 <Box>
                   <Typography

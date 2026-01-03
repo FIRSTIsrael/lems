@@ -477,7 +477,7 @@
       },
       "scoresheet-status": {
         "empty": "ריק",
-        "draft": "בתהליך",
+        "in-progress": "בתהליך",
         "completed": "הושלם",
         "gp": "ממתין ל-GP",
         "submitted": "נשלח"
@@ -493,7 +493,7 @@
           "label": "ריק",
           "description": "לא הוזן מידע בדף הניקוד"
         },
-        "draft": {
+        "in-progress": {
           "label": "בתהליך",
           "description": "דף הניקוד בתהליך מילוי"
         },
