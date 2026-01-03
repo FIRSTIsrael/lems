@@ -67,7 +67,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
     <TableContainer component={Paper} variant="outlined">
       <Table size="small">
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell sx={{ fontWeight: 600 }}>{t('table.match')}</TableCell>
             <TableCell sx={{ fontWeight: 600 }}>{t('table.scheduled-time')}</TableCell>
             {tables.map(table => (
@@ -129,7 +129,12 @@ function MatchRow({ match, tables, isActive, findScoresheetForTeam }: MatchRowPr
         </Typography>
       </TableCell>
       <TableCell>
-        <Typography variant="body2">{scheduledTime}</Typography>
+        <Typography 
+          fontFamily="monospace"
+          fontWeight={500}
+          variant="body2">
+            {scheduledTime}
+          </Typography>
       </TableCell>
       {tables.map(table => {
         const participant = match.participants.find(p => p.table.id === table.id);

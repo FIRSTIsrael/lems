@@ -3,18 +3,14 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-  Card,
   CardHeader,
   CardContent,
-  Collapse,
-  IconButton,
   Typography,
   Chip,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Paper
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import type { RoundGroup } from './utils';
 import { DesktopScheduleTable } from './desktop-schedule-table';
 import { MobileScheduleCards } from './mobile-schedule-cards';
@@ -35,7 +31,14 @@ export function RoundSchedule({ roundGroup }: RoundScheduleProps) {
   const title = `${stageLabel} - ${t('round')} ${round}`;
 
   return (
-    <Card>
+    <Paper
+      sx={{
+        bgcolor: 'white',
+        border: `2px solid transparent`,
+        borderRadius: 1.5,
+        overflow: 'hidden'
+      }}
+    >
       <CardHeader
         title={
           <Typography variant="h6" fontWeight={600}>
@@ -52,22 +55,21 @@ export function RoundSchedule({ roundGroup }: RoundScheduleProps) {
                 sx={{ mr: 1 }}
               />
             )}
-            <IconButton onClick={() => setExpanded(!expanded)} size="small">
-              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
           </>
         }
-        sx={{ borderBottom: `3px solid ${stage === 'PRACTICE' ? '#3b82f6' : '#ef4444'}` }}
+        sx={{
+          bgcolor: 'grey.50',
+          borderBottom: `1px solid ${theme.palette.divider}`,
+          py: 1.5
+        }}
       />
-      <Collapse in={expanded} timeout="auto" unmountOnExit>
-        <CardContent>
-          {isLargeScreen ? (
-            <DesktopScheduleTable matches={matches} scoresheets={scoresheets} />
-          ) : (
-            <MobileScheduleCards matches={matches} scoresheets={scoresheets} />
-          )}
-        </CardContent>
-      </Collapse>
-    </Card>
+      <CardContent sx={{ p: 0 }}>
+        {isLargeScreen ? (
+          <DesktopScheduleTable matches={matches} scoresheets={scoresheets} />
+        ) : (
+          <MobileScheduleCards matches={matches} scoresheets={scoresheets} />
+        )}
+      </CardContent>
+    </Paper>
   );
 }
