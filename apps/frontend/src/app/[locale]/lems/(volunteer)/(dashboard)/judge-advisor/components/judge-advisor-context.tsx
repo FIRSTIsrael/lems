@@ -5,7 +5,7 @@ import type { JudgingSession, Team } from '../graphql/types';
 
 interface JudgeAdvisorContextType {
   sessions: JudgingSession[];
-  disqualifiedTeams: Team[];
+  disqualifiedTeams: Set<string>;
   loading: boolean;
 }
 
@@ -17,7 +17,11 @@ interface JudgeAdvisorProviderProps {
   children?: ReactNode;
 }
 
-export function JudgeAdvisorProvider({ sessions, loading = false, children }: JudgeAdvisorProviderProps) {
+export function JudgeAdvisorProvider({
+  sessions,
+  loading = false,
+  children
+}: JudgeAdvisorProviderProps) {
   const value = useMemo<JudgeAdvisorContextType>(() => {
     const disqualifiedTeams = new Set(
       sessions

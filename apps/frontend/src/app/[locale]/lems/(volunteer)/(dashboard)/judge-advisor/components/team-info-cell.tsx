@@ -15,7 +15,7 @@ interface TeamInfoCellProps {
 export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
   const t = useTranslations('pages.judge-advisor.team-info-cell');
   const { disqualifiedTeams } = useJudgeAdvisor();
-  const isDisqualified = disqualifiedTeams.includes(team.id);
+  const isDisqualified = disqualifiedTeams.has(team.id);
 
   return (
     <Stack spacing={1} sx={{ minWidth: 200 }}>
