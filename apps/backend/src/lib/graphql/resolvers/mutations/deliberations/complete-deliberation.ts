@@ -8,23 +8,22 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeDeliberationAccess, assertDeliberationEditable } from './utils';
 
-interface StartDeliberationArgs {
+interface CompleteDeliberationArgs {
   divisionId: string;
   category: JudgingCategory;
 }
 
 /**
- * Resolver for Mutation.startDeliberation
- * Changes the deliberation status from NOT_STARTED to IN_PROGRESS and sets the start time
+ * Resolver for Mutation.completeDeliberation
+ * Changes the deliberation status from IN_PROGRESS to COMPLETED
  */
-export const startDeliberationResolver: GraphQLFieldResolver<
+export const completeDeliberationResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  StartDeliberationArgs,
+  CompleteDeliberationArgs,
   Promise<{
     deliberationId: string;
-    status: string;
-    startTime: string;
+    completed: boolean;
   }>
 > = async (_root, { divisionId, category }, context) => {
   const hyphenatedCategory = underscoresToHyphens(category) as JudgingCategory;
@@ -33,25 +32,23 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   // Check if deliberation is editable
   assertDeliberationEditable(deliberation.status);
 
-  // Check if deliberation is in NOT_STARTED status
-  if (deliberation.status !== 'not-started') {
+  // Check if deliberation is in IN_PROGRESS status
+  if (deliberation.status !== 'in-progress') {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
-      `Cannot start deliberation with status "${deliberation.status}". Must be "not-started"`
+      `Cannot complete deliberation with status "${deliberation.status}". Must be "in-progress"`
     );
   }
 
-  // Update the deliberation status and set start time
-  const now = new Date();
+  // Update the deliberation status
   const updated = await db.judgingDeliberations.get(deliberation.id).update({
-    status: 'in-progress',
-    start_time: now
+    status: 'completed'
   });
 
   if (!updated) {
     throw new MutationError(
       MutationErrorCode.INTERNAL_ERROR,
-      `Failed to start deliberation ${deliberation.id}`
+      `Failed to complete deliberation ${deliberation.id}`
     );
   }
 
@@ -59,7 +56,7 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {
       deliberationId: updated.id,
-      startTime: updated.start_time.toISOString()
+      completed: true
     }),
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_STATUS_CHANGED, {
       deliberationId: updated.id,
@@ -69,7 +66,6 @@ export const startDeliberationResolver: GraphQLFieldResolver<
 
   return {
     deliberationId: updated.id,
-    status: updated.status,
-    startTime: updated.start_time.toISOString()
+    completed: true
   };
 };

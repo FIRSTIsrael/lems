@@ -584,6 +584,68 @@
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
         "submit-button": "Submit"
       }
+    },
+    "deliberations": {
+      "category": {
+        "title": "{category} Deliberation",
+        "controls": {
+          "status": "Status",
+          "in-progress": "In Progress",
+          "not-started": "Not Started",
+          "completed": "Completed",
+          "start": "Start",
+          "complete-deliberation": "Complete Deliberation",
+          "deliberation-finalized": "This deliberation has been finalized and is no longer editable.",
+          "time-remaining": "Time Remaining",
+          "complete-modal": {
+            "title": "Complete Deliberation",
+            "description": "Are you sure you want to complete this deliberation? Once confirmed, you will be redirected to the home page.",
+            "warning-text": "This action cannot be undone. Make sure your picklist is finalized before proceeding.",
+            "confirm": "Complete",
+            "cancel": "Cancel",
+            "submitting": "Submitting...",
+            "success-message": "Deliberation completed successfully",
+            "error-message": "Failed to complete deliberation"
+          }
+        },
+        "picklist": {
+          "title": "Picklist",
+          "add-to-picklist": "Add to Picklist",
+          "remove": "Remove",
+          "empty-state": "Add teams",
+          "error-limit-exceeded": "Picklist limit reached. Cannot add more teams."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "Room Scores Distribution",
+          "no-data-available": "No data available",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "aggregate-average": "Aggregate Average"
+        },
+        "compare-teams-picker": {
+          "title": "Compare Teams",
+          "team-1": "Team 1",
+          "team-2": "Team 2",
+          "compare": "Compare",
+          "no-data-available": "No teams to compare"
+        },
+        "table": {
+          "rank": "Rank",
+          "team": "Team",
+          "room": "Room",
+          "total": "Total",
+          "normalized": "Normalized",
+          "actions": "Actions",
+          "view-rubric": "View Rubric",
+          "add-to-picklist": "Add to Picklist"
+        },
+        "small-screen-block": {
+          "title": "Screen Too Small",
+          "message": "The deliberation view requires a larger screen to display all components properly.",
+          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        }
+      }
     }
   },
   "components": {

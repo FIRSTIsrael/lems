@@ -584,6 +584,68 @@
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
         "submit-button": "הגשת דף ניקוד"
       }
+    },
+    "deliberations": {
+      "category": {
+        "title": "דיונים | {category}",
+        "controls": {
+          "status": "סטטוס",
+          "in-progress": "בתהליך",
+          "not-started": "לא התחיל",
+          "completed": "הושלם",
+          "start": "התחל",
+          "complete-deliberation": "סיום הדיון",
+          "deliberation-finalized": "דיון זה הושלם ואינו ניתן לעריכה.",
+          "time-remaining": "זמן נותר",
+          "complete-modal": {
+            "title": "סיום הדיון",
+            "description": "האם אתה בטוח שברצונך להשלים דיון זה? לאחר אישור, תהיה הפניה לדף הבית.",
+            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שרשימת הבחירה שלך סופית לפני המשך.",
+            "confirm": "סיום",
+            "cancel": "ביטול",
+            "submitting": "בתהליך...",
+            "success-message": "הדיון הושלם בהצלחה",
+            "error-message": "כישלון בהשלמת הדיון"
+          }
+        },
+        "picklist": {
+          "title": "רשימת בחירה",
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "remove": "הסר",
+          "empty-state": "הוסף קבוצות",
+          "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "התפלגות ניקוד חדרים",
+          "no-data-available": "אין נתונים זמינים",
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "aggregate-average": "ממוצע כללי"
+        },
+        "compare-teams-picker": {
+          "title": "השוואת קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השווה",
+          "no-data-available": "אין קבוצות להשוואה"
+        },
+        "table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "room": "חדר",
+          "total": "סך הכל",
+          "normalized": "מתוקנן",
+          "actions": "פעולות",
+          "view-rubric": "הצג מחוון",
+          "add-to-picklist": "הוסף לרשימת בחירה"
+        },
+        "small-screen-block": {
+          "title": "המסך קטן מדי",
+          "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+        }
+      }
     }
   },
   "components": {
