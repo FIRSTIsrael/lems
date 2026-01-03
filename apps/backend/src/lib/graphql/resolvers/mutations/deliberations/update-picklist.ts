@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -26,7 +27,8 @@ export const updateDeliberationPicklistResolver: GraphQLFieldResolver<
     picklist: string[];
   }>
 > = async (_root, { divisionId, category, picklist }, context) => {
-  const deliberation = await authorizeDeliberationAccess(context, divisionId, category);
+  const hyphenatedCategory = underscoresToHyphens(category) as JudgingCategory;
+  const deliberation = await authorizeDeliberationAccess(context, divisionId, hyphenatedCategory);
 
   // Check if deliberation is editable (not completed)
   assertDeliberationEditable(deliberation.status);

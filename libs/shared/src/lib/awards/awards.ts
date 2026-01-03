@@ -47,6 +47,12 @@ export const MANDATORY_AWARDS = [
 ] as const;
 export type MandatoryAwards = (typeof MANDATORY_AWARDS)[number];
 
+export const HIDE_PLACES: Award[] = [
+  ...PERSONAL_AWARDS,
+  ...CORE_VALUES_AWARDS,
+  'excellence-in-engineering'
+];
+
 export const AWARDS = [...MANDATORY_AWARDS, ...OPTIONAL_AWARDS, 'advancement'] as const;
 export type Award = (typeof AWARDS)[number];
 

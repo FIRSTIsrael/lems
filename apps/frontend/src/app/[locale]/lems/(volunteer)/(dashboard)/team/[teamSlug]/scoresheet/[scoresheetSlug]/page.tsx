@@ -1,13 +1,14 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Container, Box, CircularProgress } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useEvent } from '../../../../../components/event-context';
+import { useUser } from '../../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
@@ -21,6 +22,9 @@ import {
 export default function ScoresheetPage() {
   const t = useTranslations('pages.scoresheet');
   const { getStage } = useMatchTranslations();
+
+  const router = useRouter();
+  const user = useUser();
   const team = useTeam();
   const { currentDivision } = useEvent();
   const { scoresheetSlug } = useParams();
@@ -40,6 +44,17 @@ export default function ScoresheetPage() {
     parseScoresheetData,
     subscriptions
   );
+
+  // If we are a referee and this scoresheet is submitted (or escalated)
+  // We need to redirect back to the homepage since we are not supposed to be here
+  useEffect(() => {
+    if (user.role !== 'referee') return;
+    if (!scoresheet || loading) return;
+
+    if (scoresheet.status === 'submitted' || scoresheet.escalated) {
+      router.push(`/lems/${user.role}`);
+    }
+  }, [router, scoresheet, loading, user.role]);
 
   if (loading || !scoresheet) {
     return (
