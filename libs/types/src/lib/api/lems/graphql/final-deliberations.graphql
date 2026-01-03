@@ -1,0 +1,45 @@
+"""
+Final deliberation for selecting division awards
+"""
+type FinalDeliberation {
+  "The division ID this deliberation is for"
+  divisionId: String!
+
+  "Current stage of the deliberation (not-started, champions, core-awards, optional-awards, review)"
+  stage: String!
+
+  "Current status (not-started, in-progress, completed)"
+  status: String!
+
+  "Timestamp when the deliberation was started (ISO 8601)"
+  startTime: String
+
+  "Timestamp when the deliberation was completed (ISO 8601)"
+  completionTime: String
+
+  "Champions placement - Record<place number, team ID> as JSON"
+  champions: JSON!
+
+  "Innovation Project award winners (ordered list of team IDs)"
+  innovationProject: [String!]!
+
+  "Robot Design award winners (ordered list of team IDs)"
+  robotDesign: [String!]!
+
+  "Core Values award winners (ordered list of team IDs)"
+  coreValues: [String!]!
+
+  "Optional awards - dynamic based on division's award configuration with automatic_assignment=true. Key is award name, value is ordered list of team IDs. Returned as JSON."
+  optionalAwards: JSON!
+
+  "Manual eligibility for core awards stage"
+  coreAwardsManualEligibility: [String!]!
+
+  "Manual eligibility for optional awards stage"
+  optionalAwardsManualEligibility: [String!]!
+}
+
+extend type Judging {
+  "Get the final deliberation for this division"
+  finalDeliberation: FinalDeliberation
+}

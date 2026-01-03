@@ -169,7 +169,10 @@
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
-        "event-agenda": "לו״ז אירוע"
+        "event-agenda": "לו״ז אירוע",
+        "field-schedule": "לו״ז זירה",
+        "judging-schedule": "לו״ז שיפוט",
+        "field-timer": "שעון זמן מגרש"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,6 +221,46 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
+        }
+      },
+      "field-timer": {
+        "page-title": "שעון זמן מגרש",
+        "no-active-match": "אין מקצה פעיל",
+        "loading": "טוען נתוני מקצה...",
+        "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
+        "test-match": "מקצה בדיקה",
+        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}"
+      },
+      "field-schedule": {
+        "page-title": "לו״ז זירה",
+        "error-loading": "אירעה שגיאה בטעינת לו״ז הזירה.",
+        "empty-state": "לא נקבעו קרבות עדיין.",
+        "columns": {
+          "match": "קרב",
+          "start-time": "התחלה",
+          "end-time": "סיום"
+        },
+        "stages": {
+          "practice": "סבב אימון",
+          "ranking": "סבב דירוג",
+          "test": "סבב ניסוי"
+        },
+        "not-arrived": "לא הגיעה",
+        "loading": "טוען מקצים..."
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-sessions": "לא נקבעו מפגשי שיפוט.",
+        "loading": "טוען לו״ז...",
+        "arrived": "הגיעה",
+        "not-arrived": "לא הגיעה",
+        "table": {
+          "time": "שעה"
+        },
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט"
         }
       }
     },
@@ -330,6 +373,30 @@
       "team-info-cell": {
         "not-arrived": "לא הגיעה"
       }
+    },
+    "referee": {
+      "page-title": "שופט זירה",
+      "match-running": "מקצה פעיל",
+      "match-slug": "צקצה",
+      "prestart-title": "התכוננת למקצה",
+      "inspection-timer": "בדיקת ציוד",
+      "start-inspection": "התחל בדיקה",
+      "present": "נוכח",
+      "absent": "לא נוכח",
+      "ready-confirmed": "מוכן ✅",
+      "mark-ready": "סמנו כמוכן",
+      "no-match-title": "אין מקצה בשולחן כעת",
+      "no-match-description": "מחכה להשמת המשחק הבא לשולחן שלך.",
+      "no-match-instructions": "המקצים הבאים מופיעים בלוח הזמנים מטה",
+      "no-upcoming-matches": "אין משחקים מתוכננים.",
+      "match": "משחק",
+      "scheduled-time": "שעה מתוכננת",
+      "teams": "קבוצות",
+      "round": "סבב",
+      "team-not-available": "מידע הקבוצה לא זמין",
+      "break-message": "זה זמן טוב לשתות מים ולהתרענן",
+      "no-show-title": "הקבוצה לא הגיעה",
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
     },
     "scorekeeper": {
       "page-title": "סקורקיפר",
@@ -540,6 +607,68 @@
         "notes-placeholder-2": "נמקו מדוע נתתם לקבוצה ציון מתפתחת",
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
         "submit-button": "הגשת דף ניקוד"
+      }
+    },
+    "deliberations": {
+      "category": {
+        "title": "דיונים | {category}",
+        "controls": {
+          "status": "סטטוס",
+          "in-progress": "בתהליך",
+          "not-started": "לא התחיל",
+          "completed": "הושלם",
+          "start": "התחל",
+          "complete-deliberation": "סיום הדיון",
+          "deliberation-finalized": "דיון זה הושלם ואינו ניתן לעריכה.",
+          "time-remaining": "זמן נותר",
+          "complete-modal": {
+            "title": "סיום הדיון",
+            "description": "האם אתה בטוח שברצונך להשלים דיון זה? לאחר אישור, תהיה הפניה לדף הבית.",
+            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שרשימת הבחירה שלך סופית לפני המשך.",
+            "confirm": "סיום",
+            "cancel": "ביטול",
+            "submitting": "בתהליך...",
+            "success-message": "הדיון הושלם בהצלחה",
+            "error-message": "כישלון בהשלמת הדיון"
+          }
+        },
+        "picklist": {
+          "title": "רשימת בחירה",
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "remove": "הסר",
+          "empty-state": "הוסף קבוצות",
+          "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "התפלגות ניקוד חדרים",
+          "no-data-available": "אין נתונים זמינים",
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "aggregate-average": "ממוצע כללי"
+        },
+        "compare-teams-picker": {
+          "title": "השוואת קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השווה",
+          "no-data-available": "אין קבוצות להשוואה"
+        },
+        "table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "room": "חדר",
+          "total": "סך הכל",
+          "normalized": "מתוקנן",
+          "actions": "פעולות",
+          "view-rubric": "הצג מחוון",
+          "add-to-picklist": "הוסף לרשימת בחירה"
+        },
+        "small-screen-block": {
+          "title": "המסך קטן מדי",
+          "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+        }
       }
     }
   },

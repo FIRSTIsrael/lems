@@ -51,6 +51,9 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
 
   return (
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
+      <head>
+        <style>{`.recharts-wrapper * { outline: none; }`}</style>
+      </head>
       <body>
         <TimeSyncProvider>
           <NextIntlClientProvider>
