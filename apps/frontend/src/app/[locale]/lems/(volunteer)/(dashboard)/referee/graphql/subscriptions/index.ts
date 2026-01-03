@@ -4,3 +4,4 @@ export * from './team-arrival-updated';
 export * from './participant-status-updated';
 export * from './match-loaded';
 export * from './match-aborted';
+export * from './scoresheet-status-changed';
