@@ -20,6 +20,7 @@ import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
+import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -105,7 +106,8 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     rubrics: judgingRubricsResolver,
-    deliberation: judgingDeliberationResolver
+    deliberation: judgingDeliberationResolver,
+    finalDeliberation: judgingFinalDeliberationResolver
   },
   Field: {
     audienceDisplay: audienceDisplayResolver,

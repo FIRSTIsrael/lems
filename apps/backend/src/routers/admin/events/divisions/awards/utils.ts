@@ -14,6 +14,7 @@ export const makeAdminAwardResponse = (award: DbAward, includeWinner = false): A
     name: award.name,
     type: award.type,
     isOptional: award.is_optional,
+    showPlaces: award.show_places,
     allowNominations: award.allow_nominations,
     automaticAssignment: award.automatic_assignment,
     place: award.place,

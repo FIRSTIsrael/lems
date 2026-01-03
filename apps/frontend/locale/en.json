@@ -170,6 +170,8 @@
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
         "event-agenda": "Event Agenda",
+        "field-timer": "Field Timer",
+        "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule"
       },
       "awards-list": {
@@ -220,6 +222,31 @@
           "judging": "Judging",
           "field": "Field"
         }
+      },
+      "field-timer": {
+        "page-title": "Field Timer",
+        "no-active-match": "No Active Match",
+        "loading": "Loading match data...",
+        "error-loading": "Failed to load field data. Please try again.",
+        "test-match": "Test Match",
+        "match-info": "{stage} Round #{round} Match #{number}"
+      },
+      "field-schedule": {
+        "page-title": "Field Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "empty-state": "No matches have been scheduled yet.",
+        "columns": {
+          "match": "Match",
+          "start-time": "Start",
+          "end-time": "End"
+        },
+        "stages": {
+          "practice": "Practice Round",
+          "ranking": "Ranking Round",
+          "test": "Test Round"
+        },
+        "not-arrived": "Not arrived",
+        "loading": "Loading matches..."
       },
       "judging-schedule": {
         "page-title": "Judging Schedule",

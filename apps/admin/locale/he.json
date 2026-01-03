@@ -252,6 +252,16 @@
         "delete": "מחק",
         "copy": "העתק"
       },
+      "missing-info": {
+        "missing-details-count": "{count, plural, =1 {פריט אחד חסר} other {# פריטים חסרים}}",
+        "show-details": "הצג פרטים",
+        "missing-awards": "פרסים לא הוגדרו",
+        "missing-users": "משתמשים לא הוקצו",
+        "missing-schedule": "לוח זמנים לא הוגדר",
+        "dialog-title": "מידע חסר",
+        "division-fully-configured": "בית זה מוגדר במלואו",
+        "close": "סגור"
+      },
       "create": {
         "title": "יצירת אירוע",
         "form": {
