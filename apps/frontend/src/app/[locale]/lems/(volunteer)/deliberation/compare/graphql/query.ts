@@ -15,6 +15,7 @@ export const GET_COMPARE_TEAMS: TypedDocumentNode<CompareTeamsData, CompareTeams
         arrived
         disqualified
         slug
+        logoUrl
         judgingSession {
           id
           room {

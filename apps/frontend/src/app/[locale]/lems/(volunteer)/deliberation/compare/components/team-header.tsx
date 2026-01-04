@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Chip } from '@mui/material';
+import { Box, Typography, Stack, Chip, Avatar } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
 import {
   RadarChart,
@@ -50,7 +50,19 @@ export function TeamHeader({ team }: TeamHeaderProps) {
 
   return (
     <Stack spacing={2}>
-      <Box>
+      <Box sx={{ position: 'relative' }}>
+        <Avatar
+          src={team.logoUrl ?? '/assets/default-avatar.svg'}
+          alt={`${team.name} logo`}
+          sx={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: 75,
+            height: 75,
+            objectFit: 'cover'
+          }}
+        />
         <Typography variant="h6" fontWeight={600}>
           #{team.number} - {team.name}
         </Typography>

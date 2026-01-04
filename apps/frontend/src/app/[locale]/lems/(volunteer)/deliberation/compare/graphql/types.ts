@@ -66,6 +66,7 @@ export interface Team {
   arrived: boolean;
   disqualified: boolean;
   slug: string;
+  logoUrl?: string;
   judgingSession?: JudgingSession;
   scoresheets: Scoresheet[];
   rubrics: CategorizedRubrics;

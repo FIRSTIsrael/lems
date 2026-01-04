@@ -127,6 +127,30 @@
             "teamwork": "Teamwork"
           }
         },
+        "rubric-fields": {
+          "innovation-project": {
+            "problem": "Problem",
+            "research": "Research",
+            "plan": "Plan",
+            "participation": "Participation",
+            "innovation": "Innovation",
+            "model": "Model",
+            "share": "Share",
+            "improve": "Improve",
+            "explanation": "Explanation",
+            "pride": "Pride"
+          },
+          "robot-design": {
+            "strategy": "Strategy",
+            "resources": "Resources",
+            "contribution": "Contribution",
+            "skills": "Skills",
+            "test": "Test",
+            "improve": "Improve",
+            "explanation": "Explanation",
+            "pride": "Pride"
+          }
+        },
         "status-glossary": {
           "title": "Rubric Status Guide",
           "aria-label": "Show rubric status guide",

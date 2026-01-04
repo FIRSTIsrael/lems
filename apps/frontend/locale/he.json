@@ -127,6 +127,30 @@
             "teamwork": "עבודת צוות"
           }
         },
+        "rubric-fields": {
+          "innovation-project": {
+            "problem": "בעיה",
+            "research": "מחקר",
+            "plan": "תכנית",
+            "participation": "השתתפות",
+            "innovation": "חדשנות",
+            "model": "מודל",
+            "share": "שיתוף",
+            "improve": "שיפור",
+            "explanation": "הסבר",
+            "pride": "גאווה"
+          },
+          "robot-design": {
+            "strategy": "אסטרטגיה",
+            "resources": "משאבים",
+            "contribution": "תרומה",
+            "skills": "כישורים",
+            "test": "בדיקה",
+            "improve": "שיפור",
+            "explanation": "הסבר",
+            "pride": "גאווה"
+          }
+        },
         "status-glossary": {
           "title": "מדריך סטטוס מחוונים",
           "aria-label": "הצג מדריך סטטוס מחוונים",
