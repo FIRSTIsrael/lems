@@ -42,7 +42,7 @@ export function GpScores({ team }: GpScoresProps) {
                 {t('round')} {scoresheet.round}
               </Typography>
               <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
-                {Array.from({ length: gp.value - 1 }).map((_, i) => (
+                {Array.from({ length: gp.value }).map((_, i) => (
                   <Box
                     key={i}
                     sx={{

@@ -145,6 +145,8 @@
             "resources": "Resources",
             "contribution": "Contribution",
             "skills": "Skills",
+            "attachments": "Attachments",
+            "code": "Code",
             "test": "Test",
             "improve": "Improve",
             "explanation": "Explanation",
