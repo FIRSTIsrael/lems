@@ -17,6 +17,7 @@ export function RubricScores({ team }: RubricScoresProps) {
   const fields = useMemo(() => {
     const result: Array<{
       fieldId: string;
+      category: string;
       value: number | null;
       color: 'success' | 'error' | 'warning' | 'default';
     }> = [];
@@ -33,13 +34,13 @@ export function RubricScores({ team }: RubricScoresProps) {
         Object.entries(rubric.data.fields).forEach(([fieldId, field]) => {
           const comparison = fieldComparisons.get(fieldId);
           if (!comparison) {
-            result.push({ fieldId, value: field.value, color: 'default' });
+            result.push({ fieldId, category: cat, value: field.value, color: 'default' });
             return;
           }
 
           const teamValue = comparison.values.get(team.id);
           if (teamValue === undefined) {
-            result.push({ fieldId, value: field.value, color: 'default' });
+            result.push({ fieldId, category: cat, value: field.value, color: 'default' });
             return;
           }
 
@@ -54,7 +55,7 @@ export function RubricScores({ team }: RubricScoresProps) {
             }
           }
 
-          result.push({ fieldId, value: field.value, color });
+          result.push({ fieldId, category: cat, value: field.value, color });
         });
       }
     });
@@ -79,7 +80,7 @@ export function RubricScores({ team }: RubricScoresProps) {
         <Stack spacing={0.5}>
           {fields.map(field => (
             <Stack
-              key={field.fieldId}
+              key={`${field.category}-${field.fieldId}`}
               direction="row"
               justifyContent="space-between"
               alignItems="center"
