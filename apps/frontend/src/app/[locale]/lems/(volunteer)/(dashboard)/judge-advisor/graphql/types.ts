@@ -39,14 +39,55 @@ export interface JudgingSession {
   startDelta?: number;
 }
 
+export interface Award {
+  id: string;
+  name: string;
+  index: number;
+  place: number;
+  type: string; // 'PERSONAL' | 'TEAM'
+  isOptional: boolean;
+  allowNominations: boolean;
+  automaticAssignment: boolean;
+  description?: string;
+}
+
+export interface JudgingDeliberation {
+  id: string;
+  category: string;
+  status: string; // 'not-started' | 'in-progress' | 'completed'
+  startTime?: string;
+  picklist: string[];
+}
+
+export interface FinalDeliberation {
+  divisionId: string;
+  stage: string; // 'not-started' | 'champions' | 'core-awards' | 'optional-awards' | 'review'
+  status: string; // 'not-started' | 'in-progress' | 'completed'
+  startTime?: string;
+  completionTime?: string;
+  champions?: Record<string, string>;
+  innovationProject: string[];
+  robotDesign: string[];
+  coreValues: string[];
+  optionalAwards?: Record<string, string[]>;
+}
+
+export interface JudgingData {
+  sessions: JudgingSession[];
+  deliberations?: JudgingDeliberation[];
+  finalDeliberation?: FinalDeliberation;
+}
+
 export interface JudgeAdvisorData {
   sessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
+  awards?: Award[];
+  judging?: JudgingData;
 }
 
 export interface QueryData {
-  division?: { id: string; judging: JudgeAdvisorData } | null;
+  division?: { id: string; judging: JudgeAdvisorData; awards?: Award[] } | null;
 }
 
 export interface QueryVars {
@@ -60,4 +101,7 @@ export interface SubscriptionVars {
 export interface ParsedJudgeAdvisorData {
   sessions: JudgingSession[];
   sessionLength: number;
+  awards: Award[];
+  deliberations: JudgingDeliberation[];
+  finalDeliberation: FinalDeliberation | null;
 }

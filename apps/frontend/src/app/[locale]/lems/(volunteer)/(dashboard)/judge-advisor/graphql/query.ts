@@ -5,9 +5,16 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
   query GetAllJudgingSessions($divisionId: String!) {
     division(id: $divisionId) {
       id
-      rooms {
+      awards {
         id
         name
+        index
+        place
+        type
+        isOptional
+        allowNominations
+        automaticAssignment
+        description
       }
       judging {
         divisionId
@@ -46,6 +53,25 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
           startTime
           startDelta
         }
+        deliberations {
+          id
+          category
+          status
+          startTime
+          picklist
+        }
+        finalDeliberation {
+          divisionId
+          stage
+          status
+          startTime
+          completionTime
+          champions
+          innovationProject
+          robotDesign
+          coreValues
+          optionalAwards
+        }
       }
     }
   }
@@ -57,6 +83,28 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
 `;
 
 export function parseDivisionSessions(queryData: QueryData) {
-  const sessions = queryData?.division?.judging.sessions ?? [];
-  return sessions.filter(session => !!session.team);
+  const division = queryData?.division;
+  if (!division) {
+    return {
+      sessions: [],
+      sessionLength: 0,
+      awards: [],
+      deliberations: [],
+      finalDeliberation: null
+    };
+  }
+
+  const sessions = division.judging.sessions ?? [];
+  const filteredSessions = sessions.filter(session => !!session.team);
+  const awards = division.awards ?? [];
+  const deliberations = division.judging.deliberations ?? [];
+  const finalDeliberation = division.judging.finalDeliberation ?? null;
+
+  return {
+    sessions: filteredSessions,
+    sessionLength: filteredSessions.length,
+    awards,
+    deliberations,
+    finalDeliberation
+  };
 }

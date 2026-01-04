@@ -8,6 +8,9 @@ import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { RubricStatusSummary } from './components/rubric-status-summary';
 import { RubricStatusGrid } from './components/rubric-status-grid';
+import { DisqualificationSection } from './components/disqualification-section';
+import { DeliberationStatusSection } from './components/deliberation-status-section';
+import { PersonalAwardsSection } from './components/personal-awards-section';
 import { JudgeAdvisorProvider } from './components/judge-advisor-context';
 import {
   JudgeAdvisorModeToggle,
@@ -48,10 +51,19 @@ export default function JudgeAdvisorPage() {
     subscriptions
   );
 
-  const sessions = data || [];
+  const sessions = data?.sessions || [];
+  const awards = data?.awards || [];
+  const deliberations = data?.deliberations || [];
+  const finalDeliberation = data?.finalDeliberation ?? null;
 
   return (
-    <JudgeAdvisorProvider sessions={sessions} loading={loading}>
+    <JudgeAdvisorProvider
+      sessions={sessions}
+      awards={awards}
+      deliberations={deliberations}
+      finalDeliberation={finalDeliberation}
+      loading={loading}
+    >
       <PageHeader title={t('page-title')}>
         <JudgeAdvisorModeToggle mode={mode} setMode={setMode} />
       </PageHeader>
@@ -65,7 +77,9 @@ export default function JudgeAdvisorPage() {
 
       {mode === 'awards' && (
         <Stack spacing={3} mt={3}>
-          {/* Awards mode content goes here */}
+          <DisqualificationSection />
+          <DeliberationStatusSection />
+          <PersonalAwardsSection />
         </Stack>
       )}
     </JudgeAdvisorProvider>
