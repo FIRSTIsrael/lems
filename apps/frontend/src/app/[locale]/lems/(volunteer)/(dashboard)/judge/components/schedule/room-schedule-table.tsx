@@ -36,7 +36,7 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
   const theme = useTheme();
 
   const sortedSessions = useMemo(() => {
-    return [...sessions].sort((a, b) => a.number - b.number);
+    return [...sessions].filter(session => !!session.team).sort((a, b) => a.number - b.number);
   }, [sessions]);
 
   if (loading) {

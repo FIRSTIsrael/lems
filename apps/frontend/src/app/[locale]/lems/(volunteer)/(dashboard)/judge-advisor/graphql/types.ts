@@ -15,6 +15,7 @@ export interface Team {
   region: string;
   logoUrl?: string | null;
   arrived: boolean;
+  disqualified: boolean;
 }
 
 export interface CategorizedRubrics extends Record<
@@ -54,4 +55,9 @@ export interface QueryVars {
 
 export interface SubscriptionVars {
   divisionId: string;
+}
+
+export interface ParsedJudgeAdvisorData {
+  sessions: JudgingSession[];
+  sessionLength: number;
 }

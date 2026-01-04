@@ -371,7 +371,8 @@
         }
       },
       "team-info-cell": {
-        "not-arrived": "לא הגיעה"
+        "not-arrived": "לא הגיעה",
+        "disqualified": "נפסלה"
       }
     },
     "referee": {

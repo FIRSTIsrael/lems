@@ -17,7 +17,8 @@ import {
   createDeliberationUpdatedSubscription,
   createTeamArrivalUpdatedSubscription,
   createRubricUpdatedSubscription,
-  createScoresheetUpdatedSubscription
+  createScoresheetUpdatedSubscription,
+  createTeamDisqualifiedSubscription
 } from './graphql';
 
 export default function CategoryDeliberationPage() {
@@ -31,7 +32,8 @@ export default function CategoryDeliberationPage() {
       createDeliberationUpdatedSubscription(currentDivision.id),
       createTeamArrivalUpdatedSubscription(currentDivision.id),
       createRubricUpdatedSubscription(currentDivision.id),
-      createScoresheetUpdatedSubscription(currentDivision.id)
+      createScoresheetUpdatedSubscription(currentDivision.id),
+      createTeamDisqualifiedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
