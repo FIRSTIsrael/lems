@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "Judge Advisor",
+      "mode": {
+        "judging": "Judging",
+        "awards": "Awards"
+      },
       "summary": {
         "status": {
           "empty": "Empty",

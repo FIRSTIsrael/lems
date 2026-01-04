@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "שופט ראשי",
+      "mode": {
+        "judging": "שיפוט",
+        "awards": "פרסים"
+      },
       "summary": {
         "status": {
           "empty": "ריק",

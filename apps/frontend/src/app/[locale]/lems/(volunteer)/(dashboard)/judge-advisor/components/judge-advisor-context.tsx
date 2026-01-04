@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
-import type { JudgingSession, Team } from '../graphql/types';
+import type { JudgingSession } from '../graphql/types';
 
 interface JudgeAdvisorContextType {
   sessions: JudgingSession[];
