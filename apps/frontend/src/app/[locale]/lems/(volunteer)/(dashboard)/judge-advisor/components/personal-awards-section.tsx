@@ -11,17 +11,24 @@ import {
   Stack,
   TextField,
   Typography,
-  Alert
+  Alert,
+  Paper,
+  useTheme,
+  alpha
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import SendIcon from '@mui/icons-material/Send';
 import { assignPersonalAward } from '../graphql/mutations/assign-personal-award';
 import { useJudgeAdvisor } from './judge-advisor-context';
 
 export function PersonalAwardsSection() {
-  const t = useTranslations('pages.judge-advisor');
+  const t = useTranslations('pages.judge-advisor.awards.personal-awards');
   const { awards, loading } = useJudgeAdvisor();
   const [awardValues, setAwardValues] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
+  const theme = useTheme();
 
   // Filter only personal awards
   const personalAwards = useMemo(() => {
@@ -63,11 +70,27 @@ export function PersonalAwardsSection() {
   if (personalAwards.length === 0) {
     return (
       <Card>
-        <CardHeader title={t('awards.personal-awards.title')} />
+        <CardHeader
+          title={t('title')}
+          titleTypographyProps={{ variant: 'h6' }}
+          avatar={<EmojiEventsIcon sx={{ color: 'primary.main' }} />}
+        />
         <CardContent>
-          <Typography variant="body2" color="text.secondary">
-            {t('awards.personal-awards.no-awards')}
-          </Typography>
+          <Paper
+            sx={{
+              p: 3,
+              textAlign: 'center',
+              backgroundColor: alpha(theme.palette.info.main, 0.05),
+              borderLeft: `4px solid ${theme.palette.info.main}`
+            }}
+          >
+            <EmojiEventsIcon
+              sx={{ fontSize: 48, color: 'text.secondary', mb: 1, display: 'block' }}
+            />
+            <Typography variant="body2" color="text.secondary">
+              {t('no-awards')}
+            </Typography>
+          </Paper>
         </CardContent>
       </Card>
     );
@@ -75,35 +98,68 @@ export function PersonalAwardsSection() {
 
   return (
     <Card>
-      <CardHeader title={t('awards.personal-awards.title')} />
+      <CardHeader
+        title={t('title')}
+        titleTypographyProps={{ variant: 'h6' }}
+        avatar={<EmojiEventsIcon sx={{ color: 'primary.main' }} />}
+        subheader={`${personalAwards.length} award${personalAwards.length !== 1 ? 's' : ''}`}
+      />
       <CardContent>
         <Stack spacing={3}>
           {submitted && (
-            <Alert severity="info">{t('awards.personal-awards.placeholder-message')}</Alert>
+            <Alert
+              severity="success"
+              icon={<CheckCircleIcon />}
+              onClose={() => setSubmitted(false)}
+            >
+              {t('placeholder-message')}
+            </Alert>
           )}
 
           <Grid container spacing={2}>
             {personalAwards.map(award => (
               <Grid size={{ xs: 12, sm: 6 }} key={award.id}>
-                <Box>
-                  <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
-                    {award.name}
-                    {award.isOptional && (
-                      <Typography
-                        component="span"
-                        variant="caption"
-                        color="text.secondary"
-                        sx={{ ml: 1 }}
-                      >
-                        ({t('awards.personal-awards.optional')})
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.03),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                      borderColor: theme.palette.primary.main
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
+                    <EmojiEventsIcon
+                      sx={{
+                        fontSize: 20,
+                        color: 'primary.main',
+                        mt: 0.25
+                      }}
+                    />
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        {award.name}
                       </Typography>
-                    )}
-                  </Typography>
+                      {award.isOptional && (
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: 'block', mt: 0.25 }}
+                        >
+                          ({t('optional')})
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
                   {award.description && (
                     <Typography
                       variant="caption"
                       color="text.secondary"
-                      sx={{ display: 'block', mb: 1 }}
+                      sx={{ display: 'block', mb: 1.5, fontStyle: 'italic' }}
                     >
                       {award.description}
                     </Typography>
@@ -111,23 +167,37 @@ export function PersonalAwardsSection() {
                   <TextField
                     fullWidth
                     size="small"
-                    placeholder={t('awards.personal-awards.team-placeholder')}
+                    placeholder={t('team-placeholder')}
                     value={awardValues[award.id] ?? ''}
                     onChange={e => handleAwardChange(award.id, e.target.value)}
                     disabled={loading}
+                    variant="outlined"
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        backgroundColor: 'background.paper'
+                      }
+                    }}
                   />
-                </Box>
+                </Paper>
               </Grid>
             ))}
           </Grid>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 1 }}>
             <Button
               variant="contained"
+              size="large"
               onClick={handleSubmit}
               disabled={loading || personalAwards.length === 0}
+              endIcon={<SendIcon />}
+              sx={{
+                fontWeight: 600,
+                textTransform: 'none',
+                fontSize: '1rem',
+                px: 3
+              }}
             >
-              {t('awards.personal-awards.submit')}
+              {t('submit')}
             </Button>
           </Box>
         </Stack>

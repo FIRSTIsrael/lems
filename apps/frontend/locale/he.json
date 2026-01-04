@@ -377,6 +377,53 @@
       "team-info-cell": {
         "not-arrived": "לא הגיעה",
         "disqualified": "נפסלה"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "פסול קבוצות",
+          "search-placeholder": "חפש לפי מספר, שם, שיוך או עיר...",
+          "search-label": "חיפוש קבוצות",
+          "team-name": "שם הקבוצה",
+          "affiliation": "שיוך",
+          "city": "עיר",
+          "action": "פעולה",
+          "disqualify": "פסול",
+          "disqualified": "נפסלה",
+          "no-teams": "לא נמצאו קבוצות",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "all-teams-disqualified": "כל הקבוצות נפסלו",
+          "disqualified-teams-title": "קבוצות פסולות",
+          "confirm-title": "אשר ביטול הסמכה",
+          "confirm-message": "האם אתה בטוח שאתה רוצה לפסול",
+          "confirm-disqualify": "פסול",
+          "cancel": "ביטול"
+        },
+        "deliberation": {
+          "category-deliberations-title": "התייעצויות קטגוריה",
+          "final-deliberation-title": "התייעצות סופית",
+          "category": "קטגוריה",
+          "status": "סטטוס",
+          "picklist": "רשימת בחירה",
+          "start-time": "זמן התחלה",
+          "completion-time": "זמן סיום",
+          "stage": "שלב",
+          "action": "פעולה",
+          "open": "פתח",
+          "open-final": "פתח התייעצות סופית",
+          "no-deliberations": "אין התייעצויות זמינות",
+          "desired-length": "רצוי",
+          "category-innovation_project": "פרויקט חדשנות",
+          "category-robot_design": "עיצוב רובוט",
+          "category-core_values": "ערכי ליבה"
+        },
+        "personal-awards": {
+          "title": "פרסים אישיים",
+          "no-awards": "אין פרסים אישיים מוגדרים",
+          "optional": "אופציונלי",
+          "team-placeholder": "הכנס שם קבוצה או מספר",
+          "submit": "שלח פרסים",
+          "placeholder-message": "פרסים נשלחו! הערה: זו פונקציה תופסנית - המוטציה בפועל תגיע בקרוב."
+        }
       }
     },
     "referee": {

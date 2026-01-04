@@ -377,6 +377,53 @@
       "team-info-cell": {
         "not-arrived": "Not Arrived",
         "disqualified": "Disqualified"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "Disqualify Teams",
+          "search-placeholder": "Search by number, name, affiliation, or city...",
+          "search-label": "Search Teams",
+          "team-name": "Team Name",
+          "affiliation": "Affiliation",
+          "city": "City",
+          "action": "Action",
+          "disqualify": "Disqualify",
+          "disqualified": "Disqualified",
+          "no-teams": "No teams found",
+          "no-teams-found": "No teams found",
+          "all-teams-disqualified": "All teams have been disqualified",
+          "disqualified-teams-title": "Disqualified Teams",
+          "confirm-title": "Confirm Disqualification",
+          "confirm-message": "Are you sure you want to disqualify",
+          "confirm-disqualify": "Disqualify",
+          "cancel": "Cancel"
+        },
+        "deliberation": {
+          "category-deliberations-title": "Category Deliberations",
+          "final-deliberation-title": "Final Deliberation",
+          "category": "Category",
+          "status": "Status",
+          "picklist": "Picklist",
+          "start-time": "Start Time",
+          "completion-time": "Completion Time",
+          "stage": "Stage",
+          "action": "Action",
+          "open": "Open",
+          "open-final": "Open Final Deliberation",
+          "no-deliberations": "No deliberations available",
+          "desired-length": "desired",
+          "category-innovation_project": "Innovation Project",
+          "category-robot_design": "Robot Design",
+          "category-core_values": "Core Values"
+        },
+        "personal-awards": {
+          "title": "Personal Awards",
+          "no-awards": "No personal awards configured",
+          "optional": "Optional",
+          "team-placeholder": "Enter team name or number",
+          "submit": "Submit Awards",
+          "placeholder-message": "Awards submitted! Note: This is a placeholder - actual mutation coming soon."
+        }
       }
     },
     "referee": {

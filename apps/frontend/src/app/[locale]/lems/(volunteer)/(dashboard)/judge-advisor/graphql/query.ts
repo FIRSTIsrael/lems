@@ -1,11 +1,11 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { QueryData, QueryVars } from './types';
+import type { QueryData, QueryVars, JudgingData, JudgingDeliberation } from './types';
 
 export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetAllJudgingSessions($divisionId: String!) {
     division(id: $divisionId) {
       id
-      awards {
+      awards(allowNominations: false) {
         id
         name
         index
@@ -53,7 +53,21 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
           startTime
           startDelta
         }
-        deliberations {
+        innovation_project: deliberation(category: innovation_project) {
+          id
+          category
+          status
+          startTime
+          picklist
+        }
+        robot_design: deliberation(category: robot_design) {
+          id
+          category
+          status
+          startTime
+          picklist
+        }
+        core_values: deliberation(category: core_values) {
           id
           category
           status
@@ -96,14 +110,30 @@ export function parseDivisionSessions(queryData: QueryData) {
 
   const sessions = division.judging.sessions ?? [];
   const filteredSessions = sessions.filter(session => !!session.team);
-  const awards = division.awards ?? [];
-  const deliberations = division.judging.deliberations ?? [];
+
+  // Filter only PERSONAL type awards
+  const personalAwards = (division.awards ?? []).filter(award => award.type === 'PERSONAL');
+
+  // Collect deliberations from the aliased fields
+  const deliberations: JudgingDeliberation[] = [];
+  const judgingData = division.judging as JudgingData;
+
+  if (judgingData.innovation_project) {
+    deliberations.push(judgingData.innovation_project);
+  }
+  if (judgingData.robot_design) {
+    deliberations.push(judgingData.robot_design);
+  }
+  if (judgingData.core_values) {
+    deliberations.push(judgingData.core_values);
+  }
+
   const finalDeliberation = division.judging.finalDeliberation ?? null;
 
   return {
     sessions: filteredSessions,
     sessionLength: filteredSessions.length,
-    awards,
+    awards: personalAwards,
     deliberations,
     finalDeliberation
   };

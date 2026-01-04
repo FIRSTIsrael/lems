@@ -8,7 +8,7 @@ import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { RubricStatusSummary } from './components/rubric-status-summary';
 import { RubricStatusGrid } from './components/rubric-status-grid';
-import { DisqualificationSection } from './components/disqualification-section';
+import { DisqualificationSection } from './components/disqualification/disqualification-section';
 import { DeliberationStatusSection } from './components/deliberation-status-section';
 import { PersonalAwardsSection } from './components/personal-awards-section';
 import { JudgeAdvisorProvider } from './components/judge-advisor-context';

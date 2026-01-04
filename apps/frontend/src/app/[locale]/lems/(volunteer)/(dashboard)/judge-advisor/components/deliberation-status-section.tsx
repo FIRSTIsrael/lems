@@ -15,7 +15,10 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  Typography
+  Typography,
+  useTheme,
+  alpha,
+  Paper
 } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslations } from 'next-intl';
@@ -60,8 +63,9 @@ function formatTime(isoString?: string): string {
 }
 
 export function DeliberationStatusSection() {
-  const t = useTranslations('pages.judge-advisor');
+  const t = useTranslations('pages.judge-advisor.awards.deliberation');
   const { deliberations, finalDeliberation, loading } = useJudgeAdvisor();
+  const theme = useTheme();
 
   const categoriesWithStatuses = useMemo(() => {
     const categories = ['innovation_project', 'robot_design', 'core_values'];
@@ -78,141 +82,219 @@ export function DeliberationStatusSection() {
     <Stack spacing={3}>
       {/* Category Deliberations */}
       <Card>
-        <CardHeader title={t('awards.deliberation.category-deliberations-title')} />
+        <CardHeader
+          title={t('category-deliberations-title')}
+          titleTypographyProps={{ variant: 'h6' }}
+        />
         <CardContent>
           {categoriesWithStatuses.length > 0 ? (
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ backgroundColor: 'action.hover' }}>
-                  <TableCell>{t('awards.deliberation.category')}</TableCell>
-                  <TableCell>{t('awards.deliberation.status')}</TableCell>
-                  <TableCell>{t('awards.deliberation.picklist')}</TableCell>
-                  <TableCell>{t('awards.deliberation.start-time')}</TableCell>
-                  <TableCell align="right">{t('awards.deliberation.action')}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {categoriesWithStatuses.map(({ category, deliberation }) => (
-                  <TableRow key={category}>
-                    <TableCell>
-                      <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                        {t(`awards.deliberation.category-${category}`)}
-                      </Typography>
-                    </TableCell>
-                    <TableCell>
-                      {deliberation ? (
-                        <Chip
-                          label={deliberation.status}
-                          color={getDeliberationStatusColor(deliberation.status)}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ) : (
-                        <Typography variant="caption" color="text.secondary">
-                          —
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {deliberation ? (
-                        <Typography variant="body2">
-                          {deliberation.picklist.length} / {t('awards.deliberation.desired-length')}
-                        </Typography>
-                      ) : (
-                        <Typography variant="caption" color="text.secondary">
-                          —
-                        </Typography>
-                      )}
-                    </TableCell>
-                    <TableCell>{deliberation ? formatTime(deliberation.startTime) : '—'}</TableCell>
-                    <TableCell align="right">
-                      <Button
-                        size="small"
-                        variant="outlined"
-                        endIcon={<OpenInNewIcon />}
-                        target="_blank"
-                        href={`/lems/deliberation/${category}`}
-                        disabled={loading}
-                      >
-                        {t('awards.deliberation.open')}
-                      </Button>
+            <Box sx={{ overflowX: 'auto' }}>
+              <Table size="small">
+                <TableHead>
+                  <TableRow sx={{ backgroundColor: alpha(theme.palette.primary.main, 0.08) }}>
+                    <TableCell sx={{ fontWeight: 600, minWidth: 150 }}>{t('category')}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, minWidth: 120 }}>{t('status')}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, minWidth: 120 }}>{t('picklist')}</TableCell>
+                    <TableCell sx={{ fontWeight: 600, minWidth: 120 }}>{t('start-time')}</TableCell>
+                    <TableCell align="right" sx={{ fontWeight: 600, minWidth: 100 }}>
+                      {t('action')}
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {categoriesWithStatuses.map(({ category, deliberation }, index) => (
+                    <TableRow
+                      key={category}
+                      sx={{
+                        backgroundColor:
+                          index % 2 === 0
+                            ? 'background.paper'
+                            : alpha(theme.palette.action.hover, 0.3),
+                        '&:hover': {
+                          backgroundColor: alpha(theme.palette.primary.main, 0.05)
+                        }
+                      }}
+                    >
+                      <TableCell sx={{ fontWeight: 500 }}>{t(`category-${category}`)}</TableCell>
+                      <TableCell>
+                        {deliberation ? (
+                          <Chip
+                            label={deliberation.status}
+                            color={getDeliberationStatusColor(deliberation.status)}
+                            size="small"
+                            variant="outlined"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        ) : (
+                          <Typography variant="caption" color="text.secondary">
+                            —
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {deliberation ? (
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            {deliberation.picklist.length} / {t('desired-length')}
+                          </Typography>
+                        ) : (
+                          <Typography variant="caption" color="text.secondary">
+                            —
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Typography variant="body2">
+                          {deliberation ? formatTime(deliberation.startTime) : '—'}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Button
+                          size="small"
+                          variant="outlined"
+                          endIcon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
+                          target="_blank"
+                          href={`/lems/deliberation/${category}`}
+                          disabled={loading}
+                          sx={{ whiteSpace: 'nowrap' }}
+                        >
+                          {t('open')}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
           ) : (
-            <Typography variant="body2" color="text.secondary">
-              {t('awards.deliberation.no-deliberations')}
-            </Typography>
+            <Paper
+              sx={{
+                p: 3,
+                textAlign: 'center',
+                backgroundColor: alpha(theme.palette.info.main, 0.05),
+                borderLeft: `4px solid ${theme.palette.info.main}`
+              }}
+            >
+              <Typography variant="body2" color="text.secondary">
+                {t('no-deliberations')}
+              </Typography>
+            </Paper>
           )}
         </CardContent>
       </Card>
 
       {/* Final Deliberation */}
       {finalDeliberation && (
-        <Card>
-          <CardHeader title={t('awards.deliberation.final-deliberation-title')} />
+        <Card sx={{ borderLeft: `4px solid ${theme.palette.warning.main}` }}>
+          <CardHeader
+            title={t('final-deliberation-title')}
+            titleTypographyProps={{ variant: 'h6' }}
+          />
           <CardContent>
             <Grid container spacing={2}>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('awards.deliberation.stage')}
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mb: 0.5 }}
+                  >
+                    {t('stage')}
                   </Typography>
                   <Chip
                     label={finalDeliberation.stage}
                     color={getFinalDeliberationStageColor(finalDeliberation.stage)}
                     size="small"
                     variant="outlined"
-                    sx={{ mt: 0.5 }}
+                    sx={{ fontWeight: 600 }}
                   />
-                </Box>
+                </Paper>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('awards.deliberation.status')}
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.success.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mb: 0.5 }}
+                  >
+                    {t('status')}
                   </Typography>
                   <Chip
                     label={finalDeliberation.status}
                     color={getDeliberationStatusColor(finalDeliberation.status)}
                     size="small"
                     variant="outlined"
-                    sx={{ mt: 0.5 }}
+                    sx={{ fontWeight: 600 }}
                   />
-                </Box>
+                </Paper>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('awards.deliberation.start-time')}
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.info.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mb: 0.5 }}
+                  >
+                    {t('start-time')}
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
                     {formatTime(finalDeliberation.startTime)}
                   </Typography>
-                </Box>
+                </Paper>
               </Grid>
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Box>
-                  <Typography variant="caption" color="text.secondary">
-                    {t('awards.deliberation.completion-time')}
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.info.main, 0.05),
+                    border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ display: 'block', mb: 0.5 }}
+                  >
+                    {t('completion-time')}
                   </Typography>
-                  <Typography variant="body2" sx={{ mt: 0.5 }}>
+                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
                     {formatTime(finalDeliberation.completionTime)}
                   </Typography>
-                </Box>
+                </Paper>
               </Grid>
               <Grid size={{ xs: 12 }}>
                 <Button
                   fullWidth
-                  variant="outlined"
+                  variant="contained"
                   endIcon={<OpenInNewIcon />}
                   target="_blank"
                   href="/lems/deliberation/final"
                   disabled={loading}
+                  sx={{
+                    py: 1.5,
+                    fontWeight: 600,
+                    textTransform: 'none',
+                    fontSize: '1rem'
+                  }}
                 >
-                  {t('awards.deliberation.open-final')}
+                  {t('open-final')}
                 </Button>
               </Grid>
             </Grid>

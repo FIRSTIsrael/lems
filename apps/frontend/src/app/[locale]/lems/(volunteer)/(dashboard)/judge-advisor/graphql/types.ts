@@ -73,21 +73,28 @@ export interface FinalDeliberation {
 }
 
 export interface JudgingData {
+  divisionId: string;
   sessions: JudgingSession[];
-  deliberations?: JudgingDeliberation[];
+  innovation_project?: JudgingDeliberation;
+  robot_design?: JudgingDeliberation;
+  core_values?: JudgingDeliberation;
   finalDeliberation?: FinalDeliberation;
 }
 
 export interface JudgeAdvisorData {
   sessions: JudgingSession[];
-  rooms: Room[];
+  awards: Award[];
+  deliberations: JudgingDeliberation[];
+  finalDeliberation: FinalDeliberation | null;
   sessionLength: number;
-  awards?: Award[];
-  judging?: JudgingData;
 }
 
 export interface QueryData {
-  division?: { id: string; judging: JudgeAdvisorData; awards?: Award[] } | null;
+  division?: {
+    id: string;
+    awards: Award[];
+    judging: JudgingData;
+  } | null;
 }
 
 export interface QueryVars {
