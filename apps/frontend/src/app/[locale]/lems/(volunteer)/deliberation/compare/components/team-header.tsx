@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Chip } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
 import {
@@ -12,6 +13,7 @@ import {
   ResponsiveContainer
 } from 'recharts';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { rubrics } from '@lems/shared/rubrics';
 import { useCompareContext } from '../compare-context';
 import type { Team, RubricFieldValue } from '../graphql/types';
 
@@ -86,21 +88,91 @@ interface CategoryRadarChartProps {
 function CategoryRadarChart({ team, category }: CategoryRadarChartProps) {
   const rubricKey = category.replace('-', '_') as keyof typeof team.rubrics;
   const rubric = team.rubrics[rubricKey];
+  const tSections = useTranslations(`pages.judge.schedule.rubric-sections.${category}`);
+
+  // For core-values, use IP section translations
+  const tIpSections = useTranslations('pages.judge.schedule.rubric-sections.innovation-project');
 
   const data = useMemo(() => {
+    // For core-values, get coreValues fields from IP and RD rubrics grouped by section
+    if (category === 'core-values') {
+      const ipRubric = team.rubrics.innovation_project;
+      const rdRubric = team.rubrics.robot_design;
+
+      if (!ipRubric?.data?.fields && !rdRubric?.data?.fields) return [];
+
+      const ipFields =
+        (ipRubric?.data?.fields as Record<string, { value: number | null; notes?: string }>) || {};
+      const rdFields =
+        (rdRubric?.data?.fields as Record<string, { value: number | null; notes?: string }>) || {};
+
+      // Get coreValues fields from IP and RD schemas, grouped by section
+      const ipSchema = rubrics['innovation-project'];
+      const rdSchema = rubrics['robot-design'];
+
+      // Use the same sections as IP/RD (identify, design, create, iterate, communicate)
+      // and collect coreValues fields from both IP and RD for each section
+      return ipSchema.sections.map(section => {
+        const sectionValues: number[] = [];
+
+        // Get coreValues fields from IP for this section
+        section.fields.forEach(field => {
+          if (field.coreValues && ipFields[field.id]?.value != null) {
+            sectionValues.push(ipFields[field.id].value as number);
+          }
+        });
+
+        // Get coreValues fields from RD for the matching section
+        const rdSection = rdSchema.sections.find(s => s.id === section.id);
+        rdSection?.fields.forEach(field => {
+          if (field.coreValues && rdFields[field.id]?.value != null) {
+            sectionValues.push(rdFields[field.id].value as number);
+          }
+        });
+
+        const avgScore =
+          sectionValues.length > 0
+            ? sectionValues.reduce((sum, val) => sum + val, 0) / sectionValues.length
+            : 0;
+
+        return {
+          field: tIpSections(section.id),
+          score: avgScore
+        };
+      });
+    }
+
+    // For IP/RD, use the rubric schema sections
     if (!rubric?.data?.fields) return [];
 
-    const fields = Object.entries(
-      rubric.data.fields as Record<string, { value: number | null; notes?: string }>
-    )
-      .filter(([, field]) => field.value !== null)
-      .map(([id, field]) => ({
-        field: id.split('-').slice(-2).join(' '),
-        score: field.value || 0
-      }));
+    const categoryKey = category as 'innovation-project' | 'robot-design';
+    const schema = rubrics[categoryKey];
+    if (!schema || !schema.sections || schema.sections.length === 0) return [];
 
-    return fields;
-  }, [rubric]);
+    const fields = rubric.data.fields as Record<string, { value: number | null; notes?: string }>;
+
+    // Group fields by section and calculate averages using the schema
+    return schema.sections.map(
+      (section: { id: string; fields: { id: string; coreValues?: boolean }[] }) => {
+        const sectionFieldIds = section.fields.map((f: { id: string }) => f.id);
+        const sectionValues = sectionFieldIds
+          .map((fieldId: string) => fields[fieldId]?.value)
+          .filter(
+            (value: number | null | undefined) => value !== null && value !== undefined
+          ) as number[];
+
+        const avgScore =
+          sectionValues.length > 0
+            ? sectionValues.reduce((sum, val) => sum + val, 0) / sectionValues.length
+            : 0;
+
+        return {
+          field: tSections(section.id),
+          score: avgScore
+        };
+      }
+    );
+  }, [rubric, category, tSections, tIpSections, team.rubrics]);
 
   const color = useMemo(() => {
     const colors = {
@@ -139,35 +211,82 @@ function AllCategoriesRadarChart({ team }: AllCategoriesRadarChartProps) {
   const { getCategory } = useJudgingCategoryTranslations();
 
   const data = useMemo(() => {
-    const categories = [
-      { key: 'innovation_project', category: 'innovation-project' },
-      { key: 'robot_design', category: 'robot-design' },
-      { key: 'core_values', category: 'core-values' }
-    ];
+    const result: { category: string; score: number }[] = [];
 
-    return categories.map(({ key, category }) => {
-      const rubric = team.rubrics[key as keyof typeof team.rubrics];
-      if (!rubric?.data?.fields) {
-        return { category: getCategory(category), score: 0 };
-      }
-
-      // Calculate average score from all field values
-      const fieldValues = Object.values(
-        rubric.data.fields as Record<string, { value: number | null; notes?: string }>
-      )
+    // Innovation Project average
+    const ipRubric = team.rubrics.innovation_project;
+    if (ipRubric?.data?.fields) {
+      const ipFields = ipRubric.data.fields as Record<
+        string,
+        { value: number | null; notes?: string }
+      >;
+      const ipValues = Object.values(ipFields)
         .filter(field => field.value !== null)
         .map(field => field.value || 0);
+      const ipAvg =
+        ipValues.length > 0 ? ipValues.reduce((sum, val) => sum + val, 0) / ipValues.length : 0;
+      result.push({ category: getCategory('innovation-project'), score: ipAvg });
+    } else {
+      result.push({ category: getCategory('innovation-project'), score: 0 });
+    }
 
-      const avgScore =
-        fieldValues.length > 0
-          ? fieldValues.reduce((sum, val) => sum + val, 0) / fieldValues.length
-          : 0;
+    // Robot Design average
+    const rdRubric = team.rubrics.robot_design;
+    if (rdRubric?.data?.fields) {
+      const rdFields = rdRubric.data.fields as Record<
+        string,
+        { value: number | null; notes?: string }
+      >;
+      const rdValues = Object.values(rdFields)
+        .filter(field => field.value !== null)
+        .map(field => field.value || 0);
+      const rdAvg =
+        rdValues.length > 0 ? rdValues.reduce((sum, val) => sum + val, 0) / rdValues.length : 0;
+      result.push({ category: getCategory('robot-design'), score: rdAvg });
+    } else {
+      result.push({ category: getCategory('robot-design'), score: 0 });
+    }
 
-      return {
-        category: getCategory(category),
-        score: avgScore
-      };
-    });
+    // Core Values average - uses coreValues fields from IP and RD
+    const ipSchema = rubrics['innovation-project'];
+    const rdSchema = rubrics['robot-design'];
+    const cvFieldValues: number[] = [];
+
+    if (ipRubric?.data?.fields) {
+      const ipFields = ipRubric.data.fields as Record<
+        string,
+        { value: number | null; notes?: string }
+      >;
+      ipSchema.sections.forEach(section => {
+        section.fields.forEach(field => {
+          if (field.coreValues && ipFields[field.id]?.value != null) {
+            cvFieldValues.push(ipFields[field.id].value as number);
+          }
+        });
+      });
+    }
+
+    if (rdRubric?.data?.fields) {
+      const rdFields = rdRubric.data.fields as Record<
+        string,
+        { value: number | null; notes?: string }
+      >;
+      rdSchema.sections.forEach(section => {
+        section.fields.forEach(field => {
+          if (field.coreValues && rdFields[field.id]?.value != null) {
+            cvFieldValues.push(rdFields[field.id].value as number);
+          }
+        });
+      });
+    }
+
+    const cvAvg =
+      cvFieldValues.length > 0
+        ? cvFieldValues.reduce((sum, val) => sum + val, 0) / cvFieldValues.length
+        : 0;
+    result.push({ category: getCategory('core-values'), score: cvAvg });
+
+    return result;
   }, [team, getCategory]);
 
   return (

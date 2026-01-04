@@ -104,6 +104,29 @@
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design"
         },
+        "rubric-sections": {
+          "innovation-project": {
+            "identify": "Identify",
+            "design": "Design", 
+            "create": "Create",
+            "iterate": "Iterate",
+            "communicate": "Communicate"
+          },
+          "robot-design": {
+            "identify": "Identify",
+            "design": "Design",
+            "create": "Create", 
+            "iterate": "Iterate",
+            "communicate": "Communicate"
+          },
+          "core-values": {
+            "discovery": "Discovery",
+            "innovation": "Innovation",
+            "impact": "Impact",
+            "inclusion": "Inclusion",
+            "teamwork": "Teamwork"
+          }
+        },
         "status-glossary": {
           "title": "Rubric Status Guide",
           "aria-label": "Show rubric status guide",

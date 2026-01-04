@@ -104,6 +104,29 @@
           "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
         },
+        "rubric-sections": {
+          "innovation-project": {
+            "identify": "זיהוי",
+            "design": "תכנון",
+            "create": "יצירה",
+            "iterate": "חזרה ושינוי",
+            "communicate": "הצגה"
+          },
+          "robot-design": {
+            "identify": "זיהוי",
+            "design": "תכנון",
+            "create": "יצירת",
+            "iterate": "חזרה ושינוי",
+            "communicate": "הצגה"
+          },
+          "core-values": {
+            "discovery": "גילוי",
+            "innovation": "יצירתיות",
+            "impact": "השפעה",
+            "inclusion": "הכלה",
+            "teamwork": "עבודת צוות"
+          }
+        },
         "status-glossary": {
           "title": "מדריך סטטוס מחוונים",
           "aria-label": "הצג מדריך סטטוס מחוונים",
