@@ -11,7 +11,7 @@ interface FeedbackProps {
 }
 
 export function Feedback({ team }: FeedbackProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { category } = useCompareContext();
 
   const feedbacks = useMemo(() => {

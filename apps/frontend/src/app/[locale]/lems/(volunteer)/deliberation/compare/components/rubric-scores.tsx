@@ -11,7 +11,7 @@ interface RubricScoresProps {
 }
 
 export function RubricScores({ team }: RubricScoresProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { fieldComparisons, category } = useCompareContext();
 
   const fields = useMemo(() => {

@@ -11,7 +11,7 @@ interface ScoreSummaryProps {
 }
 
 export function ScoreSummary({ team }: ScoreSummaryProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { teamComparisons } = useCompareContext();
 
   const comparison = useMemo(() => {

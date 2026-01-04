@@ -6,7 +6,7 @@ import { CompareArrows } from '@mui/icons-material';
 import Link from 'next/link';
 
 export function EmptyState() {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
 
   return (
     <Box sx={{ textAlign: 'center', py: 8 }}>

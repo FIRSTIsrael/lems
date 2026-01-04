@@ -20,7 +20,7 @@ const CORE_VALUES_AWARDS = [
 ] as const;
 
 export function Nominations({ team }: NominationsProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { category } = useCompareContext();
 
   const nominations = useMemo(() => {

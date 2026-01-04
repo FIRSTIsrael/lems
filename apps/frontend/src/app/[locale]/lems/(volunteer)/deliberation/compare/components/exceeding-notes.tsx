@@ -11,7 +11,7 @@ interface ExceedingNotesProps {
 }
 
 export function ExceedingNotes({ team }: ExceedingNotesProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { category } = useCompareContext();
 
   const exceedingNotes = useMemo(() => {

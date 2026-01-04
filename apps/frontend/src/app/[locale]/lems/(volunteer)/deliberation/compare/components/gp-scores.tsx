@@ -9,7 +9,7 @@ interface GpScoresProps {
 }
 
 export function GpScores({ team }: GpScoresProps) {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
 
   const scoresheets = team.scoresheets.filter(s => s.data?.gp?.value);
 

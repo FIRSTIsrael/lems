@@ -78,11 +78,14 @@ export interface Award {
 }
 
 export interface CompareTeamsData {
-  teams: Team[];
-  awards: Award[];
+  division: {
+    id: string;
+    teams: Team[];
+    awards: Award[];
+  };
 }
 
 export interface CompareTeamsVars {
-  teamIds: string[];
+  teamSlugs: string[];
   divisionId: string;
 }

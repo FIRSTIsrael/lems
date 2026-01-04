@@ -22,14 +22,14 @@ import {
 } from './components';
 
 export default function ComparePage() {
-  const t = useTranslations('pages.deliberation.compare');
+  const t = useTranslations('layouts.deliberation.compare');
   const { currentDivision } = useEvent();
   const searchParams = useSearchParams();
 
   // Parse URL parameters
-  const teamIdsParam = searchParams.get('teams');
+  const teamSlugsParam = searchParams.get('teams');
   const categoryParam = searchParams.get('category') as JudgingCategory | null;
-  const teamIds = teamIdsParam?.split(',').filter(Boolean).slice(0, 6) ?? [];
+  const teamSlugs = teamSlugsParam?.split(',').filter(Boolean).slice(0, 6) ?? [];
 
   // Query teams data
   const { data, loading, error } = usePageData<
@@ -39,7 +39,7 @@ export default function ComparePage() {
   >(
     GET_COMPARE_TEAMS,
     {
-      teamIds,
+      teamSlugs,
       divisionId: currentDivision.id
     },
     undefined,
@@ -48,7 +48,7 @@ export default function ComparePage() {
   );
 
   // Empty state - no teams selected
-  if (teamIds.length === 0 || loading) {
+  if (teamSlugs.length === 0 || loading) {
     return (
       <>
         <PageHeader title={t('title')} />
@@ -85,7 +85,7 @@ export default function ComparePage() {
   }
 
   // No teams found
-  if (!data?.teams || data.teams.length === 0) {
+  if (!data?.division?.teams || data.division.teams.length === 0) {
     return (
       <>
         <PageHeader title={t('title')} />
@@ -96,8 +96,8 @@ export default function ComparePage() {
     );
   }
 
-  const teams = data.teams;
-  const awards = data.awards ?? [];
+  const teams = data.division.teams;
+  const awards = data.division.awards ?? [];
 
   return (
     <>
