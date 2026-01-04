@@ -90,16 +90,16 @@ function CategoryRadarChart({ team, category }: CategoryRadarChartProps) {
   const data = useMemo(() => {
     if (!rubric?.data?.fields) return [];
 
-    // Group fields by section (you would need the schema to properly group)
-    // For now, we'll show individual fields
-    const fields = Object.entries(rubric.data.fields)
+    const fields = Object.entries(
+      rubric.data.fields as Record<string, { value: number | null; notes?: string }>
+    )
       .filter(([, field]) => field.value !== null)
-      .slice(0, 8); // Limit to 8 for readability
+      .map(([id, field]) => ({
+        field: id.split('-').slice(-2).join(' '),
+        score: field.value || 0
+      }));
 
-    return fields.map(([id, field]) => ({
-      field: id.split('-').pop() || id, // Use last part of ID as label
-      score: field.value || 0
-    }));
+    return fields;
   }, [rubric]);
 
   const color = useMemo(() => {
@@ -123,7 +123,7 @@ function CategoryRadarChart({ team, category }: CategoryRadarChartProps) {
     <ResponsiveContainer width="100%" height={200}>
       <RadarChart data={data}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="field" tick={{ fontSize: 10 }} />
+        <PolarAngleAxis dataKey="field" tick={{ fontSize: 8 }} />
         <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 10 }} />
         <Radar dataKey="score" stroke={color} fill={color} fillOpacity={0.6} />
       </RadarChart>
@@ -147,14 +147,21 @@ function AllCategoriesRadarChart({ team }: AllCategoriesRadarChartProps) {
 
     return categories.map(({ key, category }) => {
       const rubric = team.rubrics[key as keyof typeof team.rubrics];
-      if (!rubric?.data?.fields) return { category: getCategory(category), score: 0 };
+      if (!rubric?.data?.fields) {
+        return { category: getCategory(category), score: 0 };
+      }
 
-      const scores = Object.values(rubric.data.fields)
+      // Calculate average score from all field values
+      const fieldValues = Object.values(
+        rubric.data.fields as Record<string, { value: number | null; notes?: string }>
+      )
         .filter(field => field.value !== null)
         .map(field => field.value || 0);
 
       const avgScore =
-        scores.length > 0 ? scores.reduce((a: number, b) => a + b, 0) / scores.length : 0;
+        fieldValues.length > 0
+          ? fieldValues.reduce((sum, val) => sum + val, 0) / fieldValues.length
+          : 0;
 
       return {
         category: getCategory(category),

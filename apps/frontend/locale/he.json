@@ -735,7 +735,9 @@
           "judges-award": "פרס השופטים",
           "motivate": "פרס המניע",
           "impact": "פרס ההשפעה"
-        }
+        },
+        "filter-by-category": "סינון לפי קטגוריה",
+        "all-categories": "כל הקטגוריות"
       }
     }
   }

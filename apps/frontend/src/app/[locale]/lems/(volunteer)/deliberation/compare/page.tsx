@@ -18,7 +18,8 @@ import {
   ExceedingNotes,
   Nominations,
   GpScores,
-  Feedback
+  Feedback,
+  CategoryFilter
 } from './components';
 
 export default function ComparePage() {
@@ -104,6 +105,7 @@ export default function ComparePage() {
       <PageHeader title={t('title')} />
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <CompareProvider teams={teams} awards={awards} category={categoryParam ?? undefined}>
+          <CategoryFilter currentCategory={categoryParam ?? undefined} />
           <Grid container spacing={3}>
             {teams.map(team => (
               <Grid key={team.id} size={{ xs: 12, sm: 6, md: 4, lg: teams.length > 3 ? 2 : 4 }}>

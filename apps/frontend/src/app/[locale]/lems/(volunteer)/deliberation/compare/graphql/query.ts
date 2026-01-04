@@ -39,16 +39,38 @@ export const GET_COMPARE_TEAMS: TypedDocumentNode<CompareTeamsData, CompareTeams
             id
             category
             status
+            data {
+              fields
+              feedback {
+                greatJob
+                thinkAbout
+              }
+            }
           }
           robot_design {
             id
             category
             status
+            data {
+              fields
+              feedback {
+                greatJob
+                thinkAbout
+              }
+            }
           }
           core_values {
             id
             category
             status
+            data {
+              fields
+              awards
+              feedback {
+                greatJob
+                thinkAbout
+              }
+            }
           }
         }
       }

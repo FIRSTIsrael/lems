@@ -735,7 +735,9 @@
           "judges-award": "Judges Award",
           "motivate": "Motivate Award",
           "impact": "Impact Award"
-        }
+        },
+        "filter-by-category": "Filter by Category",
+        "all-categories": "All Categories"
       }
     }
   }

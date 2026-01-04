@@ -6,3 +6,4 @@ export { ExceedingNotes } from './exceeding-notes';
 export { Nominations } from './nominations';
 export { GpScores } from './gp-scores';
 export { Feedback } from './feedback';
+export { CategoryFilter } from './category-filter';
