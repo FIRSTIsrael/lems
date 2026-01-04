@@ -12,6 +12,7 @@ interface FeedbackProps {
 
 export function Feedback({ team }: FeedbackProps) {
   const t = useTranslations('layouts.deliberation.compare');
+  const tRubric = useTranslations('pages.judge.schedule.rubric-labels');
   const { category } = useCompareContext();
 
   const feedbacks = useMemo(() => {
@@ -33,7 +34,7 @@ export function Feedback({ team }: FeedbackProps) {
         const { greatJob, thinkAbout } = rubric.data.feedback;
         if (greatJob || thinkAbout) {
           result.push({
-            category: cat,
+            category: tRubric(cat as 'innovation-project' | 'robot-design' | 'core-values'),
             greatJob,
             thinkAbout
           });
@@ -42,7 +43,7 @@ export function Feedback({ team }: FeedbackProps) {
     });
 
     return result;
-  }, [team, category]);
+  }, [team, category, tRubric]);
 
   if (feedbacks.length === 0) {
     return null;
@@ -56,7 +57,7 @@ export function Feedback({ team }: FeedbackProps) {
       {feedbacks.map((feedback, index) => (
         <Box key={index}>
           <Typography variant="caption" color="text.secondary" fontWeight={600}>
-            {feedback.category.toUpperCase()}
+            {feedback.category}
           </Typography>
           <Grid container spacing={1} sx={{ mt: 0.5 }}>
             {feedback.greatJob && (

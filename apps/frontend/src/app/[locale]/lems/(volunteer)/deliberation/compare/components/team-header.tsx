@@ -23,6 +23,7 @@ interface TeamHeaderProps {
 
 export function TeamHeader({ team }: TeamHeaderProps) {
   const { category } = useCompareContext();
+  const t = useTranslations('layouts.deliberation.compare');
 
   // Calculate average score
   const averageScore = useMemo(() => {
@@ -62,7 +63,7 @@ export function TeamHeader({ team }: TeamHeaderProps) {
           </Typography>
         )}
         <Chip
-          label={`Avg: ${averageScore.toFixed(2)}`}
+          label={`${t('average')}: ${averageScore.toFixed(2)}`}
           size="small"
           color={team.arrived ? 'success' : 'default'}
           sx={{ mt: 1 }}
