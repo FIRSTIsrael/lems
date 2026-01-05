@@ -91,7 +91,6 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           startTime
           completionTime
           champions
-          robotPerformance
           innovationProject
           robotDesign
           coreValues
