@@ -50,44 +50,55 @@ export function TeamHeader({ team }: TeamHeaderProps) {
 
   return (
     <Stack spacing={2}>
-      <Box sx={{ position: 'relative' }}>
+      <Box
+        sx={{
+          position: 'relative',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: 2,
+          direction: 'ltr'
+        }}
+      >
+        <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1 }}>
+          <Typography variant="h6" fontWeight={600}>
+            {team.name} - #{team.number}
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {team.affiliation}
+          </Typography>
+          {/*
+          {team.judgingSession?.room && (
+            <Typography variant="body2" color="text.secondary">
+              {team.judgingSession.room.name}
+            </Typography>
+          )} */}
+          <Chip
+            label={`${t('average')}: ${averageScore.toFixed(2)}`}
+            size="small"
+            color={team.arrived ? 'success' : 'default'}
+            sx={{ mt: 1 }}
+          />
+        </Box>
+
+        <Box sx={{ flex: 1, minWidth: 0, order: 2 }}>
+          {category ? (
+            <CategoryRadarChart team={team} category={category} />
+          ) : (
+            <AllCategoriesRadarChart team={team} />
+          )}
+        </Box>
+
         <Avatar
           src={team.logoUrl ?? '/assets/default-avatar.svg'}
           alt={`${team.name} logo`}
           sx={{
-            position: 'absolute',
-            top: 0,
-            right: 0,
             width: 75,
             height: 75,
-            objectFit: 'cover'
+            objectFit: 'cover',
+            flexShrink: 0,
+            order: 3
           }}
         />
-        <Typography variant="h6" fontWeight={600}>
-          #{team.number} - {team.name}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {team.affiliation}
-        </Typography>
-        {team.judgingSession?.room && (
-          <Typography variant="body2" color="text.secondary">
-            {team.judgingSession.room.name}
-          </Typography>
-        )}
-        <Chip
-          label={`${t('average')}: ${averageScore.toFixed(2)}`}
-          size="small"
-          color={team.arrived ? 'success' : 'default'}
-          sx={{ mt: 1 }}
-        />
-      </Box>
-
-      <Box>
-        {category ? (
-          <CategoryRadarChart team={team} category={category} />
-        ) : (
-          <AllCategoriesRadarChart team={team} />
-        )}
       </Box>
     </Stack>
   );
@@ -205,11 +216,11 @@ function CategoryRadarChart({ team, category }: CategoryRadarChartProps) {
   }
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <RadarChart data={data}>
+    <ResponsiveContainer width="100%" height={250}>
+      <RadarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="field" tick={{ fontSize: 8 }} />
-        <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 10 }} />
+        <PolarAngleAxis dataKey="field" tick={{ fontSize: 11 }} />
+        <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 12 }} />
         <Radar dataKey="score" stroke={color} fill={color} fillOpacity={0.6} />
       </RadarChart>
     </ResponsiveContainer>
@@ -303,11 +314,11 @@ function AllCategoriesRadarChart({ team }: AllCategoriesRadarChartProps) {
   }, [team, getCategory]);
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
-      <RadarChart data={data}>
+    <ResponsiveContainer width="100%" height={250}>
+      <RadarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="category" tick={{ fontSize: 10 }} />
-        <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 10 }} />
+        <PolarAngleAxis dataKey="category" tick={{ fontSize: 14 }} />
+        <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 12 }} />
         <Radar dataKey="score" stroke={blue[300]} fill={blue[300]} fillOpacity={0.6} />
       </RadarChart>
     </ResponsiveContainer>

@@ -108,7 +108,7 @@ export default function ComparePage() {
           <CategoryFilter currentCategory={categoryParam ?? undefined} />
           <Grid container spacing={3}>
             {teams.map(team => (
-              <Grid key={team.id} size={{ xs: 12, sm: 6, md: 4, lg: teams.length > 3 ? 2 : 4 }}>
+              <Grid key={team.id} size={{ xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }}>
                 <Paper
                   sx={{
                     p: 2,
