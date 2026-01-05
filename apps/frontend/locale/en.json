@@ -107,7 +107,7 @@
         "rubric-sections": {
           "innovation-project": {
             "identify": "Identify",
-            "design": "Design", 
+            "design": "Design",
             "create": "Create",
             "iterate": "Iterate",
             "communicate": "Communicate"
@@ -115,7 +115,7 @@
           "robot-design": {
             "identify": "Identify",
             "design": "Design",
-            "create": "Create", 
+            "create": "Create",
             "iterate": "Iterate",
             "communicate": "Communicate"
           },
@@ -760,7 +760,7 @@
       "error-not-authorized": "Unauthorized to access deliberation",
       "compare": {
         "title": "Compare Teams",
-        "no-teams-selected": "No Teams Selected",
+        "no-teams-selected": "No teams selected",
         "no-teams-description": "Select teams from the deliberation page to compare their performance.",
         "back-to-deliberation": "Back to Deliberation",
         "error-loading-teams": "Failed to load team data. Please try again.",
@@ -771,7 +771,7 @@
         "losses": "Losses",
         "rubric-scores": "Rubric Scores",
         "no-rubric-data": "No rubric data available",
-        "exceeding-notes": "Exceeding Notes",
+        "exceeding-notes": "How did the team exceed? ",
         "nominations": "Award Nominations",
         "gp-scores": "Gracious Professionalism",
         "round": "Round",
@@ -788,7 +788,13 @@
         },
         "filter-by-category": "Filter by Category",
         "all-categories": "All Categories",
-        "judging-room": "Judging Room"
+        "judging-room": "Judging Room",
+        "manage-teams": "Manage Teams",
+        "add-team": "Add Team",
+        "search-teams": "Search teams...",
+        "select-teams-to-compare": "Select teams to compare",
+        "current-teams": "Current Teams",
+        "done": "Done"
       }
     }
   }

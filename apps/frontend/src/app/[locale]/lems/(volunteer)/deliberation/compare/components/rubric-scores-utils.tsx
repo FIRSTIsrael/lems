@@ -6,7 +6,7 @@ export interface RubricField {
   fieldId: string;
   category: string;
   value: number | null;
-  color: 'success' | 'error' | 'warning' | 'default';
+  color: 'success' | 'error' | 'default';
 }
 
 export type FieldComparisons = Map<
@@ -23,7 +23,7 @@ export function getFieldComparisonColor(
   teamId: string,
   fieldComparisons: FieldComparisons,
   prefix?: string
-): 'success' | 'error' | 'warning' | 'default' {
+): 'success' | 'error' | 'default' {
   const comparisonKey = prefix ? `${prefix}-${fieldId}` : fieldId;
   const comparison = fieldComparisons.get(comparisonKey);
 
@@ -36,7 +36,7 @@ export function getFieldComparisonColor(
 
   if (teamValue === comparison.max) return 'success';
   if (teamValue === comparison.min) return 'error';
-  return 'warning';
+  return 'default';
 }
 
 export function extractCoreValuesFields(

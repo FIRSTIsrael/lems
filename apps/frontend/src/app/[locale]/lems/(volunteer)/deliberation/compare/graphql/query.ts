@@ -1,5 +1,19 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { CompareTeamsData, CompareTeamsVars } from './types';
+import type { CompareTeamsData, CompareTeamsVars, DivisionTeamsData, DivisionTeamsVars } from './types';
+
+export const GET_DIVISION_TEAMS: TypedDocumentNode<DivisionTeamsData, DivisionTeamsVars> = gql`
+  query GetDivisionTeams($divisionId: String!) {
+    division(id: $divisionId) {
+      id
+      teams {
+        id
+        number
+        name
+        slug
+      }
+    }
+  }
+`;
 
 export const GET_COMPARE_TEAMS: TypedDocumentNode<CompareTeamsData, CompareTeamsVars> = gql`
   query GetCompareTeams($teamSlugs: [String!]!, $divisionId: String!) {

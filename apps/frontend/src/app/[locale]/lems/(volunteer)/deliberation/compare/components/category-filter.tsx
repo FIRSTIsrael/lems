@@ -39,7 +39,8 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
           color={!currentCategory ? 'primary' : 'default'}
           onClick={() => handleCategoryChange()}
           clickable
-          size="small"
+          size="medium"
+          sx={{ fontSize: '0.9rem', height: 36 }}
         />
         {CATEGORIES.map(category => (
           <Chip
@@ -49,7 +50,8 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
             color={currentCategory === category ? 'primary' : 'default'}
             onClick={() => handleCategoryChange(category)}
             clickable
-            size="small"
+            size="medium"
+            sx={{ fontSize: '0.9rem', height: 36 }}
           />
         ))}
       </Stack>

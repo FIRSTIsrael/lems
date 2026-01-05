@@ -19,7 +19,8 @@ import {
   Nominations,
   GpScores,
   Feedback,
-  CategoryFilter
+  CategoryFilter,
+  TeamSelector
 } from './components';
 
 export default function ComparePage() {
@@ -103,7 +104,19 @@ export default function ComparePage() {
   return (
     <>
       <PageHeader title={t('title')}>
-        <CategoryFilter currentCategory={categoryParam ?? undefined} compact />
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            width: '100%'
+          }}
+        >
+          <TeamSelector currentTeams={teamSlugs} compact />
+          <CategoryFilter currentCategory={categoryParam ?? undefined} compact />
+        </Box>
       </PageHeader>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <CompareProvider teams={teams} awards={awards} category={categoryParam ?? undefined}>

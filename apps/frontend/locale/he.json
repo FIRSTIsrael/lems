@@ -771,7 +771,7 @@
         "losses": "הפסדים",
         "rubric-scores": "ניקוד המחוון",
         "no-rubric-data": "אין מידע זמין על המחוונים",
-        "exceeding-notes": "הערות מעבר לציפייה",
+        "exceeding-notes": "כיצד הקבוצה הצטיינה?",
         "nominations": "מועמדויות לפרסים",
         "gp-scores": "מקצועיות אדיבה",
         "round": "מקצה",
@@ -788,7 +788,13 @@
         },
         "filter-by-category": "סינון לפי קטגוריה",
         "all-categories": "כל הקטגוריות",
-        "judging-room": "חדר"
+        "judging-room": "חדר שיפוט",
+        "manage-teams": "ניהול קבוצות",
+        "add-team": "הוסף קבוצה",
+        "search-teams": "חפש קבוצות...",
+        "select-teams-to-compare": "בחר קבוצות להשוואה",
+        "current-teams": "קבוצות נוכחיות",
+        "done": "סיום"
       }
     }
   }
