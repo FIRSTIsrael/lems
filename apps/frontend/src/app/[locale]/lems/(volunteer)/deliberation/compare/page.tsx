@@ -2,7 +2,7 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Container, CircularProgress, Box, Paper, Alert, Grid } from '@mui/material';
+import { Container, Alert, Box, Grid, Card, Paper, CircularProgress } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../../(dashboard)/components/page-header';
@@ -49,7 +49,6 @@ export default function ComparePage() {
     { refetchIntervalMs: 0 }
   );
 
-  // Empty state - no teams selected
   if (teamSlugs.length === 0 || loading) {
     return (
       <>
@@ -74,7 +73,6 @@ export default function ComparePage() {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <>
@@ -86,7 +84,6 @@ export default function ComparePage() {
     );
   }
 
-  // No teams found
   if (!data?.division?.teams || data.division.teams.length === 0) {
     return (
       <>
@@ -114,8 +111,24 @@ export default function ComparePage() {
             width: '100%'
           }}
         >
-          <TeamSelector currentTeams={teamSlugs} compact />
-          <CategoryFilter currentCategory={categoryParam ?? undefined} compact />
+          <Card
+            variant="outlined"
+            sx={{
+              p: 1.5,
+              borderRadius: 2
+            }}
+          >
+            <TeamSelector currentTeams={teamSlugs} compact />
+          </Card>
+          <Card
+            variant="outlined"
+            sx={{
+              p: 1.5,
+              borderRadius: 2
+            }}
+          >
+            <CategoryFilter currentCategory={categoryParam ?? undefined} compact />
+          </Card>
         </Box>
       </PageHeader>
       <Container maxWidth="xl" sx={{ py: 4 }}>

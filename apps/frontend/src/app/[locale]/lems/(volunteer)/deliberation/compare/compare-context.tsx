@@ -4,10 +4,11 @@ import { createContext, useContext, useMemo, ReactNode } from 'react';
 import { JudgingCategory } from '@lems/types/judging';
 import { inferCoreValuesFields } from '@lems/shared/rubrics';
 import type { Team, Rubric, RubricFieldValue, Award } from './graphql/types';
+import { getFieldComparisonColor } from './components/rubric-scores-utils';
 
 export interface FieldComparison {
   fieldId: string;
-  values: Map<string, number>; // teamId -> score
+  values: Map<string, number>;
   min: number;
   max: number;
 }
@@ -64,7 +65,6 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       });
     });
 
-    // Infer Core Values fields from IP and RD rubrics if CV is being compared
     const coreValuesFields = new Map<string, RubricFieldValue>();
     if (!category || category === 'core-values') {
       teams.forEach(team => {
@@ -79,18 +79,15 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       });
     }
 
-    // Calculate field comparisons
     const fieldComparisons = new Map<string, FieldComparison>();
     const allFields = new Set<string>();
 
-    // Collect all field IDs
     rubricsToCompare.forEach(rubric => {
       if (rubric.data?.fields) {
         Object.keys(rubric.data.fields).forEach(fieldId => allFields.add(fieldId));
       }
     });
 
-    // Calculate min/max for each field
     allFields.forEach(fieldId => {
       const values = new Map<string, number>();
       let min = Infinity;
@@ -99,7 +96,6 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       teams.forEach(team => {
         let fieldValue: number | null = null;
 
-        // Try to find the field in the appropriate rubric
         categories.forEach(cat => {
           const rubric = team.rubrics[
             cat.replace('-', '_') as keyof typeof team.rubrics
@@ -121,20 +117,17 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       }
     });
 
-    // Calculate W/T/L for each team
     const teamComparisons = new Map<string, TeamComparison>();
     teams.forEach(team => {
       let wins = 0;
       let ties = 0;
       let losses = 0;
 
-      fieldComparisons.forEach(comparison => {
-        const teamValue = comparison.values.get(team.id);
-        if (teamValue === undefined) return;
-
-        if (teamValue === comparison.max && comparison.max > comparison.min) {
+      fieldComparisons.forEach((_, fieldId) => {
+        const color = getFieldComparisonColor(fieldId, team.id, fieldComparisons);
+        if (color === 'success') {
           wins++;
-        } else if (teamValue === comparison.min && comparison.max > comparison.min) {
+        } else if (color === 'error') {
           losses++;
         } else {
           ties++;

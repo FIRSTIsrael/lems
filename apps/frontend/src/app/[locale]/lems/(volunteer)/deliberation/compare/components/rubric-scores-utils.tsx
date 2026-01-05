@@ -34,8 +34,19 @@ export function getFieldComparisonColor(
     return 'default';
   }
 
-  if (teamValue === comparison.max) return 'success';
-  if (teamValue === comparison.min) return 'error';
+  // Count how many teams have the max/min value
+  const values = Array.from(comparison.values.values());
+  const teamsWithMax = values.filter(v => v === comparison.max).length;
+  const teamsWithMin = values.filter(v => v === comparison.min).length;
+
+  // Only count as win if this team is the ONLY one with max value AND max > min
+  if (teamValue === comparison.max && comparison.max > comparison.min && teamsWithMax === 1) {
+    return 'success';
+  }
+  // Only count as loss if this team is the ONLY one with min value AND max > min
+  if (teamValue === comparison.min && comparison.max > comparison.min && teamsWithMin === 1) {
+    return 'error';
+  }
   return 'default';
 }
 

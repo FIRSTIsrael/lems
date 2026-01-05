@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
 import { useCompareContext } from '../compare-context';
-import { getCategoryColor, getCategoryBgColor } from './rubric-scores-utils';
 import type { Team } from '../graphql/types';
+import { getCategoryColor, getCategoryBgColor } from './rubric-scores-utils';
 
 interface ExceedingNotesProps {
   team: Team;

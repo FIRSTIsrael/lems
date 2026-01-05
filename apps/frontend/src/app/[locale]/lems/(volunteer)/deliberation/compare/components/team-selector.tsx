@@ -1,22 +1,9 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import {
-  Box,
-  Button,
-  Chip,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Stack,
-  Typography,
-  TextField,
-  Autocomplete
-} from '@mui/material';
-import { Add as AddIcon, Close as CloseIcon } from '@mui/icons-material';
+import { Box, Chip, Stack, Typography, TextField, Autocomplete } from '@mui/material';
+import { Close as CloseIcon } from '@mui/icons-material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { GET_DIVISION_TEAMS } from '../graphql';
@@ -32,9 +19,7 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentDivision } = useEvent();
-  const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Get all teams in the division for selection
   const { data: divisionData } = usePageData<
     DivisionTeamsData,
     DivisionTeamsVars,
@@ -73,16 +58,26 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
   if (compact) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-        <Button
-          variant="outlined"
-          size="medium"
-          startIcon={<AddIcon />}
-          onClick={() => setDialogOpen(true)}
+        <Autocomplete
+          options={availableTeams}
+          getOptionLabel={team => `#${team.number} - ${team.name}`}
+          renderInput={params => (
+            <TextField
+              {...params}
+              label={t('add-team')}
+              placeholder={t('search-teams')}
+              size="small"
+              sx={{ minWidth: 200 }}
+            />
+          )}
+          onChange={(_, team) => {
+            if (team) {
+              addTeam(team.slug);
+            }
+          }}
           disabled={currentTeams.length >= 6}
-          sx={{ fontSize: '0.9rem', height: 36 }}
-        >
-          {t('manage-teams')}
-        </Button>
+          value={null}
+        />
 
         {currentTeamObjects.map(team => (
           <Chip
@@ -96,56 +91,6 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
             sx={{ fontSize: '0.9rem', height: 36 }}
           />
         ))}
-
-        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
-          <DialogTitle>{t('manage-teams')}</DialogTitle>
-          <DialogContent>
-            <Stack spacing={2} sx={{ mt: 1 }}>
-              <Typography variant="body2" color="text.secondary">
-                {t('select-teams-to-compare')} ({currentTeams.length}/6)
-              </Typography>
-
-              <Autocomplete
-                options={availableTeams}
-                getOptionLabel={team => `#${team.number} - ${team.name}`}
-                renderInput={params => (
-                  <TextField {...params} label={t('add-team')} placeholder={t('search-teams')} />
-                )}
-                onChange={(_, team) => {
-                  if (team) {
-                    addTeam(team.slug);
-                  }
-                }}
-                disabled={currentTeams.length >= 6}
-              />
-
-              <Box>
-                <Typography variant="subtitle2" sx={{ mb: 1 }}>
-                  {t('current-teams')}:
-                </Typography>
-                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  {currentTeamObjects.map(team => (
-                    <Chip
-                      key={team.slug}
-                      label={`#${team.number} - ${team.name}`}
-                      onDelete={() => removeTeam(team.slug)}
-                      deleteIcon={<CloseIcon />}
-                      color="primary"
-                    />
-                  ))}
-                  {currentTeams.length === 0 && (
-                    <Typography variant="body2" color="text.secondary">
-                      {t('no-teams-selected')}
-                    </Typography>
-                  )}
-                </Stack>
-              </Box>
-            </Stack>
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={() => setDialogOpen(false)}>{t('done')}</Button>
-          </DialogActions>
-        </Dialog>
       </Box>
     );
   }
@@ -155,54 +100,44 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
       <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
         {t('manage-teams')}
       </Typography>
-      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap alignItems="center">
-        <Button
-          variant="outlined"
-          startIcon={<AddIcon />}
-          onClick={() => setDialogOpen(true)}
+      <Stack spacing={2}>
+        <Autocomplete
+          options={availableTeams}
+          getOptionLabel={team => `#${team.number} - ${team.name}`}
+          renderInput={params => (
+            <TextField {...params} label={t('add-team')} placeholder={t('search-teams')} />
+          )}
+          onChange={(_, team) => {
+            if (team) {
+              addTeam(team.slug);
+            }
+          }}
           disabled={currentTeams.length >= 6}
-        >
-          {t('add-team')}
-        </Button>
+          value={null}
+        />
 
-        {currentTeamObjects.map(team => (
-          <Chip
-            key={team.slug}
-            label={`#${team.number} - ${team.name}`}
-            onDelete={() => removeTeam(team.slug)}
-            deleteIcon={<CloseIcon />}
-            color="primary"
-          />
-        ))}
-      </Stack>
-
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} maxWidth="sm" fullWidth>
-        <DialogTitle>{t('manage-teams')}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={{ mt: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              {t('select-teams-to-compare')} ({currentTeams.length}/6)
-            </Typography>
-
-            <Autocomplete
-              options={availableTeams}
-              getOptionLabel={team => `#${team.number} - ${team.name}`}
-              renderInput={params => (
-                <TextField {...params} label={t('add-team')} placeholder={t('search-teams')} />
-              )}
-              onChange={(_, team) => {
-                if (team) {
-                  addTeam(team.slug);
-                }
-              }}
-              disabled={currentTeams.length >= 6}
-            />
+        <Box>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+            {t('select-teams-to-compare')} ({currentTeams.length}/6)
+          </Typography>
+          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+            {currentTeamObjects.map(team => (
+              <Chip
+                key={team.slug}
+                label={`#${team.number} - ${team.name}`}
+                onDelete={() => removeTeam(team.slug)}
+                deleteIcon={<CloseIcon />}
+                color="primary"
+              />
+            ))}
+            {currentTeams.length === 0 && (
+              <Typography variant="body2" color="text.secondary">
+                {t('no-teams-selected')}
+              </Typography>
+            )}
           </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)}>{t('done')}</Button>
-        </DialogActions>
-      </Dialog>
+        </Box>
+      </Stack>
     </Box>
   );
 }
