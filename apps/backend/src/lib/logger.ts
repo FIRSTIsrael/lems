@@ -1,7 +1,9 @@
-// import * as path from 'path';
+import * as path from 'path';
 import pino from 'pino';
+import 'pino-pretty';
+import 'pino-roll';
 
-// const logsDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
+const logsDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
 
 function getHumanReadableTime(): string {
   const now = new Date();
@@ -19,17 +21,17 @@ function humanReadableTimeFunction(): string {
   return `,"time":"${getHumanReadableTime()}"`;
 }
 
-// const fileTransport = pino.transport({
-//   target: 'pino-roll',
-//   options: {
-//     file: path.join(logsDir, 'app'),
-//     size: '100m',
-//     frequency: 'daily',
-//     mkdir: true,
-//     extension: '.log',
-//     dateFormat: 'yyyy-MM-dd'
-//   }
-// });
+const fileTransport = pino.transport({
+  target: 'pino-roll',
+  options: {
+    file: path.join(logsDir, 'app'),
+    size: '100m',
+    frequency: 'daily',
+    mkdir: true,
+    extension: '.log',
+    dateFormat: 'yyyy-MM-dd'
+  }
+});
 
 const consoleTransport = pino.transport({
   target: 'pino-pretty',
@@ -52,7 +54,7 @@ export const logger = pino(
     }
   },
   pino.multistream([
-    // { level: 'info', stream: fileTransport },
+    { level: 'info', stream: fileTransport },
     { level: 'info', stream: consoleTransport }
   ])
 );
