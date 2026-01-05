@@ -35,14 +35,17 @@ export function SearchTeamSection({
       <Autocomplete
         options={availableTeams}
         getOptionLabel={team =>
-          `Team #${team.number} - ${team.name} (${team.affiliation}, ${team.city})`
+          t('team-option-label', {
+            number: team.number,
+            name: team.name,
+            affiliation: team.affiliation,
+            city: team.city
+          })
         }
         value={selectedTeam}
         onChange={(_, newValue) => onTeamSelect(newValue)}
         disabled={loading || availableTeams.length === 0}
-        noOptionsText={
-          availableTeams.length === 0 ? t('all-teams-disqualified') : t('no-teams-found')
-        }
+        noOptionsText={t('no-teams-found')}
         renderInput={params => (
           <TextField
             {...params}
@@ -81,7 +84,7 @@ export function SearchTeamSection({
             <Stack spacing={0.5} width="100%">
               <Stack direction="row" alignItems="center" spacing={1}>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  Team {team.number}
+                  #{team.number}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {team.name}

@@ -1,5 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { QueryData, QueryVars, JudgingData, JudgingDeliberation } from './types';
+import type { QueryData, QueryVars, JudgingData } from './types';
 
 export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetAllJudgingSessions($divisionId: String!) {
@@ -103,7 +103,7 @@ export function parseDivisionSessions(queryData: QueryData) {
       sessions: [],
       sessionLength: 0,
       awards: [],
-      deliberations: [],
+      deliberations: {},
       finalDeliberation: null
     };
   }
@@ -111,22 +111,14 @@ export function parseDivisionSessions(queryData: QueryData) {
   const sessions = division.judging.sessions ?? [];
   const filteredSessions = sessions.filter(session => !!session.team);
 
-  // Filter only PERSONAL type awards
   const personalAwards = (division.awards ?? []).filter(award => award.type === 'PERSONAL');
 
-  // Collect deliberations from the aliased fields
-  const deliberations: JudgingDeliberation[] = [];
   const judgingData = division.judging as JudgingData;
-
-  if (judgingData.innovation_project) {
-    deliberations.push(judgingData.innovation_project);
-  }
-  if (judgingData.robot_design) {
-    deliberations.push(judgingData.robot_design);
-  }
-  if (judgingData.core_values) {
-    deliberations.push(judgingData.core_values);
-  }
+  const deliberations = {
+    innovation_project: judgingData.innovation_project,
+    robot_design: judgingData.robot_design,
+    core_values: judgingData.core_values
+  };
 
   const finalDeliberation = division.judging.finalDeliberation ?? null;
 

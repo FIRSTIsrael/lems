@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState, useCallback } from 'react';
+import toast from 'react-hot-toast';
 import { Card, CardContent, CardHeader, Stack, useTheme } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
@@ -24,17 +25,14 @@ export function DisqualificationSection() {
 
   const [disqualifyTeam] = useMutation(DISQUALIFY_TEAM);
 
-  // Get all teams from sessions
   const allTeams = useMemo(() => {
     return sessions.map(session => session.team);
   }, [sessions]);
 
-  // Filter out already disqualified teams for autocomplete
   const availableTeams = useMemo(() => {
     return allTeams.filter(team => !disqualifiedTeams.has(team.id));
   }, [allTeams, disqualifiedTeams]);
 
-  // Get disqualified teams
   const disqualifiedTeamsData = useMemo(() => {
     return allTeams.filter(team => disqualifiedTeams.has(team.id));
   }, [allTeams, disqualifiedTeams]);
@@ -57,8 +55,9 @@ export function DisqualificationSection() {
       setConfirmDialogOpen(false);
     } catch (error) {
       console.error('Error disqualifying team:', error);
+      toast.error(t('error-disqualifying-team'));
     }
-  }, [selectedTeam, disqualifyTeam, currentDivision.id]);
+  }, [selectedTeam, disqualifyTeam, currentDivision.id, t]);
 
   const handleCancelDisqualify = useCallback(() => {
     setConfirmDialogOpen(false);

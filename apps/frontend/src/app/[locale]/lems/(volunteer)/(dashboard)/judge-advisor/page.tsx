@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
@@ -33,21 +33,23 @@ export default function JudgeAdvisorPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentDivision } = useEvent();
-  const [mode, setMode] = useState<JudgeAdvisorMode>('judging');
 
-  // Load mode from query params on mount
-  useEffect(() => {
+  const mode = useMemo<JudgeAdvisorMode>(() => {
     const tabParam = searchParams.get('tab');
     if (tabParam === 'awards' || tabParam === 'judging') {
-      setMode(tabParam);
+      return tabParam;
     }
+    return 'judging';
   }, [searchParams]);
 
-  const handleModeChange = (newMode: JudgeAdvisorMode) => {
-    setMode(newMode);
+  const setMode = (newMode: JudgeAdvisorMode) => {
     const newSearchParams = new URLSearchParams(searchParams);
     newSearchParams.set('tab', newMode);
     router.push(`?${newSearchParams.toString()}`);
+  };
+
+  const handleModeChange = (newMode: JudgeAdvisorMode) => {
+    setMode(newMode);
   };
 
   const subscriptions = useMemo(
@@ -71,7 +73,7 @@ export default function JudgeAdvisorPage() {
 
   const sessions = data?.sessions || [];
   const awards = data?.awards || [];
-  const deliberations = data?.deliberations || [];
+  const deliberations = data?.deliberations || {};
   const finalDeliberation = data?.finalDeliberation ?? null;
   const sessionLength = data?.sessionLength ?? 0;
 

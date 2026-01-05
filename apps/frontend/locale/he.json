@@ -380,28 +380,23 @@
       },
       "awards": {
         "disqualification": {
-          "search-title": "פסול קבוצות",
+          "search-title": "פסילת קבוצות",
           "search-placeholder": "חפש לפי מספר, שם, שיוך או עיר...",
           "search-label": "חיפוש קבוצות",
-          "team-name": "שם הקבוצה",
-          "affiliation": "שיוך",
-          "city": "עיר",
-          "action": "פעולה",
           "disqualify": "פסול",
           "disqualified": "נפסלה",
-          "no-teams": "לא נמצאו קבוצות",
           "no-teams-found": "לא נמצאו קבוצות",
-          "all-teams-disqualified": "כל הקבוצות נפסלו",
           "disqualified-teams-title": "קבוצות פסולות",
-          "confirm-title": "אשר ביטול הסמכה",
-          "confirm-message": "האם אתה בטוח שאתה רוצה לפסול",
+          "disqualified-teams-count": "{count, plural, one {# קבוצה} other {# קבוצות}}",
+          "confirm-title": "פסילת קבוצה",
+          "confirm-message": "האם אתם בטוחים שאתם רוצים לפסול את",
           "confirm-disqualify": "פסול",
-          "cancel": "ביטול"
+          "cancel": "ביטול",
+          "team-option-label": "קבוצה #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "שגיאה בפסילת הקבוצה"
         },
         "deliberation": {
-          "category-deliberations-title": "התייעצויות קטגוריה",
-          "final-deliberation-title": "התייעצות סופית",
-          "category": "קטגוריה",
+          "final-deliberation": "דיון סופי",
           "status": "סטטוס",
           "picklist": "רשימת בחירה",
           "start-time": "זמן התחלה",
@@ -409,11 +404,7 @@
           "action": "פעולה",
           "open": "פתח",
           "open-final": "פתח התייעצות סופית",
-          "no-deliberations": "אין התייעצויות זמינות",
-          "desired-length": "רצוי",
-          "category-innovation_project": "פרויקט חדשנות",
-          "category-robot_design": "עיצוב רובוט",
-          "category-core_values": "ערכי ליבה"
+          "no-deliberations": "אין התייעצויות זמינות"
         },
         "personal-awards": {
           "title": "פרסים אישיים",

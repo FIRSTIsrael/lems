@@ -50,7 +50,7 @@ export function DisqualifyConfirmationDialog({
             <>
               {t('confirm-message')}{' '}
               <strong>
-                #{team.number} — {team.name}
+                {team.name} #{team.number}
               </strong>
               ?
             </>

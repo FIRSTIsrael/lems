@@ -9,7 +9,9 @@ export function FinalDeliberationButton() {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
   const { deliberations, loading } = useJudgeAdvisor();
 
-  const isDisabled = deliberations.length < 3 || deliberations.some(d => d.status !== 'completed');
+  const deliberationsArray = Object.values(deliberations).filter(d => !!d);
+  const isDisabled =
+    deliberationsArray.length < 3 || deliberationsArray.some(d => d.status !== 'completed');
 
   return (
     <Button

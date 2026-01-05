@@ -81,10 +81,16 @@ export interface JudgingData {
   finalDeliberation?: FinalDeliberation;
 }
 
+export interface CategorizedDeliberations extends Record<string, JudgingDeliberation | undefined> {
+  innovation_project?: JudgingDeliberation;
+  robot_design?: JudgingDeliberation;
+  core_values?: JudgingDeliberation;
+}
+
 export interface JudgeAdvisorData {
   sessions: JudgingSession[];
   awards: Award[];
-  deliberations: JudgingDeliberation[];
+  deliberations: CategorizedDeliberations;
   finalDeliberation: FinalDeliberation | null;
   sessionLength: number;
 }
@@ -109,6 +115,6 @@ export interface ParsedJudgeAdvisorData {
   sessions: JudgingSession[];
   sessionLength: number;
   awards: Award[];
-  deliberations: JudgingDeliberation[];
+  deliberations: CategorizedDeliberations;
   finalDeliberation: FinalDeliberation | null;
 }

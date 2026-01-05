@@ -24,7 +24,7 @@ export function DisqualifiedTeamsList({ disqualifiedTeams }: DisqualifiedTeamsLi
         title={t('disqualified-teams-title')}
         slotProps={{ title: { variant: 'h6', sx: { fontWeight: 600 } } }}
         avatar={<BlockIcon sx={{ color: 'error.main' }} />}
-        subheader={`${disqualifiedTeams.length} ${disqualifiedTeams.length === 1 ? 'team' : 'teams'}`}
+        subheader={t('disqualified-teams-count', { count: disqualifiedTeams.length })}
       />
       <CardContent>
         <Stack spacing={2}>

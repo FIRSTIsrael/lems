@@ -15,9 +15,9 @@ export function DeliberationStatusSection() {
   const t = useTranslations('pages.judge-advisor.awards');
 
   const categoriesWithStatuses = useMemo(() => {
-    const categories = ['innovation_project', 'robot_design', 'core_values'];
+    const categories = ['innovation_project', 'robot_design', 'core_values'] as const;
     return categories.map(category => {
-      const deliberation = deliberations.find(d => d.category === category);
+      const deliberation = deliberations[category];
       return {
         category,
         deliberation

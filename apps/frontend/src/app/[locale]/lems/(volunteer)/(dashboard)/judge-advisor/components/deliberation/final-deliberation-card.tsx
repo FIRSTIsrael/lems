@@ -62,7 +62,7 @@ export function FinalDeliberationCard() {
   return (
     <Card sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.95) }}>
       <CardHeader
-        title={t('final-deliberation-title')}
+        title={t('final-deliberation')}
         slotProps={{ title: { variant: 'h6', sx: { fontWeight: 500 } } }}
         sx={{ pb: 1 }}
       />

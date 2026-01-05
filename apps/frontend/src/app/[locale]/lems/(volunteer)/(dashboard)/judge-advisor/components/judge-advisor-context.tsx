@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, ReactNode } from 'react';
 import type {
   JudgingSession,
   Award,
-  JudgingDeliberation,
+  CategorizedDeliberations,
   FinalDeliberation
 } from '../graphql/types';
 
@@ -13,7 +13,7 @@ interface JudgeAdvisorContextType {
   disqualifiedTeams: Set<string>;
   loading: boolean;
   awards: Award[];
-  deliberations: JudgingDeliberation[];
+  deliberations: CategorizedDeliberations;
   finalDeliberation: FinalDeliberation | null;
   sessionLength: number;
 }
@@ -23,7 +23,7 @@ const JudgeAdvisorContext = createContext<JudgeAdvisorContextType | null>(null);
 interface JudgeAdvisorProviderProps {
   sessions: JudgingSession[];
   awards?: Award[];
-  deliberations?: JudgingDeliberation[];
+  deliberations?: CategorizedDeliberations;
   finalDeliberation?: FinalDeliberation | null;
   loading?: boolean;
   sessionLength?: number;
@@ -33,7 +33,7 @@ interface JudgeAdvisorProviderProps {
 export function JudgeAdvisorProvider({
   sessions,
   awards = [],
-  deliberations = [],
+  deliberations = {},
   finalDeliberation = null,
   loading = false,
   sessionLength = 0,
