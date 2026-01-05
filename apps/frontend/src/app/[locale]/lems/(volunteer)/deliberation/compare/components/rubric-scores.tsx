@@ -38,7 +38,7 @@ export function RubricScores({ team }: RubricScoresProps) {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="subtitle2" fontWeight={600}>
+      <Typography variant="subtitle1" fontWeight={600} sx={{ fontSize: '1.1rem' }}>
         {t('rubric-scores')}
       </Typography>
 
@@ -53,20 +53,6 @@ export function RubricScores({ team }: RubricScoresProps) {
             overflowY: 'auto'
           }}
         >
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              color: getCategoryColor(category),
-              textAlign: 'center',
-              mb: 1,
-              display: 'block'
-            }}
-          >
-            {tRubric(category as 'innovation-project' | 'robot-design' | 'core-values')}
-          </Typography>
-
           <Stack spacing={0.5}>
             {Object.entries(fieldsByCategory).map(([, fields]) =>
               fields.map(field => (
@@ -96,9 +82,9 @@ export function RubricScores({ team }: RubricScoresProps) {
                   }}
                 >
                   <Typography
-                    variant="caption"
+                    variant="body2"
                     sx={{
-                      fontSize: '0.75rem',
+                      fontSize: '0.95rem',
                       fontWeight: 700,
                       color: getCategoryColor(cat),
                       textAlign: 'center',
@@ -115,7 +101,6 @@ export function RubricScores({ team }: RubricScoresProps) {
                         key={`${field.category}-${field.fieldId}`}
                         field={field}
                         tFields={tFields}
-                        compact
                       />
                     ))}
                   </Stack>

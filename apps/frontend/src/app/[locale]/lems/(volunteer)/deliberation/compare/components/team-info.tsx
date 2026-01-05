@@ -39,14 +39,26 @@ export function TeamInfo({ team }: TeamInfoProps) {
       <Typography variant="h6" fontWeight={600}>
         {team.name} - #{team.number}
       </Typography>
-      <Typography variant="body2" color="text.secondary">
+      <Typography variant="h6" color="text.secondary">
         {team.affiliation}
       </Typography>
+      {team.judgingSession?.room && (
+        <Typography variant="h6" color="text.secondary">
+          {t('judging-room')}: {team.judgingSession.room.name}
+        </Typography>
+      )}
       <Chip
         label={`${t('average')}: ${averageScore.toFixed(2)}`}
-        size="small"
         color={team.arrived ? 'success' : 'default'}
-        sx={{ mt: 1 }}
+        sx={{
+          mt: 1,
+          fontSize: '2rem',
+          height: 40,
+          '& .MuiChip-label': {
+            fontSize: '1.2rem',
+            fontWeight: 600
+          }
+        }}
       />
     </Box>
   );

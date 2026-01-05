@@ -102,13 +102,21 @@ export default function ComparePage() {
 
   return (
     <>
-      <PageHeader title={t('title')} />
+      <PageHeader title={t('title')}>
+        <CategoryFilter currentCategory={categoryParam ?? undefined} compact />
+      </PageHeader>
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <CompareProvider teams={teams} awards={awards} category={categoryParam ?? undefined}>
-          <CategoryFilter currentCategory={categoryParam ?? undefined} />
           <Grid container spacing={3}>
             {teams.map(team => (
-              <Grid key={team.id} size={{ xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }}>
+              <Grid
+                key={team.id}
+                size={
+                  categoryParam
+                    ? { xs: 12, sm: 6, md: 6, lg: 4 }
+                    : { xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }
+                }
+              >
                 <Paper
                   sx={{
                     p: 2,

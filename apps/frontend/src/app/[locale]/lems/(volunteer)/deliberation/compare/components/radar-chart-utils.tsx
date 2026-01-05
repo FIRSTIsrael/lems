@@ -115,8 +115,7 @@ export function processRubricRadarData(
   const fields = rubric.data.fields as RubricFields;
 
   return schema.sections.map(section => {
-    const sectionFields = section.fields.filter((field: any) => !field.coreValues);
-    const sectionScores = sectionFields
+    const sectionScores = section.fields
       .map((field: any) => fields[field.id]?.value)
       .filter(
         (value: number | null | undefined): value is number => value !== null && value !== undefined

@@ -54,7 +54,7 @@ export function CategoryRadarChart({ team, category }: CategoryRadarChartProps) 
     <ResponsiveContainer width="100%" height={250}>
       <RadarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         <PolarGrid />
-        <PolarAngleAxis dataKey="field" tick={{ fontSize: 11 }} />
+        <PolarAngleAxis dataKey="field" tick={{ fontSize: 14 }} />
         <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 12 }} />
         <Radar dataKey="score" stroke={color} fill={color} fillOpacity={0.6} />
       </RadarChart>

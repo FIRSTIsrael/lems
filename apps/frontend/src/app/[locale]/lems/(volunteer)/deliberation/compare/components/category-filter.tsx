@@ -7,11 +7,12 @@ import { JudgingCategory } from '@lems/types/judging';
 
 interface CategoryFilterProps {
   currentCategory?: JudgingCategory;
+  compact?: boolean;
 }
 
 const CATEGORIES: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
 
-export function CategoryFilter({ currentCategory }: CategoryFilterProps) {
+export function CategoryFilter({ currentCategory, compact = false }: CategoryFilterProps) {
   const tCompare = useTranslations('layouts.deliberation.compare');
   const tRubric = useTranslations('pages.judge.schedule.rubric-labels');
   const router = useRouter();
@@ -28,6 +29,32 @@ export function CategoryFilter({ currentCategory }: CategoryFilterProps) {
 
     router.push(`?${params.toString()}`);
   };
+
+  if (compact) {
+    return (
+      <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap alignItems="center">
+        <Chip
+          label={tCompare('all-categories')}
+          variant={!currentCategory ? 'filled' : 'outlined'}
+          color={!currentCategory ? 'primary' : 'default'}
+          onClick={() => handleCategoryChange()}
+          clickable
+          size="small"
+        />
+        {CATEGORIES.map(category => (
+          <Chip
+            key={category}
+            label={tRubric(category)}
+            variant={currentCategory === category ? 'filled' : 'outlined'}
+            color={currentCategory === category ? 'primary' : 'default'}
+            onClick={() => handleCategoryChange(category)}
+            clickable
+            size="small"
+          />
+        ))}
+      </Stack>
+    );
+  }
 
   return (
     <Box sx={{ mb: 3 }}>

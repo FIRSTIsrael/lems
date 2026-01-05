@@ -16,24 +16,29 @@ export function RubricFieldRow({ field, tFields, compact = false }: RubricFieldR
       spacing={compact ? 0.5 : 1}
     >
       <Typography
-        variant="caption"
+        variant="body2"
         sx={{
           flex: 1,
-          fontSize: compact ? '0.65rem' : '0.7rem',
-          color: 'text.primary'
+          fontSize: compact ? '0.8rem' : '0.9rem',
+          color: 'text.primary',
+          fontWeight: 500
         }}
       >
         {tFields(`${field.category}.${field.fieldId}`)}
       </Typography>
       <Chip
         label={field.value ?? 'N/A'}
-        size="small"
+        size="medium"
         color={field.color}
         sx={{
-          minWidth: compact ? 32 : 40,
-          height: compact ? 18 : 20,
-          fontSize: compact ? '0.65rem' : '0.7rem',
-          ...(compact && { '& .MuiChip-label': { px: 0.5 } })
+          minWidth: compact ? 40 : 48,
+          height: compact ? 24 : 28,
+          fontSize: compact ? '0.8rem' : '0.9rem',
+          fontWeight: 600,
+          '& .MuiChip-label': {
+            px: compact ? 0.75 : 1,
+            fontSize: compact ? '0.8rem' : '0.9rem'
+          }
         }}
       />
     </Stack>
