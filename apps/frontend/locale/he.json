@@ -402,9 +402,9 @@
           "start-time": "זמן התחלה",
           "stage": "שלב",
           "action": "פעולה",
-          "open": "פתח",
-          "open-final": "פתח התייעצות סופית",
-          "no-deliberations": "אין התייעצויות זמינות"
+          "open": "מעבר לדיון",
+          "open-final": "מעבר לדיון סופי",
+          "no-deliberations": "לא נמצאו דיוני שופטים"
         },
         "personal-awards": {
           "title": "פרסים אישיים",
@@ -412,7 +412,7 @@
           "optional": "אופציונלי",
           "team-placeholder": "הכנס שם קבוצה או מספר",
           "submit": "שלח פרסים",
-          "placeholder-message": "פרסים נשלחו! הערה: זו פונקציה תופסנית - המוטציה בפועל תגיע בקרוב."
+          "placeholder-message": "פרסים נשלחו"
         },
         "deliberations": "דיוני שופטים"
       }

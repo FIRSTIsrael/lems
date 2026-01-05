@@ -412,7 +412,7 @@
           "optional": "Optional",
           "team-placeholder": "Enter team name or number",
           "submit": "Submit Awards",
-          "placeholder-message": "Awards submitted! Note: This is a placeholder - actual mutation coming soon."
+          "placeholder-message": "Awards submitted"
         },
         "deliberations": "Deliberations"
       }
