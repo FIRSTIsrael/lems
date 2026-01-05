@@ -18,6 +18,7 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
       }
       judging {
         divisionId
+        sessionLength
         sessions {
           id
           number
@@ -124,7 +125,7 @@ export function parseDivisionSessions(queryData: QueryData) {
 
   return {
     sessions: filteredSessions,
-    sessionLength: filteredSessions.length,
+    sessionLength: division.judging.sessionLength,
     awards: personalAwards,
     deliberations,
     finalDeliberation

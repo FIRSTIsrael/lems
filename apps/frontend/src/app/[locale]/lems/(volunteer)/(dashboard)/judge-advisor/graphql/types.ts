@@ -79,6 +79,7 @@ export interface JudgingData {
   robot_design?: JudgingDeliberation;
   core_values?: JudgingDeliberation;
   finalDeliberation?: FinalDeliberation;
+  sessionLength: number;
 }
 
 export interface CategorizedDeliberations extends Record<string, JudgingDeliberation | undefined> {
