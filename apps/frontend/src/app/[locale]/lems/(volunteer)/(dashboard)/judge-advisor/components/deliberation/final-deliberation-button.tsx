@@ -3,15 +3,11 @@
 import { Button } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslations } from 'next-intl';
-import { JudgingDeliberation } from '../../graphql';
+import { useJudgeAdvisor } from '../judge-advisor-context';
 
-export interface FinalDeliberationButtonProps {
-  deliberations: JudgingDeliberation[];
-  loading: boolean;
-}
-
-export function FinalDeliberationButton({ deliberations, loading }: FinalDeliberationButtonProps) {
+export function FinalDeliberationButton() {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
+  const { deliberations, loading } = useJudgeAdvisor();
 
   const isDisabled = deliberations.length < 3 || deliberations.some(d => d.status !== 'completed');
 

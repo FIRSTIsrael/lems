@@ -1,30 +1,33 @@
 'use client';
 
 import dayjs from 'dayjs';
+import { useMemo } from 'react';
 import { Button } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslations } from 'next-intl';
 import { useTime } from '../../../../../../../../lib/time/hooks';
+import { useJudgeAdvisor } from '../judge-advisor-context';
 
 export interface CategoryDeliberationButtonProps {
   category: string;
-  startTime?: string;
-  sessionLength: number;
-  loading: boolean;
 }
 
-export function CategoryDeliberationButton({
-  category,
-  startTime,
-  sessionLength,
-  loading
-}: CategoryDeliberationButtonProps) {
+export function CategoryDeliberationButton({ category }: CategoryDeliberationButtonProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
   const currentTime = useTime({ interval: 1000 });
+  const { sessions, sessionLength, loading } = useJudgeAdvisor();
 
-  // Calculate if the button should be disabled
+  const latestSessionTime = useMemo(() => {
+    if (sessions.length === 0) return null;
+    return dayjs(
+      sessions.reduce((max, session) =>
+        dayjs(session.scheduledTime).isAfter(dayjs(max.scheduledTime)) ? session : max
+      ).scheduledTime
+    );
+  }, [sessions]);
+
   const isDisabled =
-    !startTime || currentTime.isBefore(dayjs(startTime).add(sessionLength, 'milliseconds'));
+    !latestSessionTime || currentTime.isBefore(latestSessionTime.add(sessionLength, 'seconds'));
 
   return (
     <Button

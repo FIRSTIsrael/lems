@@ -10,7 +10,6 @@ import {
   useJudgingDeliberationTranslations
 } from '@lems/localization';
 import { CategoryDeliberationButton } from './category-deliberation-button';
-import { useJudgeAdvisor } from '../judge-advisor-context';
 
 export interface Deliberation {
   category: string;
@@ -23,7 +22,6 @@ interface CategoryDeliberationCardProps {
   category: JudgingCategory;
   deliberation: Deliberation | undefined;
   desiredPicklistLength: number;
-  loading: boolean;
 }
 
 function getDeliberationStatusColor(
@@ -44,13 +42,11 @@ function getDeliberationStatusColor(
 export function CategoryDeliberationCard({
   category,
   deliberation,
-  desiredPicklistLength,
-  loading
+  desiredPicklistLength
 }: CategoryDeliberationCardProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
   const { getCategory } = useJudgingCategoryTranslations();
   const { getStatus } = useJudgingDeliberationTranslations();
-  const { sessionLength } = useJudgeAdvisor();
 
   const color = getRubricColor(category);
   const label = getCategory(category as JudgingCategory);
@@ -126,12 +122,7 @@ export function CategoryDeliberationCard({
         </CardContent>
 
         <CardContent sx={{ pt: 0 }}>
-          <CategoryDeliberationButton
-            category={category}
-            startTime={deliberation.startTime}
-            sessionLength={sessionLength}
-            loading={loading}
-          />
+          <CategoryDeliberationButton category={category} />
         </CardContent>
       </Card>
     </Box>

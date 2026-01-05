@@ -8,10 +8,10 @@ import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/database';
 import { useJudgeAdvisor } from '../judge-advisor-context';
 import { CategoryDeliberationCard, type Deliberation } from './category-deliberation-card';
-import { FinalDeliberationCard, type FinalDeliberation } from './final-deliberation-card';
+import { FinalDeliberationCard } from './final-deliberation-card';
 
 export function DeliberationStatusSection() {
-  const { deliberations, finalDeliberation, sessions, loading } = useJudgeAdvisor();
+  const { deliberations, sessions } = useJudgeAdvisor();
   const t = useTranslations('pages.judge-advisor.awards');
 
   const categoriesWithStatuses = useMemo(() => {
@@ -45,18 +45,11 @@ export function DeliberationStatusSection() {
                 category={underscoresToHyphens(category) as JudgingCategory}
                 deliberation={deliberation as Deliberation | undefined}
                 desiredPicklistLength={desiredPicklistLength}
-                loading={loading}
               />
             ))}
           </Box>
 
-          {/* Final Deliberation */}
-          {finalDeliberation && (
-            <FinalDeliberationCard
-              finalDeliberation={finalDeliberation as FinalDeliberation}
-              loading={loading}
-            />
-          )}
+          <FinalDeliberationCard />
         </Stack>
       </CardContent>
     </Card>

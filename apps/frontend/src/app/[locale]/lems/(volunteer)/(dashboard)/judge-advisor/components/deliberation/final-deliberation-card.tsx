@@ -14,8 +14,8 @@ import {
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useJudgingDeliberationTranslations } from '@lems/localization';
-import { FinalDeliberationButton } from './final-deliberation-button';
 import { useJudgeAdvisor } from '../judge-advisor-context';
+import { FinalDeliberationButton } from './final-deliberation-button';
 
 function getDeliberationStatusColor(
   status: string
@@ -49,23 +49,15 @@ function getFinalDeliberationStageColor(
   }
 }
 
-export interface FinalDeliberation {
-  stage: string;
-  status: string;
-  startTime?: string;
-  completionTime?: string;
-}
-
-interface FinalDeliberationCardProps {
-  finalDeliberation: FinalDeliberation;
-  loading: boolean;
-}
-
-export function FinalDeliberationCard({ finalDeliberation, loading }: FinalDeliberationCardProps) {
+export function FinalDeliberationCard() {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
   const { getStage, getStatus } = useJudgingDeliberationTranslations();
   const theme = useTheme();
-  const { deliberations } = useJudgeAdvisor();
+  const { finalDeliberation } = useJudgeAdvisor();
+
+  if (!finalDeliberation) {
+    return null;
+  }
 
   return (
     <Card sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.95) }}>
@@ -151,7 +143,7 @@ export function FinalDeliberationCard({ finalDeliberation, loading }: FinalDelib
           </Grid>
 
           <Grid size={{ xs: 12 }}>
-            <FinalDeliberationButton deliberations={deliberations} loading={loading} />
+            <FinalDeliberationButton />
           </Grid>
         </Grid>
       </CardContent>

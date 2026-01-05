@@ -89,14 +89,14 @@ export default function JudgeAdvisorPage() {
       </PageHeader>
 
       {mode === 'judging' && (
-        <Stack spacing={3} mt={3}>
+        <Stack spacing={3} my={3}>
           <RubricStatusSummary />
           <RubricStatusGrid />
         </Stack>
       )}
 
       {mode === 'awards' && (
-        <Stack spacing={3} mt={3}>
+        <Stack spacing={3} my={3}>
           <DisqualificationSection />
           <DeliberationStatusSection />
           <PersonalAwardsSection />
