@@ -22,7 +22,7 @@ export function GpScores({ team }: GpScoresProps) {
       <Typography variant="subtitle2" fontWeight={600}>
         {t('gp-scores')}
       </Typography>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+      <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, width: '100%' }}>
         {scoresheets.map(scoresheet => {
           const gp = scoresheet.data?.gp;
           if (!gp?.value) return null;
@@ -31,23 +31,30 @@ export function GpScores({ team }: GpScoresProps) {
             <Box
               key={scoresheet.id}
               sx={{
-                p: 1,
-                border: 1,
-                borderColor: 'divider',
-                borderRadius: 1,
-                minWidth: 60
+                p: 1.5,
+                border: 2,
+                borderColor: 'primary.main',
+                borderRadius: 2,
+                bgcolor: 'primary.50',
+                flex: 1,
+                textAlign: 'center'
               }}
             >
-              <Typography variant="caption" color="text.secondary">
+              <Typography
+                variant="caption"
+                color="primary.main"
+                fontWeight={700}
+                sx={{ fontSize: '0.75rem' }}
+              >
                 {t('round')} {scoresheet.round}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 0.5, mt: 0.5 }}>
+              <Box sx={{ display: 'flex', gap: 0.5, mt: 1, justifyContent: 'center' }}>
                 {Array.from({ length: gp.value }).map((_, i) => (
                   <Box
                     key={i}
                     sx={{
-                      width: 8,
-                      height: 8,
+                      width: 10,
+                      height: 10,
                       borderRadius: '50%',
                       bgcolor: 'primary.main'
                     }}
@@ -55,7 +62,16 @@ export function GpScores({ team }: GpScoresProps) {
                 ))}
               </Box>
               {gp.notes && (
-                <Typography variant="caption" sx={{ mt: 0.5, display: 'block' }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    mt: 1,
+                    display: 'block',
+                    fontSize: '0.7rem',
+                    wordWrap: 'break-word',
+                    overflowWrap: 'break-word'
+                  }}
+                >
                   {gp.notes}
                 </Typography>
               )}
