@@ -13,7 +13,7 @@ export interface ParticipantStatusUpdatedSubscriptionData {
   participantStatusUpdated: ParticipantStatusUpdatedEvent;
 }
 
-export interface SubscriptionVars {
+interface SubscriptionVars {
   divisionId: string;
 }
 
@@ -43,8 +43,7 @@ export function createParticipantStatusUpdatedSubscription(divisionId: string) {
     subscriptionVariables: { divisionId },
     updateQuery: (prev: ScorekeeperData, { data }: { data?: unknown }) => {
       if (!prev.division?.field || !data) return prev;
-      const event = (data as ParticipantStatusUpdatedSubscriptionData)
-        .participantStatusUpdated;
+      const event = (data as ParticipantStatusUpdatedSubscriptionData).participantStatusUpdated;
       return merge(prev, {
         division: {
           field: {

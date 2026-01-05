@@ -1,5 +1,5 @@
-import pino from 'pino';
 import * as path from 'path';
+import pino from 'pino';
 
 const logsDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
 
@@ -46,7 +46,7 @@ export const logger = pino(
     level: process.env.LOG_LEVEL || 'info',
     timestamp: humanReadableTimeFunction,
     formatters: {
-      level: (label) => {
+      level: label => {
         return { level: label };
       }
     }
@@ -58,4 +58,3 @@ export const logger = pino(
 );
 
 export default logger;
-
