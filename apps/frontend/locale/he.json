@@ -405,7 +405,6 @@
           "status": "סטטוס",
           "picklist": "רשימת בחירה",
           "start-time": "זמן התחלה",
-          "completion-time": "זמן סיום",
           "stage": "שלב",
           "action": "פעולה",
           "open": "פתח",
@@ -423,7 +422,8 @@
           "team-placeholder": "הכנס שם קבוצה או מספר",
           "submit": "שלח פרסים",
           "placeholder-message": "פרסים נשלחו! הערה: זו פונקציה תופסנית - המוטציה בפועל תגיע בקרוב."
-        }
+        },
+        "deliberations": "דיוני שופטים"
       }
     },
     "referee": {

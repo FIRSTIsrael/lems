@@ -22,7 +22,7 @@ export function DisqualifiedTeamsList({ disqualifiedTeams }: DisqualifiedTeamsLi
     <Card sx={{ borderLeft: `4px solid ${theme.palette.error.main}`, boxShadow: theme.shadows[2] }}>
       <CardHeader
         title={t('disqualified-teams-title')}
-        titleTypographyProps={{ variant: 'h6', sx: { fontWeight: 600 } }}
+        slotProps={{ title: { variant: 'h6', sx: { fontWeight: 600 } } }}
         avatar={<BlockIcon sx={{ color: 'error.main' }} />}
         subheader={`${disqualifiedTeams.length} ${disqualifiedTeams.length === 1 ? 'team' : 'teams'}`}
       />

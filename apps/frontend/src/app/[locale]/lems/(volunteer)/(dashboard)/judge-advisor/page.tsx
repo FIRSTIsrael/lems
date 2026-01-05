@@ -1,6 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { PageHeader } from '../components/page-header';
@@ -29,8 +30,25 @@ import {
 
 export default function JudgeAdvisorPage() {
   const t = useTranslations('pages.judge-advisor');
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const { currentDivision } = useEvent();
   const [mode, setMode] = useState<JudgeAdvisorMode>('judging');
+
+  // Load mode from query params on mount
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'awards' || tabParam === 'judging') {
+      setMode(tabParam);
+    }
+  }, [searchParams]);
+
+  const handleModeChange = (newMode: JudgeAdvisorMode) => {
+    setMode(newMode);
+    const newSearchParams = new URLSearchParams(searchParams);
+    newSearchParams.set('tab', newMode);
+    router.push(`?${newSearchParams.toString()}`);
+  };
 
   const subscriptions = useMemo(
     () => [
@@ -55,6 +73,7 @@ export default function JudgeAdvisorPage() {
   const awards = data?.awards || [];
   const deliberations = data?.deliberations || [];
   const finalDeliberation = data?.finalDeliberation ?? null;
+  const sessionLength = data?.sessionLength ?? 0;
 
   return (
     <JudgeAdvisorProvider
@@ -62,10 +81,11 @@ export default function JudgeAdvisorPage() {
       awards={awards}
       deliberations={deliberations}
       finalDeliberation={finalDeliberation}
+      sessionLength={sessionLength}
       loading={loading}
     >
       <PageHeader title={t('page-title')}>
-        <JudgeAdvisorModeToggle mode={mode} setMode={setMode} />
+        <JudgeAdvisorModeToggle mode={mode} setMode={handleModeChange} />
       </PageHeader>
 
       {mode === 'judging' && (

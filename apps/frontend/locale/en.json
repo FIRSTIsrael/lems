@@ -405,7 +405,6 @@
           "status": "Status",
           "picklist": "Picklist",
           "start-time": "Start Time",
-          "completion-time": "Completion Time",
           "stage": "Stage",
           "action": "Action",
           "open": "Open",
@@ -423,7 +422,8 @@
           "team-placeholder": "Enter team name or number",
           "submit": "Submit Awards",
           "placeholder-message": "Awards submitted! Note: This is a placeholder - actual mutation coming soon."
-        }
+        },
+        "deliberations": "Deliberations"
       }
     },
     "referee": {

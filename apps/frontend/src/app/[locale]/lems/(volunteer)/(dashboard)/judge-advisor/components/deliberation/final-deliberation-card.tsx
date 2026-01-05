@@ -1,19 +1,21 @@
 'use client';
 
+import dayjs from 'dayjs';
 import {
   Card,
   CardContent,
   CardHeader,
   Grid,
   Paper,
-  Button,
   Typography,
   Chip,
   useTheme,
   alpha
 } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslations } from 'next-intl';
+import { useJudgingDeliberationTranslations } from '@lems/localization';
+import { FinalDeliberationButton } from './final-deliberation-button';
+import { useJudgeAdvisor } from '../judge-advisor-context';
 
 function getDeliberationStatusColor(
   status: string
@@ -47,12 +49,6 @@ function getFinalDeliberationStageColor(
   }
 }
 
-function formatTime(isoString?: string): string {
-  if (!isoString) return '—';
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
 export interface FinalDeliberation {
   stage: string;
   status: string;
@@ -67,119 +63,95 @@ interface FinalDeliberationCardProps {
 
 export function FinalDeliberationCard({ finalDeliberation, loading }: FinalDeliberationCardProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
-  const tStatus = useTranslations('common.statuses');
+  const { getStage, getStatus } = useJudgingDeliberationTranslations();
   const theme = useTheme();
+  const { deliberations } = useJudgeAdvisor();
 
   return (
-    <Card sx={{ borderLeft: `4px solid ${theme.palette.warning.main}` }}>
-      <CardHeader title={t('final-deliberation-title')} titleTypographyProps={{ variant: 'h6' }} />
+    <Card sx={{ backgroundColor: alpha(theme.palette.background.paper, 0.95) }}>
+      <CardHeader
+        title={t('final-deliberation-title')}
+        slotProps={{ title: { variant: 'h6', sx: { fontWeight: 500 } } }}
+        sx={{ pb: 1 }}
+      />
       <CardContent>
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <Paper
               sx={{
                 p: 2,
-                backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`
+                backgroundColor: alpha(theme.palette.grey[500], 0.04),
+                border: 'none'
               }}
+              elevation={0}
             >
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ display: 'block', mb: 0.5 }}
+                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
               >
                 {t('stage')}
               </Typography>
               <Chip
-                label={tStatus(`final-deliberation-stage.${finalDeliberation.stage}`)}
+                label={getStage(finalDeliberation.stage)}
                 color={getFinalDeliberationStageColor(finalDeliberation.stage)}
                 size="small"
                 variant="outlined"
-                sx={{ fontWeight: 600 }}
+                sx={{ fontWeight: 500 }}
               />
             </Paper>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <Paper
               sx={{
                 p: 2,
-                backgroundColor: alpha(theme.palette.success.main, 0.05),
-                border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
+                backgroundColor: alpha(theme.palette.grey[500], 0.04),
+                border: 'none'
               }}
+              elevation={0}
             >
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ display: 'block', mb: 0.5 }}
+                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
               >
                 {t('status')}
               </Typography>
               <Chip
-                label={tStatus(`deliberation.${finalDeliberation.status}`)}
+                label={getStatus(finalDeliberation.status)}
                 color={getDeliberationStatusColor(finalDeliberation.status)}
                 size="small"
                 variant="outlined"
-                sx={{ fontWeight: 600 }}
+                sx={{ fontWeight: 500 }}
               />
             </Paper>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <Paper
               sx={{
                 p: 2,
-                backgroundColor: alpha(theme.palette.info.main, 0.05),
-                border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
+                backgroundColor: alpha(theme.palette.grey[500], 0.04),
+                border: 'none'
               }}
+              elevation={0}
             >
               <Typography
                 variant="caption"
                 color="text.secondary"
-                sx={{ display: 'block', mb: 0.5 }}
+                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
               >
                 {t('start-time')}
               </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {formatTime(finalDeliberation.startTime)}
+              <Typography variant="body2" sx={{ fontWeight: 400 }}>
+                {finalDeliberation.startTime
+                  ? dayjs(finalDeliberation.startTime).format('HH:mm')
+                  : '-'}
               </Typography>
             </Paper>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Paper
-              sx={{
-                p: 2,
-                backgroundColor: alpha(theme.palette.info.main, 0.05),
-                border: `1px solid ${alpha(theme.palette.info.main, 0.2)}`
-              }}
-            >
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mb: 0.5 }}
-              >
-                {t('completion-time')}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {formatTime(finalDeliberation.completionTime)}
-              </Typography>
-            </Paper>
-          </Grid>
+
           <Grid size={{ xs: 12 }}>
-            <Button
-              fullWidth
-              variant="contained"
-              endIcon={<OpenInNewIcon />}
-              target="_blank"
-              href="/lems/deliberation/final"
-              disabled={loading}
-              sx={{
-                py: 1.5,
-                fontWeight: 600,
-                textTransform: 'none',
-                fontSize: '1rem'
-              }}
-            >
-              {t('open-final')}
-            </Button>
+            <FinalDeliberationButton deliberations={deliberations} loading={loading} />
           </Grid>
         </Grid>
       </CardContent>

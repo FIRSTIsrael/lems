@@ -1,11 +1,16 @@
 'use client';
 
-import { Box, Button, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import dayjs from 'dayjs';
+import { Box, Card, CardContent, Chip, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JudgingCategory } from '@lems/types/judging';
-import { useJudgingCategoryTranslations } from '@lems/localization';
+import {
+  useJudgingCategoryTranslations,
+  useJudgingDeliberationTranslations
+} from '@lems/localization';
+import { CategoryDeliberationButton } from './category-deliberation-button';
+import { useJudgeAdvisor } from '../judge-advisor-context';
 
 export interface Deliberation {
   category: string;
@@ -15,7 +20,7 @@ export interface Deliberation {
 }
 
 interface CategoryDeliberationCardProps {
-  category: string;
+  category: JudgingCategory;
   deliberation: Deliberation | undefined;
   desiredPicklistLength: number;
   loading: boolean;
@@ -36,12 +41,6 @@ function getDeliberationStatusColor(
   }
 }
 
-function formatTime(isoString?: string): string {
-  if (!isoString) return '—';
-  const date = new Date(isoString);
-  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-}
-
 export function CategoryDeliberationCard({
   category,
   deliberation,
@@ -49,11 +48,16 @@ export function CategoryDeliberationCard({
   loading
 }: CategoryDeliberationCardProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
-  const tStatus = useTranslations('common.statuses');
   const { getCategory } = useJudgingCategoryTranslations();
+  const { getStatus } = useJudgingDeliberationTranslations();
+  const { sessionLength } = useJudgeAdvisor();
 
-  const color = getRubricColor(category as JudgingCategory);
+  const color = getRubricColor(category);
   const label = getCategory(category as JudgingCategory);
+
+  if (!deliberation) {
+    return null;
+  }
 
   return (
     <Box
@@ -66,9 +70,6 @@ export function CategoryDeliberationCard({
           height: '100%',
           backgroundColor: '#fafafa',
           borderLeft: `4px solid ${color}`,
-          borderTop: `2px solid ${color}`,
-          borderRight: `2px solid ${color}`,
-          borderBottom: `2px solid ${color}`,
           display: 'flex',
           flexDirection: 'column'
         }}
@@ -78,28 +79,35 @@ export function CategoryDeliberationCard({
             {label}
           </Typography>
 
-          <Stack spacing={2}>
-            {/* Status */}
+          <Stack
+            spacing={2}
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
             <Box>
               <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
                 {t('status')}
               </Typography>
-              {deliberation ? (
-                <Chip
-                  label={tStatus(`deliberation.${deliberation.status}`)}
-                  color={getDeliberationStatusColor(deliberation.status)}
-                  size="small"
-                  variant="outlined"
-                  sx={{ fontWeight: 600 }}
-                />
-              ) : (
-                <Typography variant="caption" color="text.secondary">
-                  —
-                </Typography>
-              )}
+              <Chip
+                label={getStatus(deliberation.status)}
+                color={getDeliberationStatusColor(deliberation.status)}
+                size="small"
+                variant="outlined"
+                sx={{ fontWeight: 600 }}
+              />
             </Box>
 
-            {/* Picklist */}
+            <Box>
+              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+                {t('start-time')}
+              </Typography>
+              <Typography variant="body2" fontWeight={500} fontFamily="monospace">
+                {deliberation.startTime ? dayjs(deliberation.startTime).format('HH:mm') : '—'}
+              </Typography>
+            </Box>
+
             <Box>
               <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
                 {t('picklist')}
@@ -114,37 +122,16 @@ export function CategoryDeliberationCard({
                 </Typography>
               )}
             </Box>
-
-            {/* Start Time */}
-            <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
-                {t('start-time')}
-              </Typography>
-              <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                {deliberation ? formatTime(deliberation.startTime) : '—'}
-              </Typography>
-            </Box>
           </Stack>
         </CardContent>
 
-        {/* Action Button */}
         <CardContent sx={{ pt: 0 }}>
-          <Button
-            fullWidth
-            size="small"
-            variant="outlined"
-            endIcon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
-            target="_blank"
-            href={`/lems/deliberation/${category}`}
-            disabled={loading}
-            sx={{
-              fontWeight: 600,
-              textTransform: 'none',
-              whiteSpace: 'nowrap'
-            }}
-          >
-            {t('open')}
-          </Button>
+          <CategoryDeliberationButton
+            category={category}
+            startTime={deliberation.startTime}
+            sessionLength={sessionLength}
+            loading={loading}
+          />
         </CardContent>
       </Card>
     </Box>

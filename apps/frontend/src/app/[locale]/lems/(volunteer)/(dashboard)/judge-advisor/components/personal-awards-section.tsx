@@ -72,7 +72,7 @@ export function PersonalAwardsSection() {
       <Card>
         <CardHeader
           title={t('title')}
-          titleTypographyProps={{ variant: 'h6' }}
+          slotProps={{ title: { variant: 'h6' } }}
           avatar={<EmojiEventsIcon sx={{ color: 'primary.main' }} />}
         />
         <CardContent>
@@ -84,9 +84,6 @@ export function PersonalAwardsSection() {
               borderLeft: `4px solid ${theme.palette.info.main}`
             }}
           >
-            <EmojiEventsIcon
-              sx={{ fontSize: 48, color: 'text.secondary', mb: 1, display: 'block' }}
-            />
             <Typography variant="body2" color="text.secondary">
               {t('no-awards')}
             </Typography>
@@ -100,7 +97,7 @@ export function PersonalAwardsSection() {
     <Card>
       <CardHeader
         title={t('title')}
-        titleTypographyProps={{ variant: 'h6' }}
+        slotProps={{ title: { variant: 'h6' } }}
         avatar={<EmojiEventsIcon sx={{ color: 'primary.main' }} />}
         subheader={`${personalAwards.length} award${personalAwards.length !== 1 ? 's' : ''}`}
       />

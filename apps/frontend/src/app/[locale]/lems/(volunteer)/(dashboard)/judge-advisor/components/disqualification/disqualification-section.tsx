@@ -71,7 +71,7 @@ export function DisqualificationSection() {
         <CardHeader
           title={t('search-title')}
           avatar={<SearchIcon sx={{ color: 'primary.main' }} />}
-          titleTypographyProps={{ variant: 'h6', sx: { fontWeight: 600 } }}
+          slotProps={{ title: { variant: 'h6', sx: { fontWeight: 600 } } }}
         />
         <CardContent>
           <Stack spacing={2.5}>

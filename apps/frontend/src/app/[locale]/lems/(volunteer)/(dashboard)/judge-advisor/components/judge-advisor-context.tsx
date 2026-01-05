@@ -15,6 +15,7 @@ interface JudgeAdvisorContextType {
   awards: Award[];
   deliberations: JudgingDeliberation[];
   finalDeliberation: FinalDeliberation | null;
+  sessionLength: number;
 }
 
 const JudgeAdvisorContext = createContext<JudgeAdvisorContextType | null>(null);
@@ -25,6 +26,7 @@ interface JudgeAdvisorProviderProps {
   deliberations?: JudgingDeliberation[];
   finalDeliberation?: FinalDeliberation | null;
   loading?: boolean;
+  sessionLength?: number;
   children?: ReactNode;
 }
 
@@ -34,6 +36,7 @@ export function JudgeAdvisorProvider({
   deliberations = [],
   finalDeliberation = null,
   loading = false,
+  sessionLength = 0,
   children
 }: JudgeAdvisorProviderProps) {
   const value = useMemo<JudgeAdvisorContextType>(() => {
@@ -50,9 +53,10 @@ export function JudgeAdvisorProvider({
       loading,
       awards,
       deliberations,
-      finalDeliberation
+      finalDeliberation,
+      sessionLength
     };
-  }, [sessions, awards, deliberations, finalDeliberation, loading]);
+  }, [sessions, awards, deliberations, finalDeliberation, loading, sessionLength]);
 
   return <JudgeAdvisorContext.Provider value={value}>{children}</JudgeAdvisorContext.Provider>;
 }
