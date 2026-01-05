@@ -39,14 +39,68 @@ export interface JudgingSession {
   startDelta?: number;
 }
 
+export interface Award {
+  id: string;
+  name: string;
+  index: number;
+  place: number;
+  type: string; // 'PERSONAL' | 'TEAM'
+  isOptional: boolean;
+  allowNominations: boolean;
+  automaticAssignment: boolean;
+  description?: string;
+}
+
+export interface JudgingDeliberation {
+  id: string;
+  category: string;
+  status: string; // 'not-started' | 'in-progress' | 'completed'
+  startTime?: string;
+  picklist: string[];
+}
+
+export interface FinalDeliberation {
+  divisionId: string;
+  stage: string; // 'not-started' | 'champions' | 'core-awards' | 'optional-awards' | 'review'
+  status: string; // 'not-started' | 'in-progress' | 'completed'
+  startTime?: string;
+  completionTime?: string;
+  champions?: Record<string, string>;
+  innovationProject: string[];
+  robotDesign: string[];
+  coreValues: string[];
+  optionalAwards?: Record<string, string[]>;
+}
+
+export interface JudgingData {
+  divisionId: string;
+  sessions: JudgingSession[];
+  innovation_project?: JudgingDeliberation;
+  robot_design?: JudgingDeliberation;
+  core_values?: JudgingDeliberation;
+  finalDeliberation?: FinalDeliberation;
+}
+
+export interface CategorizedDeliberations extends Record<string, JudgingDeliberation | undefined> {
+  innovation_project?: JudgingDeliberation;
+  robot_design?: JudgingDeliberation;
+  core_values?: JudgingDeliberation;
+}
+
 export interface JudgeAdvisorData {
   sessions: JudgingSession[];
-  rooms: Room[];
+  awards: Award[];
+  deliberations: CategorizedDeliberations;
+  finalDeliberation: FinalDeliberation | null;
   sessionLength: number;
 }
 
 export interface QueryData {
-  division?: { id: string; judging: JudgeAdvisorData } | null;
+  division?: {
+    id: string;
+    awards: Award[];
+    judging: JudgingData;
+  } | null;
 }
 
 export interface QueryVars {
@@ -60,4 +114,7 @@ export interface SubscriptionVars {
 export interface ParsedJudgeAdvisorData {
   sessions: JudgingSession[];
   sessionLength: number;
+  awards: Award[];
+  deliberations: CategorizedDeliberations;
+  finalDeliberation: FinalDeliberation | null;
 }

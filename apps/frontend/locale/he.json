@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "שופט ראשי",
+      "mode": {
+        "judging": "שיפוט",
+        "awards": "פרסים"
+      },
       "summary": {
         "status": {
           "empty": "ריק",
@@ -373,6 +377,44 @@
       "team-info-cell": {
         "not-arrived": "לא הגיעה",
         "disqualified": "נפסלה"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "פסילת קבוצות",
+          "search-placeholder": "חפש לפי מספר, שם, שיוך או עיר...",
+          "search-label": "חיפוש קבוצות",
+          "disqualify": "פסול",
+          "disqualified": "נפסלה",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "disqualified-teams-title": "קבוצות פסולות",
+          "disqualified-teams-count": "{count, plural, one {# קבוצה} other {# קבוצות}}",
+          "confirm-title": "פסילת קבוצה",
+          "confirm-message": "האם אתם בטוחים שאתם רוצים לפסול את",
+          "confirm-disqualify": "פסול",
+          "cancel": "ביטול",
+          "team-option-label": "קבוצה #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "שגיאה בפסילת הקבוצה"
+        },
+        "deliberation": {
+          "final-deliberation": "דיון סופי",
+          "status": "סטטוס",
+          "picklist": "רשימת בחירה",
+          "start-time": "זמן התחלה",
+          "stage": "שלב",
+          "action": "פעולה",
+          "open": "מעבר לדיון",
+          "open-final": "מעבר לדיון סופי",
+          "no-deliberations": "לא נמצאו דיוני שופטים"
+        },
+        "personal-awards": {
+          "title": "פרסים אישיים",
+          "no-awards": "אין פרסים אישיים מוגדרים",
+          "optional": "אופציונלי",
+          "team-placeholder": "הכנס שם קבוצה או מספר",
+          "submit": "שלח פרסים",
+          "placeholder-message": "פרסים נשלחו"
+        },
+        "deliberations": "דיוני שופטים"
       }
     },
     "referee": {
