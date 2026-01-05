@@ -123,7 +123,7 @@ export default function ComparePage() {
                   <RubricScores team={team} />
                   <ExceedingNotes team={team} />
                   <Nominations team={team} />
-                  <GpScores team={team} />
+                  {(!categoryParam || categoryParam === 'core-values') && <GpScores team={team} />}
                   <Feedback team={team} />
                 </Paper>
               </Grid>
