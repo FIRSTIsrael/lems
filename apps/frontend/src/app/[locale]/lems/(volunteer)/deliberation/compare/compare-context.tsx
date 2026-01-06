@@ -23,6 +23,7 @@ export interface TeamComparison {
 export interface CompareContextType {
   teams: Team[];
   awards: Award[];
+  allTeams: Team[];
   category?: JudgingCategory;
   fieldComparisons: Map<string, FieldComparison>;
   teamComparisons: Map<string, TeamComparison>;
@@ -43,10 +44,17 @@ interface CompareProviderProps {
   children: ReactNode;
   teams: Team[];
   awards: Award[];
+  allTeams: Team[];
   category?: JudgingCategory;
 }
 
-export const CompareProvider = ({ children, teams, awards, category }: CompareProviderProps) => {
+export const CompareProvider = ({
+  children,
+  teams,
+  awards,
+  allTeams,
+  category
+}: CompareProviderProps) => {
   const value = useMemo(() => {
     const rubricsToCompare: Rubric[] = [];
     const categories: JudgingCategory[] = category
@@ -146,12 +154,13 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
     return {
       teams,
       awards,
+      allTeams,
       category,
       fieldComparisons,
       teamComparisons,
       coreValuesFields
     };
-  }, [teams, awards, category]);
+  }, [teams, awards, allTeams, category]);
 
   return <CompareContext.Provider value={value}>{children}</CompareContext.Provider>;
 };

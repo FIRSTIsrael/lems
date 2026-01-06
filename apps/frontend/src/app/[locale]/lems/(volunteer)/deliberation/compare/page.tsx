@@ -7,9 +7,14 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../../(dashboard)/components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import { GET_COMPARE_TEAMS } from './graphql';
-import type { CompareTeamsData, CompareTeamsVars } from './graphql/types';
-import { CompareProvider } from './compare-context';
+import { GET_COMPARE_TEAMS, GET_DIVISION_TEAMS } from './graphql';
+import type {
+  CompareTeamsData,
+  CompareTeamsVars,
+  DivisionTeamsData,
+  DivisionTeamsVars
+} from './graphql/types';
+import { CompareProvider, type DivisionTeam } from './compare-context';
 import {
   EmptyState,
   TeamHeader,
@@ -48,6 +53,15 @@ export default function ComparePage() {
     undefined,
     { refetchIntervalMs: 0 }
   );
+
+  // Query all division teams for team selector
+  const { data: divisionData } = usePageData<
+    DivisionTeamsData,
+    DivisionTeamsVars,
+    DivisionTeamsData
+  >(GET_DIVISION_TEAMS, { divisionId: currentDivision.id }, undefined, undefined, {
+    refetchIntervalMs: 0
+  });
 
   if (teamSlugs.length === 0 || loading) {
     return (
@@ -97,9 +111,15 @@ export default function ComparePage() {
 
   const teams = data.division.teams;
   const awards = data.division.awards ?? [];
+  const allTeams: DivisionTeam[] = divisionData?.division?.teams ?? [];
 
   return (
-    <>
+    <CompareProvider
+      teams={teams}
+      awards={awards}
+      allTeams={allTeams}
+      category={categoryParam ?? undefined}
+    >
       <PageHeader title={t('title')}>
         <Box
           sx={{
@@ -132,39 +152,37 @@ export default function ComparePage() {
         </Box>
       </PageHeader>
       <Container maxWidth="xl" sx={{ py: 4 }}>
-        <CompareProvider teams={teams} awards={awards} category={categoryParam ?? undefined}>
-          <Grid container spacing={3}>
-            {teams.map(team => (
-              <Grid
-                key={team.id}
-                size={
-                  categoryParam
-                    ? { xs: 12, sm: 6, md: 6, lg: 4 }
-                    : { xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }
-                }
+        <Grid container spacing={3}>
+          {teams.map(team => (
+            <Grid
+              key={team.id}
+              size={
+                categoryParam
+                  ? { xs: 12, sm: 6, md: 6, lg: 4 }
+                  : { xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }
+              }
+            >
+              <Paper
+                sx={{
+                  p: 2,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 2
+                }}
               >
-                <Paper
-                  sx={{
-                    p: 2,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: 2
-                  }}
-                >
-                  <TeamHeader team={team} />
-                  <ScoreSummary team={team} />
-                  <RubricScores team={team} />
-                  <ExceedingNotes team={team} />
-                  <Nominations team={team} />
-                  {(!categoryParam || categoryParam === 'core-values') && <GpScores team={team} />}
-                  <Feedback team={team} />
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
-        </CompareProvider>
+                <TeamHeader team={team} />
+                <ScoreSummary team={team} />
+                <RubricScores team={team} />
+                <ExceedingNotes team={team} />
+                <Nominations team={team} />
+                {(!categoryParam || categoryParam === 'core-values') && <GpScores team={team} />}
+                <Feedback team={team} />
+              </Paper>
+            </Grid>
+          ))}
+        </Grid>
       </Container>
-    </>
+    </CompareProvider>
   );
 }

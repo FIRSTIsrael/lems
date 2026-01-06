@@ -4,10 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Chip, Stack, Typography, TextField, Autocomplete } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
-import { useEvent } from '../../../components/event-context';
-import { usePageData } from '../../../hooks/use-page-data';
-import { GET_DIVISION_TEAMS } from '../graphql';
-import type { DivisionTeamsData, DivisionTeamsVars } from '../graphql/types';
+import { useCompareContext } from '../compare-context';
 
 interface TeamSelectorProps {
   currentTeams: string[];
@@ -18,17 +15,8 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
   const t = useTranslations('layouts.deliberation.compare');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { currentDivision } = useEvent();
+  const { allTeams } = useCompareContext();
 
-  const { data: divisionData } = usePageData<
-    DivisionTeamsData,
-    DivisionTeamsVars,
-    DivisionTeamsData
-  >(GET_DIVISION_TEAMS, { divisionId: currentDivision.id }, undefined, undefined, {
-    refetchIntervalMs: 0
-  });
-
-  const allTeams = divisionData?.division?.teams ?? [];
   const availableTeams = allTeams.filter(team => !currentTeams.includes(team.slug));
 
   const updateTeamsInUrl = (newTeamSlugs: string[]) => {
