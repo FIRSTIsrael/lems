@@ -5,7 +5,7 @@ export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, Unifie
   query GetUnifiedDivision($divisionId: String!, $teamSlugs: [String!]) {
     division(id: $divisionId) {
       id
-      teams(slugs: $teamSlugs) {
+      selectedTeams: teams(slugs: $teamSlugs) {
         id
         number
         name
@@ -74,6 +74,12 @@ export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, Unifie
             }
           }
         }
+      }
+      allTeams: teams {
+        id
+        number
+        name
+        slug
       }
       awards {
         id

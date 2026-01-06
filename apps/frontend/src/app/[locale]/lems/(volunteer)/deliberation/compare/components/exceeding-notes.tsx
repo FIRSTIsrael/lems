@@ -14,24 +14,33 @@ interface ExceedingNotesProps {
   team: Team;
 }
 
-function findSectionId(category: string, fieldId: string): string | null {
-  const rubricCategory = rubrics[category as JudgingCategory];
-  if (!rubricCategory?.sections) return null;
+function SectionName({ category, fieldId }: { category: string; fieldId: string }) {
+  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
 
-  for (const section of rubricCategory.sections) {
-    if (section.fields.some(field => field.id === fieldId)) {
-      return section.id;
-    }
-  }
-  return null;
+  const sectionId = rubrics[category as JudgingCategory]?.sections?.find(section =>
+    section.fields.some(field => field.id === fieldId)
+  )?.id;
+
+  return <>{sectionId ? getSectionTitle(sectionId) : fieldId}</>;
 }
 
-function FieldName({ category, fieldId }: { category: string; fieldId: string }) {
-  const { getFieldLevel } = useRubricsTranslations(category as JudgingCategory);
-  const sectionId = findSectionId(category, fieldId);
-
-  const fieldName = sectionId ? getFieldLevel(sectionId, fieldId, 'beginning') : fieldId;
-  return <>{fieldName}</>;
+function NoteItem({
+  category,
+  note
+}: {
+  category: string;
+  note: { fieldId: string; notes: string };
+}) {
+  return (
+    <Box sx={{ p: 0.5 }}>
+      <Typography variant="caption" color="primary" fontWeight={600}>
+        <SectionName category={category} fieldId={note.fieldId} />
+      </Typography>
+      <Typography variant="body2" sx={{ mt: 0.5 }}>
+        {note.notes}
+      </Typography>
+    </Box>
+  );
 }
 
 export function ExceedingNotes({ team }: ExceedingNotesProps) {
@@ -40,28 +49,23 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
   const { category } = useCompareContext();
 
   const exceedingNotesByCategory = useMemo(() => {
-    const result: Record<string, Array<{ fieldId: string; notes: string }>> = {};
-
     const categories = category
       ? [category]
       : ['innovation-project', 'robot-design', 'core-values'];
+    const result: Record<string, Array<{ fieldId: string; notes: string }>> = {};
 
     categories.forEach(cat => {
       const rubricKey = cat.replace('-', '_') as keyof typeof team.rubrics;
-      const rubric = team.rubrics[rubricKey];
+      const fields = team.rubrics[rubricKey]?.data?.fields;
 
-      if (rubric?.data?.fields) {
-        Object.entries(rubric.data.fields).forEach(([fieldId, field]) => {
-          if (field.value === 4 && field.notes) {
-            if (!result[cat]) {
-              result[cat] = [];
-            }
-            result[cat].push({
-              fieldId,
-              notes: field.notes
-            });
-          }
-        });
+      if (fields) {
+        const exceedingFields = Object.entries(fields)
+          .filter(([, field]) => field.value === 4 && field.notes)
+          .map(([fieldId, field]) => ({ fieldId, notes: field.notes! }));
+
+        if (exceedingFields.length > 0) {
+          result[cat] = exceedingFields;
+        }
       }
     });
 
@@ -81,14 +85,7 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
         <Box sx={{ maxHeight: 240, overflowY: 'auto' }}>
           <Stack spacing={1}>
             {exceedingNotesByCategory[category]?.map((note, index) => (
-              <Box key={index} sx={{ p: 1 }}>
-                <Typography variant="caption" color="primary" fontWeight={600}>
-                  <FieldName category={category} fieldId={note.fieldId} />
-                </Typography>
-                <Typography variant="body2" sx={{ mt: 0.5 }}>
-                  {note.notes}
-                </Typography>
-              </Box>
+              <NoteItem key={index} category={category} note={note} />
             ))}
           </Stack>
         </Box>
@@ -122,14 +119,7 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                   <Grid container spacing={1}>
                     {notes.map((note, index) => (
                       <Grid key={index} size={6}>
-                        <Box sx={{ p: 0.5 }}>
-                          <Typography variant="caption" color="primary" fontWeight={600}>
-                            <FieldName category={cat} fieldId={note.fieldId} />
-                          </Typography>
-                          <Typography variant="body2" sx={{ mt: 0.5 }}>
-                            {note.notes}
-                          </Typography>
-                        </Box>
+                        <NoteItem category={cat} note={note} />
                       </Grid>
                     ))}
                   </Grid>

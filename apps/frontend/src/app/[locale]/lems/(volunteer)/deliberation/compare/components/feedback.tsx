@@ -11,10 +11,110 @@ interface FeedbackProps {
   team: Team;
 }
 
+function FeedbackItem({
+  type,
+  content,
+  compact = false
+}: {
+  type: 'greatJob' | 'thinkAbout';
+  content: string;
+  compact?: boolean;
+}) {
+  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+
+  return (
+    <Box>
+      <Typography
+        variant="caption"
+        sx={{
+          color: 'black',
+          fontWeight: 700,
+          fontSize: '0.8rem'
+        }}
+      >
+        {getFeedbackTitle(type)}
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{
+          mt: 0.5,
+          ...(compact && {
+            fontSize: '0.7rem',
+            lineHeight: 1.3
+          }),
+          wordWrap: 'break-word',
+          overflowWrap: 'break-word'
+        }}
+      >
+        {content}
+      </Typography>
+    </Box>
+  );
+}
+
+function CategoryFeedbackCard({
+  category,
+  feedback,
+  compact = false
+}: {
+  category: string;
+  feedback: { categoryName: string; greatJob?: string; thinkAbout?: string };
+  compact?: boolean;
+}) {
+  const categoryColors = {
+    'innovation-project': { main: '#1976d2', bg: '#e3f2fd' },
+    'robot-design': { main: '#388e3c', bg: '#e8f5e8' },
+    'core-values': { main: '#d32f2f', bg: '#ffebee' }
+  } as const;
+
+  const getCategoryColor = (cat: string) =>
+    categoryColors[cat as keyof typeof categoryColors]?.main ||
+    categoryColors['innovation-project'].main;
+
+  const getCategoryBgColor = (cat: string) =>
+    categoryColors[cat as keyof typeof categoryColors]?.bg ||
+    categoryColors['innovation-project'].bg;
+
+  return (
+    <Paper
+      sx={{
+        p: 1.5,
+        bgcolor: getCategoryBgColor(category),
+        border: `2px solid ${getCategoryColor(category)}`,
+        borderRadius: 2,
+        height: 180,
+        overflowY: 'auto'
+      }}
+    >
+      <Typography
+        variant="caption"
+        sx={{
+          fontSize: '0.75rem',
+          fontWeight: 700,
+          color: getCategoryColor(category),
+          textAlign: 'center',
+          mb: 1,
+          display: 'block'
+        }}
+      >
+        {feedback.categoryName}
+      </Typography>
+
+      <Stack spacing={1}>
+        {feedback.greatJob && (
+          <FeedbackItem type="greatJob" content={feedback.greatJob} compact={compact} />
+        )}
+        {feedback.thinkAbout && (
+          <FeedbackItem type="thinkAbout" content={feedback.thinkAbout} compact={compact} />
+        )}
+      </Stack>
+    </Paper>
+  );
+}
+
 export function Feedback({ team }: FeedbackProps) {
   const t = useTranslations('layouts.deliberation.compare');
   const { getCategory } = useJudgingCategoryTranslations();
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { category } = useCompareContext();
 
   const feedbacksByCategory = useMemo(() => {
@@ -50,35 +150,7 @@ export function Feedback({ team }: FeedbackProps) {
     return result;
   }, [team, category, getCategory]);
 
-  const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'innovation-project':
-        return '#1976d2'; // blue[500]
-      case 'robot-design':
-        return '#388e3c'; // green[500]
-      case 'core-values':
-        return '#d32f2f'; // red[500]
-      default:
-        return '#1976d2'; // blue[500]
-    }
-  };
-
-  const getCategoryBgColor = (cat: string) => {
-    switch (cat) {
-      case 'innovation-project':
-        return '#e3f2fd'; // blue[50]
-      case 'robot-design':
-        return '#e8f5e8'; // green[50]
-      case 'core-values':
-        return '#ffebee'; // red[50]
-      default:
-        return '#e3f2fd'; // blue[50]
-    }
-  };
-
-  const hasAnyFeedback = Object.keys(feedbacksByCategory).length > 0;
-
-  if (!hasAnyFeedback) {
+  if (Object.keys(feedbacksByCategory).length === 0) {
     return null;
   }
 
@@ -89,170 +161,14 @@ export function Feedback({ team }: FeedbackProps) {
       </Typography>
 
       {category ? (
-        <Paper
-          sx={{
-            p: 1.5,
-            bgcolor: getCategoryBgColor(category),
-            border: `2px solid ${getCategoryColor(category)}`,
-            borderRadius: 2,
-            height: 180,
-            overflowY: 'auto'
-          }}
-        >
-          <Typography
-            variant="caption"
-            sx={{
-              fontSize: '0.75rem',
-              fontWeight: 700,
-              color: getCategoryColor(category),
-              textAlign: 'center',
-              mb: 1,
-              display: 'block'
-            }}
-          >
-            {getCategory(category as 'innovation-project' | 'robot-design' | 'core-values')}
-          </Typography>
-
-          <Stack spacing={1}>
-            {Object.entries(feedbacksByCategory).map(([cat, feedback]) => (
-              <Box key={cat}>
-                <Stack spacing={1}>
-                  {feedback.greatJob && (
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'black',
-                          fontWeight: 700,
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        {getFeedbackTitle('greatJob')}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mt: 0.5,
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word'
-                        }}
-                      >
-                        {feedback.greatJob}
-                      </Typography>
-                    </Box>
-                  )}
-                  {feedback.thinkAbout && (
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'black',
-                          fontWeight: 700,
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        {getFeedbackTitle('thinkAbout')}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mt: 0.5,
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word'
-                        }}
-                      >
-                        {feedback.thinkAbout}
-                      </Typography>
-                    </Box>
-                  )}
-                </Stack>
-              </Box>
-            ))}
-          </Stack>
-        </Paper>
+        Object.entries(feedbacksByCategory).map(([cat, feedback]) => (
+          <CategoryFeedbackCard key={cat} category={cat} feedback={feedback} />
+        ))
       ) : (
         <Grid container spacing={1}>
           {Object.entries(feedbacksByCategory).map(([cat, feedback]) => (
             <Grid size={4} key={cat}>
-              <Paper
-                sx={{
-                  p: 1.5,
-                  bgcolor: getCategoryBgColor(cat),
-                  border: `2px solid ${getCategoryColor(cat)}`,
-                  borderRadius: 2,
-                  height: 180,
-                  overflowY: 'auto'
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  sx={{
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    color: getCategoryColor(cat),
-                    textAlign: 'center',
-                    mb: 1,
-                    display: 'block'
-                  }}
-                >
-                  {feedback.categoryName}
-                </Typography>
-
-                <Stack spacing={1}>
-                  {feedback.greatJob && (
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'black',
-                          fontWeight: 700,
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        {getFeedbackTitle('greatJob')}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mt: 0.5,
-                          fontSize: '0.7rem',
-                          lineHeight: 1.3,
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word'
-                        }}
-                      >
-                        {feedback.greatJob}
-                      </Typography>
-                    </Box>
-                  )}
-                  {feedback.thinkAbout && (
-                    <Box>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'black',
-                          fontWeight: 700,
-                          fontSize: '0.8rem'
-                        }}
-                      >
-                        {getFeedbackTitle('thinkAbout')}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mt: 0.5,
-                          fontSize: '0.7rem',
-                          lineHeight: 1.3,
-                          wordWrap: 'break-word',
-                          overflowWrap: 'break-word'
-                        }}
-                      >
-                        {feedback.thinkAbout}
-                      </Typography>
-                    </Box>
-                  )}
-                </Stack>
-              </Paper>
+              <CategoryFeedbackCard category={cat} feedback={feedback} compact />
             </Grid>
           ))}
         </Grid>

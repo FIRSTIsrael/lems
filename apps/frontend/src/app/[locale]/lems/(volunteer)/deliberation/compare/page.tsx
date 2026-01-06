@@ -31,10 +31,12 @@ export default function ComparePage() {
   const categoryParam = searchParams.get('category') as JudgingCategory | null;
   const teamSlugs = teamSlugsParam?.split(',').filter(Boolean).slice(0, 6) ?? [];
 
-  const { data, loading, error } = usePageData(GET_UNIFIED_DIVISION, {
-    divisionId: currentDivision.id,
-    teamSlugs: teamSlugs.length > 0 ? teamSlugs : null
-  });
+  const { data, loading, error } = usePageData(
+    GET_UNIFIED_DIVISION,
+    teamSlugs.length > 0
+      ? { divisionId: currentDivision.id, teamSlugs }
+      : { divisionId: currentDivision.id }
+  );
 
   if (teamSlugs.length === 0 || loading) {
     return (
@@ -71,7 +73,7 @@ export default function ComparePage() {
     );
   }
 
-  if (!data?.division?.teams || data.division.teams.length === 0) {
+  if (!data?.division?.selectedTeams || data.division.selectedTeams.length === 0) {
     return (
       <>
         <PageHeader title={t('title')} />
@@ -82,9 +84,9 @@ export default function ComparePage() {
     );
   }
 
-  const teams = data.division.teams;
+  const teams = data.division.selectedTeams;
   const awards = data.division.awards ?? [];
-  const allTeams: DivisionTeam[] = data.division.teams ?? [];
+  const allTeams: DivisionTeam[] = data.division.allTeams ?? [];
 
   return (
     <CompareProvider

@@ -82,7 +82,13 @@ export interface Award {
 export interface UnifiedDivisionData {
   division: {
     id: string;
-    teams: Team[];
+    selectedTeams: Team[];
+    allTeams: {
+      id: string;
+      number: string;
+      name: string;
+      slug: string;
+    }[];
     awards: Award[];
   };
 }
