@@ -57,7 +57,8 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
 `;
 
 export function parseDivisionSessions(queryData: QueryData) {
-  return queryData?.division?.judging.sessions ?? [];
+  const sessions = queryData?.division?.judging.sessions ?? [];
+  return sessions.filter(session => !!session.team);
 }
 
 export function getLeadJudgeCategory(category: string | undefined): string {

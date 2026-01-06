@@ -1,20 +1,12 @@
 import { JudgingCategory } from '@lems/types/judging';
 import { rubrics } from '@lems/shared/rubrics';
 import { hyphensToUnderscores, underscoresToHyphens } from '@lems/shared/utils';
+import { MAX_PICKLIST_LIMIT, PICKLIST_LIMIT_MULTIPLIER } from '@lems/shared';
 import type { Team, JudgingDeliberation } from './graphql/types';
 import type { MetricPerCategory, RoomMetricsMap, FieldMetadata } from './types';
 
-/**
- * Maximum picklist limit when using default formula.
- * Picklist cannot exceed 12 teams (Enforced only in the UI).
- */
-export const MAX_PICKLIST_LIMIT = 12;
-
-/**
- * Default multiplier for calculating picklist limit.
- * Picklist limit = min(12, ceil(teamCount * 0.35))
- */
-export const PICKLIST_LIMIT_MULTIPLIER = 0.35;
+// Re-export constants for backward compatibility
+export { MAX_PICKLIST_LIMIT, PICKLIST_LIMIT_MULTIPLIER };
 
 /**
  * Category abbreviations for field display labels.

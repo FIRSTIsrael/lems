@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "Judge Advisor",
+      "mode": {
+        "judging": "Judging",
+        "awards": "Awards"
+      },
       "summary": {
         "status": {
           "empty": "Empty",
@@ -371,7 +375,46 @@
         }
       },
       "team-info-cell": {
-        "not-arrived": "Not Arrived"
+        "not-arrived": "Not Arrived",
+        "disqualified": "Disqualified"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "Disqualify Teams",
+          "search-placeholder": "Search by number, name, affiliation, or city...",
+          "search-label": "Search Teams",
+          "disqualify": "Disqualify",
+          "disqualified": "Disqualified",
+          "no-teams-found": "No teams found",
+          "disqualified-teams-title": "Disqualified Teams",
+          "disqualified-teams-count": "{count, plural, one {# team} other {# teams}}",
+          "confirm-title": "Confirm Disqualification",
+          "confirm-message": "Are you sure you want to disqualify",
+          "confirm-disqualify": "Disqualify",
+          "cancel": "Cancel",
+          "team-option-label": "Team #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "Error disqualifying team"
+        },
+        "deliberation": {
+          "final-deliberation": "Final Deliberation",
+          "status": "Status",
+          "picklist": "Picklist",
+          "start-time": "Start Time",
+          "stage": "Stage",
+          "action": "Action",
+          "open": "Open",
+          "open-final": "Open Final Deliberation",
+          "no-deliberations": "No deliberations available"
+        },
+        "personal-awards": {
+          "title": "Personal Awards",
+          "no-awards": "No personal awards configured",
+          "optional": "Optional",
+          "team-placeholder": "Enter team name or number",
+          "submit": "Submit Awards",
+          "placeholder-message": "Awards submitted"
+        },
+        "deliberations": "Deliberations"
       }
     },
     "referee": {
