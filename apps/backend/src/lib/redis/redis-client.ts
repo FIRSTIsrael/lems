@@ -20,7 +20,7 @@ const createRedisClient = (): Redis => {
     enableReadyCheck: true,
     enableOfflineQueue: true,
     maxRetriesPerRequest: null,
-    lazyConnect: false
+    lazyConnect: true
   });
 
   redisClient.on('connect', () => {
