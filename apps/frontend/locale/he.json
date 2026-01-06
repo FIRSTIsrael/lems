@@ -104,55 +104,6 @@
           "innovation-project": "פרויקט החדשות",
           "robot-design": "תכנון הרובוט"
         },
-        "rubric-sections": {
-          "innovation-project": {
-            "identify": "זיהוי",
-            "design": "תכנון",
-            "create": "יצירה",
-            "iterate": "חזרה ושינוי",
-            "communicate": "הצגה"
-          },
-          "robot-design": {
-            "identify": "זיהוי",
-            "design": "תכנון",
-            "create": "יצירת",
-            "iterate": "חזרה ושינוי",
-            "communicate": "הצגה"
-          },
-          "core-values": {
-            "discovery": "גילוי",
-            "innovation": "יצירתיות",
-            "impact": "השפעה",
-            "inclusion": "הכלה",
-            "teamwork": "עבודת צוות"
-          }
-        },
-        "rubric-fields": {
-          "innovation-project": {
-            "problem": "בעיה",
-            "research": "מחקר",
-            "plan": "תכנית",
-            "participation": "השתתפות",
-            "innovation": "חדשנות",
-            "model": "מודל",
-            "share": "שיתוף",
-            "improve": "שיפור",
-            "explanation": "הסבר",
-            "pride": "גאווה"
-          },
-          "robot-design": {
-            "strategy": "אסטרטגיה",
-            "resources": "משאבים",
-            "contribution": "תרומה",
-            "skills": "כישורים",
-            "attachments": "קבצים מצורפים",
-            "code": "קוד",
-            "test": "בדיקה",
-            "improve": "שיפור",
-            "explanation": "הסבר",
-            "pride": "גאווה"
-          }
-        },
         "status-glossary": {
           "title": "מדריך סטטוס מחוונים",
           "aria-label": "הצג מדריך סטטוס מחוונים",
