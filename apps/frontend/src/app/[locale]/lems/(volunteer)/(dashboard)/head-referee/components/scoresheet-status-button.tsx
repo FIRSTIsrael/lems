@@ -8,7 +8,7 @@ import { useTranslations } from 'next-intl';import {
   Send,
   Diversity1
 } from '@mui/icons-material';
-import { Box, Badge, Tooltip, Typography, useTheme } from '@mui/material';
+import { Box, Tooltip, Typography, useTheme } from '@mui/material';
 import Link from 'next/link';
 import type { ScoresheetStatus } from '../graphql/types';
 
@@ -65,14 +65,6 @@ export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string =
       return 'text.primary';
   }
 }
-/**
- * Gets the GP badge color.
- */
-function getGpBadgeColor(gp: 2 | 3 | 4 | null | undefined): 'error' | 'default' | 'primary' {
-  if (gp === 2) return 'error'; // Red
-  if (gp === 4) return 'primary'; // Blue
-  return 'default'; // Gray for 3
-}
 
 export function ScoresheetStatusButton({
   teamNumber,
@@ -98,63 +90,66 @@ export function ScoresheetStatusButton({
       : t(`scoresheet-status.${status}`);
 
   const button = (
-    <Badge
-      badgeContent={score !== undefined ? score : null}
-      max={1000}
-      color={gp ? getGpBadgeColor(gp) : 'default'}
-      sx={{
-        '& .MuiBadge-badge': {
-          fontSize: '0.65rem',
-          height: 18,
-          minWidth: 18,
-          padding: '0 4px'
-        }
+    <Box
+    sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textDecoration: 'none',
+        gap: 0.75,
+        px: 1.25,
+        py: 0.75,
+        borderRadius: 1.5,
+        backgroundColor:
+          isCompleted || isDraft
+            ? theme.palette.mode === 'dark'
+              ? `${statusColor}20`
+              : `${statusColor}12`
+            : 'transparent',
+        border: '1.5px solid',
+        borderColor: statusColor,
+        cursor: disabled ? 'default' : 'pointer',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        width: 'auto',
+        opacity: disabled ? 0.5 : 1,
+        ...(!disabled && {
+          '&:hover': {
+            backgroundColor:
+              theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,
+            boxShadow: `0 2px 8px ${statusColor}30`
+          },
+          '&:active': {
+            transform: 'scale(0.98)'
+          }
+        })
       }}
     >
-      <Box
-      sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 0.75,
-          px: 1.25,
-          py: 0.75,
-          borderRadius: 1.5,
-          backgroundColor:
-            isCompleted || isDraft
-              ? theme.palette.mode === 'dark'
-                ? `${statusColor}20`
-                : `${statusColor}12`
-              : 'transparent',
-          border: '1.5px solid',
-          borderColor: statusColor,
-          cursor: disabled ? 'default' : 'pointer',
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          width: 'auto',
-          opacity: disabled ? 0.5 : 1,
-          ...(!disabled && {
-            '&:hover': {
-              backgroundColor:
-                theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,
-              boxShadow: `0 2px 8px ${statusColor}30`
-            },
-            '&:active': {
-              transform: 'scale(0.98)'
-            }
-          })
-        }}
-      >
-        {getScoresheetStatusIcon(escalated ? 'escalated' : status)}
+      {getScoresheetStatusIcon(escalated ? 'escalated' : status)}
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, textAlign: 'center' }}>
         <Typography variant="caption" sx={{
             fontWeight: 600,
             fontSize: '0.8rem',
-            flex: 0,
-            color: statusColor
+            lineHeight: 1,
+            color: statusColor,
+            textDecoration: 'none'
           }}
           >
           #{teamNumber}
         </Typography>
+        {(score !== undefined || gp) && (
+          <Typography variant="caption" sx={{
+              fontWeight: 500,
+              fontSize: '0.7rem',
+              lineHeight: 1,
+              color: statusColor,
+              textDecoration: 'none'
+            }}
+            >
+            {score !== undefined ? score : '-'} {gp ? `(${gp})` : ''}
+          </Typography>
+        )}
       </Box>
-    </Badge>
+    </Box>
   );
 
   if (disabled) {
