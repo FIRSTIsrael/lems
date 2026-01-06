@@ -83,6 +83,9 @@ type MatchParticipant {
 
   "ID of the match this participant is in"
   matchId: String!
+
+  "Scoresheet for this participant's team for this match, null if no team or no scoresheet"
+  scoresheet: Scoresheet
 }
 
 """

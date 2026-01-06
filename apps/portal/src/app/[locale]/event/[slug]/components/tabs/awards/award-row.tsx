@@ -38,7 +38,7 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
           if (!award.winner) {
             return null;
           }
-          const isTeamAward = typeof award.winner !== 'string';
+          const isTeamAward = award.type === 'TEAM';
           const team = isTeamAward ? teams.find(t => t.id === award.winner) : null;
           const winnerText = team ? `${team.name} #${team.number}` : (award.winner as string);
 
