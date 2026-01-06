@@ -11,145 +11,116 @@ export interface CategoryDataPoint {
   score: number;
 }
 
-type RubricFields = Record<string, { value: number | null; notes?: string }>;
+export const calculateAverage = (values: number[]) =>
+  values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
 
-export function calculateAverage(values: number[]): number {
-  return values.length > 0 ? values.reduce((sum, val) => sum + val, 0) / values.length : 0;
-}
-
-export function extractCoreValuesBySection(rubric: any, schema: any): Record<string, number[]> {
-  const sectionScores: Record<string, number[]> = {};
-
-  if (!rubric?.data?.fields) return sectionScores;
-
-  const fields = rubric.data.fields as RubricFields;
+export const extractCoreValuesBySection = (rubric: any, schema: any): Record<string, number[]> => {
+  const result: Record<string, number[]> = {};
+  if (!rubric?.data?.fields) return result;
 
   schema.sections.forEach((section: any) => {
     section.fields.forEach((field: any) => {
-      if (field.coreValues && fields[field.id]?.value !== null) {
-        if (!sectionScores[section.id]) sectionScores[section.id] = [];
-        sectionScores[section.id].push(fields[field.id].value || 0);
+      if (field.coreValues && rubric.data.fields[field.id]?.value !== null) {
+        if (!result[section.id]) result[section.id] = [];
+        result[section.id].push(rubric.data.fields[field.id].value || 0);
       }
     });
   });
+  return result;
+};
 
-  return sectionScores;
-}
-
-export function extractCoreValuesFields(rubric: any, schema: any): number[] {
+export const extractCoreValuesFields = (rubric: any, schema: any): number[] => {
   const values: number[] = [];
-
   if (!rubric?.data?.fields) return values;
 
-  const fields = rubric.data.fields as RubricFields;
-
   schema.sections.forEach((section: any) => {
     section.fields.forEach((field: any) => {
-      if (field.coreValues && fields[field.id]?.value !== null) {
-        values.push(fields[field.id].value as number);
+      if (field.coreValues && rubric.data.fields[field.id]?.value !== null) {
+        values.push(rubric.data.fields[field.id].value);
       }
     });
   });
-
   return values;
-}
+};
 
-export function calculateRubricAverage(rubric: any): number {
+export const calculateRubricAverage = (rubric: any) => {
   if (!rubric?.data?.fields) return 0;
-
-  const fields = rubric.data.fields as RubricFields;
-  const values = Object.values(fields)
-    .filter(field => field.value !== null)
-    .map(field => field.value || 0);
-
+  const values = Object.values(rubric.data.fields)
+    .filter((field: any) => field.value !== null)
+    .map((field: any) => field.value || 0);
   return calculateAverage(values);
-}
+};
 
-export function getCategoryRadarColor(category: string): string {
+export const getCategoryRadarColor = (category: string): string => {
   const colors = {
     innovation_project: '#64B5F6',
     robot_design: '#81C784',
     core_values: '#E57373'
   };
   return colors[category.replace('-', '_') as keyof typeof colors] || '#64B5F6';
-}
+};
 
-export function processCoreValuesRadarData(
+export const processCoreValuesRadarData = (
   team: Team,
   getSectionTitle: (sectionId: string) => string
-): RadarChartDataPoint[] {
+): RadarChartDataPoint[] => {
   const ipRubric = team.rubrics.innovation_project;
   const rdRubric = team.rubrics.robot_design;
-
-  if (!ipRubric?.data?.fields && !rdRubric?.data?.fields) {
-    return [];
-  }
+  if (!ipRubric?.data?.fields && !rdRubric?.data?.fields) return [];
 
   const ipSchema = rubrics['innovation-project'];
-  const rdSchema = rubrics['robot-design'];
-
   const ipSectionScores = extractCoreValuesBySection(ipRubric, ipSchema);
-  const rdSectionScores = extractCoreValuesBySection(rdRubric, rdSchema);
+  const rdSectionScores = extractCoreValuesBySection(rdRubric, rubrics['robot-design']);
 
-  return ipSchema.sections.map(section => {
-    const ipScores = ipSectionScores[section.id] || [];
-    const rdScores = rdSectionScores[section.id] || [];
-    const allScores = [...ipScores, ...rdScores];
+  return ipSchema.sections.map(section => ({
+    field: getSectionTitle(section.id),
+    score: calculateAverage([
+      ...(ipSectionScores[section.id] || []),
+      ...(rdSectionScores[section.id] || [])
+    ])
+  }));
+};
 
-    return {
-      field: getSectionTitle(section.id),
-      score: calculateAverage(allScores)
-    };
-  });
-}
-
-export function processRubricRadarData(
+export const processRubricRadarData = (
   rubric: any,
   category: string,
   getSectionTitle: (sectionId: string) => string
-): RadarChartDataPoint[] {
+): RadarChartDataPoint[] => {
   if (!rubric?.data?.fields) return [];
-
   const schema = rubrics[category as keyof typeof rubrics];
   if (!schema || typeof schema === 'string' || !schema.sections) return [];
 
-  const fields = rubric.data.fields as RubricFields;
+  return schema.sections.map(section => ({
+    field: getSectionTitle(section.id),
+    score: calculateAverage(
+      section.fields
+        .map((field: any) => rubric.data.fields[field.id]?.value)
+        .filter((v: any) => v !== null && v !== undefined)
+    )
+  }));
+};
 
-  return schema.sections.map(section => {
-    const sectionScores = section.fields
-      .map((field: any) => fields[field.id]?.value)
-      .filter(
-        (value: number | null | undefined): value is number => value !== null && value !== undefined
-      );
-
-    return {
-      field: getSectionTitle(section.id),
-      score: calculateAverage(sectionScores)
-    };
-  });
-}
-
-export function processAllCategoriesRadarData(
+export const processAllCategoriesRadarData = (
   team: Team,
   getCategory: (key: string) => string
-): CategoryDataPoint[] {
-  const result: CategoryDataPoint[] = [];
+): CategoryDataPoint[] => {
+  const categories = [
+    { key: 'innovation-project', rubric: team.rubrics.innovation_project },
+    { key: 'robot-design', rubric: team.rubrics.robot_design }
+  ];
 
-  const ipAvg = calculateRubricAverage(team.rubrics.innovation_project);
-  result.push({ category: getCategory('innovation-project'), score: ipAvg });
-
-  const rdAvg = calculateRubricAverage(team.rubrics.robot_design);
-  result.push({ category: getCategory('robot-design'), score: rdAvg });
-
-  const ipSchema = rubrics['innovation-project'];
-  const rdSchema = rubrics['robot-design'];
-
-  const ipCoreValues = extractCoreValuesFields(team.rubrics.innovation_project, ipSchema);
-  const rdCoreValues = extractCoreValuesFields(team.rubrics.robot_design, rdSchema);
-  const allCoreValues = [...ipCoreValues, ...rdCoreValues];
-
-  const cvAvg = calculateAverage(allCoreValues);
-  result.push({ category: getCategory('core-values'), score: cvAvg });
-
-  return result;
-}
+  return [
+    ...categories.map(({ key, rubric }) => ({
+      category: getCategory(key),
+      score: calculateRubricAverage(rubric)
+    })),
+    {
+      category: getCategory('core-values'),
+      score: calculateAverage(
+        categories.flatMap(({ key, rubric }) =>
+          extractCoreValuesFields(rubric, rubrics[key as keyof typeof rubrics])
+        )
+      )
+    }
+  ];
+};

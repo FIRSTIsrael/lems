@@ -11,62 +11,59 @@ interface TeamSelectorProps {
   compact?: boolean;
 }
 
-export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProps) {
+const TeamAutocomplete = ({ availableTeams, addTeam, currentTeams, t, size = 'medium' }: any) => (
+  <Autocomplete
+    options={availableTeams}
+    getOptionLabel={team => `#${team.number} - ${team.name}`}
+    renderInput={params => (
+      <TextField
+        {...params}
+        label={t('add-team')}
+        placeholder={t('search-teams')}
+        size={size}
+        sx={size === 'small' ? { minWidth: 200 } : {}}
+      />
+    )}
+    onChange={(_, team) => team && addTeam(team.slug)}
+    disabled={currentTeams.length >= 6}
+    value={null}
+  />
+);
+
+export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProps) => {
   const t = useTranslations('layouts.deliberation.compare');
   const router = useRouter();
   const searchParams = useSearchParams();
   const { allTeams } = useCompareContext();
 
   const availableTeams = allTeams.filter(team => !currentTeams.includes(team.slug));
+  const currentTeamObjects = currentTeams
+    .map(slug => allTeams.find(team => team.slug === slug))
+    .filter(Boolean);
 
   const updateTeamsInUrl = (newTeamSlugs: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (newTeamSlugs.length > 0) {
-      params.set('teams', newTeamSlugs.join(','));
-    } else {
-      params.delete('teams');
-    }
+    newTeamSlugs.length > 0 ? params.set('teams', newTeamSlugs.join(',')) : params.delete('teams');
     router.push(`?${params.toString()}`);
   };
 
-  const addTeam = (teamSlug: string) => {
-    if (currentTeams.length < 6 && !currentTeams.includes(teamSlug)) {
-      updateTeamsInUrl([...currentTeams, teamSlug]);
-    }
-  };
-
-  const removeTeam = (teamSlug: string) => {
+  const addTeam = (teamSlug: string) =>
+    currentTeams.length < 6 &&
+    !currentTeams.includes(teamSlug) &&
+    updateTeamsInUrl([...currentTeams, teamSlug]);
+  const removeTeam = (teamSlug: string) =>
     updateTeamsInUrl(currentTeams.filter(slug => slug !== teamSlug));
-  };
-
-  const currentTeamObjects = currentTeams
-    .map(slug => allTeams.find(team => team.slug === slug))
-    .filter((team): team is NonNullable<typeof team> => Boolean(team));
 
   if (compact) {
     return (
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-        <Autocomplete
-          options={availableTeams}
-          getOptionLabel={team => `#${team.number} - ${team.name}`}
-          renderInput={params => (
-            <TextField
-              {...params}
-              label={t('add-team')}
-              placeholder={t('search-teams')}
-              size="small"
-              sx={{ minWidth: 200 }}
-            />
-          )}
-          onChange={(_, team) => {
-            if (team) {
-              addTeam(team.slug);
-            }
-          }}
-          disabled={currentTeams.length >= 6}
-          value={null}
+        <TeamAutocomplete
+          availableTeams={availableTeams}
+          addTeam={addTeam}
+          currentTeams={currentTeams}
+          t={t}
+          size="small"
         />
-
         {currentTeamObjects.map(team => (
           <Chip
             key={team.slug}
@@ -89,19 +86,11 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
         {t('manage-teams')}
       </Typography>
       <Stack spacing={2}>
-        <Autocomplete
-          options={availableTeams}
-          getOptionLabel={team => `#${team.number} - ${team.name}`}
-          renderInput={params => (
-            <TextField {...params} label={t('add-team')} placeholder={t('search-teams')} />
-          )}
-          onChange={(_, team) => {
-            if (team) {
-              addTeam(team.slug);
-            }
-          }}
-          disabled={currentTeams.length >= 6}
-          value={null}
+        <TeamAutocomplete
+          availableTeams={availableTeams}
+          addTeam={addTeam}
+          currentTeams={currentTeams}
+          t={t}
         />
 
         <Box>
@@ -109,16 +98,17 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
             {t('select-teams-to-compare')} ({currentTeams.length}/6)
           </Typography>
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            {currentTeamObjects.map(team => (
-              <Chip
-                key={team.slug}
-                label={`#${team.number} - ${team.name}`}
-                onDelete={() => removeTeam(team.slug)}
-                deleteIcon={<CloseIcon />}
-                color="primary"
-              />
-            ))}
-            {currentTeams.length === 0 && (
+            {currentTeamObjects.length > 0 ? (
+              currentTeamObjects.map(team => (
+                <Chip
+                  key={team.slug}
+                  label={`#${team.number} - ${team.name}`}
+                  onDelete={() => removeTeam(team.slug)}
+                  deleteIcon={<CloseIcon />}
+                  color="primary"
+                />
+              ))
+            ) : (
               <Typography variant="body2" color="text.secondary">
                 {t('no-teams-selected')}
               </Typography>
@@ -128,4 +118,4 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
       </Stack>
     </Box>
   );
-}
+};

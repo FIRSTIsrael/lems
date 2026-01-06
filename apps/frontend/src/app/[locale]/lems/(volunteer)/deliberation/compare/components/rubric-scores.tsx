@@ -20,104 +20,118 @@ interface RubricScoresProps {
   team: Team;
 }
 
-function processFieldsBySections(
+const processFieldsBySections = (
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
-): Record<
-  string,
-  Record<
-    string,
-    Array<{ fieldId: string; value: number | null; color: 'success' | 'error' | 'default' }>
-  >
-> {
+) => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
-  const result: Record<
-    string,
-    Record<
-      string,
-      Array<{ fieldId: string; value: number | null; color: 'success' | 'error' | 'default' }>
-    >
-  > = {};
+  const result: any = {};
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
-      const ipRubric = team.rubrics.innovation_project;
-      const rdRubric = team.rubrics.robot_design;
-      const coreValuesFields: Array<{
-        fieldId: string;
-        value: number | null;
-        color: 'success' | 'error' | 'default';
-      }> = [];
-
-      [
-        { rubric: ipRubric, schema: rubrics['innovation-project'], prefix: 'ip' },
-        { rubric: rdRubric, schema: rubrics['robot-design'], prefix: 'rd' }
-      ].forEach(({ rubric, schema, prefix }) => {
-        if (rubric?.data?.fields && schema.sections) {
-          schema.sections.forEach(section => {
-            section.fields.forEach(field => {
-              if (field.coreValues && rubric.data.fields[field.id]) {
-                const color = getFieldComparisonColor(field.id, team.id, fieldComparisons, prefix);
-                coreValuesFields.push({
-                  fieldId: field.id,
-                  value: rubric.data.fields[field.id].value,
-                  color
-                });
-              }
-            });
-          });
-        }
-      });
-
-      if (coreValuesFields.length > 0) {
-        result[cat] = { 'core-values': coreValuesFields };
-      }
+      const fields = [
+        ...Object.entries(team.rubrics.innovation_project?.data?.fields || {})
+          .filter(([id, field]) =>
+            rubrics['innovation-project'].sections.some(s =>
+              s.fields.some(f => f.id === id && f.coreValues)
+            )
+          )
+          .map(([id, field]) => ({
+            fieldId: id,
+            value: field.value,
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
+          })),
+        ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
+          .filter(([id, field]) =>
+            rubrics['robot-design'].sections.some(s =>
+              s.fields.some(f => f.id === id && f.coreValues)
+            )
+          )
+          .map(([id, field]) => ({
+            fieldId: id,
+            value: field.value,
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
+          }))
+      ];
+      if (fields.length > 0) result[cat] = { 'core-values': fields };
     } else {
-      const rubricKey = cat.replace('-', '_') as keyof typeof team.rubrics;
-      const rubric = team.rubrics[rubricKey];
+      const rubric = team.rubrics[cat.replace('-', '_') as keyof typeof team.rubrics];
       const schema = rubrics[cat as JudgingCategory];
-
       if (rubric?.data?.fields && schema.sections) {
-        result[cat] = {};
-
+        const sections: any = {};
         schema.sections.forEach(section => {
-          const sectionFields: Array<{
-            fieldId: string;
-            value: number | null;
-            color: 'success' | 'error' | 'default';
-          }> = [];
-
-          section.fields.forEach(field => {
-            if (rubric.data.fields[field.id]) {
-              const color = getFieldComparisonColor(field.id, team.id, fieldComparisons);
-              sectionFields.push({
-                fieldId: field.id,
-                value: rubric.data.fields[field.id].value,
-                color
-              });
-            }
-          });
-
-          if (sectionFields.length > 0) {
-            result[cat][section.id] = sectionFields;
-          }
+          const sectionFields = section.fields
+            .filter(field => rubric.data.fields[field.id])
+            .map(field => ({
+              fieldId: field.id,
+              value: rubric.data.fields[field.id].value,
+              color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
+            }));
+          if (sectionFields.length > 0) sections[section.id] = sectionFields;
         });
+        if (Object.keys(sections).length > 0) result[cat] = sections;
       }
     }
   });
-
   return result;
-}
+};
 
-export function RubricScores({ team }: RubricScoresProps) {
+const CategoryScoreCard = ({
+  cat,
+  sections,
+  getCategory
+}: {
+  cat: string;
+  sections: any;
+  getCategory: any;
+}) => (
+  <Paper
+    sx={{
+      p: 1.5,
+      bgcolor: getCategoryBgColor(cat),
+      border: `2px solid ${getCategoryColor(cat)}`,
+      borderRadius: 2,
+      height: '100%'
+    }}
+  >
+    <Typography
+      variant="body2"
+      sx={{
+        fontSize: '0.95rem',
+        fontWeight: 700,
+        color: getCategoryColor(cat),
+        textAlign: 'center',
+        mb: 1,
+        display: 'block'
+      }}
+    >
+      {getCategory(cat as any)}
+    </Typography>
+    <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
+      {Object.entries(sections).map(([sectionId, scores]: any) => (
+        <SectionScoreRow
+          key={sectionId}
+          category={cat as JudgingCategory}
+          sectionId={sectionId}
+          scores={scores}
+          showSectionName={cat !== 'core-values'}
+          showAllScores={cat === 'core-values'}
+        />
+      ))}
+    </Stack>
+  </Paper>
+);
+
+export const RubricScores = ({ team }: RubricScoresProps) => {
   const t = useTranslations('layouts.deliberation.compare');
   const { getCategory } = useJudgingCategoryTranslations();
   const { fieldComparisons, category } = useCompareContext();
 
-  const fieldsBySections = useMemo(() => {
-    return processFieldsBySections(team, fieldComparisons, category);
-  }, [team, fieldComparisons, category]);
+  const fieldsBySections = useMemo(
+    () => processFieldsBySections(team, fieldComparisons, category),
+    [team, fieldComparisons, category]
+  );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>
     Object.values(sections).some(fields => fields.length > 0)
@@ -163,52 +177,15 @@ export function RubricScores({ team }: RubricScoresProps) {
         </Paper>
       ) : (
         <Grid container spacing={1}>
-          {Object.entries(fieldsBySections).map(([cat, sections]) => {
-            if (Object.keys(sections).length === 0) return null;
-
-            return (
+          {Object.entries(fieldsBySections).map(([cat, sections]) =>
+            Object.keys(sections).length > 0 ? (
               <Grid size={4} key={cat}>
-                <Paper
-                  sx={{
-                    p: 1.5,
-                    bgcolor: getCategoryBgColor(cat),
-                    border: `2px solid ${getCategoryColor(cat)}`,
-                    borderRadius: 2,
-                    height: '100%'
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '0.95rem',
-                      fontWeight: 700,
-                      color: getCategoryColor(cat),
-                      textAlign: 'center',
-                      mb: 1,
-                      display: 'block'
-                    }}
-                  >
-                    {getCategory(cat as 'innovation-project' | 'robot-design' | 'core-values')}
-                  </Typography>
-
-                  <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
-                    {Object.entries(sections).map(([sectionId, scores]) => (
-                      <SectionScoreRow
-                        key={sectionId}
-                        category={cat as JudgingCategory}
-                        sectionId={sectionId}
-                        scores={scores}
-                        showSectionName={cat !== 'core-values'}
-                        showAllScores={cat === 'core-values'}
-                      />
-                    ))}
-                  </Stack>
-                </Paper>
+                <CategoryScoreCard cat={cat} sections={sections} getCategory={getCategory} />
               </Grid>
-            );
-          })}
+            ) : null
+          )}
         </Grid>
       )}
     </Stack>
   );
-}
+};
