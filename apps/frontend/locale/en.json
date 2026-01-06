@@ -425,14 +425,15 @@
       },
       "current-match": {
         "no-match": "No Match Loaded",
-        "no-match-description": "Waiting for the scorekeeper to load the next match",
         "round": "Round",
         "no-team": "No Team Assigned",
         "not-arrived": "Not Arrived",
         "status": {
           "loaded": "Loaded",
           "in-progress": "In Progress"
-        }
+        },
+        "match-title": "{stage} round {round}, match #{number}",
+        "table": "Table"
       },
       "schedule": {
         "title": "Upcoming Matches",

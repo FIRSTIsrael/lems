@@ -16,8 +16,8 @@ import {
   Stack
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import { useMc } from './mc-context';
 import type { MatchStatus } from '../graphql/types';
+import { useMc } from './mc-context';
 
 const getStatusColor = (status: MatchStatus) => {
   switch (status) {
@@ -81,17 +81,17 @@ export const MatchScheduleTable: React.FC = () => {
                 }}
               >
                 <TableCell>
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                     {getStage(match.stage)} #{match.number}
                   </Typography>
                   {match.round && (
-                    <Typography variant="caption" color="textSecondary">
+                    <Typography variant="body2" color="textSecondary">
                       {t('round')} {match.round}
                     </Typography>
                   )}
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body2" sx={{ fontFamily: 'monospace' }}>
+                  <Typography variant="body1" sx={{ fontFamily: 'monospace' }}>
                     {dayjs(match.scheduledTime).format('HH:mm')}
                   </Typography>
                 </TableCell>
@@ -106,14 +106,14 @@ export const MatchScheduleTable: React.FC = () => {
                             variant="outlined"
                             sx={{ minWidth: 60, fontWeight: 600 }}
                           />
-                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
                             #{participant.team?.number || '—'}
                           </Typography>
-                          <Typography variant="body2">
+                          <Typography variant="body1">
                             {participant.team?.name || t('no-team')}
                           </Typography>
                           {participant.team && (
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography variant="body1" color="textSecondary">
                               • {participant.team.affiliation}, {participant.team.city}
                             </Typography>
                           )}

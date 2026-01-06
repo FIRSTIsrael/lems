@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Paper, Typography, Stack, Chip, useTheme, Box } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
+import { Match } from '../graphql';
 import { useMc } from './mc-context';
 
 export const CurrentMatchHero: React.FC = () => {
@@ -27,9 +28,6 @@ export const CurrentMatchHero: React.FC = () => {
       >
         <Typography variant="h6" color="textSecondary">
           {t('no-match')}
-        </Typography>
-        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-          {t('no-match-description')}
         </Typography>
       </Paper>
     );
@@ -92,7 +90,11 @@ export const CurrentMatchHero: React.FC = () => {
               backgroundClip: 'text'
             }}
           >
-            {getStage(match.stage)} #{match.number}
+            {t('match-title', {
+              stage: getStage(match.stage),
+              round: match.round,
+              number: match.number
+            })}
           </Typography>
           <Chip
             label={getStatusLabel(match.status)}
@@ -101,25 +103,28 @@ export const CurrentMatchHero: React.FC = () => {
           />
         </Stack>
 
-        {match.round && (
-          <Typography variant="h6" color="textSecondary">
-            {t('round')} {match.round}
-          </Typography>
-        )}
-
         <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
           {match.participants.map(participant => (
             <Box key={participant.id} sx={{ flex: { xs: '1', md: '1 1 50%' } }}>
               <Paper
                 sx={{
                   p: 2.5,
-                  bgcolor: 'background.paper',
+                  height: '100%',
                   border: '1px solid',
-                  borderColor: 'divider'
+                  borderColor: 'divider',
+                  opacity: participant.team ? 1 : 0.6,
+                  backgroundColor: !participant.team
+                    ? 'action.disabledBackground'
+                    : 'background.paper'
                 }}
               >
                 <Stack spacing={1.5}>
-                  <Stack direction="row" alignItems="center" spacing={1.5}>
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={1.5}
+                    justifyContent="space-between"
+                  >
                     <Typography
                       variant="h5"
                       sx={{
@@ -127,10 +132,12 @@ export const CurrentMatchHero: React.FC = () => {
                         color: theme.palette.primary.main
                       }}
                     >
-                      #{participant.team?.number || '—'}
+                      {participant.team
+                        ? `${participant.team.name} #${participant.team.number}`
+                        : '-'}
                     </Typography>
                     <Chip
-                      label={participant.table.name}
+                      label={`${t('table')} ${participant.table.name}`}
                       size="small"
                       variant="outlined"
                       sx={{ fontWeight: 600 }}
@@ -138,26 +145,18 @@ export const CurrentMatchHero: React.FC = () => {
                   </Stack>
 
                   <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {participant.team?.name || t('no-team')}
+                    {participant.team
+                      ? `${participant.team.affiliation}, ${participant.team.city}`
+                      : t('no-team')}
                   </Typography>
 
-                  {participant.team && (
-                    <Stack spacing={0.5}>
-                      <Typography variant="body2" color="textSecondary">
-                        {participant.team.affiliation}
-                      </Typography>
-                      <Typography variant="body2" color="textSecondary">
-                        {participant.team.city}
-                      </Typography>
-                      {!participant.team.arrived && (
-                        <Chip
-                          label={t('not-arrived')}
-                          size="small"
-                          color="warning"
-                          sx={{ alignSelf: 'flex-start', mt: 0.5 }}
-                        />
-                      )}
-                    </Stack>
+                  {participant.team && !participant.team.arrived && (
+                    <Chip
+                      label={t('not-arrived')}
+                      size="small"
+                      color="warning"
+                      sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                    />
                   )}
                 </Stack>
               </Paper>

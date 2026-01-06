@@ -416,7 +416,7 @@
         },
         "deliberations": "דיוני שופטים"
       }
-    },    
+    },
     "mc": {
       "page-title": "ממשק מנחה",
       "mode": {
@@ -425,14 +425,15 @@
       },
       "current-match": {
         "no-match": "אין מקצה טעון",
-        "no-match-description": "ממתינים לשומר הזמן לטעון את המקצה הבא",
         "round": "סיבוב",
         "no-team": "אין קבוצה משובצת",
         "not-arrived": "לא הגיעה",
         "status": {
           "loaded": "טעון",
           "in-progress": "מתנהל"
-        }
+        },
+        "match-title": "סבב {stage} {round}, מקצה #{number}",
+        "table": "שולחן"
       },
       "schedule": {
         "title": "מקצים קרובים",
