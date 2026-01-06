@@ -25,15 +25,13 @@ export const viewport: Viewport = {
 const heebo = Heebo({
   subsets: ['latin', 'hebrew'],
   display: 'swap',
-  variable: '--font-heebo',
-  fallback: ['system-ui', 'arial', 'sans-serif']
+  variable: '--font-heebo'
 });
 
 const roboto = Roboto({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-roboto',
-  fallback: ['system-ui', 'arial', 'sans-serif']
+  variable: '--font-roboto'
 });
 
 interface RootLayoutProps {
@@ -54,7 +52,7 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
   return (
     <html lang={locale} dir={dir} className={`${heebo.variable} ${roboto.variable}`}>
       <head>
-        <style suppressHydrationWarning>{`.recharts-wrapper * { outline: none; }`}</style>
+        <style>{`.recharts-wrapper * { outline: none; }`}</style>{' '}
       </head>
       <body>
         <TimeSyncProvider>
