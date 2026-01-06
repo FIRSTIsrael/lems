@@ -32,6 +32,7 @@ export const rubricDataResolver: GraphQLFieldResolver<
   unknown,
   RubricGraphQL['data'] | null
 > = (rubric: RubricGraphQL) => {
+  console.log(rubric.data);
   return rubric.data || null;
 };
 

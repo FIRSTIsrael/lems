@@ -2,6 +2,9 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRubricsTranslations, useJudgingCategoryTranslations } from '@lems/localization';
+import { rubrics } from '@lems/shared/rubrics';
+import { JudgingCategory } from '@lems/types/judging';
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
@@ -11,10 +14,29 @@ interface ExceedingNotesProps {
   team: Team;
 }
 
+function findSectionId(category: string, fieldId: string): string | null {
+  const rubricCategory = rubrics[category as JudgingCategory];
+  if (!rubricCategory?.sections) return null;
+
+  for (const section of rubricCategory.sections) {
+    if (section.fields.some(field => field.id === fieldId)) {
+      return section.id;
+    }
+  }
+  return null;
+}
+
+function FieldName({ category, fieldId }: { category: string; fieldId: string }) {
+  const { getFieldLevel } = useRubricsTranslations(category as JudgingCategory);
+  const sectionId = findSectionId(category, fieldId);
+
+  const fieldName = sectionId ? getFieldLevel(sectionId, fieldId, 'beginning') : fieldId;
+  return <>{fieldName}</>;
+}
+
 export function ExceedingNotes({ team }: ExceedingNotesProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const tFields = useTranslations('pages.judge.schedule.rubric-fields');
-  const tRubric = useTranslations('pages.judge.schedule.rubric-labels');
+  const { getCategory } = useJudgingCategoryTranslations();
   const { category } = useCompareContext();
 
   const exceedingNotesByCategory = useMemo(() => {
@@ -61,7 +83,7 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
             {exceedingNotesByCategory[category]?.map((note, index) => (
               <Box key={index} sx={{ p: 1 }}>
                 <Typography variant="caption" color="primary" fontWeight={600}>
-                  {tFields(`${category}.${note.fieldId}`)}
+                  <FieldName category={category} fieldId={note.fieldId} />
                 </Typography>
                 <Typography variant="body2" sx={{ mt: 0.5 }}>
                   {note.notes}
@@ -95,14 +117,14 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                       display: 'block'
                     }}
                   >
-                    {tRubric(cat as 'innovation-project' | 'robot-design' | 'core-values')}
+                    {getCategory(cat as 'innovation-project' | 'robot-design' | 'core-values')}
                   </Typography>
                   <Grid container spacing={1}>
                     {notes.map((note, index) => (
                       <Grid key={index} size={6}>
                         <Box sx={{ p: 0.5 }}>
                           <Typography variant="caption" color="primary" fontWeight={600}>
-                            {tFields(`${cat}.${note.fieldId}`)}
+                            <FieldName category={cat} fieldId={note.fieldId} />
                           </Typography>
                           <Typography variant="body2" sx={{ mt: 0.5 }}>
                             {note.notes}

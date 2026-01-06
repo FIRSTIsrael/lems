@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Box, Chip, Stack, Typography } from '@mui/material';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
 
 interface CategoryFilterProps {
@@ -14,7 +15,7 @@ const CATEGORIES: JudgingCategory[] = ['innovation-project', 'robot-design', 'co
 
 export function CategoryFilter({ currentCategory, compact = false }: CategoryFilterProps) {
   const tCompare = useTranslations('layouts.deliberation.compare');
-  const tRubric = useTranslations('pages.judge.schedule.rubric-labels');
+  const { getCategory } = useJudgingCategoryTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -45,7 +46,7 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
         {CATEGORIES.map(category => (
           <Chip
             key={category}
-            label={tRubric(category)}
+            label={getCategory(category)}
             variant={currentCategory === category ? 'filled' : 'outlined'}
             color={currentCategory === category ? 'primary' : 'default'}
             onClick={() => handleCategoryChange(category)}
@@ -74,7 +75,7 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
         {CATEGORIES.map(category => (
           <Chip
             key={category}
-            label={tRubric(category)}
+            label={getCategory(category)}
             variant={currentCategory === category ? 'filled' : 'outlined'}
             color={currentCategory === category ? 'primary' : 'default'}
             onClick={() => handleCategoryChange(category)}

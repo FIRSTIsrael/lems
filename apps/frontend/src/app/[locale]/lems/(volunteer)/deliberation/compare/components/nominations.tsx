@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Box } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
+import { useAwardTranslations } from '@lems/localization';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
 
@@ -21,6 +22,7 @@ const CORE_VALUES_AWARDS = [
 
 export function Nominations({ team }: NominationsProps) {
   const t = useTranslations('layouts.deliberation.compare');
+  const { getName: getAwardName } = useAwardTranslations();
   const { category } = useCompareContext();
 
   const nominations = useMemo(() => {
@@ -29,7 +31,6 @@ export function Nominations({ team }: NominationsProps) {
     return cvRubric.data.awards;
   }, [team.rubrics.core_values]);
 
-  // Only show nominations if viewing core-values or all categories
   if (category && category !== 'core-values') {
     return null;
   }
@@ -64,7 +65,7 @@ export function Nominations({ team }: NominationsProps) {
               ) : (
                 <Close sx={{ fontSize: 18, color: 'error.main' }} />
               )}
-              <Typography variant="body2">{t(`awards.${award}`)}</Typography>
+              <Typography variant="body2">{getAwardName(award)}</Typography>
             </Box>
           );
         })}

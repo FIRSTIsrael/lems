@@ -78,7 +78,8 @@ export interface Award {
   place?: number;
 }
 
-export interface CompareTeamsData {
+
+export interface UnifiedDivisionData {
   division: {
     id: string;
     teams: Team[];
@@ -86,23 +87,7 @@ export interface CompareTeamsData {
   };
 }
 
-export interface CompareTeamsVars {
-  teamSlugs: string[];
+export interface UnifiedDivisionVars {
   divisionId: string;
-}
-
-export interface DivisionTeamsData {
-  division: {
-    id: string;
-    teams: {
-      id: string;
-      number: number;
-      name: string;
-      slug: string;
-    }[];
-  };
-}
-
-export interface DivisionTeamsVars {
-  divisionId: string;
+  teamSlugs?: string[] | null;
 }

@@ -819,16 +819,7 @@
         "gp-scores": "Gracious Professionalism",
         "round": "Round",
         "feedback": "Feedback",
-        "great-job": "Great Job",
-        "think-about": "Think About",
         "average": "Avg",
-        "awards": {
-          "breakthrough": "Breakthrough Award",
-          "rising-all-star": "Rising All-Star",
-          "judges-award": "Judges Award",
-          "motivate": "Motivate Award",
-          "impact": "Impact Award"
-        },
         "filter-by-category": "Filter by Category",
         "all-categories": "All Categories",
         "judging-room": "Judging Room",

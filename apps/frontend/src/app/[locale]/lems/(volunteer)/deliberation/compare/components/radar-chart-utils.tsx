@@ -1,4 +1,3 @@
-import { blue, green, red } from '@mui/material/colors';
 import { rubrics } from '@lems/shared/rubrics';
 import type { Team } from '../graphql/types';
 
@@ -68,16 +67,16 @@ export function calculateRubricAverage(rubric: any): number {
 
 export function getCategoryRadarColor(category: string): string {
   const colors = {
-    innovation_project: blue[300],
-    robot_design: green[300],
-    core_values: red[300]
+    innovation_project: '#64B5F6',
+    robot_design: '#81C784',
+    core_values: '#E57373'
   };
-  return colors[category.replace('-', '_') as keyof typeof colors] || blue[300];
+  return colors[category.replace('-', '_') as keyof typeof colors] || '#64B5F6';
 }
 
 export function processCoreValuesRadarData(
   team: Team,
-  tIpSections: (key: string) => string
+  getSectionTitle: (sectionId: string) => string
 ): RadarChartDataPoint[] {
   const ipRubric = team.rubrics.innovation_project;
   const rdRubric = team.rubrics.robot_design;
@@ -98,7 +97,7 @@ export function processCoreValuesRadarData(
     const allScores = [...ipScores, ...rdScores];
 
     return {
-      field: tIpSections(section.id),
+      field: getSectionTitle(section.id),
       score: calculateAverage(allScores)
     };
   });
@@ -107,7 +106,7 @@ export function processCoreValuesRadarData(
 export function processRubricRadarData(
   rubric: any,
   category: string,
-  tSections: (key: string) => string
+  getSectionTitle: (sectionId: string) => string
 ): RadarChartDataPoint[] {
   if (!rubric?.data?.fields) return [];
 
@@ -124,7 +123,7 @@ export function processRubricRadarData(
       );
 
     return {
-      field: tSections(section.id),
+      field: getSectionTitle(section.id),
       score: calculateAverage(sectionScores)
     };
   });

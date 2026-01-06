@@ -2,8 +2,8 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRubricsGeneralTranslations, useJudgingCategoryTranslations } from '@lems/localization';
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
-import { blue, green, red } from '@mui/material/colors';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
 
@@ -13,7 +13,8 @@ interface FeedbackProps {
 
 export function Feedback({ team }: FeedbackProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const tRubric = useTranslations('pages.judge.schedule.rubric-labels');
+  const { getCategory } = useJudgingCategoryTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { category } = useCompareContext();
 
   const feedbacksByCategory = useMemo(() => {
@@ -38,7 +39,7 @@ export function Feedback({ team }: FeedbackProps) {
         const { greatJob, thinkAbout } = rubric.data.feedback;
         if (greatJob || thinkAbout) {
           result[cat] = {
-            categoryName: tRubric(cat as 'innovation-project' | 'robot-design' | 'core-values'),
+            categoryName: getCategory(cat as 'innovation-project' | 'robot-design' | 'core-values'),
             greatJob,
             thinkAbout
           };
@@ -47,31 +48,31 @@ export function Feedback({ team }: FeedbackProps) {
     });
 
     return result;
-  }, [team, category, tRubric]);
+  }, [team, category, getCategory]);
 
   const getCategoryColor = (cat: string) => {
     switch (cat) {
       case 'innovation-project':
-        return blue[500];
+        return '#1976d2'; // blue[500]
       case 'robot-design':
-        return green[500];
+        return '#388e3c'; // green[500]
       case 'core-values':
-        return red[500];
+        return '#d32f2f'; // red[500]
       default:
-        return blue[500];
+        return '#1976d2'; // blue[500]
     }
   };
 
   const getCategoryBgColor = (cat: string) => {
     switch (cat) {
       case 'innovation-project':
-        return blue[50];
+        return '#e3f2fd'; // blue[50]
       case 'robot-design':
-        return green[50];
+        return '#e8f5e8'; // green[50]
       case 'core-values':
-        return red[50];
+        return '#ffebee'; // red[50]
       default:
-        return blue[50];
+        return '#e3f2fd'; // blue[50]
     }
   };
 
@@ -88,7 +89,6 @@ export function Feedback({ team }: FeedbackProps) {
       </Typography>
 
       {category ? (
-        // Single category view - vertical layout with category background
         <Paper
           sx={{
             p: 1.5,
@@ -110,7 +110,7 @@ export function Feedback({ team }: FeedbackProps) {
               display: 'block'
             }}
           >
-            {tRubric(category as 'innovation-project' | 'robot-design' | 'core-values')}
+            {getCategory(category as 'innovation-project' | 'robot-design' | 'core-values')}
           </Typography>
 
           <Stack spacing={1}>
@@ -127,7 +127,7 @@ export function Feedback({ team }: FeedbackProps) {
                           fontSize: '0.8rem'
                         }}
                       >
-                        {t('great-job')}
+                        {getFeedbackTitle('greatJob')}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -151,7 +151,7 @@ export function Feedback({ team }: FeedbackProps) {
                           fontSize: '0.8rem'
                         }}
                       >
-                        {t('think-about')}
+                        {getFeedbackTitle('thinkAbout')}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -209,7 +209,7 @@ export function Feedback({ team }: FeedbackProps) {
                           fontSize: '0.8rem'
                         }}
                       >
-                        {t('great-job')}
+                        {getFeedbackTitle('greatJob')}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -235,7 +235,7 @@ export function Feedback({ team }: FeedbackProps) {
                           fontSize: '0.8rem'
                         }}
                       >
-                        {t('think-about')}
+                        {getFeedbackTitle('thinkAbout')}
                       </Typography>
                       <Typography
                         variant="body2"

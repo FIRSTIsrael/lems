@@ -1,2 +1,2 @@
-export { GET_COMPARE_TEAMS, GET_DIVISION_TEAMS, parseCompareTeamsData } from './query';
+export { GET_UNIFIED_DIVISION, parseCompareTeamsData } from './query';
 export type * from './types';

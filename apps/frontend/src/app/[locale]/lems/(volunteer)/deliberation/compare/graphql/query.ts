@@ -1,34 +1,20 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { CompareTeamsData, CompareTeamsVars, DivisionTeamsData, DivisionTeamsVars } from './types';
+import type { UnifiedDivisionData, UnifiedDivisionVars } from './types';
 
-export const GET_DIVISION_TEAMS: TypedDocumentNode<DivisionTeamsData, DivisionTeamsVars> = gql`
-  query GetDivisionTeams($divisionId: String!) {
-    division(id: $divisionId) {
-      id
-      teams {
-        id
-        number
-        name
-        slug
-      }
-    }
-  }
-`;
-
-export const GET_COMPARE_TEAMS: TypedDocumentNode<CompareTeamsData, CompareTeamsVars> = gql`
-  query GetCompareTeams($teamSlugs: [String!]!, $divisionId: String!) {
+export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, UnifiedDivisionVars> = gql`
+  query GetUnifiedDivision($divisionId: String!, $teamSlugs: [String!]) {
     division(id: $divisionId) {
       id
       teams(slugs: $teamSlugs) {
         id
         number
         name
+        slug
         affiliation
         city
         region
         arrived
         disqualified
-        slug
         logoUrl
         judgingSession {
           id
@@ -95,5 +81,9 @@ export const GET_COMPARE_TEAMS: TypedDocumentNode<CompareTeamsData, CompareTeams
         place
       }
     }
-  } 
+  }
 `;
+
+export const parseCompareTeamsData = (data: UnifiedDivisionData): UnifiedDivisionData => {
+  return data;
+};

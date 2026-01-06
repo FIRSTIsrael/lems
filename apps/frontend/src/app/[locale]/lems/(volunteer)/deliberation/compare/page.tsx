@@ -7,14 +7,8 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../../(dashboard)/components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import { GET_COMPARE_TEAMS, GET_DIVISION_TEAMS } from './graphql';
-import type {
-  CompareTeamsData,
-  CompareTeamsVars,
-  DivisionTeamsData,
-  DivisionTeamsVars
-} from './graphql/types';
-import { CompareProvider, type DivisionTeam } from './compare-context';
+import { GET_UNIFIED_DIVISION, type DivisionTeam } from './graphql';
+import { CompareProvider } from './compare-context';
 import {
   EmptyState,
   TeamHeader,
@@ -33,34 +27,13 @@ export default function ComparePage() {
   const { currentDivision } = useEvent();
   const searchParams = useSearchParams();
 
-  // Parse URL parameters
   const teamSlugsParam = searchParams.get('teams');
   const categoryParam = searchParams.get('category') as JudgingCategory | null;
   const teamSlugs = teamSlugsParam?.split(',').filter(Boolean).slice(0, 6) ?? [];
 
-  // Query teams data
-  const { data, loading, error } = usePageData<
-    CompareTeamsData,
-    CompareTeamsVars,
-    CompareTeamsData
-  >(
-    GET_COMPARE_TEAMS,
-    {
-      teamSlugs,
-      divisionId: currentDivision.id
-    },
-    undefined,
-    undefined,
-    { refetchIntervalMs: 0 }
-  );
-
-  // Query all division teams for team selector
-  const { data: divisionData } = usePageData<
-    DivisionTeamsData,
-    DivisionTeamsVars,
-    DivisionTeamsData
-  >(GET_DIVISION_TEAMS, { divisionId: currentDivision.id }, undefined, undefined, {
-    refetchIntervalMs: 0
+  const { data, loading, error } = usePageData(GET_UNIFIED_DIVISION, {
+    divisionId: currentDivision.id,
+    teamSlugs: teamSlugs.length > 0 ? teamSlugs : null
   });
 
   if (teamSlugs.length === 0 || loading) {
@@ -111,7 +84,7 @@ export default function ComparePage() {
 
   const teams = data.division.teams;
   const awards = data.division.awards ?? [];
-  const allTeams: DivisionTeam[] = divisionData?.division?.teams ?? [];
+  const allTeams: DivisionTeam[] = data.division.teams ?? [];
 
   return (
     <CompareProvider

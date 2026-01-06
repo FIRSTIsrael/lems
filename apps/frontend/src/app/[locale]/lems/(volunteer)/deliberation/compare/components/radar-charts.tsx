@@ -1,9 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useTranslations } from 'next-intl';
 import { Typography } from '@mui/material';
-import { blue } from '@mui/material/colors';
 import {
   RadarChart,
   PolarGrid,
@@ -12,7 +10,8 @@ import {
   Radar,
   ResponsiveContainer
 } from 'recharts';
-import { useJudgingCategoryTranslations } from '@lems/localization';
+import { useJudgingCategoryTranslations, useRubricsTranslations } from '@lems/localization';
+import { JudgingCategory } from '@lems/types/judging';
 import type { Team } from '../graphql/types';
 import {
   processCoreValuesRadarData,
@@ -27,18 +26,18 @@ interface CategoryRadarChartProps {
 }
 
 export function CategoryRadarChart({ team, category }: CategoryRadarChartProps) {
-  const tSections = useTranslations(`pages.judge.schedule.rubric-sections.${category}`);
-  const tIpSections = useTranslations('pages.judge.schedule.rubric-sections.innovation-project');
+  const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations('innovation-project');
+  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
 
   const data = useMemo(() => {
     if (category === 'core-values') {
-      return processCoreValuesRadarData(team, tIpSections);
+      return processCoreValuesRadarData(team, getIpSectionTitle);
     }
 
     const rubricKey = category.replace('-', '_') as keyof typeof team.rubrics;
     const rubric = team.rubrics[rubricKey];
-    return processRubricRadarData(rubric, category, tSections);
-  }, [team, category, tSections, tIpSections]);
+    return processRubricRadarData(rubric, category, getSectionTitle);
+  }, [team, category, getSectionTitle, getIpSectionTitle]);
 
   const color = getCategoryRadarColor(category);
 
@@ -79,7 +78,7 @@ export function AllCategoriesRadarChart({ team }: AllCategoriesRadarChartProps) 
         <PolarGrid />
         <PolarAngleAxis dataKey="category" tick={{ fontSize: 14 }} />
         <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 12 }} />
-        <Radar dataKey="score" stroke={blue[300]} fill={blue[300]} fillOpacity={0.6} />
+        <Radar dataKey="score" stroke="#64B5F6" fill="#64B5F6" fillOpacity={0.6} />
       </RadarChart>
     </ResponsiveContainer>
   );
