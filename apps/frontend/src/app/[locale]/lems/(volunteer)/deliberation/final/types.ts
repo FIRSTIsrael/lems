@@ -1,6 +1,7 @@
-import { OptionalAwards } from '@lems/shared';
+import { Award, OptionalAwards } from '@lems/shared';
 import { Division, JudgingCategory } from '@lems/database';
-import { Room, MetricPerCategory } from '../types';
+import { Room, MetricPerCategory, RoomMetricsMap } from '../types';
+import { FinalJudgingDeliberation } from './graphql';
 
 export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
 export type StagesWithNomination = 'champions' | 'core-awards' | 'optional-awards';
@@ -14,7 +15,7 @@ export type RubricsFields = Record<JudgingCategory, RubricFields>;
 /**
  * Enriched team data with all computed values for final deliberation.
  */
-type EnrichedTeam = {
+export type EnrichedTeam = {
   id: string;
   number: string;
   name: string;
@@ -24,7 +25,7 @@ type EnrichedTeam = {
   room: Room | null;
 
   scores: MetricPerCategory;
-  normalizedScores: MetricPerCategory;
+  normalizedScores: Omit<MetricPerCategory, 'core-values-no-gp'>;
   ranks: RanksPerCategory;
 
   eligibility: EligiblityPerStage;
@@ -40,10 +41,21 @@ type EnrichedTeam = {
 };
 
 export interface FinalDeliberationContextValue {
-  division: Division | null;
-  deliberation: FinalJudgingDeliberation | null;
+  division: Division;
+  deliberation: FinalJudgingDeliberation;
 
   teams: EnrichedTeam[];
 
   eligibleTeams: Record<StagesWithNomination, string[]>;
+  availableTeams: string[];
+
+  categoryPicklists: Record<JudgingCategory, string[]>;
+
+  awards: Record<Award, string[]>;
+
+  roomMetrics: RoomMetricsMap;
+
+  startDeliberation(): Promise<void>;
+  updateAward(teamId: string, awardId: Award, place: number): Promise<void>;
+  adavanceStage(): Promise<void>;
 }

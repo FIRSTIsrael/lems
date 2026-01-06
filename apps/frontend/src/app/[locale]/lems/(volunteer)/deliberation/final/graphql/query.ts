@@ -84,6 +84,20 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
 
       judging {
         divisionId
+        awards
+
+        innovationProjectDeliberation: deliberation(category: innovation_project) {
+          picklist
+        }
+
+        robotDesignDeliberation: deliberation(category: robot_design) {
+          picklist
+        }
+
+        coreValuesDeliberation: deliberation(category: core_values) {
+          picklist
+        }
+
         finalDeliberation {
           divisionId
           stage
