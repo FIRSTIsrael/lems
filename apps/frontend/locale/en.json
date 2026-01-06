@@ -804,7 +804,7 @@
       "compare": {
         "title": "Compare Teams",
         "no-teams-selected": "No teams selected",
-        "no-teams-description": "Select teams from the deliberation page to compare their performance.",
+        "no-teams-description": "Select teams to compare.",
         "back-to-deliberation": "Back to Deliberation",
         "error-loading-teams": "Failed to load team data. Please try again.",
         "teams-not-found": "The selected teams could not be found.",
