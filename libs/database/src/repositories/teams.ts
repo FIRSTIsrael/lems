@@ -296,6 +296,17 @@ export class TeamsRepository {
     return createdTeam;
   }
 
+  async getAllUnregistered(): Promise<Team[]> {
+    const teams = await this.db
+      .selectFrom('teams')
+      .leftJoin('team_divisions', 'teams.id', 'team_divisions.team_id')
+      .selectAll('teams')
+      .where('team_divisions.team_id', 'is', null)
+      .orderBy('teams.number', 'asc')
+      .execute();
+    return teams;
+  }
+
   async createMany(teams: InsertableTeam[]): Promise<Team[]> {
     const createdTeams = await this.db.insertInto('teams').values(teams).returningAll().execute();
     return createdTeams;

@@ -124,6 +124,8 @@ type ScoresheetStatusUpdated {
   scoresheetId: String!
   "The new status of the scoresheet"
   status: ScoresheetStatus!
+  "Whether the scoresheet was escalated"
+  escalated: Boolean!
 }
 
 """

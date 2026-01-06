@@ -1,22 +1,13 @@
-import pino from 'pino';
 import * as path from 'path';
+import pino from 'pino';
+import dayjs from 'dayjs';
+import 'pino-pretty';
+import 'pino-roll';
 
 const logsDir = process.env.LOG_DIR || path.join(process.cwd(), 'logs');
 
-function getHumanReadableTime(): string {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  const hours = String(now.getHours()).padStart(2, '0');
-  const minutes = String(now.getMinutes()).padStart(2, '0');
-  const seconds = String(now.getSeconds()).padStart(2, '0');
-  const ms = String(now.getMilliseconds()).padStart(3, '0');
-  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${ms}`;
-}
-
 function humanReadableTimeFunction(): string {
-  return `,"time":"${getHumanReadableTime()}"`;
+  return `,"time":"${dayjs().format('YYYY-MM-DD HH:mm:ss.SSS')}"`;
 }
 
 const fileTransport = pino.transport({
@@ -46,7 +37,7 @@ export const logger = pino(
     level: process.env.LOG_LEVEL || 'info',
     timestamp: humanReadableTimeFunction,
     formatters: {
-      level: (label) => {
+      level: label => {
         return { level: label };
       }
     }
@@ -58,4 +49,3 @@ export const logger = pino(
 );
 
 export default logger;
-

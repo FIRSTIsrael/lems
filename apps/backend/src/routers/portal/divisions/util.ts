@@ -22,6 +22,7 @@ export const makePortalAwardsResponse = (award: DbAward): Award => ({
   id: award.id,
   name: award.name,
   type: award.type,
+  showPlaces: award.show_places,
   winner: award.type === 'PERSONAL' ? award.winner_name : award.winner_id,
   place: award.place
 });
