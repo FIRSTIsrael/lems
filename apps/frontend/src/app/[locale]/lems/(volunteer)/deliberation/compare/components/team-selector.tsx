@@ -53,7 +53,7 @@ export function TeamSelector({ currentTeams, compact = false }: TeamSelectorProp
 
   const currentTeamObjects = currentTeams
     .map(slug => allTeams.find(team => team.slug === slug))
-    .filter(Boolean);
+    .filter((team): team is NonNullable<typeof team> => Boolean(team));
 
   if (compact) {
     return (

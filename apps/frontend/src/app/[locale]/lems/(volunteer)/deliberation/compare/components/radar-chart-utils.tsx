@@ -112,6 +112,8 @@ export function processRubricRadarData(
   if (!rubric?.data?.fields) return [];
 
   const schema = rubrics[category as keyof typeof rubrics];
+  if (!schema || typeof schema === 'string' || !schema.sections) return [];
+
   const fields = rubric.data.fields as RubricFields;
 
   return schema.sections.map(section => {

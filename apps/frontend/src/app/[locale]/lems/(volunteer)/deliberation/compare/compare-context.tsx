@@ -48,11 +48,10 @@ interface CompareProviderProps {
 
 export const CompareProvider = ({ children, teams, awards, category }: CompareProviderProps) => {
   const value = useMemo(() => {
-    // Collect all rubrics based on category filter
     const rubricsToCompare: Rubric[] = [];
     const categories: JudgingCategory[] = category
       ? [category]
-      : ['innovation-project', 'robot-design', 'core-values'];
+      : ['innovation-project', 'robot-design'];
 
     teams.forEach(team => {
       categories.forEach(cat => {
@@ -94,21 +93,18 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       let max = -Infinity;
 
       teams.forEach(team => {
-        let fieldValue: number | null = null;
-
-        categories.forEach(cat => {
+        for (const cat of categories) {
           const rubric = team.rubrics[
             cat.replace('-', '_') as keyof typeof team.rubrics
           ] as Rubric | null;
-          if (rubric?.data?.fields?.[fieldId]?.value) {
-            fieldValue = rubric.data.fields[fieldId].value;
-          }
-        });
+          const fieldValue = rubric?.data?.fields?.[fieldId]?.value;
 
-        if (fieldValue !== null) {
-          values.set(team.id, fieldValue);
-          min = Math.min(min, fieldValue);
-          max = Math.max(max, fieldValue);
+          if (fieldValue !== null && fieldValue !== undefined) {
+            values.set(team.id, fieldValue);
+            min = Math.min(min, fieldValue);
+            max = Math.max(max, fieldValue);
+            break;
+          }
         }
       });
 
@@ -123,14 +119,24 @@ export const CompareProvider = ({ children, teams, awards, category }: ComparePr
       let ties = 0;
       let losses = 0;
 
-      fieldComparisons.forEach((_, fieldId) => {
-        const color = getFieldComparisonColor(fieldId, team.id, fieldComparisons);
-        if (color === 'success') {
-          wins++;
-        } else if (color === 'error') {
-          losses++;
-        } else {
-          ties++;
+      categories.forEach(cat => {
+        const rubric = team.rubrics[
+          cat.replace('-', '_') as keyof typeof team.rubrics
+        ] as Rubric | null;
+
+        if (rubric?.data?.fields) {
+          Object.keys(rubric.data.fields).forEach(fieldId => {
+            if (fieldComparisons.has(fieldId)) {
+              const color = getFieldComparisonColor(fieldId, team.id, fieldComparisons);
+              if (color === 'success') {
+                wins++;
+              } else if (color === 'error') {
+                losses++;
+              } else {
+                ties++;
+              }
+            }
+          });
         }
       });
 
