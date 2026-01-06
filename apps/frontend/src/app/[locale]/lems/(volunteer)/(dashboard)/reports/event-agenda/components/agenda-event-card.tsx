@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Chip, Stack } from '@mui/material';
 import { Schedule } from '@mui/icons-material';
 import dayjs from 'dayjs';
-import { AgendaEvent } from '../event-agenda.graphql';
+import { AgendaEvent } from '../graphql';
 
 interface AgendaEventCardProps {
   event: AgendaEvent;

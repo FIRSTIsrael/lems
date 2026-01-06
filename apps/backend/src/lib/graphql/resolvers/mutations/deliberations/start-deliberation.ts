@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { underscoresToHyphens } from '@lems/shared/utils';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -26,7 +27,8 @@ export const startDeliberationResolver: GraphQLFieldResolver<
     startTime: string;
   }>
 > = async (_root, { divisionId, category }, context) => {
-  const deliberation = await authorizeDeliberationAccess(context, divisionId, category);
+  const hyphenatedCategory = underscoresToHyphens(category) as JudgingCategory;
+  const deliberation = await authorizeDeliberationAccess(context, divisionId, hyphenatedCategory);
 
   // Check if deliberation is editable
   assertDeliberationEditable(deliberation.status);
@@ -40,7 +42,7 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   }
 
   // Update the deliberation status and set start time
-  const now = new Date().toISOString();
+  const now = new Date();
   const updated = await db.judgingDeliberations.get(deliberation.id).update({
     status: 'in-progress',
     start_time: now
@@ -57,7 +59,7 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {
       deliberationId: updated.id,
-      startTime: updated.start_time
+      startTime: updated.start_time.toISOString()
     }),
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_STATUS_CHANGED, {
       deliberationId: updated.id,
@@ -68,6 +70,6 @@ export const startDeliberationResolver: GraphQLFieldResolver<
   return {
     deliberationId: updated.id,
     status: updated.status,
-    startTime: updated.start_time || now
+    startTime: updated.start_time.toISOString()
   };
 };

@@ -16,7 +16,8 @@ import {
   PersonOutlined,
   EmojiEventsOutlined,
   GroupOutlined,
-  InsightsOutlined
+  InsightsOutlined,
+  DataObjectOutlined
 } from '@mui/icons-material';
 import { PermissionType } from '@lems/database';
 import {
@@ -118,6 +119,19 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
             </Link>
           );
         })}
+      </List>
+      <Divider />
+      <List>
+        <Link href="/dev/graphql">
+          <ListItem disablePadding>
+            <ListItemButton>
+              <ListItemIcon>
+                <DataObjectOutlined />
+              </ListItemIcon>
+              <ListItemText primary={t('sidebar.graphql')} />
+            </ListItemButton>
+          </ListItem>
+        </Link>
       </List>
       <Divider />
       <Box sx={{ p: 2 }}>

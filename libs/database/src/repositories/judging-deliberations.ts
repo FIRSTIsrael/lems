@@ -79,10 +79,16 @@ export class JudgingDeliberationsRepository {
     return new JudgingDeliberationsSelector(this.db, divisionId);
   }
 
-  async create(deliberation: NewJudgingDeliberation): Promise<JudgingDeliberation> {
+  async create(
+    deliberation: Omit<NewJudgingDeliberation, 'status' | 'picklist'>
+  ): Promise<JudgingDeliberation> {
     const created = await this.db
       .insertInto('judging_deliberations')
-      .values(deliberation)
+      .values({
+        status: 'not-started',
+        picklist: [],
+        ...deliberation
+      })
       .returningAll()
       .executeTakeFirstOrThrow();
 

@@ -20,6 +20,7 @@ import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
+import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -42,6 +43,7 @@ import { currentStageResolver } from './divisions/field/current-stage';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
+import { matchParticipantScoresheetResolver } from './divisions/field/match-participant-scoresheet';
 import { audienceDisplayResolver } from './divisions/field/audience-display';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
@@ -104,7 +106,8 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     rubrics: judgingRubricsResolver,
-    deliberation: judgingDeliberationResolver
+    deliberation: judgingDeliberationResolver,
+    finalDeliberation: judgingFinalDeliberationResolver
   },
   Field: {
     audienceDisplay: audienceDisplayResolver,
@@ -118,7 +121,8 @@ export const resolvers = {
   },
   MatchParticipant: {
     team: matchParticipantTeamResolver,
-    table: matchParticipantTableResolver
+    table: matchParticipantTableResolver,
+    scoresheet: matchParticipantScoresheetResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,
