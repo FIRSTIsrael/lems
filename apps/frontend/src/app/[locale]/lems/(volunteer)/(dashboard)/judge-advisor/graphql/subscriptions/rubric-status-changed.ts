@@ -78,7 +78,6 @@ export function createRubricStatusChangedSubscription(
               )
             })
           ),
-          rooms: prev.division.judging.rooms,
           sessionLength: prev.division.judging.sessionLength
         }
       }

@@ -7,7 +7,7 @@ export interface MatchLoadedSubscriptionData {
   matchLoaded: MatchEvent;
 }
 
-export interface SubscriptionVars {
+interface SubscriptionVars {
   divisionId: string;
 }
 

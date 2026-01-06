@@ -9,6 +9,8 @@ export interface RedisEvent {
   data: Record<string, unknown>;
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+
 /**
  * Manages a shared Redis subscriber for a specific division and event type.
  * Broadcasts all received messages to multiple listeners (clients).
@@ -34,13 +36,15 @@ export class SubscriptionBroadcaster extends EventEmitter {
       username: process.env.REDIS_USERNAME,
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0', 10),
-      enableReadyCheck: false,
-      enableOfflineQueue: true,
-      lazyConnect: false,
       retryStrategy: times => {
         const delay = Math.min(times * 50, 2000);
         return delay;
-      }
+      },
+      tls: isProduction ? {} : undefined,
+      enableReadyCheck: true,
+      enableOfflineQueue: true,
+      maxRetriesPerRequest: null,
+      lazyConnect: true
     });
 
     const channel = this.getChannelName(this.divisionId, this.eventType);
