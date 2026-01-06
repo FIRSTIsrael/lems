@@ -15,14 +15,12 @@ import {
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { JudgingSession } from '../graphql';
+import { useLeadJudge } from './lead-judge-context';
 import { getRubricStatusStats } from './utils';
 import { SessionFilters } from './session-filters';
+import { LeadJudgeDeliberationCard } from './lead-judge-deliberation-card';
 
 interface RubricStatusSummaryProps {
-  sessions: JudgingSession[];
-  category: string;
-  loading?: boolean;
   teamFilter: string;
   setTeamFilter: (value: string) => void;
   statusFilter: string[];
@@ -30,9 +28,6 @@ interface RubricStatusSummaryProps {
 }
 
 export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
-  sessions,
-  category,
-  loading = false,
   teamFilter,
   setTeamFilter,
   statusFilter,
@@ -41,6 +36,8 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
   const t = useTranslations('pages.lead-judge.summary');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
+
+  const { sessions, category, loading } = useLeadJudge();
   const color = getRubricColor(category as JudgingCategory);
 
   const stats = useMemo(
@@ -173,12 +170,12 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
           </CardContent>
         </Card>
         <SessionFilters
-          sessions={sessions}
           teamFilter={teamFilter}
           setTeamFilter={setTeamFilter}
           statusFilter={statusFilter}
           setStatusFilter={setStatusFilter}
         />
+        <LeadJudgeDeliberationCard />
       </Box>
     </Paper>
   );

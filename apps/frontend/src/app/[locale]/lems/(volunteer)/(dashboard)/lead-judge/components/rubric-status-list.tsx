@@ -1,30 +1,25 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { JudgingCategory } from '@lems/types/judging';
 import { range } from '@lems/shared/utils';
 import { Paper, Box, Typography, useTheme, Stack } from '@mui/material';
-import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
+import { useLeadJudge } from './lead-judge-context';
 import { TeamSessionCard } from './team-session-card';
 
 interface RubricStatusListProps {
-  sessions: JudgingSession[];
-  category: JudgingCategory;
-  loading?: boolean;
   teamFilter: string;
   statusFilter: string[];
 }
 
 export const RubricStatusList: React.FC<RubricStatusListProps> = ({
-  sessions,
-  category,
-  loading = false,
-  teamFilter,
-  statusFilter
+  teamFilter = '',
+  statusFilter = []
 }) => {
   const t = useTranslations('pages.lead-judge.list');
   const theme = useTheme();
+
+  const { sessions, category, loading } = useLeadJudge();
 
   const filteredSessions = useFilteredSessions(sessions, {
     teamFilter,

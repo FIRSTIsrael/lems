@@ -26,6 +26,14 @@ export interface CategorizedRubrics extends Record<
   core_values: { id: string; status: RubricStatus } | null;
 }
 
+export interface Deliberation {
+  id: string;
+  category: string;
+  status: string;
+  startTime?: string;
+  picklist: unknown[];
+}
+
 export interface JudgingSession {
   id: string;
   number: number;
@@ -42,6 +50,7 @@ export interface LeadJudgeData {
   sessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
+  deliberation: Deliberation | null;
 }
 
 export interface QueryData {
