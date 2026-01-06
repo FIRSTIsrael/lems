@@ -16,7 +16,8 @@ import {
   Stack
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import type { Match, MatchStage, MatchStatus } from '../graphql/types';
+import { useMc } from './mc-context';
+import type { MatchStatus } from '../graphql/types';
 
 const getStatusColor = (status: MatchStatus) => {
   switch (status) {
@@ -29,15 +30,8 @@ const getStatusColor = (status: MatchStatus) => {
   }
 };
 
-interface MatchScheduleTableProps {
-  matches: Match[];
-  currentStage: MatchStage;
-}
-
-export const MatchScheduleTable: React.FC<MatchScheduleTableProps> = ({
-  matches,
-  currentStage
-}) => {
+export const MatchScheduleTable: React.FC = () => {
+  const { matches, currentStage } = useMc();
   const t = useTranslations('pages.mc.schedule');
   const { getStage, getStatus } = useMatchTranslations();
 

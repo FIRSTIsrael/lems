@@ -419,6 +419,10 @@
     },
     "mc": {
       "page-title": "MC Dashboard",
+      "mode": {
+        "matches": "Matches",
+        "awards": "Awards"
+      },
       "current-match": {
         "no-match": "No Match Loaded",
         "no-match-description": "Waiting for the scorekeeper to load the next match",

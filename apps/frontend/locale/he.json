@@ -419,6 +419,10 @@
     },    
     "mc": {
       "page-title": "ממשק מנחה",
+      "mode": {
+        "matches": "מקצים",
+        "awards": "פרסים"
+      },
       "current-match": {
         "no-match": "אין מקצה טעון",
         "no-match-description": "ממתינים לשומר הזמן לטעון את המקצה הבא",

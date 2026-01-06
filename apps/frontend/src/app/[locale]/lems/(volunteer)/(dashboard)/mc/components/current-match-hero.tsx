@@ -4,15 +4,10 @@ import { useTranslations } from 'next-intl';
 import { Paper, Typography, Stack, Chip, useTheme, Box } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
-import type { Match, MatchStage } from '../graphql/types';
+import { useMc } from './mc-context';
 
-interface CurrentMatchHeroProps {
-  loadedMatch: string | null;
-  matches: Match[];
-  currentStage: MatchStage;
-}
-
-export const CurrentMatchHero: React.FC<CurrentMatchHeroProps> = ({ loadedMatch, matches }) => {
+export const CurrentMatchHero: React.FC = () => {
+  const { loadedMatch, matches } = useMc();
   const t = useTranslations('pages.mc.current-match');
   const { getStage } = useMatchTranslations();
   const theme = useTheme();
