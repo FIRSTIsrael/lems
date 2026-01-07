@@ -40,11 +40,12 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
           round
           status
           escalated
-          team {
-            id
-            number
-            slug
-          }
+            team {
+              id
+              number
+              name
+              slug
+            }
           data {
             score
             gp {

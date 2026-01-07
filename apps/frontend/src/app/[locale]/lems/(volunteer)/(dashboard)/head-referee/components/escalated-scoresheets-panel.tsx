@@ -84,6 +84,9 @@ function EscalatedScoresheetItem({ scoresheet }: EscalatedScoresheetItemProps) {
           borderColor: 'action.hover'
         }
       }}
+      component={Link}
+      href={`/lems/team/${scoresheet.team.slug}/scoresheet/${scoresheet.slug}`}
+      style={{ textDecoration: 'none' }}
     >
       <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: 1 }}>
         <Chip
@@ -93,20 +96,11 @@ function EscalatedScoresheetItem({ scoresheet }: EscalatedScoresheetItemProps) {
           variant="filled"
           sx={{ fontWeight: 600 }}
         />
-        <Chip label={scoresheet.slug} size="small" variant="outlined" />
         <Chip label={t(`scoresheet-status.${scoresheet.status}`)} size="small" />
         {scoresheet.data && (
           <Chip label={`${scoresheet.data.score} ${t('points')}`} size="small" variant="outlined" />
         )}
       </Box>
-      <MuiLink
-        component={Link}
-        href={`/lems/team/${scoresheet.team.slug}/scoresheet/${scoresheet.slug}`}
-        underline="hover"
-        sx={{ fontWeight: 600, whiteSpace: 'nowrap', ml: 'auto' }}
-      >
-        {t('escalated-panel.view-scoresheet')}
-      </MuiLink>
     </Box>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip } from '@mui/material';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
@@ -63,7 +62,6 @@ interface MatchCardProps {
 }
 
 function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: MatchCardProps) {
-  const t = useTranslations('pages.head-referee');
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll to active match
@@ -89,7 +87,7 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
       <CardContent sx={{ pb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6" fontWeight={600} color="text.primary">
-            {t('match-number', { number: match.number })}
+            #{match.number}
           </Typography>
           <Chip
             label={scheduledTime}
@@ -145,6 +143,7 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
                     <ScoresheetStatusButton
                       teamNumber={participant.team!.number}
                       teamSlug={participant.team!.slug}
+                      teamName={participant.team!.name}
                       scoresheetSlug={scoresheet.slug}
                       status={scoresheet.status}
                       escalated={scoresheet.escalated}

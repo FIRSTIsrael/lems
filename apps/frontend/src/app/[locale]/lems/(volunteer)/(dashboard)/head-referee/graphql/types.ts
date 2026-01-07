@@ -58,6 +58,7 @@ export interface Scoresheet {
   team: {
     id: string;
     number: string;
+    name: string;
     slug: string;
   };
   data: ScoresheetData | null;

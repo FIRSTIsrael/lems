@@ -16,6 +16,7 @@ import type { ScoresheetStatus } from '../graphql/types';
 export interface ScoresheetStatusButtonProps {
   teamNumber: string;
   teamSlug: string;
+  teamName: string;
   scoresheetSlug: string;
   status: ScoresheetStatus;
   escalated: boolean;
@@ -25,23 +26,32 @@ export interface ScoresheetStatusButtonProps {
   dimmed?: boolean;
 }
 
-export const getScoresheetStatusIcon = (status: ScoresheetStatus | 'escalated') => {
-  const iconProps = { sx: { fontSize: '1.2rem' } };
+export const getScoresheetStatusIcon = (
+  status: ScoresheetStatus | 'escalated',
+  colorOverride?: string
+) => {
+  const iconProps = { sx: { fontSize: '1.2rem', color: colorOverride } };
+
   if (status === 'escalated') {
-    return <WarningAmber {...iconProps} sx={{ ...iconProps.sx, color: 'warning.main' }} />;
+    return (
+      <WarningAmber
+        {...iconProps}
+        sx={{ ...iconProps.sx, color: colorOverride || 'warning.main' }}
+      />
+    );
   }
 
   switch (status) {
     case 'empty':
-      return <HelpOutline {...iconProps} color="disabled" />;
+      return <HelpOutline {...iconProps} color={colorOverride ? undefined : 'disabled'} />;
     case 'in-progress':
-      return <Edit {...iconProps} color="info" />;
+      return <Edit {...iconProps} color={colorOverride ? undefined : 'info'} />;
     case 'gp':
-      return <Diversity1 {...iconProps} color="error" />;
+      return <Diversity1 {...iconProps} color={colorOverride ? undefined : 'error'} />;
     case 'completed':
-      return <CheckCircle {...iconProps} color="success" />;
+      return <CheckCircle {...iconProps} color={colorOverride ? undefined : 'success'} />;
     case 'submitted':
-      return <Send {...iconProps} color="success" />;
+      return <Send {...iconProps} color={colorOverride ? undefined : 'success'} />;
     default:
       return null;
   }
@@ -70,6 +80,7 @@ export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string =
 export function ScoresheetStatusButton({
   teamNumber,
   teamSlug,
+  teamName,
   scoresheetSlug,
   status,
   escalated,
@@ -84,12 +95,11 @@ export function ScoresheetStatusButton({
   const statusColor = getStatusColor(escalated ? 'escalated' : status);
   const isCompleted = status === 'completed';
   const isDraft = status === 'in-progress';
+  const isSubmitted = status === 'submitted';
 
-  const tooltipTitle = disabled
-    ? t('scoresheet-button.team-not-registered')
-    : escalated
-      ? t('scoresheet-button.escalated-tooltip')
-      : t(`scoresheet-status.${status}`);
+  const textColor = isSubmitted ? 'common.white' : statusColor;
+
+  const tooltipTitle = teamName;
 
   const button = (
     <Box
@@ -102,8 +112,9 @@ export function ScoresheetStatusButton({
         px: 1.5,
         py: 1,
         borderRadius: 1.5,
-        backgroundColor:
-          isCompleted || isDraft
+        backgroundColor: isSubmitted
+          ? statusColor
+          : isCompleted || isDraft
             ? theme.palette.mode === 'dark'
               ? `${statusColor}20`
               : `${statusColor}12`
@@ -114,6 +125,7 @@ export function ScoresheetStatusButton({
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         width: 'auto',
         minWidth: 'max-content',
+        minHeight: '45px',
         opacity: disabled ? 0.5 : dimmed ? 0.35 : 1,
         filter: dimmed ? 'grayscale(0.7)' : 'none',
         ...(!disabled &&
@@ -130,15 +142,21 @@ export function ScoresheetStatusButton({
           })
       }}
     >
-      {getScoresheetStatusIcon(escalated ? 'escalated' : status)}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, textAlign: 'center' }}>
+      {getScoresheetStatusIcon(escalated ? 'escalated' : status, isSubmitted ? 'common.white' : undefined)}
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 0.25,
+          textAlign: 'center'
+        }}>
         <Typography
           variant="caption"
           sx={{
             fontWeight: 700,
             fontSize: '0.8rem',
             lineHeight: 1,
-            color: statusColor,
+            color: textColor,
             textDecoration: 'none'
           }}
         >
@@ -151,7 +169,7 @@ export function ScoresheetStatusButton({
               fontWeight: 500,
               fontSize: '0.7rem',
               lineHeight: 1,
-              color: statusColor,
+              color: textColor,
               textDecoration: 'none'
             }}
           >

@@ -586,7 +586,6 @@
       "escalation-alert": "A scoresheet has been escalated to you for review",
       "points": "points",
       "round": "Round",
-      "match-number": "M{number}",
       "stage": {
         "practice": "Practice",
         "ranking": "Ranking"
@@ -612,8 +611,8 @@
         "submitted": "Submitted"
       },
       "scoresheet-button": {
-        "team-not-registered": "Team has not arrived",
-        "escalated-tooltip": "Escalated - Requires head referee review"
+        "team-not-registered": "",
+        "escalated-tooltip": ""
       },
       "legend": {
         "title": "Scoresheet Status Legend",

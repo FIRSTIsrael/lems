@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { CardHeader, CardContent, Typography, Chip, useTheme, Paper } from '@mui/material';
+import { CardHeader, CardContent, Typography, useTheme, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import type { RoundGroup } from './utils';
 import { DesktopScheduleTable } from './desktop-schedule-table';
@@ -15,7 +15,7 @@ export function RoundSchedule({ roundGroup }: RoundScheduleProps) {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
 
-  const { stage, round, matches, scoresheets, escalatedCount } = roundGroup;
+  const { stage, round, matches, scoresheets } = roundGroup;
 
   const stageLabel = stage === 'PRACTICE' ? t('stage.practice') : t('stage.ranking');
   const title = `${stageLabel} - ${t('round')} ${round}`;

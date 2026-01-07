@@ -586,7 +586,6 @@
       "escalation-alert": "דף ניקוד הועבר לטיפולך!",
       "points": "נקודות",
       "round": "סבב",
-      "match-number": "M{number}",
       "stage": {
         "practice": "אימון",
         "ranking": "דירוג"
@@ -612,8 +611,8 @@
         "submitted": "נשלח"
       },
       "scoresheet-button": {
-        "team-not-registered": "הקבוצה לא הגיעה",
-        "escalated-tooltip": "הועבר לטיפול - דורש עיון שופט ראשי"
+        "team-not-registered": "",
+        "escalated-tooltip": ""
       },
       "legend": {
         "title": "מקרא סטטוסי דף ניקוד",

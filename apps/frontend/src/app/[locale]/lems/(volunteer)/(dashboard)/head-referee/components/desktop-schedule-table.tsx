@@ -185,6 +185,7 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
             <ScoresheetStatusButton
               teamNumber={participant.team.number}
               teamSlug={participant.team.slug}
+              teamName={participant.team.name}
               scoresheetSlug={scoresheet.slug}
               status={scoresheet.status}
               escalated={scoresheet.escalated}

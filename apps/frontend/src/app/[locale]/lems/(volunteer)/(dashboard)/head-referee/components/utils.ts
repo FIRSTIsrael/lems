@@ -77,8 +77,14 @@ export function filterScoresheets(scoresheets: Scoresheet[], options: FilterOpti
 
   // Filter by search query (team number)
   if (options.searchQuery.trim()) {
-    const query = options.searchQuery.trim().toLowerCase();
-    filtered = filtered.filter(s => s.team.number.toLowerCase().includes(query));
+    const query = options.searchQuery.trim();
+    // Escape special regex characters to avoid errors
+    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQuery, 'i');
+
+    filtered = filtered.filter(
+      s => regex.test(s.team.number) || (s.team.name && regex.test(s.team.name))
+    );
   }
 
   return filtered;
