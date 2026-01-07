@@ -1,14 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-  CardHeader,
-  CardContent,
-  Typography,
-  Chip,
-  useTheme,
-  Paper
-} from '@mui/material';
+import { CardHeader, CardContent, Typography, Chip, useTheme, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import type { RoundGroup } from './utils';
 import { DesktopScheduleTable } from './desktop-schedule-table';
@@ -29,29 +22,30 @@ export function RoundSchedule({ roundGroup }: RoundScheduleProps) {
 
   return (
     <Paper
+      elevation={2}
       sx={{
-        bgcolor: 'white',
-        border: `2px solid transparent`,
-        borderRadius: 1.5,
+        backgroundColor: 'background.paper',
+        borderRadius: 2,
         overflow: 'hidden'
       }}
     >
       <CardHeader
         title={
-          <Typography variant="h6" fontWeight={600}>
+          <Typography variant="h6" fontWeight={600} color="text.primary">
             {title}
           </Typography>
         }
         sx={{
-          bgcolor: 'grey.50',
+          backgroundColor: 'grey.50',
           borderBottom: `1px solid ${theme.palette.divider}`,
-          py: 1.5
+          py: 2,
+          px: 3
         }}
       />
-      <CardContent sx={{ p: 0 }}>
-        <ResponsiveComponent 
-        desktop={<DesktopScheduleTable matches={matches} scoresheets={scoresheets} />} 
-        mobile={<MobileScheduleCards matches={matches} scoresheets={scoresheets} />}
+      <CardContent sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
+        <ResponsiveComponent
+          desktop={<DesktopScheduleTable matches={matches} scoresheets={scoresheets} />}
+          mobile={<MobileScheduleCards matches={matches} scoresheets={scoresheets} />}
         />
       </CardContent>
     </Paper>

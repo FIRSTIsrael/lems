@@ -39,6 +39,7 @@ export function ScoresheetStatusLegend() {
         sx={{
           color: theme.palette.text.secondary,
           transition: 'all 0.2s',
+          flex: '0 0 auto',
           '&:hover': {
             color: theme.palette.primary.main,
             backgroundColor:
@@ -56,7 +57,7 @@ export function ScoresheetStatusLegend() {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: 'left'
         }}
         transformOrigin={{
           vertical: 'top',
@@ -79,8 +80,8 @@ export function ScoresheetStatusLegend() {
         <Box
           sx={{
             position: 'absolute',
-            top: -8,
-            right: 12,
+            bottom: '100%',
+            right: 16,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
@@ -91,8 +92,8 @@ export function ScoresheetStatusLegend() {
         <Box
           sx={{
             position: 'absolute',
-            top: -7,
-            right: 12,
+            bottom: 'calc(100% - 1px)',
+            right: 16,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',

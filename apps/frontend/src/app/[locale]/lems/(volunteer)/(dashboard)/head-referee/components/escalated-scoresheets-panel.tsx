@@ -1,7 +1,16 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Alert, AlertTitle, Stack, Chip, Box, Link as MuiLink } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Stack,
+  Chip,
+  Box,
+  Link as MuiLink,
+  Typography
+} from '@mui/material';
 import Link from 'next/link';
 import WarningIcon from '@mui/icons-material/Warning';
 import type { Scoresheet } from '../graphql/types';
@@ -16,14 +25,37 @@ export function EscalatedScoresheetsPanel() {
   }
 
   return (
-    <Alert severity="warning" icon={<WarningIcon />}>
-      <AlertTitle>{t('escalated-panel.title', { count: escalatedScoresheets.length })}</AlertTitle>
-      <Stack spacing={1} sx={{ mt: 1 }}>
-        {escalatedScoresheets.map(scoresheet => (
-          <EscalatedScoresheetItem key={scoresheet.id} scoresheet={scoresheet} />
-        ))}
-      </Stack>
-    </Alert>
+    <Card
+      elevation={2}
+      sx={{
+        borderLeft: '4px solid',
+        borderColor: 'warning.main'
+      }}
+    >
+      <CardHeader
+        avatar={<WarningIcon sx={{ color: 'warning.main' }} />}
+        title={
+          <Typography variant="h6" fontWeight={600}>
+            {t('escalated-panel.title', { count: escalatedScoresheets.length })}
+          </Typography>
+        }
+        sx={{
+          backgroundColor: 'warning.lighter',
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+          '& .MuiCardHeader-avatar': {
+            mr: 1.5
+          }
+        }}
+      />
+      <CardContent sx={{ pt: 2 }}>
+        <Stack spacing={1.5}>
+          {escalatedScoresheets.map(scoresheet => (
+            <EscalatedScoresheetItem key={scoresheet.id} scoresheet={scoresheet} />
+          ))}
+        </Stack>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -39,24 +71,39 @@ function EscalatedScoresheetItem({ scoresheet }: EscalatedScoresheetItemProps) {
       sx={{
         display: 'flex',
         alignItems: 'center',
+        justifyContent: 'space-between',
         gap: 2,
-        p: 1,
-        bgcolor: 'background.paper',
-        borderRadius: 1
+        p: 1.5,
+        backgroundColor: 'background.paper',
+        borderRadius: 1.5,
+        border: '1px solid',
+        borderColor: 'divider',
+        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+        '&:hover': {
+          backgroundColor: 'action.hover',
+          borderColor: 'action.hover'
+        }
       }}
     >
-      <Chip label={`#${scoresheet.team.number}`} color="primary" size="small" />
-      <Chip label={scoresheet.slug} size="small" variant="outlined" />
-      <Chip label={t(`scoresheet-status.${scoresheet.status}`)} size="small" />
-      {scoresheet.data && (
-        <Chip label={`${scoresheet.data.score} ${t('points')}`} size="small" variant="outlined" />
-      )}
-      <Box sx={{ flex: 1 }} />
+      <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', flex: 1 }}>
+        <Chip
+          label={`#${scoresheet.team.number}`}
+          color="primary"
+          size="small"
+          variant="filled"
+          sx={{ fontWeight: 600 }}
+        />
+        <Chip label={scoresheet.slug} size="small" variant="outlined" />
+        <Chip label={t(`scoresheet-status.${scoresheet.status}`)} size="small" />
+        {scoresheet.data && (
+          <Chip label={`${scoresheet.data.score} ${t('points')}`} size="small" variant="outlined" />
+        )}
+      </Box>
       <MuiLink
         component={Link}
         href={`/lems/team/${scoresheet.team.slug}/scoresheet/${scoresheet.slug}`}
         underline="hover"
-        sx={{ fontWeight: 600 }}
+        sx={{ fontWeight: 600, whiteSpace: 'nowrap', ml: 'auto' }}
       >
         {t('escalated-panel.view-scoresheet')}
       </MuiLink>

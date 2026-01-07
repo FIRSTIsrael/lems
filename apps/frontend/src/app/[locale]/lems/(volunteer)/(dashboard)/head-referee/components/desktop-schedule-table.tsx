@@ -64,14 +64,34 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
   }, [sortedMatches, currentTime, data.matchLength]);
 
   return (
-    <TableContainer component={Paper} variant="outlined">
-      <Table size="small">
-        <TableHead>
-          <TableRow sx={{ bgcolor: 'grey.100' }}>
-            <TableCell sx={{ fontWeight: 600 }}>{t('table.match')}</TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>{t('table.scheduled-time')}</TableCell>
+    <TableContainer
+      component={Paper}
+      elevation={0}
+      sx={{ borderRadius: 0, backgroundColor: 'transparent' }}
+    >
+      <Table sx={{ borderCollapse: 'collapse' }}>
+        <TableHead sx={{ backgroundColor: 'primary.main' }}>
+          <TableRow>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2, color: 'common.white' }}>
+              {t('table.match')}
+            </TableCell>
+            <TableCell
+              sx={{
+                fontWeight: 600,
+                fontSize: '1rem',
+                py: 2,
+                textAlign: 'center',
+                color: 'common.white'
+              }}
+            >
+              {t('table.scheduled-time')}
+            </TableCell>
             {tables.map(table => (
-              <TableCell key={table.id} align="center" sx={{ fontWeight: 600 }}>
+              <TableCell
+                key={table.id}
+                align="center"
+                sx={{ fontWeight: 600, fontSize: '1rem', py: 2, color: 'common.white' }}
+              >
                 {table.name}
               </TableCell>
             ))}
@@ -103,7 +123,6 @@ interface MatchRowProps {
 }
 
 function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam }: MatchRowProps) {
-  const t = useTranslations('pages.head-referee');
   const rowRef = useRef<HTMLTableRowElement>(null);
 
   // Auto-scroll to active match on mount
@@ -118,30 +137,31 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
   return (
     <TableRow
       ref={rowRef}
+      hover
       sx={{
-        bgcolor: isActive ? '#e6f7e7' : 'transparent',
-        '&:hover': { bgcolor: isActive ? '#e6f7e7' : 'action.hover' }
+        backgroundColor: isActive ? 'action.selected' : 'background.paper',
+        '&:last-child td': { border: 0 },
+        '& td': { py: 2 }
       }}
     >
       <TableCell>
-        <Typography variant="body2" fontWeight={600}>
-          {t('match-number', { number: match.number })}
+        <Typography variant="body1" fontWeight={600}>
+          #{match.number}
         </Typography>
       </TableCell>
-      <TableCell>
-        <Typography 
-          fontFamily="monospace"
-          fontWeight={500}
-          variant="body2">
-            {scheduledTime}
-          </Typography>
+      <TableCell sx={{ textAlign: 'center' }}>
+        <Typography fontFamily="monospace" fontWeight={500} variant="body1">
+          {scheduledTime}
+        </Typography>
       </TableCell>
       {tables.map(table => {
         const participant = match.participants.find(p => p.table.id === table.id);
         if (!participant || !participant.team) {
           return (
             <TableCell key={table.id} align="center">
-              -
+              <Typography variant="body1" color="text.secondary">
+                -
+              </Typography>
             </TableCell>
           );
         }
@@ -151,7 +171,9 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
         if (!scoresheet) {
           return (
             <TableCell key={table.id} align="center">
-              -
+              <Typography variant="body1" color="text.secondary">
+                -
+              </Typography>
             </TableCell>
           );
         }

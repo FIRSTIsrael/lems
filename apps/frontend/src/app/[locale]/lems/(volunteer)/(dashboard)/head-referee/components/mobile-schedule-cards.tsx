@@ -78,19 +78,25 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
   return (
     <Card
       ref={cardRef}
-      variant="outlined"
+      elevation={isActive ? 4 : 2}
       sx={{
-        bgcolor: isActive ? '#e6f7e7' : 'background.paper',
-        borderColor: isActive ? 'success.main' : 'divider',
-        borderWidth: isActive ? 2 : 1
+        backgroundColor: 'background.paper',
+        borderRadius: 2,
+        transition: 'elevation 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        overflow: 'visible'
       }}
     >
-      <CardContent>
+      <CardContent sx={{ pb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight={600}>
+          <Typography variant="h6" fontWeight={600} color="text.primary">
             {t('match-number', { number: match.number })}
           </Typography>
-          <Chip label={scheduledTime} size="small" variant="outlined" />
+          <Chip
+            label={scheduledTime}
+            size="small"
+            variant="outlined"
+            sx={{ fontFamily: 'monospace', fontWeight: 500 }}
+          />
         </Box>
 
         <Divider sx={{ mb: 2 }} />
@@ -114,13 +120,20 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    p: 1,
-                    bgcolor: 'action.hover',
-                    borderRadius: 1
+                    p: 1.5,
+                    backgroundColor: 'background.default',
+                    borderRadius: 1.5,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    '&:hover': {
+                      backgroundColor: 'action.hover',
+                      borderColor: 'action.hover'
+                    }
                   }}
                 >
                   <Box>
-                    <Typography variant="body2" fontWeight={600}>
+                    <Typography variant="body2" fontWeight={600} color="text.primary">
                       {participant.table.name}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">

@@ -1,6 +1,8 @@
 'use client';
 
-import { useTranslations } from 'next-intl';import {
+import Link from 'next/link';
+import { useTranslations } from 'next-intl';
+import {
   CheckCircle,
   WarningAmber,
   HelpOutline,
@@ -9,7 +11,6 @@ import { useTranslations } from 'next-intl';import {
   Diversity1
 } from '@mui/icons-material';
 import { Box, Tooltip, Typography, useTheme } from '@mui/material';
-import Link from 'next/link';
 import type { ScoresheetStatus } from '../graphql/types';
 
 export interface ScoresheetStatusButtonProps {
@@ -23,7 +24,6 @@ export interface ScoresheetStatusButtonProps {
   disabled?: boolean;
   dimmed?: boolean;
 }
-
 
 export const getScoresheetStatusIcon = (status: ScoresheetStatus | 'escalated') => {
   const iconProps = { sx: { fontSize: '1.2rem' } };
@@ -93,14 +93,14 @@ export function ScoresheetStatusButton({
 
   const button = (
     <Box
-    sx={{
+      sx={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         textDecoration: 'none',
         gap: 0.75,
-        px: 1.25,
-        py: 0.75,
+        px: 1.5,
+        py: 1,
         borderRadius: 1.5,
         backgroundColor:
           isCompleted || isDraft
@@ -113,41 +113,48 @@ export function ScoresheetStatusButton({
         cursor: disabled ? 'default' : 'pointer',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         width: 'auto',
-        opacity: disabled ? 0.5 : (dimmed ? 0.3 : 1),
-        filter: dimmed ? 'grayscale(0.8)' : 'none',
-        ...(!disabled && !dimmed && {
-          '&:hover': {
-            backgroundColor:
-              theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,
-            boxShadow: `0 2px 8px ${statusColor}30`
-          },
-          '&:active': {
-            transform: 'scale(0.98)'
-          }
-        })
+        minWidth: 'max-content',
+        opacity: disabled ? 0.5 : dimmed ? 0.35 : 1,
+        filter: dimmed ? 'grayscale(0.7)' : 'none',
+        ...(!disabled &&
+          !dimmed && {
+            '&:hover': {
+              backgroundColor:
+                theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,
+              boxShadow: `0 2px 8px ${statusColor}30`,
+              transform: 'translateY(-1px)'
+            },
+            '&:active': {
+              transform: 'scale(0.98)'
+            }
+          })
       }}
     >
       {getScoresheetStatusIcon(escalated ? 'escalated' : status)}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, textAlign: 'center' }}>
-        <Typography variant="caption" sx={{
-            fontWeight: 600,
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.25, textAlign: 'center' }}>
+        <Typography
+          variant="caption"
+          sx={{
+            fontWeight: 700,
             fontSize: '0.8rem',
             lineHeight: 1,
             color: statusColor,
             textDecoration: 'none'
           }}
-          >
+        >
           #{teamNumber}
         </Typography>
         {(score !== undefined || gp) && (
-          <Typography variant="caption" sx={{
+          <Typography
+            variant="caption"
+            sx={{
               fontWeight: 500,
               fontSize: '0.7rem',
               lineHeight: 1,
               color: statusColor,
               textDecoration: 'none'
             }}
-            >
+          >
             {score !== undefined ? score : '-'} {gp ? `(${gp})` : ''}
           </Typography>
         )}
@@ -165,7 +172,11 @@ export function ScoresheetStatusButton({
 
   return (
     <Tooltip title={tooltipTitle} arrow>
-      <Box component={Link} href={`/lems/team/${teamSlug}/scoresheet/${scoresheetSlug}`}>
+      <Box
+        component={Link}
+        href={`/lems/team/${teamSlug}/scoresheet/${scoresheetSlug}`}
+        style={{ textDecoration: 'none' }}
+      >
         {button}
       </Box>
     </Tooltip>
