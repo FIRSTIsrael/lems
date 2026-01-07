@@ -39,6 +39,7 @@ router.post(
         place: awardData.place,
         type: awardData.type,
         is_optional: awardData.isOptional,
+        show_places: awardData.showPlaces,
         allow_nominations: awardData.allowNominations,
         automatic_assignment: awardData.automaticAssignment,
         winner_id: null,

@@ -21,7 +21,7 @@ type JudgingSession {
   room: Room!
 
   "Team being judged in this session"
-  team: Team!
+  team: Team
 
   "Actual timestamp when the session was started"
   startTime: String

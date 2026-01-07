@@ -1,4 +1,5 @@
 import { teamArrivalUpdatedResolver } from './team-arrived';
+import { teamDisqualifiedResolver } from './team-disqualified';
 import {
   judgingSessionAbortedResolver,
   judgingSessionStartedResolver,
@@ -28,6 +29,7 @@ import { deliberationUpdatedResolver, deliberationStatusChangedResolver } from '
  */
 export const subscriptionResolvers = {
   teamArrivalUpdated: teamArrivalUpdatedResolver,
+  teamDisqualified: teamDisqualifiedResolver,
   judgingSessionStarted: judgingSessionStartedResolver,
   judgingSessionAborted: judgingSessionAbortedResolver,
   judgingSessionCompleted: judgingSessionCompletedResolver,
