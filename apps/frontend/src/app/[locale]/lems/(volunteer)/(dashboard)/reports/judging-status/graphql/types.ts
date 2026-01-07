@@ -28,6 +28,7 @@ export interface JudgingSession {
 }
 
 export interface MatchParticipant {
+  id: string;
   team: Team | null;
 }
 
@@ -40,13 +41,15 @@ export interface RobotGameMatch {
 }
 
 export interface FieldState {
+  divisionId: string;
   activeMatch: string | null;
   loadedMatch: string | null;
 }
 
 export interface JudgingStatusData {
+  id: string;
+  divisionId: string;
   sessions: JudgingSession[];
-  rooms: Room[];
   sessionLength: number;
 }
 
@@ -56,7 +59,6 @@ export interface QueryData {
     rooms: Room[];
     judging: JudgingStatusData;
     field: FieldState;
-    matches: RobotGameMatch[];
   } | null;
 }
 

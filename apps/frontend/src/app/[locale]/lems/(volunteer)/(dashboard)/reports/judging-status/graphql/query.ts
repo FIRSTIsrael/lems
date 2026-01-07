@@ -10,6 +10,7 @@ export const GET_JUDGING_STATUS: TypedDocumentNode<QueryData, QueryVars> = gql`
         name
       }
       judging {
+        id: divisionId
         divisionId
         sessions {
           id
@@ -38,22 +39,9 @@ export const GET_JUDGING_STATUS: TypedDocumentNode<QueryData, QueryVars> = gql`
         sessionLength
       }
       field {
+        divisionId
         activeMatch
         loadedMatch
-      }
-      matches(stage: RANKING) {
-        id
-        stage
-        status
-        called
-        participants {
-          team {
-            id
-            number
-            name
-            affiliation
-          }
-        }
       }
     }
   }
@@ -63,8 +51,6 @@ export function parseJudgingStatus(queryData: QueryData) {
   return {
     sessions: queryData?.division?.judging.sessions ?? [],
     rooms: queryData?.division?.rooms ?? [],
-    sessionLength: queryData?.division?.judging.sessionLength ?? 0,
-    field: queryData?.division?.field ?? { activeMatch: null, loadedMatch: null },
-    matches: queryData?.division?.matches ?? []
+    sessionLength: queryData?.division?.judging.sessionLength ?? 0
   };
 }

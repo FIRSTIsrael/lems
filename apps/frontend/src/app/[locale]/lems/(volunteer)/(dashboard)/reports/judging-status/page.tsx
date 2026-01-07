@@ -12,7 +12,6 @@ import {
   parseJudgingStatus,
   createJudgingSessionStartedSubscription,
   createJudgingSessionCompletedSubscription,
-  createJudgingSessionUpdatedSubscription,
   createTeamArrivalSubscription,
   createMatchLoadedSubscription,
   createMatchStartedSubscription
@@ -28,7 +27,6 @@ export default function JudgingStatusPage() {
     () => [
       createJudgingSessionStartedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
-      createJudgingSessionUpdatedSubscription(currentDivision.id),
       createTeamArrivalSubscription(currentDivision.id),
       createMatchLoadedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id)
@@ -43,7 +41,7 @@ export default function JudgingStatusPage() {
     subscriptions
   );
 
-  const { sessions, rooms, sessionLength, field, matches } = parseJudgingStatus(data ?? {});
+  const { sessions, rooms, sessionLength } = parseJudgingStatus(data ?? {});
 
   // Find the current session number from sessions in progress
   const currentSessionNumber = useMemo(() => {
@@ -70,43 +68,11 @@ export default function JudgingStatusPage() {
     [sessions, currentSessionNumber]
   );
 
-  // Find active/loaded matches and their teams
-  const activeMatch = useMemo(
-    () => matches.find(m => m.id === field.activeMatch),
-    [matches, field.activeMatch]
-  );
-
-  const loadedMatch = useMemo(
-    () => matches.find(m => m.id === field.loadedMatch),
-    [matches, field.loadedMatch]
-  );
-
+  // For judging status, we don't need to track teams on field
+  // This is focused on judging sessions only
   const teamsOnField = useMemo(() => {
-    const teamIds = new Set<string>();
-
-    if (activeMatch) {
-      activeMatch.participants.forEach(p => {
-        if (p.team) teamIds.add(p.team.id);
-      });
-    }
-
-    if (loadedMatch) {
-      loadedMatch.participants.forEach(p => {
-        if (p.team) teamIds.add(p.team.id);
-      });
-    }
-
-    // Also include teams in called matches that haven't started
-    matches
-      .filter(m => m.called && m.status === 'not-started')
-      .forEach(m => {
-        m.participants.forEach(p => {
-          if (p.team) teamIds.add(p.team.id);
-        });
-      });
-
-    return teamIds;
-  }, [activeMatch, loadedMatch, matches]);
+    return new Set<string>();
+  }, []);
 
   return (
     <>
