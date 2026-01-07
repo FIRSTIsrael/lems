@@ -425,12 +425,12 @@
       },
       "current-match": {
         "no-match": "אין מקצה טעון",
-        "round": "סיבוב",
+        "round": "סבב",
         "no-team": "אין קבוצה משובצת",
         "not-arrived": "לא הגיעה",
         "status": {
-          "loaded": "טעון",
-          "in-progress": "מתנהל"
+          "loaded": "מקצה הבא",
+          "in-progress": "מקצה נוכחי"
         },
         "match-title": "סבב {stage} {round}, מקצה #{number}",
         "table": "שולחן"
