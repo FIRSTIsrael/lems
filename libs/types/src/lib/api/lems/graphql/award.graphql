@@ -33,12 +33,12 @@ type Award {
   winner: AwardWinner
 }
 
-union AwardWinner = PeronalWinner | TeamWinner
+union AwardWinner = PersonalWinner | TeamWinner
 
 """
 Information for a winning individual
 """
-type PeronalWinner {
+type PersonalWinner {
   "The winning individual for this award"
   name: String!
 }

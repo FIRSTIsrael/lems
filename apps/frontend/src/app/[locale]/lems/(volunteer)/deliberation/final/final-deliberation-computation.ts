@@ -54,12 +54,12 @@ export function computeRank(
 
   // Helper: compute rank by category
   const computeRankByCategory = (category: keyof MetricPerCategory, teamScore: number): number => {
-    if (picklists[category as JudgingCategory].includes(team.id)) {
+    if (category !== 'total' && picklists[category as JudgingCategory].includes(team.id)) {
       return picklists[category as JudgingCategory].indexOf(team.id) + 1;
     }
 
     const filteredTeams = allTeams.filter(
-      t => !picklists[category as JudgingCategory].includes(t.id)
+      t => category === 'total' || !picklists[category as JudgingCategory].includes(t.id)
     );
 
     // Count how many teams have a higher score
@@ -67,7 +67,11 @@ export function computeRank(
       const score = t.scores[category];
       return score > teamScore;
     }).length;
-    return higherScoreCount + 1 + picklists[category as JudgingCategory].length;
+    return (
+      higherScoreCount +
+      1 +
+      (category !== 'total' ? picklists[category as JudgingCategory].length : 0)
+    );
   };
 
   // Compute ranks for each category

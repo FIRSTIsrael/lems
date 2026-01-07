@@ -61,6 +61,6 @@ export interface FinalDeliberationContextValue {
 
   startDeliberation(): Promise<void>;
   updateAward(awardName: Award, updatedAward: string[] | Record<number, string>): Promise<void>;
-  adavanceStage(): Promise<void>;
+  advanceStage(): Promise<void>;
   updateManualEligibility(stage: StagesWithNomination, teamIds: string[]): Promise<void>;
 }

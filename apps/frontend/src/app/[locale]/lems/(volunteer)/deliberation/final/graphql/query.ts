@@ -71,7 +71,6 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
             category
             status
             data {
-              fields
               awards
               feedback {
                 greatJob
@@ -84,7 +83,29 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
 
       judging {
         divisionId
-        awards
+        awards {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          allowNominations
+          automaticAssignment
+          winner {
+            ... on TeamWinner {
+              team {
+                id
+                name
+                number
+                slug
+              }
+            }
+            ... on PersonalWinner {
+              name
+            }
+          }
+        }
 
         innovationProjectDeliberation: deliberation(category: innovation_project) {
           picklist

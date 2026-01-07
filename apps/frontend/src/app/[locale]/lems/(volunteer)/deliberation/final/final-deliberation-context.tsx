@@ -86,9 +86,7 @@ export const FinalDeliberationProvider = ({
 
   const awardCounts: Partial<Record<Award, number>> = awards.reduce(
     (acc, award) => {
-      if (!award.isOptional) {
-        acc[award.name as Award] = (acc[award.name as Award] || 0) + 1;
-      }
+      acc[award.name as Award] = (acc[award.name as Award] || 0) + 1;
       return acc;
     },
     {} as Partial<Record<Award, number>>
@@ -135,7 +133,7 @@ export const FinalDeliberationProvider = ({
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
 
       const eligibilites: EligiblityPerStage = {
-        champions: computeChampionsEligibility({ ...team, ranks }, awardCounts['champions'] || 0),
+        champions: computeChampionsEligibility({ ...team, ranks }, awardCounts.champions || 0),
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
@@ -219,7 +217,7 @@ export const FinalDeliberationProvider = ({
       roomMetrics,
       startDeliberation: handleStartFinalDeliberation,
       updateAward: handleUpdateFinalDeliberationAwards,
-      adavanceStage: handleAdvanceStage,
+      advanceStage: handleAdvanceStage,
       updateManualEligibility: handleUpdateManualEligibility
     };
   }, [
