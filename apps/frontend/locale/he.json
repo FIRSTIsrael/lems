@@ -465,30 +465,6 @@
         "no-team": "אין קבוצה משובצת"
       }
     },
-    "judging-status": {
-      "page-title": "מצב השיפוט",
-      "table": {
-        "time": "שעה",
-        "room": "חדר {name}",
-        "current-round": "סבב נוכחי",
-        "next-round": "סבב הבא",
-        "started-at": "התחיל בשעה {time}",
-        "ends-at": "מסתיים בשעה {time}"
-      },
-      "status": {
-        "not-started": "לא התחיל",
-        "in-progress": "בתהליך",
-        "completed": "הושלם",
-        "queued": "בתור"
-      },
-      "warnings": {
-        "on-field": "הקבוצה נמצאת בזירה!"
-      },
-      "empty-state": {
-        "message": "אין סבבי שיפוט מתוכננים כרגע",
-        "no-team": "אין קבוצה משובצת"
-      }
-    },
     "scorekeeper": {
       "page-title": "סקורקיפר",
       "common": {
