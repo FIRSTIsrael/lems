@@ -1,7 +1,7 @@
 import { Award, OptionalAwards } from '@lems/shared';
-import { Division, JudgingCategory } from '@lems/database';
+import { JudgingCategory } from '@lems/database';
 import { Room, MetricPerCategory, RoomMetricsMap } from '../types';
-import { FinalJudgingDeliberation } from './graphql';
+import { Division, FinalJudgingDeliberation } from './graphql';
 
 export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
 export type StagesWithNomination = 'champions' | 'core-awards' | 'optional-awards';
@@ -40,6 +40,10 @@ export type EnrichedTeam = {
   awardNominations: OptionalAwardNominations;
 };
 
+export type DeliberationAwards = Partial<Record<Award, string[]>> & {
+  champions: Record<number, string>;
+};
+
 export interface FinalDeliberationContextValue {
   division: Division;
   deliberation: FinalJudgingDeliberation;
@@ -51,11 +55,12 @@ export interface FinalDeliberationContextValue {
 
   categoryPicklists: Record<JudgingCategory, string[]>;
 
-  awards: Record<Award, string[]>;
+  awards: DeliberationAwards;
 
   roomMetrics: RoomMetricsMap;
 
   startDeliberation(): Promise<void>;
-  updateAward(teamId: string, awardId: Award, place: number): Promise<void>;
+  updateAward(awardName: Award, updatedAward: string[] | Record<number, string>): Promise<void>;
   adavanceStage(): Promise<void>;
+  updateManualEligibility(stage: StagesWithNomination, teamIds: string[]): Promise<void>;
 }

@@ -66,12 +66,20 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
   }
 
   // Get next stage
-  const nextStage = STAGE_PROGRESSION[deliberation.stage];
+  let nextStage = STAGE_PROGRESSION[deliberation.stage];
   if (!nextStage) {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
       'Cannot advance beyond review stage. Use completeFinalDeliberation instead.'
     );
+  }
+
+  // Get awards for validation
+  const awards = await db.awards.byDivisionId(divisionId).getAll();
+  const hasOptionalAwards = awards.some(award => award.is_optional);
+  if (nextStage === 'optional-awards' && !hasOptionalAwards) {
+    // Skip optional-awards stage if no optional awards exist
+    nextStage = STAGE_PROGRESSION[nextStage];
   }
 
   // Validate current stage before advancing

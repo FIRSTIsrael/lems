@@ -1,6 +1,7 @@
-import { createContext, useContext, useMemo } from 'react';
+import { createContext, useCallback, useContext, useMemo } from 'react';
 import { JudgingCategory } from '@lems/database';
 import { Award } from '@lems/shared';
+import { useMutation } from '@apollo/client/react';
 import {
   computeNormalizedScores,
   computeRoomMetrics,
@@ -8,8 +9,20 @@ import {
   getGPScores,
   getOrganizedRubricFields
 } from '../utils';
-import { EligiblityPerStage, EnrichedTeam, FinalDeliberationContextValue } from './types';
-import { Division } from './graphql';
+import {
+  DeliberationAwards,
+  EligiblityPerStage,
+  EnrichedTeam,
+  FinalDeliberationContextValue,
+  StagesWithNomination
+} from './types';
+import {
+  ADVANCE_FINAL_DELIBERATION_STAGE_MUTATION,
+  Division,
+  START_FINAL_DELIBERATION_MUTATION,
+  UPDATE_FINAL_DELIBERATION_AWARDS_MUTATION,
+  UPDATE_MANUAL_ELIGIBILITY_MUTATION
+} from './graphql';
 import {
   computeChampionsEligibility,
   computeCoreAwardsEligibility,
@@ -33,6 +46,43 @@ export const FinalDeliberationProvider = ({
 }: FinalDeliberationProviderProps) => {
   const deliberation = division.judging.finalDeliberation;
   const awards = division.judging.awards;
+
+  // Mutations
+  const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
+  const [advanceStage] = useMutation(ADVANCE_FINAL_DELIBERATION_STAGE_MUTATION);
+  const [updateFinalDeliberationAwards] = useMutation(UPDATE_FINAL_DELIBERATION_AWARDS_MUTATION);
+  const [updateManualEligibility] = useMutation(UPDATE_MANUAL_ELIGIBILITY_MUTATION);
+
+  // Helper functions for mutations - use useCallback to ensure stable references
+  const handleStartFinalDeliberation = useCallback(async () => {
+    await startFinalDeliberation({
+      variables: { divisionId }
+    });
+  }, [startFinalDeliberation, divisionId]);
+
+  const handleAdvanceStage = useCallback(async () => {
+    await advanceStage({
+      variables: { divisionId }
+    });
+  }, [advanceStage, divisionId]);
+
+  const handleUpdateFinalDeliberationAwards = useCallback(
+    async (awardName: Award, updatedAward: string[] | Record<number, string>) => {
+      await updateFinalDeliberationAwards({
+        variables: { divisionId, awards: JSON.stringify({ [awardName]: updatedAward }) }
+      });
+    },
+    [updateFinalDeliberationAwards, divisionId]
+  );
+
+  const handleUpdateManualEligibility = useCallback(
+    async (stage: StagesWithNomination, teamIds: string[]) => {
+      await updateManualEligibility({
+        variables: { divisionId, stage, teamIds }
+      });
+    },
+    [updateManualEligibility, divisionId]
+  );
 
   const awardCounts: Partial<Record<Award, number>> = awards.reduce(
     (acc, award) => {
@@ -133,12 +183,54 @@ export const FinalDeliberationProvider = ({
         awardNominations
       };
     });
+
+    const eligibleTeams: Record<StagesWithNomination, string[]> = {
+      champions: enrichedTeams.filter(t => t.eligibility.champions).map(t => t.id),
+      'core-awards': enrichedTeams.filter(t => t.eligibility['core-awards']).map(t => t.id),
+      'optional-awards': enrichedTeams.filter(t => t.eligibility['optional-awards']).map(t => t.id)
+    };
+    const availableTeams = enrichedTeams
+      .filter(t => eligibleTeams[deliberation.stage as StagesWithNomination].includes(t.id))
+      .map(t => t.id);
+
+    const optionalAwards = Object.entries(JSON.parse(deliberation.optionalAwards || '{}')).reduce<
+      Partial<Record<Award, string[]>>
+    >((acc, [awardName, teamIds]) => {
+      acc[awardName as Award] = teamIds as string[];
+      return acc;
+    }, {});
+
+    const awards: DeliberationAwards = {
+      champions: JSON.parse(deliberation.champions) ?? {},
+      'core-values': deliberation.coreValues || [],
+      'innovation-project': deliberation.innovationProject || [],
+      'robot-design': deliberation.robotDesign || [],
+      ...optionalAwards
+    };
+
+    return {
+      division,
+      deliberation,
+      teams: enrichedTeams,
+      eligibleTeams,
+      availableTeams,
+      categoryPicklists,
+      awards,
+      roomMetrics,
+      startDeliberation: handleStartFinalDeliberation,
+      updateAward: handleUpdateFinalDeliberationAwards,
+      adavanceStage: handleAdvanceStage,
+      updateManualEligibility: handleUpdateManualEligibility
+    };
   }, [
-    division.teams,
     categoryPicklists,
     awardCounts,
-    deliberation.coreAwardsManualEligibility,
-    deliberation.optionalAwardsManualEligibility
+    deliberation,
+    division,
+    handleStartFinalDeliberation,
+    handleUpdateFinalDeliberationAwards,
+    handleAdvanceStage,
+    handleUpdateManualEligibility
   ]);
 
   return (
