@@ -580,6 +580,13 @@
           "approved": "Approved"
         }
       },
+      "deliberation": {
+        "status": "Status",
+        "start-time": "Start Time",
+        "picklist": "Picklist",
+        "deliberation": "Deliberation",
+        "open": "Open"
+      },
       "list": {
         "empty-state": "Judging Sessions were not found",
         "column": {

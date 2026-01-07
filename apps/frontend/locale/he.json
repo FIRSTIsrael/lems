@@ -580,6 +580,13 @@
           "approved": "מאושר"
         }
       },
+      "deliberation": {
+        "status": "סטטוס",
+        "start-time": "זמן התחלה",
+        "picklist": "תיעדוף",
+        "deliberation": "דיון שופטים",
+        "open": "מעבר לדיון"
+      },
       "list": {
         "empty-state": "לא נמצאו סבבי שיפוט",
         "column": {

@@ -4,21 +4,24 @@ import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Stack } from '@mui/material';
 import { JudgingCategory } from '@lems/database';
+import { hyphensToUnderscores } from '@lems/shared/utils';
 import { PageHeader } from '../components/page-header';
 import { useUser } from '../../../components/user-context';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
+import { LeadJudgeProvider } from './components/lead-judge-context';
 import { RubricStatusSummary } from './components/rubric-status-summary';
 import { RubricStatusList } from './components/rubric-status-list';
+import { getDesiredPicklistLength } from './components/utils';
 import {
-  GET_ALL_JUDGING_SESSIONS,
+  GET_LEAD_JUDGE_DATA,
   createJudgingSessionStartedSubscription,
   createJudgingSessionAbortedSubscription,
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
   getLeadJudgeCategory,
-  parseDivisionSessions
+  parseLeadJudgeData
 } from './graphql';
 
 export default function LeadJudgePage() {
@@ -45,26 +48,37 @@ export default function LeadJudgePage() {
   );
 
   const { data, loading } = usePageData(
-    GET_ALL_JUDGING_SESSIONS,
+    GET_LEAD_JUDGE_DATA,
     {
-      divisionId: currentDivision.id
+      divisionId: currentDivision.id,
+      category: hyphensToUnderscores(category)
     },
-    parseDivisionSessions,
+    parseLeadJudgeData,
     subscriptions
   );
 
-  const sessions = data || [];
+  const sessions = data?.sessions || [];
+  const deliberation = data?.deliberation || null;
+  const sessionLength = data?.sessionLength ?? 0;
+  const desiredPicklistLength = useMemo(
+    () => getDesiredPicklistLength(sessions.length),
+    [sessions.length]
+  );
 
   return (
-    <>
+    <LeadJudgeProvider
+      sessions={sessions}
+      category={category}
+      deliberation={deliberation}
+      desiredPicklistLength={desiredPicklistLength}
+      sessionLength={sessionLength}
+      loading={loading}
+    >
       <PageHeader title={t('page-title')} />
       <Box sx={{ p: { xs: 2, sm: 3 } }}>
         <Stack direction={{ xs: 'column', lg: 'row' }} spacing={3} sx={{ height: 'fit-content' }}>
           <Box sx={{ flex: { xs: '1 1 100%', lg: '0 0 320px' }, minWidth: 0 }}>
             <RubricStatusSummary
-              sessions={sessions}
-              category={category}
-              loading={loading}
               teamFilter={teamFilter}
               setTeamFilter={setTeamFilter}
               statusFilter={statusFilter}
@@ -72,16 +86,10 @@ export default function LeadJudgePage() {
             />
           </Box>
           <Box sx={{ flex: { xs: '1 1 100%', lg: '1 1 auto' }, minWidth: 0 }}>
-            <RubricStatusList
-              sessions={sessions}
-              category={category}
-              loading={loading}
-              teamFilter={teamFilter}
-              statusFilter={statusFilter}
-            />
+            <RubricStatusList teamFilter={teamFilter} statusFilter={statusFilter} />
           </Box>
         </Stack>
       </Box>
-    </>
+    </LeadJudgeProvider>
   );
 }
