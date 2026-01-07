@@ -417,6 +417,40 @@
         "deliberations": "דיוני שופטים"
       }
     },
+    "mc": {
+      "page-title": "ממשק מנחה",
+      "mode": {
+        "matches": "מקצים",
+        "awards": "פרסים"
+      },
+      "current-match": {
+        "no-match": "אין מקצה טעון",
+        "round": "סבב",
+        "no-team": "אין קבוצה משובצת",
+        "not-arrived": "לא הגיעה",
+        "status": {
+          "loaded": "מקצה הבא",
+          "in-progress": "מקצה נוכחי"
+        },
+        "match-title": "סבב {stage} {round}, מקצה #{number}",
+        "table": "שולחן"
+      },
+      "schedule": {
+        "title": "מקצים קרובים",
+        "match-number": "מקצה",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "round": "סיבוב",
+        "no-matches": "אין מקצים קרובים",
+        "no-team": "אין קבוצה",
+        "not-arrived": "לא הגיעה"
+      },
+      "awards": {
+        "title": "טקס פרסים",
+        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב."
+      }
+    },
     "referee": {
       "page-title": "שופט זירה",
       "match-running": "מקצה פעיל",

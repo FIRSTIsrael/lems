@@ -417,6 +417,40 @@
         "deliberations": "Deliberations"
       }
     },
+    "mc": {
+      "page-title": "MC Dashboard",
+      "mode": {
+        "matches": "Matches",
+        "awards": "Awards"
+      },
+      "current-match": {
+        "no-match": "No Match Loaded",
+        "round": "Round",
+        "no-team": "No Team Assigned",
+        "not-arrived": "Not Arrived",
+        "status": {
+          "loaded": "Loaded",
+          "in-progress": "In Progress"
+        },
+        "match-title": "{stage} round {round}, match #{number}",
+        "table": "Table"
+      },
+      "schedule": {
+        "title": "Upcoming Matches",
+        "match-number": "Match",
+        "scheduled-time": "Time",
+        "teams": "Teams",
+        "status": "Status",
+        "round": "Round",
+        "no-matches": "No upcoming matches",
+        "no-team": "No Team",
+        "not-arrived": "Not Arrived"
+      },
+      "awards": {
+        "title": "Awards Presentation",
+        "description": "Awards presentation functionality will be available soon."
+      }
+    },
     "referee": {
       "page-title": "Referee Dashboard",
       "match-running": "Match Running",
