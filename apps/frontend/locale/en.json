@@ -172,7 +172,8 @@
         "event-agenda": "Event Agenda",
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
-        "judging-schedule": "Judging Schedule"
+        "judging-schedule": "Judging Schedule",
+        "judging-status": "Judging Status"
       },
       "awards-list": {
         "page-title": "Awards list",

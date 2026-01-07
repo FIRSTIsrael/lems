@@ -4,9 +4,9 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
-import { useEvent } from '../../components/event-context';
-import { PageHeader } from '../components/page-header';
-import { usePageData } from '../../hooks/use-page-data';
+import { useEvent } from '../../../components/event-context';
+import { PageHeader } from '../../components/page-header';
+import { usePageData } from '../../../hooks/use-page-data';
 import {
   GET_JUDGING_STATUS,
   parseJudgingStatus,

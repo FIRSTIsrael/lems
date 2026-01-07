@@ -20,7 +20,7 @@ import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
 import PlayCircleRoundedIcon from '@mui/icons-material/PlayCircleRounded';
 import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import { JudgingSession, Room } from '../graphql';
-import { TeamInfo } from '../../components/team-info';
+import { TeamInfo } from '../../../components/team-info';
 
 interface JudgingStatusMobileProps {
   currentSessions: JudgingSession[];

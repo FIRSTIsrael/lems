@@ -16,7 +16,8 @@ export default function ReportsPage() {
     { path: 'event-agenda', label: t('menu.event-agenda'), icon: <EventNote /> },
     { path: 'field-schedule', label: t('menu.field-schedule'), icon: <Stadium /> },
     { path: 'judging-schedule', label: t('menu.judging-schedule'), icon: <Schedule /> },
-    { path: 'field-timer', label: t('menu.field-timer'), icon: <Timer /> }
+    { path: 'field-timer', label: t('menu.field-timer'), icon: <Timer /> },
+    { path: 'judging-status', label: t('menu.judging-status'), icon: <Schedule /> }
   ];
   return (
     <Container maxWidth="lg" disableGutters>

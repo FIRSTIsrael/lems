@@ -172,7 +172,8 @@
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
-        "field-timer": "שעון זמן מגרש"
+        "field-timer": "שעון זמן מגרש",
+        "judging-status": "מצב השיפוט"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
