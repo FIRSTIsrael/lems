@@ -21,3 +21,18 @@ export {
   TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
   createTeamArrivalSubscription
 } from './team-arrival-updated';
+
+export {
+  TEAM_DISQUALIFIED_SUBSCRIPTION,
+  createTeamDisqualifiedSubscription
+} from './team-disqualified';
+
+export {
+  JUDGING_DELIBERATION_CHANGED_SUBSCRIPTION,
+  createJudgingDeliberationChangedSubscription
+} from './judging-deliberation-changed';
+
+export {
+  FINAL_DELIBERATION_CHANGED_SUBSCRIPTION,
+  createFinalDeliberationChangedSubscription
+} from './final-deliberation-changed';

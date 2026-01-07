@@ -1,11 +1,10 @@
 import { Box, Stack, TextField, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
+import { useLeadJudge } from './lead-judge-context';
 import { StatusFilterSelector } from './status-filter-selector';
 
 interface SessionFiltersProps {
-  sessions: JudgingSession[];
   teamFilter: string;
   setTeamFilter: (value: string) => void;
   statusFilter: string[];
@@ -13,13 +12,13 @@ interface SessionFiltersProps {
 }
 
 export const SessionFilters: React.FC<SessionFiltersProps> = ({
-  sessions,
   teamFilter,
   setTeamFilter,
   statusFilter = [],
   setStatusFilter
 }) => {
   const t = useTranslations('pages.lead-judge.list');
+  const { sessions } = useLeadJudge();
 
   const filteredSessions = useFilteredSessions(sessions, {
     teamFilter,

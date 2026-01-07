@@ -11,6 +11,19 @@
       "completed": "הושלם"
     }
   },
+  "judging-deliberations": {
+    "status": {
+      "not-started": "לא התחיל",
+      "in-progress": "בתהליך",
+      "completed": "הושלם"
+    },
+    "stage": {
+      "champions": "אליפות",
+      "core-awards": "פרסי ליבה",
+      "optional-awards": "פרסי רשות",
+      "review": "סיכום"
+    }
+  },
   "judging-categories": {
     "core-values": "ערכי הליבה",
     "innovation-project": "פרויקט החדשנות",

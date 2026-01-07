@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "שופט ראשי",
+      "mode": {
+        "judging": "שיפוט",
+        "awards": "פרסים"
+      },
       "summary": {
         "status": {
           "empty": "ריק",
@@ -371,7 +375,80 @@
         }
       },
       "team-info-cell": {
+        "not-arrived": "לא הגיעה",
+        "disqualified": "נפסלה"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "פסילת קבוצות",
+          "search-placeholder": "חפש לפי מספר, שם, שיוך או עיר...",
+          "search-label": "חיפוש קבוצות",
+          "disqualify": "פסול",
+          "disqualified": "נפסלה",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "disqualified-teams-title": "קבוצות פסולות",
+          "disqualified-teams-count": "{count, plural, one {# קבוצה} other {# קבוצות}}",
+          "confirm-title": "פסילת קבוצה",
+          "confirm-message": "האם אתם בטוחים שאתם רוצים לפסול את",
+          "confirm-disqualify": "פסול",
+          "cancel": "ביטול",
+          "team-option-label": "קבוצה #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "שגיאה בפסילת הקבוצה"
+        },
+        "deliberation": {
+          "final-deliberation": "דיון סופי",
+          "status": "סטטוס",
+          "picklist": "רשימת בחירה",
+          "start-time": "זמן התחלה",
+          "stage": "שלב",
+          "action": "פעולה",
+          "open": "מעבר לדיון",
+          "open-final": "מעבר לדיון סופי",
+          "no-deliberations": "לא נמצאו דיוני שופטים"
+        },
+        "personal-awards": {
+          "title": "פרסים אישיים",
+          "no-awards": "אין פרסים אישיים מוגדרים",
+          "optional": "אופציונלי",
+          "team-placeholder": "הכנס שם קבוצה או מספר",
+          "submit": "שלח פרסים",
+          "placeholder-message": "פרסים נשלחו"
+        },
+        "deliberations": "דיוני שופטים"
+      }
+    },
+    "mc": {
+      "page-title": "ממשק מנחה",
+      "mode": {
+        "matches": "מקצים",
+        "awards": "פרסים"
+      },
+      "current-match": {
+        "no-match": "אין מקצה טעון",
+        "round": "סבב",
+        "no-team": "אין קבוצה משובצת",
+        "not-arrived": "לא הגיעה",
+        "status": {
+          "loaded": "מקצה הבא",
+          "in-progress": "מקצה נוכחי"
+        },
+        "match-title": "סבב {stage} {round}, מקצה #{number}",
+        "table": "שולחן"
+      },
+      "schedule": {
+        "title": "מקצים קרובים",
+        "match-number": "מקצה",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "round": "סיבוב",
+        "no-matches": "אין מקצים קרובים",
+        "no-team": "אין קבוצה",
         "not-arrived": "לא הגיעה"
+      },
+      "awards": {
+        "title": "טקס פרסים",
+        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב."
       }
     },
     "referee": {
@@ -536,6 +613,13 @@
           "completed": "הסתיים",
           "approved": "מאושר"
         }
+      },
+      "deliberation": {
+        "status": "סטטוס",
+        "start-time": "זמן התחלה",
+        "picklist": "תיעדוף",
+        "deliberation": "דיון שופטים",
+        "open": "מעבר לדיון"
       },
       "list": {
         "empty-state": "לא נמצאו סבבי שיפוט",

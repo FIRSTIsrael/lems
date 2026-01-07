@@ -330,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "Judge Advisor",
+      "mode": {
+        "judging": "Judging",
+        "awards": "Awards"
+      },
       "summary": {
         "status": {
           "empty": "Empty",
@@ -371,7 +375,80 @@
         }
       },
       "team-info-cell": {
+        "not-arrived": "Not Arrived",
+        "disqualified": "Disqualified"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "Disqualify Teams",
+          "search-placeholder": "Search by number, name, affiliation, or city...",
+          "search-label": "Search Teams",
+          "disqualify": "Disqualify",
+          "disqualified": "Disqualified",
+          "no-teams-found": "No teams found",
+          "disqualified-teams-title": "Disqualified Teams",
+          "disqualified-teams-count": "{count, plural, one {# team} other {# teams}}",
+          "confirm-title": "Confirm Disqualification",
+          "confirm-message": "Are you sure you want to disqualify",
+          "confirm-disqualify": "Disqualify",
+          "cancel": "Cancel",
+          "team-option-label": "Team #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "Error disqualifying team"
+        },
+        "deliberation": {
+          "final-deliberation": "Final Deliberation",
+          "status": "Status",
+          "picklist": "Picklist",
+          "start-time": "Start Time",
+          "stage": "Stage",
+          "action": "Action",
+          "open": "Open",
+          "open-final": "Open Final Deliberation",
+          "no-deliberations": "No deliberations available"
+        },
+        "personal-awards": {
+          "title": "Personal Awards",
+          "no-awards": "No personal awards configured",
+          "optional": "Optional",
+          "team-placeholder": "Enter team name or number",
+          "submit": "Submit Awards",
+          "placeholder-message": "Awards submitted"
+        },
+        "deliberations": "Deliberations"
+      }
+    },
+    "mc": {
+      "page-title": "MC Dashboard",
+      "mode": {
+        "matches": "Matches",
+        "awards": "Awards"
+      },
+      "current-match": {
+        "no-match": "No Match Loaded",
+        "round": "Round",
+        "no-team": "No Team Assigned",
+        "not-arrived": "Not Arrived",
+        "status": {
+          "loaded": "Loaded",
+          "in-progress": "In Progress"
+        },
+        "match-title": "{stage} round {round}, match #{number}",
+        "table": "Table"
+      },
+      "schedule": {
+        "title": "Upcoming Matches",
+        "match-number": "Match",
+        "scheduled-time": "Time",
+        "teams": "Teams",
+        "status": "Status",
+        "round": "Round",
+        "no-matches": "No upcoming matches",
+        "no-team": "No Team",
         "not-arrived": "Not Arrived"
+      },
+      "awards": {
+        "title": "Awards Presentation",
+        "description": "Awards presentation functionality will be available soon."
       }
     },
     "referee": {
@@ -536,6 +613,13 @@
           "completed": "Completed",
           "approved": "Approved"
         }
+      },
+      "deliberation": {
+        "status": "Status",
+        "start-time": "Start Time",
+        "picklist": "Picklist",
+        "deliberation": "Deliberation",
+        "open": "Open"
       },
       "list": {
         "empty-state": "Judging Sessions were not found",

@@ -1,4 +1,5 @@
 import { teamArrivedResolver } from './team-arrived';
+import { disqualifyTeamResolver } from './disqualify-team';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
 import {
   loadMatchResolver,
@@ -38,6 +39,7 @@ import {
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
+  disqualifyTeam: disqualifyTeamResolver,
   startJudgingSession: startJudgingSessionResolver,
   abortJudgingSession: abortJudgingSessionResolver,
   loadMatch: loadMatchResolver,
