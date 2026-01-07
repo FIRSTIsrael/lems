@@ -17,7 +17,7 @@ interface MobileScheduleCardsProps {
   scoresheets: Scoresheet[];
 }
 
-export function MobileScheduleCards({ matches }: MobileScheduleCardsProps) {
+export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCardsProps) {
   const { data, findScoresheetForTeam } = useHeadRefereeData();
   const currentTime = useTime({ interval: 1000 });
 
@@ -46,6 +46,7 @@ export function MobileScheduleCards({ matches }: MobileScheduleCardsProps) {
         <MatchCard
           key={match.id}
           match={match}
+          scoresheets={scoresheets}
           isActive={match.id === activeMatchId}
           findScoresheetForTeam={findScoresheetForTeam}
         />
@@ -56,11 +57,12 @@ export function MobileScheduleCards({ matches }: MobileScheduleCardsProps) {
 
 interface MatchCardProps {
   match: Match;
+  scoresheets: Scoresheet[];
   isActive: boolean;
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
 }
 
-function MatchCard({ match, isActive, findScoresheetForTeam }: MatchCardProps) {
+function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: MatchCardProps) {
   const t = useTranslations('pages.head-referee');
   const cardRef = useRef<HTMLDivElement>(null);
 
@@ -103,6 +105,8 @@ function MatchCard({ match, isActive, findScoresheetForTeam }: MatchCardProps) {
                 match.round
               );
 
+              const isFiltered = scoresheet ? scoresheets.some(s => s.id === scoresheet.id) : false;
+
               return (
                 <Box
                   key={participant.id}
@@ -134,6 +138,7 @@ function MatchCard({ match, isActive, findScoresheetForTeam }: MatchCardProps) {
                       score={scoresheet.data?.score}
                       gp={scoresheet.data?.gp?.value}
                       disabled={!participant.team!.arrived}
+                      dimmed={!isFiltered}
                     />
                   )}
                 </Box>

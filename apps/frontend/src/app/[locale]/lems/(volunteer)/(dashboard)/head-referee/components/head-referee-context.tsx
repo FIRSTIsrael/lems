@@ -49,27 +49,46 @@ export function HeadRefereeProvider({ data, children }: HeadRefereeProviderProps
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
+    let hasChanges = false;
 
-    if (searchQuery) {
-      params.set('search', searchQuery);
-    } else {
-      params.delete('search');
+    // Handle search query
+    const currentSearch = params.get('search') || '';
+    if (searchQuery !== currentSearch) {
+      if (searchQuery) {
+        params.set('search', searchQuery);
+      } else {
+        params.delete('search');
+      }
+      hasChanges = true;
     }
 
-    if (statusFilter.length > 0) {
-      params.set('status', statusFilter.join(','));
-    } else {
-      params.delete('status');
+    // Handle status filter
+    const currentStatus = params.get('status');
+    const newStatus = statusFilter.length > 0 ? statusFilter.join(',') : null;
+    if (newStatus !== currentStatus) {
+      if (newStatus) {
+        params.set('status', newStatus);
+      } else {
+        params.delete('status');
+      }
+      hasChanges = true;
     }
 
-    if (showEscalatedOnly) {
-      params.set('escalated', 'true');
-    } else {
-      params.delete('escalated');
+    // Handle escalated filter
+    const currentEscalated = params.get('escalated') === 'true';
+    if (showEscalatedOnly !== currentEscalated) {
+      if (showEscalatedOnly) {
+        params.set('escalated', 'true');
+      } else {
+        params.delete('escalated');
+      }
+      hasChanges = true;
     }
 
-    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-    router.replace(newUrl, { scroll: false });
+    if (hasChanges) {
+      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+      router.replace(newUrl, { scroll: false });
+    }
   }, [searchQuery, statusFilter, showEscalatedOnly, pathname, router, searchParams]);
 
   const value = useMemo<HeadRefereeContextType>(() => {

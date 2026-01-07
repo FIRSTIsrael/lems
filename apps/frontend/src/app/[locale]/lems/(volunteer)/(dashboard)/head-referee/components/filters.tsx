@@ -1,27 +1,22 @@
 'use client';
 
-import { useState } from 'react';
+
 import { useTranslations } from 'next-intl';
 import {
   Stack,
   TextField,
-  Button,
-  Menu,
   MenuItem,
   Checkbox,
   ListItemText,
   ToggleButton,
-  Typography,
   Paper,
   Box
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import type { ScoresheetStatus } from '../graphql/types';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusLegend } from './scoresheet-status-legend';
 
-const ALL_STATUSES: ScoresheetStatus[] = ['empty', 'draft', 'completed', 'gp', 'submitted'];
+const ALL_STATUSES: ScoresheetStatus[] = ['empty', 'in-progress', 'completed', 'gp', 'submitted'];
 
 export function Filters() {
   const t = useTranslations('pages.head-referee');
@@ -33,32 +28,11 @@ export function Filters() {
     escalatedScoresheets
   } = useHeadRefereeData();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-
-  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleStatusChange = (status: ScoresheetStatus) => {
-    const newStatuses = filterOptions.statusFilter.includes(status)
-      ? filterOptions.statusFilter.filter(s => s !== status)
-      : [...filterOptions.statusFilter, status];
-    setStatusFilter(newStatuses);
-  };
-
-  const getStatusFilterLabel = () => {
-    if (filterOptions.statusFilter.length === 0) {
-      return t('filters.all-statuses');
-    }
-    if (filterOptions.statusFilter.length === 1) {
-      return t(`scoresheet-status.${filterOptions.statusFilter[0]}`);
-    }
-    return t('filters.statuses-selected', { count: filterOptions.statusFilter.length });
+  const handleStatusChange = (event: any) => {
+    const {
+      target: { value }
+    } = event;
+    setStatusFilter(typeof value === 'string' ? value.split(',') : value);
   };
 
   return (
@@ -84,26 +58,30 @@ export function Filters() {
             sx={{ flex: '1 1 200px', minWidth: 200 }}
           />
 
-          <Button
-            onClick={handleClick}
-            variant="outlined"
-            endIcon={<ExpandMoreIcon />}
-            startIcon={<FilterAltIcon />}
+          <TextField
+            select
+            label={t('filters.status-label') || 'Status'}
+            value={filterOptions.statusFilter}
+            onChange={handleStatusChange}
             size="small"
-            sx={{ minWidth: 180 }}
+            sx={{ minWidth: 200 }}
+            SelectProps={{
+              multiple: true,
+              renderValue: (selected: any) => {
+                if ((selected as string[]).length === 0) return t('filters.all-statuses');
+                return (selected as string[])
+                  .map(s => t(`scoresheet-status.${s}`))
+                  .join(', ');
+              }
+            }}
           >
-            <Typography color="text.secondary" sx={{ fontSize: '0.875rem' }}>
-              {getStatusFilterLabel()}
-            </Typography>
-          </Button>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleClose}>
             {ALL_STATUSES.map(status => (
-              <MenuItem key={status} onClick={() => handleStatusChange(status)}>
-                <Checkbox checked={filterOptions.statusFilter.includes(status)} />
+              <MenuItem key={status} value={status}>
+                <Checkbox checked={filterOptions.statusFilter.indexOf(status) > -1} />
                 <ListItemText primary={t(`scoresheet-status.${status}`)} />
               </MenuItem>
             ))}
-          </Menu>
+          </TextField>
 
           <ToggleButton
             value="escalated"

@@ -21,10 +21,11 @@ export interface ScoresheetStatusButtonProps {
   score?: number;
   gp?: 2 | 3 | 4 | null;
   disabled?: boolean;
+  dimmed?: boolean;
 }
 
 
-export const getScoresheetStatusIcon =(status: ScoresheetStatus | 'escalated') => {
+export const getScoresheetStatusIcon = (status: ScoresheetStatus | 'escalated') => {
   const iconProps = { sx: { fontSize: '1.2rem' } };
   if (status === 'escalated') {
     return <WarningAmber {...iconProps} sx={{ ...iconProps.sx, color: 'warning.main' }} />;
@@ -36,15 +37,15 @@ export const getScoresheetStatusIcon =(status: ScoresheetStatus | 'escalated') =
     case 'in-progress':
       return <Edit {...iconProps} color="info" />;
     case 'gp':
-      return <Diversity1 {...iconProps} color='error' />;
+      return <Diversity1 {...iconProps} color="error" />;
     case 'completed':
-    return <CheckCircle {...iconProps} color='success' />;
+      return <CheckCircle {...iconProps} color="success" />;
     case 'submitted':
       return <Send {...iconProps} color="success" />;
     default:
       return null;
   }
-}
+};
 
 export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string => {
   if (status === 'escalated') {
@@ -54,17 +55,17 @@ export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string =
     case 'empty':
       return 'text.disabled';
     case 'in-progress':
-      return 'info.main'; 
+      return 'info.main';
     case 'gp':
       return 'error.main';
     case 'completed':
       return 'success.main';
     case 'submitted':
-      return 'success.main';  
+      return 'success.main';
     default:
       return 'text.primary';
   }
-}
+};
 
 export function ScoresheetStatusButton({
   teamNumber,
@@ -74,7 +75,8 @@ export function ScoresheetStatusButton({
   escalated,
   score,
   gp,
-  disabled = false
+  disabled = false,
+  dimmed = false
 }: ScoresheetStatusButtonProps) {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
@@ -111,8 +113,9 @@ export function ScoresheetStatusButton({
         cursor: disabled ? 'default' : 'pointer',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         width: 'auto',
-        opacity: disabled ? 0.5 : 1,
-        ...(!disabled && {
+        opacity: disabled ? 0.5 : (dimmed ? 0.3 : 1),
+        filter: dimmed ? 'grayscale(0.8)' : 'none',
+        ...(!disabled && !dimmed && {
           '&:hover': {
             backgroundColor:
               theme.palette.mode === 'dark' ? `${statusColor}30` : `${statusColor}18`,

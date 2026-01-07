@@ -567,7 +567,8 @@
         "search-placeholder": "מספר או שם קבוצה",
         "all-statuses": "כל הסטטוסים",
         "statuses-selected": "{count} סטטוסים נבחרו",
-        "escalated-only": "הועברו בלבד"
+        "escalated-only": "הועברו בלבד",
+        "status-label": "סטטוס"
       },
       "scoresheet-status": {
         "empty": "ריק",

@@ -102,7 +102,7 @@ interface MatchRowProps {
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
 }
 
-function MatchRow({ match, tables, isActive, findScoresheetForTeam }: MatchRowProps) {
+function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam }: MatchRowProps) {
   const t = useTranslations('pages.head-referee');
   const rowRef = useRef<HTMLTableRowElement>(null);
 
@@ -156,6 +156,8 @@ function MatchRow({ match, tables, isActive, findScoresheetForTeam }: MatchRowPr
           );
         }
 
+        const isFiltered = scoresheets.some(s => s.id === scoresheet.id);
+
         return (
           <TableCell key={table.id} align="center">
             <ScoresheetStatusButton
@@ -167,6 +169,7 @@ function MatchRow({ match, tables, isActive, findScoresheetForTeam }: MatchRowPr
               score={scoresheet.data?.score}
               gp={scoresheet.data?.gp?.value}
               disabled={!participant.team.arrived}
+              dimmed={!isFiltered}
             />
           </TableCell>
         );
