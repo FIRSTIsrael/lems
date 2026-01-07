@@ -8,6 +8,7 @@ interface Team {
   city: string;
   region: string;
   logoUrl?: string | null;
+  arrived: boolean;
 }
 
 interface TeamInfoProps {

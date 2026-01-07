@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   Box,
   Chip,
@@ -15,7 +15,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Tooltip,
   Typography
 } from '@mui/material';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
@@ -31,8 +30,8 @@ interface JudgingStatusTableProps {
   nextSessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
-  teamsOnField: Set<string>;
   loading: boolean;
+  currentTime: Dayjs;
 }
 
 const getStatusColor = (status: string) => {
@@ -66,8 +65,8 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
   nextSessions,
   rooms,
   sessionLength,
-  teamsOnField,
-  loading
+  loading,
+  currentTime
 }) => {
   const t = useTranslations('pages.judging-status');
 
@@ -150,14 +149,16 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                     {t('table.current-round')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
+                    {currentTime
+                      .hour(dayjs(currentSessions[0].scheduledTime).hour())
+                      .minute(dayjs(currentSessions[0].scheduledTime).minute())
+                      .format('HH:mm')}
                   </Typography>
                 </Stack>
               </TableCell>
               {sortedRooms.map(room => {
                 const session = currentSessions.find(s => s.room.id === room.id);
                 const team = session?.team;
-                const isTeamOnField = team ? teamsOnField.has(team.id) : false;
 
                 return (
                   <TableCell key={room.id} align="center" sx={{ verticalAlign: 'top', py: 2 }}>
@@ -167,7 +168,7 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                           <TeamInfo team={team} size="sm" textAlign="center" />
                         </Box>
 
-                        <Stack direction="row" spacing={0.5} alignItems="center">
+                        <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
                           <Chip
                             icon={getStatusIcon(session.status, session.called)}
                             label={t(`status.${session.status}`)}
@@ -175,17 +176,24 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                             size="small"
                             sx={{ fontWeight: 600 }}
                           />
-                          {isTeamOnField && (
-                            <Tooltip title={t('warnings.on-field')} arrow>
-                              <WarningAmberRoundedIcon color="warning" fontSize="small" />
-                            </Tooltip>
+                          {!team.arrived && (
+                            <Chip
+                              icon={<WarningAmberRoundedIcon />}
+                              label={t('not-arrived')}
+                              color="warning"
+                              size="small"
+                              variant="outlined"
+                            />
                           )}
                         </Stack>
 
                         {session.startTime && session.startDelta !== undefined && (
                           <Typography variant="caption" color="text.secondary">
                             {t('table.started-at', {
-                              time: dayjs(session.startTime).format('HH:mm')
+                              time: currentTime
+                                .hour(dayjs(session.startTime).hour())
+                                .minute(dayjs(session.startTime).minute())
+                                .format('HH:mm')
                             })}
                             {session.startDelta !== 0 && (
                               <Typography
@@ -204,7 +212,9 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                         {session.status === 'in-progress' && session.startTime && (
                           <Typography variant="caption" color="text.secondary">
                             {t('table.ends-at', {
-                              time: dayjs(session.startTime)
+                              time: currentTime
+                                .hour(dayjs(session.startTime).hour())
+                                .minute(dayjs(session.startTime).minute())
                                 .add(sessionLength, 'seconds')
                                 .format('HH:mm')
                             })}
@@ -234,14 +244,16 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                     {t('table.next-round')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
+                    {currentTime
+                      .hour(dayjs(nextSessions[0].scheduledTime).hour())
+                      .minute(dayjs(nextSessions[0].scheduledTime).minute())
+                      .format('HH:mm')}
                   </Typography>
                 </Stack>
               </TableCell>
               {sortedRooms.map(room => {
                 const session = nextSessions.find(s => s.room.id === room.id);
                 const team = session?.team;
-                const isTeamOnField = team ? teamsOnField.has(team.id) : false;
 
                 return (
                   <TableCell key={room.id} align="center" sx={{ verticalAlign: 'top', py: 2 }}>
@@ -251,7 +263,7 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                           <TeamInfo team={team} size="sm" textAlign="center" />
                         </Box>
 
-                        <Stack direction="row" spacing={0.5} alignItems="center">
+                        <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
                           {session.called && (
                             <Chip
                               icon={<PeopleAltRoundedIcon fontSize="small" />}
@@ -261,10 +273,14 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
                               sx={{ fontWeight: 600 }}
                             />
                           )}
-                          {isTeamOnField && (
-                            <Tooltip title={t('warnings.on-field')} arrow>
-                              <WarningAmberRoundedIcon color="warning" fontSize="small" />
-                            </Tooltip>
+                          {!team.arrived && (
+                            <Chip
+                              icon={<WarningAmberRoundedIcon />}
+                              label={t('not-arrived')}
+                              color="warning"
+                              size="small"
+                              variant="outlined"
+                            />
                           )}
                         </Stack>
                       </Stack>

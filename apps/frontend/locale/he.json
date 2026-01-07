@@ -257,7 +257,9 @@
         "arrived": "הגיעה",
         "not-arrived": "לא הגיעה",
         "table": {
-          "time": "שעה"
+          "time": "שעה",
+          "start-time": "התחלה",
+          "end-time": "סיום"
         },
         "visibility": {
           "public": "כללי",
@@ -461,6 +463,7 @@
       "warnings": {
         "on-field": "הקבוצה נמצאת בזירה!"
       },
+      "not-arrived": "לא הגיעה",
       "empty-state": {
         "message": "אין סבבי שיפוט מתוכננים כרגע",
         "no-team": "אין קבוצה משובצת"

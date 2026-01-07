@@ -21,7 +21,7 @@ import { Block as BlockIcon } from '@mui/icons-material';
 import { Room, ScheduleRow } from '../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
-const JUDGING_SESSION_LENGTH = 15 * 60; // 15 minutes in seconds
+const JUDGING_SESSION_LENGTH = 15 * 60;
 
 interface ScheduleTableProps {
   rooms: Room[];
@@ -40,10 +40,9 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
 
   // Use time hook with test date for development
   const currentTime = useTime({ interval: 60000 });
-  const testTime = dayjs().year(2025).month(11).date(29).hour(9).minute(0).second(0);
+  const testTime = dayjs().year(2025).month(11).date(29).hour(8).minute(0).second(0);
   const effectiveCurrentTime = testTime; // Use test time for development
 
-  // Keep currentTime available for future use (avoiding lint warning)
   console.log('Current time hook:', currentTime.format());
 
   const roomCount = rooms.length;
@@ -147,11 +146,9 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                 );
               }
 
-              // Session row
               const sessionTime = dayjs(row.time);
               const sessionEndTime = sessionTime.add(JUDGING_SESSION_LENGTH, 'seconds');
 
-              // Check if all sessions in this time slot are completed
               const allSessionsCompleted =
                 row.rooms?.every(room => {
                   // Find the session for this room and time from the original sessions data

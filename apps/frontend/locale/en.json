@@ -257,7 +257,9 @@
         "arrived": "Arrived",
         "not-arrived": "Not arrived",
         "table": {
-          "time": "Time"
+          "time": "Time",
+          "start-time": "Start",
+          "end-time": "End"
         },
         "visibility": {
           "public": "General",
@@ -461,6 +463,7 @@
       "warnings": {
         "on-field": "Team is on the field!"
       },
+      "not-arrived": "Not arrived",
       "empty-state": {
         "message": "No judging sessions scheduled",
         "no-team": "No team assigned"

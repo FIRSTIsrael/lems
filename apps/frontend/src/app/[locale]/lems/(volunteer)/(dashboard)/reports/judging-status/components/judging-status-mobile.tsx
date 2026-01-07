@@ -2,18 +2,8 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
-import {
-  Box,
-  Card,
-  CardContent,
-  Chip,
-  Paper,
-  Skeleton,
-  Stack,
-  Tooltip,
-  Typography
-} from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { Box, Card, CardContent, Chip, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
@@ -27,8 +17,8 @@ interface JudgingStatusMobileProps {
   nextSessions: JudgingSession[];
   rooms: Room[];
   sessionLength: number;
-  teamsOnField: Set<string>;
   loading: boolean;
+  currentTime: Dayjs;
 }
 
 const getStatusColor = (status: string) => {
@@ -62,8 +52,8 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
   nextSessions,
   rooms,
   sessionLength,
-  teamsOnField,
-  loading
+  loading,
+  currentTime
 }) => {
   const t = useTranslations('pages.judging-status');
 
@@ -102,7 +92,6 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
 
   const renderSessionCard = (session: JudgingSession, room: Room, isCurrentRound: boolean) => {
     const team = session.team;
-    const isTeamOnField = team ? teamsOnField.has(team.id) : false;
 
     return (
       <Card
@@ -130,17 +119,24 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
                     size="small"
                     sx={{ fontWeight: 600 }}
                   />
-                  {isTeamOnField && (
-                    <Tooltip title={t('warnings.on-field')} arrow>
-                      <WarningAmberRoundedIcon color="warning" fontSize="small" />
-                    </Tooltip>
+                  {!team.arrived && (
+                    <Chip
+                      icon={<WarningAmberRoundedIcon />}
+                      label={t('not-arrived')}
+                      color="warning"
+                      size="small"
+                      variant="outlined"
+                    />
                   )}
                 </Stack>
 
                 {session.startTime && session.startDelta !== undefined && (
                   <Typography variant="caption" color="text.secondary">
                     {t('table.started-at', {
-                      time: dayjs(session.startTime).format('HH:mm')
+                      time: currentTime
+                        .hour(dayjs(session.startTime).hour())
+                        .minute(dayjs(session.startTime).minute())
+                        .format('HH:mm')
                     })}
                     {session.startDelta !== 0 && (
                       <Typography
@@ -159,7 +155,11 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
                 {session.status === 'in-progress' && session.startTime && (
                   <Typography variant="caption" color="text.secondary">
                     {t('table.ends-at', {
-                      time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
+                      time: currentTime
+                        .hour(dayjs(session.startTime).hour())
+                        .minute(dayjs(session.startTime).minute())
+                        .add(sessionLength, 'seconds')
+                        .format('HH:mm')
                     })}
                   </Typography>
                 )}
@@ -185,7 +185,10 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
                 {t('table.current-round')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
+                {currentTime
+                  .hour(dayjs(currentSessions[0].scheduledTime).hour())
+                  .minute(dayjs(currentSessions[0].scheduledTime).minute())
+                  .format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>
@@ -205,7 +208,10 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
                 {t('table.next-round')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
+                {currentTime
+                  .hour(dayjs(nextSessions[0].scheduledTime).hour())
+                  .minute(dayjs(nextSessions[0].scheduledTime).minute())
+                  .format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>

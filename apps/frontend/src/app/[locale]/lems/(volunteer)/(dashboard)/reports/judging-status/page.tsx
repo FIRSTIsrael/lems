@@ -3,7 +3,9 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box } from '@mui/material';
+import dayjs from 'dayjs';
 import { ResponsiveComponent } from '@lems/shared';
+import { useTime } from '../../../../../../../lib/time/hooks';
 import { useEvent } from '../../../components/event-context';
 import { PageHeader } from '../../components/page-header';
 import { usePageData } from '../../../hooks/use-page-data';
@@ -41,38 +43,18 @@ export default function JudgingStatusPage() {
     subscriptions
   );
 
-  const { sessions, rooms, sessionLength } = parseJudgingStatus(data ?? {});
+  const {
+    sessions: currentSessions,
+    nextSessions,
+    rooms,
+    sessionLength
+  } = parseJudgingStatus(data ?? {});
 
-  // Find the current session number from sessions in progress
-  const currentSessionNumber = useMemo(() => {
-    const inProgressSession = sessions.find(s => s.status === 'in-progress');
-    if (inProgressSession) return inProgressSession.number;
-
-    // If no in-progress, find the lowest not-started session
-    const notStartedSessions = sessions.filter(s => s.status === 'not-started');
-    if (notStartedSessions.length > 0) {
-      return Math.min(...notStartedSessions.map(s => s.number));
-    }
-
-    return 0;
-  }, [sessions]);
-
-  // Filter sessions to current and next rounds only
-  const currentSessions = useMemo(
-    () => sessions.filter(session => session.number === currentSessionNumber),
-    [sessions, currentSessionNumber]
-  );
-
-  const nextSessions = useMemo(
-    () => sessions.filter(session => session.number === currentSessionNumber + 1),
-    [sessions, currentSessionNumber]
-  );
-
-  // For judging status, we don't need to track teams on field
-  // This is focused on judging sessions only
-  const teamsOnField = useMemo(() => {
-    return new Set<string>();
-  }, []);
+  // Use time hook with test date for development
+  const currentTime = useTime({ interval: 60000 });
+  const testTime = dayjs().year(2025).month(11).date(29).hour(9).minute(10).second(0); // Note: month is 0-indexed
+  const effectiveCurrentTime = testTime; // Use test time for development
+  console.log('Test time set to:', effectiveCurrentTime.format('YYYY-MM-DD HH:mm:ss'));
 
   return (
     <>
@@ -86,8 +68,8 @@ export default function JudgingStatusPage() {
               nextSessions={nextSessions}
               rooms={rooms}
               sessionLength={sessionLength}
-              teamsOnField={teamsOnField}
               loading={loading}
+              currentTime={effectiveCurrentTime}
             />
           }
           desktop={
@@ -96,8 +78,8 @@ export default function JudgingStatusPage() {
               nextSessions={nextSessions}
               rooms={rooms}
               sessionLength={sessionLength}
-              teamsOnField={teamsOnField}
               loading={loading}
+              currentTime={effectiveCurrentTime}
             />
           }
         />
