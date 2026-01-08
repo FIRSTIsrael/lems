@@ -19,6 +19,8 @@ const STATUS_ITEMS: Array<ScoresheetStatus | 'escalated'> = [
 export function ScoresheetStatusLegend() {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
+  const direction = theme.direction;
+  
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -57,11 +59,11 @@ export function ScoresheetStatusLegend() {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'left'
+          horizontal: direction === 'rtl' ? 'left' : 'right'
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right'
+          horizontal: direction === 'rtl' ? 'left' : 'right'
         }}
         slotProps={{
           paper: {
@@ -81,7 +83,8 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: '100%',
-            right: 16,
+            right: direction === 'rtl' ? undefined : 9,
+            left: direction === 'rtl' ? 9 : undefined,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
@@ -93,7 +96,8 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: 'calc(100% - 1px)',
-            right: 16,
+            right: direction === 'rtl' ? undefined : 9,
+            left: direction === 'rtl' ? 9 : undefined,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',

@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import { useTranslations } from 'next-intl';
 import {
   CheckCircle,
   WarningAmber,
@@ -89,9 +88,7 @@ export function ScoresheetStatusButton({
   disabled = false,
   dimmed = false
 }: ScoresheetStatusButtonProps) {
-  const t = useTranslations('pages.head-referee');
   const theme = useTheme();
-
   const statusColor = getStatusColor(escalated ? 'escalated' : status);
   const isCompleted = status === 'completed';
   const isDraft = status === 'in-progress';

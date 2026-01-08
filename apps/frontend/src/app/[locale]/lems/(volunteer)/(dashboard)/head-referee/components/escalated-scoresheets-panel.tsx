@@ -8,7 +8,6 @@ import {
   Stack,
   Chip,
   Box,
-  Link as MuiLink,
   Typography
 } from '@mui/material';
 import Link from 'next/link';
