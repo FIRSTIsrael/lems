@@ -64,8 +64,8 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
 
   if (!match) {
     return (
-      <Paper sx={{ p: 3, flex: 1 }}>
-        <Stack spacing={2}>
+      <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Stack spacing={2} sx={{ flex: 1 }}>
           <Typography variant="h5" fontWeight={600}>
             ⏰ {t('next-match.title')}
           </Typography>
@@ -117,8 +117,8 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
   };
 
   return (
-    <Paper sx={{ p: 3, flex: 1 }}>
-      <Stack spacing={2}>
+    <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Stack spacing={2} sx={{ flex: 1 }}>
         <Stack
           direction="row"
           spacing={2}

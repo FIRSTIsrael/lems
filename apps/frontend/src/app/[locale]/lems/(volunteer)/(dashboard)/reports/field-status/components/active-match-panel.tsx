@@ -50,8 +50,8 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
 
   if (!match) {
     return (
-      <Paper sx={{ p: 3, flex: 1 }}>
-        <Stack spacing={2}>
+      <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <Stack spacing={2} sx={{ flex: 1 }}>
           <Typography variant="h5" fontWeight={600}>
             🏆 {t('active-match.title')}
           </Typography>
@@ -81,8 +81,8 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   };
 
   return (
-    <Paper sx={{ p: 3, flex: 1 }}>
-      <Stack spacing={2}>
+    <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
+      <Stack spacing={2} sx={{ flex: 1 }}>
         <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
           <Typography variant="h5" fontWeight={600}>
             🏆 {t('active-match.match-title', { slug: match.slug })}
