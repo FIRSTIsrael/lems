@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Typography, Grid, Box, Divider } from '@mui/material';
 
 interface MatchResultsProps {
-  scores: number[];
+  scores: (number | null)[];
 }
 
 export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
@@ -38,7 +38,7 @@ export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
                 {t('performance.match-number', { number: index + 1 })}
               </Typography>
               <Typography variant="body1" fontWeight="600" color="primary">
-                {score}
+                {score ?? '-'}
               </Typography>
             </Grid>
           ))}

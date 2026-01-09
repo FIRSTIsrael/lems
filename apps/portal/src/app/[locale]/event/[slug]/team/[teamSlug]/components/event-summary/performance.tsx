@@ -38,7 +38,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
           </Typography>
         </Stack>
         <Typography variant="h6" fontWeight="600" color="primary">
-          {highestScore}
+          {highestScore ?? '-'}
         </Typography>
       </Grid>
 
@@ -62,7 +62,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
           </Typography>
         </Stack>
         <Typography variant="h6" fontWeight="600" color="primary">
-          {robotGameRank}
+          {robotGameRank ?? '-'}
         </Typography>
       </Grid>
     </>

@@ -4,6 +4,7 @@ import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
 import { makePortalAwardsResponse, makePortalDivisionResponse } from '../../divisions/util';
 import { makePortalTeamResponse } from '../../teams/util';
+import { getTeamRankingData } from '../../utils/ranking-calculator';
 import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -52,14 +53,28 @@ router.get('/:teamSlug/awards', async (req: PortalTeamAtEventRequest, res: Respo
 });
 
 router.get('/:teamSlug/robot-performance', async (req: PortalTeamAtEventRequest, res: Response) => {
-  const scores = [];
-  const highestScore = 0;
-  const robotGameRank = 1;
+  // Get ranking data for this team
+  const rankingData = await getTeamRankingData(req.divisionId, req.teamId);
+
+  if (!rankingData) {
+    // Team has no submitted scoresheets
+    res.status(200).json({
+      scores: [],
+      highestScore: null,
+      robotGameRank: null
+    });
+    return;
+  }
+
+  // Sort scores by round for consistent display
+  const sortedScores = rankingData.scoresWithRounds
+    .sort((a, b) => a.round - b.round)
+    .map(s => s.score);
 
   res.status(200).json({
-    scores,
-    highestScore,
-    robotGameRank
+    scores: sortedScores,
+    highestScore: rankingData.maxScore,
+    robotGameRank: rankingData.rank
   });
 });
 

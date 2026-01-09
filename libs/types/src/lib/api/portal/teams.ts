@@ -42,10 +42,10 @@ export const PortalTeamEventResultSchema = z.object({
       matches: z.array(
         z.object({
           number: z.number(),
-          score: z.number()
+          score: z.number().nullable()
         })
       ),
-      robotGameRank: z.number()
+      robotGameRank: z.number().nullable()
     })
     .nullable()
 });
@@ -82,8 +82,8 @@ export type TeamJudgingSession = z.infer<typeof TeamJudgingSessionSchema>;
 
 export const TeamRobotPerformanceSchema = z.object({
   scores: z.array(z.number()),
-  highestScore: z.number(),
-  robotGameRank: z.number()
+  highestScore: z.number().nullable(),
+  robotGameRank: z.number().nullable()
 });
 
 export type TeamRobotPerformance = z.infer<typeof TeamRobotPerformanceSchema>;
