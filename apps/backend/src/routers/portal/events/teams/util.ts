@@ -62,6 +62,7 @@ export const makeAgendaResponse = (agendaItem: DbAgendaEvent): AgendaEvent => {
     title: agendaItem.title,
     startTime: agendaItem.start_time,
     duration: agendaItem.duration,
-    divisionId: agendaItem.division_id
+    divisionId: agendaItem.division_id,
+    location: agendaItem.location
   };
 };

@@ -21,6 +21,7 @@ export interface AgendaBlock extends ScheduleBlock {
   type: 'agenda-event';
   title: string;
   visibilty: AgendaBlockVisibility;
+  location: string | null;
 }
 
 export type BlocksByType = Record<ScheduleColumn, ScheduleBlock[]>;

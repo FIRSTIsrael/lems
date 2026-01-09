@@ -7,9 +7,8 @@ import useSWR from 'swr';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
-import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 import { useTeamAtEvent } from './team-at-event-context';
-import { AgendaEvent } from '@lems/database';
 
 interface ScheduleEntry {
   time: Date;
@@ -48,19 +47,23 @@ export const TeamSchedule: React.FC = () => {
       }),
       location: match.table.name
     })),
-    ...(judgingSession ? [{
-      time: new Date(judgingSession.scheduledTime),
-      description: t('schedule.judging-session', {
-        number: judgingSession.number,
-        room: judgingSession.room.name,
-        teamNumber: team.number
-      }),
-      location: judgingSession.room.name
-    }] : []),
+    ...(judgingSession
+      ? [
+          {
+            time: new Date(judgingSession.scheduledTime),
+            description: t('schedule.judging-session', {
+              number: judgingSession.number,
+              room: judgingSession.room.name,
+              teamNumber: team.number
+            }),
+            location: judgingSession.room.name
+          }
+        ]
+      : []),
     ...(agenda || []).map(agendaItem => ({
-      time: new Date(agendaItem.start_time),
+      time: new Date(agendaItem.startTime),
       description: agendaItem.title,
-      location: ''
+      location: agendaItem.location || ''
     }))
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 

@@ -6,13 +6,14 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Stack, useTheme } fr
 import { AgendaBlockVisibility, type AgendaBlock } from '../../calendar-types';
 import { useCalendar } from '../../calendar-context';
 import { TitleField } from './title-field';
+import { LocationField } from './location-field';
 import { VisibilitySection } from './visibility-section';
 import { DialogActionsBar } from './dialog-actions-bar';
 
 interface EditAgendaDialogProps {
   open: boolean;
   blockId: string;
-  onSave: (title: string, visibility: AgendaBlockVisibility) => void;
+  onSave: (title: string, location: string | null, visibility: AgendaBlockVisibility) => void;
   onCancel: () => void;
   onDelete: () => void;
   size: 'normal' | 'small' | 'tiny';
@@ -33,6 +34,7 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
 
   const block = blocks.agenda.find(b => b.id === blockId) as AgendaBlock | undefined;
   const [title, setTitle] = useState('');
+  const [location, setLocation] = useState<string | null>(null);
   const [visibility, setVisibility] = useState<AgendaBlockVisibility>('public');
 
   useEffect(() => {
@@ -40,17 +42,19 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
       // Sync with external state -> this is OK.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(block.title || '');
+      setLocation(block.location);
       setVisibility(block.visibilty ?? 'public');
     }
   }, [block, open]);
 
   const handleSave = () => {
-    onSave(title, visibility);
+    onSave(title, location, visibility);
   };
 
   const handleCancel = () => {
     if (block) {
       setTitle(block.title || '');
+      setLocation(block.location);
       setVisibility(block.visibilty ?? 'public');
     }
     onCancel();
@@ -97,6 +101,7 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
       <DialogContent key="body" sx={{ pt: 3, px: 3 }}>
         <Stack spacing={3} mt={3}>
           <TitleField value={title} onChange={setTitle} onKeyDown={handleKeyDown} />
+          <LocationField value={location} onChange={setLocation} onKeyDown={handleKeyDown} />
           <VisibilitySection value={visibility} onChange={setVisibility} />
         </Stack>
       </DialogContent>

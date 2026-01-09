@@ -218,6 +218,7 @@
         "no-events": "No agenda events have been scheduled yet.",
         "loading": "Loading agenda...",
         "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
+        "location": "Location",
         "visibility": {
           "public": "General",
           "judging": "Judging",

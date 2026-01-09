@@ -707,6 +707,8 @@
             "save": "שמירה",
             "delete": "מחיקה",
             "event-title": "כותרת אירוע",
+            "event-location": "מיקום",
+            "default-event-location": "חדר/מיקום",
             "visibility": "נראות",
             "public": "ציבורי",
             "description-public": "יופיע לכולם בפורטל האירועים",
