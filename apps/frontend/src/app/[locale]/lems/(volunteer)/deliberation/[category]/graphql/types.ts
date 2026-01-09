@@ -38,6 +38,7 @@ export interface Room {
 export interface JudgingSession {
   id: string;
   room: Room;
+  status: 'not-started' | 'in-progress' | 'completed';
 }
 
 export interface GPValue {

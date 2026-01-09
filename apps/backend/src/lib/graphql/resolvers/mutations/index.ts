@@ -1,4 +1,5 @@
 import { teamArrivedResolver } from './team-arrived';
+import { disqualifyTeamResolver } from './disqualify-team';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
 import {
   loadMatchResolver,
@@ -25,10 +26,15 @@ import {
   switchActiveDisplayResolver,
   updateAudienceDisplaySettingResolver
 } from './audience-display';
-import { startDeliberationResolver, updateDeliberationPicklistResolver } from './deliberations';
+import {
+  startDeliberationResolver,
+  updateDeliberationPicklistResolver,
+  completeDeliberationResolver
+} from './deliberations';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
+  disqualifyTeam: disqualifyTeamResolver,
   startJudgingSession: startJudgingSessionResolver,
   abortJudgingSession: abortJudgingSessionResolver,
   loadMatch: loadMatchResolver,
@@ -49,5 +55,6 @@ export const mutationResolvers = {
   updateScoresheetStatus: updateScoresheetStatusResolver,
   resetScoresheet: resetScoresheetResolver,
   startDeliberation: startDeliberationResolver,
-  updateDeliberationPicklist: updateDeliberationPicklistResolver
+  updateDeliberationPicklist: updateDeliberationPicklistResolver,
+  completeDeliberation: completeDeliberationResolver
 };
