@@ -1,6 +1,11 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+import type { GraphQLContext } from '../../../apollo-server';
+import { requireAuthDivisionAndRole } from '../../../utils/auth-helpers';
+
+// Allowed roles for accessing scoresheet data
+const SCORESHEET_ALLOWED_ROLES = ['referee', 'head-referee'];
 
 interface ScoresheetUpdatedSubscribeArgs {
   divisionId: string;
@@ -107,8 +112,14 @@ async function processScoresheetUpdatedEvent(
 }
 
 export const scoresheetUpdatedResolver = {
-  subscribe: (_root: unknown, { divisionId }: ScoresheetUpdatedSubscribeArgs) => {
+  subscribe: (
+    _root: unknown,
+    { divisionId }: ScoresheetUpdatedSubscribeArgs,
+    context: GraphQLContext
+  ) => {
     if (!divisionId) throw new Error('divisionId is required');
+    // Require authentication, division access, and appropriate role for scoresheet data
+    requireAuthDivisionAndRole(context.user, divisionId, SCORESHEET_ALLOWED_ROLES);
     const pubSub = getRedisPubSub();
     return pubSub.asyncIterator(divisionId, RedisEventTypes.SCORESHEET_UPDATED);
   },

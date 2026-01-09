@@ -53,9 +53,11 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     let allOptions: RoleInfoOption[] = [];
 
     if (roleInfoType === 'table' || roleInfoType === 'room') {
-      if (divisionData?.division) {
+      if (divisionData?.publicDivisionVenue) {
         const items =
-          roleInfoType === 'table' ? divisionData.division.tables : divisionData.division.rooms;
+          roleInfoType === 'table'
+            ? divisionData.publicDivisionVenue.tables
+            : divisionData.publicDivisionVenue.rooms;
         allOptions = items.map((item: { id: string; name: string }) => ({
           id: item.id,
           name: item.name

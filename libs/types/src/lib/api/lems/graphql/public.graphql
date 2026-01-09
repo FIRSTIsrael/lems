@@ -1,0 +1,25 @@
+"""
+Public venue information for a division, accessible without authentication.
+Used during login to provide table and room options.
+"""
+type PublicDivisionVenue {
+  "Division ID"
+  id: String!
+
+  "Competition tables in this division"
+  tables: [Table!]!
+
+  "Judging rooms in this division"
+  rooms: [Room!]!
+}
+
+extend type Query {
+  """
+  Get public venue information for a division (tables and rooms only).
+  This query does not require authentication and is used during the login flow.
+  """
+  publicDivisionVenue(
+    "Division ID to retrieve venue information for"
+    id: String!
+  ): PublicDivisionVenue
+}

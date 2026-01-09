@@ -11,6 +11,7 @@ interface AwardsArgs {
 
 export interface AwardGraphQL {
   id: string;
+  divisionId: string; // Added for award winner resolver
   name: string;
   index: number;
   place: number;
@@ -18,6 +19,7 @@ export interface AwardGraphQL {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
+  description?: string; // Added description field
 }
 
 /**
@@ -43,13 +45,15 @@ export const divisionAwardsResolver: GraphQLFieldResolver<
 
     return awards.map(award => ({
       id: award.id,
+      divisionId: division.id,
       name: award.name,
       index: award.index,
       place: award.place,
       type: award.type,
       isOptional: award.is_optional,
       allowNominations: award.allow_nominations,
-      automaticAssignment: award.automatic_assignment
+      automaticAssignment: award.automatic_assignment,
+      description: award.description
     }));
   } catch (error) {
     console.error('Error fetching awards for division:', division.id, error);

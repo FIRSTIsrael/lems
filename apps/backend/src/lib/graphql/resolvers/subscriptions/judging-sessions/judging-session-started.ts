@@ -1,5 +1,7 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+import type { GraphQLContext } from '../../../apollo-server';
+import { requireAuthAndDivisionAccess } from '../../../utils/auth-helpers';
 
 interface JudgingSessionStartedSubscribeArgs {
   divisionId: string;
@@ -34,9 +36,11 @@ const processJudgingSessionStartedEvent = async (
 
 const judgingSessionStartedSubscribe = (
   _root: unknown,
-  { divisionId }: JudgingSessionStartedSubscribeArgs
+  { divisionId }: JudgingSessionStartedSubscribeArgs,
+  context: GraphQLContext
 ) => {
   if (!divisionId) throw new Error('divisionId is required');
+  requireAuthAndDivisionAccess(context.user, divisionId);
   const pubSub = getRedisPubSub();
   return pubSub.asyncIterator(divisionId, RedisEventTypes.JUDGING_SESSION_STARTED);
 };

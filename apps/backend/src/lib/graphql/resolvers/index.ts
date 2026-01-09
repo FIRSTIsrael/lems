@@ -1,6 +1,7 @@
 import { GraphQLScalarType, Kind } from 'graphql';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
+import { publicDivisionVenueResolver } from './divisions/public-venue';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
 import {
@@ -49,6 +50,7 @@ import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
 import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
 import { DeliberationUpdatedEventResolver } from './subscriptions/deliberations/deliberation-updated';
+import { awardWinnerResolver, awardWinnerTeamResolver } from './awards/award-winner';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -83,7 +85,8 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver
+    division: divisionResolver,
+    publicDivisionVenue: publicDivisionVenueResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
@@ -145,6 +148,12 @@ export const resolvers = {
     ...scoresheetResolvers,
     team: scoresheetTeamResolver,
     data: scoresheetDataResolver
+  },
+  Award: {
+    winner: awardWinnerResolver
+  },
+  AwardWinner: {
+    team: awardWinnerTeamResolver
   },
   Volunteer: {
     divisions: volunteerDivisionsResolver
