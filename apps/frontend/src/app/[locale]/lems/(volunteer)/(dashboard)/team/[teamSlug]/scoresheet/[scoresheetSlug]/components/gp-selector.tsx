@@ -191,10 +191,6 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
                           borderColor: theme.palette.primary.main,
                           borderWidth: 2
                         }
-                      },
-                      '& .MuiOutlinedInput-input::placeholder': {
-                        opacity: 0.7,
-                        color: 'text.secondary'
                       }
                     }}
                   />
