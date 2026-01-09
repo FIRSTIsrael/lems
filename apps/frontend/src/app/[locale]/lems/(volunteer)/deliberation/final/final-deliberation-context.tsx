@@ -133,7 +133,16 @@ export const FinalDeliberationProvider = ({
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
 
       const eligibilites: EligiblityPerStage = {
-        champions: computeChampionsEligibility({ ...team, ranks }, awardCounts.champions || 0),
+        champions: computeChampionsEligibility(
+          { ...team, ranks },
+          division.judging.advancementPercentage
+            ? Math.ceil(
+                (division.teams.filter(t => t.arrived).length *
+                  division.judging.advancementPercentage) /
+                  100
+              )
+            : (awardCounts.champions || 0) + 3
+        ),
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
@@ -199,7 +208,7 @@ export const FinalDeliberationProvider = ({
     }, {});
 
     const awards: DeliberationAwards = {
-      champions: JSON.parse(deliberation.champions) ?? {},
+      champions: deliberation.champions ?? ({} as Record<number, string>),
       'core-values': deliberation.coreValues || [],
       'innovation-project': deliberation.innovationProject || [],
       'robot-design': deliberation.robotDesign || [],
@@ -214,6 +223,7 @@ export const FinalDeliberationProvider = ({
       availableTeams,
       categoryPicklists,
       awards,
+      awardCounts,
       roomMetrics,
       startDeliberation: handleStartFinalDeliberation,
       updateAward: handleUpdateFinalDeliberationAwards,
@@ -236,10 +246,10 @@ export const FinalDeliberationProvider = ({
   );
 };
 
-export const useFinalDeliberationContext = (): FinalDeliberationContextValue => {
+export const useFinalDeliberation = (): FinalDeliberationContextValue => {
   const context = useContext(FinalDeliberationContext);
   if (!context) {
-    throw new Error('useFinalDeliberationContext must be used within a FinalDeliberationProvider');
+    throw new Error('useFinalDeliberation must be used within a FinalDeliberationProvider');
   }
   return context;
 };

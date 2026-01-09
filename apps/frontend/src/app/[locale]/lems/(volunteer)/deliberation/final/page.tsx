@@ -2,26 +2,24 @@
 
 import { useMemo } from 'react';
 import { Box, CircularProgress } from '@mui/material';
+import { ResponsiveComponent } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import {
-  createTeamArrivalUpdatedSubscription,
-  createRubricUpdatedSubscription,
-  createScoresheetUpdatedSubscription,
   createFinalDeliberationStatusChangedSubscription,
   createFinalDeliberationUpdatedSubscription,
   GET_FINAL_DELIBERATION,
   parseFinalDeliberationData
 } from './graphql';
+import { SmallScreenBlock } from './components/small-screen-block';
+import { FinalDeliberationGrid } from './components/final-deliberation-grid';
+import { FinalDeliberationProvider } from './final-deliberation-context';
 
 export default function FinalDeliberationPage(): React.ReactElement {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
     () => [
-      createTeamArrivalUpdatedSubscription(currentDivision.id),
-      createRubricUpdatedSubscription(currentDivision.id),
-      createScoresheetUpdatedSubscription(currentDivision.id),
       createFinalDeliberationStatusChangedSubscription(currentDivision.id),
       createFinalDeliberationUpdatedSubscription(currentDivision.id)
     ],
@@ -48,5 +46,13 @@ export default function FinalDeliberationPage(): React.ReactElement {
     );
   }
 
-  return (<></>);
+  return (
+    <FinalDeliberationProvider division={division} divisionId={currentDivision.id}>
+      <ResponsiveComponent
+        mobileBreakpoint="lg"
+        desktop={<FinalDeliberationGrid />}
+        mobile={<SmallScreenBlock />}
+      />
+    </FinalDeliberationProvider>
+  );
 }

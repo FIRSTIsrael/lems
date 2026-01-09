@@ -8,7 +8,7 @@ export interface FinalJudgingDeliberation {
   status: DeliberationStatus;
   startTime: string | null;
   completionTime: string | null;
-  champions: string; // JSON string of Record<number, string>
+  champions: Record<number, string>;
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
@@ -53,6 +53,7 @@ export interface Division {
     robotDesignDeliberation: CategoryDeliberation;
     coreValuesDeliberation: CategoryDeliberation;
     finalDeliberation: FinalJudgingDeliberation;
+    advancementPercentage: number | null;
   };
 }
 

@@ -37,10 +37,10 @@ export const FINAL_DELIBERATION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-const finalDeliberationUpdatedReconciler: Reconciler<
-  FinalDeliberationData,
-  SubscriptionResult
-> = (prev, { data }) => {
+const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, SubscriptionResult> = (
+  prev,
+  { data }
+) => {
   if (!data?.finalDeliberationUpdated) return prev;
 
   const event = data.finalDeliberationUpdated;
@@ -50,17 +50,17 @@ const finalDeliberationUpdatedReconciler: Reconciler<
       judging: {
         finalDeliberation: {
           // Update status if provided
-          ...(event.status !== undefined && { status: event.status }),
+          ...(!!event.status && { status: event.status }),
           // Update stage if provided
-          ...(event.stage !== undefined && { stage: event.stage }),
+          ...(!!event.stage && { stage: event.stage }),
           // Update startTime if provided
-          ...(event.startTime !== undefined && { startTime: event.startTime }),
+          ...(!!event.startTime && { startTime: event.startTime }),
           // Update completionTime if provided
-          ...(event.completionTime !== undefined && { completionTime: event.completionTime }),
+          ...(!!event.completionTime && { completionTime: event.completionTime }),
           // Update awards if provided (JSON string)
-          ...(event.awards !== undefined && { awards: event.awards }),
+          ...(!!event.awards && JSON.parse(event.awards)),
           // Update stageData if provided (JSON string)
-          ...(event.stageData !== undefined && { stageData: event.stageData })
+          ...(!!event.stageData && { stageData: JSON.parse(event.stageData) })
         }
       }
     }

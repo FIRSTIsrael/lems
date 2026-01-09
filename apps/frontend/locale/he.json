@@ -819,6 +819,50 @@
           "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
           "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
         }
+      },
+      "final": {
+        "title": "דיון סופי",
+        "stepper": {
+          "champions": "פרס האליפות",
+          "core-awards": "פרסי ליבה",
+          "optional-awards": "פרסים אופציונליים",
+          "review": "סיכום"
+        },
+        "champions": {
+          "title": "פרס האליפות",
+          "description": "בחרו קבוצות לפרס האליפות.",
+          "podium-title": "קרנבל האליפות",
+          "place-label": "מקום #{place}",
+          "select-team": "בחרו קבוצה...",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-score": "ציון כולל",
+          "save": "שמור אליפות",
+          "advance": "קדם לפרסים בסיסיים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הסתיים",
+          "deliberation-finalized": "האליפות נבחרו. מוכן להתקדמות."
+        },
+        "champions-room-metrics": {
+          "room-scores-distribution": "התפלגות ציוני חדרים",
+          "no-data-available": "אין נתונים זמינים"
+        },
+        "compare": {
+          "title": "השוו קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השוו",
+          "no-data-available": "אין קבוצות זמינות"
+        },
+        "small-screen-block": {
+          "title": "המסך קטן מדי",
+          "message": "תצוגת הדיון הסופי דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+        }
       }
     }
   },

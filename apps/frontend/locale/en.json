@@ -819,6 +819,58 @@
           "message": "The deliberation view requires a larger screen to display all components properly.",
           "minimum-width": "Please use a desktop or rotate your device to landscape mode."
         }
+      },
+      "final": {
+        "title": "Final Deliberation",
+        "stepper": {
+          "champions": "Champions Award",
+          "core-awards": "Core Awards",
+          "optional-awards": "Optional Awards",
+          "review": "Review"
+        },
+        "champions": {
+          "title": "Champions Award",
+          "description": "Select teams to award the Champions.",
+          "podium-title": "Champions Podium",
+          "place-label": "Place #{place}",
+          "select-team": "Select team...",
+          "table-rank": "Rank",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-score": "Total Score",
+          "save": "Save Champions",
+          "advance": "Advance to Core Awards",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Champions have been selected. Ready to advance."
+        },
+        "champions-room-metrics": {
+          "room-scores-distribution": "Room Scores Distribution",
+          "no-data-available": "No data available"
+        },
+        "compare": {
+          "title": "Compare Teams",
+          "team-1": "Team 1",
+          "team-2": "Team 2",
+          "compare": "Compare",
+          "no-data-available": "No teams available"
+        },
+        "small-screen-block": {
+          "title": "Screen Too Small",
+          "message": "The final deliberation view requires a larger screen to display all components properly.",
+          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "Room Scores Distribution",
+          "no-data-available": "No data available",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "aggregate-average": "Aggregate Average"
+        }
       }
     }
   },
