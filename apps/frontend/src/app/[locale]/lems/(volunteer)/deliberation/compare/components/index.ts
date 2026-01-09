@@ -8,3 +8,4 @@ export { GpScores } from './gp-scores';
 export { Feedback } from './feedback';
 export { CategoryFilter } from './category-filter';
 export { TeamSelector } from './team-selector';
+export { CompareTeam } from './compare-team';

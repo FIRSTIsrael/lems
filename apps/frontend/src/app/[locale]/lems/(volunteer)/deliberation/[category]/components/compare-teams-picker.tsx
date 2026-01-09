@@ -1,29 +1,62 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Autocomplete, Button, Paper, Stack, TextField, Typography } from '@mui/material';
-import { CompareArrows } from '@mui/icons-material';
+import {
+  Autocomplete,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  IconButton
+} from '@mui/material';
+import { OpenInNew } from '@mui/icons-material';
+import { useEvent } from '../../components/event-context';
+import { useCategoryDeliberation } from '../deliberation-context';
+import { CompareModal } from './compare-modal';
 import type { EnrichedTeam } from '../types';
 
 interface CompareTeamsPickerProps {
   teams: EnrichedTeam[];
-  onCompare?: (team1Id: string, team2Id: string) => void;
 }
 
-export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps) {
+export function CompareTeamsPicker({ teams }: CompareTeamsPickerProps) {
   const t = useTranslations('pages.deliberations.category.compare-teams-picker');
+  const router = useRouter();
+  const { currentDivision } = useEvent();
+  const { division } = useCategoryDeliberation();
+
   const [selectedTeam1, setSelectedTeam1] = useState<string | null>(null);
   const [selectedTeam2, setSelectedTeam2] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const teamOptions = teams.map(t => ({
     label: `${t.number} - ${t.name}`,
     value: t.id
   }));
 
-  const handleCompare = () => {
-    if (selectedTeam1 && selectedTeam2) {
-      onCompare?.(selectedTeam1, selectedTeam2);
+  // Memoized calculation of awards and allTeams from division data
+  const { awards, allTeamsData } = useMemo(() => {
+    return {
+      awards: division?.awards ?? [],
+      allTeamsData: division?.allTeams ?? []
+    };
+  }, [division]);
+
+  // Get the selected team objects from the teams array
+  const team1 = teams.find(t => t.id === selectedTeam1);
+  const team2 = teams.find(t => t.id === selectedTeam2);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleOpenComparePageInNewTab = () => {
+    const teamSlugs = [team1?.slug, team2?.slug].filter(Boolean).join(',');
+    if (teamSlugs) {
+      router.push(`/lems/deliberation/compare?teams=${teamSlugs}`);
     }
   };
 
@@ -49,7 +82,16 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
         >
           {t('title')}
         </Typography>
-        <CompareArrows />
+        <IconButton
+          size="small"
+          onClick={handleOpenComparePageInNewTab}
+          disabled={!team1 || !team2 || team1.id === team2.id}
+          sx={{
+            p: 0.5
+          }}
+        >
+          <OpenInNew fontSize="small" />
+        </IconButton>
       </Stack>
 
       <Autocomplete
@@ -106,7 +148,7 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
         fullWidth
         disabled={!selectedTeam1 || !selectedTeam2 || selectedTeam1 === selectedTeam2}
         size="small"
-        onClick={handleCompare}
+        onClick={handleOpenModal}
         sx={{
           mt: 1,
           fontWeight: 600,
@@ -122,6 +164,16 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
       >
         {t('compare')}
       </Button>
+
+      <CompareModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        team1={team1}
+        team2={team2}
+        divisionId={currentDivision.id}
+        awards={awards}
+        allTeams={allTeamsData as any}
+      />
     </Stack>
   );
 }

@@ -2,25 +2,14 @@
 
 import { useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Container, Alert, Box, Grid, Card, Paper, CircularProgress } from '@mui/material';
+import { Container, Alert, Box, Grid, Card, CircularProgress } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../../(dashboard)/components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import { GET_UNIFIED_DIVISION, type DivisionTeam } from './graphql';
 import { CompareProvider } from './compare-context';
-import {
-  EmptyState,
-  TeamHeader,
-  ScoreSummary,
-  RubricScores,
-  ExceedingNotes,
-  Nominations,
-  GpScores,
-  Feedback,
-  CategoryFilter,
-  TeamSelector
-} from './components';
+import { EmptyState, CategoryFilter, TeamSelector, CompareTeam } from './components';
 
 export default function ComparePage() {
   const t = useTranslations('layouts.deliberation.compare');
@@ -137,23 +126,7 @@ export default function ComparePage() {
                   : { xs: 12, sm: 6, md: 6, lg: teams.length > 2 ? 4 : 6 }
               }
             >
-              <Paper
-                sx={{
-                  p: 2,
-                  height: '100%',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2
-                }}
-              >
-                <TeamHeader team={team} />
-                <ScoreSummary team={team} />
-                <RubricScores team={team} />
-                <ExceedingNotes team={team} />
-                <Nominations team={team} />
-                {(!categoryParam || categoryParam === 'core-values') && <GpScores team={team} />}
-                <Feedback team={team} />
-              </Paper>
+              <CompareTeam team={team} />
             </Grid>
           ))}
         </Grid>
