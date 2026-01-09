@@ -78,8 +78,9 @@ export function RoleAssignmentSection({
       <CardHeader
         title={getRole(role)}
         titleTypographyProps={{ variant: 'h6' }}
+        sx={{ flexWrap: 'wrap' }}
         action={
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
             <Typography variant="body2" color="text.secondary">
               {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
             </Typography>
@@ -122,6 +123,7 @@ export function RoleAssignmentSection({
                   justifyContent="space-between"
                   alignItems="flex-start"
                   spacing={2}
+                  sx={{ minWidth: 0 }}
                 >
                   <Stack spacing={2} flex={1} minWidth={0}>
                     {!singleDivision && (
@@ -186,7 +188,7 @@ export function RoleAssignmentSection({
                     color="error"
                     onClick={() => handleRemoveSlot(slot.id)}
                     aria-label={t('remove-slot')}
-                    sx={{ display: singleDivision ? 'none' : 'flex' }}
+                    sx={{ display: singleDivision ? 'none' : 'flex', flexShrink: 0 }}
                   >
                     <DeleteIcon />
                   </IconButton>
