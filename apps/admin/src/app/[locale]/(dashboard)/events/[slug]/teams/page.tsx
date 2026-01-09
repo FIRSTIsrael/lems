@@ -52,7 +52,7 @@ export default function EventTeamsPage() {
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
           {isUnified ? (
-            <EventTeamsUnifiedView teams={teams} divisions={divisions} />
+            <EventTeamsUnifiedView teams={teams} divisions={divisions} eventId={event.id} />
           ) : (
             <EventTeamsSplitView eventId={event.id} />
           )}
