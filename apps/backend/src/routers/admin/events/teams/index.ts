@@ -51,4 +51,26 @@ router.delete(
   }
 );
 
+router.put(
+  '/:teamId/division',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    const { teamId } = req.params;
+    const { divisionId } = req.body;
+
+    if (!teamId || !divisionId) {
+      res.status(400).json({ error: 'Team ID and division ID are required' });
+      return;
+    }
+
+    try {
+      await db.events.byId(req.eventId).changeTeamDivision(teamId, divisionId);
+      res.status(200).end();
+    } catch (error) {
+      console.error('Error changing team division:', error);
+      res.status(500).json({ error: 'Failed to change team division' });
+    }
+  }
+);
+
 export default router;
