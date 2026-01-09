@@ -53,7 +53,7 @@ type RubricData {
   "Awards the team is eligible for"
   awards: JSON
   "Field values for each rubric criterion"
-  fields: JSON!
+  fields: JSON
   "Feedback for the team"
   feedback: RubricFeedback
 }

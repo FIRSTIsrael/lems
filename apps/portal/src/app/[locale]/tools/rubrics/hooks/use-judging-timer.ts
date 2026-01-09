@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react';
-import { useJudgingSounds } from './use-judging-sounds';
+import { useJudgingSounds } from '@lems/shared';
 
 // TODO: Allow selecting from a set of predefined templates
 // That will accommodate multiple regions
@@ -126,7 +126,7 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
 };
 
 export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => {
-  const playSound = useJudgingSounds();
+  const { playSound } = useJudgingSounds();
 
   const [state, dispatch] = useReducer(timerReducer, {
     currentStage: 0,

@@ -20,9 +20,6 @@ type Division {
   "Judging rooms assigned to this division"
   rooms: [Room!]!
 
-  "Awards configured for this division, optionally filtered by allowNominations"
-  awards("Filter awards by whether they allow nominations" allowNominations: Boolean): [Award!]!
-
   "Agenda events for this division, optionally filtered by visibility"
   agenda(
     "Filter events by visibility (public, field, judging)"
@@ -80,7 +77,6 @@ type AgendaEvent {
   "Visibility of the event (public, field, judging)"
   visibility: String!
 }
-
 
 extend type Query {
   """

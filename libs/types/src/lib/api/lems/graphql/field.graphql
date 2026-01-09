@@ -170,9 +170,6 @@ Represents an event when a match has been completed
 type MatchCompletedEvent {
   "Match identifier"
   matchId: String!
-
-  "ID of the automatically loaded next match, if one was eligible (starts within 15 minutes)"
-  autoLoadedMatchId: String
 }
 
 """

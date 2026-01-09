@@ -409,6 +409,9 @@
           },
           "search": {
             "placeholder": "Search teams by number, name, affiliation, city, or division..."
+          },
+          "menu": {
+            "selectDivision": "Select Division"
           }
         },
         "split": {

@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import { useEffect, useRef, useMemo } from 'react';
 import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
-import { useJudgingSounds } from './use-judging-sounds';
+import { useJudgingSounds } from '@lems/shared';
 
 // Judging stages with durations in seconds
 export const JUDGING_STAGES = [
@@ -53,7 +53,7 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
     return result;
   }, [minutes, seconds, sessionLength]);
 
-  const playSound = useJudgingSounds();
+  const { playSound } = useJudgingSounds();
   const previousStageRef = useRef(currentStageIndex);
 
   // Calculate total time remaining (current stage + all remaining stages)

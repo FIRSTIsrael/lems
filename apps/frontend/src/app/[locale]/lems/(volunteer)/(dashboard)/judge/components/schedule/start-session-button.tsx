@@ -6,7 +6,9 @@ import { useTranslations } from 'next-intl';
 import { Button, Chip } from '@mui/material';
 import { PlayArrow, CheckCircle } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
+import { SESSION_START_THRESOLD } from '@lems/shared/consts';
 import { JudgingSession } from '../../graphql';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface StartSessionButtonProps {
   session: JudgingSession;
@@ -21,19 +23,19 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
 }) => {
   const t = useTranslations('pages.judge.schedule');
   const [loading, setLoading] = useState(false);
+  const currentTime = useTime({interval: 1000});
 
   const isStartable = useMemo(() => {
     if (session.status !== 'not-started') return false;
     if (!session.team.arrived) return false;
 
     // Must have 5 minutes or less until scheduled start time
-    const now = dayjs();
     const scheduled = dayjs(session.scheduledTime);
-    const minutesUntilStart = scheduled.diff(now, 'minutes', true);
-    if (minutesUntilStart > 5) return false;
+    const minutesUntilStart = scheduled.diff(currentTime, 'minutes', true);
+    if (minutesUntilStart > SESSION_START_THRESOLD) return false;
 
     return true;
-  }, [session.status, session.scheduledTime, session.team.arrived]);
+  }, [session.status, session.team.arrived, session.scheduledTime, currentTime]);
 
   const handleStartSession = async (sessionId: string) => {
     setLoading(true);

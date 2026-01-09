@@ -29,6 +29,7 @@ router.post(
       event_id: division.event_id,
       role: 'judge',
       role_info: { roomId: room.id },
+      identifier: null,
       password: generateVolunteerPassword()
     });
 

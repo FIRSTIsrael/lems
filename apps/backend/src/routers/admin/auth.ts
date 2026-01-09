@@ -7,8 +7,8 @@ import { AdminRequest } from '../../types/express';
 import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
-import { makeAdminUserResponse } from './users/util';
 import { logger } from '../../lib/logger';
+import { makeAdminUserResponse } from './users/util';
 
 const router = express.Router({ mergeParams: true });
 
