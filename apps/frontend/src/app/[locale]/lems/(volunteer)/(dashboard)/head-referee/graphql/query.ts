@@ -7,6 +7,7 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
       id
       field {
         divisionId
+        loadedMatch
         matches {
           id
           slug
@@ -40,12 +41,12 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
           round
           status
           escalated
-            team {
-              id
-              number
-              name
-              slug
-            }
+          team {
+            id
+            number
+            name
+            slug
+          }
           data {
             score
             gp {

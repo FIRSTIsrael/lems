@@ -5,11 +5,13 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetDivisionAwards($divisionId: String!) {
     division(id: $divisionId) {
       id
-      awards {
-        id
-        name
-        place
-        description
+      judging {
+        awards {
+          id
+          name
+          place
+          description
+        }
       }
     }
   }

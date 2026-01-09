@@ -603,9 +603,10 @@
         "escalated-only": "Escalated Only",
         "status-label": "Status"
       },
+      "scoresheet-round": "{stage} #{round}",
       "scoresheet-status": {
         "empty": "Empty",
-        "in-progress": "In Progress",
+        "draft": "Draft",
         "completed": "Completed",
         "gp": "Awaiting GP",
         "submitted": "Submitted"
@@ -621,8 +622,8 @@
           "label": "Empty",
           "description": "No scoresheet data has been entered"
         },
-        "in-progress": {
-          "label": "In Progress",
+        "draft": {
+          "label": "Draft",
           "description": "Scoresheet is being filled out"
         },
         "completed": {
@@ -644,7 +645,9 @@
       },
       "table": {
         "match": "Match",
-        "scheduled-time": "Time"
+        "scheduled-time": "Time",
+        "participant-ready": "Ready",
+        "participant-not-ready": "Not Ready"
       }
     },
     "audience-display": {
@@ -859,6 +862,79 @@
     },
     "deliberation": {
       "error-not-authorized": "Unauthorized to access deliberation"
+    }
+  },
+  "deliberations": {
+    "final": {
+      "title": "Final Deliberation",
+      "error": {
+        "loadingData": "Failed to load deliberation data",
+        "notFound": "Final deliberation not found"
+      },
+      "stages": {
+        "champions": "Champions Selection",
+        "core-awards": "Core Awards",
+        "optional-awards": "Optional Awards",
+        "review": "Review & Finalize"
+      },
+      "buttons": {
+        "previous": "Previous Stage",
+        "next": "Next Stage",
+        "finalize": "Finalize Deliberation"
+      },
+      "teamCard": {
+        "totalRank": "Total Rank",
+        "overall": "Overall",
+        "robotGameRank": "Robot Game Rank",
+        "robotGame": "Robot Game"
+      },
+      "champions": {
+        "instruction": "Select teams for 1st, 2nd, 3rd, and 4th place champions. Teams are ranked by total judging score.",
+        "championsTitle": "Champions Selection",
+        "eligibleTeams": "{count} eligible teams",
+        "noEligibleTeams": "No teams are eligible for champions at this time",
+        "robotPerformanceTitle": "Robot Performance Winners",
+        "robotPerformanceDescription": "These teams are automatically ranked by their highest game score",
+        "maxScore": "Max Score"
+      },
+      "coreAwards": {
+        "instruction": "Select award winners for each judging category. Teams can only win one award per category.",
+        "categories": {
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values"
+        },
+        "selectWinners": "Select award winners for {category}",
+        "noEligibleTeams": "No teams are eligible for this award",
+        "selectedWinners": "Selected Winners",
+        "rank": "Rank",
+        "none": "None selected"
+      },
+      "optionalAwards": {
+        "instruction": "Select teams that have been nominated for optional awards. A team can receive multiple optional awards.",
+        "filterByAward": "Filter by Award",
+        "allAwards": "All Awards",
+        "nominatedTeams": "Teams with Optional Award Nominations",
+        "teamsNominatedFor": "Teams nominated for {award}",
+        "eligibleTeams": "{count} teams nominated",
+        "noEligibleTeams": "No teams have nominations for optional awards",
+        "selectedWinners": "Selected Winners",
+        "none": "None selected"
+      },
+      "review": {
+        "instruction": "Review all selected awards below. Click 'Finalize' to submit the deliberation results.",
+        "finalizationWarning": "Once finalized, the deliberation cannot be edited. Please review all selections carefully.",
+        "champions": "Champions",
+        "coreAwards": "Core Awards",
+        "optionalAwards": "Optional Awards",
+        "place": "Place",
+        "categories": {
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "robot-performance": "Robot Performance"
+        }
+      }
     }
   }
 }
