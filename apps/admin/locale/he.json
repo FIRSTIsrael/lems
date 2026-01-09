@@ -376,6 +376,7 @@
         },
         "registration-button": {
           "title": "רישום קבוצות",
+          "csv-title": "רישום קבוצות מ-CSV",
           "alert": "לאירוע זה כבר יש לוח זמנים. לא ניתן לשנות את רישום הקבוצות כעת."
         },
         "registration-dialog": {
@@ -390,6 +391,45 @@
             "cancel": "ביטול"
           },
           "no-teams-selected": "לא נבחרו קבוצות"
+        },
+        "register-from-csv-dialog": {
+          "title": "רישום קבוצות מ-CSV",
+          "actions": {
+            "cancel": "ביטול"
+          },
+          "form": {
+            "instructions": {
+              "title": "דרישות קובץ CSV",
+              "description": "עלו קובץ CSV המכיל מספרי קבוצות לרישום. הקובץ יעובד וקבוצות יירשמו בהתאם.",
+              "csv-format": "פורמט CSV נדרש:",
+              "requirements": {
+                "header": "הקובץ לא צריך להכיל שורת כותרת",
+                "columns": "נדרשת עמודה אחת בלבד: מספר קבוצה",
+                "encoding": "הקובץ חייב להישמר בקידוד UTF-8"
+              },
+              "example": "דוגמה לתוכן CSV:"
+            },
+            "fields": {
+              "file": {
+                "label": "קובץ CSV",
+                "description": "בחרו קובץ CSV עם מספרי קבוצות",
+                "placeholder": "בחרו קובץ CSV"
+              }
+            },
+            "errors": {
+              "invalid-file": "פורמט קובץ לא חוקי. אנא עלו קובץ CSV תקין.",
+              "upload-error": "אירעה שגיאה בעת העלאת הקובץ. אנא נסו שוב."
+            },
+            "upload": "רישום קבוצות",
+            "uploading": "מרשם קבוצות..."
+          },
+          "success": {
+            "title": "קבוצות נרשמו בהצלחה!",
+            "registered": "{count, plural, =1 {קבוצה אחת נרשמה:} other {# קבוצות נרשמו:}}",
+            "skipped": "{count, plural, =1 {קבוצה אחת דולגה:} other {# קבוצות דולגו:}}",
+            "and-more": "...ו{count} נוספות",
+            "close": "סגור"
+          }
         },
         "remove-dialog": {
           "title": "ביטול רישום לקבוצה",
