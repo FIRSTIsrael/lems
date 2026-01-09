@@ -16,11 +16,11 @@ const createRedisClient = (): Redis => {
       const delay = Math.min(times * 50, 2000);
       return delay;
     },
-    tls: isProduction ? { rejectUnauthorized: true } : undefined,
+    tls: isProduction ? {} : undefined,
     enableReadyCheck: true,
     enableOfflineQueue: true,
     maxRetriesPerRequest: null,
-    lazyConnect: false
+    lazyConnect: true
   });
 
   redisClient.on('connect', () => {

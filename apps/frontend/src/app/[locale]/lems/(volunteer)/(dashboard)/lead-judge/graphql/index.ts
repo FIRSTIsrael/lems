@@ -1,4 +1,4 @@
-export { GET_ALL_JUDGING_SESSIONS, parseDivisionSessions, getLeadJudgeCategory } from './query';
+export { GET_LEAD_JUDGE_DATA, parseLeadJudgeData, getLeadJudgeCategory } from './query';
 
 export * from './types';
 

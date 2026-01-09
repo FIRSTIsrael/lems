@@ -51,6 +51,16 @@ type DeliberationPicklistUpdatedResult {
   picklist: [String!]!
 }
 
+"""
+Result type for completing a deliberation
+"""
+type DeliberationCompletedResult {
+  "The ID of the deliberation"
+  deliberationId: String!
+  "Whether the deliberation was successfully completed"
+  completed: Boolean!
+}
+
 extend type Mutation {
   """
   Start a deliberation for a specific category.
@@ -74,6 +84,16 @@ extend type Mutation {
     "The new ordered list of team IDs"
     picklist: [String!]!
   ): DeliberationPicklistUpdatedResult!
+
+  """
+  Complete a deliberation for a specific category.
+  """
+  completeDeliberation(
+    "The ID of the division containing the deliberation"
+    divisionId: String!
+    "The judging category to complete deliberation for"
+    category: JudgingCategory!
+  ): DeliberationCompletedResult!
 }
 
 """
@@ -110,9 +130,23 @@ type DeliberationStatusChanged {
 }
 
 """
+Event fired when a deliberation is completed
+"""
+type DeliberationCompleted {
+  "The ID of the deliberation"
+  deliberationId: String!
+
+  "Indicates that the deliberation has been completed"
+  completed: Boolean!
+}
+
+"""
 Union type for all deliberation update events
 """
-union DeliberationUpdatedEvent = DeliberationStarted | DeliberationPicklistUpdated
+union DeliberationUpdatedEvent =
+  | DeliberationStarted
+  | DeliberationPicklistUpdated
+  | DeliberationCompleted
 
 extend type Subscription {
   """

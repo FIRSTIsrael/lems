@@ -20,7 +20,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
   const [searchValue, setSearchValue] = useState('');
   const theme = useTheme();
 
-  const { data: teams } = useSWR<Team[]>('/admin/teams', {
+  const { data: teams } = useSWR<Team[]>('/admin/teams?extraFields=deletable', {
     fallbackData: initialTeams
   });
 
@@ -148,11 +148,13 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       headerName: t('columns.actions'),
       width: 120,
       sortable: false,
-      renderCell: (params) => (
+      renderCell: params => (
         <GridActionsCell {...params}>
-          <UpdateTeamButton team={params.row} />
-          <DeleteTeamButton team={params.row} />
-        </GridActionsCell> 
+          <>
+            <UpdateTeamButton team={params.row} />
+            <DeleteTeamButton team={params.row} />
+          </>
+        </GridActionsCell>
       )
     }
   ];

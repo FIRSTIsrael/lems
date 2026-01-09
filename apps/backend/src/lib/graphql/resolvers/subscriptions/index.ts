@@ -1,4 +1,5 @@
 import { teamArrivalUpdatedResolver } from './team-arrived';
+import { teamDisqualifiedResolver } from './team-disqualified';
 import {
   judgingSessionAbortedResolver,
   judgingSessionStartedResolver,
@@ -20,7 +21,12 @@ import {
   audienceDisplaySettingUpdatedResolver,
   audienceDisplaySwitchedResolver
 } from './audience-display';
-import { deliberationUpdatedResolver, deliberationStatusChangedResolver } from './deliberations';
+import {
+  deliberationUpdatedResolver,
+  deliberationStatusChangedResolver,
+  finalDeliberationUpdatedResolver,
+  finalDeliberationStatusChangedResolver
+} from './deliberations';
 
 /**
  * GraphQL Subscription resolvers
@@ -28,6 +34,7 @@ import { deliberationUpdatedResolver, deliberationStatusChangedResolver } from '
  */
 export const subscriptionResolvers = {
   teamArrivalUpdated: teamArrivalUpdatedResolver,
+  teamDisqualified: teamDisqualifiedResolver,
   judgingSessionStarted: judgingSessionStartedResolver,
   judgingSessionAborted: judgingSessionAbortedResolver,
   judgingSessionCompleted: judgingSessionCompletedResolver,
@@ -45,5 +52,7 @@ export const subscriptionResolvers = {
   scoresheetUpdated: scoresheetUpdatedResolver,
   scoresheetStatusChanged: scoresheetStatusChangedResolver,
   deliberationUpdated: deliberationUpdatedResolver,
-  deliberationStatusChanged: deliberationStatusChangedResolver
+  deliberationStatusChanged: deliberationStatusChangedResolver,
+  finalDeliberationUpdated: finalDeliberationUpdatedResolver,
+  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver
 };

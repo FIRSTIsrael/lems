@@ -82,12 +82,12 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
     JUDGING_CATEGORIES.map(category =>
       db.judgingDeliberations.create({
         division_id: division.id,
-        category,
-        status: 'not-started',
-        picklist: []
+        category
       })
     )
   );
+
+  await db.finalDeliberations.create(division.id);
 
   // Create rubrics for each team in the division
   const teamIds = [
@@ -235,6 +235,7 @@ router.delete('/schedule', async (req: SchedulerRequest, res) => {
       db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
       db.scoresheets.byDivision(req.divisionId).deleteAll(),
       db.judgingDeliberations.byDivision(req.divisionId).deleteAll(),
+      db.finalDeliberations.byDivision(req.divisionId).delete(),
       db.divisions.byId(req.divisionId).update({ has_schedule: false, schedule_settings: null })
     ]);
 

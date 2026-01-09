@@ -8,6 +8,7 @@ interface ScoresheetStatusChangedSubscribeArgs {
 type ScoresheetStatusUpdatedEvent = {
   scoresheetId: string;
   status: string;
+  escalated: boolean;
 };
 
 async function processScoresheetStatusChangedEvent(
@@ -15,8 +16,9 @@ async function processScoresheetStatusChangedEvent(
 ): Promise<ScoresheetStatusUpdatedEvent | null> {
   const scoresheetId = ((event.data as Record<string, unknown>).scoresheetId as string) || '';
   const status = ((event.data as Record<string, unknown>).status as string) || '';
+  const escalated = ((event.data as Record<string, unknown>).escalated as boolean) ?? false;
 
-  return scoresheetId && status ? { scoresheetId, status } : null;
+  return scoresheetId && status ? { scoresheetId, status, escalated } : null;
 }
 
 export const scoresheetStatusChangedResolver = {

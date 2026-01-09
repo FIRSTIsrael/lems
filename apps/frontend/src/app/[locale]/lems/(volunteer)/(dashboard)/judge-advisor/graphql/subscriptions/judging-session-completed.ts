@@ -33,7 +33,6 @@ function updateJudgingSessions(
       id: prev.division.id,
       judging: {
         sessions: updater(prev.division.judging.sessions),
-        rooms: prev.division.judging.rooms,
         sessionLength: prev.division.judging.sessionLength
       }
     }

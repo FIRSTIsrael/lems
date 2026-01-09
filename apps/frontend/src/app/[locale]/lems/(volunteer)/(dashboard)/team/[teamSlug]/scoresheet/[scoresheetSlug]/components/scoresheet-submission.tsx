@@ -96,7 +96,7 @@ export const ScoresheetSubmission: React.FC = () => {
     }
   };
 
-  const handleReset = async () => {
+  const handleReset = () => {
     setOpenResetDialog(true);
   };
 

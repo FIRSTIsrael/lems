@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import {
   Box,
   Container,
@@ -26,18 +26,12 @@ interface ErrorProps {
 export default function LemsError({ error, reset }: ErrorProps) {
   const t = useTranslations('pages.error');
   const router = useRouter();
-  const pathname = usePathname();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     console.error('LEMS Error:', error);
   }, [error]);
-
-  const handleGoHome = () => {
-    const locale = pathname.split('/')[1];
-    router.push(`/${locale}/lems`);
-  };
 
   return (
     <Box
@@ -182,7 +176,7 @@ export default function LemsError({ error, reset }: ErrorProps) {
             <Button
               variant="contained"
               startIcon={<HomeIcon />}
-              onClick={handleGoHome}
+              onClick={() => router.push('/')}
               fullWidth={isMobile}
               sx={{
                 px: { xs: 3, sm: 4 },

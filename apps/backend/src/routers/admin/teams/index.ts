@@ -1,15 +1,33 @@
 import express from 'express';
 import fileUpload, { UploadedFile } from 'express-fileupload';
+import { ensureArray } from '@lems/shared/utils';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../middleware/require-permission';
 import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });
+const FILE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 
 router.get('/', async (req: AdminRequest, res) => {
-  const teams = await db.teams.getAllWithActiveStatus();
-  res.json(teams.map(team => makeAdminTeamResponse(team)));
+  let teams = await db.teams.getAllWithActiveStatus();
+
+  const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
+
+  if (extraFields.includes('deletable')) {
+    const unregistered = await db.teams.getAllUnregistered();
+    const unregisteredIds = new Set(unregistered.map(t => t.id));
+
+    teams = teams.map(team => {
+      return {
+        ...team,
+        deletable: unregisteredIds.has(team.id)
+      };
+    });
+  }
+
+  const response = teams.map(team => makeAdminTeamResponse(team));
+  res.json(response);
 });
 
 router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
@@ -85,6 +103,12 @@ router.put(
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
           return;
         }
+        if (
+          logoFile.size > FILE_SIZE_LIMIT
+        ) {
+          res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
+          return;
+        }
 
         try {
           team = await db.teams.byId(team.id).updateLogo(logoFile.data);
@@ -148,6 +172,12 @@ router.post(
             !logoFile.name.endsWith('.svg'))
         ) {
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
+          return;
+        }
+        if (
+          logoFile.size > FILE_SIZE_LIMIT
+        ) {
+          res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
           return;
         }
 

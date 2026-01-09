@@ -1,32 +1,52 @@
-
 """
 An award configured for a division
 """
 type Award {
-	"Unique identifier for the award"
-	id: String!
+  "Unique identifier for the award"
+  id: String!
 
-	"Display name of the award"
-	name: String!
+  "Display name of the award"
+  name: String!
 
-	"Index/order of this award within the division"
-	index: Int!
+  "Index/order of this award within the division"
+  index: Int!
 
-	"Place/position number for this award"
-	place: Int!
+  "Place/position number for this award"
+  place: Int!
 
-	"Type of award (PERSONAL for individuals, TEAM for team-based)"
-	type: String!
+  "Type of award (PERSONAL for individuals, TEAM for team-based)"
+  type: String!
 
-	"Whether this award is optional"
-	isOptional: Boolean!
+  "Whether this award is optional"
+  isOptional: Boolean!
 
-	"Whether this award allows nominations"
-	allowNominations: Boolean!
+  "Whether this award allows nominations"
+  allowNominations: Boolean!
 
-	"Whether this award is assigned automatically"
-	automaticAssignment: Boolean!
+  "Whether this award is assigned automatically"
+  automaticAssignment: Boolean!
 
-	"Optional description for this award"
-	description: String
+  "Optional description for this award"
+  description: String
+
+  "Computed winner for this award (requires judge-advisor role until awards are announced)"
+  winner: AwardWinner
+}
+
+union AwardWinner = PersonalWinner | TeamWinner
+
+"""
+Information for a winning individual
+"""
+type PersonalWinner {
+  "The winning individual for this award"
+  name: String!
+}
+
+"""
+Information for a winning team
+"""
+type TeamWinner {
+  "The winning team for this award"
+  team: Team!
 }

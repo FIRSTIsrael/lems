@@ -254,7 +254,8 @@
         },
         "field-notes-label": "הערות",
         "field-notes-placeholder": "כיצד הקבוצה הצטיינה?",
-        "mobile-placeholder": "סמנו ניקוד..."
+        "mobile-placeholder": "סמנו ניקוד...",
+        "mobile-feedback": "משוב"
       }
     }
   },

@@ -64,6 +64,18 @@ extend type Mutation {
     "Relevant division ID"
     divisionId: String!
   ): TeamEvent!
+
+  """
+  Disqualify a team in a specific division. This action is irreversible.
+  Only Judge Advisors can perform this action on their assigned divisions.
+  """
+  disqualifyTeam(
+    "The team ID to disqualify"
+    teamId: String!
+
+    "Relevant division ID"
+    divisionId: String!
+  ): TeamEvent!
 }
 
 extend type Subscription {
@@ -71,4 +83,9 @@ extend type Subscription {
   Subscribe to events when teams arrive at a specific division.
   """
   teamArrivalUpdated("The division ID to listen for updates in" divisionId: String!): TeamEvent!
+
+  """
+  Subscribe to events when teams are disqualified in a specific division.
+  """
+  teamDisqualified("The division ID to listen for disqualification events in" divisionId: String!): TeamEvent!
 }

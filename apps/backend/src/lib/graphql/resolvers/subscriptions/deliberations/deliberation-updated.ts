@@ -13,6 +13,10 @@ type DeliberationUpdatedEvent =
   | {
       deliberationId: string;
       startTime: string;
+    }
+  | {
+      deliberationId: string;
+      completed: boolean;
     };
 
 const processDeliberationUpdatedEvent = async (
@@ -33,18 +37,30 @@ const processDeliberationUpdatedEvent = async (
           deliberationId,
           picklist
         }
-      : null;
+      : {
+          deliberationId,
+          picklist: []
+        };
   }
 
   // Handle DeliberationStarted events
   if ('startTime' in eventData) {
-    const startTime = (eventData.startTime as string) || '';
+    const startTime = eventData.startTime as string;
     return startTime
       ? {
           deliberationId,
           startTime
         }
       : null;
+  }
+
+  // Handle DeliberationCompleted events
+  if ('completed' in eventData) {
+    const completed = eventData.completed as boolean;
+    return {
+      deliberationId,
+      completed
+    };
   }
 
   return null;
@@ -74,6 +90,9 @@ export const DeliberationUpdatedEventResolver = {
     }
     if ('startTime' in event) {
       return 'DeliberationStarted';
+    }
+    if ('completed' in event) {
+      return 'DeliberationCompleted';
     }
     return null;
   }

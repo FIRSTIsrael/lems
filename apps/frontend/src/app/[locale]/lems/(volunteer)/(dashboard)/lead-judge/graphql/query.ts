@@ -1,63 +1,87 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { QueryData, QueryVars } from './types';
+import type { QueryData, QueryVars, Deliberation, JudgingSession } from './types';
 
-export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> = gql`
-  query GetAllJudgingSessions($divisionId: String!) {
-    division(id: $divisionId) {
-      id
-      rooms {
+export interface LeadJudgePageData {
+  sessions: JudgingSession[];
+  deliberation: Deliberation | null;
+  sessionLength: number;
+}
+
+export const GET_LEAD_JUDGE_DATA: TypedDocumentNode<QueryData, QueryVars & { category: string }> =
+  gql`
+    query GetLeadJudgeData($divisionId: String!, $category: JudgingCategory!) {
+      division(id: $divisionId) {
         id
-        name
-      }
-      judging {
-        divisionId
-        sessions {
+        rooms {
           id
-          number
-          scheduledTime
-          status
-          room {
-            id
-            name
-          }
-          team {
+          name
+        }
+        judging {
+          divisionId
+          sessions {
             id
             number
-            name
-            affiliation
-            city
-            slug
-            region
-            logoUrl
-            arrived
+            scheduledTime
+            status
+            room {
+              id
+              name
+            }
+            team {
+              id
+              number
+              name
+              affiliation
+              city
+              slug
+              region
+              logoUrl
+              arrived
+            }
+            rubrics {
+              innovation_project {
+                ...RubricFields
+              }
+              robot_design {
+                ...RubricFields
+              }
+              core_values {
+                ...RubricFields
+              }
+            }
+            startTime
+            startDelta
           }
-          rubrics {
-            innovation_project {
-              ...RubricFields
-            }
-            robot_design {
-              ...RubricFields
-            }
-            core_values {
-              ...RubricFields
-            }
+          sessionLength
+          deliberation(category: $category) {
+            id
+            category
+            status
+            startTime
+            picklist
           }
-          startTime
-          startDelta
         }
-        sessionLength
       }
     }
-  }
 
-  fragment RubricFields on Rubric {
-    id
-    status
-  }
-`;
+    fragment RubricFields on Rubric {
+      id
+      status
+    }
+  `;
 
-export function parseDivisionSessions(queryData: QueryData) {
-  return queryData?.division?.judging.sessions ?? [];
+export function parseLeadJudgeData(queryData: QueryData): LeadJudgePageData {
+  const judging = queryData?.division?.judging;
+  const sessions = judging?.sessions ?? [];
+  const sessionLength = judging?.sessionLength ?? 0;
+
+  const deliberation = judging?.deliberation ?? null;
+
+  return {
+    sessions: sessions.filter(session => !!session.team),
+    deliberation,
+    sessionLength
+  };
 }
 
 export function getLeadJudgeCategory(category: string | undefined): string {

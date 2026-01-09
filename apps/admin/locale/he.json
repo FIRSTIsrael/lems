@@ -252,6 +252,16 @@
         "delete": "מחק",
         "copy": "העתק"
       },
+      "missing-info": {
+        "missing-details-count": "{count, plural, =1 {פריט אחד חסר} other {# פריטים חסרים}}",
+        "show-details": "הצג פרטים",
+        "missing-awards": "פרסים לא הוגדרו",
+        "missing-users": "משתמשים לא הוקצו",
+        "missing-schedule": "לוח זמנים לא הוגדר",
+        "dialog-title": "מידע חסר",
+        "division-fully-configured": "בית זה מוגדר במלואו",
+        "close": "סגור"
+      },
       "create": {
         "title": "יצירת אירוע",
         "form": {
@@ -266,7 +276,7 @@
             },
             "slug": {
               "label": "מזהה האירוע",
-              "placeholder": "לדוגמה: איזורי-2025",
+              "placeholder": "לדוגמה: regional-2025",
               "helper-text": "אותיות קטנות באנגלית, מספרים ומקפים בלבד. חייב להיות ייחודי."
             },
             "date": {
@@ -399,6 +409,9 @@
           },
           "search": {
             "placeholder": "חפש קבוצות לפי מספר, שם, שיוך, עיר או בית..."
+          },
+          "menu": {
+            "selectDivision": "בחר בית"
           }
         },
         "split": {
@@ -1003,7 +1016,8 @@
         "users": "משתמשים",
         "events": "אירועים",
         "teams": "קבוצות",
-        "insights": "תובנות"
+        "insights": "תובנות",
+        "graphql": "GraphQL"
       },
       "user-menu": {
         "logout": "התנתקות"

@@ -32,6 +32,7 @@ export * from './documents/judging-session-state';
 export * from './documents/robot-game-match-state';
 export * from './documents/rubric';
 export * from './documents/scoresheet';
+export * from './documents/final-deliberation';
 
 export * from './tables/judging-deliberation';
 export * from './tables/awards';

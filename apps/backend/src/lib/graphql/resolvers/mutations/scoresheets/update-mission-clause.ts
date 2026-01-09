@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { scoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import { Scoresheet } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -81,7 +82,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     updateFields['status'] = newStatus;
   }
 
-  const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
+  const result = await db.raw.mongo.collection<Scoresheet>('scoresheets').findOneAndUpdate(
     { _id: scoresheetObjectId },
     {
       $set: updateFields
@@ -115,7 +116,8 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
     publishTasks.push(
       pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_STATUS_CHANGED, {
         scoresheetId,
-        status: newStatus
+        status: newStatus,
+        escalated: result.escalated
       })
     );
   }

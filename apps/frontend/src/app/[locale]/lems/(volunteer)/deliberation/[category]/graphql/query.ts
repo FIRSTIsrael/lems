@@ -23,6 +23,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
         slug
         judgingSession {
           id
+          status
           room {
             id
             name
@@ -70,7 +71,6 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
             category
             status
             data {
-              fields
               awards
               feedback {
                 greatJob

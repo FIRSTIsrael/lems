@@ -252,6 +252,16 @@
         "delete": "Delete",
         "copy": "Copy"
       },
+      "missing-info": {
+        "missing-details-count": "{count, plural, =1 {1 item missing} other {# items missing}}",
+        "show-details": "Show details",
+        "missing-awards": "Awards not configured",
+        "missing-users": "Users not assigned",
+        "missing-schedule": "Schedule not configured",
+        "dialog-title": "Missing Information",
+        "division-fully-configured": "This division is fully configured",
+        "close": "Close"
+      },
       "create": {
         "title": "Create Event",
         "form": {
@@ -399,6 +409,9 @@
           },
           "search": {
             "placeholder": "Search teams by number, name, affiliation, city, or division..."
+          },
+          "menu": {
+            "selectDivision": "Select Division"
           }
         },
         "split": {
@@ -1003,7 +1016,8 @@
         "users": "Users",
         "events": "Events",
         "teams": "Teams",
-        "insights": "Insights"
+        "insights": "Insights",
+        "graphql": "GraphQL"
       },
       "user-menu": {
         "logout": "Logout"

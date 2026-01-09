@@ -83,6 +83,9 @@ type MatchParticipant {
 
   "ID of the match this participant is in"
   matchId: String!
+
+  "Scoresheet for this participant's team for this match, null if no team or no scoresheet"
+  scoresheet: Scoresheet
 }
 
 """
@@ -167,9 +170,6 @@ Represents an event when a match has been completed
 type MatchCompletedEvent {
   "Match identifier"
   matchId: String!
-
-  "ID of the automatically loaded next match, if one was eligible (starts within 15 minutes)"
-  autoLoadedMatchId: String
 }
 
 """

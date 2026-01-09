@@ -21,7 +21,7 @@ type JudgingSession {
   room: Room!
 
   "Team being judged in this session"
-  team: Team!
+  team: Team
 
   "Actual timestamp when the session was started"
   startTime: String
@@ -72,6 +72,9 @@ type Judging {
     "Filter rubrics by judging category"
     category: JudgingCategory
   ): [Rubric!]!
+
+  "Awards available for this division"
+  awards("Whether teams can be nominated for awards" allowNominations: Boolean): [Award!]!
 }
 
 extend type Division {

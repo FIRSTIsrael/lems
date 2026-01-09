@@ -14,3 +14,8 @@ export {
 } from './scoresheet-updated';
 
 export { RUBRIC_UPDATED_SUBSCRIPTION, createRubricUpdatedSubscription } from './rubric-updated';
+
+export {
+  TEAM_DISQUALIFIED_SUBSCRIPTION,
+  createTeamDisqualifiedSubscription
+} from './team-disqualified';

@@ -3,7 +3,7 @@
 import dayjs from 'dayjs';
 import { useEffect, useRef, useMemo } from 'react';
 import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
-import { useJudgingSounds } from './use-judging-sounds';
+import { useJudgingSounds } from '@lems/shared';
 
 // Judging stages with durations in seconds
 export const JUDGING_STAGES = [
@@ -27,13 +27,12 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
   );
 
   const { currentStageIndex, stageTimeRemaining } = useMemo(() => {
-    let result: { currentStageIndex: number; stageTimeRemaining: number };
+    let result: { currentStageIndex: number; stageTimeRemaining: number } = {
+      currentStageIndex: JUDGING_STAGES.length - 1,
+      stageTimeRemaining: 0
+    };
 
     let elapsedTime = sessionLength - (minutes * 60 + seconds);
-
-    for (const stage of JUDGING_STAGES) {
-      result = { currentStageIndex: 0, stageTimeRemaining: stage.duration };
-    }
 
     for (let i = 0; i < JUDGING_STAGES.length; i++) {
       if (elapsedTime >= JUDGING_STAGES[i].duration) {
@@ -51,11 +50,10 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
       break;
     }
 
-    result = { currentStageIndex: JUDGING_STAGES.length - 1, stageTimeRemaining: 0 };
     return result;
   }, [minutes, seconds, sessionLength]);
 
-  const playSound = useJudgingSounds();
+  const { playSound } = useJudgingSounds();
   const previousStageRef = useRef(currentStageIndex);
 
   // Calculate total time remaining (current stage + all remaining stages)

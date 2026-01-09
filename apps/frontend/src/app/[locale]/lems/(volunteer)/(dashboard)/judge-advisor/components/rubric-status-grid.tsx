@@ -22,21 +22,15 @@ import {
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { hyphensToUnderscores } from '@lems/shared/utils';
-import { JudgingSession } from '../graphql';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
 import { StatusFilterSelector } from './status-filter-selector';
+import { RubricStatusGlossary } from './rubric-status-glossary';
+import { useJudgeAdvisor } from './judge-advisor-context';
 
-interface RubricStatusGridProps {
-  sessions: JudgingSession[];
-  loading?: boolean;
-}
-
-export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
-  sessions,
-  loading = false
-}) => {
+export const RubricStatusGrid = () => {
+  const { sessions, loading } = useJudgeAdvisor();
   const t = useTranslations('pages.judge-advisor.grid');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
@@ -120,6 +114,9 @@ export const RubricStatusGrid: React.FC<RubricStatusGridProps> = ({
               {t('sort.session')}
             </Button>
           </ButtonGroup>
+          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+            <RubricStatusGlossary />
+          </Box>
           {(teamFilter || statusFilter.length > 0) && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="textSecondary">

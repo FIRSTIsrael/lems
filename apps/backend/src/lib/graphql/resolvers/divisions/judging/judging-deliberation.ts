@@ -44,7 +44,7 @@ export const judgingDeliberationResolver: GraphQLFieldResolver<
       id: deliberation.id,
       category: hyphensToUnderscores(deliberation.category) as JudgingCategory,
       status: deliberation.status,
-      startTime: deliberation.start_time,
+      startTime: deliberation.start_time ? deliberation.start_time.toISOString() : null,
       picklist: deliberation.picklist
     };
   } catch (error) {

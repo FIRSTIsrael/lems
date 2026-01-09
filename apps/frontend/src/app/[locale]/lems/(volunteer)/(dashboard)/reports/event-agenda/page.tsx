@@ -5,7 +5,7 @@ import { Stack, Container, Box } from '@mui/material';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { GET_DIVISION_AGENDA, parseDivisionAgenda } from './event-agenda.graphql';
+import { GET_DIVISION_AGENDA, parseDivisionAgenda } from './graphql';
 import { AgendaEventsList } from './components/agenda-events-list';
 import { ErrorState } from './components/error-state';
 import { EmptyState } from './components/empty-state';

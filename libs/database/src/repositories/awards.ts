@@ -1,6 +1,6 @@
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableAward, Award, UpdateableAward } from '../schema/tables/awards';
+import { InsertableAward, Award, UpdatableAward } from '../schema/tables/awards';
 
 class AwardsSelector {
   constructor(
@@ -88,7 +88,7 @@ export class AwardsRepository {
 
     const isPersonalAward = award.type === 'PERSONAL';
 
-    let updateFields: Partial<UpdateableAward>;
+    let updateFields: Partial<UpdatableAward>;
 
     if (isPersonalAward) {
       updateFields = {

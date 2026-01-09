@@ -169,7 +169,10 @@
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
-        "event-agenda": "Event Agenda"
+        "event-agenda": "Event Agenda",
+        "field-timer": "Field Timer",
+        "field-schedule": "Field Schedule",
+        "judging-schedule": "Judging Schedule"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -218,6 +221,46 @@
           "public": "General",
           "judging": "Judging",
           "field": "Field"
+        }
+      },
+      "field-timer": {
+        "page-title": "Field Timer",
+        "no-active-match": "No Active Match",
+        "loading": "Loading match data...",
+        "error-loading": "Failed to load field data. Please try again.",
+        "test-match": "Test Match",
+        "match-info": "{stage} Round #{round} Match #{number}"
+      },
+      "field-schedule": {
+        "page-title": "Field Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "empty-state": "No matches have been scheduled yet.",
+        "columns": {
+          "match": "Match",
+          "start-time": "Start",
+          "end-time": "End"
+        },
+        "stages": {
+          "practice": "Practice Round",
+          "ranking": "Ranking Round",
+          "test": "Test Round"
+        },
+        "not-arrived": "Not arrived",
+        "loading": "Loading matches..."
+      },
+      "judging-schedule": {
+        "page-title": "Judging Schedule",
+        "error-loading": "An error occurred while loading the schedule.",
+        "no-sessions": "No judging sessions have been scheduled yet.",
+        "loading": "Loading schedule...",
+        "arrived": "Arrived",
+        "not-arrived": "Not arrived",
+        "table": {
+          "time": "Time"
+        },
+        "visibility": {
+          "public": "General",
+          "judging": "Judging"
         }
       }
     },
@@ -287,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "Judge Advisor",
+      "mode": {
+        "judging": "Judging",
+        "awards": "Awards"
+      },
       "summary": {
         "status": {
           "empty": "Empty",
@@ -325,11 +372,134 @@
         "sort": {
           "room": "Sort by Room",
           "session": "Sort by Session"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "draft": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "approved": {
+              "label": "Approved",
+              "description": "Rubric has been completed and submitted"
+            },
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
       },
       "team-info-cell": {
-        "not-arrived": "Not Arrived"
+        "not-arrived": "Not Arrived",
+        "disqualified": "Disqualified"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "Disqualify Teams",
+          "search-placeholder": "Search by number, name, affiliation, or city...",
+          "search-label": "Search Teams",
+          "disqualify": "Disqualify",
+          "disqualified": "Disqualified",
+          "no-teams-found": "No teams found",
+          "disqualified-teams-title": "Disqualified Teams",
+          "disqualified-teams-count": "{count, plural, one {# team} other {# teams}}",
+          "confirm-title": "Confirm Disqualification",
+          "confirm-message": "Are you sure you want to disqualify",
+          "confirm-disqualify": "Disqualify",
+          "cancel": "Cancel",
+          "team-option-label": "Team #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "Error disqualifying team"
+        },
+        "deliberation": {
+          "final-deliberation": "Final Deliberation",
+          "status": "Status",
+          "picklist": "Picklist",
+          "start-time": "Start Time",
+          "stage": "Stage",
+          "action": "Action",
+          "open": "Open",
+          "open-final": "Open Final Deliberation",
+          "no-deliberations": "No deliberations available"
+        },
+        "personal-awards": {
+          "title": "Personal Awards",
+          "no-awards": "No personal awards configured",
+          "optional": "Optional",
+          "team-placeholder": "Enter team name or number",
+          "submit": "Submit Awards",
+          "placeholder-message": "Awards submitted"
+        },
+        "deliberations": "Deliberations"
       }
+    },
+    "mc": {
+      "page-title": "MC Dashboard",
+      "mode": {
+        "matches": "Matches",
+        "awards": "Awards"
+      },
+      "current-match": {
+        "no-match": "No Match Loaded",
+        "round": "Round",
+        "no-team": "No Team Assigned",
+        "not-arrived": "Not Arrived",
+        "status": {
+          "loaded": "Loaded",
+          "in-progress": "In Progress"
+        },
+        "match-title": "{stage} round {round}, match #{number}",
+        "table": "Table"
+      },
+      "schedule": {
+        "title": "Upcoming Matches",
+        "match-number": "Match",
+        "scheduled-time": "Time",
+        "teams": "Teams",
+        "status": "Status",
+        "round": "Round",
+        "no-matches": "No upcoming matches",
+        "no-team": "No Team",
+        "not-arrived": "Not Arrived"
+      },
+      "awards": {
+        "title": "Awards Presentation",
+        "description": "Awards presentation functionality will be available soon."
+      }
+    },
+    "referee": {
+      "page-title": "Referee Dashboard",
+      "match-running": "Match Running",
+      "match-slug": "Match",
+      "prestart-title": "Match Preparation",
+      "inspection-timer": "Equipment Inspection",
+      "start-inspection": "Start Inspection",
+      "present": "Present",
+      "absent": "Absent",
+      "ready-confirmed": "Ready",
+      "mark-ready": "Mark Ready",
+      "no-match-title": "No Match Assigned",
+      "no-match-description": "Waiting for the next match to be assigned to your table.",
+      "no-match-instructions": "Check the schedule below to see upcoming matches.",
+      "no-upcoming-matches": "No upcoming matches scheduled.",
+      "match": "Match",
+      "scheduled-time": "Scheduled Time",
+      "teams": "Teams",
+      "round": "Round",
+      "team-not-available": "Team information not available",
+      "break-message": "This is a good time to drink water and refresh",
+      "no-show-title": "Team Did Not Arrive",
+      "no-show-description": "This team has not arrived at the event and will not participate in this match."
     },
     "scorekeeper": {
       "page-title": "Scorekeeper",
@@ -437,6 +607,75 @@
         "teams": "Teams"
       }
     },
+    "head-referee": {
+      "page-title": "Head Referee Dashboard",
+      "escalation-alert": "A scoresheet has been escalated to you for review",
+      "points": "points",
+      "round": "Round",
+      "stage": {
+        "practice": "Practice",
+        "ranking": "Ranking"
+      },
+      "escalated-count": "{count} escalated",
+      "escalated-panel": {
+        "title": "{count, plural, one {# Escalated Scoresheet} other {# Escalated Scoresheets}}",
+        "view-scoresheet": "View Scoresheet"
+      },
+      "filters": {
+        "search-label": "Search Teams",
+        "search-placeholder": "Team number or name",
+        "all-statuses": "All Statuses",
+        "statuses-selected": "{count} statuses selected",
+        "escalated-only": "Escalated Only",
+        "status-label": "Status"
+      },
+      "scoresheet-round": "{stage} #{round}",
+      "scoresheet-status": {
+        "empty": "Empty",
+        "draft": "Draft",
+        "completed": "Completed",
+        "gp": "Awaiting GP",
+        "submitted": "Submitted"
+      },
+      "scoresheet-button": {
+        "team-not-registered": "",
+        "escalated-tooltip": ""
+      },
+      "legend": {
+        "title": "Scoresheet Status Legend",
+        "aria-label": "Show scoresheet status legend",
+        "empty": {
+          "label": "Empty",
+          "description": "No scoresheet data has been entered"
+        },
+        "draft": {
+          "label": "Draft",
+          "description": "Scoresheet is being filled out"
+        },
+        "completed": {
+          "label": "Completed",
+          "description": "Mission scoring is complete"
+        },
+        "gp": {
+          "label": "Awaiting GP",
+          "description": "Waiting for Gracious Professionalism rating"
+        },
+        "submitted": {
+          "label": "Submitted",
+          "description": "Scoresheet has been finalized and submitted"
+        },
+        "escalated": {
+          "label": "Escalated",
+          "description": "Requires head referee review - overrides other statuses"
+        }
+      },
+      "table": {
+        "match": "Match",
+        "scheduled-time": "Time",
+        "participant-ready": "Ready",
+        "participant-not-ready": "Not Ready"
+      }
+    },
     "audience-display": {
       "match-preview": {
         "round": "Round",
@@ -468,7 +707,40 @@
           "draft": "Draft",
           "completed": "Completed",
           "approved": "Approved"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "draft": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "approved": {
+              "label": "Approved",
+              "description": "Rubric has been completed and submitted"
+            },
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
+      },
+      "deliberation": {
+        "status": "Status",
+        "start-time": "Start Time",
+        "picklist": "Picklist",
+        "deliberation": "Deliberation",
+        "open": "Open"
       },
       "list": {
         "empty-state": "Judging Sessions were not found",
@@ -541,6 +813,68 @@
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
         "submit-button": "Submit"
       }
+    },
+    "deliberations": {
+      "category": {
+        "title": "{category} Deliberation",
+        "controls": {
+          "status": "Status",
+          "in-progress": "In Progress",
+          "not-started": "Not Started",
+          "completed": "Completed",
+          "start": "Start",
+          "complete-deliberation": "Complete Deliberation",
+          "deliberation-finalized": "This deliberation has been finalized and is no longer editable.",
+          "time-remaining": "Time Remaining",
+          "complete-modal": {
+            "title": "Complete Deliberation",
+            "description": "Are you sure you want to complete this deliberation? Once confirmed, you will be redirected to the home page.",
+            "warning-text": "This action cannot be undone. Make sure your picklist is finalized before proceeding.",
+            "confirm": "Complete",
+            "cancel": "Cancel",
+            "submitting": "Submitting...",
+            "success-message": "Deliberation completed successfully",
+            "error-message": "Failed to complete deliberation"
+          }
+        },
+        "picklist": {
+          "title": "Picklist",
+          "add-to-picklist": "Add to Picklist",
+          "remove": "Remove",
+          "empty-state": "Add teams",
+          "error-limit-exceeded": "Picklist limit reached. Cannot add more teams."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "Room Scores Distribution",
+          "no-data-available": "No data available",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "aggregate-average": "Aggregate Average"
+        },
+        "compare-teams-picker": {
+          "title": "Compare Teams",
+          "team-1": "Team 1",
+          "team-2": "Team 2",
+          "compare": "Compare",
+          "no-data-available": "No teams to compare"
+        },
+        "table": {
+          "rank": "Rank",
+          "team": "Team",
+          "room": "Room",
+          "total": "Total",
+          "normalized": "Normalized",
+          "actions": "Actions",
+          "view-rubric": "View Rubric",
+          "add-to-picklist": "Add to Picklist"
+        },
+        "small-screen-block": {
+          "title": "Screen Too Small",
+          "message": "The deliberation view requires a larger screen to display all components properly.",
+          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        }
+      }
     }
   },
   "components": {
@@ -579,7 +913,109 @@
       "points-unit": "pts."
     },
     "deliberation": {
-      "error-not-authorized": "Unauthorized to access deliberation"
+      "error-not-authorized": "Unauthorized to access deliberation",
+      "compare": {
+        "title": "Compare Teams",
+        "no-teams-selected": "No teams selected",
+        "no-teams-description": "Select teams to compare.",
+        "back-to-deliberation": "Back to Deliberation",
+        "error-loading-teams": "Failed to load team data. Please try again.",
+        "teams-not-found": "The selected teams could not be found.",
+        "field-comparison": "Field Comparison",
+        "wins": "Wins",
+        "ties": "Ties",
+        "losses": "Losses",
+        "rubric-scores": "Rubric Scores",
+        "no-rubric-data": "No rubric data available",
+        "exceeding-notes": "How did the team exceed? ",
+        "nominations": "Award Nominations",
+        "gp-scores": "Gracious Professionalism",
+        "round": "Round",
+        "feedback": "Feedback",
+        "average": "Avg",
+        "filter-by-category": "Filter by Category",
+        "all-categories": "All Categories",
+        "judging-room": "Judging Room",
+        "manage-teams": "Manage Teams",
+        "add-team": "Add Team",
+        "search-teams": "Search teams...",
+        "select-teams-to-compare": "Select teams to compare",
+        "current-teams": "Current Teams",
+        "done": "Done"
+      }
+    }
+  },
+  "deliberations": {
+    "final": {
+      "title": "Final Deliberation",
+      "error": {
+        "loadingData": "Failed to load deliberation data",
+        "notFound": "Final deliberation not found"
+      },
+      "stages": {
+        "champions": "Champions Selection",
+        "core-awards": "Core Awards",
+        "optional-awards": "Optional Awards",
+        "review": "Review & Finalize"
+      },
+      "buttons": {
+        "previous": "Previous Stage",
+        "next": "Next Stage",
+        "finalize": "Finalize Deliberation"
+      },
+      "teamCard": {
+        "totalRank": "Total Rank",
+        "overall": "Overall",
+        "robotGameRank": "Robot Game Rank",
+        "robotGame": "Robot Game"
+      },
+      "champions": {
+        "instruction": "Select teams for 1st, 2nd, 3rd, and 4th place champions. Teams are ranked by total judging score.",
+        "championsTitle": "Champions Selection",
+        "eligibleTeams": "{count} eligible teams",
+        "noEligibleTeams": "No teams are eligible for champions at this time",
+        "robotPerformanceTitle": "Robot Performance Winners",
+        "robotPerformanceDescription": "These teams are automatically ranked by their highest game score",
+        "maxScore": "Max Score"
+      },
+      "coreAwards": {
+        "instruction": "Select award winners for each judging category. Teams can only win one award per category.",
+        "categories": {
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values"
+        },
+        "selectWinners": "Select award winners for {category}",
+        "noEligibleTeams": "No teams are eligible for this award",
+        "selectedWinners": "Selected Winners",
+        "rank": "Rank",
+        "none": "None selected"
+      },
+      "optionalAwards": {
+        "instruction": "Select teams that have been nominated for optional awards. A team can receive multiple optional awards.",
+        "filterByAward": "Filter by Award",
+        "allAwards": "All Awards",
+        "nominatedTeams": "Teams with Optional Award Nominations",
+        "teamsNominatedFor": "Teams nominated for {award}",
+        "eligibleTeams": "{count} teams nominated",
+        "noEligibleTeams": "No teams have nominations for optional awards",
+        "selectedWinners": "Selected Winners",
+        "none": "None selected"
+      },
+      "review": {
+        "instruction": "Review all selected awards below. Click 'Finalize' to submit the deliberation results.",
+        "finalizationWarning": "Once finalized, the deliberation cannot be edited. Please review all selections carefully.",
+        "champions": "Champions",
+        "coreAwards": "Core Awards",
+        "optionalAwards": "Optional Awards",
+        "place": "Place",
+        "categories": {
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design",
+          "core-values": "Core Values",
+          "robot-performance": "Robot Performance"
+        }
+      }
     }
   }
 }

@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
 import { Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
-import { ResponsiveComponent } from '@lems/shared';
+import { ResponsiveComponent, useJudgingSounds } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { useUser } from '../../../components/user-context';
 import { PageHeader } from '../components/page-header';
@@ -22,7 +22,6 @@ import {
   createRubricStatusChangedSubscription
 } from './graphql';
 import { RoomScheduleTable } from './components/schedule/room-schedule-table';
-import { useJudgingSounds } from './components/timer/hooks/use-judging-sounds';
 import { JudgingSessionProvider } from './components/timer/judging-session-context';
 import { JudgingTimerDesktopLayout } from './components/timer/judging-timer-desktop-layout';
 import { JudgingTimerMobileLayout } from './components/timer/judging-timer-mobile-layout';
@@ -32,7 +31,7 @@ export default function JudgePage() {
   const { currentDivision } = useEvent();
   const { roleInfo } = useUser();
 
-  const playSound = useJudgingSounds();
+  const { playSound } = useJudgingSounds();
 
   const [openSoundTest, setOpenSoundTest] = useState(false);
 

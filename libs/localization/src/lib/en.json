@@ -11,6 +11,19 @@
       "completed": "Completed"
     }
   },
+  "judging-deliberations": {
+    "status": {
+      "not-started": "Not Started",
+      "in-progress": "In Progress",
+      "completed": "Completed"
+    },
+    "stage": {
+      "champions": "Champions",
+      "core-awards": "Core Awards",
+      "optional-awards": "Optional Awards",
+      "review": "Review"
+    }
+  },
   "judging-categories": {
     "core-values": "Core Values",
     "innovation-project": "Innovation Project",

@@ -5,7 +5,8 @@ import {
   CORE_VALUES_AWARDS,
   OPTIONAL_AWARDS,
   PERSONAL_AWARDS,
-  AUTOMATIC_ASSIGNMENT_AWARDS
+  AUTOMATIC_ASSIGNMENT_AWARDS,
+  HIDE_PLACES
 } from '../types';
 
 /**
@@ -77,6 +78,7 @@ export function parseSchemaToApiRequest(
     const isOptional = !(OPTIONAL_AWARDS as readonly string[]).includes(award);
     const allowNominations = (CORE_VALUES_AWARDS as readonly string[]).includes(award);
     const automaticAssignment = (AUTOMATIC_ASSIGNMENT_AWARDS as readonly string[]).includes(award);
+    const showPlaces = !(HIDE_PLACES as readonly string[]).includes(award);
 
     for (let place = 1; place <= schemaItem.count; place++) {
       awards.push({
@@ -85,6 +87,7 @@ export function parseSchemaToApiRequest(
         place: place,
         type: isPersonal ? 'PERSONAL' : 'TEAM',
         isOptional,
+        showPlaces,
         allowNominations,
         automaticAssignment
       });

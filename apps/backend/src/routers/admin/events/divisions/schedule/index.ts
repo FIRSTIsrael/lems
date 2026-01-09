@@ -192,7 +192,7 @@ router.put(
       // Swap judging sessions and match participants
       await Promise.all([
         db.judgingSessions.swapTeams(teamId1, teamId2, req.divisionId),
-        db.robotGameMatches.swapTeams(teamId1, teamId2)
+        db.robotGameMatches.swapTeams(teamId1, teamId2, req.divisionId)
       ]);
 
       res.status(200).json({ ok: true });

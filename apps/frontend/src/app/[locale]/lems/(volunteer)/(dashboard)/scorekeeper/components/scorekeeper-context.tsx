@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
+import { MATCH_LOAD_THRESHOLD } from '@lems/shared/consts';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { AudienceDisplayState, Match, MatchStage, ScorekeeperData } from '../graphql';
 
@@ -63,7 +64,7 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     if (nextMatch) {
       const scheduledTime = dayjs(nextMatch.scheduledTime);
       const minutesUntilStart = scheduledTime.diff(currentTime, 'minute', true);
-      if (minutesUntilStart > 15) {
+      if (minutesUntilStart > MATCH_LOAD_THRESHOLD) {
         nextMatch = null;
       }
     }

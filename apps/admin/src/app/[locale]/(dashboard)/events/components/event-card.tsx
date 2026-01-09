@@ -1,8 +1,10 @@
 'use client';
 
+import { useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import useSWR from 'swr';
 import {
   Card,
   CardContent,
@@ -12,22 +14,13 @@ import {
   Chip,
   IconButton,
   Stack,
-  Alert,
   Tooltip
 } from '@mui/material';
-import {
-  LocationOn,
-  CalendarMonth,
-  Group,
-  Edit,
-  Delete,
-  ContentCopy,
-  CheckCircle,
-  Warning
-} from '@mui/icons-material';
-import { EventSummary } from '@lems/types/api/admin';
+import { LocationOn, CalendarMonth, Group, Edit, Delete, ContentCopy } from '@mui/icons-material';
+import { EventSummary, Division } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
 import { useSession } from '../../components/session-context';
+import { EventMissingInfo } from './missing-info/event-missing-info';
 
 interface EventCardProps extends EventSummary {
   onDelete?: (id: string) => void;
@@ -51,8 +44,13 @@ export const EventCard: React.FC<EventCardProps> = ({
   const { user } = useSession();
   const router = useRouter();
   const t = useTranslations('pages.events.card');
+  const [showDetails, setShowDetails] = useState(false);
 
   const isAssigned = adminIds.includes(user.id);
+
+  const { data: detailedDivisions } = useSWR<Division[]>(
+    !isFullySetUp ? `/admin/events/${id}/divisions` : null
+  );
 
   const handleDelete = () => onDelete?.(id);
   const handleCopy = () => onCopy?.(id);
@@ -129,15 +127,11 @@ export const EventCard: React.FC<EventCardProps> = ({
         )}
 
         <Box sx={{ mt: 'auto' }}>
-          {isFullySetUp ? (
-            <Alert severity="success" icon={<CheckCircle />} sx={{ py: 0.5 }}>
-              {t('fully-set-up')}
-            </Alert>
-          ) : (
-            <Alert severity="warning" icon={<Warning />} sx={{ py: 0.5 }}>
-              {t('missing-details')}
-            </Alert>
-          )}
+          <EventMissingInfo
+            divisions={detailedDivisions || divisions}
+            isFullySetUp={isFullySetUp}
+            onShowDetails={() => setShowDetails(true)}
+          />
         </Box>
       </CardContent>
 

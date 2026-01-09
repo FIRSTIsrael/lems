@@ -94,7 +94,7 @@
         "start-time": "שעת התחלה",
         "team": "פרטי קבוצה",
         "actions": "פעולות",
-        "rubrics": "רובריקות",
+        "rubrics": "מחוונים",
         "no-sessions": "אין מפגשי שיפוט מתוכננים",
         "not-arrived": "לא הגיעו",
         "start-session": "התחל",
@@ -169,7 +169,10 @@
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
-        "event-agenda": "לו״ז אירוע"
+        "event-agenda": "לו״ז אירוע",
+        "field-schedule": "לו״ז זירה",
+        "judging-schedule": "לו״ז שיפוט",
+        "field-timer": "שעון זמן מגרש"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,6 +221,46 @@
           "public": "כללי",
           "judging": "שיפוט",
           "field": "זירה"
+        }
+      },
+      "field-timer": {
+        "page-title": "שעון זמן מגרש",
+        "no-active-match": "אין מקצה פעיל",
+        "loading": "טוען נתוני מקצה...",
+        "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
+        "test-match": "מקצה בדיקה",
+        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}"
+      },
+      "field-schedule": {
+        "page-title": "לו״ז זירה",
+        "error-loading": "אירעה שגיאה בטעינת לו״ז הזירה.",
+        "empty-state": "לא נקבעו קרבות עדיין.",
+        "columns": {
+          "match": "קרב",
+          "start-time": "התחלה",
+          "end-time": "סיום"
+        },
+        "stages": {
+          "practice": "סבב אימון",
+          "ranking": "סבב דירוג",
+          "test": "סבב ניסוי"
+        },
+        "not-arrived": "לא הגיעה",
+        "loading": "טוען מקצים..."
+      },
+      "judging-schedule": {
+        "page-title": "לו״ז שיפוט",
+        "error-loading": "אירעה שגיאה בטעינת הלו״ז.",
+        "no-sessions": "לא נקבעו מפגשי שיפוט.",
+        "loading": "טוען לו״ז...",
+        "arrived": "הגיעה",
+        "not-arrived": "לא הגיעה",
+        "table": {
+          "time": "שעה"
+        },
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט"
         }
       }
     },
@@ -287,6 +330,10 @@
     },
     "judge-advisor": {
       "page-title": "שופט ראשי",
+      "mode": {
+        "judging": "שיפוט",
+        "awards": "פרסים"
+      },
       "summary": {
         "status": {
           "empty": "ריק",
@@ -325,11 +372,134 @@
         "sort": {
           "room": "מיין לפי חדר",
           "session": "מיין לפי סבב"
+        },
+        "status-glossary": {
+          "title": "מדריך סטטוס מחוונים",
+          "aria-label": "הצג מדריך סטטוס מחוונים",
+          "statuses": {
+            "empty": {
+              "label": "לא התחיל",
+              "description": "המחוון טרם מולא"
+            },
+            "draft": {
+              "label": "בתהליך",
+              "description": "המחוון ממולא כעת"
+            },
+            "approved": {
+              "label": "אושר",
+              "description": "המחוון הושלם ונשלח"
+            },
+            "locked": {
+              "label": "נעול",
+              "description": "המחוון נעול ולא ניתן לעריכה"
+            },
+            "completed": {
+              "label": "מאושר",
+              "description": "המחוון נבדק ואושר"
+            }
+          }
         }
       },
       "team-info-cell": {
-        "not-arrived": "לא הגיעה"
+        "not-arrived": "לא הגיעה",
+        "disqualified": "נפסלה"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "פסילת קבוצות",
+          "search-placeholder": "חפש לפי מספר, שם, שיוך או עיר...",
+          "search-label": "חיפוש קבוצות",
+          "disqualify": "פסול",
+          "disqualified": "נפסלה",
+          "no-teams-found": "לא נמצאו קבוצות",
+          "disqualified-teams-title": "קבוצות פסולות",
+          "disqualified-teams-count": "{count, plural, one {# קבוצה} other {# קבוצות}}",
+          "confirm-title": "פסילת קבוצה",
+          "confirm-message": "האם אתם בטוחים שאתם רוצים לפסול את",
+          "confirm-disqualify": "פסול",
+          "cancel": "ביטול",
+          "team-option-label": "קבוצה #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "שגיאה בפסילת הקבוצה"
+        },
+        "deliberation": {
+          "final-deliberation": "דיון סופי",
+          "status": "סטטוס",
+          "picklist": "רשימת בחירה",
+          "start-time": "זמן התחלה",
+          "stage": "שלב",
+          "action": "פעולה",
+          "open": "מעבר לדיון",
+          "open-final": "מעבר לדיון סופי",
+          "no-deliberations": "לא נמצאו דיוני שופטים"
+        },
+        "personal-awards": {
+          "title": "פרסים אישיים",
+          "no-awards": "אין פרסים אישיים מוגדרים",
+          "optional": "אופציונלי",
+          "team-placeholder": "הכנס שם קבוצה או מספר",
+          "submit": "שלח פרסים",
+          "placeholder-message": "פרסים נשלחו"
+        },
+        "deliberations": "דיוני שופטים"
       }
+    },
+    "mc": {
+      "page-title": "ממשק מנחה",
+      "mode": {
+        "matches": "מקצים",
+        "awards": "פרסים"
+      },
+      "current-match": {
+        "no-match": "אין מקצה טעון",
+        "round": "סבב",
+        "no-team": "אין קבוצה משובצת",
+        "not-arrived": "לא הגיעה",
+        "status": {
+          "loaded": "מקצה הבא",
+          "in-progress": "מקצה נוכחי"
+        },
+        "match-title": "סבב {stage} {round}, מקצה #{number}",
+        "table": "שולחן"
+      },
+      "schedule": {
+        "title": "מקצים קרובים",
+        "match-number": "מקצה",
+        "scheduled-time": "שעה",
+        "teams": "קבוצות",
+        "status": "סטטוס",
+        "round": "סיבוב",
+        "no-matches": "אין מקצים קרובים",
+        "no-team": "אין קבוצה",
+        "not-arrived": "לא הגיעה"
+      },
+      "awards": {
+        "title": "טקס פרסים",
+        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב."
+      }
+    },
+    "referee": {
+      "page-title": "שופט זירה",
+      "match-running": "מקצה פעיל",
+      "match-slug": "צקצה",
+      "prestart-title": "התכוננת למקצה",
+      "inspection-timer": "בדיקת ציוד",
+      "start-inspection": "התחל בדיקה",
+      "present": "נוכח",
+      "absent": "לא נוכח",
+      "ready-confirmed": "מוכן",
+      "mark-ready": "סמנו כמוכן",
+      "no-match-title": "אין מקצה בשולחן כעת",
+      "no-match-description": "מחכה להשמת המשחק הבא לשולחן שלך.",
+      "no-match-instructions": "המקצים הבאים מופיעים בלוח הזמנים מטה",
+      "no-upcoming-matches": "אין משחקים מתוכננים.",
+      "match": "משחק",
+      "scheduled-time": "שעה מתוכננת",
+      "teams": "קבוצות",
+      "round": "סבב",
+      "team-not-available": "מידע הקבוצה לא זמין",
+      "break-message": "זה זמן טוב לשתות מים ולהתרענן",
+      "no-show-title": "הקבוצה לא הגיעה",
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
     },
     "scorekeeper": {
       "page-title": "סקורקיפר",
@@ -437,6 +607,75 @@
         "teams": "קבוצות"
       }
     },
+    "head-referee": {
+      "page-title": "לוח בקרה - שופט ראשי",
+      "escalation-alert": "דף ניקוד הועבר לטיפולך!",
+      "points": "נקודות",
+      "round": "סבב",
+      "stage": {
+        "practice": "אימון",
+        "ranking": "דירוג"
+      },
+      "escalated-count": "{count} הועברו",
+      "escalated-panel": {
+        "title": "{count, plural, one {דף ניקוד אחד הועבר לטיפולך} other {# דפי ניקוד הועברו לטיפולך}}",
+        "view-scoresheet": "צפה בדף ניקוד"
+      },
+      "filters": {
+        "search-label": "חיפוש קבוצות",
+        "search-placeholder": "מספר או שם קבוצה",
+        "all-statuses": "כל הסטטוסים",
+        "statuses-selected": "{count} סטטוסים נבחרו",
+        "escalated-only": "הועברו בלבד",
+        "status-label": "סטטוס"
+      },
+      "scoresheet-round": "סבב {stage} #{round}",
+      "scoresheet-status": {
+        "empty": "ריק",
+        "draft": "בתהליך",
+        "completed": "הושלם",
+        "gp": "ממתין ל-GP",
+        "submitted": "נשלח"
+      },
+      "scoresheet-button": {
+        "team-not-registered": "",
+        "escalated-tooltip": ""
+      },
+      "legend": {
+        "title": "מקרא סטטוסי דף ניקוד",
+        "aria-label": "הצג מקרא סטטוסים",
+        "empty": {
+          "label": "ריק",
+          "description": "לא הוזן מידע בדף הניקוד"
+        },
+        "draft": {
+          "label": "בתהליך",
+          "description": "דף הניקוד בתהליך מילוי"
+        },
+        "completed": {
+          "label": "הושלם",
+          "description": "ניקוד המשימות הושלם"
+        },
+        "gp": {
+          "label": "ממתין ל-GP",
+          "description": "ממתין לדירוג Gracious Professionalism"
+        },
+        "submitted": {
+          "label": "נשלח",
+          "description": "דף הניקוד אושר ונשלח"
+        },
+        "escalated": {
+          "label": "הועבר לטיפול",
+          "description": "דורש עיון שופט ראשי - גובר על סטטוסים אחרים"
+        }
+      },
+      "table": {
+        "match": "מקצה",
+        "scheduled-time": "שעה",
+        "participant-ready": "מוכן",
+        "participant-not-ready": "לא מוכן"
+      }
+    },
     "audience-display": {
       "match-preview": {
         "round": "סבב",
@@ -468,7 +707,40 @@
           "draft": "טיוטה",
           "completed": "הסתיים",
           "approved": "מאושר"
+        },
+        "status-glossary": {
+          "title": "מדריך סטטוס מחוונים",
+          "aria-label": "הצג מדריך סטטוס מחוונים",
+          "statuses": {
+            "empty": {
+              "label": "לא התחיל",
+              "description": "המחוון טרם מולא"
+            },
+            "draft": {
+              "label": "בתהליך",
+              "description": "המחוון ממולא כעת"
+            },
+            "approved": {
+              "label": "אושר",
+              "description": "המחוון הושלם ונשלח"
+            },
+            "locked": {
+              "label": "נעול",
+              "description": "המחוון נעול ולא ניתן לעריכה"
+            },
+            "completed": {
+              "label": "מאושר",
+              "description": "המחוון נבדק ואושר"
+            }
+          }
         }
+      },
+      "deliberation": {
+        "status": "סטטוס",
+        "start-time": "זמן התחלה",
+        "picklist": "תיעדוף",
+        "deliberation": "דיון שופטים",
+        "open": "מעבר לדיון"
       },
       "list": {
         "empty-state": "לא נמצאו סבבי שיפוט",
@@ -541,6 +813,68 @@
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
         "submit-button": "הגשת דף ניקוד"
       }
+    },
+    "deliberations": {
+      "category": {
+        "title": "דיונים | {category}",
+        "controls": {
+          "status": "סטטוס",
+          "in-progress": "בתהליך",
+          "not-started": "לא התחיל",
+          "completed": "הושלם",
+          "start": "התחל",
+          "complete-deliberation": "סיום הדיון",
+          "deliberation-finalized": "דיון זה הושלם ואינו ניתן לעריכה.",
+          "time-remaining": "זמן נותר",
+          "complete-modal": {
+            "title": "סיום הדיון",
+            "description": "האם אתה בטוח שברצונך להשלים דיון זה? לאחר אישור, תהיה הפניה לדף הבית.",
+            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שרשימת הבחירה שלך סופית לפני המשך.",
+            "confirm": "סיום",
+            "cancel": "ביטול",
+            "submitting": "בתהליך...",
+            "success-message": "הדיון הושלם בהצלחה",
+            "error-message": "כישלון בהשלמת הדיון"
+          }
+        },
+        "picklist": {
+          "title": "רשימת בחירה",
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "remove": "הסר",
+          "empty-state": "הוסף קבוצות",
+          "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
+        },
+        "scores-chart": {
+          "room-scores-distribution": "התפלגות ניקוד חדרים",
+          "no-data-available": "אין נתונים זמינים",
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "aggregate-average": "ממוצע כללי"
+        },
+        "compare-teams-picker": {
+          "title": "השוואת קבוצות",
+          "team-1": "קבוצה 1",
+          "team-2": "קבוצה 2",
+          "compare": "השווה",
+          "no-data-available": "אין קבוצות להשוואה"
+        },
+        "table": {
+          "rank": "דירוג",
+          "team": "קבוצה",
+          "room": "חדר",
+          "total": "סך הכל",
+          "normalized": "מתוקנן",
+          "actions": "פעולות",
+          "view-rubric": "הצג מחוון",
+          "add-to-picklist": "הוסף לרשימת בחירה"
+        },
+        "small-screen-block": {
+          "title": "המסך קטן מדי",
+          "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+        }
+      }
     }
   },
   "components": {
@@ -579,7 +913,109 @@
       "points-unit": "נק'"
     },
     "deliberation": {
-      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה"
+      "error-not-authorized": "אין לך הרשאות לגשת לדיון זה",
+      "compare": {
+        "title": "השוואת קבוצות",
+        "no-teams-selected": "לא נבחרו קבוצות",
+        "no-teams-description": "בחרו קבוצות מדף הדיונים כדי להשוות את הביצועים שלהן.",
+        "back-to-deliberation": "חזרה לדיונים",
+        "error-loading-teams": "שגיאה בטעינת נתוני הקבוצות. אנא נסו שוב.",
+        "teams-not-found": "הקבוצות שנבחרו לא נמצאו.",
+        "field-comparison": "השוואת תחומים",
+        "wins": "ניצחונות",
+        "ties": "תיקו",
+        "losses": "הפסדים",
+        "rubric-scores": "ניקוד המחוון",
+        "no-rubric-data": "אין מידע זמין על המחוונים",
+        "exceeding-notes": "כיצד הקבוצה הצטיינה?",
+        "nominations": "מועמדויות לפרסים",
+        "gp-scores": "מקצועיות אדיבה",
+        "round": "מקצה",
+        "feedback": "משוב",
+        "average": "ממוצע",
+        "filter-by-category": "סינון לפי קטגוריה",
+        "all-categories": "כל הקטגוריות",
+        "judging-room": "חדר שיפוט",
+        "manage-teams": "ניהול קבוצות",
+        "add-team": "הוסף קבוצה",
+        "search-teams": "חפש קבוצות...",
+        "select-teams-to-compare": "בחר קבוצות להשוואה",
+        "current-teams": "קבוצות נוכחיות",
+        "done": "סיום"
+      }
+    }
+  },
+  "deliberations": {
+    "final": {
+      "title": "דיון סופי",
+      "error": {
+        "loadingData": "נכשל בטעינת נתוני הדיון",
+        "notFound": "הדיון הסופי לא נמצא"
+      },
+      "stages": {
+        "champions": "בחירת אלופים",
+        "core-awards": "פרסי ליבה",
+        "optional-awards": "פרסים אופציונליים",
+        "review": "סקירה וסיום"
+      },
+      "buttons": {
+        "previous": "שלב קודם",
+        "next": "שלב הבא",
+        "finalize": "סיום דיון"
+      },
+      "teamCard": {
+        "totalRank": "דירוג כולל",
+        "overall": "כולל",
+        "robotGameRank": "דירוג משחק רובוט",
+        "robotGame": "משחק רובוט"
+      },
+      "champions": {
+        "instruction": "בחרו קבוצות למקום ראשון, שני, שלישי ורביעי. קבוצות מדורגות לפי ניקוד השיפוט הכולל.",
+        "championsTitle": "בחירת אלופים",
+        "eligibleTeams": "{count} קבוצות זכאיות",
+        "noEligibleTeams": "אין קבוצות זכאיות לאלופים בשלב זה",
+        "robotPerformanceTitle": "זוכי ביצוע הרובוט",
+        "robotPerformanceDescription": "קבוצות אלו מדורגות אוטומטית לפי ניקוד המשחק הגבוה ביותר שלהן",
+        "maxScore": "ניקוד מקסימום"
+      },
+      "coreAwards": {
+        "instruction": "בחרו זוכים בפרסים לכל קטגוריית שיפוט. קבוצה יכולה לזכות בפרס אחד בלבד לקטגוריה.",
+        "categories": {
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה"
+        },
+        "selectWinners": "בחרו זוכים בפרס עבור {category}",
+        "noEligibleTeams": "אין קבוצות זכאיות לפרס זה",
+        "selectedWinners": "זוכים שנבחרו",
+        "rank": "דירוג",
+        "none": "לא נבחרו"
+      },
+      "optionalAwards": {
+        "instruction": "בחרו קבוצות שהיו מועמדות לפרסים אופציונליים. קבוצה יכולה לקבל מספר פרסים אופציונליים.",
+        "filterByAward": "סננו לפי פרס",
+        "allAwards": "כל הפרסים",
+        "nominatedTeams": "קבוצות עם מועמדויות לפרס אופציונלי",
+        "teamsNominatedFor": "קבוצות שהיו מועמדות ל {award}",
+        "eligibleTeams": "{count} קבוצות מועמדות",
+        "noEligibleTeams": "אין קבוצות עם מועמדויות לפרסים אופציונליים",
+        "selectedWinners": "זוכים שנבחרו",
+        "none": "לא נבחרו"
+      },
+      "review": {
+        "instruction": "סקרו את כל הפרסים שנבחרו מטה. לחצו על 'סיום' כדי להגיש את תוצאות הדיון.",
+        "finalizationWarning": "לאחר סיום לא ניתן יהיה לערוך את הדיון. אנא סקרו את כל הבחירות בעיון לפני המשך.",
+        "champions": "אלופים",
+        "coreAwards": "פרסי ליבה",
+        "optionalAwards": "פרסים אופציונליים",
+        "place": "מקום",
+        "categories": {
+          "innovation-project": "פרויקט חדשנות",
+          "robot-design": "עיצוב רובוט",
+          "core-values": "ערכי ליבה",
+          "robot-performance": "ביצוע רובוט"
+        }
+      }
     }
   }
 }

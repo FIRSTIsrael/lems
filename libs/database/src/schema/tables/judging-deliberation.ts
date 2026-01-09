@@ -7,7 +7,7 @@ export interface JudgingDeliberationsTable {
   division_id: string;
   category: string;
   status: DeliberationStatus;
-  start_time: string | null;
+  start_time: Date | null;
   picklist: string[]; // Array of team IDs
 }
 

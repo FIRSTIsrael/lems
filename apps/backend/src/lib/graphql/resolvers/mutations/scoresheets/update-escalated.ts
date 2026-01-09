@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import { Scoresheet } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -29,7 +30,7 @@ export const updateScoresheetEscalatedResolver: GraphQLFieldResolver<
 > = async (_root, { divisionId, scoresheetId, escalated }, context) => {
   const { scoresheetObjectId } = await authorizeScoresheetAccess(context, divisionId, scoresheetId);
 
-  const result = await db.raw.mongo.collection('scoresheets').findOneAndUpdate(
+  const result = await db.raw.mongo.collection<Scoresheet>('scoresheets').findOneAndUpdate(
     { _id: scoresheetObjectId },
     {
       $set: {
@@ -46,7 +47,7 @@ export const updateScoresheetEscalatedResolver: GraphQLFieldResolver<
     );
   }
 
-  // Publish the update event
+  // Publish the update events
   const pubSub = getRedisPubSub();
 
   const eventPayload: ScoresheetEscalatedUpdatedEvent = {
@@ -54,6 +55,11 @@ export const updateScoresheetEscalatedResolver: GraphQLFieldResolver<
     escalated
   };
 
+  pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_STATUS_CHANGED, {
+    scoresheetId,
+    status: result.status,
+    escalated
+  });
   pubSub.publish(divisionId, RedisEventTypes.SCORESHEET_UPDATED, eventPayload);
 
   return eventPayload;

@@ -11,7 +11,6 @@ import {
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
-import { divisionAwardsResolver } from './divisions/division-awards';
 import { divisionAgendaResolver } from './divisions/division-agenda';
 import { divisionFieldResolver } from './divisions/field/field';
 import { divisionJudgingResolver } from './divisions/judging/judging';
@@ -20,6 +19,9 @@ import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
+import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
+import { judgingAwardsResolver } from './divisions/judging/judging-awards';
+import { awardWinnerResolver } from './divisions/judging/award-winner';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';
 import { sessionRubricsResolver } from './judging/session-rubrics';
@@ -42,11 +44,15 @@ import { currentStageResolver } from './divisions/field/current-stage';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
+import { matchParticipantScoresheetResolver } from './divisions/field/match-participant-scoresheet';
 import { audienceDisplayResolver } from './divisions/field/audience-display';
 import { fieldScoresheetsResolver } from './divisions/field/scoresheets';
 import { RubricUpdatedEventResolver } from './subscriptions/rubrics/rubric-updated';
 import { ScoresheetUpdatedEventResolver } from './subscriptions/scoresheet/scoresheet-updated';
-import { DeliberationUpdatedEventResolver } from './subscriptions/deliberations/deliberation-updated';
+import {
+  DeliberationUpdatedEventResolver,
+  FinalDeliberationUpdatedEventResolver
+} from './subscriptions/deliberations';
 
 // JSON scalar resolver - passes through any valid JSON value
 const JSONScalar = new GraphQLScalarType({
@@ -96,7 +102,6 @@ export const resolvers = {
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
-    awards: divisionAwardsResolver,
     agenda: divisionAgendaResolver
   },
   Judging: {
@@ -104,7 +109,12 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     rubrics: judgingRubricsResolver,
-    deliberation: judgingDeliberationResolver
+    deliberation: judgingDeliberationResolver,
+    finalDeliberation: judgingFinalDeliberationResolver,
+    awards: judgingAwardsResolver
+  },
+  Award: {
+    winner: awardWinnerResolver
   },
   Field: {
     audienceDisplay: audienceDisplayResolver,
@@ -118,7 +128,8 @@ export const resolvers = {
   },
   MatchParticipant: {
     team: matchParticipantTeamResolver,
-    table: matchParticipantTableResolver
+    table: matchParticipantTableResolver,
+    scoresheet: matchParticipantScoresheetResolver
   },
   JudgingSession: {
     room: judgingSessionRoomResolver,
@@ -148,5 +159,6 @@ export const resolvers = {
   RoleInfo: RoleInfoResolver,
   RubricUpdatedEvent: RubricUpdatedEventResolver,
   ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
-  DeliberationUpdatedEvent: DeliberationUpdatedEventResolver
+  DeliberationUpdatedEvent: DeliberationUpdatedEventResolver,
+  FinalDeliberationUpdatedEvent: FinalDeliberationUpdatedEventResolver
 };

@@ -54,9 +54,8 @@ export function RoleAssignmentSection({
   } = useVolunteer();
 
   const slots = getSlotsForRole(role);
-  const [expanded, setExpanded] = useState(initiallyExpanded);
-
   const singleDivision = divisions.length === 1;
+  const [expanded, setExpanded] = useState(true);
 
   const handleAddSlot = () => {
     addSlot(role);
@@ -79,21 +78,33 @@ export function RoleAssignmentSection({
       <CardHeader
         title={getRole(role)}
         titleTypographyProps={{ variant: 'h6' }}
+        sx={{ flexWrap: 'wrap' }}
         action={
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
             <Typography variant="body2" color="text.secondary">
               {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
             </Typography>
             <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
               {t('add-slot')}
             </Button>
-            <IconButton
-              onClick={() => setExpanded(!expanded)}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+            {singleDivision ? (
+              <IconButton
+                color="error"
+                onClick={() => slots.forEach(slot => removeSlot(slot.id))}
+                aria-label={t('remove-slot')}
+                disabled={slots.length === 0}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ) : (
+              <IconButton
+                onClick={() => setExpanded(!expanded)}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            )}
           </Stack>
         }
       />
@@ -112,6 +123,7 @@ export function RoleAssignmentSection({
                   justifyContent="space-between"
                   alignItems="flex-start"
                   spacing={2}
+                  sx={{ minWidth: 0 }}
                 >
                   <Stack spacing={2} flex={1} minWidth={0}>
                     {!singleDivision && (
@@ -176,6 +188,7 @@ export function RoleAssignmentSection({
                     color="error"
                     onClick={() => handleRemoveSlot(slot.id)}
                     aria-label={t('remove-slot')}
+                    sx={{ display: singleDivision ? 'none' : 'flex', flexShrink: 0 }}
                   >
                     <DeleteIcon />
                   </IconButton>
