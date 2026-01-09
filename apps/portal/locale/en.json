@@ -254,7 +254,8 @@
         },
         "field-notes-label": "Notes",
         "field-notes-placeholder": "How did the team exceed?",
-        "mobile-placeholder": "Choose value..."
+        "mobile-placeholder": "Choose value...",
+        "mobile-feedback": "Feedback"
       }
     }
   },
