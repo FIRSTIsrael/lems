@@ -172,7 +172,8 @@
         "event-agenda": "Event Agenda",
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
-        "judging-schedule": "Judging Schedule"
+        "judging-schedule": "Judging Schedule",
+        "judging-status": "Judging Status"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -256,7 +257,9 @@
         "arrived": "Arrived",
         "not-arrived": "Not arrived",
         "table": {
-          "time": "Time"
+          "time": "Time",
+          "start-time": "Start",
+          "end-time": "End"
         },
         "visibility": {
           "public": "General",
@@ -500,6 +503,31 @@
       "break-message": "This is a good time to drink water and refresh",
       "no-show-title": "Team Did Not Arrive",
       "no-show-description": "This team has not arrived at the event and will not participate in this match."
+    },
+    "judging-status": {
+      "page-title": "Judging Status",
+      "table": {
+        "time": "Time",
+        "room": "Room {name}",
+        "current-round": "Current Round",
+        "next-round": "Next Round",
+        "started-at": "Started at {time}",
+        "ends-at": "Ends at {time}"
+      },
+      "status": {
+        "not-started": "Not Started",
+        "in-progress": "In Progress",
+        "completed": "Completed",
+        "queued": "Queued"
+      },
+      "warnings": {
+        "on-field": "Team is on the field!"
+      },
+      "not-arrived": "Not arrived",
+      "empty-state": {
+        "message": "No judging sessions scheduled",
+        "no-team": "No team assigned"
+      }
     },
     "scorekeeper": {
       "page-title": "Scorekeeper",
