@@ -35,18 +35,17 @@ export default function JudgingStatusPage() {
   const { data, loading } = usePageData(
     GET_JUDGING_STATUS,
     { divisionId: currentDivision.id },
-    undefined,
+    parseJudgingStatus,
     subscriptions
   );
 
-  const {
-    sessions: currentSessions,
-    nextSessions,
-    rooms,
-    sessionLength
-  } = parseJudgingStatus(data ?? {});
-
   const currentTime = useTime({ interval: 1000 });
+
+  if (!data) {
+    return null;
+  }
+
+  const { sessions: currentSessions, nextSessions, rooms, sessionLength } = data;
 
   return (
     <>
