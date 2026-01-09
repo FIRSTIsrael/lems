@@ -1,9 +1,9 @@
 'use client';
 
 import React, { createContext, useContext } from 'react';
-import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { TeamAtEventData } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 
 const TeamAtEventDataContext = createContext<TeamAtEventData | null>(null);
 
@@ -16,7 +16,7 @@ export function TeamAtEventProvider({ children }: TeamAtEventProviderProps) {
   const eventSlug = params.slug as string;
   const teamSlug = params.teamSlug as string;
 
-  const { data: teamAtEvent, error } = useSWR<TeamAtEventData | null>(
+  const { data: teamAtEvent, error } = useRealtimeData<TeamAtEventData | null>(
     `/portal/events/${eventSlug}/teams/${teamSlug}`,
     { suspense: true, fallbackData: null }
   );
