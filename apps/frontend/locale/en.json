@@ -861,7 +861,36 @@
       "points-unit": "pts."
     },
     "deliberation": {
-      "error-not-authorized": "Unauthorized to access deliberation"
+      "error-not-authorized": "Unauthorized to access deliberation",
+      "compare": {
+        "title": "Compare Teams",
+        "no-teams-selected": "No teams selected",
+        "no-teams-description": "Select teams to compare.",
+        "back-to-deliberation": "Back to Deliberation",
+        "error-loading-teams": "Failed to load team data. Please try again.",
+        "teams-not-found": "The selected teams could not be found.",
+        "field-comparison": "Field Comparison",
+        "wins": "Wins",
+        "ties": "Ties",
+        "losses": "Losses",
+        "rubric-scores": "Rubric Scores",
+        "no-rubric-data": "No rubric data available",
+        "exceeding-notes": "How did the team exceed? ",
+        "nominations": "Award Nominations",
+        "gp-scores": "Gracious Professionalism",
+        "round": "Round",
+        "feedback": "Feedback",
+        "average": "Avg",
+        "filter-by-category": "Filter by Category",
+        "all-categories": "All Categories",
+        "judging-room": "Judging Room",
+        "manage-teams": "Manage Teams",
+        "add-team": "Add Team",
+        "search-teams": "Search teams...",
+        "select-teams-to-compare": "Select teams to compare",
+        "current-teams": "Current Teams",
+        "done": "Done"
+      }
     }
   },
   "deliberations": {
