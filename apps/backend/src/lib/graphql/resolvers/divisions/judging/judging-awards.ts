@@ -54,8 +54,6 @@ export const judgingAwardsResolver: GraphQLFieldResolver<
       isOptional: award.is_optional,
       allowNominations: award.allow_nominations,
       automaticAssignment: award.automatic_assignment,
-      winner_id: award.winner_id,
-      winner_name: award.winner_name,
       divisionId: judging.divisionId
     }));
   } catch (error) {

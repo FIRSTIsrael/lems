@@ -20,7 +20,7 @@ import { judgingSessionLengthResolver } from './divisions/judging/judging-sessio
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
-import { judgingAwardsResolver } from './divisions/judging/judging-award-winners';
+import { judgingAwardsResolver } from './divisions/judging/judging-awards';
 import { awardWinnerResolver } from './divisions/judging/award-winner';
 import { judgingSessionRoomResolver } from './judging/session-room';
 import { judgingSessionTeamResolver } from './judging/session-team';

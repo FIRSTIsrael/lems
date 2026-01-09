@@ -4,13 +4,20 @@ import { TeamGraphQL, buildTeamGraphQL } from '../../../utils/team-builder';
 
 interface AwardWithDivisionId {
   id: string;
-  type: 'PERSONAL' | 'TEAM';
-  winner_id?: string;
-  winner_name?: string;
-  divisionId?: string;
+  divisionId: string;
 }
 
-type AwardWinner = { team: TeamGraphQL } | { name: string } | null;
+interface PersonalWinnerData {
+  __typename: 'PersonalWinner';
+  name: string;
+}
+
+interface TeamWinnerData {
+  __typename: 'TeamWinner';
+  team: TeamGraphQL;
+}
+
+type AwardWinner = PersonalWinnerData | TeamWinnerData | null;
 
 /**
  * Resolver for Award.winner field.
@@ -27,28 +34,32 @@ export const awardWinnerResolver: GraphQLFieldResolver<
   unknown,
   unknown,
   Promise<AwardWinner>
-> = async (award: AwardWithDivisionId) => {
+> = async (award: AwardWithDivisionId): Promise<AwardWinner> => {
   try {
-    // If no winner is set, return null
-    if (!award.winner_id && !award.winner_name) {
+    const awardRecord = (await db.awards.byDivisionId(award.divisionId).getAll()).find(a => a.id === award.id);
+    if (!awardRecord) {
       return null;
     }
 
     // For team awards, fetch the team
-    if (award.type === 'TEAM' && award.winner_id && award.divisionId) {
-      const team = await db.teams.byId(award.winner_id).get();
+    if (awardRecord.type === 'TEAM' && awardRecord.winner_id) {
+      const team = await db.teams.byId(awardRecord.winner_id).get();
       if (team) {
-        return {
+        const result: TeamWinnerData = {
+          __typename: 'TeamWinner',
           team: buildTeamGraphQL(team, award.divisionId)
         };
+        return result;
       }
     }
 
     // For personal awards, return the name
-    if (award.type === 'PERSONAL' && award.winner_name) {
-      return {
-        name: award.winner_name
+    if (awardRecord.type === 'PERSONAL' && awardRecord.winner_name) {
+      const result: PersonalWinnerData = {
+        __typename: 'PersonalWinner',
+        name: awardRecord.winner_name
       };
+      return result;
     }
 
     return null;
