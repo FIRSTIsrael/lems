@@ -11,7 +11,6 @@ interface Participant {
     id: string;
     number: number;
     name: string;
-    registered?: boolean;
   } | null;
   table: {
     id: string;

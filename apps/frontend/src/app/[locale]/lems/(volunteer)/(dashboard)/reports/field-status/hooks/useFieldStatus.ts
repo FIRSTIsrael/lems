@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery, useSubscription } from '@apollo/client/react';
 import { useMemo } from 'react';
 import {
   FIELD_STATUS_QUERY,

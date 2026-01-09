@@ -37,7 +37,6 @@ export const FIELD_STATUS_QUERY = gql`
               id
               number
               name
-              registered
             }
             table {
               id
@@ -63,7 +62,6 @@ export const FIELD_STATUS_QUERY = gql`
             id
             number
             name
-            registered
           }
           room {
             id

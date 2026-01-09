@@ -1,25 +1,23 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import { Box, Container, Stack, Alert, CircularProgress, Grid } from '@mui/material';
+import { useEvent } from '../../../components/event-context';
 import { useFieldStatus } from './hooks';
-import {
-  MatchCountdown,
-  ActiveMatchPanel,
-  NextMatchPanel,
-  QueueOverview,
-  UpcomingMatches,
-  FieldHealthMetrics,
-  JudgingIntegration
-} from './components';
+import { MatchCountdown } from './components/match-countdown';
+import { ActiveMatchPanel } from './components/active-match-panel';
+import { NextMatchPanel } from './components/next-match-panel';
+import { QueueOverview } from './components/queue-overview';
+import { UpcomingMatches } from './components/upcoming-matches';
+import { FieldHealthMetrics } from './components/field-health-metrics';
+import { JudgingIntegration } from './components/judging-integration';
 
 /**
  * Field Status Report Page
  * Comprehensive real-time view of field operations
  */
 export default function FieldStatusPage() {
-  const searchParams = useSearchParams();
-  const divisionId = searchParams.get('divisionId') || '';
+  const { currentDivision } = useEvent();
+  const divisionId = currentDivision.id;
 
   const {
     division,

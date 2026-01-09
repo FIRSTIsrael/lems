@@ -1,7 +1,7 @@
 'use client';
 
 import { Paper, Stack, Typography, LinearProgress } from '@mui/material';
-import { useMatchTimer } from '../../hooks';
+import { useMatchTimer } from '../hooks/useMatchTimer';
 
 interface MatchCountdownProps {
   scheduledTime?: string | null;

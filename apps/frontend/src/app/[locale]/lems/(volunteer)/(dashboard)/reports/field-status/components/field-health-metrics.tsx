@@ -4,7 +4,7 @@ import { Paper, Stack, Typography, Box, LinearProgress, Chip } from '@mui/materi
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
-import { useFieldMetrics, formatMinutes } from '../../hooks/useFieldMetrics';
+import { useFieldMetrics, formatMinutes } from '../hooks/useFieldMetrics';
 
 interface Match {
   id: string;
