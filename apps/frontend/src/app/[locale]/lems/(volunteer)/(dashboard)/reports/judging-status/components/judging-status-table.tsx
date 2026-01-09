@@ -4,8 +4,6 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs, { Dayjs } from 'dayjs';
 import {
-  Box,
-  Chip,
   Paper,
   Skeleton,
   Stack,
@@ -17,13 +15,9 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
-import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import PlayCircleRoundedIcon from '@mui/icons-material/PlayCircleRounded';
-import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
 import { JudgingSession, Room } from '../graphql';
-import { TeamInfo } from '../../../components/team-info';
+import { SessionRow } from './session-row';
+import { NextSessionRow } from './next-session-row';
 
 interface JudgingStatusTableProps {
   currentSessions: JudgingSession[];
@@ -33,32 +27,6 @@ interface JudgingStatusTableProps {
   loading: boolean;
   currentTime: Dayjs;
 }
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'completed':
-      return 'success';
-    case 'in-progress':
-      return 'info';
-    case 'not-started':
-      return 'default';
-    default:
-      return 'default';
-  }
-};
-
-const getStatusIcon = (status: string, called: boolean) => {
-  if (status === 'completed') {
-    return <CheckCircleRoundedIcon fontSize="small" />;
-  }
-  if (status === 'in-progress') {
-    return <PlayCircleRoundedIcon fontSize="small" />;
-  }
-  if (called) {
-    return <PeopleAltRoundedIcon fontSize="small" />;
-  }
-  return <RadioButtonUncheckedRoundedIcon fontSize="small" />;
-};
 
 export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
   currentSessions,
@@ -126,10 +94,16 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
     >
       <Table>
         <TableHead>
-          <TableRow sx={{ bgcolor: 'grey.50' }}>
-            <TableCell sx={{ fontWeight: 600, minWidth: 120 }}>{t('table.time')}</TableCell>
+          <TableRow sx={{ bgcolor: 'primary.main' }}>
+            <TableCell sx={{ fontWeight: 600, minWidth: 120, color: 'white' }}>
+              {t('table.time')}
+            </TableCell>
             {sortedRooms.map(room => (
-              <TableCell key={room.id} align="center" sx={{ fontWeight: 600, minWidth: 200 }}>
+              <TableCell
+                key={room.id}
+                align="center"
+                sx={{ fontWeight: 600, minWidth: 200, color: 'white' }}
+              >
                 {t('table.room', { name: room.name })}
               </TableCell>
             ))}
@@ -158,75 +132,13 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               </TableCell>
               {sortedRooms.map(room => {
                 const session = currentSessions.find(s => s.room.id === room.id);
-                const team = session?.team;
-
                 return (
-                  <TableCell key={room.id} align="center" sx={{ verticalAlign: 'top', py: 2 }}>
-                    {session && team ? (
-                      <Stack spacing={1} alignItems="center">
-                        <Box sx={{ minWidth: 180 }}>
-                          <TeamInfo team={team} size="sm" textAlign="center" />
-                        </Box>
-
-                        <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-                          <Chip
-                            icon={getStatusIcon(session.status, session.called)}
-                            label={t(`status.${session.status}`)}
-                            color={getStatusColor(session.status)}
-                            size="small"
-                            sx={{ fontWeight: 600 }}
-                          />
-                          {!team.arrived && (
-                            <Chip
-                              icon={<WarningAmberRoundedIcon />}
-                              label={t('not-arrived')}
-                              color="warning"
-                              size="small"
-                              variant="outlined"
-                            />
-                          )}
-                        </Stack>
-
-                        {session.startTime && session.startDelta !== undefined && (
-                          <Typography variant="caption" color="text.secondary">
-                            {t('table.started-at', {
-                              time: currentTime
-                                .hour(dayjs(session.startTime).hour())
-                                .minute(dayjs(session.startTime).minute())
-                                .format('HH:mm')
-                            })}
-                            {session.startDelta !== 0 && (
-                              <Typography
-                                component="span"
-                                variant="caption"
-                                color={session.startDelta > 0 ? 'error' : 'success.main'}
-                                sx={{ ml: 0.5 }}
-                              >
-                                ({session.startDelta > 0 ? '+' : ''}
-                                {Math.round(session.startDelta / 1000)}s)
-                              </Typography>
-                            )}
-                          </Typography>
-                        )}
-
-                        {session.status === 'in-progress' && session.startTime && (
-                          <Typography variant="caption" color="text.secondary">
-                            {t('table.ends-at', {
-                              time: currentTime
-                                .hour(dayjs(session.startTime).hour())
-                                .minute(dayjs(session.startTime).minute())
-                                .add(sessionLength, 'seconds')
-                                .format('HH:mm')
-                            })}
-                          </Typography>
-                        )}
-                      </Stack>
-                    ) : (
-                      <Typography variant="body2" color="text.disabled">
-                        —
-                      </Typography>
-                    )}
-                  </TableCell>
+                  <SessionRow
+                    key={room.id}
+                    session={session!}
+                    currentTime={currentTime}
+                    sessionLength={sessionLength}
+                  />
                 );
               })}
             </TableRow>
@@ -253,44 +165,7 @@ export const JudgingStatusTable: React.FC<JudgingStatusTableProps> = ({
               </TableCell>
               {sortedRooms.map(room => {
                 const session = nextSessions.find(s => s.room.id === room.id);
-                const team = session?.team;
-
-                return (
-                  <TableCell key={room.id} align="center" sx={{ verticalAlign: 'top', py: 2 }}>
-                    {session && team ? (
-                      <Stack spacing={1} alignItems="center">
-                        <Box sx={{ minWidth: 180 }}>
-                          <TeamInfo team={team} size="sm" textAlign="center" />
-                        </Box>
-
-                        <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-                          {session.called && (
-                            <Chip
-                              icon={<PeopleAltRoundedIcon fontSize="small" />}
-                              label={t('status.queued')}
-                              color="warning"
-                              size="small"
-                              sx={{ fontWeight: 600 }}
-                            />
-                          )}
-                          {!team.arrived && (
-                            <Chip
-                              icon={<WarningAmberRoundedIcon />}
-                              label={t('not-arrived')}
-                              color="warning"
-                              size="small"
-                              variant="outlined"
-                            />
-                          )}
-                        </Stack>
-                      </Stack>
-                    ) : (
-                      <Typography variant="body2" color="text.disabled">
-                        —
-                      </Typography>
-                    )}
-                  </TableCell>
-                );
+                return <NextSessionRow key={room.id} session={session} />;
               })}
             </TableRow>
           )}

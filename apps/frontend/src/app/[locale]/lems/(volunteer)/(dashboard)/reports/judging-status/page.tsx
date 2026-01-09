@@ -3,12 +3,12 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box } from '@mui/material';
-import dayjs from 'dayjs';
 import { ResponsiveComponent } from '@lems/shared';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useEvent } from '../../../components/event-context';
 import { PageHeader } from '../../components/page-header';
 import { usePageData } from '../../../hooks/use-page-data';
+import { CountdownHeader } from './components/countdown-header';
 import {
   GET_JUDGING_STATUS,
   parseJudgingStatus,
@@ -50,17 +50,19 @@ export default function JudgingStatusPage() {
     sessionLength
   } = parseJudgingStatus(data ?? {});
 
-  // Use time hook with test date for development
-  const currentTime = useTime({ interval: 60000 });
-  const testTime = dayjs().year(2025).month(11).date(29).hour(9).minute(10).second(0); // Note: month is 0-indexed
-  const effectiveCurrentTime = testTime; // Use test time for development
-  console.log('Test time set to:', effectiveCurrentTime.format('YYYY-MM-DD HH:mm:ss'));
+  const currentTime = useTime({ interval: 1000 });
 
   return (
     <>
       <PageHeader title={t('page-title')} />
 
-      <Box sx={{ py: 3 }}>
+      <CountdownHeader
+        currentSessions={currentSessions}
+        sessionLength={sessionLength}
+        currentTime={currentTime}
+      />
+
+      <Box sx={{ py: 1 }}>
         <ResponsiveComponent
           mobile={
             <JudgingStatusMobile
@@ -69,7 +71,7 @@ export default function JudgingStatusPage() {
               rooms={rooms}
               sessionLength={sessionLength}
               loading={loading}
-              currentTime={effectiveCurrentTime}
+              currentTime={currentTime}
             />
           }
           desktop={
@@ -79,7 +81,7 @@ export default function JudgingStatusPage() {
               rooms={rooms}
               sessionLength={sessionLength}
               loading={loading}
-              currentTime={effectiveCurrentTime}
+              currentTime={currentTime}
             />
           }
         />
