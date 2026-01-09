@@ -2,9 +2,10 @@ import {
   RobotGameMatchWithParticipants as DbRobotGameMatch,
   RobotGameTable as DbRobotGameTable,
   JudgingSession as DbJudgingSession,
-  JudgingRoom as DbJudgingRoom
+  JudgingRoom as DbJudgingRoom,
+  AgendaEvent as DbAgendaEvent
 } from '@lems/database';
-import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,
@@ -52,5 +53,15 @@ export const makePortalTeamRobotGameMatchResponse = (
     stage: match.stage,
     scheduledTime: match.scheduled_time,
     table: { id: table.id, name: table.name }
+  };
+};
+
+export const makeAgendaResponse = (agendaItem: DbAgendaEvent): AgendaEvent => {
+  return {
+    id: agendaItem.id,
+    title: agendaItem.title,
+    startTime: agendaItem.start_time,
+    duration: agendaItem.duration,
+    divisionId: agendaItem.division_id
   };
 };
