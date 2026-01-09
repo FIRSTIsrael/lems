@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
 import { RobotGameMatchState } from '@lems/database';
+import { MATCH_LOAD_THRESHOLD } from '@lems/shared/consts';
 import db from '../../../../database';
 
-const AUTO_LOAD_THRESHOLD_MINUTES = 15;
 
 /**
  * Finds the next unstarted match in the current stage that should be auto-loaded
@@ -27,7 +27,7 @@ export async function getAutoLoadMatch(divisionId: string, currentStage: string)
       const scheduledTime = dayjs(candidateMatch.scheduled_time);
       const minutesUntilStart = scheduledTime.diff(dayjs(), 'minute', true);
 
-      if (minutesUntilStart <= AUTO_LOAD_THRESHOLD_MINUTES) {
+      if (minutesUntilStart <= MATCH_LOAD_THRESHOLD) {
         return candidateMatch.id;
       }
     }
