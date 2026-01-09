@@ -30,6 +30,12 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         setSuccessMessage('');
         return;
       }
+      const maxSize = 10 * 1024 * 1024; // 10 MB
+      if (file.size > maxSize) {
+        setErrorMessage('File size must not exceed 10 MB');
+        setSuccessMessage('');
+        return;
+      }
       setSelectedFile(file);
       setErrorMessage('');
     } else {
@@ -71,7 +77,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
             accept="image/jpeg,image/jpg,image/png"
             selectedFile={selectedFile}
             setSelectedFile={handleFileChange}
-            description="JPG, JPEG, or PNG format"
+            description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
             disabled={uploading}
           />
         </Box>

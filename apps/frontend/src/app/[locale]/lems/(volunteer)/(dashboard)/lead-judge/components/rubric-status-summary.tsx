@@ -19,6 +19,7 @@ import { useLeadJudge } from './lead-judge-context';
 import { getRubricStatusStats } from './utils';
 import { SessionFilters } from './session-filters';
 import { LeadJudgeDeliberationCard } from './lead-judge-deliberation-card';
+import { RubricStatusGlossary } from './rubric-status-glossary';
 
 interface RubricStatusSummaryProps {
   teamFilter: string;
@@ -73,6 +74,9 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
         flexDirection: 'column'
       }}
     >
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', mb: 1 }}>
+        <RubricStatusGlossary />
+      </Box>
       <Box
         sx={{
           flex: 1,

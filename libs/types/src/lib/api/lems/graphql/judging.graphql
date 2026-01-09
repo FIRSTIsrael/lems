@@ -74,7 +74,7 @@ type Judging {
   ): [Rubric!]!
 
   "Awards available for this division"
-  awards: [Award!]!
+  awards("Whether teams can be nominated for awards" allowNominations: Boolean): [Award!]!
 }
 
 extend type Division {

@@ -21,6 +21,8 @@ import { Block as BlockIcon } from '@mui/icons-material';
 import { Room, ScheduleRow } from '../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
+const JUDGING_SESSION_LENGTH = 15 * 60;
+
 interface ScheduleTableProps {
   rooms: Room[];
   rows: ScheduleRow[];
@@ -35,7 +37,13 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
   const t = useTranslations('pages.reports.judging-schedule');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  // Use time hook with test date for development
   const currentTime = useTime({ interval: 60000 });
+  const testTime = dayjs().year(2025).month(11).date(29).hour(8).minute(0).second(0);
+  const effectiveCurrentTime = testTime; // Use test time for development
+
+  console.log('Current time hook:', currentTime.format());
 
   const roomCount = rooms.length;
 
@@ -52,9 +60,14 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
         >
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
-              <TableCell width={100} align="center">
+              <TableCell width={80} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                  {t('table.time')}
+                  {t('table.start-time')}
+                </Typography>
+              </TableCell>
+              <TableCell width={80} align="center">
+                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  {t('table.end-time')}
                 </Typography>
               </TableCell>
               {rooms.map(room => (
@@ -73,7 +86,8 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                 const visibilityColor = VISIBILITY_COLORS[event.visibility] || '#9E9E9E';
                 const startTime = dayjs(row.time);
                 const endTime = startTime.add(event.duration, 'second');
-                const isActive = currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
+                const isActive =
+                  effectiveCurrentTime.isAfter(startTime) && effectiveCurrentTime.isBefore(endTime);
 
                 return (
                   <TableRow
@@ -90,6 +104,15 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                         fontSize={isMobile ? '0.75rem' : '1rem'}
                       >
                         {dayjs(row.time).format('HH:mm')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      <Typography
+                        fontFamily="monospace"
+                        fontWeight={500}
+                        fontSize={isMobile ? '0.75rem' : '1rem'}
+                      >
+                        {endTime.format('HH:mm')}
                       </Typography>
                     </TableCell>
                     <TableCell colSpan={roomCount} align="center">
@@ -123,16 +146,39 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                 );
               }
 
-              // Session row
+              const sessionTime = dayjs(row.time);
+              const sessionEndTime = sessionTime.add(JUDGING_SESSION_LENGTH, 'seconds');
+
+              const allSessionsCompleted =
+                row.rooms?.every(room => {
+                  // Find the session for this room and time from the original sessions data
+                  // This is a simplified check - in practice you'd need access to session status
+                  return room.team; // For now, assume sessions with teams might be completed
+                }) || false;
+
               return (
-                <TableRow key={`session-${index}`} sx={{ bgcolor: 'white' }}>
+                <TableRow
+                  key={`session-${index}`}
+                  sx={{
+                    bgcolor: allSessionsCompleted ? 'grey.100' : 'white'
+                  }}
+                >
                   <TableCell align="center">
                     <Typography
                       fontFamily="monospace"
                       fontWeight={500}
                       fontSize={isMobile ? '0.75rem' : '1rem'}
                     >
-                      {dayjs(row.time).format('HH:mm')}
+                      {sessionTime.format('HH:mm')}
+                    </Typography>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Typography
+                      fontFamily="monospace"
+                      fontWeight={500}
+                      fontSize={isMobile ? '0.75rem' : '1rem'}
+                    >
+                      {sessionEndTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   {row.rooms?.map(room => (

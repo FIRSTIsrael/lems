@@ -57,6 +57,14 @@ export const VisibilitySection: React.FC<VisibilitySectionProps> = ({ value, onC
           description={t('description-judging')}
           onChange={onChange}
         />
+
+        <VisibilityOption
+          value="teams"
+          isSelected={value === 'teams'}
+          label={t('teams')}
+          description={t('description-teams')}
+          onChange={onChange}
+        />
       </RadioGroup>
     </FormControl>
   );

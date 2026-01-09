@@ -68,6 +68,16 @@ export const TeamRobotGameMatchSchema = z.object({
 
 export type TeamRobotGameMatch = z.infer<typeof TeamRobotGameMatchSchema>;
 
+export const AgendaEventSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  startTime: z.coerce.date(),
+  duration: z.number(),
+  divisionId: z.string()
+});
+
+export type AgendaEvent = z.infer<typeof AgendaEventSchema>;
+
 export const TeamJudgingSessionSchema = z.object({
   id: z.string(),
   number: z.number(),

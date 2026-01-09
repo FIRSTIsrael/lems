@@ -376,11 +376,13 @@
         },
         "registration-button": {
           "title": "Register Teams",
+          "csv-title": "Register Teams from CSV",
           "alert": "This event already has a schedule set. Team registration can no longer be modified."
         },
         "registration-dialog": {
           "title": "Register Teams {divisions, plural, =1 {} other {to Divisions}}",
           "division": "Division",
+          "random": "Random",
           "available-teams": "Available Teams",
           "no-available-teams": "No available teams",
           "registered-teams": "Teams to Register ({count})",
@@ -389,6 +391,45 @@
             "cancel": "Cancel"
           },
           "no-teams-selected": "No teams selected"
+        },
+        "register-from-csv-dialog": {
+          "title": "Register Teams from CSV",
+          "actions": {
+            "cancel": "Cancel"
+          },
+          "form": {
+            "instructions": {
+              "title": "CSV File Requirements",
+              "description": "Upload a CSV file containing team numbers to register. The file will be processed and teams will be registered accordingly.",
+              "csv-format": "Required CSV Format:",
+              "requirements": {
+                "header": "The file should not contain a header row",
+                "columns": "Only one column is required: team number",
+                "encoding": "File must be saved with UTF-8 encoding"
+              },
+              "example": "Example CSV content:"
+            },
+            "fields": {
+              "file": {
+                "label": "CSV File",
+                "description": "Select a CSV file with team numbers",
+                "placeholder": "Choose CSV file"
+              }
+            },
+            "errors": {
+              "invalid-file": "Invalid file format. Please upload a valid CSV file.",
+              "upload-error": "An error occurred while uploading the file. Please try again."
+            },
+            "upload": "Register Teams",
+            "uploading": "Registering teams..."
+          },
+          "success": {
+            "title": "Teams registered successfully!",
+            "registered": "{count, plural, =1 {1 team registered:} other {# teams registered:}}",
+            "skipped": "{count, plural, =1 {1 team skipped:} other {# teams skipped:}}",
+            "and-more": "...and {count} more",
+            "close": "Close"
+          }
         },
         "remove-dialog": {
           "title": "Remove Team",
@@ -409,6 +450,9 @@
           },
           "search": {
             "placeholder": "Search teams by number, name, affiliation, city, or division..."
+          },
+          "menu": {
+            "selectDivision": "Select Division"
           }
         },
         "split": {
@@ -670,6 +714,8 @@
             "description-judging": "Visible on the internal judging schedule",
             "field": "Field",
             "description-field": "Visible on the internal field schedule",
+            "teams": "Teams",
+            "description-teams": "Visible on team schedules in the team portal",
             "generating": "Generating...",
             "generate-button": "Generate Agenda",
             "generate": {
