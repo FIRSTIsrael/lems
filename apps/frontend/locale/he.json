@@ -603,9 +603,10 @@
         "escalated-only": "הועברו בלבד",
         "status-label": "סטטוס"
       },
+      "scoresheet-round": "סבב {stage} #{round}",
       "scoresheet-status": {
         "empty": "ריק",
-        "in-progress": "בתהליך",
+        "draft": "בתהליך",
         "completed": "הושלם",
         "gp": "ממתין ל-GP",
         "submitted": "נשלח"
@@ -621,7 +622,7 @@
           "label": "ריק",
           "description": "לא הוזן מידע בדף הניקוד"
         },
-        "in-progress": {
+        "draft": {
           "label": "בתהליך",
           "description": "דף הניקוד בתהליך מילוי"
         },
@@ -644,7 +645,9 @@
       },
       "table": {
         "match": "מקצה",
-        "scheduled-time": "שעה"
+        "scheduled-time": "שעה",
+        "participant-ready": "מוכן",
+        "participant-not-ready": "לא מוכן"
       }
     },
     "audience-display": {

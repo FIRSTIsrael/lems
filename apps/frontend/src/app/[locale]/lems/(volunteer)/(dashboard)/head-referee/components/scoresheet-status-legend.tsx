@@ -9,7 +9,7 @@ import { getScoresheetStatusIcon } from './scoresheet-status-button';
 
 const STATUS_ITEMS: Array<ScoresheetStatus | 'escalated'> = [
   'empty',
-  'in-progress',
+  'draft',
   'completed',
   'gp',
   'submitted',
@@ -20,7 +20,7 @@ export function ScoresheetStatusLegend() {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
   const direction = theme.direction;
-  
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -28,7 +28,7 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
 
 /**
  * Creates a subscription configuration for match completed events.
- * Updates the match status when a match is completed.
+ * Updates the match status when a match is completed and clears the loaded match.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook
@@ -42,10 +42,12 @@ export function createMatchCompletedSubscription(divisionId: string) {
 
       const completedData = (data as MatchCompletedSubscriptionData).matchCompleted;
       const completedMatchId = completedData.matchId;
+      const autoLoadedMatchId = completedData.autoLoadedMatchId;
 
       return merge(prev, {
         division: {
           field: {
+            loadedMatch: autoLoadedMatchId || null,
             matches: updateById(prev.division.field.matches, completedMatchId, match => ({
               ...match,
               status: 'completed'
