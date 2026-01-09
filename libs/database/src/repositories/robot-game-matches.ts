@@ -277,41 +277,61 @@ export class RobotGameMatchesRepository {
     return result;
   }
 
-  async swapTeams(teamId1: string, teamId2: string): Promise<void> {
-    const team1Participants = await this.db
-      .selectFrom('robot_game_match_participants')
-      .selectAll()
-      .where('team_id', '=', teamId1)
-      .execute();
+  async swapTeams(teamId1: string, teamId2: string, divisionId: string): Promise<void> {
+    await this.db.transaction().execute(async trx => {
+      // Get participants for both teams only in the specified division
+      const team1Participants = await trx
+        .selectFrom('robot_game_match_participants')
+        .selectAll()
+        .where('team_id', '=', teamId1)
+        .where('match_id', 'in', (eb) =>
+          eb
+            .selectFrom('robot_game_matches')
+            .select('id')
+            .where('division_id', '=', divisionId)
+        )
+        .execute();
 
-    const team2Participants = await this.db
-      .selectFrom('robot_game_match_participants')
-      .selectAll()
-      .where('team_id', '=', teamId2)
-      .execute();
+      const team2Participants = await trx
+        .selectFrom('robot_game_match_participants')
+        .selectAll()
+        .where('team_id', '=', teamId2)
+        .where('match_id', 'in', (eb) =>
+          eb
+            .selectFrom('robot_game_matches')
+            .select('id')
+            .where('division_id', '=', divisionId)
+        )
+        .execute();
 
-    const updates = [];
+      const team1Pks = team1Participants.map(p => p.pk);
 
-    for (const participant of team1Participants) {
-      updates.push(
-        this.db
+      // Step 1: Set team1 participants to NULL to avoid constraint violation
+      if (team1Pks.length > 0) {
+        await trx
           .updateTable('robot_game_match_participants')
-          .set({ team_id: teamId2 })
-          .where('pk', '=', participant.pk)
-          .execute()
-      );
-    }
+          .set({ team_id: null })
+          .where('pk', 'in', team1Pks)
+          .execute();
+      }
 
-    for (const participant of team2Participants) {
-      updates.push(
-        this.db
+      // Step 2: Set team2 participants to team1
+      for (const participant of team2Participants) {
+        await trx
           .updateTable('robot_game_match_participants')
           .set({ team_id: teamId1 })
           .where('pk', '=', participant.pk)
-          .execute()
-      );
-    }
+          .execute();
+      }
 
-    await Promise.all(updates);
+      // Step 3: Set the NULL participants (from step 1) to team2
+      if (team1Pks.length > 0) {
+        await trx
+          .updateTable('robot_game_match_participants')
+          .set({ team_id: teamId2 })
+          .where('pk', 'in', team1Pks)
+          .execute();
+      }
+    });
   }
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react';
-import { useTimerSounds } from './use-timer-sounds';
+import { useTimerSounds } from '@lems/shared';
 
 const MATCH_TIME = 150; // Default match time in seconds (2.5 minutes)
 
@@ -52,7 +52,7 @@ const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
 };
 
 export const useFieldTimer = (): [FieldTimerState, FieldTimerControls] => {
-  const playSound = useTimerSounds();
+  const { playSound } = useTimerSounds();
 
   const [state, dispatch] = useReducer(timerReducer, {
     timeRemaining: MATCH_TIME,

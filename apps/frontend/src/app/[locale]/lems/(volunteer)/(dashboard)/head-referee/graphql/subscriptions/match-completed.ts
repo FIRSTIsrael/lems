@@ -6,7 +6,6 @@ import type { HeadRefereeData } from '../types';
 export interface MatchCompletedSubscriptionData {
   matchCompleted: {
     matchId: string;
-    autoLoadedMatchId?: string;
   };
 }
 
@@ -21,7 +20,6 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      autoLoadedMatchId
     }
   }
 `;
@@ -42,12 +40,10 @@ export function createMatchCompletedSubscription(divisionId: string) {
 
       const completedData = (data as MatchCompletedSubscriptionData).matchCompleted;
       const completedMatchId = completedData.matchId;
-      const autoLoadedMatchId = completedData.autoLoadedMatchId;
 
       return merge(prev, {
         division: {
           field: {
-            loadedMatch: autoLoadedMatchId || null,
             matches: updateById(prev.division.field.matches, completedMatchId, match => ({
               ...match,
               status: 'completed'

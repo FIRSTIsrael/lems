@@ -13,7 +13,11 @@ export const ScoresheetIncompleteAlert: React.FC<ScoresheetIncompleteAlertProps>
 }) => {
   const t = useTranslations('layouts.scoresheet');
 
-  if (validation.isComplete) {
+  const hasMissionErrors = Array.from(validation.missionErrors.values()).some(
+    m => !m.isComplete || m.errors.length > 0
+  );
+
+  if (!hasMissionErrors || validation.isComplete) {
     return null;
   }
 

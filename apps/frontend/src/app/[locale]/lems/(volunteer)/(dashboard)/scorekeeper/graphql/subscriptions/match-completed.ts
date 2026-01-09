@@ -5,7 +5,6 @@ import type { MatchStatus, ScorekeeperData } from '../types';
 
 interface MatchCompletedEvent {
   matchId: string;
-  autoLoadedMatchId?: string;
 }
 
 interface MatchCompletedSubscriptionData {
@@ -23,7 +22,6 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      autoLoadedMatchId
     }
   }
 `;
@@ -37,21 +35,14 @@ export function createMatchCompletedSubscription(divisionId: string) {
       const completedData = (data as MatchCompletedSubscriptionData).matchCompleted;
       const completedMatchId = completedData.matchId;
 
-      const updates: Partial<ScorekeeperData['division']['field']> = {
-        activeMatch: null,
-        matches: prev.division.field.matches.map(match =>
-          match.id === completedMatchId ? { ...match, status: 'completed' as MatchStatus } : match
-        )
-      };
-
-      // Only update loadedMatch if autoLoadedMatchId was provided
-      if (completedData.autoLoadedMatchId) {
-        updates.loadedMatch = completedData.autoLoadedMatchId;
-      }
-
       return merge(prev, {
         division: {
-          field: updates
+          field: {
+            activeMatch: null,
+            matches: prev.division.field.matches.map(match =>
+              match.id === completedMatchId ? { ...match, status: 'completed' as MatchStatus } : match
+            )
+          }
         }
       });
     }

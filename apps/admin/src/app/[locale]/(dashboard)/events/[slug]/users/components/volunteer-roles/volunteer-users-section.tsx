@@ -52,7 +52,7 @@ export function VolunteerUsersSection() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3}>
+      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3} sx={{ flexWrap: 'wrap', gap: 2 }}>
         <Box>
           <Typography variant="h5" gutterBottom>
             {t('title')}
@@ -62,7 +62,7 @@ export function VolunteerUsersSection() {
           </Typography>
         </Box>
 
-        <Stack direction={{ sm: 'column', lg: 'row' }} spacing={2}>
+        <Stack direction={{ xs: 'column', sm: 'column', lg: 'row' }} spacing={2} sx={{ minWidth: 0 }}>
           <Tooltip
             title={isNew ? t('status.new-users-tooltip') : t('status.existing-users-tooltip')}
             arrow
@@ -73,6 +73,7 @@ export function VolunteerUsersSection() {
               color={isNew ? 'info' : 'success'}
               variant="outlined"
               size="small"
+              sx={{ width: 'fit-content' }}
             />
           </Tooltip>
 
@@ -82,7 +83,7 @@ export function VolunteerUsersSection() {
             onClick={handleDownloadPasswords}
             size="large"
             disabled={isNew || saving}
-            sx={{ flexShrink: 0 }}
+            sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
           >
             {t('download-passwords')}
           </Button>
@@ -93,7 +94,7 @@ export function VolunteerUsersSection() {
             onClick={onSave}
             disabled={validationErrors.length > 0 || saving}
             size="large"
-            sx={{ flexShrink: 0 }}
+            sx={{ flexShrink: 0, whiteSpace: 'nowrap' }}
           >
             {saving ? t('saving') : t('save-slots')}
           </Button>
