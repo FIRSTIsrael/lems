@@ -39,18 +39,32 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
 
   const hasMultipleDivisions = divisions.length > 1;
 
-  const [selectedDivision, setSelectedDivision] = useState<Division | null>(
-    divisions.filter(division => !division.hasSchedule)[0] || null
-  );
+  const availableDivisions = divisions.filter(division => !division.hasSchedule);
+  const [selectedDivisionId, setSelectedDivisionId] = useState<string>('random');
   const [availableTeams, setAvailableTeams] = useState<Team[]>(teams);
   const [registeredTeams, setRegisteredTeams] = useState<TeamWithDivision[]>([]);
+  const [nextDivisionIndex, setNextDivisionIndex] = useState(0);
+
+  const selectedDivision =
+    selectedDivisionId === 'random'
+      ? null
+      : divisions.find(division => division.id === selectedDivisionId) || null;
 
   const handleAddTeam = (team: Team) => {
-    if (!selectedDivision) return;
+    let division: Division;
+
+    if (selectedDivisionId === 'random') {
+      if (availableDivisions.length === 0) return;
+      division = availableDivisions[nextDivisionIndex % availableDivisions.length];
+      setNextDivisionIndex(prev => prev + 1);
+    } else {
+      if (!selectedDivision) return;
+      division = selectedDivision;
+    }
 
     const newRegisteredTeam: TeamWithDivision = {
       ...team,
-      division: { ...selectedDivision }
+      division: { ...division }
     };
 
     setRegisteredTeams(prev => [...prev, newRegisteredTeam]);
@@ -76,14 +90,15 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
             <FormControl fullWidth>
               <InputLabel>{t('division')}</InputLabel>
               <Select
-                value={selectedDivision?.id || null}
+                value={selectedDivisionId}
                 label={t('division')}
-                onChange={e =>
-                  setSelectedDivision(
-                    divisions.find(division => division.id === e.target.value) || null
-                  )
-                }
+                onChange={e => setSelectedDivisionId(e.target.value)}
               >
+                <MenuItem value="random" key="random">
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {t('random')}
+                  </Box>
+                </MenuItem>
                 {divisions.map(division => (
                   <MenuItem key={division.id} value={division.id} disabled={division.hasSchedule}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>

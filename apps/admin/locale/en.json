@@ -381,6 +381,7 @@
         "registration-dialog": {
           "title": "Register Teams {divisions, plural, =1 {} other {to Divisions}}",
           "division": "Division",
+          "random": "Random",
           "available-teams": "Available Teams",
           "no-available-teams": "No available teams",
           "registered-teams": "Teams to Register ({count})",

@@ -381,6 +381,7 @@
         "registration-dialog": {
           "title": "רישום קבוצות {divisions, plural, =1 {} other {לבתים}}",
           "division": "בית",
+          "random": "רנדומלי",
           "available-teams": "קבוצות שנותרו",
           "no-available-teams": "לא נותרו קבוצות",
           "registered-teams": "קבוצות לרישום ({count})",
