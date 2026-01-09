@@ -22,6 +22,7 @@ interface TeamStatusLegendProps {
 export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchorEl, onClose }) => {
   const t = useTranslations('pages.scorekeeper.next-match');
   const theme = useTheme();
+  const direction = theme.direction;
 
   return (
     <Popover
@@ -30,11 +31,11 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
       onClose={onClose}
       anchorOrigin={{
         vertical: 'bottom',
-        horizontal: 'right'
+        horizontal: direction === 'rtl' ? 'left' : 'right'
       }}
       transformOrigin={{
         vertical: 'top',
-        horizontal: 'right'
+        horizontal: direction === 'rtl' ? 'left' : 'right'
       }}
       slotProps={{
         paper: {
@@ -54,8 +55,8 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
       <Box
         sx={{
           position: 'absolute',
-          top: -8,
-          right: 12,
+          bottom: '100%',
+          right: 9,
           width: 0,
           height: 0,
           borderLeft: '8px solid transparent',
@@ -66,8 +67,8 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
       <Box
         sx={{
           position: 'absolute',
-          top: -7,
-          right: 12,
+          bottom: 'calc(100% - 1px)',
+          right: 9,
           width: 0,
           height: 0,
           borderLeft: '8px solid transparent',

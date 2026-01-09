@@ -12,6 +12,7 @@ const STATUS_ITEMS: RubricStatus[] = ['empty', 'draft', 'completed', 'locked', '
 export const RubricStatusGlossary: React.FC = () => {
   const t = useTranslations('pages.judge.schedule.status-glossary');
   const theme = useTheme();
+  const direction = theme.direction;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -49,11 +50,11 @@ export const RubricStatusGlossary: React.FC = () => {
         onClose={handleClose}
         anchorOrigin={{
           vertical: 'bottom',
-          horizontal: 'right'
+          horizontal: direction === 'rtl' ? 'left' : 'right'
         }}
         transformOrigin={{
           vertical: 'top',
-          horizontal: 'right'
+          horizontal: direction === 'rtl' ? 'left' : 'right'
         }}
         slotProps={{
           paper: {
@@ -72,8 +73,8 @@ export const RubricStatusGlossary: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: -8,
-            right: 12,
+            bottom: '100%',
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
@@ -84,8 +85,8 @@ export const RubricStatusGlossary: React.FC = () => {
         <Box
           sx={{
             position: 'absolute',
-            top: -7,
-            right: 12,
+            bottom: 'calc(100% - 1px)',
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
