@@ -7,7 +7,7 @@ export interface VolunteerSlot {
 }
 
 /** Roles that are managed by the system and cannot be edited manually (always required) */
-export const SYSTEM_MANAGED_ROLES = ['referee', 'judge'] as const;
+export const SYSTEM_MANAGED_ROLES = ['referee', 'judge', 'audience-display'] as const;
 export type SystemManagedRole = (typeof SYSTEM_MANAGED_ROLES)[number];
 
 /** System-managed roles that can be toggled on/off */
@@ -23,7 +23,6 @@ export const EDITABLE_MANDATORY_ROLES = [
   'judge-advisor',
   'head-referee',
   'scorekeeper',
-  'audience-display',
   'tournament-manager',
   'pit-admin'
 ] as const;
