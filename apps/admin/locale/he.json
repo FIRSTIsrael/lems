@@ -409,6 +409,9 @@
           },
           "search": {
             "placeholder": "חפש קבוצות לפי מספר, שם, שיוך, עיר או בית..."
+          },
+          "menu": {
+            "selectDivision": "בחר בית"
           }
         },
         "split": {
