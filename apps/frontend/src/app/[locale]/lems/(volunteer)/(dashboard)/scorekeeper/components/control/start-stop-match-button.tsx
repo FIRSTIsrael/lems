@@ -14,6 +14,7 @@ import {
 import { PlayArrowRounded, StopRounded } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { useMutation } from '@apollo/client/react';
+import { MATCH_START_THRESHOLD } from '@lems/shared/consts';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { ABORT_MATCH_MUTATION, START_MATCH_MUTATION } from '../../graphql';
@@ -47,7 +48,7 @@ export const StartStopMatchButton = () => {
     ? dayjs(loadedMatch.scheduledTime).diff(currentTime, 'minute', true)
     : Infinity;
 
-  const canStart = hasLoadedMatch && !hasActiveMatch && minutesUntilStart <= 5;
+  const canStart = hasLoadedMatch && !hasActiveMatch && minutesUntilStart <= MATCH_START_THRESHOLD;
 
   const handleAbortClick = () => {
     setAbortDialogOpen(true);
