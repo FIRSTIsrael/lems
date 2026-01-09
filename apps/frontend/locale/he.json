@@ -172,7 +172,8 @@
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
-        "field-timer": "שעון זמן מגרש"
+        "field-timer": "שעון זמן מגרש",
+        "judging-status": "מצב השיפוט"
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -256,7 +257,9 @@
         "arrived": "הגיעה",
         "not-arrived": "לא הגיעה",
         "table": {
-          "time": "שעה"
+          "time": "שעה",
+          "start-time": "התחלה",
+          "end-time": "סיום"
         },
         "visibility": {
           "public": "כללי",
@@ -500,6 +503,31 @@
       "break-message": "זה זמן טוב לשתות מים ולהתרענן",
       "no-show-title": "הקבוצה לא הגיעה",
       "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
+    },
+    "judging-status": {
+      "page-title": "מצב השיפוט",
+      "table": {
+        "time": "שעה",
+        "room": "חדר {name}",
+        "current-round": "סבב נוכחי",
+        "next-round": "סבב הבא",
+        "started-at": "התחיל בשעה {time}",
+        "ends-at": "מסתיים בשעה {time}"
+      },
+      "status": {
+        "not-started": "לא התחיל",
+        "in-progress": "בתהליך",
+        "completed": "הושלם",
+        "queued": "בתור"
+      },
+      "warnings": {
+        "on-field": "הקבוצה נמצאת בזירה!"
+      },
+      "not-arrived": "לא הגיעה",
+      "empty-state": {
+        "message": "אין סבבי שיפוט מתוכננים כרגע",
+        "no-team": "אין קבוצה משובצת"
+      }
     },
     "scorekeeper": {
       "page-title": "סקורקיפר",

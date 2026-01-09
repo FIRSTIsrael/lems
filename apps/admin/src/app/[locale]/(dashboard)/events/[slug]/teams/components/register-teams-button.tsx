@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Button, Box } from '@mui/material';
+import { Button } from '@mui/material';
 import { Event, Division } from '@lems/types/api/admin';
 import { RegisterTeamsDialog } from './register-teams-dialog';
 
@@ -19,12 +19,17 @@ export const RegisterTeamsButton: React.FC<RegisterTeamsButtonProps> = ({ event,
   const disabled = divisions.length > 0 && divisionsWithSchedule.length === divisions.length;
 
   return (
-    <Box sx={{ mt: 2 }}>
-      <Button variant="contained" size="large" onClick={() => setModalOpen(true)} sx={{ mb: 3 }} disabled={disabled}>
+    <>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => setModalOpen(true)}
+        disabled={disabled}
+      >
         {t('title')}
       </Button>
 
       <RegisterTeamsDialog open={modalOpen} onClose={() => setModalOpen(false)} event={event} />
-    </Box>
+    </>
   );
 };

@@ -10,6 +10,7 @@ import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';
 import { RegisterTeamsButton } from './components/register-teams-button';
+import { RegisterTeamsFromCSVButton } from './components/register-teams-from-csv-button';
 import { ScheduleExists } from './components/schedule-exists';
 
 export default function EventTeamsPage() {
@@ -46,7 +47,10 @@ export default function EventTeamsPage() {
           </Stack>
         </EventPageTitle>
 
-        <RegisterTeamsButton event={event} divisions={divisions} />
+        <Stack direction="row" spacing={2} sx={{ mb: 3 }}>
+          <RegisterTeamsButton event={event} divisions={divisions} />
+          <RegisterTeamsFromCSVButton event={event} divisions={divisions} />
+        </Stack>
 
         <ScheduleExists divisions={divisions} />
 

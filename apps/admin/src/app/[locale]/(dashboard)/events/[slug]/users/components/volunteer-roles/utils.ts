@@ -13,6 +13,9 @@ export const transformVolunteerUsersToSlots = (
   for (const volunteer of volunteers) {
     if (volunteer.role === 'lead-judge') {
       toggledSystemRoles.add('lead-judge');
+    } else if (SYSTEM_MANAGED_ROLES.includes(volunteer.role as SystemManagedRole)) {
+      // System-managed roles (judge, referee, audience-display) - skip
+      continue;
     } else {
       slots.push({
         id: volunteer.id,
@@ -60,6 +63,16 @@ export const transformVolunteerSlotsToUsers = (
         });
       }
     }
+  }
+
+  // Auto-generate audience-display (always enabled, 1 per division)
+  for (const division of divisions) {
+    users.push({
+      role: 'audience-display',
+      divisions: [division.id],
+      identifier: null,
+      roleInfo: null
+    });
   }
 
   return users;
