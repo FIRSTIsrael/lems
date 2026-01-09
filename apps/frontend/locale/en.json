@@ -372,6 +372,32 @@
         "sort": {
           "room": "Sort by Room",
           "session": "Sort by Session"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "draft": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "approved": {
+              "label": "Approved",
+              "description": "Rubric has been completed and submitted"
+            },
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
       },
       "team-info-cell": {

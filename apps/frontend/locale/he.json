@@ -372,6 +372,32 @@
         "sort": {
           "room": "מיין לפי חדר",
           "session": "מיין לפי סבב"
+        },
+        "status-glossary": {
+          "title": "מדריך סטטוס מחוונים",
+          "aria-label": "הצג מדריך סטטוס מחוונים",
+          "statuses": {
+            "empty": {
+              "label": "לא התחיל",
+              "description": "המחוון טרם מולא"
+            },
+            "draft": {
+              "label": "בתהליך",
+              "description": "המחוון ממולא כעת"
+            },
+            "approved": {
+              "label": "אושר",
+              "description": "המחוון הושלם ונשלח"
+            },
+            "locked": {
+              "label": "נעול",
+              "description": "המחוון נעול ולא ניתן לעריכה"
+            },
+            "completed": {
+              "label": "מאושר",
+              "description": "המחוון נבדק ואושר"
+            }
+          }
         }
       },
       "team-info-cell": {
