@@ -7,6 +7,7 @@ import { requirePermission } from '../middleware/require-permission';
 import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });
+const FILE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 
 router.get('/', async (req: AdminRequest, res) => {
   let teams = await db.teams.getAllWithActiveStatus();
@@ -102,6 +103,12 @@ router.put(
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
           return;
         }
+        if (
+          logoFile.size > FILE_SIZE_LIMIT
+        ) {
+          res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
+          return;
+        }
 
         try {
           team = await db.teams.byId(team.id).updateLogo(logoFile.data);
@@ -165,6 +172,12 @@ router.post(
             !logoFile.name.endsWith('.svg'))
         ) {
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
+          return;
+        }
+        if (
+          logoFile.size > FILE_SIZE_LIMIT
+        ) {
+          res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
           return;
         }
 
