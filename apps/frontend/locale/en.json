@@ -175,6 +175,54 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule"
       },
+      "field-status": {
+        "countdown": {
+          "no-match": "No match loaded",
+          "late": "Late!",
+          "tables-ready": "{ready} of {total} tables ready"
+        },
+        "upcoming-matches": {
+          "title": "Upcoming Matches",
+          "no-matches": "No upcoming matches",
+          "time": "Time",
+          "next": "Next",
+          "in-time": "in {time}",
+          "team-number": "Team {number}"
+        },
+        "active-match": {
+          "title": "Active Match",
+          "no-match": "No active match",
+          "match-title": "Match {slug}",
+          "started-at": "Started",
+          "status": {
+            "in-progress": "Running",
+            "completed": "Completed"
+          }
+        },
+        "next-match": {
+          "title": "Next Match",
+          "no-match": "No match loaded",
+          "match-title": "Next Match: {slug}",
+          "tables-ready": "Tables Ready",
+          "team-number": "Team {number}",
+          "judging-conflict": "Judging: {room}",
+          "status": {
+            "ready": "Ready",
+            "present": "Present",
+            "queued": "Queued",
+            "not-present": "Not Present"
+          }
+        },
+        "judging-integration": {
+          "title": "Judging Integration",
+          "active-sessions": "Active Judging Sessions",
+          "team-info": "Team {number} - {name}",
+          "conflicts": "Time Conflicts",
+          "team-number": "Team {number}",
+          "conflict-details": "In judging: {room} | Called to match {match}",
+          "no-conflicts": "No time conflicts"
+        }
+      },
       "awards-list": {
         "page-title": "Awards list",
         "description": "A list of all awards in this division, including their order of distribution and their settings.",

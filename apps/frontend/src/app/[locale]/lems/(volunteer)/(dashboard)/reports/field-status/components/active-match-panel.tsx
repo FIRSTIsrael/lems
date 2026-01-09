@@ -1,9 +1,10 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
-import dayjs from 'dayjs';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
   id: string;
@@ -43,15 +44,18 @@ interface ActiveMatchPanelProps {
  * Display panel for currently active match
  * Shows match info, participants, and progress
  */
-export function ActiveMatchPanel({ match, matchLength = 150 }: ActiveMatchPanelProps) {
+export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
+  const t = useTranslations('pages.reports.field-status');
+  const currentTime = useTime({ interval: 1000 });
+
   if (!match) {
     return (
       <Paper sx={{ p: 3, flex: 1 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight={600}>
-            🏆 מקצה רץ
+            🏆 {t('active-match.title')}
           </Typography>
-          <Typography color="text.secondary">אין מקצה פעיל כרגע</Typography>
+          <Typography color="text.secondary">{t('active-match.no-match')}</Typography>
         </Stack>
       </Paper>
     );
@@ -64,8 +68,8 @@ export function ActiveMatchPanel({ match, matchLength = 150 }: ActiveMatchPanelP
   };
 
   const getStatusText = () => {
-    if (match.status === 'in-progress') return 'רץ';
-    if (match.status === 'completed') return 'הושלם';
+    if (match.status === 'in-progress') return t('active-match.status.in-progress');
+    if (match.status === 'completed') return t('active-match.status.completed');
     return match.status;
   };
 
@@ -81,7 +85,7 @@ export function ActiveMatchPanel({ match, matchLength = 150 }: ActiveMatchPanelP
       <Stack spacing={2}>
         <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
           <Typography variant="h5" fontWeight={600}>
-            🏆 מקצה {match.slug}
+            🏆 {t('active-match.match-title', { slug: match.slug })}
           </Typography>
           <Chip
             label={getStatusText()}
@@ -93,7 +97,12 @@ export function ActiveMatchPanel({ match, matchLength = 150 }: ActiveMatchPanelP
         {match.startTime && (
           <Stack spacing={0.5}>
             <Typography variant="body2" color="text.secondary">
-              התחיל: {dayjs(match.startTime).format('HH:mm:ss')}
+              {t('active-match.started-at')}:{' '}
+              {currentTime
+                .set('hour', new Date(match.startTime).getHours())
+                .set('minute', new Date(match.startTime).getMinutes())
+                .set('second', new Date(match.startTime).getSeconds())
+                .format('HH:mm:ss')}
             </Typography>
             {match.startDelta !== null && match.startDelta !== undefined && (
               <Typography

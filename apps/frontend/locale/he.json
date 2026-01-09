@@ -175,6 +175,54 @@
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש"
       },
+      "field-status": {
+        "countdown": {
+          "no-match": "אין מקצה טעון",
+          "late": "מאחר!",
+          "tables-ready": "{ready} מתוך {total} שולחנות מוכנים"
+        },
+        "upcoming-matches": {
+          "title": "מקצים קרובים",
+          "no-matches": "אין מקצים קרובים",
+          "time": "זמן",
+          "next": "הבא",
+          "in-time": "בעוד {time}",
+          "team-number": "קבוצה {number}"
+        },
+        "active-match": {
+          "title": "מקצה רץ",
+          "no-match": "אין מקצה פעיל כרגע",
+          "match-title": "מקצה {slug}",
+          "started-at": "התחיל",
+          "status": {
+            "in-progress": "רץ",
+            "completed": "הושלם"
+          }
+        },
+        "next-match": {
+          "title": "המקצה הבא",
+          "no-match": "אין מקצה טעון",
+          "match-title": "המקצה הבא: {slug}",
+          "tables-ready": "שולחנות מוכנים",
+          "team-number": "קבוצה {number}",
+          "judging-conflict": "שיפוט: {room}",
+          "status": {
+            "ready": "מוכן",
+            "present": "נוכח",
+            "queued": "בקיו",
+            "not-present": "לא נוכח"
+          }
+        },
+        "judging-integration": {
+          "title": "אינטגרציה עם שיפוט",
+          "active-sessions": "מפגשי שיפוט פעילים",
+          "team-info": "קבוצה {number} - {name}",
+          "conflicts": "התנגשויות זמן",
+          "team-number": "קבוצה {number}",
+          "conflict-details": "בשיפוט: {room} | נקראה למקצה {match}",
+          "no-conflicts": "אין התנגשויות זמן"
+        }
+      },
       "awards-list": {
         "page-title": "רשימת פרסים",
         "description": "רשימת כל הפרסים בחלוקה זו, כולל סדר ההענקה וההגדרות שלהם.",

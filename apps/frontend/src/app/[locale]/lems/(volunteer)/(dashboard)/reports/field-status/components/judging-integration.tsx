@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import InfoIcon from '@mui/icons-material/Info';
@@ -43,6 +44,8 @@ interface JudgingIntegrationProps {
  * Highlights teams that are in judging and called to field
  */
 export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingIntegrationProps) {
+  const t = useTranslations('pages.reports.field-status');
+
   if (activeSessions.length === 0) {
     return null;
   }
@@ -63,14 +66,14 @@ export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingInt
     <Paper sx={{ p: 3, mt: 4 }}>
       <Stack spacing={3}>
         <Typography variant="h5" fontWeight={600}>
-          🎯 אינטגרציה עם שיפוט
+          🎯 {t('judging-integration.title')}
         </Typography>
 
         {/* Active Sessions */}
         <Box>
           <Stack direction="row" spacing={1} alignItems="center" mb={2}>
             <InfoIcon fontSize="small" color="info" />
-            <Typography variant="subtitle2">מפגשי שיפוט פעילים</Typography>
+            <Typography variant="subtitle2">{t('judging-integration.active-sessions')}</Typography>
             <Chip label={activeSessions.length} size="small" color="info" />
           </Stack>
 
@@ -90,7 +93,10 @@ export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingInt
                 }}
               >
                 <Typography variant="body2">
-                  קבוצה {session.team.number} - {session.team.name}
+                  {t('judging-integration.team-info', {
+                    number: session.team.number,
+                    name: session.team.name
+                  })}
                 </Typography>
                 <Chip label={session.room.name} size="small" variant="outlined" color="info" />
               </Box>
@@ -104,7 +110,7 @@ export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingInt
             <Stack direction="row" spacing={1} alignItems="center" mb={2}>
               <WarningAmberIcon fontSize="small" color="warning" />
               <Typography variant="subtitle2" color="warning.main">
-                התנגשויות זמן
+                {t('judging-integration.conflicts')}
               </Typography>
               <Chip label={conflicts.length} size="small" color="warning" />
             </Stack>
@@ -123,10 +129,15 @@ export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingInt
                 >
                   <Stack spacing={0.5}>
                     <Typography variant="body2" fontWeight={600}>
-                      קבוצה {conflict.session.team.number}
+                      {t('judging-integration.team-number', {
+                        number: conflict.session.team.number
+                      })}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">
-                      בשיפוט: {conflict.session.room.name} | נקראה למקצה {conflict.match.slug}
+                      {t('judging-integration.conflict-details', {
+                        room: conflict.session.room.name,
+                        match: conflict.match.slug
+                      })}
                     </Typography>
                   </Stack>
                 </Box>
@@ -145,7 +156,7 @@ export function JudgingIntegration({ activeSessions, queuedMatches }: JudgingInt
             }}
           >
             <Typography variant="body2" color="success.dark">
-              ✓ אין התנגשויות זמן
+              ✓ {t('judging-integration.no-conflicts')}
             </Typography>
           </Box>
         )}

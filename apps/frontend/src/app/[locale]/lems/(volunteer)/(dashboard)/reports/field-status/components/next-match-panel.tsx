@@ -1,11 +1,12 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
-import dayjs from 'dayjs';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
   id: string;
@@ -58,14 +59,17 @@ interface NextMatchPanelProps {
  * Shows readiness status and conflicts
  */
 export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelProps) {
+  const t = useTranslations('pages.reports.field-status');
+  const currentTime = useTime({ interval: 1000 });
+
   if (!match) {
     return (
       <Paper sx={{ p: 3, flex: 1 }}>
         <Stack spacing={2}>
           <Typography variant="h5" fontWeight={600}>
-            ⏰ המקצה הבא
+            ⏰ {t('next-match.title')}
           </Typography>
-          <Typography color="text.secondary">אין מקצה טעון</Typography>
+          <Typography color="text.secondary">{t('next-match.no-match')}</Typography>
         </Stack>
       </Paper>
     );
@@ -98,13 +102,13 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
   const getStatusText = (status: string) => {
     switch (status) {
       case 'ready':
-        return 'מוכן';
+        return t('next-match.status.ready');
       case 'present':
-        return 'נוכח';
+        return t('next-match.status.present');
       case 'queued':
-        return 'בקיו';
+        return t('next-match.status.queued');
       default:
-        return 'לא נוכח';
+        return t('next-match.status.not-present');
     }
   };
 
@@ -123,16 +127,19 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
           flexWrap="wrap"
         >
           <Typography variant="h5" fontWeight={600}>
-            ⏰ המקצה הבא: {match.slug}
+            ⏰ {t('next-match.match-title', { slug: match.slug })}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {dayjs(match.scheduledTime).format('HH:mm')}
+            {currentTime
+              .set('hour', new Date(match.scheduledTime).getHours())
+              .set('minute', new Date(match.scheduledTime).getMinutes())
+              .format('HH:mm')}
           </Typography>
         </Stack>
 
         <Stack direction="row" spacing={1} alignItems="center">
           <Typography variant="subtitle1" fontWeight={500}>
-            שולחנות מוכנים:
+            {t('next-match.tables-ready')}:
           </Typography>
           <Chip
             label={`${tablesReady}/${totalTables}`}
@@ -170,7 +177,7 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
                     {participant.table.name}:
                   </Typography>
                   <Typography variant="body2" sx={{ flex: 1 }}>
-                    קבוצה {participant.team?.number}
+                    {t('next-match.team-number', { number: participant.team?.number })}
                   </Typography>
                   <Stack direction="row" spacing={0.5} alignItems="center">
                     {getStatusIcon(status)}
@@ -181,7 +188,7 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
                   {judgingSession && (
                     <Chip
                       icon={<WarningAmberIcon />}
-                      label={`שיפוט: ${judgingSession.room.name}`}
+                      label={t('next-match.judging-conflict', { room: judgingSession.room.name })}
                       size="small"
                       color="warning"
                       variant="outlined"

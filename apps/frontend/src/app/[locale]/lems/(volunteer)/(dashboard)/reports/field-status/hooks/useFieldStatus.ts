@@ -77,18 +77,19 @@ export function useFieldStatus({ divisionId, pollInterval = 30000 }: UseFieldSta
   const division = data?.division;
   const field = division?.field;
   const judging = division?.judging;
-  const matches = field?.matches || [];
-  const sessions = judging?.sessions || [];
+  
+  const matches = useMemo(() => field?.matches || [], [field?.matches]);
+  const sessions = useMemo(() => judging?.sessions || [], [judging?.sessions]);
 
   const activeMatch = useMemo(() => {
     if (!field?.activeMatch) return null;
     return matches.find(m => m.id === field.activeMatch) || null;
-  }, [matches, field?.activeMatch]);
+  }, [matches, field]);
 
   const loadedMatch = useMemo(() => {
     if (!field?.loadedMatch) return null;
     return matches.find(m => m.id === field.loadedMatch) || null;
-  }, [matches, field?.loadedMatch]);
+  }, [matches, field]);
 
   const queuedMatches = useMemo(() => {
     return matches.filter(m => m.called && m.status === 'not-started');

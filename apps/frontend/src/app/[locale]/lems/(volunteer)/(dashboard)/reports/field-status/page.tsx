@@ -6,15 +6,9 @@ import { useFieldStatus } from './hooks';
 import { MatchCountdown } from './components/match-countdown';
 import { ActiveMatchPanel } from './components/active-match-panel';
 import { NextMatchPanel } from './components/next-match-panel';
-import { QueueOverview } from './components/queue-overview';
 import { UpcomingMatches } from './components/upcoming-matches';
-import { FieldHealthMetrics } from './components/field-health-metrics';
 import { JudgingIntegration } from './components/judging-integration';
 
-/**
- * Field Status Report Page
- * Comprehensive real-time view of field operations
- */
 export default function FieldStatusPage() {
   const { currentDivision } = useEvent();
   const divisionId = currentDivision.id;
@@ -26,7 +20,6 @@ export default function FieldStatusPage() {
     queuedMatches,
     upcomingMatches,
     activeSessions,
-    matches,
     loading,
     error
   } = useFieldStatus({ divisionId });
@@ -68,7 +61,6 @@ export default function FieldStatusPage() {
     );
   }
 
-  // Calculate tables ready for countdown
   const tablesReady = loadedMatch?.participants.filter((p: any) => p.ready).length || 0;
   const totalTables = loadedMatch?.participants.filter((p: any) => p.team).length || 0;
 
@@ -92,14 +84,12 @@ export default function FieldStatusPage() {
           </Grid>
         </Grid>
 
-        {/* Queue Overview */}
+        {/* Queue Overview - there is no queue yet
         <QueueOverview matches={queuedMatches} />
+        */}
 
         {/* Two-Column Layout for Metrics and Integration */}
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, lg: 6 }}>
-            <FieldHealthMetrics matches={matches} />
-          </Grid>
           <Grid size={{ xs: 12, lg: 6 }}>
             <JudgingIntegration activeSessions={activeSessions} queuedMatches={queuedMatches} />
           </Grid>

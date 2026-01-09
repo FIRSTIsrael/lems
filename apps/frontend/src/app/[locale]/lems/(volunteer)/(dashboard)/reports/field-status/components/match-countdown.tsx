@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, LinearProgress } from '@mui/material';
 import { useMatchTimer } from '../hooks/useMatchTimer';
 
@@ -18,6 +19,7 @@ export function MatchCountdown({
   tablesReady = 0,
   totalTables = 0
 }: MatchCountdownProps) {
+  const t = useTranslations('pages.reports.field-status');
   const { formattedTime, urgency, progress, isLate } = useMatchTimer({
     scheduledTime,
     enabled: !!scheduledTime
@@ -34,7 +36,7 @@ export function MatchCountdown({
         }}
       >
         <Typography variant="h4" color="text.secondary">
-          אין מקצה טעון
+          {t('countdown.no-match')}
         </Typography>
       </Paper>
     );
@@ -90,13 +92,13 @@ export function MatchCountdown({
 
           {isLate && (
             <Typography variant="h5" color="error">
-              מאחר!
+              {t('countdown.late')}
             </Typography>
           )}
 
           {totalTables > 0 && (
             <Typography variant="h4">
-              {tablesReady} מתוך {totalTables} שולחנות מוכנים
+              {t('countdown.tables-ready', { ready: tablesReady, total: totalTables })}
             </Typography>
           )}
         </Stack>

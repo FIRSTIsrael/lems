@@ -1,8 +1,19 @@
 'use client';
 
-import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
-import dayjs from 'dayjs';
-import ScheduleIcon from '@mui/icons-material/Schedule';
+import { useTranslations } from 'next-intl';
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+  Chip,
+  Stack
+} from '@mui/material';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
   team?: {
@@ -31,11 +42,13 @@ interface UpcomingMatchesProps {
 }
 
 /**
- * Display upcoming matches in timeline format
- * Shows next several matches with participants
+ * Display upcoming matches in table format
+ * Shows next 3 rounds with participants by table
  */
-export function UpcomingMatches({ matches, maxDisplay = 10 }: UpcomingMatchesProps) {
-  const now = new Date();
+export function UpcomingMatches({ matches, maxDisplay = 3 }: UpcomingMatchesProps) {
+  const t = useTranslations('pages.reports.field-status');
+  const currentTime = useTime({ interval: 30000 });
+  const now = currentTime.toDate();
   const upcoming = matches
     .filter(m => m.status === 'not-started' && new Date(m.scheduledTime) > now)
     .sort((a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime())
@@ -43,80 +56,117 @@ export function UpcomingMatches({ matches, maxDisplay = 10 }: UpcomingMatchesPro
 
   if (upcoming.length === 0) {
     return (
-      <Paper sx={{ p: 3, mt: 4 }}>
-        <Typography variant="h5" fontWeight={600} gutterBottom>
-          📅 מקצים קרובים
+      <Paper sx={{ p: 3 }}>
+        <Typography variant="h6" fontWeight={600} gutterBottom>
+          {t('upcoming-matches.title')}
         </Typography>
-        <Typography color="text.secondary">אין מקצים קרובים</Typography>
+        <Typography color="text.secondary">{t('upcoming-matches.no-matches')}</Typography>
       </Paper>
     );
   }
 
+  const allTables = Array.from(
+    new Set(
+      upcoming.flatMap(match => match.participants.filter(p => p.team).map(p => p.table.name))
+    )
+  ).sort();
+
   return (
-    <Paper sx={{ p: 3, mt: 4 }}>
-      <Stack spacing={3}>
-        <Typography variant="h5" fontWeight={600}>
-          📅 מקצים קרובים
+    <Paper sx={{ p: 0 }}>
+      <Stack spacing={2} sx={{ p: 3, pb: 0 }}>
+        <Typography variant="h6" fontWeight={600}>
+          {t('upcoming-matches.title')}
         </Typography>
+      </Stack>
 
-        <Stack spacing={2}>
-          {upcoming.map((match, index) => {
-            const participants = match.participants.filter(p => p.team);
-            const timeUntil = dayjs(match.scheduledTime).diff(dayjs(), 'minutes');
+      <TableContainer>
+        <Table size="small">
+          <TableHead>
+            <TableRow sx={{ bgcolor: 'primary.main' }}>
+              <TableCell sx={{ fontWeight: 600, color: 'white', minWidth: 120 }}>
+                {t('upcoming-matches.time')}
+              </TableCell>
+              {allTables.map(tableName => (
+                <TableCell
+                  key={tableName}
+                  align="center"
+                  sx={{ fontWeight: 600, color: 'white', minWidth: 150 }}
+                >
+                  {tableName}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {upcoming.map((match, index) => {
+              const timeUntil = currentTime.to(match.scheduledTime, true);
+              const isNext = index === 0;
 
-            return (
-              <Box
-                key={match.id}
-                sx={{
-                  p: 2,
-                  bgcolor: index === 0 ? 'action.hover' : 'background.default',
-                  borderRadius: 2,
-                  border: index === 0 ? '2px solid' : '1px solid',
-                  borderColor: index === 0 ? 'primary.main' : 'divider'
-                }}
-              >
-                <Stack spacing={1}>
-                  <Stack
-                    direction="row"
-                    spacing={2}
-                    alignItems="center"
-                    justifyContent="space-between"
-                    flexWrap="wrap"
-                  >
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Typography variant="subtitle1" fontWeight={600}>
-                        מקצה {match.slug}
-                      </Typography>
-                      {index === 0 && <Chip label="הבא" size="small" color="primary" />}
-                    </Stack>
-
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <ScheduleIcon fontSize="small" color="action" />
-                      <Typography variant="body2" color="text.secondary">
-                        {dayjs(match.scheduledTime).format('HH:mm')}
+              return (
+                <TableRow
+                  key={match.id}
+                  sx={{
+                    bgcolor: isNext ? 'primary.50' : 'white',
+                    '&:hover': { bgcolor: isNext ? 'primary.100' : 'grey.50' }
+                  }}
+                >
+                  <TableCell sx={{ verticalAlign: 'top', py: 2 }}>
+                    <Stack spacing={0.5}>
+                      <Stack direction="row" spacing={1} alignItems="center">
+                        <Typography variant="body2" fontWeight={600}>
+                          {match.slug}
+                        </Typography>
+                        {isNext && (
+                          <Chip label={t('upcoming-matches.next')} size="small" color="primary" />
+                        )}
+                      </Stack>
+                      <Typography variant="caption" color="text.secondary">
+                        {currentTime
+                          .set('hour', new Date(match.scheduledTime).getHours())
+                          .set('minute', new Date(match.scheduledTime).getMinutes())
+                          .format('HH:mm')}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        (בעוד {timeUntil} דקות)
+                        {t('upcoming-matches.in-time', { time: timeUntil })}
                       </Typography>
                     </Stack>
-                  </Stack>
+                  </TableCell>
+                  {allTables.map(tableName => {
+                    const participant = match.participants.find(
+                      p => p.table.name === tableName && p.team
+                    );
 
-                  <Stack direction="row" spacing={1} flexWrap="wrap">
-                    {participants.map(p => (
-                      <Chip
-                        key={p.team?.id}
-                        label={`${p.table.name}: קבוצה ${p.team?.number}`}
-                        size="small"
-                        variant="outlined"
-                      />
-                    ))}
-                  </Stack>
-                </Stack>
-              </Box>
-            );
-          })}
-        </Stack>
-      </Stack>
+                    return (
+                      <TableCell
+                        key={tableName}
+                        align="center"
+                        sx={{ verticalAlign: 'top', py: 2 }}
+                      >
+                        {participant?.team ? (
+                          <Stack spacing={0.5} alignItems="center">
+                            <Typography variant="body2" fontWeight={500}>
+                              {t('upcoming-matches.team-number', {
+                                number: participant.team.number
+                              })}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary" noWrap>
+                              {participant.team.name}
+                            </Typography>
+                          </Stack>
+                        ) : (
+                          <Typography variant="body2" color="text.disabled">
+                            —
+                          </Typography>
+                        )}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Paper>
   );
 }
