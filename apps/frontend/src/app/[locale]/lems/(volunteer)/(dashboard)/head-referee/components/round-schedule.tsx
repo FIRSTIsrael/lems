@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { CardHeader, CardContent, Typography, useTheme, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import type { RoundGroup } from './utils';
-import { DesktopScheduleTable } from './desktop-schedule-table';
+import { DesktopScheduleTable } from './desktop-schedule';
 import { MobileScheduleCards } from './mobile-schedule-cards';
 
 interface RoundScheduleProps {

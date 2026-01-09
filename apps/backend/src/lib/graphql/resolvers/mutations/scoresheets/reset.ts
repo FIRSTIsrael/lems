@@ -7,6 +7,7 @@ import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeScoresheetAccess } from './utils';
 
 type ScoresheetResetEvent = {
+  __typename: 'ScoresheetResetEvent';
   scoresheetId: string;
   status: string;
 };
@@ -62,6 +63,7 @@ export const resetScoresheetResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
 
   const eventPayload: ScoresheetResetEvent = {
+    __typename: 'ScoresheetResetEvent',
     scoresheetId,
     status: 'empty'
   };

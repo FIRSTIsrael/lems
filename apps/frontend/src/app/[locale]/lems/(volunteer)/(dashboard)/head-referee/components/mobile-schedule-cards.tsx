@@ -149,7 +149,7 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
                       escalated={scoresheet.escalated}
                       score={scoresheet.data?.score}
                       gp={scoresheet.data?.gp?.value}
-                      disabled={!participant.team!.arrived}
+                      disabled={!participant.team!.arrived || match.status !== 'completed'}
                       dimmed={!isFiltered}
                     />
                   )}

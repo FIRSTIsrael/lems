@@ -1,26 +1,75 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { DataGrid, GridColDef, GridActionsCellItem, GridActionsCell } from '@mui/x-data-grid';
-import { Avatar, Box, Chip, useTheme } from '@mui/material';
+import { useMemo, useState, useCallback } from 'react';
+import { mutate } from 'swr';
+import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
+import {
+  Avatar,
+  Box,
+  Chip,
+  useTheme
+} from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { apiFetch } from '@lems/shared';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
+import { ChangeDivisionMenu } from './change-division-menu';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
   divisions: Division[];
+  eventId: string;
 }
 
 export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   teams,
-  divisions
+  divisions,
+  eventId
 }) => {
   const t = useTranslations('pages.events.teams.unified');
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
+  const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleChangeDivision = useCallback(async (newDivisionId: string) => {
+    if (!selectedTeam || newDivisionId === selectedTeam.division.id) return;
+
+    try {
+      const response = await apiFetch(`/admin/events/${eventId}/teams/${selectedTeam.id}/division`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ divisionId: newDivisionId })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to change team division');
+      }
+
+      setSelectedTeam(null);
+      setAnchorEl(null);
+
+      mutate(`/admin/events/${eventId}/teams`);
+
+    } catch (error) {
+      console.error('Failed to change team division:', error);
+    }
+  }, [selectedTeam, eventId]);
+
+  const handleOpenDivisionMenu = useCallback((event: React.MouseEvent<HTMLDivElement>, team: TeamWithDivision) => {
+    event.stopPropagation();
+    setSelectedTeam(team);
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleCloseDivisionMenu = useCallback(() => {
+    setSelectedTeam(null);
+    setAnchorEl(null);
+  }, []);
 
   const hasMultipleDivisions = divisions.length > 1;
   const divisionsWithSchedule = new Set(
@@ -82,20 +131,25 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
             headerName: t('columns.division'),
             width: 140,
             sortable: true,
-            renderCell: params => (
-              <Chip
-                label={params.row.division.name}
-                size="small"
-                sx={{
-                  backgroundColor: params.row.division.color,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  '& .MuiChip-label': {
-                    px: 1
-                  }
-                }}
-              />
-            ),
+            renderCell: params => {
+              const hasScheduleInAnyDivision = divisionsWithSchedule.size > 0;
+              return (
+                <Chip
+                  label={params.row.division.name}
+                  size="small"
+                  onClick={hasScheduleInAnyDivision ? undefined : (e) => handleOpenDivisionMenu(e, params.row)}
+                  sx={{
+                    backgroundColor: params.row.division.color,
+                    color: 'white',
+                    fontWeight: 'bold',
+                    ...(hasScheduleInAnyDivision ? {} : { cursor: 'pointer', '&:hover': { opacity: 0.8 } }),
+                    '& .MuiChip-label': {
+                      px: 1
+                    }
+                  }}
+                />
+              );
+            },
             valueGetter: (value, row) => row.division.name
           }
         ]
@@ -125,7 +179,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       width: 120,
       sortable: false,
       renderCell: params => (
-        <GridActionsCell {...params}>
+        <>
           <GridActionsCellItem
             key="edit"
             icon={<Edit />}
@@ -137,12 +191,11 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
               console.log('Edit team:', params.row.id);
             }}
           />
-          ,
           <RemoveTeamButton
             team={params.row}
             disabled={divisionsWithSchedule.has(params.row.division.id)}
           />
-        </GridActionsCell>
+        </>
       )
     }
   ];
@@ -186,6 +239,15 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           }}
         />
       </Box>
+
+      <ChangeDivisionMenu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseDivisionMenu}
+        divisions={divisions}
+        selectedTeam={selectedTeam}
+        onSelectDivision={handleChangeDivision}
+      />
     </Box>
   );
 };

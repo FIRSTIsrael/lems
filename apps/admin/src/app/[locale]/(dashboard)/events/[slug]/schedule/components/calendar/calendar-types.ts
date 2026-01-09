@@ -1,8 +1,12 @@
 import { Dayjs } from 'dayjs';
 
-export type ScheduleBlockType = 'practice-round' | 'ranking-round' | 'judging-session' | 'agenda-event';
+export type ScheduleBlockType =
+  | 'practice-round'
+  | 'ranking-round'
+  | 'judging-session'
+  | 'agenda-event';
 export type ScheduleColumn = 'judging' | 'field' | 'agenda';
-export type AgendaBlockVisibility = 'public' | 'field' | 'judging';
+export type AgendaBlockVisibility = 'public' | 'field' | 'judging' | 'teams';
 
 export interface ScheduleBlock {
   id: string;

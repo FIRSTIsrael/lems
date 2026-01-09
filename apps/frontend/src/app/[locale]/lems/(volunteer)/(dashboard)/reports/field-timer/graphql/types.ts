@@ -42,7 +42,6 @@ export interface MatchStartedSubscriptionData {
 export interface MatchCompletedSubscriptionData {
   matchCompleted: {
     matchId: string;
-    autoLoadedMatchId: string | null;
   };
 }
 

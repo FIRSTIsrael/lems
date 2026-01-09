@@ -1,17 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  Stack,
-  Chip,
-  Box,
-  Typography
-} from '@mui/material';
+import { Card, CardContent, CardHeader, Stack, Chip, Box, Typography } from '@mui/material';
 import Link from 'next/link';
 import WarningIcon from '@mui/icons-material/Warning';
+import { useMatchTranslations } from '@lems/localization';
 import type { Scoresheet } from '../graphql/types';
 import { useHeadRefereeData } from './head-referee-context';
 
@@ -64,6 +57,7 @@ interface EscalatedScoresheetItemProps {
 
 function EscalatedScoresheetItem({ scoresheet }: EscalatedScoresheetItemProps) {
   const t = useTranslations('pages.head-referee');
+  const { getStage } = useMatchTranslations();
 
   return (
     <Box
@@ -94,6 +88,13 @@ function EscalatedScoresheetItem({ scoresheet }: EscalatedScoresheetItemProps) {
           size="small"
           variant="filled"
           sx={{ fontWeight: 600 }}
+        />
+        <Chip
+          label={t('scoresheet-round', {
+            stage: getStage(scoresheet.stage),
+            round: scoresheet.round
+          })}
+          size="small"
         />
         <Chip label={t(`scoresheet-status.${scoresheet.status}`)} size="small" />
         {scoresheet.data && (

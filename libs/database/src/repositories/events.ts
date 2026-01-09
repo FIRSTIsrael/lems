@@ -213,6 +213,45 @@ class EventSelector {
       .execute();
   }
 
+  async changeTeamDivision(teamId: string, newDivisionId: string): Promise<void> {
+    const event = await this.get();
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    await this.db.transaction().execute(async trx => {
+      const newDivision = await trx
+        .selectFrom('divisions')
+        .select('id')
+        .where('id', '=', newDivisionId)
+        .where('event_id', '=', event.id)
+        .executeTakeFirst();
+
+      if (!newDivision) {
+        throw new Error('Division not found in this event');
+      }
+
+      await trx
+        .deleteFrom('team_divisions')
+        .where('team_id', '=', teamId)
+        .where(
+          'division_id',
+          'in',
+          trx.selectFrom('divisions').select('id').where('event_id', '=', event.id)
+        )
+        .execute();
+
+      await trx
+        .insertInto('team_divisions')
+        .values({
+          team_id: teamId,
+          division_id: newDivisionId
+        })
+        .execute();
+    });
+  }
+
   async getSettings(): Promise<EventSettings | null> {
     const event = await this.get();
 

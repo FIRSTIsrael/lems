@@ -1,4 +1,4 @@
-import { Worker, Job } from 'bullmq';
+import { Worker, Job, RedisClient } from 'bullmq';
 import { getRedisClient } from '../redis/redis-client';
 import { logger } from '../logger';
 import { ScheduledEvent } from './types';
@@ -53,7 +53,7 @@ export class WorkerManager {
           await this.processJob(job);
         },
         {
-          connection: redisConnection,
+          connection: redisConnection as RedisClient,
           concurrency: 1
         }
       );

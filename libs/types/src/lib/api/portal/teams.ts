@@ -68,6 +68,16 @@ export const TeamRobotGameMatchSchema = z.object({
 
 export type TeamRobotGameMatch = z.infer<typeof TeamRobotGameMatchSchema>;
 
+export const AgendaEventSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  startTime: z.coerce.date(),
+  duration: z.number(),
+  divisionId: z.string()
+});
+
+export type AgendaEvent = z.infer<typeof AgendaEventSchema>;
+
 export const TeamJudgingSessionSchema = z.object({
   id: z.string(),
   number: z.number(),
@@ -81,9 +91,9 @@ export const TeamJudgingSessionSchema = z.object({
 export type TeamJudgingSession = z.infer<typeof TeamJudgingSessionSchema>;
 
 export const TeamRobotPerformanceSchema = z.object({
-  scores: z.array(z.number()),
-  highestScore: z.number(),
-  robotGameRank: z.number()
+  scores: z.array(z.number().nullable()),
+  highestScore: z.number().nullable(),
+  robotGameRank: z.number().nullable()
 });
 
 export type TeamRobotPerformance = z.infer<typeof TeamRobotPerformanceSchema>;

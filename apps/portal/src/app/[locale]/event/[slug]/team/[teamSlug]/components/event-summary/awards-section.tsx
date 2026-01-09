@@ -1,16 +1,15 @@
 'use client';
 
-import React from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
-import useSWR from 'swr';
+import { useRealtimeData } from '../../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 
 export const AwardsSection: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
-  const { data: awards, isLoading } = useSWR<Award[] | null>(
+  const { data: awards, isLoading } = useRealtimeData<Award[] | null>(
     `/portal/events/${event.slug}/teams/${team.slug}/awards`,
     { suspense: true, fallbackData: null }
   );

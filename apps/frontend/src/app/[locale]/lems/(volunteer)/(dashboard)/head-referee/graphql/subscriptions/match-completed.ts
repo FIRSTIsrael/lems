@@ -6,7 +6,6 @@ import type { HeadRefereeData } from '../types';
 export interface MatchCompletedSubscriptionData {
   matchCompleted: {
     matchId: string;
-    autoLoadedMatchId?: string;
   };
 }
 
@@ -21,14 +20,13 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      autoLoadedMatchId
     }
   }
 `;
 
 /**
  * Creates a subscription configuration for match completed events.
- * Updates the match status when a match is completed.
+ * Updates the match status when a match is completed and clears the loaded match.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook

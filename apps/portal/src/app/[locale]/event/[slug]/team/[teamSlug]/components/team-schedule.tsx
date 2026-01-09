@@ -3,11 +3,12 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import useSWR from 'swr';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
+import { AgendaEvent } from '@lems/database';
 import { useMatchTranslations } from '@lems/localization';
 import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from './team-at-event-context';
 
 interface ScheduleEntry {
@@ -19,9 +20,10 @@ interface ScheduleEntry {
 export const TeamSchedule: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
-  const { data } = useSWR<{
+  const { data } = useRealtimeData<{
     session: TeamJudgingSession;
     matches: TeamRobotGameMatch[];
+    agenda: AgendaEvent[];
   } | null>(`/portal/events/${event.slug}/teams/${team.slug}/activities`, {
     suspense: true
   });
@@ -33,10 +35,10 @@ export const TeamSchedule: React.FC = () => {
     return null; // Should be handled by suspense
   }
 
-  const { session: judgingSession, matches } = data;
+  const { session: judgingSession, matches, agenda } = data;
 
   const scheduleEntries: ScheduleEntry[] = [
-    ...matches.map(match => ({
+    ...(matches || []).map(match => ({
       time: new Date(match.scheduledTime),
       description: t('schedule.match-type', {
         stage: getStage(match.stage),
@@ -46,15 +48,24 @@ export const TeamSchedule: React.FC = () => {
       }),
       location: match.table.name
     })),
-    {
-      time: new Date(judgingSession.scheduledTime),
-      description: t('schedule.judging-session', {
-        number: judgingSession.number,
-        room: judgingSession.room.name,
-        teamNumber: team.number
-      }),
-      location: judgingSession.room.name
-    }
+    ...(judgingSession
+      ? [
+          {
+            time: new Date(judgingSession.scheduledTime),
+            description: t('schedule.judging-session', {
+              number: judgingSession.number,
+              room: judgingSession.room.name,
+              teamNumber: team.number
+            }),
+            location: judgingSession.room.name
+          }
+        ]
+      : []),
+    ...(agenda || []).map(agendaItem => ({
+      time: new Date(agendaItem.start_time),
+      description: agendaItem.title,
+      location: ''
+    }))
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 
   return (

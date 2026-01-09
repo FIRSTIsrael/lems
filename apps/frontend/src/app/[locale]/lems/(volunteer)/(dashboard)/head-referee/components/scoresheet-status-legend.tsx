@@ -9,7 +9,7 @@ import { getScoresheetStatusIcon } from './scoresheet-status-button';
 
 const STATUS_ITEMS: Array<ScoresheetStatus | 'escalated'> = [
   'empty',
-  'in-progress',
+  'draft',
   'completed',
   'gp',
   'submitted',
@@ -20,7 +20,7 @@ export function ScoresheetStatusLegend() {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
   const direction = theme.direction;
-  
+
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -83,8 +83,7 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: '100%',
-            right: direction === 'rtl' ? undefined : 9,
-            left: direction === 'rtl' ? 9 : undefined,
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
@@ -96,8 +95,7 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: 'calc(100% - 1px)',
-            right: direction === 'rtl' ? undefined : 9,
-            left: direction === 'rtl' ? 9 : undefined,
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',

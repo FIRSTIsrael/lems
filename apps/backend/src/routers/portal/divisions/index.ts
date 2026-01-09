@@ -3,6 +3,7 @@ import db from '../../../lib/database';
 import { PortalDivisionRequest } from '../../../types/express';
 import { attachDivision } from '../middleware/attach-division';
 import { makePortalTeamResponse } from '../teams/util';
+import { calculateRobotGameRankings } from '../utils/ranking-calculator';
 import {
   makePortalDivisionResponse,
   makePortalJudgingSessionResponse,
@@ -49,20 +50,29 @@ router.get('/:divisionId/schedule/field', async (req: PortalDivisionRequest, res
 router.get('/:divisionId/scoreboard', async (req: PortalDivisionRequest, res: Response) => {
   const teams = await db.teams.byDivisionId(req.divisionId).getAll();
 
-  const scoreboard = teams.map((team, index) => ({
-    team: {
-      id: team.id,
-      name: team.name,
-      number: team.number,
-      affiliation: team.affiliation,
-      city: team.city,
-      region: team.region,
-      slug: `${team.region}-${team.number}`.toUpperCase()
-    },
-    robotGameRank: index + 1,
-    maxScore: 0,
-    scores: [0, 0, 0]
-  }));
+  const rankings = await calculateRobotGameRankings(req.divisionId);
+
+  const scoreboard = teams.map(team => {
+    const rankingData = rankings.get(team.id);
+
+    const scores =
+      rankingData?.scoresWithRounds.sort((a, b) => a.round - b.round).map(s => s.score) ?? [];
+
+    return {
+      team: {
+        id: team.id,
+        name: team.name,
+        number: team.number,
+        affiliation: team.affiliation,
+        city: team.city,
+        region: team.region,
+        slug: `${team.region}-${team.number}`.toUpperCase()
+      },
+      robotGameRank: rankingData?.rank ?? null,
+      maxScore: rankingData?.maxScore ?? null,
+      scores: scores.length > 0 ? scores : null
+    };
+  });
 
   res.status(200).json(scoreboard);
 });

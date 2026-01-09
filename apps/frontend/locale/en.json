@@ -172,7 +172,8 @@
         "event-agenda": "Event Agenda",
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
-        "judging-schedule": "Judging Schedule"
+        "judging-schedule": "Judging Schedule",
+        "judging-status": "Judging Status"
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -256,7 +257,9 @@
         "arrived": "Arrived",
         "not-arrived": "Not arrived",
         "table": {
-          "time": "Time"
+          "time": "Time",
+          "start-time": "Start",
+          "end-time": "End"
         },
         "visibility": {
           "public": "General",
@@ -372,6 +375,32 @@
         "sort": {
           "room": "Sort by Room",
           "session": "Sort by Session"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "draft": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "approved": {
+              "label": "Approved",
+              "description": "Rubric has been completed and submitted"
+            },
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
       },
       "team-info-cell": {
@@ -460,7 +489,7 @@
       "start-inspection": "Start Inspection",
       "present": "Present",
       "absent": "Absent",
-      "ready-confirmed": "Ready ✅",
+      "ready-confirmed": "Ready",
       "mark-ready": "Mark Ready",
       "no-match-title": "No Match Assigned",
       "no-match-description": "Waiting for the next match to be assigned to your table.",
@@ -474,6 +503,31 @@
       "break-message": "This is a good time to drink water and refresh",
       "no-show-title": "Team Did Not Arrive",
       "no-show-description": "This team has not arrived at the event and will not participate in this match."
+    },
+    "judging-status": {
+      "page-title": "Judging Status",
+      "table": {
+        "time": "Time",
+        "room": "Room {name}",
+        "current-round": "Current Round",
+        "next-round": "Next Round",
+        "started-at": "Started at {time}",
+        "ends-at": "Ends at {time}"
+      },
+      "status": {
+        "not-started": "Not Started",
+        "in-progress": "In Progress",
+        "completed": "Completed",
+        "queued": "Queued"
+      },
+      "warnings": {
+        "on-field": "Team is on the field!"
+      },
+      "not-arrived": "Not arrived",
+      "empty-state": {
+        "message": "No judging sessions scheduled",
+        "no-team": "No team assigned"
+      }
     },
     "scorekeeper": {
       "page-title": "Scorekeeper",
@@ -603,9 +657,10 @@
         "escalated-only": "Escalated Only",
         "status-label": "Status"
       },
+      "scoresheet-round": "{stage} #{round}",
       "scoresheet-status": {
         "empty": "Empty",
-        "in-progress": "In Progress",
+        "draft": "Draft",
         "completed": "Completed",
         "gp": "Awaiting GP",
         "submitted": "Submitted"
@@ -621,8 +676,8 @@
           "label": "Empty",
           "description": "No scoresheet data has been entered"
         },
-        "in-progress": {
-          "label": "In Progress",
+        "draft": {
+          "label": "Draft",
           "description": "Scoresheet is being filled out"
         },
         "completed": {
@@ -644,7 +699,9 @@
       },
       "table": {
         "match": "Match",
-        "scheduled-time": "Time"
+        "scheduled-time": "Time",
+        "participant-ready": "Ready",
+        "participant-not-ready": "Not Ready"
       }
     },
     "audience-display": {
@@ -678,6 +735,32 @@
           "draft": "Draft",
           "completed": "Completed",
           "approved": "Approved"
+        },
+        "status-glossary": {
+          "title": "Rubric Status Guide",
+          "aria-label": "Show rubric status guide",
+          "statuses": {
+            "empty": {
+              "label": "Not Started",
+              "description": "Rubric has not been filled yet"
+            },
+            "draft": {
+              "label": "In Progress",
+              "description": "Rubric is currently being filled out"
+            },
+            "approved": {
+              "label": "Approved",
+              "description": "Rubric has been completed and submitted"
+            },
+            "locked": {
+              "label": "Locked",
+              "description": "Rubric is locked and cannot be edited"
+            },
+            "completed": {
+              "label": "Completed",
+              "description": "Rubric has been reviewed and approved"
+            }
+          }
         }
       },
       "deliberation": {
@@ -910,7 +993,36 @@
       "points-unit": "pts."
     },
     "deliberation": {
-      "error-not-authorized": "Unauthorized to access deliberation"
+      "error-not-authorized": "Unauthorized to access deliberation",
+      "compare": {
+        "title": "Compare Teams",
+        "no-teams-selected": "No teams selected",
+        "no-teams-description": "Select teams to compare.",
+        "back-to-deliberation": "Back to Deliberation",
+        "error-loading-teams": "Failed to load team data. Please try again.",
+        "teams-not-found": "The selected teams could not be found.",
+        "field-comparison": "Field Comparison",
+        "wins": "Wins",
+        "ties": "Ties",
+        "losses": "Losses",
+        "rubric-scores": "Rubric Scores",
+        "no-rubric-data": "No rubric data available",
+        "exceeding-notes": "How did the team exceed? ",
+        "nominations": "Award Nominations",
+        "gp-scores": "Gracious Professionalism",
+        "round": "Round",
+        "feedback": "Feedback",
+        "average": "Avg",
+        "filter-by-category": "Filter by Category",
+        "all-categories": "All Categories",
+        "judging-room": "Judging Room",
+        "manage-teams": "Manage Teams",
+        "add-team": "Add Team",
+        "search-teams": "Search teams...",
+        "select-teams-to-compare": "Select teams to compare",
+        "current-teams": "Current Teams",
+        "done": "Done"
+      }
     }
   }
 }

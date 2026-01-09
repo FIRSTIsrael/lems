@@ -8,6 +8,7 @@ import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { enqueueScheduledEvent } from '../../../../queues/scheduled-events-queue';
 import { authorizeMatchAccess } from './utils';
+import { getAutoLoadMatch } from './match-utils';
 
 interface StartMatchArgs {
   divisionId: string;
@@ -107,6 +108,34 @@ export const startMatchResolver: GraphQLFieldResolver<
       startTime,
       startDelta
     });
+
+    // Auto-load the next match if this is not a TEST match
+    if (match.stage !== 'TEST') {
+      const currentStage = divisionUpdateResult.field?.currentStage || 'PRACTICE';
+      try {
+        const autoLoadedMatchId = await getAutoLoadMatch(divisionId, currentStage);
+        if (autoLoadedMatchId) {
+          await db.raw.mongo
+            .collection<DivisionState>('division_states')
+            .findOneAndUpdate(
+              { divisionId },
+              { $set: { 'field.loadedMatch': autoLoadedMatchId } },
+              { returnDocument: 'after' }
+            );
+          console.log(
+            `[StartMatch] Auto-loaded match ${autoLoadedMatchId} for division ${divisionId}`
+          );
+
+          // Publish match loaded event for the auto-loaded match
+          await pubSub.publish(divisionId, RedisEventTypes.MATCH_LOADED, {
+            matchId: autoLoadedMatchId
+          });
+        }
+      } catch (error) {
+        console.error(`[StartMatch] Failed to auto-load next match for ${matchId}:`, error);
+        // Don't fail the mutation - the match is already started
+      }
+    }
 
     // Publish stage advanced event if applicable
     if (shouldAdvanceStage) {
