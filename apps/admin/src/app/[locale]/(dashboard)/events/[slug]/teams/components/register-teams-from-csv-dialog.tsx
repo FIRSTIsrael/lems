@@ -51,9 +51,13 @@ const RegisterForm: React.FC<{
   const t = useTranslations('pages.events.teams.register-from-csv-dialog.form');
   const registrationT = useTranslations('pages.events.teams.registration-dialog');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [selectedDivisionId, setSelectedDivisionId] = useState<string | null>(
-    divisions.filter(division => !division.hasSchedule)[0]?.id || null
-  );
+  const [selectedDivisionId, setSelectedDivisionId] = useState<string | null>(() => {
+    const available = divisions.filter(division => !division.hasSchedule);
+    if (available.length > 1) {
+      return 'random';
+    }
+    return available[0]?.id || null;
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
