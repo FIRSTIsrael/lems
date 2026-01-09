@@ -14,9 +14,7 @@ import {
   parseJudgingStatus,
   createJudgingSessionStartedSubscription,
   createJudgingSessionCompletedSubscription,
-  createTeamArrivalSubscription,
-  createMatchLoadedSubscription,
-  createMatchStartedSubscription
+  createTeamArrivalSubscription
 } from './graphql';
 import { JudgingStatusTable } from './components/judging-status-table';
 import { JudgingStatusMobile } from './components/judging-status-mobile';
@@ -29,9 +27,7 @@ export default function JudgingStatusPage() {
     () => [
       createJudgingSessionStartedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
-      createTeamArrivalSubscription(currentDivision.id),
-      createMatchLoadedSubscription(currentDivision.id),
-      createMatchStartedSubscription(currentDivision.id)
+      createTeamArrivalSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

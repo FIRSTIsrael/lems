@@ -26,11 +26,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, currentTime, se
           </Box>
 
           <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-            <SessionStatusChip
-              status={session.status}
-              called={session.called}
-              arrived={team.arrived}
-            />
+            <SessionStatusChip status={session.status} arrived={team.arrived} />
           </Stack>
 
           {session.startTime && session.startDelta !== undefined && (

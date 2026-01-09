@@ -57,14 +57,6 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
               value={(() => {
                 const scheduledTime = dayjs(currentSessions[0].scheduledTime);
                 const minutesDiff = scheduledTime.diff(currentTime, 'minute');
-
-                console.log('Progress bar debug:', {
-                  scheduledTime: scheduledTime.format('YYYY-MM-DD HH:mm:ss'),
-                  currentTime: currentTime.format('YYYY-MM-DD HH:mm:ss'),
-                  minutesDiff,
-                  sessionLength
-                });
-
                 if (minutesDiff < 0) {
                   const elapsedMinutes = Math.abs(minutesDiff);
                   const sessionDurationMinutes = sessionLength / 60;

@@ -3,14 +3,10 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs, { Dayjs } from 'dayjs';
-import { Box, Card, CardContent, Chip, Paper, Skeleton, Stack, Typography } from '@mui/material';
-import PeopleAltRoundedIcon from '@mui/icons-material/PeopleAltRounded';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
-import CheckCircleRoundedIcon from '@mui/icons-material/CheckCircleRounded';
-import PlayCircleRoundedIcon from '@mui/icons-material/PlayCircleRounded';
-import RadioButtonUncheckedRoundedIcon from '@mui/icons-material/RadioButtonUncheckedRounded';
+import { Box, Card, CardContent, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { JudgingSession, Room } from '../graphql';
 import { TeamInfo } from '../../../components/team-info';
+import { SessionStatusChip } from './session-status-chip';
 
 interface JudgingStatusMobileProps {
   currentSessions: JudgingSession[];
@@ -20,32 +16,6 @@ interface JudgingStatusMobileProps {
   loading: boolean;
   currentTime: Dayjs;
 }
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'completed':
-      return 'success';
-    case 'in-progress':
-      return 'info';
-    case 'not-started':
-      return 'default';
-    default:
-      return 'default';
-  }
-};
-
-const getStatusIcon = (status: string, called: boolean) => {
-  if (status === 'completed') {
-    return <CheckCircleRoundedIcon fontSize="small" />;
-  }
-  if (status === 'in-progress') {
-    return <PlayCircleRoundedIcon fontSize="small" />;
-  }
-  if (called) {
-    return <PeopleAltRoundedIcon fontSize="small" />;
-  }
-  return <RadioButtonUncheckedRoundedIcon fontSize="small" />;
-};
 
 export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
   currentSessions,
@@ -112,22 +82,7 @@ export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
                 <TeamInfo team={team} size="sm" />
 
                 <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-                  <Chip
-                    icon={getStatusIcon(session.status, session.called)}
-                    label={t(`status.${session.status}`)}
-                    color={getStatusColor(session.status)}
-                    size="small"
-                    sx={{ fontWeight: 600 }}
-                  />
-                  {!team.arrived && (
-                    <Chip
-                      icon={<WarningAmberRoundedIcon />}
-                      label={t('not-arrived')}
-                      color="warning"
-                      size="small"
-                      variant="outlined"
-                    />
-                  )}
+                  <SessionStatusChip status={session.status} arrived={team.arrived} />
                 </Stack>
 
                 {session.startTime && session.startDelta !== undefined && (
