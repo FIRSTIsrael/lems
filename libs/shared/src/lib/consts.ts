@@ -1,3 +1,5 @@
-const matchLoadThreshold = 15;
-const sessionStartThreshold = 5;
-export { matchLoadThreshold, sessionStartThreshold };
+const MATCH_LOAD_THRESHOLD = 15;
+const MATCH_START_THRESHOLD = 5;
+const SESSION_START_THRESOLD = 5;
+
+export { MATCH_LOAD_THRESHOLD, SESSION_START_THRESOLD, MATCH_START_THRESHOLD};

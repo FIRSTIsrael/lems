@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Button, Chip } from '@mui/material';
 import { PlayArrow, CheckCircle } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { sessionStartThreshold } from '@lems/shared/consts';
+import { SESSION_START_THRESOLD } from '@lems/shared/consts';
 import { JudgingSession } from '../../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
@@ -32,7 +32,7 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
     // Must have 5 minutes or less until scheduled start time
     const scheduled = dayjs(session.scheduledTime);
     const minutesUntilStart = scheduled.diff(currentTime, 'minutes', true);
-    if (minutesUntilStart > sessionStartThreshold) return false;
+    if (minutesUntilStart > SESSION_START_THRESOLD) return false;
 
     return true;
   }, [session.status, session.team.arrived, session.scheduledTime, currentTime]);
