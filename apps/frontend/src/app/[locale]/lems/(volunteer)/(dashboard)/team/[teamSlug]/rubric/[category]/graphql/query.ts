@@ -43,9 +43,11 @@ export const GET_AWARD_OPTIONS_QUERY: TypedDocumentNode<
   query GetAwardOptions($divisionId: String!) {
     division(id: $divisionId) {
       id
-      awards(allowNominations: true) {
-        id
-        name
+      judging {
+        awards(allowNominations: true) {
+          id
+          name
+        }
       }
     }
   }

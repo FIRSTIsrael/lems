@@ -15,7 +15,7 @@ import type { ScoresheetStatus } from '../graphql/types';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusLegend } from './scoresheet-status-legend';
 
-const ALL_STATUSES: ScoresheetStatus[] = ['empty', 'in-progress', 'completed', 'gp', 'submitted'];
+const ALL_STATUSES: ScoresheetStatus[] = ['empty', 'draft', 'completed', 'gp', 'submitted'];
 
 export function Filters() {
   const t = useTranslations('pages.head-referee');

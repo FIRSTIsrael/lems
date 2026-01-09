@@ -1,94 +1,44 @@
-import type { RubricStatus } from '@lems/database';
+import { DeliberationStatus } from '@lems/database';
+import { FinalDeliberationStage } from '../types';
+import { Team } from '../../types';
 
-export interface RubricFieldValue {
-  value: 1 | 2 | 3 | 4 | null;
-  notes?: string;
-}
-
-export interface RubricFeedback {
-  greatJob: string;
-  thinkAbout: string;
-}
-
-export interface RubricData {
-  fields: Record<string, RubricFieldValue>;
-  feedback?: RubricFeedback;
-  awards?: Record<string, boolean>;
-}
-
-export interface Rubric {
-  id: string;
-  category: string;
-  status: RubricStatus;
-  data?: RubricData;
-}
-
-export interface CategorizedRubrics {
-  innovation_project: Rubric | null;
-  robot_design: Rubric | null;
-  core_values: Rubric | null;
-}
-
-export interface Room {
-  id: string;
-  name: string;
-}
-
-export interface JudgingSession {
-  id: string;
-  room: Room;
-  status: 'not-started' | 'in-progress' | 'completed';
-}
-
-export interface GPValue {
-  value: 2 | 3 | 4 | null;
-  notes?: string;
-}
-
-export interface ScoresheetData {
-  score: number;
-  gp?: GPValue;
-}
-
-export interface Scoresheet {
-  id: string;
-  round: number;
-  slug: string;
-  data?: ScoresheetData;
-}
-
-export interface Team {
-  id: string;
-  number: string;
-  name: string;
-  affiliation: string;
-  city: string;
-  region: string;
-  arrived: boolean;
-  disqualified: boolean;
-  slug: string;
-  judgingSession?: JudgingSession;
-  scoresheets: Scoresheet[];
-  rubrics: CategorizedRubrics;
-}
-
-export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
-export type FinalDeliberationStatus = 'not-started' | 'in-progress' | 'completed';
-
-export interface FinalDeliberation {
+export interface FinalJudgingDeliberation {
   divisionId: string;
   stage: FinalDeliberationStage;
-  status: FinalDeliberationStatus;
+  status: DeliberationStatus;
   startTime: string | null;
   completionTime: string | null;
   champions: string; // JSON string of Record<number, string>
-  robotPerformance: string[];
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
   optionalAwards: string; // JSON string of Record<string, string[]>
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];
+}
+
+interface Award {
+  id: string;
+  name: string;
+  index: number;
+  place: number;
+  type: 'PERSONAL' | 'TEAM';
+  isOptional: boolean;
+  allowNominations: boolean;
+  automaticAssignment: boolean;
+  winner?: TeamWinner | PersonalWinner;
+}
+
+interface TeamWinner {
+  team: Team;
+}
+
+interface PersonalWinner {
+  name: string;
+}
+
+interface CategoryDeliberation {
+  picklist: string[];
 }
 
 export interface Division {
@@ -98,7 +48,11 @@ export interface Division {
   teams: Team[];
   judging: {
     divisionId: string;
-    finalDeliberation: FinalDeliberation | null;
+    awards: Award[];
+    innovationProjectDeliberation: CategoryDeliberation;
+    robotDesignDeliberation: CategoryDeliberation;
+    coreValuesDeliberation: CategoryDeliberation;
+    finalDeliberation: FinalJudgingDeliberation;
   };
 }
 

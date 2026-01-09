@@ -14,7 +14,8 @@ import {
 } from 'recharts';
 import { Box, Paper, Typography, useTheme, alpha } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
-import type { EnrichedTeam, RoomMetricsMap } from '../types';
+import type { EnrichedTeam } from '../types';
+import { RoomMetricsMap } from '../../types';
 
 interface RoomScoresDistributionProps {
   roomMetrics: RoomMetricsMap;

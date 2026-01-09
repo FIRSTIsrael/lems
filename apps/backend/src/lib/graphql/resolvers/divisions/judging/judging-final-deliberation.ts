@@ -13,7 +13,6 @@ interface FinalDeliberationGraphQL {
   startTime: string | null;
   completionTime: string | null;
   champions: string; // JSON string of Record<number, string>
-  robotPerformance: string[];
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
@@ -47,7 +46,6 @@ export const judgingFinalDeliberationResolver: GraphQLFieldResolver<
       ? new Date(deliberation.completionTime).toISOString()
       : null,
     champions: JSON.stringify(deliberation.awards.champions || {}),
-    robotPerformance: deliberation.awards['robot-performance'] || [],
     innovationProject: deliberation.awards['innovation-project'] || [],
     robotDesign: deliberation.awards['robot-design'] || [],
     coreValues: deliberation.awards['core-values'] || [],

@@ -1,15 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
-import db from '../../../database';
+import db from '../../../../database';
 
-interface DivisionWithId {
-  id: string;
+interface JudgingWithDivisionId {
+  divisionId: string;
 }
 
-interface AwardsArgs {
-  allowNominations?: boolean;
-}
-
-export interface AwardGraphQL {
+interface AwardGraphQL {
   id: string;
   name: string;
   index: number;
@@ -18,23 +14,31 @@ export interface AwardGraphQL {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
+  winner_id?: string;
+  winner_name?: string;
+  divisionId: string;
+}
+
+interface AwardsArgs {
+  allowNominations?: boolean;
 }
 
 /**
- * Resolver for Division.awards field.
- * Fetches all awards configured for a division.
+ * Resolver for Judging.awards field.
+ * Fetches all available awards for a division.
+ * 
  * @param division - The division object containing the id
  * @param args - Optional arguments to filter results
  * @param args.allowNominations - Filter by allowNominations
  */
-export const divisionAwardsResolver: GraphQLFieldResolver<
-  DivisionWithId,
+export const judgingAwardsResolver: GraphQLFieldResolver<
+  JudgingWithDivisionId,
   unknown,
   AwardsArgs,
   Promise<AwardGraphQL[]>
-> = async (division: DivisionWithId, args: AwardsArgs) => {
+> = async (judging: JudgingWithDivisionId, args: AwardsArgs) => {
   try {
-    let awards = await db.awards.byDivisionId(division.id).getAll();
+    let awards = await db.awards.byDivisionId(judging.divisionId).getAll();
 
     // Filter by allowNominations if specified
     if (args?.allowNominations !== undefined) {
@@ -49,10 +53,11 @@ export const divisionAwardsResolver: GraphQLFieldResolver<
       type: award.type,
       isOptional: award.is_optional,
       allowNominations: award.allow_nominations,
-      automaticAssignment: award.automatic_assignment
+      automaticAssignment: award.automatic_assignment,
+      divisionId: judging.divisionId
     }));
   } catch (error) {
-    console.error('Error fetching awards for division:', division.id, error);
+    console.error('Error fetching judging rooms for division:', judging.divisionId, error);
     throw error;
   }
 };

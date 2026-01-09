@@ -43,3 +43,90 @@ extend type Judging {
   "Get the final deliberation for this division"
   finalDeliberation: FinalDeliberation
 }
+
+type FinalDeliberationStartResult {
+  status: String!
+  stage: String!
+  startTime: String!
+}
+
+type FinalDeliberationStageResult {
+  stage: String!
+  status: String!
+}
+
+type FinalDeliberationAwardsResult {
+  awards: String!
+}
+
+type ManualEligibilityResult {
+  stage: String!
+  manualEligibility: [String!]!
+}
+
+type FinalDeliberationCompleteResult {
+  status: String!
+  completionTime: String!
+}
+
+type FinalDeliberationUpdatedEvent {
+  divisionId: String!
+  status: String
+  stage: String
+  startTime: String
+  completionTime: String
+  awards: String
+  stageData: String
+}
+
+type FinalDeliberationStatusChangedEvent {
+  divisionId: String!
+  status: String!
+  stage: String!
+}
+
+extend type Mutation {
+  """
+  Start the final deliberation for a division
+  """
+  startFinalDeliberation(divisionId: String!): FinalDeliberationStartResult!
+
+  """
+  Advance to the next stage in the final deliberation
+  """
+  advanceFinalDeliberationStage(divisionId: String!): FinalDeliberationStageResult!
+
+  """
+  Update award assignments in the final deliberation
+  """
+  updateFinalDeliberationAwards(
+    divisionId: String!
+    awards: String!
+  ): FinalDeliberationAwardsResult!
+
+  """
+  Update manual eligibility for a specific stage
+  """
+  updateManualEligibility(
+    divisionId: String!
+    stage: String!
+    teamIds: [String!]!
+  ): ManualEligibilityResult!
+
+  """
+  Complete and lock the final deliberation
+  """
+  completeFinalDeliberation(divisionId: String!): FinalDeliberationCompleteResult!
+}
+
+extend type Subscription {
+  """
+  Subscribe to updates for the final deliberation
+  """
+  finalDeliberationUpdated(divisionId: String!): FinalDeliberationUpdatedEvent!
+
+  """
+  Subscribe to status changes for the final deliberation
+  """
+  finalDeliberationStatusChanged(divisionId: String!): FinalDeliberationStatusChangedEvent!
+}

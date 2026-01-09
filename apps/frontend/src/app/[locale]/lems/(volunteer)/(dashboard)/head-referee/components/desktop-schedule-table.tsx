@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useEffect, useRef } from 'react';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Table,
   TableBody,
@@ -10,10 +10,15 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Typography
+  Typography,
+  Tooltip,
+  Stack
 } from '@mui/material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import { Locale, Locales } from '@lems/localization';
 import type { Match, Scoresheet, Table as TableType } from '../graphql/types';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from './head-referee-context';
@@ -105,6 +110,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               tables={tables}
               scoresheets={scoresheets}
               isActive={match.id === activeMatchId}
+              isLoaded={match.id === data.loadedMatch}
               findScoresheetForTeam={findScoresheetForTeam}
             />
           ))}
@@ -119,11 +125,22 @@ interface MatchRowProps {
   tables: TableType[];
   scoresheets: Scoresheet[];
   isActive: boolean;
+  isLoaded: boolean;
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
 }
 
-function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam }: MatchRowProps) {
+function MatchRow({
+  match,
+  tables,
+  scoresheets,
+  isActive,
+  isLoaded,
+  findScoresheetForTeam
+}: MatchRowProps) {
+  const t = useTranslations('pages.head-referee');
   const rowRef = useRef<HTMLTableRowElement>(null);
+  const currentLocale = useLocale() as Locale;
+  const isRTL = Locales[currentLocale].rtl;
 
   // Auto-scroll to active match on mount
   useEffect(() => {
@@ -139,7 +156,7 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
       ref={rowRef}
       hover
       sx={{
-        backgroundColor: isActive ? 'action.selected' : 'background.paper',
+        backgroundColor: isActive ? 'primary.light' : 'background.paper',
         '&:last-child td': { border: 0 },
         '& td': { py: 2 }
       }}
@@ -167,33 +184,90 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
         }
 
         const scoresheet = findScoresheetForTeam(participant.team.id, match.stage, match.round);
+        const isMatchCompleted = match.status === 'completed';
 
-        if (!scoresheet) {
+        // If match is completed and scoresheet exists, show the scoresheet button
+        if (isMatchCompleted && scoresheet) {
+          const isFiltered = scoresheets.some(s => s.id === scoresheet.id);
+
           return (
             <TableCell key={table.id} align="center">
-              <Typography variant="body1" color="text.secondary">
-                -
-              </Typography>
+              <ScoresheetStatusButton
+                teamNumber={participant.team.number}
+                teamSlug={participant.team.slug}
+                teamName={participant.team.name}
+                scoresheetSlug={scoresheet.slug}
+                status={scoresheet.status}
+                escalated={scoresheet.escalated}
+                score={scoresheet.data?.score}
+                gp={scoresheet.data?.gp?.value}
+                disabled={!participant.team.arrived}
+                dimmed={!isFiltered}
+              />
             </TableCell>
           );
         }
 
-        const isFiltered = scoresheets.some(s => s.id === scoresheet.id);
+        // Show participant readiness state for non-completed matches
+        const isReady = participant.ready;
+
+        // Show icons only for the loaded match
+        const showIcon = isLoaded;
 
         return (
-          <TableCell key={table.id} align="center">
-            <ScoresheetStatusButton
-              teamNumber={participant.team.number}
-              teamSlug={participant.team.slug}
-              teamName={participant.team.name}
-              scoresheetSlug={scoresheet.slug}
-              status={scoresheet.status}
-              escalated={scoresheet.escalated}
-              score={scoresheet.data?.score}
-              gp={scoresheet.data?.gp?.value}
-              disabled={!participant.team.arrived}
-              dimmed={!isFiltered}
-            />
+          <TableCell
+            key={table.id}
+            align="center"
+            sx={{
+              cursor: 'default'
+            }}
+          >
+            <Tooltip
+              title={
+                isLoaded && isReady
+                  ? t('table.participant-ready')
+                  : isLoaded && !isReady
+                    ? t('table.participant-not-ready')
+                    : ''
+              }
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="center"
+                spacing={0.5}
+                sx={{ width: '100%' }}
+              >
+                {!isRTL &&
+                  showIcon &&
+                  (isReady ? (
+                    <CheckCircleIcon sx={{ color: 'success.main', fontSize: '1.25rem' }} />
+                  ) : (
+                    <CancelIcon sx={{ color: 'error.main', fontSize: '1.25rem' }} />
+                  ))}
+                <Stack
+                  sx={{
+                    alignItems: 'center',
+                    minWidth: 0,
+                    flex: 1
+                  }}
+                >
+                  <Typography variant="body2" fontWeight={600} noWrap>
+                    #{participant.team.number}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary" noWrap>
+                    {participant.team.name}
+                  </Typography>
+                </Stack>
+                {isRTL &&
+                  showIcon &&
+                  (isReady ? (
+                    <CheckCircleIcon sx={{ color: 'success.main', fontSize: '1.25rem' }} />
+                  ) : (
+                    <CancelIcon sx={{ color: 'error.main', fontSize: '1.25rem' }} />
+                  ))}
+              </Stack>
+            </Tooltip>
           </TableCell>
         );
       })}

@@ -29,6 +29,11 @@ import {
 import {
   startDeliberationResolver,
   updateDeliberationPicklistResolver,
+  startFinalDeliberationResolver,
+  advanceFinalDeliberationStageResolver,
+  updateFinalDeliberationAwardsResolver,
+  updateManualEligibilityResolver,
+  completeFinalDeliberationResolver,
   completeDeliberationResolver
 } from './deliberations';
 
@@ -56,5 +61,10 @@ export const mutationResolvers = {
   resetScoresheet: resetScoresheetResolver,
   startDeliberation: startDeliberationResolver,
   updateDeliberationPicklist: updateDeliberationPicklistResolver,
-  completeDeliberation: completeDeliberationResolver
+  completeDeliberation: completeDeliberationResolver,
+  startFinalDeliberation: startFinalDeliberationResolver,
+  advanceFinalDeliberationStage: advanceFinalDeliberationStageResolver,
+  updateFinalDeliberationAwards: updateFinalDeliberationAwardsResolver,
+  updateManualEligibility: updateManualEligibilityResolver,
+  completeFinalDeliberation: completeFinalDeliberationResolver
 };

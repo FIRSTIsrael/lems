@@ -26,7 +26,7 @@ export const MATCH_LOADED_SUBSCRIPTION: TypedDocumentNode<
 
 /**
  * Creates a subscription configuration for match loaded events.
- * Updates the match status when a match is loaded.
+ * Updates the match status and sets the loaded match when a match is loaded.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook
@@ -43,6 +43,7 @@ export function createMatchLoadedSubscription(divisionId: string) {
       return merge(prev, {
         division: {
           field: {
+            loadedMatch: matchId,
             matches: updateById(prev.division.field.matches, matchId, match => ({
               ...match,
               status: 'loaded'

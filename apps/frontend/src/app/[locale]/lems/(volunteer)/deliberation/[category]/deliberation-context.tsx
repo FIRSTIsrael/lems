@@ -6,17 +6,19 @@ import { JudgingCategory } from '@lems/types/judging';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { toast } from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import type { DeliberationContextValue, EnrichedTeam } from './types';
-import type { Division } from './graphql/types';
 import {
   computeTeamScores,
   computeRoomMetrics,
+  getFieldDisplayLabels,
   computeNormalizedScores,
+  getOrganizedRubricFields,
+  getGPScores
+} from '../utils';
+import type { DeliberationContextValue, EnrichedTeam } from './types';
+import type { Division } from './graphql/types';
+import {
   computeRank,
   computeEligibility,
-  getOrganizedRubricFields,
-  getGPScores,
-  getFieldDisplayLabels,
   PICKLIST_LIMIT_MULTIPLIER,
   MAX_PICKLIST_LIMIT
 } from './deliberation-computation';
