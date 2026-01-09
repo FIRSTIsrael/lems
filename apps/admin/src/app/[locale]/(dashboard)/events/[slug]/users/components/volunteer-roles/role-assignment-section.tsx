@@ -54,9 +54,8 @@ export function RoleAssignmentSection({
   } = useVolunteer();
 
   const slots = getSlotsForRole(role);
-  const [expanded, setExpanded] = useState(initiallyExpanded);
-
   const singleDivision = divisions.length === 1;
+  const [expanded, setExpanded] = useState(true);
 
   const handleAddSlot = () => {
     addSlot(role);
@@ -87,13 +86,24 @@ export function RoleAssignmentSection({
             <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
               {t('add-slot')}
             </Button>
-            <IconButton
-              onClick={() => setExpanded(!expanded)}
-              aria-expanded={expanded}
-              aria-label="show more"
-            >
-              {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
+            {singleDivision ? (
+              <IconButton
+                color="error"
+                onClick={() => slots.forEach(slot => removeSlot(slot.id))}
+                aria-label={t('remove-slot')}
+                disabled={slots.length === 0}
+              >
+                <DeleteIcon />
+              </IconButton>
+            ) : (
+              <IconButton
+                onClick={() => setExpanded(!expanded)}
+                aria-expanded={expanded}
+                aria-label="show more"
+              >
+                {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            )}
           </Stack>
         }
       />
@@ -176,6 +186,7 @@ export function RoleAssignmentSection({
                     color="error"
                     onClick={() => handleRemoveSlot(slot.id)}
                     aria-label={t('remove-slot')}
+                    sx={{ display: singleDivision ? 'none' : 'flex' }}
                   >
                     <DeleteIcon />
                   </IconButton>
