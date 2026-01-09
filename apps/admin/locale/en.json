@@ -714,6 +714,8 @@
             "description-judging": "Visible on the internal judging schedule",
             "field": "Field",
             "description-field": "Visible on the internal field schedule",
+            "teams": "Teams",
+            "description-teams": "Visible on team schedules in the team portal",
             "generating": "Generating...",
             "generate-button": "Generate Agenda",
             "generate": {

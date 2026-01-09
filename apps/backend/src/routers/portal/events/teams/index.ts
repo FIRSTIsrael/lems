@@ -4,7 +4,11 @@ import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
 import { makePortalAwardsResponse, makePortalDivisionResponse } from '../../divisions/util';
 import { makePortalTeamResponse } from '../../teams/util';
-import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse, makeAgendaResponse} from './util';
+import {
+  makePortalTeamJudgingSessionResponse,
+  makePortalTeamRobotGameMatchResponse,
+  makeAgendaResponse
+} from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -31,7 +35,9 @@ router.get('/:teamSlug/activities', async (req: PortalTeamAtEventRequest, res: R
   const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
   const matches = await db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId);
   const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-  const agenda = await db.divisions.byId(req.divisionId).agenda().getAll("public");
+  const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
+  const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
+  const agenda = [...agendaPublic, ...agendaTeams];
 
   res.json({
     session: makePortalTeamJudgingSessionResponse(req.teamId, session, rooms),
