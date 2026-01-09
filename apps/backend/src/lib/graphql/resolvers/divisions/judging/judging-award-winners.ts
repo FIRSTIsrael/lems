@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../../database';
-import { TeamGraphQL } from '../../../utils/team-builder';
 
 interface JudgingWithDivisionId {
   divisionId: string;
@@ -15,15 +14,9 @@ interface AwardGraphQL {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
-  winner?: TeamWinner | PersonalWinner;
-}
-
-interface TeamWinner {
-  team: TeamGraphQL;
-}
-
-interface PersonalWinner {
-  name: string;
+  winner_id?: string;
+  winner_name?: string;
+  divisionId: string;
 }
 
 interface AwardsArgs {
@@ -32,13 +25,13 @@ interface AwardsArgs {
 
 /**
  * Resolver for Judging.awards field.
- * Fetches all available awards with winners for a division.
+ * Fetches all available awards for a division.
  * 
  * @param division - The division object containing the id
  * @param args - Optional arguments to filter results
  * @param args.allowNominations - Filter by allowNominations
  */
-export const judgingAwardWinnersResolver: GraphQLFieldResolver<
+export const judgingAwardsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
   unknown,
   AwardsArgs,
@@ -52,22 +45,19 @@ export const judgingAwardWinnersResolver: GraphQLFieldResolver<
       awards = awards.filter(award => award.allow_nominations === args.allowNominations);
     }
 
-    const teams = await db.teams.byDivisionId(judging.divisionId).getAll();
-
-    return awards.map(award => {
-      const teamWinner = teams.find(team => team.id === award.winner_id);
-      return {
-        id: award.id,
-        name: award.name,
-        index: award.index,
-        place: award.place,
-        type: award.type,
-        isOptional: award.is_optional,
-        allowNominations: award.allow_nominations,
-        automaticAssignment: award.automatic_assignment,
-        winner: award.type === 'TEAM' ? teamWinner : { name: award.winner_name }
-      };
-    });
+    return awards.map(award => ({
+      id: award.id,
+      name: award.name,
+      index: award.index,
+      place: award.place,
+      type: award.type,
+      isOptional: award.is_optional,
+      allowNominations: award.allow_nominations,
+      automaticAssignment: award.automatic_assignment,
+      winner_id: award.winner_id,
+      winner_name: award.winner_name,
+      divisionId: judging.divisionId
+    }));
   } catch (error) {
     console.error('Error fetching judging rooms for division:', judging.divisionId, error);
     throw error;
