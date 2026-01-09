@@ -70,7 +70,7 @@ export const PortalScoreboardEntrySchema = z.object({
   team: Team,
   robotGameRank: z.number().nullable(),
   maxScore: z.number().nullable(),
-  scores: z.array(z.number()).nullable()
+  scores: z.array(z.number().nullable())
 });
 
 export type ScoreboardEntry = z.infer<typeof PortalScoreboardEntrySchema>;
