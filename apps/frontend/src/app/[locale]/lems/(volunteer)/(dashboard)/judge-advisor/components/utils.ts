@@ -15,9 +15,11 @@ export type RubricStatusStat = {
 export function getRubricStatusStats(
   sessions: JudgingSession[]
 ): Record<JudgingCategory, RubricStatusStat> {
+  const arrivedSessions = sessions.filter(session => session.team.arrived);
+
   return JUDGING_CATEGORIES.reduce(
     (acc, category) => {
-      const statuses = sessions
+      const statuses = arrivedSessions
         .map(
           session =>
             session.rubrics[hyphensToUnderscores(category)]?.status || ('empty' as RubricStatus)
