@@ -6,7 +6,6 @@ import {
   AgendaEvent as DbAgendaEvent
 } from '@lems/database';
 import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
-import { duration } from 'node_modules/zod/v4/classic/iso.cjs';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,
