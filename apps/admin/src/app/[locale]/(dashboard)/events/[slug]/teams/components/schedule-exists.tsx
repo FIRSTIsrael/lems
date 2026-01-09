@@ -82,7 +82,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => 
                   color="primary"
                   size="small"
                   startIcon={<Schedule />}
-                  href={`/events/${event.slug}/schedule?division=${division.id}`}
+                  href={`/admin/events/${event.slug}/schedule?division=${division.id}`}
                   sx={{ color: 'primary.main' }}
                 >
                   {t('view-schedule')}
