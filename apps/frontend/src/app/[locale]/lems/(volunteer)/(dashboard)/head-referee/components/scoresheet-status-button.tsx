@@ -43,7 +43,7 @@ export const getScoresheetStatusIcon = (
   switch (status) {
     case 'empty':
       return <HelpOutline {...iconProps} color={colorOverride ? undefined : 'disabled'} />;
-    case 'in-progress':
+    case 'draft':
       return <Edit {...iconProps} color={colorOverride ? undefined : 'info'} />;
     case 'gp':
       return <Diversity1 {...iconProps} color={colorOverride ? undefined : 'error'} />;
@@ -63,7 +63,7 @@ export const getStatusColor = (status: ScoresheetStatus | 'escalated'): string =
   switch (status) {
     case 'empty':
       return 'text.disabled';
-    case 'in-progress':
+    case 'draft':
       return 'info.main';
     case 'gp':
       return 'error.main';
@@ -91,7 +91,7 @@ export function ScoresheetStatusButton({
   const theme = useTheme();
   const statusColor = getStatusColor(escalated ? 'escalated' : status);
   const isCompleted = status === 'completed';
-  const isDraft = status === 'in-progress';
+  const isDraft = status === 'draft';
   const isSubmitted = status === 'submitted';
 
   const textColor = isSubmitted ? 'common.white' : statusColor;
@@ -139,14 +139,18 @@ export function ScoresheetStatusButton({
           })
       }}
     >
-      {getScoresheetStatusIcon(escalated ? 'escalated' : status, isSubmitted ? 'common.white' : undefined)}
+      {getScoresheetStatusIcon(
+        escalated ? 'escalated' : status,
+        isSubmitted ? 'common.white' : undefined
+      )}
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'column',
           gap: 0.25,
           textAlign: 'center'
-        }}>
+        }}
+      >
         <Typography
           variant="caption"
           sx={{

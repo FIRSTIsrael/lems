@@ -603,9 +603,10 @@
         "escalated-only": "Escalated Only",
         "status-label": "Status"
       },
+      "scoresheet-round": "{stage} #{round}",
       "scoresheet-status": {
         "empty": "Empty",
-        "in-progress": "In Progress",
+        "draft": "Draft",
         "completed": "Completed",
         "gp": "Awaiting GP",
         "submitted": "Submitted"
@@ -621,8 +622,8 @@
           "label": "Empty",
           "description": "No scoresheet data has been entered"
         },
-        "in-progress": {
-          "label": "In Progress",
+        "draft": {
+          "label": "Draft",
           "description": "Scoresheet is being filled out"
         },
         "completed": {

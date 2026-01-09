@@ -179,6 +179,7 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
         }
 
         const isFiltered = scoresheets.some(s => s.id === scoresheet.id);
+        const isMatchCompleted = match.status === 'completed';
 
         return (
           <TableCell key={table.id} align="center">
@@ -191,7 +192,7 @@ function MatchRow({ match, tables, scoresheets, isActive, findScoresheetForTeam 
               escalated={scoresheet.escalated}
               score={scoresheet.data?.score}
               gp={scoresheet.data?.gp?.value}
-              disabled={!participant.team.arrived}
+              disabled={!participant.team.arrived || !isMatchCompleted}
               dimmed={!isFiltered}
             />
           </TableCell>
