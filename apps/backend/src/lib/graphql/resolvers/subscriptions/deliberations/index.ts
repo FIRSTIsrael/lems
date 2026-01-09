@@ -8,4 +8,3 @@ export {
   FinalDeliberationUpdatedEventResolver
 } from './final-deliberation-updated';
 export { finalDeliberationStatusChangedResolver } from './final-deliberation-status-changed';
-export { finalDeliberationStageChangedResolver } from './final-deliberation-stage-changed';

@@ -114,10 +114,10 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
       stage: updated.stage,
       stageData: updated.stageData
     }),
-    pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_STAGE_CHANGED, {
+    pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
       divisionId,
       stage: updated.stage,
-      previousStage: deliberation.stage
+      status: updated.status
     })
   ]);
 

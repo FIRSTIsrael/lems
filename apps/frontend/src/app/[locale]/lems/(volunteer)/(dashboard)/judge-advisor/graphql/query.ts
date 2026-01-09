@@ -5,20 +5,20 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
   query GetAllJudgingSessions($divisionId: String!) {
     division(id: $divisionId) {
       id
-      awards(allowNominations: false) {
-        id
-        name
-        index
-        place
-        type
-        isOptional
-        allowNominations
-        automaticAssignment
-        description
-      }
       judging {
         divisionId
         sessionLength
+        awards(allowNominations: false) {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          allowNominations
+          automaticAssignment
+          description
+        }
         sessions {
           id
           number

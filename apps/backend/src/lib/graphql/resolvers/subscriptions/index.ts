@@ -25,8 +25,7 @@ import {
   deliberationUpdatedResolver,
   deliberationStatusChangedResolver,
   finalDeliberationUpdatedResolver,
-  finalDeliberationStatusChangedResolver,
-  finalDeliberationStageChangedResolver
+  finalDeliberationStatusChangedResolver
 } from './deliberations';
 
 /**
@@ -55,6 +54,5 @@ export const subscriptionResolvers = {
   deliberationUpdated: deliberationUpdatedResolver,
   deliberationStatusChanged: deliberationStatusChangedResolver,
   finalDeliberationUpdated: finalDeliberationUpdatedResolver,
-  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver,
-  finalDeliberationStageChanged: finalDeliberationStageChangedResolver
+  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver
 };

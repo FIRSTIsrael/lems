@@ -25,5 +25,4 @@ export enum RedisEventTypes {
   DELIBERATION_STATUS_CHANGED = 'deliberationStatusChanged',
   FINAL_DELIBERATION_UPDATED = 'finalDeliberationUpdated',
   FINAL_DELIBERATION_STATUS_CHANGED = 'finalDeliberationStatusChanged',
-  FINAL_DELIBERATION_STAGE_CHANGED = 'finalDeliberationStageChanged'
 }

@@ -91,7 +91,8 @@ export const completeFinalDeliberationResolver: GraphQLFieldResolver<
     }),
     pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_STATUS_CHANGED, {
       divisionId,
-      status: updated.status
+      status: updated.status,
+      stage: updated.stage
     })
   ]);
 

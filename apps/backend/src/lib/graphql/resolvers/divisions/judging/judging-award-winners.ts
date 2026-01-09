@@ -26,18 +26,32 @@ interface PersonalWinner {
   name: string;
 }
 
+interface AwardsArgs {
+  allowNominations?: boolean;
+}
+
 /**
  * Resolver for Judging.awards field.
  * Fetches all available awards with winners for a division.
+ * 
+ * @param division - The division object containing the id
+ * @param args - Optional arguments to filter results
+ * @param args.allowNominations - Filter by allowNominations
  */
 export const judgingAwardWinnersResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
   unknown,
-  unknown,
+  AwardsArgs,
   Promise<AwardGraphQL[]>
-> = async (judging: JudgingWithDivisionId) => {
+> = async (judging: JudgingWithDivisionId, args: AwardsArgs) => {
   try {
-    const awards = await db.awards.byDivisionId(judging.divisionId).getAll();
+    let awards = await db.awards.byDivisionId(judging.divisionId).getAll();
+
+    // Filter by allowNominations if specified
+    if (args?.allowNominations !== undefined) {
+      awards = awards.filter(award => award.allow_nominations === args.allowNominations);
+    }
+
     const teams = await db.teams.byDivisionId(judging.divisionId).getAll();
 
     return awards.map(award => {
