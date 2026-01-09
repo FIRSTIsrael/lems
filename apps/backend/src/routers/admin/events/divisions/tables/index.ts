@@ -29,6 +29,7 @@ router.post(
       event_id: division.event_id,
       role: 'referee',
       role_info: { tableId: table.id },
+      identifier: null,
       password: generateVolunteerPassword()
     });
 
