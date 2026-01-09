@@ -10,7 +10,6 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      autoLoadedMatchId
     }
   }
 `;
