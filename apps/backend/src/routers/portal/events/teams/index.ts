@@ -4,7 +4,7 @@ import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
 import { makePortalAwardsResponse, makePortalDivisionResponse } from '../../divisions/util';
 import { makePortalTeamResponse } from '../../teams/util';
-import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse, makeAgendaResponse as makeAgendaResponse } from './util';
+import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse, makeAgendaResponse} from './util';
 
 const router = express.Router({ mergeParams: true });
 
