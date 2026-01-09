@@ -3,6 +3,7 @@ export interface HeadRefereeData {
     id: string;
     field: {
       divisionId: string;
+      loadedMatch: string | null;
       matches: Match[];
       scoresheets: Scoresheet[];
       tables: Table[];
@@ -75,6 +76,7 @@ export type ScoresheetStatus = 'empty' | 'draft' | 'completed' | 'gp' | 'submitt
 
 export interface FieldData {
   divisionId: string;
+  loadedMatch: string | null;
   matches: Match[];
   scoresheets: Scoresheet[];
   tables: Table[];

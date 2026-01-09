@@ -645,7 +645,9 @@
       },
       "table": {
         "match": "מקצה",
-        "scheduled-time": "שעה"
+        "scheduled-time": "שעה",
+        "participant-ready": "מוכן",
+        "participant-not-ready": "לא מוכן"
       }
     },
     "audience-display": {

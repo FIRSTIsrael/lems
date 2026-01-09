@@ -645,7 +645,9 @@
       },
       "table": {
         "match": "Match",
-        "scheduled-time": "Time"
+        "scheduled-time": "Time",
+        "participant-ready": "Ready",
+        "participant-not-ready": "Not Ready"
       }
     },
     "audience-display": {
