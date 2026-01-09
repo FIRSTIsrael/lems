@@ -13,6 +13,7 @@ import {
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
+import { useTranslations } from 'next-intl';
 import { useRubricContext } from '../rubric-context';
 
 interface MobileFeedbackProps {
@@ -21,6 +22,7 @@ interface MobileFeedbackProps {
 }
 
 export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabled = false }) => {
+  const t = useTranslations('pages.tools.rubrics');
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
   const { rubric, updateRubric } = useRubricContext();
   const feedbackFields = ['greatJob', 'thinkAbout'] as const;
@@ -57,7 +59,7 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
       <CardHeader
         title={
           <Typography variant="h6" fontWeight={700} sx={{ color }}>
-            Feedback
+            {t('mobile-feedback')}
           </Typography>
         }
         sx={{

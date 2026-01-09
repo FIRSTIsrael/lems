@@ -26,6 +26,7 @@ import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
 import { StatusFilterSelector } from './status-filter-selector';
+import { RubricStatusGlossary } from './rubric-status-glossary';
 import { useJudgeAdvisor } from './judge-advisor-context';
 
 export const RubricStatusGrid = () => {
@@ -113,6 +114,9 @@ export const RubricStatusGrid = () => {
               {t('sort.session')}
             </Button>
           </ButtonGroup>
+          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+            <RubricStatusGlossary />
+          </Box>
           {(teamFilter || statusFilter.length > 0) && (
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Typography variant="body2" color="textSecondary">

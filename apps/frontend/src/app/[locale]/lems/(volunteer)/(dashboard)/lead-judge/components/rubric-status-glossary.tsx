@@ -4,13 +4,12 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconButton, Popover, Box, Typography, Stack, Divider, useTheme } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { RubricStatus } from '@lems/database';
 import { getRubricIcon } from '@lems/shared/rubrics/rubric-utils';
 
-const STATUS_ITEMS: RubricStatus[] = ['empty', 'draft', 'completed', 'locked', 'approved'];
+const STATUS_ITEMS = ['empty', 'draft', 'completed', 'locked', 'approved'] as const;
 
 export const RubricStatusGlossary: React.FC = () => {
-  const t = useTranslations('pages.judge.schedule.status-glossary');
+  const t = useTranslations('pages.lead-judge.summary.status-glossary');
   const theme = useTheme();
   const direction = theme.direction;
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);

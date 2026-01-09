@@ -83,8 +83,7 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: '100%',
-            right: direction === 'rtl' ? undefined : 9,
-            left: direction === 'rtl' ? 9 : undefined,
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
@@ -96,8 +95,7 @@ export function ScoresheetStatusLegend() {
           sx={{
             position: 'absolute',
             bottom: 'calc(100% - 1px)',
-            right: direction === 'rtl' ? undefined : 9,
-            left: direction === 'rtl' ? 9 : undefined,
+            right: 9,
             width: 0,
             height: 0,
             borderLeft: '8px solid transparent',
