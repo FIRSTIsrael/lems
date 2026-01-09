@@ -4,7 +4,7 @@ import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
 import { makePortalAwardsResponse, makePortalDivisionResponse } from '../../divisions/util';
 import { makePortalTeamResponse } from '../../teams/util';
-import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse, MakeAgendaResponse } from './util';
+import { makePortalTeamJudgingSessionResponse, makePortalTeamRobotGameMatchResponse, makeAgendaResponse as makeAgendaResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
 
@@ -36,7 +36,7 @@ router.get('/:teamSlug/activities', async (req: PortalTeamAtEventRequest, res: R
   res.json({
     session: makePortalTeamJudgingSessionResponse(req.teamId, session, rooms),
     matches: matches.map(match => makePortalTeamRobotGameMatchResponse(req.teamId, match, tables)),
-    agenda: agenda.map(a => MakeAgendaResponse(a))
+    agenda: agenda.map(a => makeAgendaResponse(a))
   });
 });
 

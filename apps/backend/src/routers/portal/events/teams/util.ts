@@ -3,9 +3,9 @@ import {
   RobotGameTable as DbRobotGameTable,
   JudgingSession as DbJudgingSession,
   JudgingRoom as DbJudgingRoom,
-  AgendaEvent
+  AgendaEvent as DbAgendaEvent
 } from '@lems/database';
-import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 import { duration } from 'node_modules/zod/v4/classic/iso.cjs';
 
 export const makePortalTeamJudgingSessionResponse = (
@@ -57,7 +57,7 @@ export const makePortalTeamRobotGameMatchResponse = (
   };
 };
 
-export const MakeAgendaResponse = (agendaItem: AgendaEvent) => {
+export const makeAgendaResponse = (agendaItem: DbAgendaEvent): AgendaEvent => {
   return {
     id: agendaItem.id,
     title: agendaItem.title,
