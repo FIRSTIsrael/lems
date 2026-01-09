@@ -1,33 +1,5 @@
-import { JudgingCategory } from '@lems/types/judging';
-import type { Division, JudgingDeliberation, Room } from './graphql/types';
-
-export type MetricPerCategory = Record<JudgingCategory | 'total' | 'core-values-no-gp', number>;
-
-/**
- * Metrics aggregated across all teams in a room.
- * Used to compute normalization factors.
- */
-export interface RoomMetrics {
-  avgScores: MetricPerCategory;
-  teamCount: number;
-}
-
-/**
- * Aggregated room metrics indexed by room ID.
- */
-export type RoomMetricsMap = Record<string, RoomMetrics>;
-
-/**
- * Metadata for a single rubric field in a category.
- */
-export interface FieldMetadata {
-  id: string;
-  category: JudgingCategory;
-  sectionId: string;
-  fieldNumber: number;
-  displayLabel: string; // e.g., 'IP-1', 'RD-5'
-  coreValues: boolean;
-}
+import type { MetricPerCategory, Room, RoomMetricsMap } from '../types';
+import type { Division, JudgingDeliberation } from './graphql/types';
 
 /**
  * Enriched team data with all computed values for deliberation.
