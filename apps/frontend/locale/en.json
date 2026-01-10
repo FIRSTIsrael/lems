@@ -478,7 +478,11 @@
       },
       "awards": {
         "title": "Awards Presentation",
-        "description": "Awards presentation functionality will be available soon."
+        "description": "Awards presentation functionality will be available soon.",
+        "blocked": {
+          "title": "Awards Not Yet Assigned",
+          "description": "The awards have not yet been approved. Please check back later."
+        }
       }
     },
     "referee": {
