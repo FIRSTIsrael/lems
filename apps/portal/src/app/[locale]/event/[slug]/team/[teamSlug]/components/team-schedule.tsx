@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
-import { AgendaEvent } from '@lems/database';
 import { useMatchTranslations } from '@lems/localization';
 import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
