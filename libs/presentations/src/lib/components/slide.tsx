@@ -34,15 +34,12 @@ export const Slide: React.FC<SlideProps> = ({
   const immediate = false;
 
   const {
-    slideCount,
     slidePortalNode,
     slideIds,
     activeView,
     pendingView,
     advanceSlide,
     regressSlide,
-    skipTo,
-    navigationDirection,
     commitTransition,
     cancelTransition
   } = useContext(DeckContext);
@@ -60,67 +57,55 @@ export const Slide: React.FC<SlideProps> = ({
   const infinityDirection = slideIndex < activeView.slideIndex ? Infinity : -Infinity;
   const internalStepIndex = isActive ? activeView.stepIndex : infinityDirection;
 
+  // Handle navigation transitions: step changes on active slide, slide enter/exit
   useEffect(() => {
-    if (!isActive) return;
-    if (!stepWillChange) return;
-    if (slideWillChange) return;
+    // Case 1: Exiting to non-existent slide - cancel
+    if (willExit && pendingView.slideId === undefined) {
+      cancelTransition();
+      return;
+    }
 
-    if (pendingView.stepIndex < 0) {
-      regressSlide();
-    } else if (pendingView.stepIndex > finalStepIndex) {
-      advanceSlide();
-    } else if (pendingView.stepIndex === GOTO_FINAL_STEP) {
-      commitTransition({
-        stepIndex: finalStepIndex
-      });
-    } else {
-      commitTransition();
+    // Case 2: Entering a new slide - validate and commit step bounds
+    if (willEnter && finalStepIndex !== undefined) {
+      const step = pendingView.stepIndex;
+      if (step < 0) {
+        commitTransition({ stepIndex: 0 });
+      } else if (step === GOTO_FINAL_STEP || step > finalStepIndex) {
+        // GOTO_FINAL_STEP is a sentinel for "go to last step of this slide"
+        commitTransition({ stepIndex: finalStepIndex });
+      } else {
+        commitTransition();
+      }
+      return;
+    }
+
+    // Case 3: Step change on active slide - validate bounds
+    if (isActive && stepWillChange && !slideWillChange) {
+      const step = pendingView.stepIndex;
+      if (step < 0) {
+        regressSlide();
+      } else if (step > finalStepIndex) {
+        advanceSlide();
+      } else if (step === GOTO_FINAL_STEP) {
+        commitTransition({ stepIndex: finalStepIndex });
+      } else {
+        commitTransition();
+      }
     }
   }, [
-    activeView,
-    advanceSlide,
-    commitTransition,
-    finalStepIndex,
-    navigationDirection,
     isActive,
-    pendingView,
-    regressSlide,
-    skipTo,
-    slideCount,
+    willEnter,
+    willExit,
+    stepWillChange,
     slideWillChange,
-    stepWillChange
+    pendingView.slideId,
+    pendingView.stepIndex,
+    finalStepIndex,
+    advanceSlide,
+    regressSlide,
+    commitTransition,
+    cancelTransition
   ]);
-
-  // Bounds checking for slides in the presentation.
-  useEffect(() => {
-    if (!willExit) return;
-    if (pendingView.slideId === undefined) cancelTransition();
-  }, [willExit, cancelTransition, pendingView.slideId]);
-
-  useEffect(() => {
-    if (!willEnter) return;
-    if (finalStepIndex === undefined) return;
-
-    if (pendingView.stepIndex < 0) {
-      commitTransition({
-        stepIndex: 0
-      });
-    } else if (pendingView.stepIndex === GOTO_FINAL_STEP) {
-      // Because <Slide> elements enumerate their own steps, nobody else
-      // actually knows how many steps are in a slide. So other slides put a
-      // value of GOTO_FINAL_STEP in the step index to indicate that the slide
-      // should fill in the correct finalStepIndex before we commit the change.
-      commitTransition({
-        stepIndex: finalStepIndex
-      });
-    } else if (pendingView.stepIndex > finalStepIndex) {
-      commitTransition({
-        stepIndex: finalStepIndex
-      });
-    } else {
-      commitTransition();
-    }
-  }, [activeView, commitTransition, finalStepIndex, navigationDirection, pendingView, willEnter]);
 
   return (
     <>

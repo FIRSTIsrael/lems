@@ -26,6 +26,7 @@ import { ControlButtons } from './components/control/control-buttons';
 import { AudienceDisplayControl } from './components/audience-display-control';
 import { ScorekeeperLoadingSkeleton } from './components/scorekeeper-loading-skeleton';
 import { ScorekeeperProvider } from './components/scorekeeper-context';
+import { AwardsPresentationWrapper } from './components/awards-presentation-wrapper';
 
 export default function ScorekeeperPage() {
   const t = useTranslations('pages.scorekeeper');
@@ -73,6 +74,8 @@ export default function ScorekeeperPage() {
     );
   }
 
+  const isAwardsMode = data.audienceDisplay?.activeDisplay === 'awards';
+
   return (
     <>
       <PageHeader title={t('page-title')} />
@@ -101,9 +104,11 @@ export default function ScorekeeperPage() {
               <Grid size={{ xs: 12, lg: 6 }}>
                 <Stack spacing={2} height="100%">
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
-                    {t('current-match.section-title')}
+                    {isAwardsMode
+                      ? t('awards-presentation.title')
+                      : t('current-match.section-title')}
                   </Typography>
-                  <ActiveMatchDisplay />
+                  {isAwardsMode ? <AwardsPresentationWrapper /> : <ActiveMatchDisplay />}
                 </Stack>
               </Grid>
 

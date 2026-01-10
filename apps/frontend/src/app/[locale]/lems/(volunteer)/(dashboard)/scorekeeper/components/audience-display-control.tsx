@@ -126,7 +126,7 @@ export function AudienceDisplayControl() {
                 {t('modes.message')}
               </Typography>
             </ToggleButton>
-            <ToggleButton value="awards" aria-label="awards" disabled>
+            <ToggleButton value="awards" aria-label="awards">
               <EmojiEventsRounded sx={{ fontSize: '1.15rem' }} />
               <Typography variant="caption" sx={{ fontWeight: 600 }}>
                 {t('modes.awards')}

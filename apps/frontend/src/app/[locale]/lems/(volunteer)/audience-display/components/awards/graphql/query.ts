@@ -1,16 +1,11 @@
-import { gql } from '@apollo/client';
-import { AudienceDisplayData } from './types';
+import { gql, TypedDocumentNode } from '@apollo/client';
+import { AwardsData, AwardsVars } from './types';
 
-export const GET_AUDIENCE_DISPLAY_DATA = gql`
-  query GetAudienceDisplayData($divisionId: String!) {
+export const GET_AWARDS_DATA: TypedDocumentNode<AwardsData, AwardsVars> = gql`
+  query GetAwardsData($divisionId: String!) {
     division(id: $divisionId) {
       id
       field {
-        divisionId
-        audienceDisplay {
-          activeDisplay
-          settings
-        }
         judging {
           awards {
             id
@@ -47,6 +42,6 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
   }
 `;
 
-export function parseAudienceDisplayData(data: AudienceDisplayData) {
-  return data.division.field.audienceDisplay;
+export function parseAwardsData(data: AwardsData) {
+  return data.division.field.judging?.awards ?? [];
 }

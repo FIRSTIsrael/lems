@@ -1,17 +1,31 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { AudienceDisplayState } from '../graphql';
+import { AudienceDisplayState, Award } from '../graphql';
 
-const AudienceDisplayContext = createContext<AudienceDisplayState | null>(null);
+interface AudienceDisplayContextData {
+  displayState: AudienceDisplayState;
+  awards: Award[];
+}
+
+const AudienceDisplayContext = createContext<AudienceDisplayContextData | null>(null);
 
 interface AudienceDisplayProviderProps {
-  data: AudienceDisplayState;
+  displayState: AudienceDisplayState;
+  awards?: Award[];
   children?: ReactNode;
 }
 
-export function AudienceDisplayProvider({ data, children }: AudienceDisplayProviderProps) {
-  return <AudienceDisplayContext.Provider value={data}>{children}</AudienceDisplayContext.Provider>;
+export function AudienceDisplayProvider({
+  displayState,
+  awards = [],
+  children
+}: AudienceDisplayProviderProps) {
+  return (
+    <AudienceDisplayContext.Provider value={{ displayState, awards }}>
+      {children}
+    </AudienceDisplayContext.Provider>
+  );
 }
 
 export function useAudienceDisplayData(): AudienceDisplayState {
@@ -19,5 +33,13 @@ export function useAudienceDisplayData(): AudienceDisplayState {
   if (!context) {
     throw new Error('useAudienceDisplayData must be used within a AudienceDisplayProvider');
   }
-  return context;
+  return context.displayState;
+}
+
+export function useAwards(): Award[] {
+  const context = useContext(AudienceDisplayContext);
+  if (!context) {
+    throw new Error('useAwards must be used within a AudienceDisplayProvider');
+  }
+  return context.awards;
 }

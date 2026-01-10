@@ -12,12 +12,19 @@ import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
+import { AwardsDisplay } from './components/awards-display';
 import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
   GET_AUDIENCE_DISPLAY_DATA,
   parseAudienceDisplayData
 } from './graphql';
+import type { AudienceDisplayState, Award } from './graphql';
+
+interface ParsedAudienceDisplayData {
+  displayState: AudienceDisplayState;
+  awards: Award[];
+}
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -51,7 +58,11 @@ export default function AudienceDisplayPage() {
     {
       divisionId: currentDivision.id
     },
-    parseAudienceDisplayData,
+    (rawData): ParsedAudienceDisplayData => {
+      const displayState = parseAudienceDisplayData(rawData);
+      const awards = rawData.division.field.judging?.awards ?? [];
+      return { displayState, awards };
+    },
     subscriptions
   );
 
@@ -63,15 +74,29 @@ export default function AudienceDisplayPage() {
     return null;
   }
 
-  const activeDisplay = data.activeDisplay;
+  const activeDisplay = data.displayState.activeDisplay;
+  const awardWinnerSlideStyle =
+    (data.displayState.settings?.awards?.awardWinnerSlideStyle as 'chroma' | 'full' | 'both') ||
+    'both';
+  const presentationState = (data.displayState.settings?.awards?.presentationState as {
+    slideIndex: number;
+    stepIndex: number;
+  }) || { slideIndex: 0, stepIndex: 0 };
 
   return (
-    <AudienceDisplayProvider data={data}>
+    <AudienceDisplayProvider displayState={data.displayState} awards={data.awards}>
       {activeDisplay === 'logo' && <LogoDisplay />}
       {activeDisplay === 'message' && <MessageDisplay />}
       {activeDisplay === 'sponsors' && <SponsorsDisplay />}
       {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
       {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
+      {activeDisplay === 'awards' && (
+        <AwardsDisplay
+          awards={data.awards}
+          awardWinnerSlideStyle={awardWinnerSlideStyle}
+          presentationState={presentationState}
+        />
+      )}
     </AudienceDisplayProvider>
   );
 }

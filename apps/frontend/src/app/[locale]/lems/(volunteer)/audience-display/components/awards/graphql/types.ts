@@ -1,16 +1,3 @@
-export type AudienceDisplayScreen =
-  | 'scoreboard'
-  | 'match_preview'
-  | 'sponsors'
-  | 'logo'
-  | 'message'
-  | 'awards';
-
-export interface AudienceDisplayState {
-  activeDisplay: AudienceDisplayScreen;
-  settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
-}
-
 export interface TeamWinner {
   id: string;
   name: string;
@@ -42,11 +29,10 @@ export interface Award {
   winner?: TeamWinner | PersonalWinner | null;
 }
 
-export interface AudienceDisplayData {
+export interface AwardsData {
   division: {
     id: string;
     field: {
-      audienceDisplay: AudienceDisplayState | null;
       judging: {
         awards: Award[];
       } | null;
@@ -54,6 +40,10 @@ export interface AudienceDisplayData {
   };
 }
 
-export interface AudienceDisplayVars {
+export interface AwardsVars {
   divisionId: string;
+}
+
+export function parseAwardsData(data: AwardsData) {
+  return data.division.field.judging?.awards ?? [];
 }
