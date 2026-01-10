@@ -35,7 +35,6 @@ function FieldStatusContent() {
           matchLength={matchLength}
         />
 
-        {/* Active and Next Match - Side by Side on Desktop */}
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6 }}>
             <ActiveMatchPanel match={activeMatch} />
@@ -49,7 +48,6 @@ function FieldStatusContent() {
         <QueueOverview matches={queuedMatches} />
         */}
 
-        {/* Upcoming Matches */}
         <UpcomingMatches matches={upcomingMatches} loadedMatchId={loadedMatch?.id} />
       </Stack>
     </Container>

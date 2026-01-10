@@ -13,7 +13,7 @@ interface MatchCountdownProps {
 }
 
 /**
- * Large countdown timer display for next match
+ * countdown timer display for next match
  * Shows time remaining with color-coded urgency
  */
 export function MatchCountdown({

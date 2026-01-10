@@ -39,6 +39,7 @@ interface QueueOverviewProps {
 /**
  * Overview of matches in queue
  * Shows called matches and team readiness
+ * NO QUEUE YET
  */
 export function QueueOverview({ matches }: QueueOverviewProps) {
   const t = useTranslations('pages.reports.field-status.queue-overview');

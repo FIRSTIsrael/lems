@@ -14,13 +14,12 @@ interface UpcomingMatchesProps {
 }
 
 /**
- * Display upcoming matches in scorekeeper-style table format
- * Shows match number, scheduled time, and teams (without status and actions columns)
+ * Display upcoming matches
+ * Shows match number, scheduled time, and teams
  */
 export function UpcomingMatches({ matches, loadedMatchId, maxDisplay = 10 }: UpcomingMatchesProps) {
   const t = useTranslations('pages.reports.field-status');
 
-  // Filter to upcoming matches only using dayjs
   const upcoming = useMemo(() => {
     return matches
       .filter(m => m.status === 'not-started')
