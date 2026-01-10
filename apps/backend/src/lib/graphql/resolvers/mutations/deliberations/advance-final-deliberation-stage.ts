@@ -92,7 +92,7 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
 
   // Handle stage-specific completion logic
   if (deliberation.stage === 'champions') {
-    await handleChampionsStageCompletion(divisionId);
+    await handleChampionsStageCompletion(divisionId, deliberation.awards.champions);
   } else if (deliberation.stage === 'core-awards') {
     await handleCoreAwardsStageCompletion(divisionId);
   } else if (deliberation.stage === 'optional-awards') {

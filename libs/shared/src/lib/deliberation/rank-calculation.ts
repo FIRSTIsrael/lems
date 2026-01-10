@@ -1,4 +1,5 @@
 import type { JudgingCategory } from '@lems/database';
+import { compareScoreArrays } from '../utils';
 
 /**
  * Team with enriched rank data
@@ -10,9 +11,9 @@ export interface TeamWithRanks {
     'innovation-project': number;
     'robot-design': number;
     'core-values': number;
+    'robot-game': number;
   };
   averageRank: number;
-  coreValuesRank: number;
 }
 
 /**
@@ -21,12 +22,9 @@ export interface TeamWithRanks {
 export interface RankCalculationData {
   teamId: string;
   teamNumber: number;
-  rubricScores: {
-    'innovation-project': number;
-    'robot-design': number;
-    'core-values': number;
-  };
+  rubricScores: Record<JudgingCategory, number>;
   gpScore: number; // GP score (used for core-values tiebreaker)
+  robotGameScores: number[];
 }
 
 /**
@@ -84,10 +82,11 @@ export function calculateTeamRanks(
   picklists: Partial<Record<JudgingCategory, string[]>>
 ): TeamWithRanks {
   const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
-  const ranks: Record<JudgingCategory, number> = {
+  const ranks: Record<JudgingCategory | 'robot-game', number> = {
     'innovation-project': 0,
     'robot-design': 0,
-    'core-values': 0
+    'core-values': 0,
+    'robot-game': 0
   };
 
   // Calculate rank for each category
@@ -96,9 +95,19 @@ export function calculateTeamRanks(
     ranks[category] = calculateCategoryRank(teamData, allTeams, category, picklist);
   });
 
+  // Calculate robot game rank
+  ranks['robot-game'] =
+    allTeams
+      .sort((a, b) => compareScoreArrays(a.robotGameScores, b.robotGameScores))
+      .indexOf(teamData) + 1;
+
   // Calculate average rank
   const averageRank =
-    (ranks['innovation-project'] + ranks['robot-design'] + ranks['core-values']) / 3;
+    (ranks['innovation-project'] +
+      ranks['robot-design'] +
+      ranks['core-values'] +
+      ranks['robot-game']) /
+    4;
 
   return {
     teamId: teamData.teamId,
@@ -106,10 +115,10 @@ export function calculateTeamRanks(
     ranks: {
       'innovation-project': ranks['innovation-project'],
       'robot-design': ranks['robot-design'],
-      'core-values': ranks['core-values']
+      'core-values': ranks['core-values'],
+      'robot-game': ranks['robot-game']
     },
-    averageRank,
-    coreValuesRank: ranks['core-values']
+    averageRank
   };
 }
 
@@ -123,6 +132,7 @@ export function calculateTeamRanks(
  */
 export function selectAdvancingTeams(
   teamsWithRanks: TeamWithRanks[],
+  championsIds: string[],
   advancementPercent: number
 ): string[] {
   if (advancementPercent <= 0) {
@@ -130,18 +140,21 @@ export function selectAdvancingTeams(
   }
 
   // Sort by: average rank (ascending), then core-values rank (ascending), then team number (ascending)
-  const sorted = [...teamsWithRanks].sort((a, b) => {
-    const avgDiff = a.averageRank - b.averageRank;
-    if (avgDiff !== 0) return avgDiff;
+  const sorted = [...teamsWithRanks]
+    .filter(team => !championsIds.includes(team.teamId))
+    .sort((a, b) => {
+      const avgDiff = a.averageRank - b.averageRank;
+      if (avgDiff !== 0) return avgDiff;
 
-    const cvDiff = a.coreValuesRank - b.coreValuesRank;
-    if (cvDiff !== 0) return cvDiff;
+      const cvDiff = a.ranks['core-values'] - b.ranks['core-values'];
+      if (cvDiff !== 0) return cvDiff;
 
-    return a.teamNumber - b.teamNumber;
-  });
+      return a.teamNumber - b.teamNumber;
+    });
 
   // Calculate how many teams advance
-  const advancingCount = Math.ceil((sorted.length * advancementPercent) / 100);
+  const advancingCount =
+    Math.round((teamsWithRanks.length * advancementPercent) / 100) - championsIds.length;
 
   // Return top N team IDs
   return sorted.slice(0, advancingCount).map(t => t.teamId);

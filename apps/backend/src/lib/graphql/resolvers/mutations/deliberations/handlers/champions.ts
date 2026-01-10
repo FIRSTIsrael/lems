@@ -1,4 +1,4 @@
-import { JudgingCategory, FinalDeliberationAwards } from '@lems/database';
+import { JudgingCategory, FinalDeliberationAwards, Scoresheet, Award } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { calculateTeamRanks, selectAdvancingTeams } from '@lems/shared/deliberation';
@@ -15,6 +15,7 @@ interface TeamScoreData {
   teamNumber: number;
   rubricScores: Record<JudgingCategory, number>;
   gpScore: number;
+  robotGameScores: number[];
 }
 
 /**
@@ -33,21 +34,35 @@ export function validateChampionsStage(deliberation: { awards: FinalDeliberation
 /**
  * Handles advancement award creation when leaving champions stage
  */
-export async function handleChampionsStageCompletion(divisionId: string): Promise<void> {
-  const advancementConfig = await getAdvancementConfig(divisionId);
-  if (!advancementConfig) {
-    return;
-  }
-
+export async function handleChampionsStageCompletion(
+  divisionId: string,
+  champions: FinalDeliberationAwards['champions']
+): Promise<void> {
   const teams = await db.teams.byDivisionId(divisionId).getAll();
   if (teams.length === 0) {
     return;
   }
 
+  await assignChampionsToTeams(divisionId, champions);
+
   const teamScores = await calculateAllTeamScores(divisionId, teams);
   const teamsWithRanks = await rankTeams(teamScores, divisionId);
+
+  const robotPerformanceAwards = await db.awards.byDivisionId(divisionId).get('robot-performance');
+  const robotPerformanceWinners = teamsWithRanks
+    .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
+    .slice(0, robotPerformanceAwards.length)
+    .map(t => t.teamId);
+  await assignRobotPerformanceAwards(robotPerformanceWinners, robotPerformanceAwards);
+
+  const advancementConfig = await getAdvancementConfig(divisionId);
+  if (!advancementConfig) {
+    return;
+  }
+
   const advancingTeamIds = selectAdvancingTeams(
     teamsWithRanks,
+    Object.values(champions),
     advancementConfig.advancement_percent
   );
 
@@ -90,13 +105,17 @@ async function calculateAllTeamScores(
   teams: TeamData[]
 ): Promise<TeamScoreData[]> {
   const rubrics = await db.rubrics.byDivision(divisionId).getAll();
-  const scoresheets = await db.raw.mongo.collection('scoresheets').find({ divisionId }).toArray();
+  const scoresheets = await db.raw.mongo
+    .collection<Scoresheet>('scoresheets')
+    .find({ divisionId })
+    .toArray();
 
   return teams.map(team => ({
     teamId: team.id,
     teamNumber: team.number,
     rubricScores: calculateRubricScores(team.id, rubrics),
-    gpScore: calculateGPScore(team.id, scoresheets)
+    gpScore: calculateGPScore(team.id, scoresheets),
+    robotGameScores: scoresheets.filter(s => s.teamId === team.id).map(s => s.data?.score || 0)
   }));
 }
 
@@ -191,6 +210,36 @@ async function fetchPicklists(
   return picklists;
 }
 
+const assignChampionsToTeams = async (
+  divisionId: string,
+  champions: FinalDeliberationAwards['champions']
+): Promise<void> => {
+  const championsAwards = await db.awards.byDivisionId(divisionId).get('champions');
+  for (const award of championsAwards) {
+    const teamId = champions[award.place];
+    if (!teamId) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        `Champion place ${award.place} is not assigned to any team`
+      );
+    }
+    await db.awards.assign(award.id, teamId);
+  }
+};
+
+const assignRobotPerformanceAwards = async (
+  teamsWithRanks: string[],
+  robotPerformanceAwards: Award[]
+): Promise<void> => {
+  for (let i = 0; i < robotPerformanceAwards.length; i++) {
+    const award = robotPerformanceAwards[i];
+    const teamId = teamsWithRanks[i];
+    if (teamId) {
+      await db.awards.assign(award.id, teamId);
+    }
+  }
+};
+
 /**
  * Creates Award entries for advancing teams
  */
@@ -198,11 +247,11 @@ async function createAdvancementAwards(
   divisionId: string,
   advancingTeamIds: string[]
 ): Promise<void> {
-  const advancementAwards = advancingTeamIds.map(teamId => ({
+  const advancementAwards = advancingTeamIds.map((teamId, index) => ({
     division_id: divisionId,
     name: 'advancement',
     index: -1,
-    place: 1,
+    place: index + 1,
     type: 'TEAM' as const,
     is_optional: false,
     show_places: false,
