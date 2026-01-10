@@ -1,21 +1,8 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import {
-  Box,
-  CircularProgress,
-  Alert,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-  Typography,
-  Stack,
-  Grid,
-  FormControlLabel,
-  Radio
-} from '@mui/material';
+import { Box, CircularProgress, Alert } from '@mui/material';
+import { ExportRubricTable } from './export-rubric-table';
 
 interface RubricSchema {
   sections: Array<{
@@ -34,6 +21,23 @@ interface Rubric {
   status?: string;
   feedback?: { greatJob: string; thinkAbout: string };
   schema?: RubricSchema;
+  translations?: {
+    sections: Record<
+      string,
+      {
+        title: string;
+        description: string;
+        fields: Record<
+          string,
+          {
+            beginning: string;
+            developing: string;
+            accomplished: string;
+          }
+        >;
+      }
+    >;
+  };
 }
 
 interface RubricsExportPageProps {
@@ -91,7 +95,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
   }
 
   return (
-    <Box>
+    <Box sx={{ '@media print': { margin: 0, padding: 0 } }}>
       {rubrics.length > 0 ? (
         rubrics.map((rubric, index) => (
           <Box
@@ -100,175 +104,36 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
             sx={{
               pageBreakInside: 'avoid !important',
               breakInside: 'avoid !important',
-              position: 'relative',
-              boxSizing: 'border-box',
+              p: 2,
               '@media print': {
-                margin: '0',
-                padding: '0',
-                maxHeight: '100vh',
-                overflow: 'hidden'
+                margin: 0,
+                padding: 2,
+                pageBreakAfter: 'always'
               }
             }}
           >
-            <Stack spacing={0} sx={{ height: '100%' }}>
-              <Grid container sx={{ p: 2 }}>
-                <Grid size={10}>
-                  <Stack justifyContent="space-between" height="100%" spacing={0.5}>
-                    <Typography fontSize="0.65rem" color="textSecondary">
-                      Team #{rubric.teamNumber} - {rubric.teamName} | {rubric.divisionName}
-                    </Typography>
-                    <Typography fontSize="1.5rem" fontWeight={700}>
-                      {rubric.rubricCategory}
-                    </Typography>
-                  </Stack>
-                </Grid>
-              </Grid>
-
-              <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
-                {rubric.schema && rubric.schema.sections && rubric.schema.sections.length > 0 ? (
-                  <Box
-                    dir="rtl"
-                    sx={{
-                      width: '115%',
-                      mt: 1,
-                      mb: -5,
-                      mr: -3,
-                      ml: -7,
-                      '@media print': {
-                        height: 'fit-content',
-                        overflow: 'hidden',
-                        pageBreakInside: 'avoid !important',
-                        breakInside: 'avoid !important'
-                      }
-                    }}
-                  >
-                    <Table
-                      sx={{
-                        tableLayout: 'fixed',
-                        borderCollapse: 'collapse',
-                        maxWidth: '100%',
-                        width: '100%',
-                        position: 'relative',
-                        border: '2px solid #000',
-                        transform: 'scale(0.75)',
-                        transformOrigin: 'top center',
-                        '@media print': {
-                          width: '100%',
-                          tableLayout: 'fixed',
-                          pageBreakInside: 'avoid !important',
-                          breakInside: 'avoid !important'
-                        },
-                        '& .MuiTableCell-root': {
-                          padding: '3px 6px',
-                          fontSize: '0.85rem',
-                          lineHeight: 1.2,
-                          height: 'auto'
-                        },
-                        '& .MuiTableHead-root .MuiTableCell-root': {
-                          padding: '1em',
-                          fontSize: '1em'
-                        },
-                        '& .MuiTypography-root': {
-                          fontSize: '0.85rem',
-                          lineHeight: 1.2
-                        },
-                        '& .MuiTableHead-root .MuiTypography-root': {
-                          fontSize: '1em'
-                        },
-                        '& .MuiTableRow-root': {
-                          minHeight: 'unset',
-                          height: 'auto'
-                        }
-                      }}
-                    >
-                      <TableHead sx={{ p: '0.5rem 0.25rem' }}>
-                        <TableRow>
-                          <TableCell sx={{ border: '2px solid #000', textAlign: 'center' }}>
-                            Beginning
-                          </TableCell>
-                          <TableCell sx={{ border: '2px solid #000', textAlign: 'center' }}>
-                            Developing
-                          </TableCell>
-                          <TableCell sx={{ border: '2px solid #000', textAlign: 'center' }}>
-                            Accomplished
-                          </TableCell>
-                          <TableCell sx={{ border: '2px solid #000', textAlign: 'center' }}>
-                            Exceeds
-                          </TableCell>
-                        </TableRow>
-                      </TableHead>
-                      {rubric.schema.sections.map(section => (
-                        <TableBody key={section.id}>
-                          <TableRow>
-                            <TableCell
-                              colSpan={4}
-                              sx={{
-                                border: '2px solid #000',
-                                backgroundColor: '#e8f0f7',
-                                fontWeight: 'bold',
-                                textAlign: 'right'
-                              }}
-                            >
-                              {section.id}
-                            </TableCell>
-                          </TableRow>
-                          {section.fields.map(field => (
-                            <TableRow key={field.id}>
-                              {[1, 2, 3, 4].map(level => (
-                                <TableCell
-                                  key={level}
-                                  sx={{
-                                    border: '2px solid #000',
-                                    fontSize: '0.7rem',
-                                    p: '0 0.5em',
-                                    backgroundColor:
-                                      rubric.scores[field.id] === level ? '#d4edda' : '#fff'
-                                  }}
-                                >
-                                  <Box
-                                    sx={{
-                                      display: 'flex',
-                                      alignItems: 'center',
-                                      gap: 0.5,
-                                      width: '100%',
-                                      minHeight: '2.5rem'
-                                    }}
-                                  >
-                                    <FormControlLabel
-                                      value={level}
-                                      control={
-                                        <Radio
-                                          disableRipple
-                                          checked={rubric.scores[field.id] === level}
-                                          sx={{ fontSize: '1.7em' }}
-                                        />
-                                      }
-                                      label=""
-                                      sx={{
-                                        m: 0,
-                                        '.MuiFormControlLabel-label': { display: 'none' }
-                                      }}
-                                    />
-                                  </Box>
-                                </TableCell>
-                              ))}
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      ))}
-                    </Table>
-                  </Box>
-                ) : (
-                  <Alert severity="info">No rubric data available</Alert>
-                )}
+            <Box sx={{ mb: 2, textAlign: 'right' }}>
+              <Box sx={{ fontSize: '0.95rem' }}>
+                {rubric.teamName} - #{rubric.teamNumber}
               </Box>
-            </Stack>
+              <Box sx={{ fontSize: '0.85rem', color: '#666' }}>{rubric.rubricCategory}</Box>
+            </Box>
+
+            {rubric.schema && rubric.schema.sections && rubric.schema.sections.length > 0 ? (
+              <ExportRubricTable
+                sections={rubric.schema.sections}
+                category={rubric.rubricCategory as any}
+                scores={rubric.scores}
+                feedback={rubric.feedback}
+              />
+            ) : (
+              <Alert severity="info">No rubric data available</Alert>
+            )}
           </Box>
         ))
       ) : (
         <Alert severity="info">No rubrics found</Alert>
       )}
-      <Box sx={{ '@media print': { pageBreakAfter: 'always' } }} />
     </Box>
   );
 }
