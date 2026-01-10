@@ -5,9 +5,8 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
-import { AgendaEvent } from '@lems/database';
 import { useMatchTranslations } from '@lems/localization';
-import { TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from './team-at-event-context';
 
@@ -62,9 +61,9 @@ export const TeamSchedule: React.FC = () => {
         ]
       : []),
     ...(agenda || []).map(agendaItem => ({
-      time: new Date(agendaItem.start_time),
+      time: new Date(agendaItem.startTime),
       description: agendaItem.title,
-      location: ''
+      location: agendaItem.location || ''
     }))
   ].sort((a, b) => a.time.getTime() - b.time.getTime());
 

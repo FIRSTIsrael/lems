@@ -707,6 +707,8 @@
             "save": "Save",
             "delete": "Delete",
             "event-title": "Event Title",
+            "event-location": "Location",
+            "default-event-location": "Room/Location",
             "visibility": "Visibility",
             "public": "Public",
             "description-public": "Visible to everyone on the Public Portal",

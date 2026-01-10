@@ -34,7 +34,8 @@ const createAgendaBlock = (
   startTime: Dayjs,
   durationSeconds: number,
   title: string,
-  visibilty: AgendaBlockVisibility
+  visibilty: AgendaBlockVisibility,
+  location: string | null
 ): AgendaBlock => {
   const id = nanoid(12);
 
@@ -44,7 +45,8 @@ const createAgendaBlock = (
     startTime,
     durationSeconds,
     title,
-    visibilty
+    visibilty,
+    location
   };
 };
 
@@ -77,7 +79,12 @@ export interface CalendarContextType {
   addRankingRound: () => void;
   deleteFieldBlock: (blockId: string) => void;
   updateColumn: (column: ScheduleColumn, blockId: string, newStartTime: Dayjs) => void;
-  addAgendaEvent: (startTime: Dayjs, durationSeconds: number, title: string) => void;
+  addAgendaEvent: (
+    startTime: Dayjs,
+    durationSeconds: number,
+    title: string,
+    location?: string | null
+  ) => void;
   updateAgendaEvent: (blockId: string, updates: Partial<AgendaBlock>) => void;
   deleteAgendaEvent: (blockId: string) => void;
 }
@@ -296,7 +303,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
 
     // update counters
     if (deleted.type === 'practice-round') {
-      setPracticeRounds(prevRounds => prevRounds - 1)
+      setPracticeRounds(prevRounds => prevRounds - 1);
     }
 
     if (deleted.type === 'ranking-round') {
@@ -304,8 +311,19 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }
   };
 
-  const addAgendaEvent = (startTime: Dayjs, durationSeconds: number, title: string) => {
-    const newEvent = createAgendaBlock(startTime, durationSeconds, title, 'public');
+  const addAgendaEvent = (
+    startTime: Dayjs,
+    durationSeconds: number,
+    title: string,
+    location?: string | null
+  ) => {
+    const newEvent = createAgendaBlock(
+      startTime,
+      durationSeconds,
+      title,
+      'public',
+      location || null
+    );
     setBlocks(prev => ({
       ...prev,
       agenda: [...prev.agenda, newEvent].sort((a, b) => a.startTime.diff(b.startTime))

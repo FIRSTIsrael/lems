@@ -4,6 +4,7 @@ export interface AgendaEvent {
   startTime: string;
   duration: number;
   visibility: string;
+  location: string | null;
 }
 
 export interface QueryData {

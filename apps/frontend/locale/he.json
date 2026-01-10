@@ -218,6 +218,7 @@
         "no-events": "לא נקבעו אירועים בלו״ז.",
         "loading": "טוען לו״ז...",
         "duration-minutes": "{count, plural, one {דקה אחת} other {# דקות}}",
+        "location": "מיקום",
         "visibility": {
           "public": "כללי",
           "judging": "שיפוט",

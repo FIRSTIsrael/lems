@@ -100,9 +100,14 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
     setEditingBlockId(block.id);
   };
 
-  const handleSaveDialog = (newTitle: string, newVisibility: AgendaBlockVisibility) => {
+  const handleSaveDialog = (
+    newTitle: string,
+    newLocation: string | null,
+    newVisibility: AgendaBlockVisibility
+  ) => {
     updateAgendaEvent(block.id, {
       title: newTitle,
+      location: newLocation,
       visibilty: newVisibility
     });
     setEditingBlockId(null);
@@ -172,6 +177,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
         startTime={block.startTime}
         durationSeconds={block.durationSeconds}
         visibility={block.visibilty ?? 'public'}
+        location={block.location}
         size={size}
         onEditClick={handleEditClick}
         onDeleteClick={handleDelete}

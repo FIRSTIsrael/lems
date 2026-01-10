@@ -66,7 +66,7 @@ export function AgendaEventCard({ event }: AgendaEventCardProps) {
         <Typography variant="subtitle1" fontWeight={600} noWrap>
           {event.title}
         </Typography>
-        <Stack direction="row" spacing={1} alignItems="center">
+        <Stack direction="row" spacing={1} alignItems="center" sx={{ flexWrap: 'wrap', gap: 0.5 }}>
           <Typography variant="body2" color="text.secondary">
             {formattedTime}
           </Typography>
@@ -76,6 +76,16 @@ export function AgendaEventCard({ event }: AgendaEventCardProps) {
           <Typography variant="body2" color="text.secondary">
             {t('duration-minutes', { count: durationMinutes })}
           </Typography>
+          {event.location && (
+            <>
+              <Typography variant="body2" color="text.secondary">
+                •
+              </Typography>
+              <Typography variant="body2" color="text.secondary" fontWeight={500}>
+                {event.location}
+              </Typography>
+            </>
+          )}
         </Stack>
       </Stack>
 
