@@ -43,6 +43,8 @@ export async function handleChampionsStageCompletion(
     return;
   }
 
+  // TODO: Idempotency check
+
   await assignChampionsToTeams(divisionId, champions);
 
   const teamScores = await calculateAllTeamScores(divisionId, teams);

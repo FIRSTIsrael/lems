@@ -89,31 +89,24 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
     nextStage = STAGE_PROGRESSION[nextStage];
   }
 
-  // Validate current stage before advancing
+  // Handle stage specific advancement logic
   switch (deliberation.stage) {
     case 'champions':
       validateChampionsStage(deliberation);
+      await handleChampionsStageCompletion(divisionId, deliberation.awards.champions);
       break;
     case 'core-awards':
       validateCoreAwardsStage(deliberation);
+      await handleCoreAwardsStageCompletion(divisionId);
       break;
     case 'optional-awards':
       validateOptionalAwardsStage();
+      await handleOptionalAwardsStageCompletion(divisionId);
       break;
     case 'review':
       validateReviewStage();
+      await handleReviewStageCompletion(divisionId);
       break;
-  }
-
-  // Handle stage-specific completion logic
-  if (deliberation.stage === 'champions') {
-    await handleChampionsStageCompletion(divisionId, deliberation.awards.champions);
-  } else if (deliberation.stage === 'core-awards') {
-    await handleCoreAwardsStageCompletion(divisionId);
-  } else if (deliberation.stage === 'optional-awards') {
-    await handleOptionalAwardsStageCompletion(divisionId);
-  } else if (deliberation.stage === 'review') {
-    await handleReviewStageCompletion(divisionId);
   }
 
   // Update to next stage and clear stage-specific data
