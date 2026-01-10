@@ -75,6 +75,9 @@ type Judging {
 
   "Awards available for this division"
   awards("Whether teams can be nominated for awards" allowNominations: Boolean): [Award!]!
+
+  "Advancement percentage for teams in this division, null if advancement is disabled"
+  advancementPercentage: Int
 }
 
 extend type Division {

@@ -848,6 +848,26 @@
       }
     },
     "deliberations": {
+      "scores-chart": {
+        "room-scores-distribution": "Room Scores Distribution",
+        "no-data-available": "No data available",
+        "innovation-project": "Innovation Project",
+        "robot-design": "Robot Design",
+        "core-values": "Core Values",
+        "aggregate-average": "Aggregate Average"
+      },
+      "compare": {
+        "title": "Compare Teams",
+        "team-1": "Team 1",
+        "team-2": "Team 2",
+        "compare": "Compare",
+        "no-data-available": "No teams available"
+      },
+      "small-screen-block": {
+        "title": "Screen Too Small",
+        "message": "The deliberation view requires a larger screen to display all components properly.",
+        "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+      },
       "category": {
         "title": "{category} Deliberation",
         "controls": {
@@ -877,21 +897,6 @@
           "empty-state": "Add teams",
           "error-limit-exceeded": "Picklist limit reached. Cannot add more teams."
         },
-        "scores-chart": {
-          "room-scores-distribution": "Room Scores Distribution",
-          "no-data-available": "No data available",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average"
-        },
-        "compare-teams-picker": {
-          "title": "Compare Teams",
-          "team-1": "Team 1",
-          "team-2": "Team 2",
-          "compare": "Compare",
-          "no-data-available": "No teams to compare"
-        },
         "table": {
           "rank": "Rank",
           "team": "Team",
@@ -901,11 +906,34 @@
           "actions": "Actions",
           "view-rubric": "View Rubric",
           "add-to-picklist": "Add to Picklist"
+        }
+      },
+      "final": {
+        "title": "Final Deliberation",
+        "stepper": {
+          "champions": "Champions Award",
+          "core-awards": "Core Awards",
+          "optional-awards": "Optional Awards",
+          "review": "Review"
         },
-        "small-screen-block": {
-          "title": "Screen Too Small",
-          "message": "The deliberation view requires a larger screen to display all components properly.",
-          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        "champions": {
+          "title": "Champions Award",
+          "description": "Select teams to award the Champions.",
+          "podium-title": "Champions Podium",
+          "place-label": "Place #{place}",
+          "select-team": "Select team...",
+          "table-rank": "Rank",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-score": "Total Score",
+          "save": "Save Champions",
+          "advance": "Advance to Core Awards",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Champions have been selected. Ready to advance."
         }
       }
     }
@@ -975,79 +1003,6 @@
         "select-teams-to-compare": "Select teams to compare",
         "current-teams": "Current Teams",
         "done": "Done"
-      }
-    }
-  },
-  "deliberations": {
-    "final": {
-      "title": "Final Deliberation",
-      "error": {
-        "loadingData": "Failed to load deliberation data",
-        "notFound": "Final deliberation not found"
-      },
-      "stages": {
-        "champions": "Champions Selection",
-        "core-awards": "Core Awards",
-        "optional-awards": "Optional Awards",
-        "review": "Review & Finalize"
-      },
-      "buttons": {
-        "previous": "Previous Stage",
-        "next": "Next Stage",
-        "finalize": "Finalize Deliberation"
-      },
-      "teamCard": {
-        "totalRank": "Total Rank",
-        "overall": "Overall",
-        "robotGameRank": "Robot Game Rank",
-        "robotGame": "Robot Game"
-      },
-      "champions": {
-        "instruction": "Select teams for 1st, 2nd, 3rd, and 4th place champions. Teams are ranked by total judging score.",
-        "championsTitle": "Champions Selection",
-        "eligibleTeams": "{count} eligible teams",
-        "noEligibleTeams": "No teams are eligible for champions at this time",
-        "robotPerformanceTitle": "Robot Performance Winners",
-        "robotPerformanceDescription": "These teams are automatically ranked by their highest game score",
-        "maxScore": "Max Score"
-      },
-      "coreAwards": {
-        "instruction": "Select award winners for each judging category. Teams can only win one award per category.",
-        "categories": {
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values"
-        },
-        "selectWinners": "Select award winners for {category}",
-        "noEligibleTeams": "No teams are eligible for this award",
-        "selectedWinners": "Selected Winners",
-        "rank": "Rank",
-        "none": "None selected"
-      },
-      "optionalAwards": {
-        "instruction": "Select teams that have been nominated for optional awards. A team can receive multiple optional awards.",
-        "filterByAward": "Filter by Award",
-        "allAwards": "All Awards",
-        "nominatedTeams": "Teams with Optional Award Nominations",
-        "teamsNominatedFor": "Teams nominated for {award}",
-        "eligibleTeams": "{count} teams nominated",
-        "noEligibleTeams": "No teams have nominations for optional awards",
-        "selectedWinners": "Selected Winners",
-        "none": "None selected"
-      },
-      "review": {
-        "instruction": "Review all selected awards below. Click 'Finalize' to submit the deliberation results.",
-        "finalizationWarning": "Once finalized, the deliberation cannot be edited. Please review all selections carefully.",
-        "champions": "Champions",
-        "coreAwards": "Core Awards",
-        "optionalAwards": "Optional Awards",
-        "place": "Place",
-        "categories": {
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "robot-performance": "Robot Performance"
-        }
       }
     }
   }
