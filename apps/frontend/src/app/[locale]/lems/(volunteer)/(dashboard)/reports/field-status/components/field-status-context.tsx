@@ -13,6 +13,7 @@ interface FieldStatusContextType {
   loadedMatch: Match | null;
   queuedMatches: Match[];
   upcomingMatches: Match[];
+  matchLength: number;
 }
 
 const FieldStatusContext = createContext<FieldStatusContextType | null>(null);
@@ -77,7 +78,8 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       activeMatch,
       loadedMatch,
       queuedMatches,
-      upcomingMatches
+      upcomingMatches,
+      matchLength: field.matchLength
     };
   }, [division, field, tables, matches]);
 

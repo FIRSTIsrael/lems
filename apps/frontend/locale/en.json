@@ -197,6 +197,9 @@
           "no-match": "No active match",
           "match-title": "Match {slug}",
           "started-at": "Started",
+          "deviation": "Deviation",
+          "participants": "Participants",
+          "team-label": "Team",
           "status": {
             "in-progress": "Running",
             "completed": "Completed"

@@ -20,19 +20,19 @@ import { UpcomingMatches } from './components/upcoming-matches';
 import { FieldStatusProvider, useFieldStatusData } from './components/field-status-context';
 
 function FieldStatusContent() {
-  const { activeMatch, loadedMatch, upcomingMatches } = useFieldStatusData();
+  const { activeMatch, loadedMatch, upcomingMatches, matchLength } = useFieldStatusData();
 
-  const tablesReady = loadedMatch?.participants.filter(p => p.ready).length || 0;
+  const tablesReady = loadedMatch?.participants.filter(p => p.ready && p.team).length || 0;
   const totalTables = loadedMatch?.participants.filter(p => p.team).length || 0;
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
       <Stack spacing={4}>
-        {/* Countdown Timer */}
         <MatchCountdown
           scheduledTime={loadedMatch?.scheduledTime}
           tablesReady={tablesReady}
           totalTables={totalTables}
+          matchLength={matchLength}
         />
 
         {/* Active and Next Match - Side by Side on Desktop */}

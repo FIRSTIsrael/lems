@@ -197,6 +197,9 @@
           "no-match": "אין מקצה פעיל כרגע",
           "match-title": "מקצה {slug}",
           "started-at": "התחיל",
+          "deviation": "סטייה",
+          "participants": "משתתפים",
+          "team-label": "קבוצה",
           "status": {
             "in-progress": "רץ",
             "completed": "הושלם"

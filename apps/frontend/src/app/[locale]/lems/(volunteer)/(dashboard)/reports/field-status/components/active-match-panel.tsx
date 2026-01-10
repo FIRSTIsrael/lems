@@ -56,7 +56,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
           <Typography variant="h5" fontWeight={600}>
-            🏆 {t('active-match.title')}
+            {t('active-match.title')}
           </Typography>
           <Typography color="text.secondary">{t('active-match.no-match')}</Typography>
         </Stack>
@@ -117,7 +117,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                 color={Math.abs(match.startDelta) > 120 ? 'error' : 'text.secondary'}
                 sx={{ fontSize: '1.05rem', fontWeight: 700 }}
               >
-                סטייה: {formatDelay(match.startDelta)}
+                {t('active-match.deviation')}: {formatDelay(match.startDelta)}
               </Typography>
             )}
           </Stack>
@@ -135,7 +135,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               letterSpacing: 0.5
             }}
           >
-            משתתפים:
+            {t('active-match.participants')}:
           </Typography>
           <Stack spacing={1}>
             {match.participants
@@ -161,7 +161,8 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                     {participant.table.name}:
                   </Typography>
                   <Typography variant="body2" sx={{ fontSize: '1.05rem', fontWeight: 700 }}>
-                    קבוצה {participant.team?.number} - {participant.team?.name}
+                    {t('active-match.team-label')} {participant.team?.number} -{' '}
+                    {participant.team?.name}
                   </Typography>
                   {participant.ready && <CheckCircleIcon fontSize="small" color="success" />}
                 </Stack>

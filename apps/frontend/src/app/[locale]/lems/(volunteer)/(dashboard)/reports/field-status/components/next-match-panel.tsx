@@ -54,7 +54,7 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
           <Typography variant="h5" fontWeight={600}>
-            ⏰ {t('next-match.title')}
+            {t('next-match.title')}
           </Typography>
           <Typography color="text.secondary">{t('next-match.no-match')}</Typography>
         </Stack>
@@ -110,7 +110,7 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
           flexWrap="wrap"
         >
           <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
-            ⏰ {getStage(match.stage)} #{match.number}
+            {getStage(match.stage)} #{match.number}
           </Typography>
           <Typography
             variant="body2"

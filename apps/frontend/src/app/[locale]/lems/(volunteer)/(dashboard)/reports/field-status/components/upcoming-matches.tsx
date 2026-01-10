@@ -29,8 +29,6 @@ export function UpcomingMatches({ matches, loadedMatchId, maxDisplay = 10 }: Upc
       .slice(0, maxDisplay);
   }, [matches, loadedMatchId, maxDisplay]);
 
-  console.log(upcoming);
-
   return (
     <Paper sx={{ p: 0 }}>
       <Stack spacing={2} sx={{ p: 3, pb: 0 }}>
