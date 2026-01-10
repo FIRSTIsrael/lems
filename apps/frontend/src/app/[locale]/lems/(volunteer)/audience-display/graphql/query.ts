@@ -1,10 +1,11 @@
 import { gql } from '@apollo/client';
-import { AudienceDisplayData } from './types';
+import { AudienceDisplayData, AudienceDisplayState } from './types';
 
 export const GET_AUDIENCE_DISPLAY_DATA = gql`
   query GetAudienceDisplayData($divisionId: String!) {
     division(id: $divisionId) {
       id
+      awards_assigned
       field {
         divisionId
         audienceDisplay {
@@ -47,6 +48,10 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
   }
 `;
 
-export function parseAudienceDisplayData(data: AudienceDisplayData) {
-  return data.division.field.audienceDisplay;
+export function parseAudienceDisplayData(data: AudienceDisplayData): AudienceDisplayState {
+  return (
+    data.division.field.audienceDisplay ?? {
+      activeDisplay: 'logo'
+    }
+  );
 }

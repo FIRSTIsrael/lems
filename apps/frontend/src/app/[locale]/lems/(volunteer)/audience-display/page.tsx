@@ -24,6 +24,7 @@ import type { AudienceDisplayState, Award } from './graphql';
 interface ParsedAudienceDisplayData {
   displayState: AudienceDisplayState;
   awards: Award[];
+  awardsAssigned: boolean;
 }
 
 export default function AudienceDisplayPage() {
@@ -61,7 +62,8 @@ export default function AudienceDisplayPage() {
     (rawData): ParsedAudienceDisplayData => {
       const displayState = parseAudienceDisplayData(rawData);
       const awards = rawData.division.field.judging?.awards ?? [];
-      return { displayState, awards };
+      const awardsAssigned = rawData.division.awards_assigned;
+      return { displayState, awards, awardsAssigned };
     },
     subscriptions
   );
@@ -84,7 +86,11 @@ export default function AudienceDisplayPage() {
   }) || { slideIndex: 0, stepIndex: 0 };
 
   return (
-    <AudienceDisplayProvider displayState={data.displayState} awards={data.awards}>
+    <AudienceDisplayProvider
+      displayState={data.displayState}
+      awards={data.awards}
+      awardsAssigned={data.awardsAssigned}
+    >
       {activeDisplay === 'logo' && <LogoDisplay />}
       {activeDisplay === 'message' && <MessageDisplay />}
       {activeDisplay === 'sponsors' && <SponsorsDisplay />}

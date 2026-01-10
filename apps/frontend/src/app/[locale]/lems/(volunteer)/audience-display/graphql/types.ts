@@ -45,6 +45,7 @@ export interface Award {
 export interface AudienceDisplayData {
   division: {
     id: string;
+    awards_assigned: boolean;
     field: {
       audienceDisplay: AudienceDisplayState | null;
       judging: {
