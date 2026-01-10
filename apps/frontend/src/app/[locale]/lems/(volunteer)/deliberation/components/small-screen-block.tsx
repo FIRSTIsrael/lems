@@ -4,7 +4,7 @@ import { Container, Paper, Typography, Box, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 
 export const SmallScreenBlock = () => {
-  const t = useTranslations('pages.deliberations.final.small-screen-block');
+  const t = useTranslations('pages.deliberations.small-screen-block');
   const theme = useTheme();
 
   return (

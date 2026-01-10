@@ -29,12 +29,6 @@ export interface MandatoryAwards {
  */
 export interface FinalDeliberationAwards extends MandatoryAwards {
   /**
-   * Advancement awards - teams that advanced from this division.
-   * Stored as an ordered list of team IDs.
-   * Only populated when advancement is enabled and teams advance to next division.
-   */
-  advancement?: string[];
-  /**
    * Optional awards - dynamically determined by awards with automatic_assignment=true.
    * Key is the award name, value is an ordered list of team IDs.
    * Examples: 'breakthrough', 'motivate', 'rising-all-star', 'judges-award', 'impact', 'excellence-in-engineering'

@@ -5,13 +5,13 @@ import { Box, CircularProgress } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
+import { SmallScreenBlock } from '../components/small-screen-block';
 import {
   createFinalDeliberationStatusChangedSubscription,
   createFinalDeliberationUpdatedSubscription,
   GET_FINAL_DELIBERATION,
   parseFinalDeliberationData
 } from './graphql';
-import { SmallScreenBlock } from './components/small-screen-block';
 import { FinalDeliberationGrid } from './components/final-deliberation-grid';
 import { FinalDeliberationProvider } from './final-deliberation-context';
 

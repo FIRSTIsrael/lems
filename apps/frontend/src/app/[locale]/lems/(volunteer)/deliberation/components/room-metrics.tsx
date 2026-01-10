@@ -14,17 +14,16 @@ import {
 } from 'recharts';
 import { Box, Paper, Typography, useTheme, alpha } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
-import type { EnrichedTeam } from '../types';
-import { RoomMetricsMap } from '../../types';
+import { Room, RoomMetricsMap } from '../types';
 
 interface RoomScoresDistributionProps {
   roomMetrics: RoomMetricsMap;
-  teams: EnrichedTeam[];
+  teams: { room: Room | null }[];
 }
 
 export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistributionProps) {
   const theme = useTheme();
-  const t = useTranslations('pages.deliberations.category.scores-chart');
+  const t = useTranslations('pages.deliberations.scores-chart');
 
   // Compute room metrics with useMemo to avoid unnecessary recalculations
   const chartData = useMemo(() => {

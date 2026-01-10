@@ -5,11 +5,13 @@ import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { validateStageCompletion } from './handlers/validators';
-import { handleChampionsStageCompletion } from './handlers/champions';
-import { handleCoreAwardsStageCompletion } from './handlers/core-awards';
-import { handleOptionalAwardsStageCompletion } from './handlers/optional-awards';
-import { handleReviewStageCompletion } from './handlers/review';
+import { handleChampionsStageCompletion, validateChampionsStage } from './handlers/champions';
+import { handleCoreAwardsStageCompletion, validateCoreAwardsStage } from './handlers/core-awards';
+import {
+  handleOptionalAwardsStageCompletion,
+  validateOptionalAwardsStage
+} from './handlers/optional-awards';
+import { handleReviewStageCompletion, validateReviewStage } from './handlers/review';
 
 interface AdvanceFinalDeliberationStageArgs {
   divisionId: string;
@@ -88,7 +90,20 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
   }
 
   // Validate current stage before advancing
-  await validateStageCompletion(deliberation);
+  switch (deliberation.stage) {
+    case 'champions':
+      validateChampionsStage(deliberation);
+      break;
+    case 'core-awards':
+      validateCoreAwardsStage(deliberation);
+      break;
+    case 'optional-awards':
+      validateOptionalAwardsStage();
+      break;
+    case 'review':
+      validateReviewStage();
+      break;
+  }
 
   // Handle stage-specific completion logic
   if (deliberation.stage === 'champions') {

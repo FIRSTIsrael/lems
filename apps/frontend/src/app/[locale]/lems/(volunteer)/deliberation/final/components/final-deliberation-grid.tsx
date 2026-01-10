@@ -6,7 +6,6 @@ import {
   Stepper,
   Step,
   StepLabel,
-  Container,
   useTheme,
   AppBar,
   IconButton,
@@ -103,12 +102,6 @@ export const FinalDeliberationGrid: React.FC = () => {
 
       {/* Main Content - Flex grow to fill remaining space */}
       {deliberation?.stage === 'champions' && <ChampionsStage />}
-      {deliberation?.stage !== 'champions' && (
-        <Container maxWidth="lg" sx={{ py: { xs: 1.5, sm: 2 }, flex: 1 }}>
-          {/* Page Content - Placeholder for future components */}
-          <Box sx={{ minHeight: '300px' }}>{/* Content will be added here */}</Box>
-        </Container>
-      )}
     </Box>
   );
 };

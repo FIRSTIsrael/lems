@@ -2,8 +2,8 @@
 
 import { Stack } from '@mui/material';
 import { useCategoryDeliberation } from '../deliberation-context';
-import { RoomScoresDistribution } from './room-scores-distribution';
-import { CompareTeamsPicker } from './compare-teams-picker';
+import { RoomScoresDistribution } from '../../components/room-metrics';
+import { CompareTeamsPicker } from '../../components/compare-picker';
 
 export function Metrics() {
   const { roomMetrics, teams } = useCategoryDeliberation();

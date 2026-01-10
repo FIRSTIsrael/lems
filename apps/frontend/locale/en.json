@@ -843,6 +843,26 @@
       }
     },
     "deliberations": {
+      "scores-chart": {
+        "room-scores-distribution": "Room Scores Distribution",
+        "no-data-available": "No data available",
+        "innovation-project": "Innovation Project",
+        "robot-design": "Robot Design",
+        "core-values": "Core Values",
+        "aggregate-average": "Aggregate Average"
+      },
+      "compare": {
+        "title": "Compare Teams",
+        "team-1": "Team 1",
+        "team-2": "Team 2",
+        "compare": "Compare",
+        "no-data-available": "No teams available"
+      },
+      "small-screen-block": {
+        "title": "Screen Too Small",
+        "message": "The deliberation view requires a larger screen to display all components properly.",
+        "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+      },
       "category": {
         "title": "{category} Deliberation",
         "controls": {
@@ -872,21 +892,6 @@
           "empty-state": "Add teams",
           "error-limit-exceeded": "Picklist limit reached. Cannot add more teams."
         },
-        "scores-chart": {
-          "room-scores-distribution": "Room Scores Distribution",
-          "no-data-available": "No data available",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average"
-        },
-        "compare-teams-picker": {
-          "title": "Compare Teams",
-          "team-1": "Team 1",
-          "team-2": "Team 2",
-          "compare": "Compare",
-          "no-data-available": "No teams to compare"
-        },
         "table": {
           "rank": "Rank",
           "team": "Team",
@@ -896,11 +901,6 @@
           "actions": "Actions",
           "view-rubric": "View Rubric",
           "add-to-picklist": "Add to Picklist"
-        },
-        "small-screen-block": {
-          "title": "Screen Too Small",
-          "message": "The deliberation view requires a larger screen to display all components properly.",
-          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
         }
       },
       "final": {
@@ -929,30 +929,6 @@
           "not-started": "Waiting to start deliberation",
           "completed": "Deliberation Complete",
           "deliberation-finalized": "Champions have been selected. Ready to advance."
-        },
-        "champions-room-metrics": {
-          "room-scores-distribution": "Room Scores Distribution",
-          "no-data-available": "No data available"
-        },
-        "compare": {
-          "title": "Compare Teams",
-          "team-1": "Team 1",
-          "team-2": "Team 2",
-          "compare": "Compare",
-          "no-data-available": "No teams available"
-        },
-        "small-screen-block": {
-          "title": "Screen Too Small",
-          "message": "The final deliberation view requires a larger screen to display all components properly.",
-          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
-        },
-        "scores-chart": {
-          "room-scores-distribution": "Room Scores Distribution",
-          "no-data-available": "No data available",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average"
         }
       }
     }

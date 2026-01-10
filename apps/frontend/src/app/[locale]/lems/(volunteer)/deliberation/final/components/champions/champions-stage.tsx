@@ -2,8 +2,8 @@
 
 import { Box, Paper } from '@mui/material';
 import { useFinalDeliberation } from '../../final-deliberation-context';
-import { RoomScoresDistribution } from '../room-metrics';
-import { CompareTeamsPicker } from '../compare-picker';
+import { RoomScoresDistribution } from '../../../components/room-metrics';
+import { CompareTeamsPicker } from '../../../components/compare-picker';
 import { ChampionsDataGrid } from './champions-data-grid';
 import { ChampionsPodium } from './champions-podium';
 import { ChampionsControlsPanel } from './champions-controls-panel';

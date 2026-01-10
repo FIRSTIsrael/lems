@@ -71,7 +71,7 @@ export async function handleChampionsStageCompletion(
   }
 
   await createAdvancementAwards(divisionId, advancingTeamIds);
-  await updateFinalDeliberationAwards(divisionId, advancingTeamIds);
+  await updateFinalDeliberationAwards(divisionId);
 }
 
 /**
@@ -247,6 +247,12 @@ async function createAdvancementAwards(
   divisionId: string,
   advancingTeamIds: string[]
 ): Promise<void> {
+  const adavncementAwards = await db.awards.byDivisionId(divisionId).get('advancement');
+  if (adavncementAwards.length > 0) {
+    // Advancement awards already exist
+    return;
+  }
+
   const advancementAwards = advancingTeamIds.map((teamId, index) => ({
     division_id: divisionId,
     name: 'advancement',
@@ -267,17 +273,13 @@ async function createAdvancementAwards(
 /**
  * Updates final deliberation with advancing team IDs and publishes Redis event
  */
-async function updateFinalDeliberationAwards(
-  divisionId: string,
-  advancingTeamIds: string[]
-): Promise<void> {
+async function updateFinalDeliberationAwards(divisionId: string): Promise<void> {
   const deliberation = await db.finalDeliberations.byDivision(divisionId).get();
   if (!deliberation) return;
 
   const updatedDeliberation = await db.finalDeliberations.byDivision(divisionId).update({
     awards: {
-      ...deliberation.awards,
-      advancement: advancingTeamIds
+      ...deliberation.awards
     }
   });
 
