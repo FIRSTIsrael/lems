@@ -1,68 +1,29 @@
 'use client';
 
-import { Box, Container, Stack, Alert, CircularProgress, Grid } from '@mui/material';
+import { useMemo } from 'react';
+import { Box, Container, Stack, CircularProgress, Grid } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
-import { useFieldStatus } from './hooks';
+import { usePageData } from '../../../hooks/use-page-data';
+import {
+  GET_FIELD_STATUS_DATA,
+  parseFieldStatusData,
+  createMatchLoadedSubscription,
+  createMatchStartedSubscription,
+  createMatchCompletedSubscription,
+  createMatchAbortedSubscription,
+  createParticipantStatusUpdatedSubscription
+} from './graphql';
 import { MatchCountdown } from './components/match-countdown';
 import { ActiveMatchPanel } from './components/active-match-panel';
 import { NextMatchPanel } from './components/next-match-panel';
 import { UpcomingMatches } from './components/upcoming-matches';
-import { JudgingIntegration } from './components/judging-integration';
+import { FieldStatusProvider, useFieldStatusData } from './components/field-status-context';
 
-export default function FieldStatusPage() {
-  const { currentDivision } = useEvent();
-  const divisionId = currentDivision.id;
+function FieldStatusContent() {
+  const { activeMatch, loadedMatch, upcomingMatches } = useFieldStatusData();
 
-  const {
-    division,
-    activeMatch,
-    loadedMatch,
-    queuedMatches,
-    upcomingMatches,
-    activeSessions,
-    loading,
-    error
-  } = useFieldStatus({ divisionId });
-
-  if (loading && !division) {
-    return (
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '50vh'
-          }}
-        >
-          <CircularProgress />
-        </Box>
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ py: 4 }}>
-          <Alert severity="error">שגיאה בטעינת נתונים: {error.message}</Alert>
-        </Box>
-      </Container>
-    );
-  }
-
-  if (!division) {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ py: 4 }}>
-          <Alert severity="warning">לא נמצאה בית ספר</Alert>
-        </Box>
-      </Container>
-    );
-  }
-
-  const tablesReady = loadedMatch?.participants.filter((p: any) => p.ready).length || 0;
-  const totalTables = loadedMatch?.participants.filter((p: any) => p.team).length || 0;
+  const tablesReady = loadedMatch?.participants.filter(p => p.ready).length || 0;
+  const totalTables = loadedMatch?.participants.filter(p => p.team).length || 0;
 
   return (
     <Container maxWidth="xl" sx={{ py: 4 }}>
@@ -80,7 +41,7 @@ export default function FieldStatusPage() {
             <ActiveMatchPanel match={activeMatch} />
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <NextMatchPanel match={loadedMatch} activeSessions={activeSessions} />
+            <NextMatchPanel match={loadedMatch} />
           </Grid>
         </Grid>
 
@@ -88,16 +49,60 @@ export default function FieldStatusPage() {
         <QueueOverview matches={queuedMatches} />
         */}
 
-        {/* Two-Column Layout for Metrics and Integration */}
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, lg: 6 }}>
-            <JudgingIntegration activeSessions={activeSessions} queuedMatches={queuedMatches} />
-          </Grid>
-        </Grid>
-
         {/* Upcoming Matches */}
-        <UpcomingMatches matches={upcomingMatches} />
+        <UpcomingMatches matches={upcomingMatches} loadedMatchId={loadedMatch?.id} />
       </Stack>
     </Container>
+  );
+}
+
+export default function FieldStatusPage() {
+  const { currentDivision } = useEvent();
+
+  const subscriptions = useMemo(
+    () => [
+      createMatchLoadedSubscription(currentDivision.id),
+      createMatchStartedSubscription(currentDivision.id),
+      createMatchCompletedSubscription(currentDivision.id),
+      createMatchAbortedSubscription(currentDivision.id),
+      createParticipantStatusUpdatedSubscription(currentDivision.id)
+    ],
+    [currentDivision.id]
+  );
+
+  const { data, loading, error } = usePageData(
+    GET_FIELD_STATUS_DATA,
+    {
+      divisionId: currentDivision.id
+    },
+    parseFieldStatusData,
+    subscriptions
+  );
+
+  if (error) {
+    throw error || new Error('Failed to load field status data');
+  }
+
+  if (loading || !data) {
+    return (
+      <Container maxWidth="xl">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '50vh'
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
+
+  return (
+    <FieldStatusProvider data={data}>
+      <FieldStatusContent />
+    </FieldStatusProvider>
   );
 }

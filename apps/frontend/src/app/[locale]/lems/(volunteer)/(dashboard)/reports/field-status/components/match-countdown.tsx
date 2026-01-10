@@ -35,7 +35,11 @@ export function MatchCountdown({
           mt: 4
         }}
       >
-        <Typography variant="h4" color="text.secondary">
+        <Typography
+          variant="h4"
+          color="text.secondary"
+          sx={{ fontSize: '1.3rem', fontWeight: 700 }}
+        >
           {t('countdown.no-match')}
         </Typography>
       </Paper>
@@ -91,13 +95,13 @@ export function MatchCountdown({
           </Typography>
 
           {isLate && (
-            <Typography variant="h5" color="error">
+            <Typography variant="h5" color="error" sx={{ fontSize: '1.3rem', fontWeight: 700 }}>
               {t('countdown.late')}
             </Typography>
           )}
 
           {totalTables > 0 && (
-            <Typography variant="h4">
+            <Typography variant="h4" sx={{ fontSize: '1.2rem', fontWeight: 700 }}>
               {t('countdown.tables-ready', { ready: tablesReady, total: totalTables })}
             </Typography>
           )}

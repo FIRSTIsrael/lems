@@ -1,11 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
@@ -35,31 +36,17 @@ interface Match {
   participants: Participant[];
 }
 
-interface Session {
-  id: string;
-  status: string;
-  team: {
-    id: string;
-    number: number;
-    name: string;
-  };
-  room: {
-    id: string;
-    name: string;
-  };
-}
-
 interface NextMatchPanelProps {
   match: Match | null;
-  activeSessions?: Session[];
 }
 
 /**
  * Display panel for next loaded match
  * Shows readiness status and conflicts
  */
-export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelProps) {
+export function NextMatchPanel({ match }: NextMatchPanelProps) {
   const t = useTranslations('pages.reports.field-status');
+  const { getStage } = useMatchTranslations();
   const currentTime = useTime({ interval: 1000 });
 
   if (!match) {
@@ -112,10 +99,6 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
     }
   };
 
-  const checkTeamInJudging = (teamId: string) => {
-    return activeSessions.find(s => s.team.id === teamId);
-  };
-
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
@@ -126,19 +109,23 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
           justifyContent="space-between"
           flexWrap="wrap"
         >
-          <Typography variant="h5" fontWeight={600}>
-            ⏰ {t('next-match.match-title', { slug: match.slug })}
+          <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
+            ⏰ {getStage(match.stage)} #{match.number}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+          >
             {currentTime
-              .set('hour', new Date(match.scheduledTime).getHours())
-              .set('minute', new Date(match.scheduledTime).getMinutes())
+              .set('hour', dayjs(match.scheduledTime).hour())
+              .set('minute', dayjs(match.scheduledTime).minute())
               .format('HH:mm')}
           </Typography>
         </Stack>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="subtitle1" fontWeight={500}>
+          <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: '1.05rem' }}>
             {t('next-match.tables-ready')}:
           </Typography>
           <Chip
@@ -154,46 +141,45 @@ export function NextMatchPanel({ match, activeSessions = [] }: NextMatchPanelPro
           <Stack spacing={1}>
             {participants.map(participant => {
               const status = getParticipantStatus(participant);
-              const judgingSession = participant.team
-                ? checkTeamInJudging(participant.team.id)
-                : null;
 
               return (
                 <Stack
                   key={participant.id}
                   direction="row"
-                  spacing={1}
+                  spacing={0.5}
                   alignItems="center"
                   sx={{
                     py: 1,
                     px: 2,
                     bgcolor: 'background.default',
-                    borderRadius: 1,
-                    border: judgingSession ? '2px solid' : 'none',
-                    borderColor: 'warning.main'
+                    borderRadius: 1
                   }}
                 >
-                  <Typography variant="body2" fontWeight={500} sx={{ minWidth: 80 }}>
+                  <Typography
+                    variant="body2"
+                    fontWeight={500}
+                    sx={{ maxWidth: 80, fontSize: '1.05rem' }}
+                  >
                     {participant.table.name}:
                   </Typography>
-                  <Typography variant="body2" sx={{ flex: 1 }}>
-                    {t('next-match.team-number', { number: participant.team?.number })}
+                  <Typography
+                    variant="body2"
+                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}
+                  >
+                    {participant.team
+                      ? t('next-match.team-number', { number: participant.team.number })
+                      : '—'}
                   </Typography>
                   <Stack direction="row" spacing={0.5} alignItems="center">
                     {getStatusIcon(status)}
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{ fontSize: '0.95rem', fontWeight: 500 }}
+                    >
                       {getStatusText(status)}
                     </Typography>
                   </Stack>
-                  {judgingSession && (
-                    <Chip
-                      icon={<WarningAmberIcon />}
-                      label={t('next-match.judging-conflict', { room: judgingSession.room.name })}
-                      size="small"
-                      color="warning"
-                      variant="outlined"
-                    />
-                  )}
                 </Stack>
               );
             })}

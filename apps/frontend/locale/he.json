@@ -187,7 +187,10 @@
           "time": "זמן",
           "next": "הבא",
           "in-time": "בעוד {time}",
-          "team-number": "קבוצה {number}"
+          "team-number": "קבוצה {number}",
+          "match-number": "מקצה",
+          "scheduled-time": "זמן מתוכנן",
+          "teams": "קבוצות"
         },
         "active-match": {
           "title": "מקצה רץ",
@@ -221,6 +224,13 @@
           "team-number": "קבוצה {number}",
           "conflict-details": "בשיפוט: {room} | נקראה למקצה {match}",
           "no-conflicts": "אין התנגשויות זמן"
+        },
+        "queue-overview": {
+          "title": "מצב הקיו",
+          "no-matches": "אין מקצים בקיו כרגע",
+          "match-label": "מקצה",
+          "in-queue": "בקיו:",
+          "team-label": "קבוצה"
         }
       },
       "awards-list": {

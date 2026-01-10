@@ -187,7 +187,10 @@
           "time": "Time",
           "next": "Next",
           "in-time": "in {time}",
-          "team-number": "Team {number}"
+          "team-number": "Team {number}",
+          "match-number": "Match",
+          "scheduled-time": "Scheduled Time",
+          "teams": "Teams"
         },
         "active-match": {
           "title": "Active Match",
@@ -221,6 +224,13 @@
           "team-number": "Team {number}",
           "conflict-details": "In judging: {room} | Called to match {match}",
           "no-conflicts": "No time conflicts"
+        },
+        "queue-overview": {
+          "title": "Queue Status",
+          "no-matches": "No matches in queue right now",
+          "match-label": "Match",
+          "in-queue": "In queue:",
+          "team-label": "Team"
         }
       },
       "awards-list": {
