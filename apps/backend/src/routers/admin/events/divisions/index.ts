@@ -10,6 +10,7 @@ import divisionPitMapRouter from './pit-map';
 import divisionTeamsRouter from './teams';
 import divisionScheduleRouter from './schedule';
 import divisionAwardsRouter from './awards';
+import divisionExportRouter from './export';
 
 const router = express.Router({ mergeParams: true });
 
@@ -39,6 +40,7 @@ router.use('/:divisionId/pit-map', divisionPitMapRouter);
 router.use('/:divisionId/teams', divisionTeamsRouter);
 router.use('/:divisionId/awards', divisionAwardsRouter);
 router.use('/:divisionId/schedule', divisionScheduleRouter);
+router.use('/:divisionId/export', divisionExportRouter);
 
 router.put(
   '/:divisionId',

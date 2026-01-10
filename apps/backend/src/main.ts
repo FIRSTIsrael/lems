@@ -24,6 +24,7 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
+import exportRouter from './routers/api/export/index';
 
 logger.info({ component: 'server' }, 'Backend server initializing');
 
@@ -84,6 +85,7 @@ const wsServer = new WebSocketServer({
   path: '/lems/graphql'
 });
 
+// eslint-disable-next-line react-hooks/rules-of-hooks
 const serverCleanup = useServer(
   {
     schema,
@@ -128,6 +130,7 @@ app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
 app.use('/portal', portalRouter);
+app.use('/api/export', exportRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
