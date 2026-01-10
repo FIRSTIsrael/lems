@@ -6,6 +6,7 @@ import { makePortalEventResponse } from '../events/util';
 import { makePortalSeasonResponse } from '../seasons/util';
 import { attachTeam } from '../middleware/attach-team';
 import { PortalTeamRequest } from '../../../types/express';
+import { getTeamRankingData } from '../utils/ranking-calculator';
 import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -156,11 +157,30 @@ router.get(
       const teamAwards = awards.filter(award => award.winner_id === req.teamId);
 
       const matches = await db.robotGameMatches.byDivision(teamDivision).getByTeam(req.teamId);
-      const teamMatchResults = matches
-        .filter(match => match.stage === 'RANKING')
-        .map(match => ({ number: match.round, score: 0 }));
+      const rankingMatches = matches.filter(match => match.stage === 'RANKING');
 
-      const robotGameRank = 1;
+      const scoresheets = await db.scoresheets
+        .byDivision(teamDivision)
+        .byTeamId(req.teamId)
+        .byStage('RANKING')
+        .getAll();
+
+      const submittedScoresheets = scoresheets.filter(
+        s => s.status === 'submitted' && s.data?.score != null
+      );
+
+      const scoresByRound = new Map<number, number>();
+      for (const sheet of submittedScoresheets) {
+        scoresByRound.set(sheet.round, sheet.data.score);
+      }
+
+      const teamMatchResults = rankingMatches.map(match => ({
+        number: match.round,
+        score: scoresByRound.get(match.round) ?? null
+      }));
+
+      const rankingData = await getTeamRankingData(teamDivision, req.teamId);
+      const robotGameRank = rankingData?.rank ?? null;
 
       eventResult.results = {
         awards: teamAwards.map(award => ({

@@ -1,10 +1,10 @@
 'use client';
 
 import React from 'react';
-import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Grid, Box } from '@mui/material';
 import { TeamRobotPerformance } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 import { AwardsSection } from './awards-section';
 import { PerformanceMetrics } from './performance';
@@ -15,7 +15,7 @@ export const EventSummary: React.FC = () => {
 
   const { event, team } = useTeamAtEvent();
 
-  const { data: robotPerformance } = useSWR<TeamRobotPerformance>(
+  const { data: robotPerformance } = useRealtimeData<TeamRobotPerformance>(
     `/portal/events/${event.slug}/teams/${team.slug}/robot-performance`,
     { suspense: true }
   );

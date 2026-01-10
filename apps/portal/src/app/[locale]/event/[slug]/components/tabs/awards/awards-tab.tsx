@@ -1,10 +1,10 @@
 'use client';
 
-import useSWR from 'swr';
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Paper, Box, Divider, Stack } from '@mui/material';
-import { Award } from '@lems/types/api/portal';
+import { Award, Team } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useDivision } from '../../division-data-context';
 import { AwardRow } from './award-row';
 
@@ -13,11 +13,11 @@ export const AwardsTab: React.FC = () => {
 
   const division = useDivision();
 
-  const { data: awards } = useSWR<Award[]>(`/portal/divisions/${division.id}/awards`, {
+  const { data: awards } = useRealtimeData<Award[]>(`/portal/divisions/${division.id}/awards`, {
     suspense: true
   });
 
-  const { data: teams } = useSWR(`/portal/divisions/${division.id}/teams`, {
+  const { data: teams } = useRealtimeData<Team[]>(`/portal/divisions/${division.id}/teams`, {
     suspense: true
   });
 

@@ -3,11 +3,12 @@
 import React from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import useSWR from 'swr';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
+import { AgendaEvent } from '@lems/database';
 import { useMatchTranslations } from '@lems/localization';
 import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
+import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from './team-at-event-context';
 
 interface ScheduleEntry {
@@ -19,7 +20,7 @@ interface ScheduleEntry {
 export const TeamSchedule: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
-  const { data } = useSWR<{
+  const { data } = useRealtimeData<{
     session: TeamJudgingSession;
     matches: TeamRobotGameMatch[];
     agenda: AgendaEvent[];

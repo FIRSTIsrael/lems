@@ -92,9 +92,9 @@ export const TeamJudgingSessionSchema = z.object({
 export type TeamJudgingSession = z.infer<typeof TeamJudgingSessionSchema>;
 
 export const TeamRobotPerformanceSchema = z.object({
-  scores: z.array(z.number()),
-  highestScore: z.number(),
-  robotGameRank: z.number()
+  scores: z.array(z.number().nullable()),
+  highestScore: z.number().nullable(),
+  robotGameRank: z.number().nullable()
 });
 
 export type TeamRobotPerformance = z.infer<typeof TeamRobotPerformanceSchema>;
