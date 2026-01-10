@@ -5,6 +5,7 @@ export const GET_MC_DATA: TypedDocumentNode<McData, McVars> = gql`
   query GetMcData($divisionId: String!) {
     division(id: $divisionId) {
       id
+      awardsAssigned
       field {
         divisionId
         matches {
@@ -45,7 +46,8 @@ export function parseMcData(queryData: McData): ParsedMcData {
     return {
       matches: [],
       currentStage: 'PRACTICE',
-      loadedMatch: null
+      loadedMatch: null,
+      awardsAssigned: false
     };
   }
 
@@ -57,6 +59,7 @@ export function parseMcData(queryData: McData): ParsedMcData {
   return {
     matches: currentStageMatches,
     currentStage: field.currentStage,
-    loadedMatch: field.loadedMatch
+    loadedMatch: field.loadedMatch,
+    awardsAssigned: queryData.division?.awardsAssigned ?? false
   };
 }
