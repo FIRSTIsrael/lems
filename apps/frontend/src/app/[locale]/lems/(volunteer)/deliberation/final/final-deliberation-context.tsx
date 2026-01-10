@@ -136,11 +136,7 @@ export const FinalDeliberationProvider = ({
         champions: computeChampionsEligibility(
           { ...team, ranks },
           division.judging.advancementPercentage
-            ? Math.ceil(
-                (division.teams.filter(t => t.arrived).length *
-                  division.judging.advancementPercentage) /
-                  100
-              )
+            ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
             : (awardCounts.champions || 0) + 3
         ),
         'core-awards': computeCoreAwardsEligibility(
