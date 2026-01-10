@@ -166,6 +166,7 @@
     "reports": {
       "page-title": "Reports",
       "menu": {
+        "field-status": "Field Status",
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
@@ -174,6 +175,67 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
         "judging-status": "Judging Status"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "No match loaded",
+          "late": "Late!",
+          "tables-ready": "{ready} of {total} tables ready"
+        },
+        "upcoming-matches": {
+          "title": "Upcoming Matches",
+          "no-matches": "No upcoming matches",
+          "time": "Time",
+          "next": "Next",
+          "in-time": "in {time}",
+          "team-number": "Team {number}",
+          "match-number": "Match",
+          "scheduled-time": "Scheduled Time",
+          "teams": "Teams"
+        },
+        "active-match": {
+          "title": "Active Match",
+          "no-match": "No active match",
+          "match-title": "Match {slug}",
+          "started-at": "Started",
+          "deviation": "Deviation",
+          "participants": "Participants",
+          "team-label": "Team",
+          "status": {
+            "in-progress": "Running",
+            "completed": "Completed"
+          }
+        },
+        "next-match": {
+          "title": "Next Match",
+          "no-match": "No match loaded",
+          "match-title": "Next Match: {slug}",
+          "tables-ready": "Tables Ready",
+          "team-number": "Team {number}",
+          "judging-conflict": "Judging: {room}",
+          "status": {
+            "ready": "Ready",
+            "present": "Present",
+            "queued": "Queued",
+            "not-present": "Not Present"
+          }
+        },
+        "judging-integration": {
+          "title": "Judging Integration",
+          "active-sessions": "Active Judging Sessions",
+          "team-info": "Team {number} - {name}",
+          "conflicts": "Time Conflicts",
+          "team-number": "Team {number}",
+          "conflict-details": "In judging: {room} | Called to match {match}",
+          "no-conflicts": "No time conflicts"
+        },
+        "queue-overview": {
+          "title": "Queue Status",
+          "no-matches": "No matches in queue right now",
+          "match-label": "Match",
+          "in-queue": "In queue:",
+          "team-label": "Team"
+        }
       },
       "awards-list": {
         "page-title": "Awards list",
