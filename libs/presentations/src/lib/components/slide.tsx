@@ -148,7 +148,7 @@ export const Slide: React.FC<SlideProps> = ({
                 width: '100%',
                 backgroundImage: chromaKey
                   ? 'none'
-                  : 'url(/assets/audience-display/season-background.webp)',
+                  : 'url(/assets/audience-display/audience-display-background.webp)',
                 backgroundColor: chromaKey ? '#ff00ff' : 'transparent',
                 backgroundRepeat: 'no-repeat',
                 backgroundSize: 'cover',
