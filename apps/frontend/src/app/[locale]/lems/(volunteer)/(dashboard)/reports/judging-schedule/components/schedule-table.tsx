@@ -21,11 +21,10 @@ import { Block as BlockIcon } from '@mui/icons-material';
 import { Room, ScheduleRow } from '../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
-const JUDGING_SESSION_LENGTH = 15 * 60;
-
 interface ScheduleTableProps {
   rooms: Room[];
   rows: ScheduleRow[];
+  sessionLength: number;
 }
 
 const VISIBILITY_COLORS: Record<string, string> = {
@@ -33,17 +32,11 @@ const VISIBILITY_COLORS: Record<string, string> = {
   judging: '#FF9800'
 };
 
-export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
+export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps) {
   const t = useTranslations('pages.reports.judging-schedule');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  // Use time hook with test date for development
   const currentTime = useTime({ interval: 60000 });
-  const testTime = dayjs().year(2025).month(11).date(29).hour(8).minute(0).second(0);
-  const effectiveCurrentTime = testTime; // Use test time for development
-
-  console.log('Current time hook:', currentTime.format());
 
   const roomCount = rooms.length;
 
@@ -86,8 +79,7 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
                 const visibilityColor = VISIBILITY_COLORS[event.visibility] || '#9E9E9E';
                 const startTime = dayjs(row.time);
                 const endTime = startTime.add(event.duration, 'second');
-                const isActive =
-                  effectiveCurrentTime.isAfter(startTime) && effectiveCurrentTime.isBefore(endTime);
+                const isActive = currentTime.isBetween(startTime, endTime);
 
                 return (
                   <TableRow
@@ -147,13 +139,11 @@ export function ScheduleTable({ rooms, rows }: ScheduleTableProps) {
               }
 
               const sessionTime = dayjs(row.time);
-              const sessionEndTime = sessionTime.add(JUDGING_SESSION_LENGTH, 'seconds');
+              const sessionEndTime = sessionTime.add(sessionLength, 'seconds');
 
               const allSessionsCompleted =
                 row.rooms?.every(room => {
-                  // Find the session for this room and time from the original sessions data
-                  // This is a simplified check - in practice you'd need access to session status
-                  return room.team; // For now, assume sessions with teams might be completed
+                  return room.team;
                 }) || false;
 
               return (
