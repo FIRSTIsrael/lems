@@ -15,16 +15,18 @@ interface ScorekeeperContextType {
   activeMatch: Match | null;
   testMatch: Match | null;
   nextMatch: Match | null;
+  awardsAssigned: boolean;
 }
 
 const ScorekeeperContext = createContext<ScorekeeperContextType | null>(null);
 
 interface ScorekeeperProviderProps {
-  data: ScorekeeperData['division']['field'];
+  data: ScorekeeperData['division'];
   children?: ReactNode;
 }
 
 export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps) {
+  const field = data.field;
   const {
     matches,
     audienceDisplay,
@@ -32,7 +34,7 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     currentStage,
     loadedMatch: loadedMatchId,
     activeMatch: activeMatchId
-  } = data;
+  } = field;
 
   const currentTime = useTime({ interval: 1000 });
 
@@ -77,7 +79,8 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
       loadedMatch,
       activeMatch,
       testMatch,
-      nextMatch
+      nextMatch,
+      awardsAssigned: data.awardsAssigned
     };
   }, [
     activeMatchId,
@@ -86,7 +89,8 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     matchLength,
     currentStage,
     currentTime,
-    audienceDisplay
+    audienceDisplay,
+    data.awardsAssigned
   ]);
 
   return <ScorekeeperContext.Provider value={value}>{children}</ScorekeeperContext.Provider>;

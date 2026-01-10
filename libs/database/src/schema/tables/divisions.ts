@@ -18,6 +18,7 @@ export interface DivisionsTable {
   has_schedule: Generated<boolean>; // Default false
   has_awards: Generated<boolean>; // Default false
   has_users: Generated<boolean>; // Default false
+  awards_assigned: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
 }
 

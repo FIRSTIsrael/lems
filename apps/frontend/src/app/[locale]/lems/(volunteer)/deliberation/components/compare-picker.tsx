@@ -4,15 +4,14 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Autocomplete, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { CompareArrows } from '@mui/icons-material';
-import type { EnrichedTeam } from '../types';
 
 interface CompareTeamsPickerProps {
-  teams: EnrichedTeam[];
+  teams: { id: string; number: string; name: string }[];
   onCompare?: (team1Id: string, team2Id: string) => void;
 }
 
 export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps) {
-  const t = useTranslations('pages.deliberations.category.compare-teams-picker');
+  const t = useTranslations('pages.deliberations.compare');
   const [selectedTeam1, setSelectedTeam1] = useState<string | null>(null);
   const [selectedTeam2, setSelectedTeam2] = useState<string | null>(null);
 
@@ -31,10 +30,11 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
     <Stack
       component={Paper}
       p={2.5}
-      width="25%"
       justifyContent="space-between"
       sx={{
-        border: theme => `1px solid ${theme.palette.divider}`
+        flex: 1,
+        border: theme => `1px solid ${theme.palette.divider}`,
+        borderRadius: 1.5
       }}
     >
       <Stack direction="row" justifyContent="space-between" alignItems="center">
@@ -103,21 +103,14 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
 
       <Button
         variant="contained"
+        color="primary"
         fullWidth
         disabled={!selectedTeam1 || !selectedTeam2 || selectedTeam1 === selectedTeam2}
-        size="small"
         onClick={handleCompare}
         sx={{
-          mt: 1,
           fontWeight: 600,
-          fontSize: '0.875rem',
           textTransform: 'none',
-          py: 1.25,
-          transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-          '&:hover:not(:disabled)': {
-            transform: 'translateY(-2px)',
-            boxShadow: '0 12px 24px rgba(0, 0, 0, 0.15)'
-          }
+          py: 1
         }}
       >
         {t('compare')}

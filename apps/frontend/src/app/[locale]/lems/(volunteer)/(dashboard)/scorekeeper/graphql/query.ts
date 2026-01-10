@@ -5,6 +5,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
   query GetScorekeeperData($divisionId: String!) {
     division(id: $divisionId) {
       id
+      awardsAssigned
       field {
         divisionId
         matches {
@@ -80,5 +81,5 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
 `;
 
 export function parseScorekeeperData(data: ScorekeeperData) {
-  return data.division.field;
+  return data.division;
 }

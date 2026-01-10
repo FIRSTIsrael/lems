@@ -32,6 +32,7 @@ export interface Match {
 export interface McData {
   division: {
     id: string;
+    awardsAssigned: boolean;
     field: {
       matches: Match[];
       currentStage: MatchStage;
@@ -48,6 +49,7 @@ export interface ParsedMcData {
   matches: Match[];
   currentStage: MatchStage;
   loadedMatch: string | null;
+  awardsAssigned: boolean;
 }
 
 export interface MatchEvent {

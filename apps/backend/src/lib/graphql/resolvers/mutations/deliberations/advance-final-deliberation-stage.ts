@@ -1,10 +1,17 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { FinalDeliberationStage, FinalDeliberationAwards } from '@lems/database';
+import { FinalDeliberationStage } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+import { handleChampionsStageCompletion, validateChampionsStage } from './handlers/champions';
+import { handleCoreAwardsStageCompletion, validateCoreAwardsStage } from './handlers/core-awards';
+import {
+  handleOptionalAwardsStageCompletion,
+  validateOptionalAwardsStage
+} from './handlers/optional-awards';
+import { handleReviewStageCompletion, validateReviewStage } from './handlers/review';
 
 interface AdvanceFinalDeliberationStageArgs {
   divisionId: string;
@@ -82,12 +89,24 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
     nextStage = STAGE_PROGRESSION[nextStage];
   }
 
-  // Validate current stage before advancing
-  await validateStageCompletion(divisionId, deliberation);
-
-  // If leaving champions stage, handle advancement
-  if (deliberation.stage === 'champions') {
-    await handleChampionsStageCompletion(divisionId);
+  // Handle stage specific advancement logic
+  switch (deliberation.stage) {
+    case 'champions':
+      validateChampionsStage(deliberation);
+      await handleChampionsStageCompletion(divisionId, deliberation.awards.champions);
+      break;
+    case 'core-awards':
+      validateCoreAwardsStage(deliberation);
+      await handleCoreAwardsStageCompletion(divisionId);
+      break;
+    case 'optional-awards':
+      validateOptionalAwardsStage();
+      await handleOptionalAwardsStageCompletion(divisionId);
+      break;
+    case 'review':
+      validateReviewStage();
+      await handleReviewStageCompletion(divisionId);
+      break;
   }
 
   // Update to next stage and clear stage-specific data
@@ -126,82 +145,3 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
     status: updated.status
   };
 };
-
-/**
- * Validates that the current stage has all required data before advancing
- */
-async function validateStageCompletion(
-  divisionId: string,
-  deliberation: { stage: FinalDeliberationStage; awards: FinalDeliberationAwards }
-): Promise<void> {
-  switch (deliberation.stage) {
-    case 'champions': {
-      // Validate champions placement (at least 1st place must be assigned)
-      const champions = deliberation.awards.champions || {};
-      if (!champions['1']) {
-        throw new MutationError(
-          MutationErrorCode.FORBIDDEN,
-          'Cannot advance from champions stage without assigning 1st place'
-        );
-      }
-      break;
-    }
-    case 'core-awards': {
-      // Validate that required core awards are assigned
-      const awards = deliberation.awards;
-      if (!awards['innovation-project'] || awards['innovation-project'].length === 0) {
-        throw new MutationError(
-          MutationErrorCode.FORBIDDEN,
-          'Innovation Project award must be assigned before advancing'
-        );
-      }
-      if (!awards['robot-design'] || awards['robot-design'].length === 0) {
-        throw new MutationError(
-          MutationErrorCode.FORBIDDEN,
-          'Robot Design award must be assigned before advancing'
-        );
-      }
-      if (!awards['core-values'] || awards['core-values'].length === 0) {
-        throw new MutationError(
-          MutationErrorCode.FORBIDDEN,
-          'Core Values award must be assigned before advancing'
-        );
-      }
-      break;
-    }
-    // optional-awards and review don't require validation
-  }
-}
-
-/**
- * Handles advancement award creation when leaving champions stage
- */
-async function handleChampionsStageCompletion(divisionId: string): Promise<void> {
-  // Get division to check if advancement is enabled
-  const division = await db.divisions.byId(divisionId).get();
-  if (!division) return;
-
-  // Check if advancement is enabled
-  const event = await db.raw.sql
-    .selectFrom('events')
-    .innerJoin('event_settings', 'event_settings.event_id', 'events.id')
-    .select('event_settings.advancement_percent')
-    .where('events.id', '=', division.event_id)
-    .executeTakeFirst();
-
-  if (!event || event.advancement_percent === 0) {
-    // Advancement not enabled
-    return;
-  }
-
-  // TODO: Calculate advancing teams based on advancement percentage
-  // This will require:
-  // 1. Get all teams in division
-  // 2. Calculate total ranks for each team
-  // 3. Sort by total rank with tiebreakers (CV rank, then team number)
-  // 4. Take top N% based on advancement_percent
-  // 5. Store in deliberation.awards or separate advancement tracking
-
-  // For now, this is a placeholder for the advancement logic
-  // Implementation will be added in a follow-up
-}

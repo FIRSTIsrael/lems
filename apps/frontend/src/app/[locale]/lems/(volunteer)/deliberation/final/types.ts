@@ -40,7 +40,7 @@ export type EnrichedTeam = {
   awardNominations: OptionalAwardNominations;
 };
 
-export type DeliberationAwards = Partial<Record<Award, string[]>> & {
+export type DeliberationAwards = Partial<Omit<Record<Award, string[]>, 'champions'>> & {
   champions: Record<number, string>;
 };
 
@@ -56,6 +56,7 @@ export interface FinalDeliberationContextValue {
   categoryPicklists: Record<JudgingCategory, string[]>;
 
   awards: DeliberationAwards;
+  awardCounts: Partial<Record<Award, number>>;
 
   roomMetrics: RoomMetricsMap;
 

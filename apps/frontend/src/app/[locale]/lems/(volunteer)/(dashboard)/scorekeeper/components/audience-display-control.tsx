@@ -33,7 +33,7 @@ export function AudienceDisplayControl() {
 
   const t = useTranslations('pages.scorekeeper.audience-display');
   const theme = useTheme();
-  const { audienceDisplay } = useScorekeeperData();
+  const { audienceDisplay, awardsAssigned } = useScorekeeperData();
 
   const [switchAudienceDisplay] = useMutation(SWITCH_AUDIENCE_DISPLAY_MUTATION, {
     onError: () => {
@@ -126,7 +126,7 @@ export function AudienceDisplayControl() {
                 {t('modes.message')}
               </Typography>
             </ToggleButton>
-            <ToggleButton value="awards" aria-label="awards">
+            <ToggleButton value="awards" aria-label="awards" disabled={!awardsAssigned}>
               <EmojiEventsRounded sx={{ fontSize: '1.15rem' }} />
               <Typography variant="caption" sx={{ fontWeight: 600 }}>
                 {t('modes.awards')}

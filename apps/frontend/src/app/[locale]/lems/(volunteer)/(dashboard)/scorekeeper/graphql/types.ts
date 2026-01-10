@@ -78,6 +78,7 @@ export interface AudienceDisplayState {
 export interface ScorekeeperData {
   division: {
     id: string;
+    awardsAssigned: boolean;
     field: {
       matches: Match[];
       audienceDisplay: AudienceDisplayState | null;

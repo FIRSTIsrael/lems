@@ -84,13 +84,13 @@ export function computeRank(
 
 export const computeChampionsEligibility = (
   team: Team & { ranks: RanksPerCategory },
-  numOfAwards: number
+  numOfEligibleTeams: number
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
-  return team.ranks.total <= numOfAwards;
+  return team.ranks.total <= numOfEligibleTeams;
 };
 
 export const computeCoreAwardsEligibility = (
