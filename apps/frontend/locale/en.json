@@ -934,6 +934,33 @@
           "not-started": "Waiting to start deliberation",
           "completed": "Deliberation Complete",
           "deliberation-finalized": "Champions have been selected. Ready to advance."
+        },
+        "core-awards": {
+          "title": "Core Awards",
+          "description": "Select award winners from the picklists",
+          "table-rank": "Rank",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-actions": "Actions",
+          "table-robot-design": "Robot Design",
+          "table-innovation-project": "Innovation",
+          "table-core-values": "Core Values",
+          "manual-eligibility-title": "Manual Eligibility",
+          "manual-eligibility-description": "Add teams not in the picklists",
+          "add-team": "Add Team",
+          "select-team": "Select team...",
+          "robot-design": "Robot Design",
+          "innovation-project": "Innovation Project",
+          "core-values": "Core Values",
+          "save": "Save Awards",
+          "advance": "Advance to Optional Awards",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Core awards have been selected. Ready to advance.",
+          "manual-team-indicator": "Added manually"
         }
       }
     }

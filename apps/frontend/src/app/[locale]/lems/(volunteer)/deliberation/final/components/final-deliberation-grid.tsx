@@ -20,6 +20,7 @@ import { ArrowBack } from '@mui/icons-material';
 import router from 'next/router';
 import { useFinalDeliberation } from '../final-deliberation-context';
 import { ChampionsStage } from './champions/champions-stage';
+import { CoreAwardsStage } from './core-awards/core-awards-stage';
 
 const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-awards', 'review'];
 
@@ -102,6 +103,7 @@ export const FinalDeliberationGrid: React.FC = () => {
 
       {/* Main Content - Flex grow to fill remaining space */}
       {deliberation?.stage === 'champions' && <ChampionsStage />}
+      {deliberation?.stage === 'core-awards' && <CoreAwardsStage />}
     </Box>
   );
 };

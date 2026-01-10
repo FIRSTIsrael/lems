@@ -934,6 +934,33 @@
           "not-started": "מחכה להתחלת דיון",
           "deliberation-finalized": "פרסי האליפות נבחרו, מחכה להמשך הדיון.",
           "completed": "הדיון הושלם"
+        },
+        "core-awards": {
+          "title": "פרסי ליבה",
+          "description": "בחרו קבוצות לפרסי הליבה",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-actions": "פעולות",
+          "table-robot-design": "תכנון הרובוט",
+          "table-innovation-project": "פרויקט החדשנות",
+          "table-core-values": "ערכי ליבה",
+          "manual-eligibility-title": "זכאות ידנית",
+          "manual-eligibility-description": "הוסף קבוצות שלא ברשימת הבחירה",
+          "add-team": "הוסף קבוצה",
+          "select-team": "בחר קבוצה...",
+          "robot-design": "תכנון הרובוט",
+          "innovation-project": "פרויקט החדשנות",
+          "core-values": "ערכי ליבה",
+          "save": "שמור פרסים",
+          "advance": "המשך לפרסים אופציונליים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית"
         }
       }
     }

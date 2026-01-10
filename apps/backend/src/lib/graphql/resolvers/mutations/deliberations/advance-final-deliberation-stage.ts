@@ -112,6 +112,7 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
   // Update to next stage and clear stage-specific data
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
     stage: nextStage,
+    status: 'not-started',
     stageData: {
       ...deliberation.stageData,
       [nextStage]: {}
