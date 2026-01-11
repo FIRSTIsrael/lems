@@ -38,25 +38,32 @@ export default function ComparePage() {
       : { divisionId: currentDivision.id }
   );
 
-  if (teamSlugs.length === 0 || loading) {
+  if (loading) {
     return (
       <>
         <PageHeader title={t('title')} />
         <Container maxWidth="xl" sx={{ py: 4 }}>
-          {loading ? (
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                minHeight: '50vh'
-              }}
-            >
-              <CircularProgress />
-            </Box>
-          ) : (
-            <EmptyState />
-          )}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '50vh'
+            }}
+          >
+            <CircularProgress />
+          </Box>
+        </Container>
+      </>
+    );
+  }
+
+  if (teamSlugs.length === 0) {
+    return (
+      <>
+        <PageHeader title={t('title')} />
+        <Container maxWidth="xl" sx={{ py: 4 }}>
+          <EmptyState />
         </Container>
       </>
     );
@@ -85,7 +92,7 @@ export default function ComparePage() {
   }
 
   const teams = data.division.selectedTeams;
-  const awards = data.division.awards ?? [];
+  const awards = data.division.judging?.awards ?? [];
   const allTeams: DivisionTeam[] = data.division.allTeams ?? [];
 
   return (
