@@ -10,10 +10,9 @@ import {
   Stack,
   Typography,
   alpha,
-  useTheme,
-  Chip
+  useTheme
 } from '@mui/material';
-import { Add, Close } from '@mui/icons-material';
+import { Add } from '@mui/icons-material';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 
 export const ManualEligibilityControl: React.FC = () => {
@@ -41,10 +40,7 @@ export const ManualEligibilityControl: React.FC = () => {
         !team.disqualified
     );
   }, [teams, picketListTeamIds, deliberation.coreAwardsManualEligibility]);
-  // Get manually added team objects
-  const manualTeams = useMemo(() => {
-    return teams.filter(team => deliberation.coreAwardsManualEligibility.includes(team.id));
-  }, [teams, deliberation.coreAwardsManualEligibility]);
+
   const handleAddTeam = useCallback(async () => {
     if (!selectedTeamId) return;
 
@@ -60,21 +56,6 @@ export const ManualEligibilityControl: React.FC = () => {
       setIsAdding(false);
     }
   }, [selectedTeamId, deliberation.coreAwardsManualEligibility, updateManualEligibility]);
-
-  const handleRemoveTeam = useCallback(
-    async (teamId: string) => {
-      setIsAdding(true);
-      try {
-        const updatedManualEligibility = deliberation.coreAwardsManualEligibility.filter(
-          id => id !== teamId
-        );
-        await updateManualEligibility('core-awards', updatedManualEligibility);
-      } finally {
-        setIsAdding(false);
-      }
-    },
-    [deliberation.coreAwardsManualEligibility, updateManualEligibility]
-  );
 
   return (
     <Box
@@ -109,87 +90,53 @@ export const ManualEligibilityControl: React.FC = () => {
           {t('manual-eligibility-description')}
         </Typography>
       </Box>
-
-      <Stack spacing={1}>
-        {/* Add Team Section */}
-        <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start' }}>
-          <Autocomplete
-            options={availableTeams}
-            getOptionLabel={option => `${option.number} - ${option.name}`}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
-            value={availableTeams.find(t => t.id === selectedTeamId) || null}
-            onChange={(_, newValue) => setSelectedTeamId(newValue?.id || null)}
-            disabled={availableTeams.length === 0 || isAdding}
-            sx={{ flex: 1, minWidth: 0 }}
-            renderInput={params => (
-              <TextField
-                {...params}
-                placeholder={t('select-team')}
-                size="small"
-                sx={{
-                  '& .MuiOutlinedInput-root': {
-                    fontSize: '0.875rem'
-                  }
-                }}
-              />
-            )}
-            componentsProps={{
-              paper: {
-                sx: {
-                  '& .MuiAutocomplete-option': {
-                    fontSize: '0.875rem !important'
-                  }
+      <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start' }}>
+        <Autocomplete
+          options={availableTeams}
+          getOptionLabel={option => `${option.number} - ${option.name}`}
+          isOptionEqualToValue={(option, value) => option.id === value.id}
+          value={availableTeams.find(t => t.id === selectedTeamId) || null}
+          onChange={(_, newValue) => setSelectedTeamId(newValue?.id || null)}
+          disabled={availableTeams.length === 0 || isAdding}
+          sx={{ flex: 1, minWidth: 0 }}
+          renderInput={params => (
+            <TextField
+              {...params}
+              placeholder={t('select-team')}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  fontSize: '0.875rem'
+                }
+              }}
+            />
+          )}
+          componentsProps={{
+            paper: {
+              sx: {
+                '& .MuiAutocomplete-option': {
+                  fontSize: '0.875rem !important'
                 }
               }
-            }}
-            noOptionsText="No available teams"
-          />
-          <Button
-            variant="contained"
-            size="small"
-            startIcon={<Add />}
-            onClick={handleAddTeam}
-            disabled={!selectedTeamId || isAdding || availableTeams.length === 0}
-            sx={{
-              fontWeight: 600,
-              textTransform: 'none',
-              whiteSpace: 'nowrap',
-              mt: 0.5
-            }}
-          >
-            {t('add-team')}
-          </Button>
-        </Stack>
-
-        {/* Manually Added Teams */}
-        {manualTeams.length > 0 && (
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {manualTeams.map(team => (
-              <Chip
-                key={team.id}
-                label={`${team.number}`}
-                onDelete={() => handleRemoveTeam(team.id)}
-                deleteIcon={<Close />}
-                size="small"
-                variant="outlined"
-                icon={undefined}
-                sx={{
-                  fontWeight: 600,
-                  borderColor: alpha(theme.palette.warning.main, 0.6),
-                  color: theme.palette.warning.dark,
-                  bgcolor: alpha(theme.palette.warning.main, 0.1),
-                  '& .MuiChip-deleteIcon': {
-                    color: theme.palette.warning.dark,
-                    '&:hover': {
-                      color: theme.palette.error.main
-                    }
-                  }
-                }}
-                title={team.name}
-              />
-            ))}
-          </Box>
-        )}
+            }
+          }}
+          noOptionsText="No available teams"
+        />
+        <Button
+          variant="contained"
+          size="small"
+          startIcon={<Add />}
+          onClick={handleAddTeam}
+          disabled={!selectedTeamId || isAdding || availableTeams.length === 0}
+          sx={{
+            fontWeight: 600,
+            textTransform: 'none',
+            whiteSpace: 'nowrap',
+            mt: 0.5
+          }}
+        >
+          {t('add-team')}
+        </Button>
       </Stack>
     </Box>
   );

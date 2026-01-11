@@ -978,6 +978,9 @@
           "optional-awards": "פרסים אופציונליים",
           "review": "סיכום"
         },
+        "errors": {
+          "award-limit-exceeded": "לא ניתן להוסיף זוכים נוספים לפרס זה."
+        },
         "champions": {
           "title": "פרס האליפות",
           "description": "בחרו קבוצות לפרס האליפות.",

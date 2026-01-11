@@ -6,6 +6,7 @@ import { Box, Paper, Stack, Typography, alpha, useTheme, IconButton, Tooltip } f
 import { Close } from '@mui/icons-material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/database';
+import { Award } from '@lems/shared';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 
@@ -36,7 +37,7 @@ const AwardListItem: React.FC<AwardListItemProps> = ({ team, index, onRemove }) 
           justifyContent: 'center'
         }}
       >
-        Position {index + 1}
+        {index + 1}
       </Paper>
     );
   }
@@ -111,7 +112,7 @@ export const CoreAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.core-awards');
   const { getCategory } = useJudgingCategoryTranslations();
-  const { teams, awards, updateAward } = useFinalDeliberation();
+  const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
 
   const handleRemoveAward = useCallback(
     async (category: JudgingCategory, index: number) => {
@@ -161,7 +162,8 @@ export const CoreAwardsAwardLists: React.FC = () => {
                 fontSize: '0.875rem'
               }}
             >
-              {getCategory(category)}
+              {getCategory(category)} ({categoryAwards[category].length}/
+              {awardCounts[category as Award] ?? 0})
             </Typography>
           </Box>
 

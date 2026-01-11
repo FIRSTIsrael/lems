@@ -27,7 +27,21 @@ export function CoreAwardsDataGrid() {
   );
 
   // Combine picklist and manual teams, filtering to eligible
-  const coreAwardsTeamIds = useMemo(() => new Set(eligibleTeams['core-awards']), [eligibleTeams]);
+  const coreAwardsTeamIds = useMemo<Set<string>>(
+    () => new Set(eligibleTeams['core-awards']),
+    [eligibleTeams]
+  );
+
+  // Get teams that have been selected for any core award
+  const selectedTeamIds = useMemo<Set<string>>(
+    () =>
+      new Set([
+        ...(awards['robot-design'] || []),
+        ...(awards['innovation-project'] || []),
+        ...(awards['core-values'] || [])
+      ]),
+    [awards]
+  );
 
   const handleAddToAward = useCallback(
     async (teamId: string, category: JudgingCategory) => {
@@ -42,7 +56,7 @@ export function CoreAwardsDataGrid() {
 
   const filteredTeams = useMemo(() => {
     return teams
-      .filter(team => coreAwardsTeamIds.has(team.id))
+      .filter(team => coreAwardsTeamIds.has(team.id) || selectedTeamIds.has(team.id))
       .sort((a, b) => {
         // Picklist teams first (sorted by rank in their categories)
         const aInPicklist = picketListTeamIds.has(a.id);
@@ -63,7 +77,7 @@ export function CoreAwardsDataGrid() {
 
         return getAvgRank(a) - getAvgRank(b);
       });
-  }, [teams, coreAwardsTeamIds, picketListTeamIds]);
+  }, [teams, coreAwardsTeamIds, selectedTeamIds, picketListTeamIds]);
 
   const columns: GridColDef<EnrichedTeam>[] = useMemo(
     () => [
@@ -268,8 +282,18 @@ export function CoreAwardsDataGrid() {
         '& .MuiDataGrid-row': {
           '&:hover': {
             backgroundColor: alpha(theme.palette.primary.main, 0.05)
+          },
+          '&.selected-award-row': {
+            backgroundColor: alpha(purple[400], 0.1),
+            '&:hover': {
+              backgroundColor: alpha(purple[400], 0.15)
+            }
           }
         }
+      }}
+      getRowClassName={params => {
+        const team = params.row as EnrichedTeam;
+        return selectedTeamIds.has(team.id) ? 'selected-award-row' : '';
       }}
     />
   );

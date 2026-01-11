@@ -978,6 +978,9 @@
           "optional-awards": "Optional Awards",
           "review": "Review"
         },
+        "errors": {
+          "award-limit-exceeded": "Cannot add more winners for this award."
+        },
         "champions": {
           "title": "Champions Award",
           "description": "Select teams to award the Champions.",
