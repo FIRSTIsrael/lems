@@ -1025,7 +1025,11 @@
           "not-started": "מחכה להתחלת דיון",
           "completed": "הדיון הושלם",
           "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
-          "manual-team-indicator": "נוספו ידנית"
+          "manual-team-indicator": "נוספו ידנית",
+          "no-data-available": "אין קבוצות זמינות",
+          "team-not-eligible-for-category": "הקבוצה לא זכאית ל-{category}",
+          "team-already-added-to-category": "הקבוצה כבר נוספה ל-{category}",
+          "add-team-to-category": "הוסף קבוצה ל-{category}"
         }
       }
     }

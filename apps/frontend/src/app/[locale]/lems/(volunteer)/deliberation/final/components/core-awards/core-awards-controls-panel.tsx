@@ -21,26 +21,26 @@ const getProgressColor = (progressPercent: number) => {
 export const CoreAwardsControlsPanel: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.core-awards');
-  const { deliberation, startDeliberation, awards, advanceStage } = useFinalDeliberation();
+  const { deliberation, startDeliberation, awards, awardCounts, advanceStage } =
+    useFinalDeliberation();
   const currentTime = useTime({ interval: 1000 });
-  const [isStarting, setIsStarting] = useState(false);
-  const [isAdvancing, setIsAdvancing] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleStartDeliberation = useCallback(async () => {
-    setIsStarting(true);
+    setIsLoading(true);
     try {
       await startDeliberation();
     } finally {
-      setIsStarting(false);
+      setIsLoading(false);
     }
   }, [startDeliberation]);
 
   const handleAdvanceStage = useCallback(async () => {
-    setIsAdvancing(true);
+    setIsLoading(true);
     try {
       await advanceStage();
     } finally {
-      setIsAdvancing(false);
+      setIsLoading(false);
     }
   }, [advanceStage]);
 
@@ -53,10 +53,12 @@ export const CoreAwardsControlsPanel: React.FC = () => {
     () =>
       deliberation
         ? ['robot-design', 'innovation-project', 'core-values'].every(
-            award => (awards[award as JudgingCategory] || []).length > 0
+            award =>
+              (awards[award as JudgingCategory] || []).length ===
+              awardCounts[award as JudgingCategory]
           )
         : false,
-    [deliberation, awards]
+    [deliberation, awards, awardCounts]
   );
 
   // Calculate timer values
@@ -197,7 +199,7 @@ export const CoreAwardsControlsPanel: React.FC = () => {
             fullWidth
             startIcon={<PlayArrow />}
             onClick={handleStartDeliberation}
-            disabled={isStarting}
+            disabled={isLoading}
             sx={{
               fontWeight: 600,
               textTransform: 'none',
@@ -212,14 +214,14 @@ export const CoreAwardsControlsPanel: React.FC = () => {
             fullWidth
             endIcon={<Verified />}
             onClick={handleAdvanceStage}
-            disabled={!isCoreAwardsComplete || isAdvancing}
+            disabled={!isCoreAwardsComplete || isLoading}
             sx={{
               fontWeight: 600,
               textTransform: 'none',
               py: 1.25
             }}
           >
-            {isAdvancing ? `${t('saving')}...` : t('advance')}
+            {isLoading ? `${t('saving')}...` : t('advance')}
           </Button>
         ) : null}
       </Box>

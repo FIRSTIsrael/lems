@@ -1025,7 +1025,11 @@
           "not-started": "Waiting to start deliberation",
           "completed": "Deliberation Complete",
           "deliberation-finalized": "Core awards have been selected. Ready to advance.",
-          "manual-team-indicator": "Added manually"
+          "manual-team-indicator": "Added manually",
+          "no-data-available": "No teams available",
+          "team-not-eligible-for-category": "Team is not eligible for {category}",
+          "team-already-added-to-category": "Team already added to {category}",
+          "add-team-to-category": "Add team to {category}"
         }
       }
     }

@@ -120,14 +120,19 @@ export const ManualEligibilityControl: React.FC = () => {
               }
             }
           }}
-          noOptionsText="No available teams"
+          noOptionsText={t('no-data-available')}
         />
         <Button
           variant="contained"
           size="small"
           startIcon={<Add />}
           onClick={handleAddTeam}
-          disabled={!selectedTeamId || isAdding || availableTeams.length === 0}
+          disabled={
+            !selectedTeamId ||
+            isAdding ||
+            availableTeams.length === 0 ||
+            deliberation.status !== 'in-progress'
+          }
           sx={{
             fontWeight: 600,
             textTransform: 'none',

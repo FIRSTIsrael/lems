@@ -14,11 +14,9 @@ export const CoreAwardsStage: React.FC = () => {
   return (
     <>
       <Box sx={{ flex: 1, display: 'flex', minHeight: 0, p: 2.5, gap: 2.5 }}>
-        {/* Main content area */}
         <Box
           sx={{ flex: '0 1 75%', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}
         >
-          {/* DataGrid */}
           <Paper
             sx={{
               flex: '0 0 auto',
@@ -32,7 +30,6 @@ export const CoreAwardsStage: React.FC = () => {
             <CoreAwardsDataGrid />
           </Paper>
 
-          {/* Metrics and Compare Section */}
           <Box
             sx={{
               flex: 1,
@@ -47,7 +44,6 @@ export const CoreAwardsStage: React.FC = () => {
           </Box>
         </Box>
 
-        {/* Sidebar: Award Lists and Controls */}
         <Box
           sx={{
             flex: '0 1 25%',

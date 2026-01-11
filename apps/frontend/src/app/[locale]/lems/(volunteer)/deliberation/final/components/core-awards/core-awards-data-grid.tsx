@@ -221,17 +221,19 @@ export function CoreAwardsDataGrid() {
                     key={category}
                     title={
                       !canAdd
-                        ? `Not in ${getCategory(category)} picklist`
+                        ? t('team-not-eligible-for-category', { category: getCategory(category) })
                         : isAlreadyAdded
-                          ? `Already added to ${getCategory(category)}`
-                          : `Add to ${getCategory(category)}`
+                          ? t('team-already-added-to-category', { category: getCategory(category) })
+                          : t('add-team-to-category', { category: getCategory(category) })
                     }
                   >
                     <span>
                       <IconButton
                         size="small"
                         onClick={() => handleAddToAward(team.id, category)}
-                        disabled={!canAdd || isAlreadyAdded}
+                        disabled={
+                          !canAdd || isAlreadyAdded || deliberation.status !== 'in-progress'
+                        }
                         sx={{
                           p: 0.5,
                           color: isAlreadyAdded
@@ -261,6 +263,7 @@ export function CoreAwardsDataGrid() {
       t,
       getCategory,
       deliberation.coreAwardsManualEligibility,
+      deliberation.status,
       categoryPicklists,
       awards,
       handleAddToAward
