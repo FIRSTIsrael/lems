@@ -97,3 +97,5 @@ export interface UnifiedDivisionVars {
   divisionId: string;
   teamSlugs?: string[] | null;
 }
+
+export type DivisionTeam = UnifiedDivisionData['division']['allTeams'][0];

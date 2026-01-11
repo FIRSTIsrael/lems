@@ -20,19 +20,31 @@ interface RubricScoresProps {
   team: Team;
 }
 
+interface SectionFields {
+  [sectionId: string]: Array<{
+    fieldId: string;
+    value: number | null;
+    color: 'success' | 'error' | 'default';
+  }>;
+}
+
+interface FieldsByCategories {
+  [category: string]: SectionFields;
+}
+
 const processFieldsBySections = (
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
-) => {
+): FieldsByCategories => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
-  const result: any = {};
+  const result: FieldsByCategories = {};
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
       const fields = [
         ...Object.entries(team.rubrics.innovation_project?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['innovation-project'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
@@ -43,7 +55,7 @@ const processFieldsBySections = (
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
           })),
         ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['robot-design'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
@@ -59,13 +71,13 @@ const processFieldsBySections = (
       const rubric = team.rubrics[cat.replace('-', '_') as keyof typeof team.rubrics];
       const schema = rubrics[cat as JudgingCategory];
       if (rubric?.data?.fields && schema.sections) {
-        const sections: any = {};
+        const sections: SectionFields = {};
         schema.sections.forEach(section => {
           const sectionFields = section.fields
-            .filter(field => rubric.data.fields[field.id])
+            .filter(field => rubric.data?.fields?.[field.id])
             .map(field => ({
               fieldId: field.id,
-              value: rubric.data.fields[field.id].value,
+              value: rubric.data?.fields?.[field.id]?.value ?? null,
               color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
             }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
@@ -77,15 +89,13 @@ const processFieldsBySections = (
   return result;
 };
 
-const CategoryScoreCard = ({
-  cat,
-  sections,
-  getCategory
-}: {
+interface CategoryScoreCardProps {
   cat: string;
-  sections: any;
-  getCategory: any;
-}) => (
+  sections: SectionFields;
+  getCategory: (category: string) => string;
+}
+
+const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProps) => (
   <Paper
     sx={{
       p: 1.5,
@@ -106,10 +116,10 @@ const CategoryScoreCard = ({
         display: 'block'
       }}
     >
-      {getCategory(cat as any)}
+      {getCategory(cat)}
     </Typography>
     <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
-      {Object.entries(sections).map(([sectionId, scores]: any) => (
+      {Object.entries(sections).map(([sectionId, scores]) => (
         <SectionScoreRow
           key={sectionId}
           category={cat as JudgingCategory}
@@ -134,7 +144,9 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
   );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>
-    Object.values(sections).some(fields => fields.length > 0)
+    Object.values(sections as SectionFields).some(
+      fields => Array.isArray(fields) && fields.length > 0
+    )
   );
 
   if (!hasAnyFields) {
@@ -178,7 +190,7 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
       ) : (
         <Grid container spacing={1}>
           {Object.entries(fieldsBySections).map(([cat, sections]) =>
-            Object.keys(sections).length > 0 ? (
+            Object.keys(sections as SectionFields).length > 0 ? (
               <Grid size={4} key={cat}>
                 <CategoryScoreCard cat={cat} sections={sections} getCategory={getCategory} />
               </Grid>
