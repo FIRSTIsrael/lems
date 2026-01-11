@@ -27,7 +27,7 @@ const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-
 export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
-  const { awards, deliberation } = useFinalDeliberation();
+  const { awardCounts, deliberation } = useFinalDeliberation();
 
   // Determine visible stages based on whether optional awards exist
   const visibleStages = useMemo(() => {
@@ -35,12 +35,14 @@ export const FinalDeliberationGrid: React.FC = () => {
       return STAGES;
     }
 
-    const hasOptionalAwards = Object.keys(awards).some(award =>
-      (OPTIONAL_AWARDS as readonly string[]).includes(award)
+    const hasOptionalAwards = Object.keys(awardCounts).some(award =>
+      (OPTIONAL_AWARDS as readonly string[])
+        .filter(name => name !== 'excellence-in-engineering')
+        .includes(award)
     );
 
     return hasOptionalAwards ? STAGES : STAGES.filter(stage => stage !== 'optional-awards');
-  }, [awards, deliberation]);
+  }, [awardCounts, deliberation]);
 
   // Get current stage index
   const currentStageIndex = useMemo(() => {
