@@ -1065,6 +1065,17 @@
         "select-teams-to-compare": "בחר קבוצות להשוואה",
         "current-teams": "קבוצות נוכחיות",
         "done": "סיום"
+      },
+      "export": {
+        "rubrics-title": "מחוונים - קבוצה #{teamNumber}",
+        "scoresheets-title": "דפי ניקוד - קבוצה #{teamNumber}",
+        "rubric-title": "מחוון {category} - קבוצה #{teamNumber}",
+        "scoresheet-title": "מקצה {stage} {round} - קבוצה #{teamNumber}",
+        "total-score": "ניקוד כולל",
+        "no-rubric": "אין מחוון זמין ל-{category}",
+        "no-scoresheets": "אין דפי ניקוד זמינים",
+        "error-loading-rubrics": "שגיאה בטעינת המחוונים. בבקשה נסה שנית.",
+        "error-loading-scoresheets": "שגיאה בטעינת דפי הניקוד. בבקשה נסה שנית."
       }
     }
   }

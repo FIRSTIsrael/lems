@@ -1065,6 +1065,17 @@
         "select-teams-to-compare": "Select teams to compare",
         "current-teams": "Current Teams",
         "done": "Done"
+      },
+      "export": {
+        "rubrics-title": "Rubrics - Team #{teamNumber}",
+        "scoresheets-title": "Scoresheets - Team #{teamNumber}",
+        "rubric-title": "{category} Rubric - Team #{teamNumber}",
+        "scoresheet-title": "{stage} Round {round} - Team #{teamNumber}",
+        "total-score": "Total Score",
+        "no-rubric": "No rubric available for {category}",
+        "no-scoresheets": "No scoresheets available",
+        "error-loading-rubrics": "Error loading rubrics. Please try again.",
+        "error-loading-scoresheets": "Error loading scoresheets. Please try again."
       }
     }
   }
