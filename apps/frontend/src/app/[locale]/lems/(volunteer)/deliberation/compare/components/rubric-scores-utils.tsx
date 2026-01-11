@@ -1,5 +1,7 @@
 import { rubrics } from '@lems/shared/rubrics';
-import type { Team } from '../graphql/types';
+import type { RubricCategorySchema } from '@lems/shared/rubrics';
+import type { Team, Rubric, RubricFieldValue } from '../graphql/types';
+import type { FieldComparison } from '../compare-context';
 
 export interface RubricField {
   fieldId: string;
@@ -8,14 +10,7 @@ export interface RubricField {
   color: 'success' | 'error' | 'default';
 }
 
-export type FieldComparisons = Map<
-  string,
-  {
-    values: Map<string, number>;
-    max: number;
-    min: number;
-  }
->;
+export type FieldComparisons = Map<string, FieldComparison>;
 
 export function getFieldComparisonColor(
   fieldId: string,
@@ -47,8 +42,8 @@ export function getFieldComparisonColor(
 }
 
 export const extractCoreValuesFields = (
-  rubric: any,
-  schema: any,
+  rubric: Rubric | null | undefined,
+  schema: RubricCategorySchema,
   categoryPrefix: string,
   teamId: string,
   fieldComparisons: FieldComparisons
@@ -58,8 +53,8 @@ export const extractCoreValuesFields = (
   const fields = rubric.data.fields;
   const result: RubricField[] = [];
 
-  schema.sections.forEach((section: any) => {
-    section.fields.forEach((field: any) => {
+  schema.sections.forEach(section => {
+    section.fields.forEach(field => {
       if (field.coreValues && fields[field.id]) {
         result.push({
           fieldId: field.id,
@@ -75,14 +70,14 @@ export const extractCoreValuesFields = (
 };
 
 export const extractRubricFields = (
-  rubric: any,
+  rubric: Rubric | null | undefined,
   category: string,
   teamId: string,
   fieldComparisons: FieldComparisons
 ): RubricField[] => {
   if (!rubric?.data?.fields) return [];
 
-  return Object.entries(rubric.data.fields).map(([fieldId, field]: [string, any]) => ({
+  return Object.entries(rubric.data.fields).map(([fieldId, field]: [string, RubricFieldValue]) => ({
     fieldId,
     category,
     value: field.value,

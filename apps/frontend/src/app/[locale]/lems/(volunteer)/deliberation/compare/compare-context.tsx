@@ -3,11 +3,10 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import { JudgingCategory } from '@lems/types/judging';
 import { inferCoreValuesFields } from '@lems/shared/rubrics';
-import type { Team, Rubric, RubricFieldValue, Award } from './graphql/types';
+import type { Team, Rubric, RubricFieldValue, Award, DivisionTeam } from './graphql/types';
 import { getFieldComparisonColor } from './components/rubric-scores-utils';
 
 export interface FieldComparison {
-  fieldId: string;
   values: Map<string, number>;
   min: number;
   max: number;
@@ -23,7 +22,7 @@ export interface TeamComparison {
 export interface CompareContextType {
   teams: Team[];
   awards: Award[];
-  allTeams: Team[];
+  allTeams: DivisionTeam[];
   category?: JudgingCategory;
   fieldComparisons: Map<string, FieldComparison>;
   teamComparisons: Map<string, TeamComparison>;
@@ -44,7 +43,7 @@ interface CompareProviderProps {
   children: ReactNode;
   teams: Team[];
   awards: Award[];
-  allTeams: Team[];
+  allTeams: DivisionTeam[];
   category?: JudgingCategory;
 }
 
@@ -117,7 +116,7 @@ export const CompareProvider = ({
       });
 
       if (values.size > 0) {
-        fieldComparisons.set(fieldId, { fieldId, values, min, max });
+        fieldComparisons.set(fieldId, { values, min, max });
       }
     });
 
