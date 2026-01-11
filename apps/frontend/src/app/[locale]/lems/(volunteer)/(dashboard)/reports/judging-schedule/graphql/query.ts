@@ -18,6 +18,7 @@ export const GET_JUDGING_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql
       }
       judging {
         divisionId
+        sessionLength
         sessions {
           id
           number
@@ -42,13 +43,15 @@ export const GET_JUDGING_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql
 export function parseJudgingSchedule(data: QueryData): {
   rooms: Room[];
   rows: ScheduleRow[];
+  sessionLength: number;
 } {
   if (!data.division) {
-    return { rooms: [], rows: [] };
+    return { rooms: [], rows: [], sessionLength: 0 };
   }
 
   const { rooms, agenda, judging } = data.division;
   const sessions = judging.sessions;
+  const sessionLength = judging.sessionLength;
 
   const sessionsByTime = new Map<number, JudgingSession[]>();
   sessions.forEach(session => {
@@ -88,5 +91,5 @@ export function parseJudgingSchedule(data: QueryData): {
 
   rows.sort((a, b) => a.time.getTime() - b.time.getTime());
 
-  return { rooms, rows };
+  return { rooms, rows, sessionLength };
 }

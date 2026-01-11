@@ -33,6 +33,7 @@ export interface QueryData {
     rooms: Room[];
     agenda: AgendaEvent[];
     judging: {
+      sessionLength: number;
       sessions: JudgingSession[];
     };
   } | null;
