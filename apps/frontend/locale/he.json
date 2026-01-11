@@ -1,5 +1,11 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "מחוון {category} של קבוצה #{teamNumber} {teamName}"
+      }
+    },
     "login": {
       "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
@@ -1003,6 +1009,15 @@
         "select-teams-to-compare": "בחר קבוצות להשוואה",
         "current-teams": "קבוצות נוכחיות",
         "done": "סיום"
+      }
+    }
+  },
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "משוב",
+        "great-job": "עבודה מעולה",
+        "think-about": "חשבו על"
       }
     }
   }

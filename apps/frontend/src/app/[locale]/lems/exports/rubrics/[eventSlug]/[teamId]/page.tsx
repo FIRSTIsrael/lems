@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
+import { useTranslations } from 'next-intl';
+import { useRubricsGeneralTranslations } from '@lems/localization';
+import Image from 'next/image';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import { ExportRubricTable } from './export-rubric-table';
 
@@ -17,6 +20,8 @@ interface Rubric {
   teamNumber: number;
   teamName: string;
   rubricCategory: string;
+  seasonName: string;
+  eventName: string;
   scores: Record<string, number | null>;
   status?: string;
   feedback?: { greatJob: string; thinkAbout: string };
@@ -50,6 +55,8 @@ interface RubricsExportPageProps {
 
 export default function RubricsExportPage({ params: paramsPromise }: RubricsExportPageProps) {
   const params = use(paramsPromise);
+  const t = useTranslations('pages.exports.rubrics');
+  const { getTerm } = useRubricsGeneralTranslations();
   const [rubrics, setRubrics] = useState<Rubric[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -112,11 +119,50 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
               }
             }}
           >
-            <Box sx={{ mb: 2, textAlign: 'right' }}>
-              <Box sx={{ fontSize: '0.95rem' }}>
-                {rubric.teamName} - #{rubric.teamNumber}
+            {/* Header with FIRST LEGO League branding */}
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                mb: 3,
+                pb: 2,
+                borderBottom: '2px solid #000',
+                '@media print': {
+                  mb: 2,
+                  pb: 1
+                }
+              }}
+            >
+              {/* Main content */}
+              <Box sx={{ flex: 1, textAlign: 'left' }}>
+                {/* Metadata line */}
+                <Box sx={{ fontSize: '0.7rem', color: '#666', mb: 1, lineHeight: 1.3 }}>
+                  {t('metadata', {
+                    eventName: rubric.eventName,
+                    divisionName: rubric.divisionName,
+                    seasonName: rubric.seasonName
+                  })}
+                </Box>
+
+                {/* Main title */}
+                <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold', mb: 1 }}>
+                  {t('title', {
+                    category: getTerm(`categories.${rubric.rubricCategory}.title`),
+                    teamNumber: rubric.teamNumber,
+                    teamName: rubric.teamName
+                  })}
+                </Box>
               </Box>
-              <Box sx={{ fontSize: '0.85rem', color: '#666' }}>{rubric.rubricCategory}</Box>
+              {/* Logo */}
+              <Box sx={{ width: '100px', height: '80px', position: 'relative', flexShrink: 0 }}>
+                <Image
+                  src="/assets/audience-display/sponsors/fllc-horizontal.svg"
+                  alt="FIRST LEGO League Challenge"
+                  fill
+                  style={{ objectFit: 'contain' }}
+                />
+              </Box>
             </Box>
 
             {rubric.schema && rubric.schema.sections && rubric.schema.sections.length > 0 ? (

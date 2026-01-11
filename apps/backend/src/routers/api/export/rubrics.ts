@@ -18,6 +18,9 @@ router.get('/rubrics', async (req, res: Response) => {
       return res.status(404).json({ error: 'Event not found' });
     }
 
+    const season = await db.seasons.byId(event.season_id).get();
+    const seasonName = season?.name;
+
     const [, number] = teamId.split('-');
     const teams = await db.teams.getAll();
     const team = teams.find(t => t.number === parseInt(number));
@@ -52,6 +55,8 @@ router.get('/rubrics', async (req, res: Response) => {
         teamNumber: team.number,
         teamName: team.name,
         rubricCategory: rubric.category,
+        seasonName,
+        eventName: event.name,
         scores,
         status: rubric.status,
         feedback: rubric.data?.feedback,

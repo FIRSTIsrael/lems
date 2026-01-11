@@ -1,5 +1,5 @@
 import { Router, Response } from 'express';
-import { Parser, FieldInfo } from '@json2csv/plainjs';
+import { scoresheet } from '@lems/shared/scoresheet';
 import db from '../../../lib/database';
 
 const router = Router();
@@ -38,38 +38,40 @@ router.get('/scores', async (req, res: Response) => {
       return res.status(404).json({ error: 'No scores found for this team' });
     }
 
-    const scores = Object.fromEntries(
-      teamScoresheets.map(scoresheet => [`round-${scoresheet.round}`, scoresheet.data?.score || 0])
-    );
+    // Get the first ranking scoresheet to extract mission details
+    const rankingScoresheet = teamScoresheets.find(s => s.stage === 'RANKING');
+    
+    if (!rankingScoresheet || !rankingScoresheet.data?.missions) {
+      return res.status(404).json({ error: 'No mission data found for this team' });
+    }
 
-    const csvData = [{
-      teamNumber: team.number,
-      teamName: team.name,
-      ...scores
-    }];
+    // Build detailed mission scores
+    const missions = scoresheet.missions.map(mission => {
+      const missionData = rankingScoresheet.data?.missions?.[mission.id] || {};
+      const clauseValues = mission.clauses.map((_, index) => missionData[index] ?? null);
+      
+      let score = 0;
+      try {
+        score = mission.calculation(...clauseValues);
+      } catch {
+        score = 0;
+      }
 
-    res.set('Content-Disposition', `attachment; filename=scores-${teamId}.csv`);
-    res.set('Content-Type', 'text/csv');
-
-    const fields: Array<string | FieldInfo<object, unknown>> = [
-      { label: 'Team Number', value: 'teamNumber' },
-      { label: 'Team Name', value: 'teamName' }
-    ];
-
-    const roundNumbers = Object.keys(scores)
-      .filter(key => key.startsWith('round-'))
-      .map(key => parseInt(key.replace('round-', '')))
-      .sort((a, b) => a - b);
-
-    roundNumbers.forEach(round => {
-      fields.push({
-        label: `Round ${round}`,
-        value: row => row[`round-${round}`]
-      });
+      return {
+        id: mission.id,
+        score
+      };
     });
 
-    const parser = new Parser({ fields });
-    res.send(`\ufeff${parser.parse(csvData)}`);
+    const totalScore = rankingScoresheet.data?.score || 0;
+
+    res.contentType('application/json');
+    res.json({
+      teamNumber: team.number,
+      teamName: team.name,
+      missions,
+      totalScore
+    });
   } catch (error) {
     console.error('Error exporting scores:', error);
     res.status(500).json({ error: 'Failed to export scores' });

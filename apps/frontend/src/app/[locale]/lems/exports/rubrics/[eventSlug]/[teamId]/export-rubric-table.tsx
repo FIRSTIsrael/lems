@@ -50,16 +50,43 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
   const sectionBgColor = sectionColors[category];
 
   return (
-    <Box>
-      <Paper elevation={3} sx={{ borderRadius: 2, my: 2 }}>
+    <Box
+      sx={{
+        '@media print': {
+          transform: 'scale(0.85)',
+          transformOrigin: 'top center',
+          width: '100%'
+        }
+      }}
+    >
+      <Paper
+        elevation={3}
+        sx={{
+          borderRadius: 2,
+          my: 2,
+          '@media print': { boxShadow: 'none', borderRadius: 0, my: 0 }
+        }}
+      >
         <Table
           sx={{
             tableLayout: 'fixed',
+            border: '2px solid #000',
             '& thead': {
               backgroundColor: 'action.hover'
             },
             '& td, & th': {
-              borderColor: 'divider'
+              borderColor: '#000',
+              borderWidth: '0.3px',
+              borderStyle: 'solid',
+              '@media print': {
+                WebkitPrintColorAdjust: 'exact',
+                printColorAdjust: 'exact'
+              }
+            },
+            '@media print': {
+              '& tbody tr': {
+                pageBreakInside: 'avoid'
+              }
             }
           }}
         >
@@ -72,14 +99,14 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                   sx={{
                     bgcolor: colors[index],
                     boxSizing: 'border-box',
-                    fontSize: '1em',
-                    py: '0.875em',
-                    px: '0.5em',
+                    fontSize: '0.8em',
+                    py: '0.6em',
+                    px: '0.35em',
                     fontWeight: 700,
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
                   }}
                 >
-                  <Typography fontSize="1.4em" fontWeight={700}>
+                  <Typography fontSize="1.3em" fontWeight={700}>
                     {getColumnTitle(column)}
                   </Typography>
                 </TableCell>
@@ -95,19 +122,19 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                     colSpan={4}
                     sx={{
                       bgcolor: sectionBgColor,
-                      py: '0.75em',
-                      px: '1.5em',
+                      py: '0.5em',
+                      px: '0.85em',
                       textAlign: 'start',
-                      fontSize: '0.875em',
+                      fontSize: '0.75em',
                       fontWeight: 500
                     }}
                   >
-                    <Stack direction="row" spacing={1} alignItems="center">
+                    <Stack direction="row" spacing={0.6} alignItems="center">
                       <Typography fontSize="1em" fontWeight={700} component="span" flexShrink={0}>
                         {getSectionTitle(section.id)}
                       </Typography>
                       <Box sx={{ whiteSpace: 'pre' }}> - </Box>
-                      <Typography sx={{ flex: 1, fontSize: '0.9em' }}>
+                      <Typography sx={{ flex: 1, fontSize: '0.95em' }}>
                         {getSectionDescription(section.id)}
                       </Typography>
                     </Stack>
@@ -123,21 +150,22 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                       return (
                         <TableCell
                           key={level}
-                          align={levelText ? 'left' : 'center'}
+                          align="left"
                           sx={{
                             borderTop: '1px solid #000',
                             borderRight: '1px solid rgba(0,0,0,0.2)',
                             borderLeft: '1px solid rgba(0,0,0,0.2)',
                             borderBottom: 'none',
-                            fontSize: '1em',
-                            p: '0.75em',
-                            pr: '0.5em',
+                            fontSize: '0.75em',
+                            p: '0.4em',
+                            pr: '0.3em',
                             pl: '0.25em',
-                            backgroundColor: '#fff'
+                            backgroundColor: '#fff',
+                            verticalAlign: 'middle'
                           }}
                         >
                           <Stack
-                            spacing={0.5}
+                            spacing={0.3}
                             direction="row"
                             alignItems={levelText ? 'flex-start' : 'center'}
                             justifyContent={levelText ? 'flex-start' : 'center'}
@@ -148,7 +176,7 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                                 <Radio
                                   disableRipple
                                   checked={isChecked}
-                                  sx={{ fontSize: '1.5em' }}
+                                  sx={{ fontSize: '1.1em' }}
                                 />
                               }
                               label=""
@@ -157,11 +185,7 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                                 '.MuiFormControlLabel-label': { display: 'none' }
                               }}
                             />
-                            {levelText && (
-                              <Typography fontSize="0.875em" sx={{ pt: '0.25em' }}>
-                                {levelText}
-                              </Typography>
-                            )}
+                            {levelText && <Typography fontSize="0.85em">{levelText}</Typography>}
                           </Stack>
                         </TableCell>
                       );
@@ -172,48 +196,59 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
             ))}
             {/* Feedback Row */}
             {feedback && (
-              <TableRow>
-                <TableCell
-                  colSpan={4}
-                  sx={{
-                    bgcolor: sectionBgColor,
-                    py: '0.75em',
-                    px: '1.5em',
-                    textAlign: 'start',
-                    fontSize: '0.875em',
-                    fontWeight: 500
-                  }}
-                >
-                  <Typography fontSize="1em" fontWeight={700}>
-                    {getFeedbackTitle('feedback')}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            )}
-            {feedback && (
               <>
                 <TableRow>
-                  <TableCell colSpan={4} sx={{ p: '1em' }}>
-                    <Stack spacing={1}>
-                      <Box>
-                        <Typography fontWeight={700} fontSize="0.9em">
-                          {getFeedbackTitle('great-job')}
-                        </Typography>
-                        <Typography fontSize="0.85em">{feedback.greatJob || '-'}</Typography>
-                      </Box>
-                    </Stack>
+                  <TableCell
+                    colSpan={2}
+                    sx={{
+                      bgcolor: sectionBgColor,
+                      py: '0.4em',
+                      px: '0.85em',
+                      borderRight: '1px solid #000',
+                      textAlign: 'left',
+                      fontSize: '0.85em',
+                      fontWeight: 500
+                    }}
+                  >
+                    <Typography fontSize="0.9em" fontWeight={700}>
+                      {getFeedbackTitle('great-job')}
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    colSpan={2}
+                    sx={{
+                      bgcolor: sectionBgColor,
+                      py: '0.4em',
+                      px: '0.85em',
+                      textAlign: 'left',
+                      fontSize: '0.85em',
+                      fontWeight: 500
+                    }}
+                  >
+                    <Typography fontSize="0.9em" fontWeight={700}>
+                      {getFeedbackTitle('think-about')}
+                    </Typography>
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell colSpan={4} sx={{ p: '1em' }}>
-                    <Stack spacing={1}>
-                      <Box>
-                        <Typography fontWeight={700} fontSize="0.9em">
-                          {getFeedbackTitle('think-about')}
-                        </Typography>
-                        <Typography fontSize="0.85em">{feedback.thinkAbout || '-'}</Typography>
-                      </Box>
-                    </Stack>
+                  <TableCell
+                    colSpan={2}
+                    sx={{
+                      p: '0.5em',
+                      borderRight: '1px solid #000',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <Typography fontSize="0.85em">{feedback.greatJob || '-'}</Typography>
+                  </TableCell>
+                  <TableCell
+                    colSpan={2}
+                    sx={{
+                      p: '0.5em',
+                      textAlign: 'left'
+                    }}
+                  >
+                    <Typography fontSize="0.85em">{feedback.thinkAbout || '-'}</Typography>
                   </TableCell>
                 </TableRow>
               </>

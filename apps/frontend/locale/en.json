@@ -1,5 +1,11 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "Generated from FIRST Israel event system | {eventName} | Season {seasonName}",
+        "title": "Rubric {category} for Team #{teamNumber} {teamName}"
+      }
+    },
     "login": {
       "subtitle": "Volunteer Login",
       "continue": "Continue",
@@ -1003,6 +1009,15 @@
         "select-teams-to-compare": "Select teams to compare",
         "current-teams": "Current Teams",
         "done": "Done"
+      }
+    }
+  },
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "Feedback",
+        "great-job": "Great Job",
+        "think-about": "Think About"
       }
     }
   }

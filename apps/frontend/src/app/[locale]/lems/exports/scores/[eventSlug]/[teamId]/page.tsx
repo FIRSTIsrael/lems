@@ -1,18 +1,7 @@
 'use client';
 
 import { useEffect, useState, use } from 'react';
-import {
-  Box,
-  CircularProgress,
-  Alert,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper
-} from '@mui/material';
+import { Box, CircularProgress, Alert } from '@mui/material';
 
 interface ScoresExportPageProps {
   params: Promise<{
@@ -22,10 +11,16 @@ interface ScoresExportPageProps {
   }>;
 }
 
+interface Mission {
+  id: string;
+  score: number;
+}
+
 interface ScoresData {
   teamNumber: number;
   teamName: string;
-  scores: Record<string, number>;
+  missions: Mission[];
+  totalScore: number;
 }
 
 export default function ScoresExportPage({ params: paramsPromise }: ScoresExportPageProps) {
@@ -44,22 +39,7 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
           throw new Error('Failed to fetch scores');
         }
 
-        const text = await response.text();
-        const lines = text.split('\n');
-        const headers = lines[0].split(',');
-        const values = lines[1].split(',');
-
-        const scoresData: ScoresData = {
-          teamNumber: parseInt(values[0]),
-          teamName: values[1],
-          scores: {}
-        };
-
-        for (let i = 2; i < headers.length; i++) {
-          const header = headers[i].replace(/"/g, '');
-          scoresData.scores[header] = parseFloat(values[i]);
-        }
-
+        const scoresData: ScoresData = await response.json();
         setData(scoresData);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load scores');
@@ -97,8 +77,6 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
     );
   }
 
-  const roundKeys = Object.keys(data.scores).filter(key => key.startsWith('Round'));
-
   return (
     <Box sx={{ p: 2, '@media print': { margin: 0, padding: 0 } }}>
       <Box sx={{ mb: 3 }}>
@@ -108,26 +86,60 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
         </p>
       </Box>
 
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: '#f5f5f5' }}>
-              <TableCell sx={{ fontWeight: 'bold' }}>Round</TableCell>
-              <TableCell align="right" sx={{ fontWeight: 'bold' }}>
-                Score
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {roundKeys.map(round => (
-              <TableRow key={round}>
-                <TableCell>{round}</TableCell>
-                <TableCell align="right">{data.scores[round]}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        {data.missions.map(mission => (
+          <Box
+            key={mission.id}
+            sx={{
+              display: 'flex',
+              gap: 2,
+              p: 2,
+              border: '1px solid #ddd',
+              borderRadius: 1,
+              backgroundColor: '#fff'
+            }}
+          >
+            {/* Score on the left */}
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                minWidth: '60px',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+                color: '#2e7d32',
+                backgroundColor: '#f0f0f0',
+                borderRadius: 1,
+                p: 2
+              }}
+            >
+              {mission.score}
+            </Box>
+
+            {/* Mission details */}
+            <Box sx={{ flex: 1 }}>
+              <Box sx={{ fontWeight: 'bold', fontSize: '1rem', mb: 0.5 }}>{mission.id}</Box>
+            </Box>
+          </Box>
+        ))}
+
+        {/* Total Score */}
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            p: 2,
+            backgroundColor: '#f5f5f5',
+            borderRadius: 1,
+            fontWeight: 'bold',
+            fontSize: '1.1rem'
+          }}
+        >
+          <Box sx={{ flex: 1 }}>Total Score</Box>
+          <Box sx={{ color: '#1976d2' }}>{data.totalScore}</Box>
+        </Box>
+      </Box>
     </Box>
   );
 }
