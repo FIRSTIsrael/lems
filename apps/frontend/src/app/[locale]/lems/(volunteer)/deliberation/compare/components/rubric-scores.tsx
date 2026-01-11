@@ -75,11 +75,14 @@ const processFieldsBySections = (
         schema.sections.forEach(section => {
           const sectionFields = section.fields
             .filter(field => rubric.data?.fields?.[field.id])
-            .map(field => ({
-              fieldId: field.id,
-              value: rubric.data?.fields?.[field.id]?.value ?? null,
-              color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
-            }));
+            .map(field => {
+              const fieldValue = rubric.data?.fields?.[field.id];
+              return {
+                fieldId: field.id,
+                value: fieldValue?.value ?? null,
+                color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
+              };
+            });
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
         });
         if (Object.keys(sections).length > 0) result[cat] = sections;
@@ -175,27 +178,35 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
           }}
         >
           <Stack spacing={0.5}>
-            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => (
-              <SectionScoreRow
-                key={sectionId}
-                category={category as JudgingCategory}
-                sectionId={sectionId}
-                scores={scores}
-                showSectionName={category !== 'core-values'}
-                showAllScores={category === 'core-values'}
-              />
-            ))}
+            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => {
+              const typedScores = scores as Array<{
+                fieldId: string;
+                value: number | null;
+                color: 'success' | 'error' | 'default';
+              }>;
+              return (
+                <SectionScoreRow
+                  key={sectionId}
+                  category={category as JudgingCategory}
+                  sectionId={sectionId}
+                  scores={typedScores}
+                  showSectionName={category !== 'core-values'}
+                  showAllScores={category === 'core-values'}
+                />
+              );
+            })}
           </Stack>
         </Paper>
       ) : (
         <Grid container spacing={1}>
-          {Object.entries(fieldsBySections).map(([cat, sections]) =>
-            Object.keys(sections as SectionFields).length > 0 ? (
+          {Object.entries(fieldsBySections).map(([cat, sections]) => {
+            const typedSections = sections as SectionFields;
+            return Object.keys(typedSections).length > 0 ? (
               <Grid size={4} key={cat}>
-                <CategoryScoreCard cat={cat} sections={sections} getCategory={getCategory} />
+                <CategoryScoreCard cat={cat} sections={typedSections} getCategory={getCategory} />
               </Grid>
-            ) : null
-          )}
+            ) : null;
+          })}
         </Grid>
       )}
     </Stack>

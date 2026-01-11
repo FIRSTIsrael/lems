@@ -58,7 +58,11 @@ export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProp
 
   const updateTeamsInUrl = (newTeamSlugs: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    newTeamSlugs.length > 0 ? params.set('teams', newTeamSlugs.join(',')) : params.delete('teams');
+    if (newTeamSlugs.length > 0) {
+      params.set('teams', newTeamSlugs.join(','));
+    } else {
+      params.delete('teams');
+    }
     router.push(`?${params.toString()}`);
   };
 

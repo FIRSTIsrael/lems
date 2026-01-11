@@ -89,7 +89,10 @@ export interface UnifiedDivisionData {
       name: string;
       slug: string;
     }[];
-    awards: Award[];
+    judging: {
+      divisionId: string;
+      awards: Award[];
+    };
   };
 }
 
