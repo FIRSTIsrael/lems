@@ -96,6 +96,6 @@ export function parseRubricData(queryData: QueryResult): RubricItem {
  * Parses the award options query result and returns a Set of award names.
  */
 export function parseAwardOptions(queryData: AwardOptionsQueryResult): Set<string> {
-  const awards = queryData.division?.awards ?? [];
-  return new Set(awards.map(award => award.name));
+  const awards = (queryData?.division as any)?.judging?.awards ?? [];
+  return new Set(awards.map((award: any) => award.name));
 }
