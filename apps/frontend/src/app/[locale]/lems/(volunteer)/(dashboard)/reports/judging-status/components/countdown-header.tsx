@@ -26,6 +26,8 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
       .second(sessionDate.getSeconds());
   }, [currentSessions, currentTime]);
 
+  if (!scheduledTime) return null;
+
   return (
     <Paper
       sx={{
