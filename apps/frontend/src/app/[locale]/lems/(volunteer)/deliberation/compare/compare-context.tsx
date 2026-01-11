@@ -7,7 +7,6 @@ import type { Team, Rubric, RubricFieldValue, Award, DivisionTeam } from './grap
 import { getFieldComparisonColor } from './components/rubric-scores-utils';
 
 export interface FieldComparison {
-  fieldId: string;
   values: Map<string, number>;
   min: number;
   max: number;
@@ -117,7 +116,7 @@ export const CompareProvider = ({
       });
 
       if (values.size > 0) {
-        fieldComparisons.set(fieldId, { fieldId, values, min, max });
+        fieldComparisons.set(fieldId, { values, min, max });
       }
     });
 

@@ -12,6 +12,7 @@ import {
   getCategoryColor,
   getCategoryBgColor,
   getFieldComparisonColor,
+  type RubricField,
   type FieldComparisons
 } from './rubric-scores-utils';
 import { SectionScoreRow } from './section-score-row';
@@ -51,6 +52,7 @@ const processFieldsBySections = (
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'innovation-project' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
           })),
@@ -62,6 +64,7 @@ const processFieldsBySections = (
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'robot-design' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
           }))
@@ -70,19 +73,18 @@ const processFieldsBySections = (
     } else {
       const rubric = team.rubrics[cat.replace('-', '_') as keyof typeof team.rubrics];
       const schema = rubrics[cat as JudgingCategory];
-      if (rubric?.data?.fields && schema.sections) {
-        const sections: SectionFields = {};
+      const rubricData = rubric?.data;
+      if (rubricData?.fields && schema.sections) {
+        const sections: Record<string, RubricField[]> = {};
         schema.sections.forEach(section => {
           const sectionFields = section.fields
-            .filter(field => rubric.data?.fields?.[field.id])
-            .map(field => {
-              const fieldValue = rubric.data?.fields?.[field.id];
-              return {
-                fieldId: field.id,
-                value: fieldValue?.value ?? null,
-                color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
-              };
-            });
+            .filter(field => rubricData.fields[field.id])
+            .map(field => ({
+              fieldId: field.id,
+              category: cat,
+              value: rubricData.fields[field.id].value,
+              color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
+            }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
         });
         if (Object.keys(sections).length > 0) result[cat] = sections;
