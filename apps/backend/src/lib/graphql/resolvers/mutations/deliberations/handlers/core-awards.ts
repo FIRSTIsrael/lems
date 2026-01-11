@@ -1,7 +1,9 @@
-import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { FinalDeliberationAwards } from '@lems/database';
-import { getRedisPubSub } from '../../../../../redis/redis-pubsub';
+import { Award, FinalDeliberationAwards, JudgingCategory } from '@lems/database';
+import db from '../../../../../database';
+import { calculateAllTeamScores, rankTeams, updateFinalDeliberationAwards } from './utils';
+
+const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
 
 /**
  * Validates that required core awards are assigned
@@ -35,36 +37,98 @@ export function validateCoreAwardsStage(deliberation: { awards: FinalDeliberatio
  * Handles core awards stage completion when advancing to optional awards stage
  * Core awards typically include: Innovation Project, Robot Design, and Core Values
  */
-export async function handleCoreAwardsStageCompletion(divisionId: string): Promise<void> {
-  // TODO: Implement core awards stage completion logic
-  // This could include:
-  // - Finalizing core award selections
-  // - Creating any automatic awards based on selections
-  // - Calculating statistics or rankings for core awards
-  // - Any cleanup or validation before moving to optional awards
+export async function handleCoreAwardsStageCompletion(
+  divisionId: string,
+  awards: FinalDeliberationAwards
+): Promise<void> {
+  const teams = await db.teams.byDivisionId(divisionId).getAll();
+  if (teams.length === 0) {
+    return;
+  }
 
-  // For now, publish a placeholder event indicating the stage was processed
-  const pubSub = getRedisPubSub();
-  await pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
-    divisionId,
-    message: 'Core awards stage completed'
-  });
+  await validateCoreAwardsAssignment(awards);
+
+  await assignCoreAwardsToTeams(divisionId, awards);
+
+  const excellenceInEngineeringAwards = await db.awards
+    .byDivisionId(divisionId)
+    .get('excellence-in-engineering');
+
+  if (excellenceInEngineeringAwards.length === 0) {
+    await updateFinalDeliberationAwards(divisionId);
+    return;
+  }
+
+  const teamScores = await calculateAllTeamScores(divisionId, teams);
+  const teamsWithRanks = await rankTeams(teamScores, divisionId);
+
+  const excellenceInEngineeringWinners = teamsWithRanks
+    .filter(
+      t =>
+        !Object.values(awards.champions || {}).includes(t.teamId) &&
+        !awards['innovation-project'].includes(t.teamId) &&
+        !awards['robot-design'].includes(t.teamId) &&
+        !awards['core-values'].includes(t.teamId)
+    )
+    .sort((a, b) => a.ranks['total'] - b.ranks['total'])
+    .slice(0, excellenceInEngineeringAwards.length)
+    .map(t => t.teamId);
+
+  await assignExcellenceInEngineeringAwards(
+    excellenceInEngineeringWinners,
+    excellenceInEngineeringAwards
+  );
+
+  await updateFinalDeliberationAwards(divisionId);
 }
 
 /**
  * Validates that all required core awards are properly assigned
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function validateCoreAwardsAssignment(): Promise<void> {
-  // TODO: Add validation logic for core awards
-  // Check that all teams that should receive core awards have them properly assigned
+async function validateCoreAwardsAssignment(awards: FinalDeliberationAwards): Promise<void> {
+  const championsIds = Object.values(awards.champions || {});
+  for (const category of categories) {
+    if (awards[category].filter(winnerId => championsIds.includes(winnerId)).length > 0) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        `Category ${category} has a winner that was already assigned a champions award`
+      );
+    }
+  }
 }
 
 /**
- * Finalizes core award selections
+ * Assign core award selections
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function finalizeCoreAwardSelections(): Promise<void> {
-  // TODO: Implement core award finalization
-  // Lock in selections, prevent further modifications if needed
+async function assignCoreAwardsToTeams(
+  divisionId: string,
+  awards: FinalDeliberationAwards
+): Promise<void> {
+  for (const category of categories) {
+    const categoryAwards = await db.awards.byDivisionId(divisionId).get(category);
+    for (let i = 0; i < categoryAwards.length; i++) {
+      const award = categoryAwards[i];
+      const teamId = awards[category][i];
+      if (!teamId) {
+        throw new MutationError(
+          MutationErrorCode.FORBIDDEN,
+          `No team assigned for award ${award.name} in category ${category}`
+        );
+      }
+      await db.awards.assign(award.id, teamId);
+    }
+  }
 }
+
+const assignExcellenceInEngineeringAwards = async (
+  teamsWithRanks: string[],
+  robotPerformanceAwards: Award[]
+): Promise<void> => {
+  for (let i = 0; i < robotPerformanceAwards.length; i++) {
+    const award = robotPerformanceAwards[i];
+    const teamId = teamsWithRanks[i];
+    if (teamId) {
+      await db.awards.assign(award.id, teamId);
+    }
+  }
+};
