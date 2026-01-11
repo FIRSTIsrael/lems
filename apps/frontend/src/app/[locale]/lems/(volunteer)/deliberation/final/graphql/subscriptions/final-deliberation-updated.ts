@@ -1,6 +1,6 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler } from '@lems/shared/utils';
-import type { FinalDeliberationData } from '../types';
+import type { FinalDeliberationData, FinalJudgingDeliberation } from '../types';
 
 interface FinalDeliberationUpdatedEvent {
   divisionId: string;
@@ -45,6 +45,40 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
 
   const event = data.finalDeliberationUpdated;
 
+  let stageDataUpdate: Partial<FinalJudgingDeliberation> = {};
+  if (event.stageData) {
+    try {
+      const parsedStageData = JSON.parse(event.stageData);
+      if (parsedStageData['core-awards']?.manualEligibility) {
+        stageDataUpdate = {
+          coreAwardsManualEligibility: parsedStageData['core-awards'].manualEligibility
+        };
+      } else if (parsedStageData['optional-awards']?.manualEligibility) {
+        stageDataUpdate = {
+          optionalAwardsManualEligibility: parsedStageData['optional-awards'].manualEligibility
+        };
+      }
+    } catch {
+      // Ignore JSON parse errors
+    }
+  }
+
+  const awardsUpdate: Partial<FinalJudgingDeliberation> = {};
+  // Parse awards JSON if provided, turn awards into camel case keys
+  if (event.awards) {
+    try {
+      const parsedAwards = JSON.parse(event.awards);
+      // Convert keys to camel case
+      for (const [key, value] of Object.entries(parsedAwards)) {
+        const camelCaseKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase());
+        // @ts-expect-error - Dynamic key assignment
+        awardsUpdate[camelCaseKey] = value;
+      }
+    } catch {
+      // Ignore JSON parse errors
+    }
+  }
+
   return merge(prev, {
     division: {
       judging: {
@@ -57,10 +91,8 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
           ...(!!event.startTime && { startTime: event.startTime }),
           // Update completionTime if provided
           ...(!!event.completionTime && { completionTime: event.completionTime }),
-          // Update awards if provided (JSON string)
-          ...(!!event.awards && JSON.parse(event.awards)),
-          // Update stageData if provided (JSON string)
-          ...(!!event.stageData && { stageData: JSON.parse(event.stageData) })
+          ...awardsUpdate,
+          ...stageDataUpdate
         }
       }
     }

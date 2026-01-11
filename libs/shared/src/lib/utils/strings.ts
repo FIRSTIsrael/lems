@@ -25,3 +25,16 @@ export function hyphensToUnderscores(str: string): string {
 export function underscoresToHyphens(str: string): string {
   return str.replace(/_/g, '-');
 }
+
+/**
+ * Converts a kebab-case string to camelCase.
+ *
+ * @param str - The input kebab-case string
+ * @returns The string converted to camelCase
+ *
+ * @example
+ * kebabCaseToCamelCase('innovation-project') // 'innovationProject'
+ */
+export function kebabCaseToCamelCase(str: string): string {
+  return str.replace(/-./g, x => x[1].toUpperCase());
+}
