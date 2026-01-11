@@ -8,8 +8,8 @@ import { ResponsiveComponent } from '@lems/shared';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
+import { SmallScreenBlock } from '../components/small-screen-block';
 import { CategoryDeliberationProvider } from './deliberation-context';
-import { SmallScreenBlock } from './components/small-screen-block';
 import { DeliberationGrid } from './components/deliberation-grid';
 import {
   GET_CATEGORY_DELIBERATION,
