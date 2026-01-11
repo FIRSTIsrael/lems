@@ -12,6 +12,7 @@ import {
   getCategoryColor,
   getCategoryBgColor,
   getFieldComparisonColor,
+  type RubricField,
   type FieldComparisons
 } from './rubric-scores-utils';
 import { SectionScoreRow } from './section-score-row';
@@ -24,32 +25,34 @@ const processFieldsBySections = (
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
-) => {
+): Record<string, Record<string, RubricField[]>> => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
-  const result: any = {};
+  const result: Record<string, Record<string, RubricField[]>> = {};
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
       const fields = [
         ...Object.entries(team.rubrics.innovation_project?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['innovation-project'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'innovation-project' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
           })),
         ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['robot-design'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'robot-design' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
           }))
@@ -58,14 +61,16 @@ const processFieldsBySections = (
     } else {
       const rubric = team.rubrics[cat.replace('-', '_') as keyof typeof team.rubrics];
       const schema = rubrics[cat as JudgingCategory];
-      if (rubric?.data?.fields && schema.sections) {
-        const sections: any = {};
+      const rubricData = rubric?.data;
+      if (rubricData?.fields && schema.sections) {
+        const sections: Record<string, RubricField[]> = {};
         schema.sections.forEach(section => {
           const sectionFields = section.fields
-            .filter(field => rubric.data.fields[field.id])
+            .filter(field => rubricData.fields[field.id])
             .map(field => ({
               fieldId: field.id,
-              value: rubric.data.fields[field.id].value,
+              category: cat,
+              value: rubricData.fields[field.id].value,
               color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
             }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
@@ -83,8 +88,8 @@ const CategoryScoreCard = ({
   getCategory
 }: {
   cat: string;
-  sections: any;
-  getCategory: any;
+  sections: Record<string, RubricField[]>;
+  getCategory: (category: JudgingCategory) => string;
 }) => (
   <Paper
     sx={{
@@ -106,10 +111,10 @@ const CategoryScoreCard = ({
         display: 'block'
       }}
     >
-      {getCategory(cat as any)}
+      {getCategory(cat as JudgingCategory)}
     </Typography>
     <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
-      {Object.entries(sections).map(([sectionId, scores]: any) => (
+      {Object.entries(sections).map(([sectionId, scores]: [string, RubricField[]]) => (
         <SectionScoreRow
           key={sectionId}
           category={cat as JudgingCategory}
