@@ -38,8 +38,6 @@ export const TeamsTab: React.FC = () => {
     return null; // Should be handled by suspense fallback
   }
 
-  console.log(teams);
-
   const sortedTeams = [...teams].sort((a, b) => a.number - b.number);
 
   return (
