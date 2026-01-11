@@ -7,7 +7,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../../(dashboard)/components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
-import { GET_UNIFIED_DIVISION, type DivisionTeam } from './graphql';
+import { GET_UNIFIED_DIVISION } from './graphql';
 import { CompareProvider } from './compare-context';
 import {
   EmptyState,
@@ -74,6 +74,11 @@ export default function ComparePage() {
   }
 
   if (!data?.division?.selectedTeams || data.division.selectedTeams.length === 0) {
+    console.log('[ComparePage] No teams found', {
+      data: data?.division,
+      teamSlugs,
+      selectedTeams: data?.division?.selectedTeams
+    });
     return (
       <>
         <PageHeader title={t('title')} />
@@ -84,9 +89,10 @@ export default function ComparePage() {
     );
   }
 
+  console.log('[ComparePage] Rendering teams', data.division.selectedTeams);
   const teams = data.division.selectedTeams;
-  const awards = data.division.awards ?? [];
-  const allTeams: DivisionTeam[] = data.division.allTeams ?? [];
+  const awards = data.division.judging?.awards ?? [];
+  const allTeams = data.division.allTeams ?? [];
 
   return (
     <CompareProvider

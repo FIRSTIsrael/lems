@@ -78,18 +78,22 @@ export interface Award {
   place?: number;
 }
 
+export interface DivisionTeam {
+  id: string;
+  number: string;
+  name: string;
+  slug: string;
+}
 
 export interface UnifiedDivisionData {
   division: {
     id: string;
     selectedTeams: Team[];
-    allTeams: {
-      id: string;
-      number: string;
-      name: string;
-      slug: string;
-    }[];
-    awards: Award[];
+    allTeams: Team[];
+    judging: {
+      divisionId: string;
+      awards: Award[];
+    };
   };
 }
 
