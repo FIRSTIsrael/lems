@@ -21,13 +21,25 @@ interface RubricScoresProps {
   team: Team;
 }
 
+interface SectionFields {
+  [sectionId: string]: Array<{
+    fieldId: string;
+    value: number | null;
+    color: 'success' | 'error' | 'default';
+  }>;
+}
+
+interface FieldsByCategories {
+  [category: string]: SectionFields;
+}
+
 const processFieldsBySections = (
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
-): Record<string, Record<string, RubricField[]>> => {
+): FieldsByCategories => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
-  const result: Record<string, Record<string, RubricField[]>> = {};
+  const result: FieldsByCategories = {};
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
@@ -82,15 +94,13 @@ const processFieldsBySections = (
   return result;
 };
 
-const CategoryScoreCard = ({
-  cat,
-  sections,
-  getCategory
-}: {
+interface CategoryScoreCardProps {
   cat: string;
-  sections: Record<string, RubricField[]>;
-  getCategory: (category: JudgingCategory) => string;
-}) => (
+  sections: SectionFields;
+  getCategory: (category: string) => string;
+}
+
+const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProps) => (
   <Paper
     sx={{
       p: 1.5,
@@ -111,10 +121,10 @@ const CategoryScoreCard = ({
         display: 'block'
       }}
     >
-      {getCategory(cat as JudgingCategory)}
+      {getCategory(cat)}
     </Typography>
     <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
-      {Object.entries(sections).map(([sectionId, scores]: [string, RubricField[]]) => (
+      {Object.entries(sections).map(([sectionId, scores]) => (
         <SectionScoreRow
           key={sectionId}
           category={cat as JudgingCategory}
@@ -139,7 +149,9 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
   );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>
-    Object.values(sections).some(fields => fields.length > 0)
+    Object.values(sections as SectionFields).some(
+      fields => Array.isArray(fields) && fields.length > 0
+    )
   );
 
   if (!hasAnyFields) {
@@ -168,27 +180,35 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
           }}
         >
           <Stack spacing={0.5}>
-            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => (
-              <SectionScoreRow
-                key={sectionId}
-                category={category as JudgingCategory}
-                sectionId={sectionId}
-                scores={scores}
-                showSectionName={category !== 'core-values'}
-                showAllScores={category === 'core-values'}
-              />
-            ))}
+            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => {
+              const typedScores = scores as Array<{
+                fieldId: string;
+                value: number | null;
+                color: 'success' | 'error' | 'default';
+              }>;
+              return (
+                <SectionScoreRow
+                  key={sectionId}
+                  category={category as JudgingCategory}
+                  sectionId={sectionId}
+                  scores={typedScores}
+                  showSectionName={category !== 'core-values'}
+                  showAllScores={category === 'core-values'}
+                />
+              );
+            })}
           </Stack>
         </Paper>
       ) : (
         <Grid container spacing={1}>
-          {Object.entries(fieldsBySections).map(([cat, sections]) =>
-            Object.keys(sections).length > 0 ? (
+          {Object.entries(fieldsBySections).map(([cat, sections]) => {
+            const typedSections = sections as SectionFields;
+            return Object.keys(typedSections).length > 0 ? (
               <Grid size={4} key={cat}>
-                <CategoryScoreCard cat={cat} sections={sections} getCategory={getCategory} />
+                <CategoryScoreCard cat={cat} sections={typedSections} getCategory={getCategory} />
               </Grid>
-            ) : null
-          )}
+            ) : null;
+          })}
         </Grid>
       )}
     </Stack>

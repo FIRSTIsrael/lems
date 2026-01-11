@@ -66,12 +66,14 @@ export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProp
     router.push(`?${params.toString()}`);
   };
 
-  const addTeam = (teamSlug: string) =>
-    currentTeams.length < 6 &&
-    !currentTeams.includes(teamSlug) &&
-    updateTeamsInUrl([...currentTeams, teamSlug]);
-  const removeTeam = (teamSlug: string) =>
+  const addTeam = (teamSlug: string) => {
+    if (currentTeams.length < 6 && !currentTeams.includes(teamSlug)) {
+      updateTeamsInUrl([...currentTeams, teamSlug]);
+    }
+  };
+  const removeTeam = (teamSlug: string) => {
     updateTeamsInUrl(currentTeams.filter(slug => slug !== teamSlug));
+  };
 
   if (compact) {
     return (
