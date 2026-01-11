@@ -1,6 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge } from '@lems/shared/utils';
-import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
+import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import type { SubscriptionVars, QueryData } from '../types';
 
 interface SubscriptionData {
