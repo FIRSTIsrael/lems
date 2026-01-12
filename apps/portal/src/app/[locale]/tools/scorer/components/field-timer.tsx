@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useContext } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Typography, Stack, Paper, IconButton, Slide, Fab } from '@mui/material';
 import {
   Timer as TimerIcon,
@@ -8,7 +8,8 @@ import {
   Pause as PauseIcon,
   Stop as StopIcon,
   Refresh as RefreshIcon,
-  Close as CloseIcon
+  Close as CloseIcon,
+  DragIndicator as DragIcon
 } from '@mui/icons-material';
 import { useFieldTimer } from '../hooks/use-field-timer';
 import { MissionContext } from './mission-context';
@@ -19,8 +20,24 @@ const formatTime = (seconds: number): string => {
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
 
+interface DragState {
+  isDragging: boolean;
+  startX: number;
+  startY: number;
+  offsetX: number;
+  offsetY: number;
+}
+
 export const FieldTimer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dragState, setDragState] = useState<DragState>({
+    isDragging: false,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0
+  });
+  const paperRef = useRef<HTMLDivElement>(null);
 
   const { points } = useContext(MissionContext);
   const scoreFloaterShown = Boolean(points);
@@ -42,6 +59,55 @@ export const FieldTimer = () => {
       resume();
     }
   };
+
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Don't start dragging if clicking on buttons
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    
+    if (!paperRef.current) return;
+    
+    const rect = paperRef.current.getBoundingClientRect();
+    setDragState({
+      isDragging: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      offsetX: rect.left,
+      offsetY: rect.top
+    });
+  };
+
+  useEffect(() => {
+    if (!dragState.isDragging) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!paperRef.current) return;
+
+      const deltaX = e.clientX - dragState.startX;
+      const deltaY = e.clientY - dragState.startY;
+
+      const newLeft = dragState.offsetX + deltaX;
+      const newTop = dragState.offsetY + deltaY;
+
+      paperRef.current.style.left = `${newLeft}px`;
+      paperRef.current.style.top = `${newTop}px`;
+      paperRef.current.style.bottom = 'auto';
+      paperRef.current.style.right = 'auto';
+    };
+
+    const handleMouseUp = () => {
+      setDragState(prev => ({ ...prev, isDragging: false }));
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [dragState]);
 
   return (
     <>
@@ -67,6 +133,8 @@ export const FieldTimer = () => {
 
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
+          ref={paperRef}
+          onMouseDown={handleMouseDown}
           elevation={8}
           sx={{
             position: 'fixed',
@@ -80,9 +148,27 @@ export const FieldTimer = () => {
               'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
-            transition: 'bottom 0.3s ease-in-out'
+            transition: dragState.isDragging ? 'none' : 'bottom 0.3s ease-in-out',
+            cursor: dragState.isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none'
           }}
         >
+          <Stack
+            onMouseDown={handleMouseDown}
+            sx={{
+              position: 'absolute',
+              top: 12,
+              left: 12,
+              color: 'grey.500',
+              cursor: dragState.isDragging ? 'grabbing' : 'grab',
+              '&:hover': { color: 'grey.700' },
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <DragIcon fontSize="small" />
+          </Stack>
+
           <IconButton
             onClick={() => setIsOpen(false)}
             sx={{
