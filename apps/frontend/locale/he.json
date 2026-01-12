@@ -284,7 +284,8 @@
         "visibility": {
           "public": "כללי",
           "judging": "שיפוט",
-          "field": "זירה"
+          "field": "זירה",
+          "teams": "קבוצות"
         }
       },
       "field-timer": {

@@ -284,7 +284,8 @@
         "visibility": {
           "public": "General",
           "judging": "Judging",
-          "field": "Field"
+          "field": "Field",
+          "teams": "Teams"
         }
       },
       "field-timer": {
