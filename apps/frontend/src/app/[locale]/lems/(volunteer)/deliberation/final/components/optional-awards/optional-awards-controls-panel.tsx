@@ -5,7 +5,7 @@ import { Box, Button, LinearProgress, Stack, Typography, alpha, useTheme } from 
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { JudgingCategory } from '@lems/database';
+import { OPTIONAL_AWARDS, Award, PERSONAL_AWARDS } from '@lems/shared';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -13,14 +13,24 @@ import { ManualEligibilityControl } from '../shared/manual-eligibility-control';
 
 const DELIBERATION_DURATION_SECONDS = 10 * 60; // 10 minutes
 
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(v => typeof v === 'string');
+}
+
+function getAwardArray(awards: Record<string, unknown>, award: Award): string[] {
+  const awardDict = awards as Record<string, unknown>;
+  const value = awardDict[award];
+  return isStringArray(value) ? value : [];
+}
+
 const getProgressColor = (progressPercent: number) => {
   if (progressPercent >= 20) return 'primary';
   return 'warning';
 };
 
-export const CoreAwardsControlsPanel: React.FC = () => {
+export const OptionalAwardsControlsPanel: React.FC = () => {
   const theme = useTheme();
-  const t = useTranslations('pages.deliberations.final.core-awards');
+  const t = useTranslations('pages.deliberations.final.optional-awards');
   const { deliberation, startDeliberation, awards, awardCounts, advanceStage } =
     useFinalDeliberation();
   const currentTime = useTime({ interval: 1000 });
@@ -48,15 +58,19 @@ export const CoreAwardsControlsPanel: React.FC = () => {
   const isCompleted = useMemo(() => deliberation?.status === 'completed', [deliberation]);
   const isNotStarted = useMemo(() => !isInProgress && !isCompleted, [isInProgress, isCompleted]);
 
-  // Check if all core awards are filled
-  const isCoreAwardsComplete = useMemo(
+  // Check if all optional awards are filled (or have their max limit)
+  const isOptionalAwardsComplete = useMemo(
     () =>
       deliberation
-        ? ['robot-design', 'innovation-project', 'core-values'].every(
+        ? OPTIONAL_AWARDS.filter(
             award =>
-              (awards[award as JudgingCategory] || []).length ===
-              awardCounts[award as JudgingCategory]
-          )
+              award !== 'excellence-in-engineering' &&
+              !(PERSONAL_AWARDS as readonly string[]).includes(award)
+          ).every(award => {
+            const selectedCount = getAwardArray(awards, award as Award).length;
+            const maxCount = awardCounts[award as Award] ?? 0;
+            return selectedCount === maxCount;
+          })
         : false,
     [deliberation, awards, awardCounts]
   );
@@ -189,7 +203,7 @@ export const CoreAwardsControlsPanel: React.FC = () => {
         </Box>
       )}
 
-      <ManualEligibilityControl stage="core-awards" />
+      <ManualEligibilityControl stage="optional-awards" />
 
       <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
         {isNotStarted ? (
@@ -213,7 +227,7 @@ export const CoreAwardsControlsPanel: React.FC = () => {
             fullWidth
             endIcon={<Verified />}
             onClick={handleAdvanceStage}
-            disabled={!isCoreAwardsComplete || isLoading}
+            disabled={!isOptionalAwardsComplete || isLoading}
             sx={{
               fontWeight: 600,
               textTransform: 'none',

@@ -981,6 +981,13 @@
         "errors": {
           "award-limit-exceeded": "לא ניתן להוסיף זוכים נוספים לפרס זה."
         },
+        "manual-eligibility-control": {
+          "title": "זכאות ידנית",
+          "description": "הוסף קבוצות שלא הועמדו לדיון",
+          "add-team": "הוסף קבוצה",
+          "select-team": "בחר קבוצה...",
+          "no-data-available": "אין קבוצות זמינות"
+        },
         "champions": {
           "title": "פרס האליפות",
           "description": "בחרו קבוצות לפרס האליפות.",
@@ -1010,10 +1017,6 @@
           "table-robot-design": "תכנון הרובוט",
           "table-innovation-project": "פרויקט החדשנות",
           "table-core-values": "ערכי ליבה",
-          "manual-eligibility-title": "זכאות ידנית",
-          "manual-eligibility-description": "הוסף קבוצות שלא ברשימת הבחירה",
-          "add-team": "הוסף קבוצה",
-          "select-team": "בחר קבוצה...",
           "robot-design": "תכנון הרובוט",
           "innovation-project": "פרויקט החדשנות",
           "core-values": "ערכי ליבה",
@@ -1026,10 +1029,43 @@
           "completed": "הדיון הושלם",
           "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
           "manual-team-indicator": "נוספו ידנית",
-          "no-data-available": "אין קבוצות זמינות",
           "team-not-eligible-for-category": "הקבוצה לא זכאית ל-{category}",
           "team-already-added-to-category": "הקבוצה כבר נוספה ל-{category}",
           "add-team-to-category": "הוסף קבוצה ל-{category}"
+        },
+        "optional-awards": {
+          "title": "פרסים אופציונליים",
+          "description": "בחרו קבוצות לפרסים אופציונליים",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-core-values": "ערכי ליבה",
+          "table-core-values-rubric": "מחוון ערכי ליבה",
+          "table-nominations": "מועמדויות",
+          "table-actions": "פעולות",
+          "award": {
+            "excellence-in-engineering": "הצטיינות בהנדסה",
+            "lead-mentor": "מנטור מוביל",
+            "volunteer-of-the-year": "מתנדב השנה",
+            "breakthrough": "פריצת דרך",
+            "rising-all-star": "כוכב עולה",
+            "motivate": "השראה ותנועה",
+            "judges-award": "פרס השופטים",
+            "impact": "השפעה"
+          },
+          "save": "שמור פרסים",
+          "advance": "קדם לסיכום",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסים אופציונליים נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-not-eligible": "הקבוצה לא זכאית לפרסים אופציונליים",
+          "team-already-added": "הקבוצה כבר נבחרה לפרס",
+          "no-data-available": "אין קבוצות זמינות",
+          "select-award": "בחר פרס",
+          "add-to-award": "הוסף קבוצה לפרס"
         }
       }
     }

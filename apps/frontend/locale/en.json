@@ -981,6 +981,14 @@
         "errors": {
           "award-limit-exceeded": "Cannot add more winners for this award."
         },
+        "manual-eligibility-control": {
+          "title": "Manual Eligibility",
+          "description": "Add teams not nominated",
+          "add-team": "Add Team",
+          "select-team": "Select team...",
+          "add-to-award": "Add to Award",
+          "no-data-available": "No teams available"
+        },
         "champions": {
           "title": "Champions Award",
           "description": "Select teams to award the Champions.",
@@ -1010,10 +1018,6 @@
           "table-robot-design": "Robot Design",
           "table-innovation-project": "Innovation",
           "table-core-values": "Core Values",
-          "manual-eligibility-title": "Manual Eligibility",
-          "manual-eligibility-description": "Add teams not in the picklists",
-          "add-team": "Add Team",
-          "select-team": "Select team...",
           "robot-design": "Robot Design",
           "innovation-project": "Innovation Project",
           "core-values": "Core Values",
@@ -1026,10 +1030,43 @@
           "completed": "Deliberation Complete",
           "deliberation-finalized": "Core awards have been selected. Ready to advance.",
           "manual-team-indicator": "Added manually",
-          "no-data-available": "No teams available",
           "team-not-eligible-for-category": "Team is not eligible for {category}",
           "team-already-added-to-category": "Team already added to {category}",
           "add-team-to-category": "Add team to {category}"
+        },
+        "optional-awards": {
+          "title": "Optional Awards",
+          "description": "Select winners for optional awards",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-core-values": "Core Values",
+          "table-core-values-rubric": "CV Rubric",
+          "table-nominations": "Nominations",
+          "table-actions": "Actions",
+          "award": {
+            "excellence-in-engineering": "Excellence in Engineering",
+            "lead-mentor": "Lead Mentor",
+            "volunteer-of-the-year": "Volunteer of the Year",
+            "breakthrough": "Breakthrough",
+            "rising-all-star": "Rising All Star",
+            "motivate": "Motivate",
+            "judges-award": "Judge's Award",
+            "impact": "Impact"
+          },
+          "save": "Save Awards",
+          "advance": "Advance to Review",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Optional awards have been selected. Ready to advance.",
+          "manual-team-indicator": "Added manually",
+          "team-not-eligible": "Team is not eligible for optional awards",
+          "team-already-added": "Team already selected for an award",
+          "no-data-available": "No teams available",
+          "select-award": "Select an award",
+          "add-to-award": "Add team to award"
         }
       }
     }
