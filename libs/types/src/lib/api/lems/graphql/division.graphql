@@ -14,6 +14,9 @@ type Division {
   "Public URL of the pit map image for this division, if available"
   pitMapUrl: String
 
+  "Indicates whether awards have been officially assigned to winners in this division"
+  awardsAssigned: Boolean!
+
   "Competition tables assigned to this division"
   tables: [Table!]!
 
