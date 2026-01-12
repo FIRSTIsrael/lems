@@ -11,7 +11,7 @@ interface SWRError extends Error {
 
 type FetcherArgs = string | [string, z.ZodSchema];
 
-const swrFetcher = async (args: FetcherArgs) => {
+export const swrFetcher = async (args: FetcherArgs) => {
   let url: string;
   let schema: z.ZodSchema | undefined;
 
@@ -31,7 +31,9 @@ const swrFetcher = async (args: FetcherArgs) => {
         statusText: result.statusText,
         error: result.error
       });
-      const error = new Error(`API request failed: ${result.status} ${result.statusText}`) as SWRError;
+      const error = new Error(
+        `API request failed: ${result.status} ${result.statusText}`
+      ) as SWRError;
       error.info = result.error;
       error.status = result.status;
       throw error;

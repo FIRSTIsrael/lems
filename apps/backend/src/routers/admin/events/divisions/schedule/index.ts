@@ -93,8 +93,12 @@ router.delete(
         db.rubrics.byDivision(req.divisionId).deleteAll(),
 
         db.robotGameMatches.byDivision(req.divisionId).deleteAll(),
-        // TODO: Scoresheets here
+        db.scoresheets.byDivision(req.divisionId).deleteAll(),
 
+        db.judgingDeliberations.byDivision(req.divisionId).deleteAll(),
+        db.finalDeliberations.byDivision(req.divisionId).delete(),
+
+        db.divisions.byId(req.divisionId).agenda().delete(),
         db.divisions.byId(req.divisionId).update({ has_schedule: false })
       ]);
 

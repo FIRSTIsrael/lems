@@ -74,7 +74,8 @@ export const AgendaEventSchema = z.object({
   startTime: z.coerce.date(),
   duration: z.number(),
   divisionId: z.string(),
-  location: z.string().nullable()
+  location: z.string().nullable(),
+  visibility: z.enum(['public', 'field', 'judging', 'teams'])
 });
 
 export type AgendaEvent = z.infer<typeof AgendaEventSchema>;

@@ -1,9 +1,5 @@
 import useSWR, { SWRConfiguration } from 'swr';
-import { apiFetch } from '@lems/shared';
-
-const fetcher = (path: string, init?: RequestInit) => {
-  return apiFetch(path, init);
-};
+import { swrFetcher } from '@lems/shared';
 
 /**
  * Hook for fetching real-time portal data with automatic refresh.
@@ -11,17 +7,11 @@ const fetcher = (path: string, init?: RequestInit) => {
  *
  * @param path - API path (e.g., "/portal/divisions/123/scoreboard")
  * @param swrConfig - Optional SWR configuration. See https://swr.vercel.app/docs/configuration for details.
- * @param init - Optional fetch configuration
  * @returns SWR response with data, loading state, and error
  */
-export const useRealtimeData = <T>(
-  path: string,
-  swrConfig?: SWRConfiguration,
-  init?: RequestInit
-) => {
-  const fetcherWithInit = (url: string) => fetcher(url, init);
-
-  const { data, isLoading, error, mutate } = useSWR(path, fetcherWithInit, {
+export const useRealtimeData = <T>(path: string, swrConfig?: SWRConfiguration) => {
+  const { data, isLoading, error, mutate } = useSWR(path, swrFetcher, {
+    ...swrConfig,
     refreshInterval: 90000, // 90 seconds
     revalidateOnFocus: true,
     revalidateOnReconnect: true,

@@ -70,7 +70,7 @@ export const FieldScheduleTab: React.FC = () => {
       tablesMap.set(participant.table.id, participant.table);
     });
   });
-  const tables = Array.from(tablesMap.values());
+  const tables = Array.from(tablesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <Paper sx={{ p: 0 }}>
