@@ -1,13 +1,5 @@
+import { Award } from '@lems/shared';
 import { ValidationResult } from './utils/validation';
-import {
-  Award,
-  AWARDS,
-  AWARD_LIMITS,
-  CORE_VALUES_AWARDS,
-  OPTIONAL_AWARDS,
-  PERSONAL_AWARDS,
-  MANDATORY_AWARDS
-} from '@lems/shared';
 
 export type {
   Award,
