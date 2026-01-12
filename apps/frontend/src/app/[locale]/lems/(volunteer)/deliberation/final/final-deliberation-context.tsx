@@ -79,12 +79,13 @@ export const FinalDeliberationProvider = ({
 
   const optionalAwards = useMemo<Partial<DeliberationAwards>>(
     () =>
-      Object.entries(JSON.parse(deliberation.optionalAwards || '{}')).reduce<
-        Partial<Record<Award, string[]>>
-      >((acc, [awardName, teamIds]) => {
-        acc[awardName as Award] = teamIds as string[];
-        return acc;
-      }, {}),
+      Object.entries(deliberation.optionalAwards).reduce<Partial<Record<Award, string[]>>>(
+        (acc, [awardName, teamIds]) => {
+          acc[awardName as Award] = teamIds as string[];
+          return acc;
+        },
+        {}
+      ),
     [deliberation.optionalAwards]
   );
 
@@ -171,12 +172,12 @@ export const FinalDeliberationProvider = ({
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
-          awards,
+          division.judging.awards,
           deliberation.coreAwardsManualEligibility || []
         ),
         'optional-awards': computeOptionalAwardsEligibility(
           { ...team, awardNominations },
-          awards,
+          division.judging.awards,
           deliberation.optionalAwardsManualEligibility || []
         )
       };

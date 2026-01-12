@@ -5,11 +5,9 @@ import { getEmptyRubric } from '../rubric-utils';
 import type {
   QueryResult,
   QueryVariables,
-  AwardOptionsQueryResult,
-  AwardOptionsQueryVariables,
   GetTeamSessionQueryData,
   GetTeamSessionQueryVars,
-  RubricItem
+  PageData
 } from './types';
 
 export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = gql`
@@ -18,6 +16,10 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
       id
       judging {
         divisionId
+        awards(allowNominations: true) {
+          id
+          name
+        }
         rubrics(teamIds: [$teamId], category: $category) {
           id
           category
@@ -30,23 +32,6 @@ export const GET_RUBRIC_QUERY: TypedDocumentNode<QueryResult, QueryVariables> = 
               thinkAbout
             }
           }
-        }
-      }
-    }
-  }
-`;
-
-export const GET_AWARD_OPTIONS_QUERY: TypedDocumentNode<
-  AwardOptionsQueryResult,
-  AwardOptionsQueryVariables
-> = gql`
-  query GetAwardOptions($divisionId: String!) {
-    division(id: $divisionId) {
-      id
-      judging {
-        awards(allowNominations: true) {
-          id
-          name
         }
       }
     }
@@ -75,27 +60,22 @@ export const GET_TEAM_SESSION_QUERY: TypedDocumentNode<
   }
 `;
 
-export function parseRubricData(queryData: QueryResult): RubricItem {
-  const rubric = queryData.division.judging.rubrics[0];
+export function parseRubricData(queryData: QueryResult): PageData {
+  const judging = queryData.division.judging;
 
-  if (!rubric) {
+  if (!judging.rubrics || judging.rubrics.length === 0) {
     throw new Error('Rubric not found');
   }
 
-  if (!rubric.data) {
+  if (!judging.rubrics[0].data) {
     return {
-      ...rubric,
-      data: getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory)
+      awards: judging.awards,
+      rubric: {
+        ...judging.rubrics[0],
+        data: getEmptyRubric(underscoresToHyphens(judging.rubrics[0].category) as JudgingCategory)
+      }
     };
   }
 
-  return rubric;
-}
-
-/**
- * Parses the award options query result and returns a Set of award names.
- */
-export function parseAwardOptions(queryData: AwardOptionsQueryResult): Set<string> {
-  const awards = (queryData?.division as any)?.judging?.awards ?? [];
-  return new Set(awards.map((award: any) => award.name));
+  return { awards: judging.awards, rubric: { ...judging.rubrics[0] } };
 }
