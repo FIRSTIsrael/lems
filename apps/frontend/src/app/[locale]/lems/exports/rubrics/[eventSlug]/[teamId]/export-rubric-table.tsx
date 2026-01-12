@@ -10,10 +10,10 @@ import {
   TableCell,
   Typography,
   Stack,
-  Box,
-  FormControlLabel,
-  Radio
+  Box
 } from '@mui/material';
+import { CircleOutlined, TaskAltRounded } from '@mui/icons-material';
+import { CoreValuesFieldCheckedIcon, CoreValuesFieldUncheckedIcon } from '@lems/shared/icons';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema, rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
@@ -43,7 +43,7 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
   scores,
   feedback
 }) => {
-  const { getColumnTitle, getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getColumnTitle } = useRubricsGeneralTranslations();
   const { getSectionTitle, getSectionDescription, getFieldLevel } =
     useRubricsTranslations(category);
   const colors = categoryColors[category];
@@ -90,7 +90,7 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
             }
           }}
         >
-          <TableHead sx={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+          <TableHead>
             <TableRow>
               {rubricColumns.map((column, index) => (
                 <TableCell
@@ -170,21 +170,39 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                             alignItems={levelText ? 'flex-start' : 'center'}
                             justifyContent={levelText ? 'flex-start' : 'center'}
                           >
-                            <FormControlLabel
-                              value={cellValue}
-                              control={
-                                <Radio
-                                  disableRipple
-                                  checked={isChecked}
-                                  sx={{ fontSize: '1.1em' }}
+                            {field.coreValues ? (
+                              isChecked ? (
+                                <CoreValuesFieldCheckedIcon
+                                  sx={{
+                                    color: 'primary.main',
+                                    fill: 'primary.main',
+                                    fontSize: '1.5em'
+                                  }}
                                 />
-                              }
-                              label=""
-                              sx={{
-                                m: 0,
-                                '.MuiFormControlLabel-label': { display: 'none' }
-                              }}
-                            />
+                              ) : (
+                                <CoreValuesFieldUncheckedIcon
+                                  sx={{
+                                    color: 'action.active',
+                                    fill: 'action.active',
+                                    fontSize: '1.5em'
+                                  }}
+                                />
+                              )
+                            ) : isChecked ? (
+                              <TaskAltRounded
+                                sx={{
+                                  color: 'primary.main',
+                                  fontSize: '1.5em'
+                                }}
+                              />
+                            ) : (
+                              <CircleOutlined
+                                sx={{
+                                  color: 'action.active',
+                                  fontSize: '1.5em'
+                                }}
+                              />
+                            )}
                             {levelText && <Typography fontSize="0.85em">{levelText}</Typography>}
                           </Stack>
                         </TableCell>
@@ -197,60 +215,7 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
             {/* Feedback Row */}
             {feedback && (
               <>
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    sx={{
-                      bgcolor: sectionBgColor,
-                      py: '0.4em',
-                      px: '0.85em',
-                      borderRight: '1px solid #000',
-                      textAlign: 'left',
-                      fontSize: '0.85em',
-                      fontWeight: 500
-                    }}
-                  >
-                    <Typography fontSize="0.9em" fontWeight={700}>
-                      {getFeedbackTitle('great-job')}
-                    </Typography>
-                  </TableCell>
-                  <TableCell
-                    colSpan={2}
-                    sx={{
-                      bgcolor: sectionBgColor,
-                      py: '0.4em',
-                      px: '0.85em',
-                      textAlign: 'left',
-                      fontSize: '0.85em',
-                      fontWeight: 500
-                    }}
-                  >
-                    <Typography fontSize="0.9em" fontWeight={700}>
-                      {getFeedbackTitle('think-about')}
-                    </Typography>
-                  </TableCell>
-                </TableRow>
-                <TableRow>
-                  <TableCell
-                    colSpan={2}
-                    sx={{
-                      p: '0.5em',
-                      borderRight: '1px solid #000',
-                      textAlign: 'left'
-                    }}
-                  >
-                    <Typography fontSize="0.85em">{feedback.greatJob || '-'}</Typography>
-                  </TableCell>
-                  <TableCell
-                    colSpan={2}
-                    sx={{
-                      p: '0.5em',
-                      textAlign: 'left'
-                    }}
-                  >
-                    <Typography fontSize="0.85em">{feedback.thinkAbout || '-'}</Typography>
-                  </TableCell>
-                </TableRow>
+                <TableRow></TableRow>
               </>
             )}
           </TableBody>

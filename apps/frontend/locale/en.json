@@ -3,7 +3,32 @@
     "exports": {
       "rubrics": {
         "metadata": "Generated from FIRST Israel event system | {eventName} | Season {seasonName}",
-        "title": "Rubric {category} for Team #{teamNumber} {teamName}"
+        "title": "Rubric {category} for Team #{teamNumber} {teamName}",
+        "no-rubrics-found": "No rubrics found",
+        "feedback": {
+          "title": "Judging Session Feedback",
+          "page-title": "Judging Session Feedback for Team #{teamNumber} - {teamName}",
+          "great-job": "Great Job",
+          "think-about": "Think About",
+          "great-job-placeholder": "Note the things the team did excellently...",
+          "think-about-placeholder": "Things the team should think about or improve...",
+          "categories": {
+            "core-values": "Core Values",
+            "innovation-project": "Innovation Project",
+            "robot-design": "Robot Design"
+          },
+          "category-descriptions": {
+            "core-values": "How did the team demonstrate teamwork, discovery, inclusion, innovation, impact, and fun in their work?",
+            "innovation-project": "How did the team identify a problem related to the season's theme and approach solving it?",
+            "robot-design": "What was the team's approach to solving robot missions in a structured and planned manner?"
+          },
+          "awards": {
+            "title": "Award Nomination",
+            "description": "If the team is nominated for one of these awards, please write in the appropriate box. Also check with the event organizer which optional awards are available in your division.",
+            "placeholder": "Is the team nominated for this award? Reasons...",
+            "no-awards": "No optional awards available."
+          }
+        }
       }
     },
     "login": {
