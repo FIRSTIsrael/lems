@@ -60,7 +60,6 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
         }}
       >
         <TableBody>
-          {/* Column Headers */}
           <TableRow>
             <TableCell
               align="center"
@@ -124,12 +123,10 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
             </TableCell>
           </TableRow>
 
-          {/* Render all three categories */}
           {(['core-values', 'innovation-project', 'robot-design'] as const).map(category => {
             const feedback = getFeedback(category);
             return (
               <React.Fragment key={category}>
-                {/* Category Header Row */}
                 <TableRow>
                   <TableCell
                     colSpan={2}

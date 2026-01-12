@@ -212,7 +212,6 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                 ))}
               </React.Fragment>
             ))}
-            {/* Feedback Row */}
             {feedback && (
               <>
                 <TableRow></TableRow>
