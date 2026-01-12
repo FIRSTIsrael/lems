@@ -2,8 +2,8 @@
 
 import dayjs from 'dayjs';
 import { useEffect, useRef, useMemo } from 'react';
-import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
 import { useJudgingSounds } from '@lems/shared';
+import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
 
 // Judging stages with durations in seconds
 export const JUDGING_STAGES = [
