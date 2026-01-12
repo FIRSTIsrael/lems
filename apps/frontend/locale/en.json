@@ -1036,38 +1036,22 @@
           "add-team-to-category": "Add team to {category}"
         },
         "optional-awards": {
-          "title": "Optional Awards",
-          "description": "Select winners for optional awards",
           "table-team": "Team",
           "table-room": "Room",
           "table-core-values": "Core Values",
-          "table-core-values-rubric": "CV Rubric",
           "table-nominations": "Nominations",
           "table-actions": "Actions",
-          "award": {
-            "excellence-in-engineering": "Excellence in Engineering",
-            "lead-mentor": "Lead Mentor",
-            "volunteer-of-the-year": "Volunteer of the Year",
-            "breakthrough": "Breakthrough",
-            "rising-all-star": "Rising All Star",
-            "motivate": "Motivate",
-            "judges-award": "Judge's Award",
-            "impact": "Impact"
-          },
-          "save": "Save Awards",
+          "start": "Start Deliberation",
           "advance": "Advance to Review",
           "saving": "Saving...",
-          "start": "Start Deliberation",
           "time-remaining": "Time Remaining",
           "not-started": "Waiting to start deliberation",
           "completed": "Deliberation Complete",
           "deliberation-finalized": "Optional awards have been selected. Ready to advance.",
           "manual-team-indicator": "Added manually",
-          "team-not-eligible": "Team is not eligible for optional awards",
           "team-already-added": "Team already selected for an award",
           "no-data-available": "No teams available",
-          "select-award": "Select an award",
-          "add-to-award": "Add team to award"
+          "select-award": "Select an award"
         }
       }
     }
