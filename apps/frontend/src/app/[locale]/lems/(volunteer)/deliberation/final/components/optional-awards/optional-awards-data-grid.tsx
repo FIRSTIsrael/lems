@@ -17,6 +17,7 @@ import {
 import { Stars, Add } from '@mui/icons-material';
 import { purple } from '@mui/material/colors';
 import { OPTIONAL_AWARDS, Award } from '@lems/shared';
+import { useAwardTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 
@@ -29,8 +30,7 @@ export function OptionalAwardsDataGrid() {
     useFinalDeliberation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
-
-  console.log(teams);
+  const { getName } = useAwardTranslations();
 
   // Get teams eligible for optional awards
   const optionalAwardsEligibleTeamIds = useMemo<Set<string>>(
@@ -196,15 +196,23 @@ export function OptionalAwardsDataGrid() {
           }
 
           return (
-            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: 0.5,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100%'
+              }}
+            >
               {nominatedAwards.map(award => (
                 <Chip
                   key={award}
-                  label={award}
+                  label={getName(award)}
                   size="small"
                   variant="outlined"
                   sx={{
-                    height: 20,
                     fontSize: '0.7rem',
                     fontWeight: 600
                   }}
@@ -247,7 +255,7 @@ export function OptionalAwardsDataGrid() {
         }
       }
     ],
-    [t, deliberation, handleOpenPopover, teams]
+    [t, deliberation, handleOpenPopover, teams, getName]
   );
 
   const open = Boolean(anchorEl);

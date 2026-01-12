@@ -5,18 +5,9 @@ import { useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, alpha, useTheme, IconButton, Tooltip } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import { Award, OPTIONAL_AWARDS } from '@lems/shared';
+import { useAwardTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
-
-function isStringArray(value: unknown): value is string[] {
-  return Array.isArray(value) && value.every(v => typeof v === 'string');
-}
-
-function getAwardArray(awards: Record<string, unknown>, award: Award): string[] {
-  const awardDict = awards as Record<string, unknown>;
-  const value = awardDict[award];
-  return isStringArray(value) ? value : [];
-}
 
 interface AwardListItemProps {
   team: EnrichedTeam | null;
@@ -118,10 +109,11 @@ export const OptionalAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
   const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
+  const { getName } = useAwardTranslations();
 
   const handleRemoveAward = useCallback(
     async (award: Award, index: number) => {
-      const currentAwards = getAwardArray(awards, award);
+      const currentAwards = (awards[award] ?? []) as string[];
       const updated = currentAwards.filter((_: string, i: number) => i !== index);
       await updateAward(award, updated);
     },
@@ -141,7 +133,7 @@ export const OptionalAwardsAwardLists: React.FC = () => {
     () =>
       displayedAwards.reduce(
         (acc, award) => {
-          const awardTeamIds = getAwardArray(awards, award);
+          const awardTeamIds = (awards[award] ?? []) as string[];
           const awardTeams = awardTeamIds.map(teamId => teams.find(t => t.id === teamId));
           acc[award] = awardTeams;
           return acc;
@@ -177,7 +169,7 @@ export const OptionalAwardsAwardLists: React.FC = () => {
                 textTransform: 'capitalize'
               }}
             >
-              {t(`award.${award}`)} ({awardSelections[award].length}/{awardCounts[award] ?? 0})
+              {getName(award)} ({awardSelections[award].length}/{awardCounts[award] ?? 0})
             </Typography>
           </Box>
 

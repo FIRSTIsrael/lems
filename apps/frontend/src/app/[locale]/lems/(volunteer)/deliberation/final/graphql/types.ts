@@ -12,7 +12,7 @@ export interface FinalJudgingDeliberation {
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
-  optionalAwards: string; // JSON string of Record<string, string[]>
+  optionalAwards: Record<string, string[]>;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];
 }
@@ -29,7 +29,7 @@ interface Award {
   winner?: TeamWinner | PersonalWinner;
 }
 
-interface TeamWinner {
+export interface TeamWinner {
   team: Team;
 }
 

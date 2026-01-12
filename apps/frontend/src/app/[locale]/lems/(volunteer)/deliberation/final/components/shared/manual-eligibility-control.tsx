@@ -24,7 +24,7 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
 }) => {
   const theme = useTheme();
   const t = useTranslations(`pages.deliberations.final.manual-eligibility-control`);
-  const { awards, teams, deliberation, updateManualEligibility } = useFinalDeliberation();
+  const { division, teams, deliberation, updateManualEligibility } = useFinalDeliberation();
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -38,15 +38,13 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
 
   const awardedTeamIds = useMemo(() => {
     const ids = new Set<string>();
-    Object.values(awards.champions).forEach(ids.add, ids);
-    if (stage === 'optional-awards') {
-      awards['robot-design']?.forEach(ids.add, ids);
-      awards['innovation-project']?.forEach(ids.add, ids);
-      awards['core-values']?.forEach(ids.add, ids);
-      awards['excellence-in-engineering']?.forEach(ids.add, ids);
-    }
+    division.judging.awards.forEach(award => {
+      if (award.winner && 'team' in award.winner) {
+        ids.add(award.winner.team.id);
+      }
+    });
     return ids;
-  }, [awards, stage]);
+  }, [division.judging.awards]);
 
   // Get available teams (not in current selections, arrived, not disqualified)
   const availableTeams = useMemo(() => {

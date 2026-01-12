@@ -105,8 +105,8 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
       await handleCoreAwardsStageCompletion(divisionId, deliberation.awards);
       break;
     case 'optional-awards':
-      validateOptionalAwardsStage();
-      await handleOptionalAwardsStageCompletion(divisionId);
+      validateOptionalAwardsStage(deliberation.awards.optionalAwards, awards);
+      await handleOptionalAwardsStageCompletion(divisionId, deliberation.awards.optionalAwards);
       break;
     case 'review':
       validateReviewStage();

@@ -1,6 +1,7 @@
 import { JudgingCategory } from '@lems/database';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
-import { DeliberationAwards, OptionalAwardNominations, RanksPerCategory } from './types';
+import { OptionalAwardNominations, RanksPerCategory } from './types';
+import { Division, TeamWinner } from './graphql';
 
 /**
  * Extracts optional award nominations from a rubric
@@ -96,22 +97,18 @@ export const computeChampionsEligibility = (
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
-  awards: DeliberationAwards,
+  awards: Division['judging']['awards'],
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
+  const winningTeamIds = awards
+    .filter(award => award.type === 'TEAM' && (award?.winner as TeamWinner)?.team)
+    .map(award => award.id);
   // Check if team has already won an award
-  if (
-    Object.values(awards).some(awardList =>
-      typeof awardList === 'object'
-        ? Object.values(awardList).includes(team.id)
-        : (awardList as string[]).includes(team.id)
-    )
-  )
-    return false;
+  if (winningTeamIds.includes(team.id)) return false;
 
   return (
     Object.values(picklists).some(list => list.includes(team.id)) ||
@@ -121,22 +118,18 @@ export const computeCoreAwardsEligibility = (
 
 export const computeOptionalAwardsEligibility = (
   team: Team & { awardNominations: OptionalAwardNominations },
-  awards: DeliberationAwards,
+  awards: Division['judging']['awards'],
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
+  const winningTeamIds = awards
+    .filter(award => award.type === 'TEAM' && (award?.winner as TeamWinner)?.team)
+    .map(award => award.id);
   // Check if team has already won an award
-  if (
-    Object.values(awards).some(awardList =>
-      typeof awardList === 'object'
-        ? Object.values(awardList).includes(team.id)
-        : (awardList as string[]).includes(team.id)
-    )
-  )
-    return false;
+  if (winningTeamIds.includes(team.id)) return false;
 
   return Object.keys(team.awardNominations).length > 0 || manualNominations.includes(team.id);
 };
