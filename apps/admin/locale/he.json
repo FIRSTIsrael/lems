@@ -187,6 +187,22 @@
       "update-dialog": {
         "title": "עדכון קבוצה",
         "cancel": "ביטול"
+      },
+      "logo-upload-dialog": {
+        "title": "עדכון לוגו הקבוצה",
+        "fields": {
+          "logo": {
+            "label": "לוגו הקבוצה",
+            "description": "העלאת לוגו קבוצה חדש (JPG, PNG, או SVG)",
+            "placeholder": "מקבל קבצי תמונה"
+          }
+        },
+        "cancel": "ביטול",
+        "upload": "העלאה",
+        "uploading": "מעלה...",
+        "errors": {
+          "upload-failed": "כישלון בהעלאת הלוגו. אנא נסו שוב."
+        }
       }
     },
     "index": {

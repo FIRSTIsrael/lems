@@ -3,13 +3,15 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridActionsCell, GridColDef } from '@mui/x-data-grid';
-import { Avatar, Box, Chip, useTheme } from '@mui/material';
+import { Avatar, Box, Chip, IconButton, useTheme } from '@mui/material';
+import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
 import { TeamsSearch } from './teams-search';
 import { DeleteTeamButton } from './delete-team-button';
 import { UpdateTeamButton } from './update-team-button';
+import { LogoUploadDialog } from './logo-upload-dialog';
 
 interface TeamsDataGridProps {
   teams: Team[];
@@ -18,6 +20,8 @@ interface TeamsDataGridProps {
 export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeams }) => {
   const t = useTranslations('pages.teams.list');
   const [searchValue, setSearchValue] = useState('');
+  const [logoUploadTeam, setLogoUploadTeam] = useState<Team | null>(null);
+  const [logoUploadDialogOpen, setLogoUploadDialogOpen] = useState(false);
   const theme = useTheme();
 
   const { data: teams } = useSWR<Team[]>('/admin/teams?extraFields=deletable', {
@@ -51,14 +55,54 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
       disableColumnMenu: true,
       renderCell: params => (
         <Box
-          sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            position: 'relative',
+            '&:hover .edit-icon': {
+              opacity: 1
+            }
+          }}
         >
-          <Avatar
-            src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
-            alt={params.row.name}
+          <Box
+            onClick={() => {
+              setLogoUploadTeam(params.row);
+              setLogoUploadDialogOpen(true);
+            }}
+            sx={{
+              cursor: 'pointer',
+              position: 'relative',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
           >
-            #{params.row.number}
-          </Avatar>
+            <Avatar
+              src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
+              alt={params.row.name}
+            >
+              #{params.row.number}
+            </Avatar>
+            <Box
+              className="edit-icon"
+              sx={{
+                position: 'absolute',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                opacity: 0,
+                transition: 'opacity 0.2s ease-in-out',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                borderRadius: '50%',
+                width: '100%',
+                height: '100%'
+              }}
+            >
+              <Edit sx={{ color: 'white', fontSize: 20 }} />
+            </Box>
+          </Box>
         </Box>
       )
     },
@@ -193,6 +237,17 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
           }}
         />
       </Box>
+
+      {logoUploadTeam && (
+        <LogoUploadDialog
+          team={logoUploadTeam}
+          open={logoUploadDialogOpen}
+          onClose={() => {
+            setLogoUploadDialogOpen(false);
+            setLogoUploadTeam(null);
+          }}
+        />
+      )}
     </Box>
   );
 };
