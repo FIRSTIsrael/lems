@@ -8,7 +8,8 @@ import {
   makePortalDivisionResponse,
   makePortalJudgingSessionResponse,
   makePortalAwardsResponse,
-  makePortalMatchResponse
+  makePortalMatchResponse,
+  makePortalAgendaResponse
 } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -44,6 +45,16 @@ router.get('/:divisionId/schedule/field', async (req: PortalDivisionRequest, res
 
   const matches = fieldSchedule.map(match => makePortalMatchResponse(match, tables, teams));
   res.status(200).json(matches);
+});
+
+router.get('/:divisionId/agenda', async (req: PortalDivisionRequest, res: Response) => {
+  const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
+  const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
+  const agenda = [...agendaPublic, ...agendaTeams].sort(
+    (a, b) => a.start_time.getTime() - b.start_time.getTime()
+  );
+
+  res.status(200).json(agenda.map(makePortalAgendaResponse));
 });
 
 // TODO: Implement this properly
