@@ -1,7 +1,8 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Box, Paper, Stack, LinearProgress } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { JudgingSession } from '../graphql';
 
@@ -16,7 +17,16 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
   sessionLength,
   currentTime
 }) => {
-  if (currentSessions.length === 0) return null;
+  const scheduledTime = useMemo(() => {
+    if (currentSessions.length === 0) return null;
+    const sessionDate = new Date(currentSessions[0].scheduledTime);
+    return currentTime
+      .hour(sessionDate.getHours())
+      .minute(sessionDate.getMinutes())
+      .second(sessionDate.getSeconds());
+  }, [currentSessions, currentTime]);
+
+  if (!scheduledTime) return null;
 
   return (
     <Paper
@@ -53,7 +63,6 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
           <LinearProgress
             variant="determinate"
             value={(() => {
-              const scheduledTime = dayjs(currentSessions[0].scheduledTime);
               const minutesDiff = scheduledTime.diff(currentTime, 'minute');
               if (minutesDiff < 0) {
                 const elapsedMinutes = Math.abs(minutesDiff);
@@ -76,7 +85,6 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
               bgcolor: 'grey.200',
               '& .MuiLinearProgress-bar': {
                 bgcolor: (() => {
-                  const scheduledTime = dayjs(currentSessions[0].scheduledTime);
                   const minutesDiff = scheduledTime.diff(currentTime, 'minute');
 
                   if (minutesDiff > 2) return 'success.main';

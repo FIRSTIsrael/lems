@@ -140,7 +140,7 @@ function MatchRow({
   const t = useTranslations('pages.head-referee');
   const rowRef = useRef<HTMLTableRowElement>(null);
   const currentLocale = useLocale() as Locale;
-  const isRTL = Locales[currentLocale].rtl;
+  const isRTL = Locales[currentLocale].direction === 'rtl';
 
   // Auto-scroll to active match on mount
   useEffect(() => {

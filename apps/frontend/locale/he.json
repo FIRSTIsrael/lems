@@ -172,6 +172,7 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
+        "field-status": "מצב הזירה",
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
@@ -180,6 +181,67 @@
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש",
         "judging-status": "מצב השיפוט"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "אין מקצה טעון",
+          "late": "מאחר!",
+          "tables-ready": "{ready} מתוך {total} שולחנות מוכנים"
+        },
+        "upcoming-matches": {
+          "title": "מקצים קרובים",
+          "no-matches": "אין מקצים קרובים",
+          "time": "זמן",
+          "next": "הבא",
+          "in-time": "בעוד {time}",
+          "team-number": "קבוצה {number}",
+          "match-number": "מקצה",
+          "scheduled-time": "זמן מתוכנן",
+          "teams": "קבוצות"
+        },
+        "active-match": {
+          "title": "מקצה רץ",
+          "no-match": "אין מקצה פעיל כרגע",
+          "match-title": "מקצה {slug}",
+          "started-at": "התחיל",
+          "deviation": "סטייה",
+          "participants": "משתתפים",
+          "team-label": "קבוצה",
+          "status": {
+            "in-progress": "רץ",
+            "completed": "הושלם"
+          }
+        },
+        "next-match": {
+          "title": "המקצה הבא",
+          "no-match": "אין מקצה טעון",
+          "match-title": "המקצה הבא: {slug}",
+          "tables-ready": "שולחנות מוכנים",
+          "team-number": "קבוצה {number}",
+          "judging-conflict": "שיפוט: {room}",
+          "status": {
+            "ready": "מוכן",
+            "present": "נוכח",
+            "queued": "בקיו",
+            "not-present": "לא נוכח"
+          }
+        },
+        "judging-integration": {
+          "title": "אינטגרציה עם שיפוט",
+          "active-sessions": "מפגשי שיפוט פעילים",
+          "team-info": "קבוצה {number} - {name}",
+          "conflicts": "התנגשויות זמן",
+          "team-number": "קבוצה {number}",
+          "conflict-details": "בשיפוט: {room} | נקראה למקצה {match}",
+          "no-conflicts": "אין התנגשויות זמן"
+        },
+        "queue-overview": {
+          "title": "מצב הקיו",
+          "no-matches": "אין מקצים בקיו כרגע",
+          "match-label": "מקצה",
+          "in-queue": "בקיו:",
+          "team-label": "קבוצה"
+        }
       },
       "awards-list": {
         "page-title": "רשימת פרסים",

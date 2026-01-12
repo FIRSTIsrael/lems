@@ -1,6 +1,6 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge, updateInArray } from '@lems/shared/utils';
-import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
+import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
 import type { SubscriptionVars, QueryData, JudgingSession } from '../types';
 
 interface SubscriptionData {
@@ -37,8 +37,7 @@ function updateJudgingSessions(
         ...prev.division.judging,
         sessions: updater(prev.division.judging.sessions)
       },
-      field: prev.division.field,
-      matches: prev.division.matches
+      field: prev.division.field
     }
   });
 }
