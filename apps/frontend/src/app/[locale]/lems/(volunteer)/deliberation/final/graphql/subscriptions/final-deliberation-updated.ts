@@ -63,22 +63,6 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
     }
   }
 
-  const awardsUpdate: Partial<FinalJudgingDeliberation> = {};
-  // Parse awards JSON if provided, turn awards into camel case keys
-  if (event.awards) {
-    try {
-      const parsedAwards = JSON.parse(event.awards);
-      // Convert keys to camel case
-      for (const [key, value] of Object.entries(parsedAwards)) {
-        const camelCaseKey = key.replace(/-([a-z])/g, g => g[1].toUpperCase());
-        // @ts-expect-error - Dynamic key assignment
-        awardsUpdate[camelCaseKey] = value;
-      }
-    } catch {
-      // Ignore JSON parse errors
-    }
-  }
-
   return merge(prev, {
     division: {
       judging: {
@@ -91,7 +75,7 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
           ...(!!event.startTime && { startTime: event.startTime }),
           // Update completionTime if provided
           ...(!!event.completionTime && { completionTime: event.completionTime }),
-          ...awardsUpdate,
+          ...(!!event.awards && JSON.parse(event.awards)),
           ...stageDataUpdate
         }
       }

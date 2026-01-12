@@ -15,47 +15,60 @@ import {
 import { Add } from '@mui/icons-material';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 
-export const ManualEligibilityControl: React.FC = () => {
-  const theme = useTheme();
-  const t = useTranslations('pages.deliberations.final.core-awards');
-  const { teams, categoryPicklists, deliberation, updateManualEligibility } =
-    useFinalDeliberation();
+interface ManualEligibilityControlProps {
+  stage?: 'core-awards' | 'optional-awards';
+}
 
+export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> = ({
+  stage = 'core-awards'
+}) => {
+  const theme = useTheme();
+  const t = useTranslations(`pages.deliberations.final.manual-eligibility-control`);
+  const { division, teams, deliberation, updateManualEligibility } = useFinalDeliberation();
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  // Get teams in any picklist
-  const picketListTeamIds = useMemo(
-    () => new Set(Object.values(categoryPicklists).flat()),
-    [categoryPicklists]
+  // Get the appropriate manual eligibility list based on stage
+  const manualEligibilityKey =
+    stage === 'core-awards' ? 'coreAwardsManualEligibility' : 'optionalAwardsManualEligibility';
+  const currentManualEligibility = useMemo(
+    () => deliberation[manualEligibilityKey] || [],
+    [deliberation, manualEligibilityKey]
   );
 
-  // Get available teams (not in picklist, arrived, not disqualified)
+  const awardedTeamIds = useMemo(() => {
+    const ids = new Set<string>();
+    division.judging.awards.forEach(award => {
+      if (award.winner && 'team' in award.winner) {
+        ids.add(award.winner.team.id);
+      }
+    });
+    return ids;
+  }, [division.judging.awards]);
+
+  // Get available teams (not in current selections, arrived, not disqualified)
   const availableTeams = useMemo(() => {
     return teams.filter(
       team =>
-        !picketListTeamIds.has(team.id) &&
-        !deliberation.coreAwardsManualEligibility.includes(team.id) &&
+        !team.eligibility[stage] &&
+        !awardedTeamIds.has(team.id) &&
         team.arrived &&
         !team.disqualified
     );
-  }, [teams, picketListTeamIds, deliberation.coreAwardsManualEligibility]);
+  }, [teams, awardedTeamIds, stage]);
 
   const handleAddTeam = useCallback(async () => {
     if (!selectedTeamId) return;
 
     setIsAdding(true);
     try {
-      const updatedManualEligibility = [
-        ...deliberation.coreAwardsManualEligibility,
-        selectedTeamId
-      ];
-      await updateManualEligibility('core-awards', updatedManualEligibility);
+      const updatedManualEligibility = [...currentManualEligibility, selectedTeamId];
+      await updateManualEligibility(stage, updatedManualEligibility);
       setSelectedTeamId(null);
     } finally {
       setIsAdding(false);
     }
-  }, [selectedTeamId, deliberation.coreAwardsManualEligibility, updateManualEligibility]);
+  }, [selectedTeamId, currentManualEligibility, updateManualEligibility, stage]);
 
   return (
     <Box
@@ -78,7 +91,7 @@ export const ManualEligibilityControl: React.FC = () => {
             mb: 0.25
           }}
         >
-          {t('manual-eligibility-title')}
+          {t('title')}
         </Typography>
         <Typography
           variant="caption"
@@ -87,7 +100,7 @@ export const ManualEligibilityControl: React.FC = () => {
             fontSize: '0.75rem'
           }}
         >
-          {t('manual-eligibility-description')}
+          {t('description')}
         </Typography>
       </Box>
       <Stack direction="row" spacing={1} sx={{ alignItems: 'flex-start' }}>
@@ -111,15 +124,6 @@ export const ManualEligibilityControl: React.FC = () => {
               }}
             />
           )}
-          componentsProps={{
-            paper: {
-              sx: {
-                '& .MuiAutocomplete-option': {
-                  fontSize: '0.875rem !important'
-                }
-              }
-            }
-          }}
           noOptionsText={t('no-data-available')}
         />
         <Button
@@ -137,7 +141,8 @@ export const ManualEligibilityControl: React.FC = () => {
             fontWeight: 600,
             textTransform: 'none',
             whiteSpace: 'nowrap',
-            mt: 0.5
+            mt: 0.5,
+            height: '100%'
           }}
         >
           {t('add-team')}

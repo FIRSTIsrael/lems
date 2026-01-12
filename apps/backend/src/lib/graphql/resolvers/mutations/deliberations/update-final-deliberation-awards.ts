@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { FinalDeliberationAwards } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { Award, OPTIONAL_AWARDS } from '@lems/shared/awards';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -41,7 +41,7 @@ export const updateFinalDeliberationAwardsResolver: GraphQLFieldResolver<
   }
 
   // Parse awards
-  let awards: Partial<FinalDeliberationAwards>;
+  let awards: Partial<Record<Award, string[]>>;
   try {
     awards = JSON.parse(awardsJson);
   } catch {
@@ -65,10 +65,28 @@ export const updateFinalDeliberationAwardsResolver: GraphQLFieldResolver<
     );
   }
 
+  const optionalAwards: Partial<Record<Award, string[]>> = {};
+  const mandatoryAwards: Partial<Record<Award, string[]>> = {};
+  const championsAward: { '1'?: string; '2'?: string; '3'?: string; '4'?: string } = {};
+
+  Object.entries(awards).forEach(([awardName, awardData]) => {
+    if ((OPTIONAL_AWARDS as readonly string[]).includes(awardName)) {
+      if (awardName === 'champions') {
+        Object.assign(championsAward, awardData);
+      } else {
+        optionalAwards[awardName as Award] = awardData as string[];
+      }
+    } else {
+      mandatoryAwards[awardName as Award] = awardData as string[];
+    }
+  });
+
   // Merge with existing awards
   const updatedAwards = {
     ...deliberation.awards,
-    ...awards
+    optionalAwards,
+    ...mandatoryAwards,
+    ...(Object.keys(championsAward).length > 0 && { champions: championsAward })
   };
 
   // Update the deliberation
