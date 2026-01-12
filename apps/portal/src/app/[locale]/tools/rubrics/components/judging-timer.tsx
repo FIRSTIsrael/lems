@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab } from '@mui/material';
+import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, useTheme, useMediaQuery } from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -24,6 +24,9 @@ const JudgingTimer = () => {
   const paperRef = useRef<HTMLDivElement>(null);
   const { getStage } = useJudgingSessionStageTranslations();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const [timerState, timerControls] = useJudgingTimer();
   const { currentStage, stageTimeRemaining, totalTimeRemaining, isRunning, isFinished } =
     timerState;
@@ -42,9 +45,14 @@ const JudgingTimer = () => {
   };
 
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    // Disable dragging on mobile devices
+    if (isMobile) {
+      return;
+    }
+
     const target = e.target as HTMLElement;
-    // Prevent dragging if clicking on a button, icon, or input element
-    if (target.closest('button, [role="button"], input, svg')) {
+    // Prevent dragging if clicking on a button or input element
+    if (target.closest('button, [role="button"], input')) {
       return;
     }
 
@@ -154,18 +162,18 @@ const JudgingTimer = () => {
               borderBottom: '1px solid rgba(0,0,0,0.1)'
             }}
           >
-            <IconButton
+            <Stack
               data-drag-handle
-              size="small"
               sx={{
-                cursor: 'grab',
-                '&:active': { cursor: 'grabbing' },
                 color: 'grey.400',
-                '&:hover': { bgcolor: 'grey.100', color: 'grey.600' }
+                cursor: isDragging ? 'grabbing' : 'grab',
+                '&:hover': { color: 'grey.600' },
+                display: isMobile ? 'none' : 'flex',
+                alignItems: 'center'
               }}
             >
-              <DragIndicatorIcon />
-            </IconButton>
+              <DragIndicatorIcon fontSize="small" />
+            </Stack>
 
             <Box flex={1} />
 

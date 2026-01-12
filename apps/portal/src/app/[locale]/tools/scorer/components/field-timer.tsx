@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useContext, useRef, useEffect } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Fab } from '@mui/material';
+import { Typography, Stack, Paper, IconButton, Slide, Fab, useTheme, useMediaQuery } from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -39,6 +39,9 @@ export const FieldTimer = () => {
   });
   const paperRef = useRef<HTMLDivElement>(null);
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   const { points } = useContext(MissionContext);
   const scoreFloaterShown = Boolean(points);
 
@@ -61,6 +64,11 @@ export const FieldTimer = () => {
   };
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Disable dragging on mobile devices
+    if (isMobile) {
+      return;
+    }
+
     // Don't start dragging if clicking on buttons
     if ((e.target as HTMLElement).closest('button')) {
       return;
@@ -162,7 +170,7 @@ export const FieldTimer = () => {
               color: 'grey.500',
               cursor: dragState.isDragging ? 'grabbing' : 'grab',
               '&:hover': { color: 'grey.700' },
-              display: 'flex',
+              display: isMobile ? 'none' : 'flex',
               alignItems: 'center'
             }}
           >
