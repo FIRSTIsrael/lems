@@ -311,7 +311,13 @@
           "test": "סבב ניסוי"
         },
         "not-arrived": "לא הגיעה",
-        "loading": "טוען מקצים..."
+        "loading": "טוען מקצים...",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט",
+          "field": "זירה",
+          "teams": "קבוצות"
+        }
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",

@@ -311,7 +311,13 @@
           "test": "Test Round"
         },
         "not-arrived": "Not arrived",
-        "loading": "Loading matches..."
+        "loading": "Loading matches...",
+        "visibility": {
+          "public": "General",
+          "judging": "Judging",
+          "field": "Field",
+          "teams": "Teams"
+        }
       },
       "judging-schedule": {
         "page-title": "Judging Schedule",

@@ -108,14 +108,38 @@ export function parseFieldScheduleData(data: QueryData) {
     {} as { [key: string]: typeof matches }
   );
 
-  // For each round, filter rows that belong to that round
-  const roundRowsMap = Object.keys(roundMatches).reduce(
-    (result: { [key: string]: typeof rows }, roundKey) => {
-      const roundMatchIds = new Set(roundMatches[roundKey].map(m => m.id));
+  // Create a map of match IDs to their indices in the rows array
+  const matchIdToRowIndex = new Map<string, number>();
+  rows.forEach((row, index) => {
+    if (row.type === 'match') {
+      matchIdToRowIndex.set(row.data.id, index);
+    }
+  });
 
-      result[roundKey] = rows.filter(
-        row => (row.type === 'match' && roundMatchIds.has(row.data.id)) || row.type === 'event'
-      );
+  // Sort round keys chronologically by the scheduled time of their first match
+  const sortedRoundKeys = Object.keys(roundMatches).sort((a, b) => {
+    const firstMatchA = roundMatches[a][0];
+    const firstMatchB = roundMatches[b][0];
+    return dayjs(firstMatchA.scheduledTime).diff(dayjs(firstMatchB.scheduledTime));
+  });
+
+  // For each round, slice the rows array to get only events that belong to that round
+  const roundRowsMap = sortedRoundKeys.reduce(
+    (result: { [key: string]: typeof rows }, roundKey, roundIndex) => {
+      const isFirstRound = roundIndex === 0;
+      const isLastRound = roundIndex === sortedRoundKeys.length - 1;
+
+      // Find start index (0 for first round, first match of current round for others)
+      const startIndex = isFirstRound
+        ? 0
+        : matchIdToRowIndex.get(roundMatches[roundKey][0].id);
+
+      // Find end index (last row for last round, first match of next round for others)
+      const endIndex = isLastRound
+        ? rows.length
+        : matchIdToRowIndex.get(roundMatches[sortedRoundKeys[roundIndex + 1]][0].id);
+
+      result[roundKey] = rows.slice(startIndex, endIndex);
 
       return result;
     },
