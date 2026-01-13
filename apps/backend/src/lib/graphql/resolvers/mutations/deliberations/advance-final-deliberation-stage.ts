@@ -12,7 +12,6 @@ import {
   handleOptionalAwardsStageCompletion,
   validateOptionalAwardsStage
 } from './handlers/optional-awards';
-import { handleReviewStageCompletion, validateReviewStage } from './handlers/review';
 
 interface AdvanceFinalDeliberationStageArgs {
   divisionId: string;
@@ -109,8 +108,6 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
       await handleOptionalAwardsStageCompletion(divisionId, deliberation.awards.optionalAwards);
       break;
     case 'review':
-      validateReviewStage();
-      await handleReviewStageCompletion(divisionId);
       break;
   }
 

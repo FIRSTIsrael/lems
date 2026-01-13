@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Grid, Button } from '@mui/material';
 import { useAwardTranslations } from '@lems/localization';
+import { PERSONAL_AWARDS } from '@lems/shared/awards';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import { AwardSection } from './award-section';
 import { ApprovalModal } from './approval-modal';
@@ -13,15 +14,15 @@ export const ReviewStage: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('pages.deliberations.final.review');
   const { getName: getAwardName } = useAwardTranslations();
-  const { division } = useFinalDeliberation();
+  const { division, deliberation } = useFinalDeliberation();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   // Filter out personal awards and group by name
   const groupedAwards = useMemo(() => {
-    const personalAwardNames = new Set(['lead-mentor', 'volunteer-of-the-year']);
-
     // Get all awards from the division, excluding personal awards
-    const teamAwards = division.judging.awards.filter(award => !personalAwardNames.has(award.name));
+    const teamAwards = division.judging.awards.filter(
+      award => !(PERSONAL_AWARDS as readonly string[]).includes(award.name)
+    );
 
     // Group by name and sort by index
     const grouped: Record<string, typeof teamAwards> = {};
@@ -58,19 +59,17 @@ export const ReviewStage: React.FC = () => {
   }, []);
 
   const handleSuccess = useCallback(() => {
-    router.push('/lems');
+    router.push('/');
   }, [router]);
 
   return (
     <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2.5, gap: 2.5 }}>
-      {/* Title */}
       <Paper sx={{ p: 2.5, borderRadius: 1.5 }}>
         <Typography variant="h2" textAlign="center" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
           {t('title')}
         </Typography>
       </Paper>
 
-      {/* Awards Grid */}
       <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
         <Grid container spacing={2.5}>
           {awardOrder.map(awardName => (
@@ -85,7 +84,6 @@ export const ReviewStage: React.FC = () => {
         </Grid>
       </Box>
 
-      {/* Approval Button */}
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2.5 }}>
         <Button
           variant="contained"
@@ -99,12 +97,12 @@ export const ReviewStage: React.FC = () => {
             fontWeight: 600,
             textTransform: 'none'
           }}
+          disabled={deliberation.status === 'completed'}
         >
           {t('approve-button')}
         </Button>
       </Box>
 
-      {/* Approval Modal */}
       <ApprovalModal
         open={openConfirmDialog}
         onClose={handleCloseConfirm}

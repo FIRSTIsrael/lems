@@ -26,6 +26,9 @@ type Award {
   "Whether this award is assigned automatically"
   automaticAssignment: Boolean!
 
+  "Whether to show places for this award"
+  showPlaces: Boolean!
+
   "Optional description for this award"
   description: String
 

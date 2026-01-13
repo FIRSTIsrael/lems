@@ -26,6 +26,7 @@ interface Award {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
+  showPlaces: boolean;
   winner?: TeamWinner | PersonalWinner;
 }
 

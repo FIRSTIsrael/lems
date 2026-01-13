@@ -1061,16 +1061,17 @@
         },
         "review": {
           "title": "Review Awards",
-          "approve-button": "Approve & Publish Awards",
+          "place": "Place #{place}",
+          "approve-button": "Approve & Lock Awards",
           "approval-modal": {
-            "title": "Confirm Award Publication",
-            "description": "Are you sure you want to approve and publish these awards?",
-            "warning-text": "⚠️ Publishing will immediately announce the awards to the Scorekeeper and MC, and unlock the awards presentation. This action cannot be undone.",
-            "confirm": "Approve & Publish",
+            "title": "Confirm Awards",
+            "description": "Are you sure you want to approve and lock these awards?",
+            "warning-text": "⚠️ Locking will immediately announce the awards to the Scorekeeper and MC, and unlock the awards presentation. This action cannot be undone.",
+            "confirm": "Approve & Lock",
             "cancel": "Cancel",
-            "submitting": "Publishing...",
-            "success-message": "Awards published successfully",
-            "error-message": "Failed to publish awards"
+            "submitting": "Locking...",
+            "success-message": "Awards locked successfully",
+            "error-message": "Failed to lock awards"
           }
         }
       }

@@ -10,6 +10,7 @@ interface AwardSectionProps {
     id: string;
     name: string;
     place: number;
+    showPlaces: boolean;
     type: string;
     winner?: {
       team?: {
@@ -26,6 +27,7 @@ interface AwardSectionProps {
 export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awards, getAwardName }) => {
   return (
     <Paper
+      variant="outlined"
       sx={{
         p: 2.5,
         borderRadius: 1.5,
@@ -36,7 +38,6 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awards, g
         height: '100%'
       }}
     >
-      {/* Award Title */}
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <EmojiEvents sx={{ color: 'primary.main', fontSize: '1.5rem' }} />
         <Typography
@@ -51,7 +52,6 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awards, g
         </Typography>
       </Box>
 
-      {/* Award Winners */}
       <Stack spacing={1}>
         {awards.map(award => (
           <AwardWinnerCard key={award.id} award={award} />
