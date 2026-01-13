@@ -4,7 +4,7 @@ import db from '../../../lib/database';
 
 const router = Router();
 
-router.get('/rubrics', async (req, res: Response) => {
+router.get('/', async (req, res: Response) => {
   try {
     const eventSlug = req.query.eventSlug as string;
     const teamId = req.query.teamId as string;
@@ -43,13 +43,13 @@ router.get('/rubrics', async (req, res: Response) => {
       const division = divisions.find(d => d.id === rubric.divisionId);
       const rubricSchema = rubricSchemas[rubric.category as keyof typeof rubricSchemas];
       const scores: Record<string, number | null> = {};
-      
+
       if (rubric.data?.fields) {
         Object.entries(rubric.data.fields).forEach(([fieldId, fieldData]) => {
           scores[fieldId] = fieldData.value || null;
         });
       }
-      
+
       return {
         divisionName: division?.name || 'Unknown Division',
         teamNumber: team.number,

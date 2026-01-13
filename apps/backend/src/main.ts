@@ -24,7 +24,6 @@ import lemsRouter from './routers/lems';
 import adminRouter from './routers/admin/index';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler/index';
-import exportRouter from './routers/api/export/index';
 
 logger.info({ component: 'server' }, 'Backend server initializing');
 
@@ -53,7 +52,10 @@ try {
   await redis.ping();
   logger.info({ component: 'redis' }, 'Redis initialized and connection verified');
 } catch (error) {
-  logger.error({ component: 'redis', error: error instanceof Error ? error.message : String(error) }, 'Failed to initialize Redis');
+  logger.error(
+    { component: 'redis', error: error instanceof Error ? error.message : String(error) },
+    'Failed to initialize Redis'
+  );
   throw new Error('Redis initialization failed');
 }
 
@@ -72,9 +74,18 @@ try {
 
   // Start the unified worker
   await workerManager.start();
-  logger.info({ component: 'worker-manager', handlers: ['session-completed', 'match-completed', 'match-endgame-triggered'] }, 'Worker manager started with event handlers');
+  logger.info(
+    {
+      component: 'worker-manager',
+      handlers: ['session-completed', 'match-completed', 'match-endgame-triggered']
+    },
+    'Worker manager started with event handlers'
+  );
 } catch (error) {
-  logger.error({ component: 'worker-manager', error: error instanceof Error ? error.message : String(error) }, 'Failed to initialize worker manager');
+  logger.error(
+    { component: 'worker-manager', error: error instanceof Error ? error.message : String(error) },
+    'Failed to initialize worker manager'
+  );
   throw new Error('Worker manager initialization failed');
 }
 
@@ -130,7 +141,6 @@ app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
 app.use('/portal', portalRouter);
-app.use('/api/export', exportRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ ok: true });
@@ -144,13 +154,16 @@ app.use((req, res) => {
 // Error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err, req, res, next) => {
-  logger.error({
-    component: 'http',
-    method: req.method,
-    path: req.path,
-    error: err instanceof Error ? err.message : String(err),
-    stack: err instanceof Error ? err.stack : undefined
-  }, 'Unhandled error');
+  logger.error(
+    {
+      component: 'http',
+      method: req.method,
+      path: req.path,
+      error: err instanceof Error ? err.message : String(err),
+      stack: err instanceof Error ? err.stack : undefined
+    },
+    'Unhandled error'
+  );
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
 });
 
@@ -161,13 +174,16 @@ server.listen(port, () => {
   logger.info({ endpoint: `http://localhost:${port}/lems/graphql` }, 'GraphQL endpoint');
 });
 
-server.on('error', (error) => {
+server.on('error', error => {
   logger.error({ component: 'server', error: error.message }, 'Server error');
 });
 
 // Graceful shutdown
 process.on('SIGTERM', async () => {
-  logger.info({ component: 'server', signal: 'SIGTERM' }, 'SIGTERM received, shutting down gracefully');
+  logger.info(
+    { component: 'server', signal: 'SIGTERM' },
+    'SIGTERM received, shutting down gracefully'
+  );
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
@@ -179,7 +195,10 @@ process.on('SIGTERM', async () => {
 });
 
 process.on('SIGINT', async () => {
-  logger.info({ component: 'server', signal: 'SIGINT' }, 'SIGINT received, shutting down gracefully');
+  logger.info(
+    { component: 'server', signal: 'SIGINT' },
+    'SIGINT received, shutting down gracefully'
+  );
   server.close(async () => {
     const workerManager = getWorkerManager();
     await workerManager.stop();
