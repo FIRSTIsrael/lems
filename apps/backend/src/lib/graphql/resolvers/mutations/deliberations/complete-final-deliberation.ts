@@ -49,14 +49,6 @@ export const completeFinalDeliberationResolver: GraphQLFieldResolver<
     );
   }
 
-  // Check if deliberation is in progress and at review stage
-  if (deliberation.status !== 'in-progress') {
-    throw new MutationError(
-      MutationErrorCode.FORBIDDEN,
-      `Cannot complete deliberation with status "${deliberation.status}". Must be "in-progress"`
-    );
-  }
-
   if (deliberation.stage !== 'review') {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
@@ -119,13 +111,5 @@ function validateFinalAwards(deliberation: { awards: FinalDeliberationAwards }):
     if (!awards[awardName] || awards[awardName].length === 0) {
       throw new MutationError(MutationErrorCode.FORBIDDEN, `${awardName} award must be assigned`);
     }
-  }
-
-  // Robot performance should be auto-assigned, but validate it exists
-  if (!awards['robot-performance'] || awards['robot-performance'].length === 0) {
-    throw new MutationError(
-      MutationErrorCode.FORBIDDEN,
-      'Robot Performance award must be assigned'
-    );
   }
 }

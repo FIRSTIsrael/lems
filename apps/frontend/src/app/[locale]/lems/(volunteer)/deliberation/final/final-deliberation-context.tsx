@@ -225,7 +225,7 @@ export const FinalDeliberationProvider = ({
       'optional-awards': enrichedTeams.filter(t => t.eligibility['optional-awards']).map(t => t.id)
     };
     const availableTeams = enrichedTeams
-      .filter(t => eligibleTeams[deliberation.stage as StagesWithNomination].includes(t.id))
+      .filter(t => (eligibleTeams[deliberation.stage as StagesWithNomination] ?? []).includes(t.id))
       .map(t => t.id);
 
     return {

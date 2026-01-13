@@ -1057,6 +1057,21 @@
           "team-already-added": "הקבוצה כבר נבחרה לפרס",
           "no-data-available": "אין קבוצות זמינות",
           "select-award": "בחר פרס"
+        },
+        "review": {
+          "title": "סיכום הפרסים",
+          "place": "מקום #{place}",
+          "approve-button": "אישור ונעילת הפרסים",
+          "approval-modal": {
+            "title": "אישור ונעילת הפרסים",
+            "description": "האם אתה בטוח שברצונך לאשר ולנעול את הפרסים האלה?",
+            "warning-text": "⚠️ נעילה תוביל להודעה מיידית על הפרסים ל- Scorekeeper ו- MC, ויפתח את מצגת הפרסים. פעולה זו לא ניתן לביטול.",
+            "confirm": "אישור ונעילה",
+            "cancel": "ביטול",
+            "submitting": "נועל...",
+            "success-message": "הפרסים ננעלו בהצלחה",
+            "error-message": "נעילה נכשלה."
+          }
         }
       }
     }

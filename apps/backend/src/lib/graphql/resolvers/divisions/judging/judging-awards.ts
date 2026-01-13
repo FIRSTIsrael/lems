@@ -17,6 +17,7 @@ interface AwardGraphQL {
   winner_id?: string;
   winner_name?: string;
   divisionId: string;
+  showPlaces: boolean;
 }
 
 interface AwardsArgs {
@@ -26,7 +27,7 @@ interface AwardsArgs {
 /**
  * Resolver for Judging.awards field.
  * Fetches all available awards for a division.
- * 
+ *
  * @param division - The division object containing the id
  * @param args - Optional arguments to filter results
  * @param args.allowNominations - Filter by allowNominations
@@ -51,6 +52,7 @@ export const judgingAwardsResolver: GraphQLFieldResolver<
       index: award.index,
       place: award.place,
       type: award.type,
+      showPlaces: award.show_places,
       isOptional: award.is_optional,
       allowNominations: award.allow_nominations,
       automaticAssignment: award.automatic_assignment,

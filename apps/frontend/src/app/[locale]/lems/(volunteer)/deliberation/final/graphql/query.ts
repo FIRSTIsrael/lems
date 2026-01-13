@@ -93,6 +93,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           isOptional
           allowNominations
           automaticAssignment
+          showPlaces
           winner {
             ... on TeamWinner {
               team {
