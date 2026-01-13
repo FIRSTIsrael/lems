@@ -29,6 +29,12 @@
             "no-awards": "No optional awards available."
           }
         }
+      },
+      "scores": {
+        "metadata": "Generated from FIRST Israel event system | {eventName}| Season {seasonName}",
+        "title": "Score Sheet {round} for Team #{teamNumber} - {teamName}",
+        "total-points": "{points} Points",
+        "no-scores-found": "No scores found"
       }
     },
     "login": {

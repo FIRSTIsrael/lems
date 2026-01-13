@@ -26,11 +26,11 @@ router.get('/scores', async (req, res: Response) => {
     }
 
     const divisions = await db.divisions.byEventId(event.id).getAll();
-    const scoresheets = await Promise.all(
+    const allScoresheets = await Promise.all(
       divisions.map(div => db.scoresheets.byDivision(div.id).getAll())
     ).then(results => results.flat());
 
-    const teamScoresheets = scoresheets.filter(
+    const teamScoresheets = allScoresheets.filter(
       s => s.teamId === team.id && s.stage === 'RANKING'
     );
 
@@ -38,39 +38,54 @@ router.get('/scores', async (req, res: Response) => {
       return res.status(404).json({ error: 'No scores found for this team' });
     }
 
-    // Get the first ranking scoresheet to extract mission details
-    const rankingScoresheet = teamScoresheets.find(s => s.stage === 'RANKING');
-    
-    if (!rankingScoresheet || !rankingScoresheet.data?.missions) {
-      return res.status(404).json({ error: 'No mission data found for this team' });
+    teamScoresheets.sort((a, b) => a.round - b.round);
+
+    const division = divisions.find(d => d.id === teamScoresheets[0].divisionId);
+    if (!division) {
+      return res.status(404).json({ error: 'Division not found' });
     }
 
-    // Build detailed mission scores
-    const missions = scoresheet.missions.map(mission => {
-      const missionData = rankingScoresheet.data?.missions?.[mission.id] || {};
-      const clauseValues = mission.clauses.map((_, index) => missionData[index] ?? null);
-      
-      let score = 0;
-      try {
-        score = mission.calculation(...clauseValues);
-      } catch {
-        score = 0;
+    const season = await db.seasons.byId(event.season_id).get();
+    const seasonName = season?.name || 'Unknown Season';
+
+    const scoresheets = teamScoresheets.map(rankingScoresheet => {
+      if (!rankingScoresheet.data?.missions) {
+        return null;
       }
 
-      return {
-        id: mission.id,
-        score
-      };
-    });
+      const missions = scoresheet.missions.map(mission => {
+        const missionData = rankingScoresheet.data?.missions?.[mission.id];
+        
+        if (!missionData) {
+          return {
+            clauses: mission.clauses.map(() => ({ value: null }))
+          };
+        }
 
-    const totalScore = rankingScoresheet.data?.score || 0;
+        const clausesArray = mission.clauses.map((_, index) => ({
+          value: missionData[index] ?? null
+        }));
+
+        return {
+          clauses: clausesArray
+        };
+      });
+
+      return {
+        round: rankingScoresheet.round,
+        missions,
+        score: rankingScoresheet.data?.score || 0
+      };
+    }).filter(s => s !== null);
 
     res.contentType('application/json');
     res.json({
       teamNumber: team.number,
       teamName: team.name,
-      missions,
-      totalScore
+      eventName: event.name,
+      divisionName: division.name,
+      seasonName,
+      scoresheets
     });
   } catch (error) {
     console.error('Error exporting scores:', error);

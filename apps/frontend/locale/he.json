@@ -28,6 +28,12 @@
             "no-awards": "אין פרסים אופציונליים זמינים."
           }
         }
+      },
+      "scores": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "דף ניקוד {round} של קבוצה #{teamNumber} - {teamName}",
+        "total-points": "{points} נקודות",
+        "no-scores-found": "לא נמצאו ניקודים"
       }
     },
     "login": {
