@@ -12,25 +12,47 @@ import {
   Popover,
   Stack,
   Typography,
-  Chip
+  Chip,
+  Button
 } from '@mui/material';
-import { Stars, Add } from '@mui/icons-material';
+import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple } from '@mui/material/colors';
 import { OPTIONAL_AWARDS, Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
+import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
 
 const FIELD_COLUMN_WIDTH = 60;
 
 export function OptionalAwardsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
+  const tTable = useTranslations('pages.deliberations.category.table');
   const { teams, eligibleTeams, deliberation, awards, updateAward, awardCounts } =
     useFinalDeliberation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
   const { getName } = useAwardTranslations();
+
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
+
+  const handleRowSelectionChange = (newSelection: string[]) => {
+    if (newSelection.length <= 2) {
+      setSelectedTeams(newSelection);
+    }
+  };
+
+  const handleCompare = () => {
+    if (selectedTeams.length === 2) {
+      setCompareDialogOpen(true);
+    }
+  };
+
+  const selectedTeamSlugs = useMemo(() => {
+    return teams.filter(t => selectedTeams.includes(t.id)).map(t => t.slug) as [string, string];
+  }, [selectedTeams, teams]);
 
   // Get teams eligible for optional awards
   const optionalAwardsEligibleTeamIds = useMemo<Set<string>>(
@@ -272,11 +294,34 @@ export function OptionalAwardsDataGrid() {
 
   return (
     <>
+      {selectedTeams.length === 2 && (
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CompareArrows />}
+            onClick={handleCompare}
+            sx={{ textTransform: 'none' }}
+          >
+            {tTable('compare-teams')}
+          </Button>
+        </Box>
+      )}
+
       <DataGrid
         rows={filteredTeams}
-        columns={columns}
+        getRowId={row => row.id}
         density="compact"
+        checkboxSelection
+        rowSelectionModel={selectedTeams}
+        onRowSelectionModelChange={newSelection =>
+          handleRowSelectionChange(newSelection as string[])
+        }
+        isRowSelectable={params =>
+          selectedTeams.length < 2 || selectedTeams.includes(params.id as string)
+        }
         disableRowSelectionOnClick
+        hideFooterSelectedRowCount
         hideFooter
         sx={{
           width: '100%',
@@ -364,6 +409,14 @@ export function OptionalAwardsDataGrid() {
           </Stack>
         </Box>
       </Popover>
+
+      {selectedTeams.length === 2 && (
+        <TeamComparisonDialog
+          open={compareDialogOpen}
+          onClose={() => setCompareDialogOpen(false)}
+          teamSlugs={selectedTeamSlugs}
+        />
+      )}
     </>
   );
 }

@@ -4,27 +4,38 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Autocomplete, Button, Paper, Stack, TextField, Typography } from '@mui/material';
 import { CompareArrows } from '@mui/icons-material';
+import { JudgingCategory } from '@lems/types/judging';
+import { TeamComparisonDialog } from './team-comparison-dialog';
 
 interface CompareTeamsPickerProps {
-  teams: { id: string; number: string; name: string }[];
+  teams: { id: string; number: string; name: string; slug: string }[];
+  category?: JudgingCategory;
   onCompare?: (team1Id: string, team2Id: string) => void;
 }
 
-export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps) {
+export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsPickerProps) {
   const t = useTranslations('pages.deliberations.compare');
   const [selectedTeam1, setSelectedTeam1] = useState<string | null>(null);
   const [selectedTeam2, setSelectedTeam2] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const teamOptions = teams.map(t => ({
     label: `${t.number} - ${t.name}`,
-    value: t.id
+    value: t.id,
+    slug: t.slug
   }));
 
   const handleCompare = () => {
     if (selectedTeam1 && selectedTeam2) {
+      setDialogOpen(true);
       onCompare?.(selectedTeam1, selectedTeam2);
     }
   };
+
+  const selectedTeamSlugs: [string, string] = [
+    teamOptions.find(t => t.value === selectedTeam1)?.slug || '',
+    teamOptions.find(t => t.value === selectedTeam2)?.slug || ''
+  ];
 
   return (
     <Stack
@@ -115,6 +126,15 @@ export function CompareTeamsPicker({ teams, onCompare }: CompareTeamsPickerProps
       >
         {t('compare')}
       </Button>
+
+      {selectedTeam1 && selectedTeam2 && selectedTeamSlugs[0] && selectedTeamSlugs[1] && (
+        <TeamComparisonDialog
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          teamSlugs={selectedTeamSlugs}
+          category={category}
+        />
+      )}
     </Stack>
   );
 }

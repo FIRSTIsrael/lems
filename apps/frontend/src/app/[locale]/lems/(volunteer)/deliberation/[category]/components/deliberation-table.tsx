@@ -25,7 +25,10 @@ export function DeliberationTable() {
     fieldDisplayLabels
   } = useCategoryDeliberation();
 
-  const pickedTeamIds = useMemo(() => new Set(picklistTeams.map(t => t.id)), [picklistTeams]);
+  const pickedTeamIds = useMemo(
+    () => new Set((picklistTeams || []).map(t => t.id)),
+    [picklistTeams]
+  );
   const hypenatedCategory = underscoresToHyphens(
     deliberation?.category as string
   ) as JudgingCategory;
@@ -104,7 +107,7 @@ export function DeliberationTable() {
       },
 
       // Rubric field columns
-      ...fieldDisplayLabels.map(
+      ...(fieldDisplayLabels || []).map(
         label =>
           ({
             field: label,
@@ -122,7 +125,7 @@ export function DeliberationTable() {
       ),
 
       // GP score columns (only shown for core-values category)
-      ...(hypenatedCategory === 'core-values'
+      ...(hypenatedCategory === 'core-values' && teams && teams.length > 0
         ? Object.keys(teams[0]?.gpScores ?? {})
             .sort((a, b) => {
               const roundA = parseInt(a.split('-')[1], 10);
@@ -203,8 +206,9 @@ export function DeliberationTable() {
 
   return (
     <DataGrid
-      rows={teams}
+      rows={teams || []}
       columns={columns}
+      getRowId={row => row.id}
       pageSizeOptions={[50]}
       density="compact"
       initialState={{
@@ -214,7 +218,11 @@ export function DeliberationTable() {
       disableVirtualization={theme.direction === 'rtl'}
       getRowClassName={params => {
         const team = params.row as EnrichedTeam;
-        if (suggestedTeam?.id === team.id && picklistTeams.length < picklistLimit) {
+        if (
+          suggestedTeam?.id === team.id &&
+          picklistTeams &&
+          picklistTeams.length < picklistLimit
+        ) {
           return 'suggested-team';
         }
         return '';

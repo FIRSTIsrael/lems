@@ -932,6 +932,11 @@
         "compare": "Compare",
         "no-data-available": "No teams available"
       },
+      "compare-dialog": {
+        "title": "Team Comparison",
+        "open-full-compare": "Open Full Compare Page",
+        "error-loading-teams": "Error loading team data"
+      },
       "small-screen-block": {
         "title": "Screen Too Small",
         "message": "The deliberation view requires a larger screen to display all components properly.",
@@ -974,7 +979,8 @@
           "normalized": "Normalized",
           "actions": "Actions",
           "view-rubric": "View Rubric",
-          "add-to-picklist": "Add to Picklist"
+          "add-to-picklist": "Add to Picklist",
+          "compare-teams": "Compare Teams"
         }
       },
       "final": {

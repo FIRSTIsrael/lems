@@ -932,6 +932,11 @@
         "compare": "השוו",
         "no-data-available": "אין קבוצות זמינות"
       },
+      "compare-dialog": {
+        "title": "השוואת קבוצות",
+        "open-full-compare": "פתח דף השוואה מלא",
+        "error-loading-teams": "שגיאה בטעינת נתוני הקבוצות"
+      },
       "small-screen-block": {
         "title": "המסך קטן מדי",
         "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
@@ -974,7 +979,8 @@
           "normalized": "מתוקנן",
           "actions": "פעולות",
           "view-rubric": "הצג מחוון",
-          "add-to-picklist": "הוסף לרשימת בחירה"
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "compare-teams": "השוו קבוצות"
         }
       },
       "final": {

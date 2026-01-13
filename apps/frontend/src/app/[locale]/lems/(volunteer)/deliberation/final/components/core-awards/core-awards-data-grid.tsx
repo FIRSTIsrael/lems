@@ -1,24 +1,45 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { useTheme, Tooltip, Box, alpha, IconButton } from '@mui/material';
+import { useTheme, Tooltip, Box, alpha, IconButton, Button } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { Stars, Add } from '@mui/icons-material';
+import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple, blue, green, red } from '@mui/material/colors';
 import { JudgingCategory } from '@lems/database';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
+import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
 
 const FIELD_COLUMN_WIDTH = 130;
 
 export function CoreAwardsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.core-awards');
+  const tTable = useTranslations('pages.deliberations.category.table');
   const { getCategory } = useJudgingCategoryTranslations();
   const { teams, eligibleTeams, categoryPicklists, deliberation, awards, updateAward } =
     useFinalDeliberation();
+
+  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
+
+  const handleRowSelectionChange = (newSelection: string[]) => {
+    if (newSelection.length <= 2) {
+      setSelectedTeams(newSelection);
+    }
+  };
+
+  const handleCompare = () => {
+    if (selectedTeams.length === 2) {
+      setCompareDialogOpen(true);
+    }
+  };
+
+  const selectedTeamSlugs = useMemo(() => {
+    return teams.filter(t => selectedTeams.includes(t.id)).map(t => t.slug) as [string, string];
+  }, [selectedTeams, teams]);
 
   // Get teams from picklists and manually added teams
   const picketListTeamIds = useMemo(
@@ -271,33 +292,65 @@ export function CoreAwardsDataGrid() {
   );
 
   return (
-    <DataGrid
-      rows={filteredTeams}
-      columns={columns}
-      getRowId={row => row.id}
-      density="compact"
-      disableRowSelectionOnClick
-      hideFooterSelectedRowCount
-      hideFooter
-      sx={{
-        width: '100%',
-        height: '100%',
-        '& .MuiDataGrid-row': {
-          '&:hover': {
-            backgroundColor: alpha(theme.palette.primary.main, 0.05)
-          },
-          '&.selected-award-row': {
-            backgroundColor: alpha(purple[400], 0.1),
+    <>
+      {selectedTeams.length === 2 && (
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CompareArrows />}
+            onClick={handleCompare}
+            sx={{ textTransform: 'none' }}
+          >
+            {tTable('compare-teams')}
+          </Button>
+        </Box>
+      )}
+
+      <DataGrid
+        rows={filteredTeams}
+        columns={columns}
+        getRowId={row => row.id}
+        density="compact"
+        checkboxSelection
+        rowSelectionModel={selectedTeams}
+        onRowSelectionModelChange={newSelection =>
+          handleRowSelectionChange(newSelection as string[])
+        }
+        isRowSelectable={params =>
+          selectedTeams.length < 2 || selectedTeams.includes(params.id as string)
+        }
+        disableRowSelectionOnClick
+        hideFooterSelectedRowCount
+        hideFooter
+        sx={{
+          width: '100%',
+          height: '100%',
+          '& .MuiDataGrid-row': {
             '&:hover': {
-              backgroundColor: alpha(purple[400], 0.15)
+              backgroundColor: alpha(theme.palette.primary.main, 0.05)
+            },
+            '&.selected-award-row': {
+              backgroundColor: alpha(purple[400], 0.1),
+              '&:hover': {
+                backgroundColor: alpha(purple[400], 0.15)
+              }
             }
           }
-        }
-      }}
-      getRowClassName={params => {
-        const team = params.row as EnrichedTeam;
-        return selectedTeamIds.has(team.id) ? 'selected-award-row' : '';
-      }}
-    />
+        }}
+        getRowClassName={params => {
+          const team = params.row as EnrichedTeam;
+          return selectedTeamIds.has(team.id) ? 'selected-award-row' : '';
+        }}
+      />
+
+      {selectedTeams.length === 2 && (
+        <TeamComparisonDialog
+          open={compareDialogOpen}
+          onClose={() => setCompareDialogOpen(false)}
+          teamSlugs={selectedTeamSlugs}
+        />
+      )}
+    </>
   );
 }
