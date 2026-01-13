@@ -4,7 +4,9 @@ import React from 'react';
 import { Typography, Table, TableBody, TableRow, TableCell, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
-import { Rubric } from './page';
+
+// TODO: Use graphQL!!! This will cause circular dependency issues
+// import { Rubric } from '../page';
 
 const categoryColors = {
   'core-values': '#EBB3AA',

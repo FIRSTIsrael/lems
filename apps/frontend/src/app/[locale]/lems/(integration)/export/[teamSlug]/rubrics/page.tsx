@@ -6,8 +6,8 @@ import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
 import Image from 'next/image';
 import { Box, CircularProgress, Alert, Typography } from '@mui/material';
-import { ExportRubricTable } from './export-rubric-table';
-import { CombinedFeedbackTable } from './combined-feedback-table';
+import { ExportRubricTable } from './components/export-rubric-table';
+import { CombinedFeedbackTable } from './components/combined-feedback-table';
 
 interface RubricSchema {
   sections: Array<{

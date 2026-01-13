@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { Box, CircularProgress, Alert, Typography, Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { scoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
-import { ExportScoresheetHeader } from './export-scoresheet-header';
-import { ExportScoresheetMission } from './export-scoresheet-mission';
+import { ExportScoresheetHeader } from './components/export-scoresheet-header';
+import { ExportScoresheetMission } from './components/export-scoresheet-mission';
 
 interface ScoresExportPageProps {
   params: Promise<{
