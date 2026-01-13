@@ -104,7 +104,7 @@
     "@swc-node/register": "^1.11.1",
     "@swc/cli": "^0.7.9",
     "@swc/core": "^1.15.8",
-    "@swc/helpers": "~0.5.11",
+    "@swc/helpers": "~0.5.18",
     "@swc/plugin-emotion": "^14.3.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
