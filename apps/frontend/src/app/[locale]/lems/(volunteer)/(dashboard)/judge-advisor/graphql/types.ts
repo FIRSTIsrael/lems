@@ -48,7 +48,6 @@ export interface Award {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
-  description?: string;
 }
 
 export interface JudgingDeliberation {
@@ -80,6 +79,7 @@ export interface JudgingData {
   core_values?: JudgingDeliberation;
   finalDeliberation?: FinalDeliberation;
   sessionLength: number;
+  awards: Award[];
 }
 
 export interface CategorizedDeliberations extends Record<string, JudgingDeliberation | undefined> {

@@ -70,7 +70,7 @@ export const FieldScheduleTab: React.FC = () => {
       tablesMap.set(participant.table.id, participant.table);
     });
   });
-  const tables = Array.from(tablesMap.values());
+  const tables = Array.from(tablesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -121,10 +121,10 @@ export const FieldScheduleTab: React.FC = () => {
                         {t('field-schedule.time')}
                       </Typography>
                     </TableCell>
-                    {tables.map((_, index) => (
-                      <TableCell key={index} width={isMobile ? 80 : 120} align="center">
+                    {tables.map((table) => (
+                      <TableCell key={table.id} width={isMobile ? 80 : 120} align="center">
                         <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                          {t('field-schedule.table')} {index + 1}
+                          {table.name}
                         </Typography>
                       </TableCell>
                     ))}

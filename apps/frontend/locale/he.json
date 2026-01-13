@@ -320,7 +320,8 @@
         "visibility": {
           "public": "כללי",
           "judging": "שיפוט",
-          "field": "זירה"
+          "field": "זירה",
+          "teams": "קבוצות"
         }
       },
       "field-timer": {
@@ -346,7 +347,13 @@
           "test": "סבב ניסוי"
         },
         "not-arrived": "לא הגיעה",
-        "loading": "טוען מקצים..."
+        "loading": "טוען מקצים...",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט",
+          "field": "זירה",
+          "teams": "קבוצות"
+        }
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",
@@ -1014,6 +1021,16 @@
           "optional-awards": "פרסים אופציונליים",
           "review": "סיכום"
         },
+        "errors": {
+          "award-limit-exceeded": "לא ניתן להוסיף זוכים נוספים לפרס זה."
+        },
+        "manual-eligibility-control": {
+          "title": "זכאות ידנית",
+          "description": "הוסף קבוצות שלא הועמדו לדיון",
+          "add-team": "הוסף קבוצה",
+          "select-team": "בחר קבוצה...",
+          "no-data-available": "אין קבוצות זמינות"
+        },
         "champions": {
           "title": "פרס האליפות",
           "description": "בחרו קבוצות לפרס האליפות.",
@@ -1032,6 +1049,50 @@
           "not-started": "מחכה להתחלת דיון",
           "deliberation-finalized": "פרסי האליפות נבחרו, מחכה להמשך הדיון.",
           "completed": "הדיון הושלם"
+        },
+        "core-awards": {
+          "title": "פרסי ליבה",
+          "description": "בחרו קבוצות לפרסי הליבה",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-actions": "פעולות",
+          "table-robot-design": "תכנון הרובוט",
+          "table-innovation-project": "פרויקט החדשנות",
+          "table-core-values": "ערכי ליבה",
+          "robot-design": "תכנון הרובוט",
+          "innovation-project": "פרויקט החדשנות",
+          "core-values": "ערכי ליבה",
+          "save": "שמור פרסים",
+          "advance": "המשך לפרסים אופציונליים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-not-eligible-for-category": "הקבוצה לא זכאית ל-{category}",
+          "team-already-added-to-category": "הקבוצה כבר נוספה ל-{category}",
+          "add-team-to-category": "הוסף קבוצה ל-{category}"
+        },
+        "optional-awards": {
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-core-values": "ערכי ליבה",
+          "table-nominations": "מועמדויות",
+          "table-actions": "פעולות",
+          "start": "התחל דיון",
+          "advance": "המשך לסיכום",
+          "saving": "שומר...",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסים אופציונליים נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-already-added": "הקבוצה כבר נבחרה לפרס",
+          "no-data-available": "אין קבוצות זמינות",
+          "select-award": "בחר פרס"
         }
       }
     }

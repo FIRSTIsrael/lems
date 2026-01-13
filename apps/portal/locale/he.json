@@ -155,6 +155,7 @@
         "awards": "פרסים",
         "field-schedule": "לוח זמנים זירה",
         "judging-schedule": "לוח זמנים שיפוט",
+        "agenda": "סדר יום",
         "general-schedule": "לוח זמנים כללי"
       },
       "scoreboard": {
@@ -181,6 +182,13 @@
         "advancement": "זכאים להעפלה",
         "place": "מקום {place}",
         "no-data": "טרם הוכרזו פרסים"
+      },
+      "agenda": {
+        "no-data": "אין אירועי סדר יום זמינים",
+        "visibility": {
+          "public": "ציבורי",
+          "teams": "קבוצות"
+        }
       },
       "division-teams": "קבוצות {divisionName}",
       "region": "מדינה"

@@ -187,6 +187,22 @@
       "update-dialog": {
         "title": "Update Team",
         "cancel": "Cancel"
+      },
+      "logo-upload-dialog": {
+        "title": "Update Team Logo",
+        "fields": {
+          "logo": {
+            "label": "Team Logo",
+            "description": "Upload a new team logo (JPG, PNG, or SVG)",
+            "placeholder": "Accepts image files"
+          }
+        },
+        "cancel": "Cancel",
+        "upload": "Upload",
+        "uploading": "Uploading...",
+        "errors": {
+          "upload-failed": "Failed to upload logo. Please try again."
+        }
       }
     },
     "index": {

@@ -66,7 +66,6 @@ export const startFinalDeliberationResolver: GraphQLFieldResolver<
   const now = new Date();
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
     status: 'in-progress',
-    stage: 'champions',
     startTime: now
   });
 

@@ -5,9 +5,16 @@ import {
   JudgingRoom as DbJudgingRoom,
   RobotGameTable as DbRobotGameTable,
   RobotGameMatchWithParticipants as DbRobotGameMatch,
-  JudgingSession as DbJudgingSession
+  JudgingSession as DbJudgingSession,
+  AgendaEvent as DbAgendaEvent
 } from '@lems/database';
-import { Award, Division, JudgingSession, RobotGameMatch } from '@lems/types/api/portal';
+import {
+  Award,
+  Division,
+  JudgingSession,
+  RobotGameMatch,
+  AgendaEvent
+} from '@lems/types/api/portal';
 import { makePortalTeamResponse } from '../teams/util';
 
 export const makePortalDivisionResponse = (division: DbDivision): Division => {
@@ -80,5 +87,17 @@ export const makePortalJudgingSessionResponse = (
     team: team ? makePortalTeamResponse(team) : null,
     room: { id: room.id, name: room.name },
     scheduledTime: new Date(session.scheduled_time)
+  };
+};
+
+export const makePortalAgendaResponse = (agendaEvent: DbAgendaEvent): AgendaEvent => {
+  return {
+    id: agendaEvent.id,
+    title: agendaEvent.title,
+    startTime: new Date(agendaEvent.start_time),
+    duration: agendaEvent.duration,
+    divisionId: agendaEvent.division_id,
+    location: agendaEvent.location,
+    visibility: agendaEvent.visibility as 'public' | 'judging' | 'field' | 'teams'
   };
 };

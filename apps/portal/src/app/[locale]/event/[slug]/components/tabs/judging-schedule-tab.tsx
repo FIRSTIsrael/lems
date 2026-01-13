@@ -49,7 +49,7 @@ export const JudgingScheduleTab = () => {
   sessions.forEach(session => {
     roomsMap.set(session.room.id, session.room);
   });
-  const rooms = Array.from(roomsMap.values());
+  const rooms = Array.from(roomsMap.values()).sort((a, b) => a.name.localeCompare(b.name));
 
   const groupedSessions = groupSessionsByTime(sessions, rooms);
 

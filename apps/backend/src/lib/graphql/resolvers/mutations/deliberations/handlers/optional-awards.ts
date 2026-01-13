@@ -1,63 +1,86 @@
-import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { getRedisPubSub } from '../../../../../redis/redis-pubsub';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
+import { OPTIONAL_AWARDS } from '@lems/shared/awards';
+import { Award, FinalDeliberationAwards } from '@lems/database';
+import db from '../../../../../database';
+import { updateFinalDeliberationAwards } from './utils';
 
 /**
  * Validates that optional awards are properly assigned
  */
-export function validateOptionalAwardsStage(): void {
-  // TODO: Add validation logic for optional awards
-  // Check that optional awards are properly assigned within any constraints
-  // This could include:
-  // - Ensuring no conflicts in nominations
-  // - Validating nomination counts
-  // - Checking award-specific constraints
+export function validateOptionalAwardsStage(
+  optionalAwards: FinalDeliberationAwards['optionalAwards'],
+  divisionAwards: Award[]
+): Promise<void> {
+  const divisionOptionalAwards = divisionAwards.filter(award =>
+    (OPTIONAL_AWARDS as readonly string[])
+      .filter(name => name !== 'excellence-in-engineering')
+      .includes(award.name)
+  );
+  for (const award of divisionOptionalAwards) {
+    if (!optionalAwards[award.name] || optionalAwards[award.name].length === 0) {
+      return Promise.reject(
+        new Error(`Optional award "${award.name}" must have at least one team assigned.`)
+      );
+    }
+  }
 }
 
 /**
  * Handles optional awards stage completion when advancing to review stage
  * Optional awards are defined per event and may include various recognition categories
  */
-export async function handleOptionalAwardsStageCompletion(divisionId: string): Promise<void> {
-  // TODO: Implement optional awards stage completion logic
-  // This could include:
-  // - Finalizing optional award selections
-  // - Creating any automatic awards based on selections
-  // - Calculating statistics or tallies for optional awards
-  // - Validation of optional award assignments before moving to review
+export async function handleOptionalAwardsStageCompletion(
+  divisionId: string,
+  optionalAwards: FinalDeliberationAwards['optionalAwards']
+): Promise<void> {
+  await validateOptionalAwardsAssignment(divisionId, optionalAwards);
 
-  // For now, publish a placeholder event indicating the stage was processed
-  const pubSub = getRedisPubSub();
-  await pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
-    divisionId,
-    message: 'Optional awards stage completed'
-  });
-}
+  await assignOptionalAwardsToTeams(divisionId, optionalAwards);
 
-/**
- * Fetches all optional awards for the division
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-async function getOptionalAwardsForDivision(): Promise<any[]> {
-  // TODO: Fetch optional awards from database
-  // const awards = await db.awards.byDivisionId(divisionId).getAll();
-  // return awards.filter(award => award.is_optional);
-  return [];
+  await updateFinalDeliberationAwards(divisionId);
 }
 
 /**
  * Validates optional award selections
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function validateOptionalAwardSelections(): Promise<void> {
-  // TODO: Add validation logic for optional awards
-  // Check that optional awards are properly assigned within any constraints
+async function validateOptionalAwardsAssignment(
+  divisionId: string,
+  optionalAwards: FinalDeliberationAwards['optionalAwards']
+): Promise<void> {
+  const awards = (await db.awards.byDivisionId(divisionId).getAll()).filter(
+    award => award.name !== 'robot-performance'
+  );
+  for (const [awardName, winners] of Object.entries(optionalAwards)) {
+    for (const award of awards) {
+      if (winners.includes(award.winner_id)) {
+        throw new MutationError(
+          MutationErrorCode.FORBIDDEN,
+          `Award ${awardName} has a winner that was already assigned an award`
+        );
+      }
+    }
+  }
 }
 
 /**
- * Finalizes optional award selections
+ * Assigns optional awards to teams in the database
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function finalizeOptionalAwardSelections(): Promise<void> {
-  // TODO: Implement optional award finalization
-  // Lock in selections, prevent further modifications if needed
+async function assignOptionalAwardsToTeams(
+  divisionId: string,
+  optionalAwards: FinalDeliberationAwards['optionalAwards']
+): Promise<void> {
+  for (const [awardName, teamIds] of Object.entries(optionalAwards)) {
+    const awards = await db.awards.byDivisionId(divisionId).get(awardName);
+    if (awards.length !== teamIds.length) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        `Number of teams assigned to award ${awardName} does not match number of awards available`
+      );
+    }
+    for (let i = 0; i < teamIds.length; i++) {
+      const award = awards[i];
+      const teamId = teamIds[i];
+      await db.awards.assign(award.id, teamId);
+    }
+  }
 }

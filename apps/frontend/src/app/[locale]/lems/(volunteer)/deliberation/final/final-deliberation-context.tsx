@@ -2,6 +2,8 @@ import { createContext, useCallback, useContext, useMemo } from 'react';
 import { JudgingCategory } from '@lems/database';
 import { Award } from '@lems/shared';
 import { useMutation } from '@apollo/client/react';
+import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import {
   computeNormalizedScores,
   computeRoomMetrics,
@@ -44,8 +46,9 @@ export const FinalDeliberationProvider = ({
   division,
   children
 }: FinalDeliberationProviderProps) => {
+  const t = useTranslations('pages.deliberations.final.errors');
   const deliberation = division.judging.finalDeliberation;
-  const awards = division.judging.awards;
+  const deliberationAwards = division.judging.awards;
 
   // Mutations
   const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
@@ -53,38 +56,7 @@ export const FinalDeliberationProvider = ({
   const [updateFinalDeliberationAwards] = useMutation(UPDATE_FINAL_DELIBERATION_AWARDS_MUTATION);
   const [updateManualEligibility] = useMutation(UPDATE_MANUAL_ELIGIBILITY_MUTATION);
 
-  // Helper functions for mutations - use useCallback to ensure stable references
-  const handleStartFinalDeliberation = useCallback(async () => {
-    await startFinalDeliberation({
-      variables: { divisionId }
-    });
-  }, [startFinalDeliberation, divisionId]);
-
-  const handleAdvanceStage = useCallback(async () => {
-    await advanceStage({
-      variables: { divisionId }
-    });
-  }, [advanceStage, divisionId]);
-
-  const handleUpdateFinalDeliberationAwards = useCallback(
-    async (awardName: Award, updatedAward: string[] | Record<number, string>) => {
-      await updateFinalDeliberationAwards({
-        variables: { divisionId, awards: JSON.stringify({ [awardName]: updatedAward }) }
-      });
-    },
-    [updateFinalDeliberationAwards, divisionId]
-  );
-
-  const handleUpdateManualEligibility = useCallback(
-    async (stage: StagesWithNomination, teamIds: string[]) => {
-      await updateManualEligibility({
-        variables: { divisionId, stage, teamIds }
-      });
-    },
-    [updateManualEligibility, divisionId]
-  );
-
-  const awardCounts: Partial<Record<Award, number>> = awards.reduce(
+  const awardCounts: Partial<Record<Award, number>> = deliberationAwards.reduce(
     (acc, award) => {
       acc[award.name as Award] = (acc[award.name as Award] || 0) + 1;
       return acc;
@@ -103,6 +75,64 @@ export const FinalDeliberationProvider = ({
       division.judging.innovationProjectDeliberation.picklist,
       division.judging.coreValuesDeliberation.picklist
     ]
+  );
+
+  const optionalAwards = useMemo<Partial<DeliberationAwards>>(
+    () =>
+      Object.entries(deliberation.optionalAwards).reduce<Partial<Record<Award, string[]>>>(
+        (acc, [awardName, teamIds]) => {
+          acc[awardName as Award] = teamIds as string[];
+          return acc;
+        },
+        {}
+      ),
+    [deliberation.optionalAwards]
+  );
+
+  const awards = useMemo<DeliberationAwards>(
+    () => ({
+      champions: deliberation.champions ?? ({} as Record<number, string>),
+      'core-values': deliberation.coreValues || [],
+      'innovation-project': deliberation.innovationProject || [],
+      'robot-design': deliberation.robotDesign || [],
+      ...optionalAwards
+    }),
+    [deliberation, optionalAwards]
+  );
+
+  // Helper functions for mutations - use useCallback to ensure stable references
+  const handleStartFinalDeliberation = useCallback(async () => {
+    await startFinalDeliberation({
+      variables: { divisionId }
+    });
+  }, [startFinalDeliberation, divisionId]);
+
+  const handleAdvanceStage = useCallback(async () => {
+    await advanceStage({
+      variables: { divisionId }
+    });
+  }, [advanceStage, divisionId]);
+
+  const handleUpdateFinalDeliberationAwards = useCallback(
+    async (awardName: Award, updatedAward: string[] | Record<number, string>) => {
+      if ((updatedAward as string[]).length > (awardCounts[awardName as Award] || 0)) {
+        toast.error(t('award-limit-exceeded'));
+        return;
+      }
+      await updateFinalDeliberationAwards({
+        variables: { divisionId, awards: JSON.stringify({ [awardName]: updatedAward }) }
+      });
+    },
+    [updateFinalDeliberationAwards, divisionId, awardCounts, t]
+  );
+
+  const handleUpdateManualEligibility = useCallback(
+    async (stage: StagesWithNomination, teamIds: string[]) => {
+      await updateManualEligibility({
+        variables: { divisionId, stage, teamIds }
+      });
+    },
+    [updateManualEligibility, divisionId]
   );
 
   const value = useMemo<FinalDeliberationContextValue>(() => {
@@ -142,10 +172,12 @@ export const FinalDeliberationProvider = ({
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
+          division.judging.awards,
           deliberation.coreAwardsManualEligibility || []
         ),
         'optional-awards': computeOptionalAwardsEligibility(
           { ...team, awardNominations },
+          division.judging.awards,
           deliberation.optionalAwardsManualEligibility || []
         )
       };
@@ -196,21 +228,6 @@ export const FinalDeliberationProvider = ({
       .filter(t => eligibleTeams[deliberation.stage as StagesWithNomination].includes(t.id))
       .map(t => t.id);
 
-    const optionalAwards = Object.entries(JSON.parse(deliberation.optionalAwards || '{}')).reduce<
-      Partial<Record<Award, string[]>>
-    >((acc, [awardName, teamIds]) => {
-      acc[awardName as Award] = teamIds as string[];
-      return acc;
-    }, {});
-
-    const awards: DeliberationAwards = {
-      champions: deliberation.champions ?? ({} as Record<number, string>),
-      'core-values': deliberation.coreValues || [],
-      'innovation-project': deliberation.innovationProject || [],
-      'robot-design': deliberation.robotDesign || [],
-      ...optionalAwards
-    };
-
     return {
       division,
       deliberation,
@@ -227,10 +244,11 @@ export const FinalDeliberationProvider = ({
       updateManualEligibility: handleUpdateManualEligibility
     };
   }, [
-    categoryPicklists,
-    awardCounts,
-    deliberation,
     division,
+    deliberation,
+    categoryPicklists,
+    awards,
+    awardCounts,
     handleStartFinalDeliberation,
     handleUpdateFinalDeliberationAwards,
     handleAdvanceStage,

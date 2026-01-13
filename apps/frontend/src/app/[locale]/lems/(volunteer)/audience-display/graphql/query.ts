@@ -17,5 +17,7 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
 `;
 
 export function parseAudienceDisplayData(data: AudienceDisplayData) {
-  return data.division.field.audienceDisplay;
+  return data.division.field.audienceDisplay ?? {
+    activeDisplay: 'logo'
+  };
 }

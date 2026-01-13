@@ -155,6 +155,7 @@
         "awards": "Awards",
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
+        "agenda": "Agenda",
         "general-schedule": "General Schedule"
       },
       "scoreboard": {
@@ -181,6 +182,13 @@
         "advancement": "Eligible for Advancement",
         "place": "{place} Place",
         "no-data": "No awards announced yet"
+      },
+      "agenda": {
+        "no-data": "No agenda events available",
+        "visibility": {
+          "public": "Public",
+          "teams": "Teams"
+        }
       },
       "division-teams": "{divisionName} teams",
       "region": "Region"

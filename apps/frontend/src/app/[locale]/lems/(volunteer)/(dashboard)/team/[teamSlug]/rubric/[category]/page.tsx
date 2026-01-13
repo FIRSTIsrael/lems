@@ -38,7 +38,7 @@ export default function RubricPage() {
     [currentDivision.id]
   );
 
-  const { data: rubric, loading } = usePageData(
+  const { data, loading } = usePageData(
     GET_RUBRIC_QUERY,
     {
       divisionId: currentDivision.id,
@@ -50,20 +50,20 @@ export default function RubricPage() {
   );
 
   const isEditable = useMemo(() => {
-    if (!rubric) return false;
+    if (!data?.rubric) return false;
 
     if (user.role === 'judge-advisor') {
-      return rubric.status !== 'approved';
+      return data.rubric.status !== 'approved';
     }
 
     if (user.role === 'lead-judge') {
-      return user.roleInfo?.['category'] === category && rubric.status !== 'approved';
+      return user.roleInfo?.['category'] === category && data.rubric.status !== 'approved';
     }
 
-    return rubric ? ['empty', 'draft', 'completed'].includes(rubric.status) : false;
-  }, [category, rubric, user.role, user.roleInfo]);
+    return data.rubric ? ['empty', 'draft', 'completed'].includes(data.rubric.status) : false;
+  }, [category, data, user.role, user.roleInfo]);
 
-  if (loading || !rubric) {
+  if (loading || !data?.rubric) {
     return (
       <Box
         sx={{
@@ -89,9 +89,9 @@ export default function RubricPage() {
       />
 
       <Container maxWidth="lg" sx={{ py: 4 }}>
-        <RubricProvider rubric={rubric}>
+        <RubricProvider rubric={data.rubric}>
           <ValidationAlert />
-          {schema.awards && <AwardNominations hasAwards={schema.awards} disabled={!isEditable} />}
+          {schema.awards && <AwardNominations awards={data.awards} disabled={!isEditable} />}
 
           <RubricTable
             sections={schema.sections}

@@ -17,7 +17,7 @@ interface MobileScheduleCardsProps {
 }
 
 export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCardsProps) {
-  const { data, findScoresheetForTeam } = useHeadRefereeData();
+  const { data, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
   const currentTime = useTime({ interval: 1000 });
 
   // Sort matches by scheduled time
@@ -48,6 +48,7 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
           scoresheets={scoresheets}
           isActive={match.id === activeMatchId}
           findScoresheetForTeam={findScoresheetForTeam}
+          searchQuery={filterOptions.searchQuery}
         />
       ))}
     </Stack>
@@ -59,10 +60,19 @@ interface MatchCardProps {
   scoresheets: Scoresheet[];
   isActive: boolean;
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
+  searchQuery: string;
 }
 
-function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: MatchCardProps) {
+function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam, searchQuery }: MatchCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+
+  // Check if a team matches the search query
+  const doesTeamMatchSearch = (teamNumber: string, teamName: string): boolean => {
+    if (!searchQuery.trim()) return true;
+    const escapedQuery = searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQuery, 'i');
+    return regex.test(teamNumber) || regex.test(teamName);
+  };
 
   // Auto-scroll to active match
   useEffect(() => {
@@ -110,6 +120,7 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
               );
 
               const isFiltered = scoresheet ? scoresheets.some(s => s.id === scoresheet.id) : false;
+              const isTeamFiltered = doesTeamMatchSearch(participant.team!.number, participant.team!.name);
 
               return (
                 <Box
@@ -124,6 +135,8 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam }: Matc
                     border: '1px solid',
                     borderColor: 'divider',
                     transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                    opacity: isTeamFiltered ? 1 : 0.35,
+                    filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
                     '&:hover': {
                       backgroundColor: 'action.hover',
                       borderColor: 'action.hover'

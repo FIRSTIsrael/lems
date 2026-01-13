@@ -17,6 +17,7 @@ import {
   alpha
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useAwardTranslations } from '@lems/localization';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import SendIcon from '@mui/icons-material/Send';
@@ -25,6 +26,7 @@ import { useJudgeAdvisor } from './judge-advisor-context';
 
 export function PersonalAwardsSection() {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
+  const { getDescription } = useAwardTranslations();
   const { awards, loading } = useJudgeAdvisor();
   const [awardValues, setAwardValues] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
@@ -152,15 +154,9 @@ export function PersonalAwardsSection() {
                       )}
                     </Box>
                   </Box>
-                  {award.description && (
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ display: 'block', mb: 1.5, fontStyle: 'italic' }}
-                    >
-                      {award.description}
-                    </Typography>
-                  )}
+                  <Box sx={{ mb: 1.5 }}>
+                    {getDescription(award.id)}
+                  </Box>
                   <TextField
                     fullWidth
                     size="small"

@@ -58,7 +58,7 @@ export const parseTeamList = (data: Buffer<ArrayBufferLike>) => {
       }
       for (const record of records) {
         teams.push({
-          number: record.number,
+          number: Number.parseInt(String(record.number)), // Ensure number is a valid integer
           name: record.name,
           affiliation: record.affiliation,
           city: record.city,
