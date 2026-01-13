@@ -22,6 +22,7 @@ import { useFinalDeliberation } from '../final-deliberation-context';
 import { ChampionsStage } from './champions/champions-stage';
 import { CoreAwardsStage } from './core-awards/core-awards-stage';
 import { OptionalAwardsStage } from './optional-awards/optional-awards-stage';
+import { ReviewStage } from './review/review-stage';
 
 const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-awards', 'review'];
 
@@ -108,6 +109,7 @@ export const FinalDeliberationGrid: React.FC = () => {
       {deliberation?.stage === 'champions' && <ChampionsStage />}
       {deliberation?.stage === 'core-awards' && <CoreAwardsStage />}
       {deliberation?.stage === 'optional-awards' && <OptionalAwardsStage />}
+      {deliberation?.stage === 'review' && <ReviewStage />}
     </Box>
   );
 };

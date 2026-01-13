@@ -1057,6 +1057,20 @@
           "team-already-added": "הקבוצה כבר נבחרה לפרס",
           "no-data-available": "אין קבוצות זמינות",
           "select-award": "בחר פרס"
+        },
+        "review": {
+          "title": "סיכום הפרסים",
+          "approve-button": "אישור והפרסום פרסים",
+          "approval-modal": {
+            "title": "אישור פרסום הפרסים",
+            "description": "האם אתה בטוח שברצונך לאשר ולהפיץ את הפרסים האלה?",
+            "warning-text": "⚠️ פרסום יוביל להודעה מיידית על הפרסים ל- Scorekeeper ו- MC, ויפתח את מצגת הפרסים. פעולה זו לא ניתן לביטול.",
+            "confirm": "אישור והפרסום",
+            "cancel": "ביטול",
+            "submitting": "מפרסם...",
+            "success-message": "הפרסים פורסמו בהצלחה",
+            "error-message": "הפרסום נכשל"
+          }
         }
       }
     }
