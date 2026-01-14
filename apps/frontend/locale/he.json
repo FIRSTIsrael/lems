@@ -5,6 +5,8 @@
         "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
         "title": "מחוון {category} של קבוצה #{teamNumber} {teamName}",
         "no-rubrics-found": "לא נמצאו מחוונים",
+        "team-not-found": "קבוצה {teamSlug} לא נמצאה באירוע {eventSlug}",
+        "no-rubric-data": "לא נמצאו נתוני מחוון",
         "feedback": {
           "title": "פידבק ממפגשי השיפוט",
           "page-title": "פידבק ממפגשי השיפוט של קבוצה #{teamNumber} - {teamName}",

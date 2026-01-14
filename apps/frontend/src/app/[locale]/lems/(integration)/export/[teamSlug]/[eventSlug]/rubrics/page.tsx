@@ -1,14 +1,16 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useMemo, use } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { rubrics as rubricSchemas } from '@lems/shared/rubrics';
 import Image from 'next/image';
 import { Box, CircularProgress, Alert, Typography } from '@mui/material';
+import { useQuery } from '@apollo/client/react';
 import { ExportRubricTable } from './components/export-rubric-table';
 import { CombinedFeedbackTable } from './components/combined-feedback-table';
-import { Rubric, OptionalAward } from './types';
+import { GET_TEAM_INFO_QUERY, GET_RUBRICS_QUERY, RubricInfo } from './graphql/query';
 
 interface RubricsExportPageProps {
   params: Promise<{
@@ -22,35 +24,88 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
   const params = use(paramsPromise);
   const t = useTranslations('pages.exports.rubrics');
   const { getTerm } = useRubricsGeneralTranslations();
-  const [rubrics, setRubrics] = useState<Rubric[]>([]);
-  const [optionalAwards, setOptionalAwards] = useState<OptionalAward[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const teamSlugUpper = params.teamSlug.toUpperCase();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const { eventSlug, teamSlug } = params;
-        const response = await fetch(
-          `/api/export/rubrics?eventSlug=${eventSlug}&teamSlug=${teamSlug}`
-        );
+  const {
+    data: teamInfoData,
+    loading: teamInfoLoading,
+    error: teamInfoError
+  } = useQuery(GET_TEAM_INFO_QUERY, {
+    variables: {
+      eventSlug: params.eventSlug,
+      teamSlug: teamSlugUpper
+    },
+    fetchPolicy: 'no-cache'
+  });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch rubrics');
+  const divisions = teamInfoData?.event?.divisions || [];
+  const division = divisions.find(div => div.teams?.length > 0);
+  const team = division?.teams?.[0];
+  const divisionId = division?.id;
+  const teamId = team?.id;
+
+  const teamNotFound = teamInfoData?.event && divisions.length > 0 && !team;
+
+  const {
+    data: rubricsData,
+    loading: rubricsLoading,
+    error: rubricsError
+  } = useQuery(GET_RUBRICS_QUERY, {
+    variables: { divisionId: divisionId!, teamId: teamId! },
+    skip: !divisionId || !teamId || teamNotFound,
+    fetchPolicy: 'no-cache'
+  });
+
+  let rubrics: Array<{
+    divisionName: string;
+    teamNumber: number;
+    teamName: string;
+    rubricCategory: string;
+    seasonName: string;
+    eventName: string;
+    scores: Record<string, number>;
+    status: string;
+    feedback: { greatJob: string; thinkAbout: string };
+    schema: any;
+  }> = [];
+  if (rubricsData?.division && team && teamInfoData?.event) {
+    const divisionData = rubricsData.division;
+    rubrics = divisionData.judging.rubrics.map((rubric: RubricInfo) => {
+      const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
+      const schema = rubricSchemas[categoryKey];
+
+      const fields = rubric.data?.fields || {};
+      const scores: Record<string, number> = {};
+      Object.entries(fields).forEach(([fieldId, fieldData]) => {
+        if (fieldData && typeof fieldData === 'object' && 'value' in fieldData) {
+          const fieldValue = (fieldData as { value: number | null }).value;
+          if (fieldValue !== null) {
+            scores[fieldId] = fieldValue;
+          }
         }
+      });
 
-        const data = await response.json();
-        setRubrics(data.rubrics || []);
-        setOptionalAwards(data.optionalAwards || []);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load rubrics');
-      } finally {
-        setLoading(false);
-      }
-    };
+      return {
+        divisionName: divisionData.name,
+        teamNumber: team.number,
+        teamName: team.name,
+        rubricCategory: categoryKey,
+        seasonName: '',
+        eventName: teamInfoData.event.name,
+        scores: scores,
+        status: rubric.status,
+        feedback: rubric.data?.feedback || { greatJob: '', thinkAbout: '' },
+        schema: schema
+      };
+    });
+  }
 
-    fetchData();
-  }, [params]);
+  const optionalAwards = useMemo(() => {
+    return rubricsData?.division?.judging?.awards || [];
+  }, [rubricsData]);
+
+  const loading = teamInfoLoading || rubricsLoading;
+  const error = teamInfoError?.message || rubricsError?.message || '';
 
   if (loading) {
     return (
@@ -58,6 +113,16 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}
       >
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (teamNotFound || !team) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">
+          {t('team-not-found', { teamSlug: teamSlugUpper, eventSlug: params.eventSlug })}
+        </Alert>
       </Box>
     );
   }
@@ -140,7 +205,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                     feedback={rubric.feedback}
                   />
                 ) : (
-                  <Alert severity="info">No rubric data available</Alert>
+                  <Alert severity="info">{t('no-rubric-data')}</Alert>
                 )}
               </Box>
             ))}

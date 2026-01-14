@@ -5,6 +5,8 @@
         "metadata": "Generated from FIRST Israel event system | {eventName} | Season {seasonName}",
         "title": "Rubric {category} for Team #{teamNumber} {teamName}",
         "no-rubrics-found": "No rubrics found",
+        "team-not-found": "Team {teamSlug} not found in event {eventSlug}",
+        "no-rubric-data": "No rubric data available",
         "feedback": {
           "title": "Judging Session Feedback",
           "page-title": "Judging Session Feedback for Team #{teamNumber} - {teamName}",
