@@ -15,7 +15,7 @@
   },
   "private": true,
   "dependencies": {
-    "@apollo/client": "^4.0.11",
+    "@apollo/client": "^4.0.13",
     "@apollo/client-integration-nextjs": "^0.14.4",
     "@apollo/server": "^5.2.0",
     "@as-integrations/express5": "^1.1.2",
