@@ -12,8 +12,7 @@ import {
   Award,
   Division,
   JudgingSession,
-  RobotGameMatch,
-  AgendaEvent
+  RobotGameMatch
 } from '@lems/types/api/portal';
 import { makePortalTeamResponse } from '../teams/util';
 
@@ -90,7 +89,17 @@ export const makePortalJudgingSessionResponse = (
   };
 };
 
-export const makePortalAgendaResponse = (agendaEvent: DbAgendaEvent): AgendaEvent => {
+export const makePortalAgendaResponse = (
+  agendaEvent: DbAgendaEvent
+): {
+  id: string;
+  title: string;
+  startTime: Date;
+  duration: number;
+  divisionId: string;
+  location: string | null;
+  visibility: 'public' | 'judging' | 'field' | 'teams';
+} => {
   return {
     id: agendaEvent.id,
     title: agendaEvent.title,

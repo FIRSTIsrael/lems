@@ -8,56 +8,13 @@ import Image from 'next/image';
 import { Box, CircularProgress, Alert, Typography } from '@mui/material';
 import { ExportRubricTable } from './components/export-rubric-table';
 import { CombinedFeedbackTable } from './components/combined-feedback-table';
-
-interface RubricSchema {
-  sections: Array<{
-    id: string;
-    fields: Array<{ id: string; coreValues?: boolean }>;
-  }>;
-  feedback?: boolean;
-}
-
-export interface Rubric {
-  divisionName: string;
-  teamNumber: number;
-  teamName: string;
-  rubricCategory: string;
-  seasonName: string;
-  eventName: string;
-  scores: Record<string, number | null>;
-  status?: string;
-  feedback?: { greatJob: string; thinkAbout: string };
-  schema?: RubricSchema;
-  translations?: {
-    sections: Record<
-      string,
-      {
-        title: string;
-        description: string;
-        fields: Record<
-          string,
-          {
-            beginning: string;
-            developing: string;
-            accomplished: string;
-          }
-        >;
-      }
-    >;
-  };
-}
-
-interface OptionalAward {
-  id: string;
-  name: string;
-  description?: string;
-}
+import { Rubric, OptionalAward } from './types';
 
 interface RubricsExportPageProps {
   params: Promise<{
     locale: string;
+    teamSlug: string;
     eventSlug: string;
-    teamId: string;
   }>;
 }
 
@@ -73,8 +30,10 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { eventSlug, teamId } = params;
-        const response = await fetch(`/api/export/rubrics?eventSlug=${eventSlug}&teamId=${teamId}`);
+        const { eventSlug, teamSlug } = params;
+        const response = await fetch(
+          `/api/export/rubrics?eventSlug=${eventSlug}&teamSlug=${teamSlug}`
+        );
 
         if (!response.ok) {
           throw new Error('Failed to fetch rubrics');
