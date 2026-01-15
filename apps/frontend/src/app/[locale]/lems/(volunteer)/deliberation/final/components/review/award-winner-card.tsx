@@ -2,30 +2,16 @@
 
 import { Box, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { EnrichedTeam } from '../../types';
 
 interface AwardWinnerCardProps {
-  award: {
-    id: string;
-    place: number;
-    type: string;
-    showPlaces: boolean;
-    winner?: {
-      team?: {
-        id: string;
-        name: string;
-        number: string;
-      };
-      name?: string;
-    };
-  };
+  winner: EnrichedTeam;
+  index: number;
 }
 
-export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ award }) => {
+export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ winner, index }) => {
   const t = useTranslations('pages.deliberations.final.review');
-  const winnerInfo = award.winner?.team
-    ? `${award.winner.team.number} | ${award.winner.team.name}`
-    : award.winner?.name || '-';
-
+  const winnerInfo = `${winner.number} | ${winner.name}`;
   return (
     <Box
       sx={{
@@ -41,7 +27,7 @@ export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ award }) => {
       }}
     >
       <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-        {award.showPlaces ? t('place', { place: award.place }) : `#${award.place}`}
+        {t('place', { place: index + 1 })}
       </Typography>
       <Typography
         variant="body2"

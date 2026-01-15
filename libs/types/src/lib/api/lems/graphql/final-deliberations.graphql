@@ -29,6 +29,9 @@ type FinalDeliberation {
   "Core Values award winners (ordered list of team IDs)"
   coreValues: [String!]!
 
+  "Robot Performance award winners (ordered list of team IDs)"
+  robotPerformance: [String!]!
+
   "Optional awards - dynamic based on division's award configuration with automatic_assignment=true. Key is award name, value is ordered list of team IDs. Returned as JSON."
   optionalAwards: JSON!
 

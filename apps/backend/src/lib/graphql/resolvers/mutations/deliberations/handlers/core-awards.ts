@@ -75,6 +75,7 @@ export async function handleCoreAwardsStageCompletion(
     .map(t => t.teamId);
 
   await assignExcellenceInEngineeringAwards(
+    divisionId,
     excellenceInEngineeringWinners,
     excellenceInEngineeringAwards
   );
@@ -121,14 +122,27 @@ async function assignCoreAwardsToTeams(
 }
 
 const assignExcellenceInEngineeringAwards = async (
-  teamsWithRanks: string[],
-  robotPerformanceAwards: Award[]
+  divisionId: string,
+  excellenceInEngineeringTeams: string[],
+  excellenceInEngineeringAwards: Award[]
 ): Promise<void> => {
-  for (let i = 0; i < robotPerformanceAwards.length; i++) {
-    const award = robotPerformanceAwards[i];
-    const teamId = teamsWithRanks[i];
+  for (let i = 0; i < excellenceInEngineeringAwards.length; i++) {
+    const award = excellenceInEngineeringAwards[i];
+    const teamId = excellenceInEngineeringTeams[i];
     if (teamId) {
       await db.awards.assign(award.id, teamId);
     }
+  }
+
+  const finalDeliberation = await db.finalDeliberations.byDivision(divisionId).get();
+  if (finalDeliberation) {
+    const updatedAwards = { ...finalDeliberation.awards };
+    updatedAwards.optionalAwards = {
+      ...updatedAwards.optionalAwards,
+      'excellence-in-engineering': excellenceInEngineeringTeams
+    };
+    await db.finalDeliberations.byDivision(divisionId).update({
+      awards: updatedAwards
+    });
   }
 };

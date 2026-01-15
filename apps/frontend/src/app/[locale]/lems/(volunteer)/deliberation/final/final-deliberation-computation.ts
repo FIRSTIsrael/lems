@@ -1,7 +1,6 @@
-import { JudgingCategory } from '@lems/database';
+import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { OptionalAwardNominations, RanksPerCategory } from './types';
-import { Division, TeamWinner } from './graphql';
 
 /**
  * Extracts optional award nominations from a rubric
@@ -97,16 +96,18 @@ export const computeChampionsEligibility = (
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
-  awards: Division['judging']['awards'],
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
-  const winningTeamIds = awards
-    .filter(award => award.type === 'TEAM' && (award?.winner as TeamWinner)?.team)
-    .map(award => award.id);
+  const winningTeamIds = Object.entries(awards)
+    .filter(([key]) => key !== 'robot-performance')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+    .flat();
   // Check if team has already won an award
   if (winningTeamIds.includes(team.id)) return false;
 
@@ -118,16 +119,18 @@ export const computeCoreAwardsEligibility = (
 
 export const computeOptionalAwardsEligibility = (
   team: Team & { awardNominations: OptionalAwardNominations },
-  awards: Division['judging']['awards'],
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
-  const winningTeamIds = awards
-    .filter(award => award.type === 'TEAM' && (award?.winner as TeamWinner)?.team)
-    .map(award => award.id);
+  const winningTeamIds = Object.entries(awards)
+    .filter(([key]) => key !== 'robot-performance')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+    .flat();
   // Check if team has already won an award
   if (winningTeamIds.includes(team.id)) return false;
 

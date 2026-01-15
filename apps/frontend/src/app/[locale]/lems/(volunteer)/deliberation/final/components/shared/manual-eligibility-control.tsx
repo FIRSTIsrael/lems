@@ -24,7 +24,7 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
 }) => {
   const theme = useTheme();
   const t = useTranslations(`pages.deliberations.final.manual-eligibility-control`);
-  const { division, teams, deliberation, updateManualEligibility } = useFinalDeliberation();
+  const { awards, teams, deliberation, updateManualEligibility } = useFinalDeliberation();
   const [selectedTeamId, setSelectedTeamId] = useState<string | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -36,22 +36,22 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
     [deliberation, manualEligibilityKey]
   );
 
-  const awardedTeamIds = useMemo(() => {
-    const ids = new Set<string>();
-    division.judging.awards.forEach(award => {
-      if (award.winner && 'team' in award.winner) {
-        ids.add(award.winner.team.id);
-      }
-    });
-    return ids;
-  }, [division.judging.awards]);
+  const awardedTeamIds = useMemo(
+    () =>
+      Object.entries(awards)
+        .filter(([key]) => key !== 'robot-performance')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+        .flat(),
+    [awards]
+  );
 
   // Get available teams (not in current selections, arrived, not disqualified)
   const availableTeams = useMemo(() => {
     return teams.filter(
       team =>
         !team.eligibility[stage] &&
-        !awardedTeamIds.has(team.id) &&
+        !awardedTeamIds.includes(team.id) &&
         team.arrived &&
         !team.disqualified
     );

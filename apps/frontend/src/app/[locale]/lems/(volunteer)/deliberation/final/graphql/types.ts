@@ -12,6 +12,7 @@ export interface FinalJudgingDeliberation {
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
+  robotPerformance: string[];
   optionalAwards: Record<string, string[]>;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];

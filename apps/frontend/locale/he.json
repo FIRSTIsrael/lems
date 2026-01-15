@@ -1017,6 +1017,7 @@
         "core-awards": {
           "title": "פרסי ליבה",
           "description": "בחרו קבוצות לפרסי הליבה",
+          "select-team": "בחרו קבוצה...",
           "table-rank": "דירוג",
           "table-team": "קבוצה",
           "table-room": "חדר",
