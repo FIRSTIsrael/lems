@@ -11,6 +11,9 @@ type Event {
   "Display name of the event"
   name: String!
 
+  "Display name of the season"
+  seasonName: String
+
   "ISO 8601 datetime when the event starts"
   startDate: String!
 

@@ -5,7 +5,7 @@ import {
   JudgingRoom as DbJudgingRoom,
   AgendaEvent as DbAgendaEvent
 } from '@lems/database';
-import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
+import { AgendaEvent, TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,

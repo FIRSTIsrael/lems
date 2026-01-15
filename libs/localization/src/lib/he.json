@@ -405,8 +405,11 @@
       "exceeds": "מצטיינת"
     },
     "categories": {
-      "core-values": {},
+      "core-values": {
+        "title": "ערכי הליבה"
+      },
       "innovation-project": {
+        "title": "פרויקט החדשנות",
         "sections": {
           "identify": {
             "title": "זיהוי",
@@ -491,6 +494,7 @@
         }
       },
       "robot-design": {
+        "title": "תכנון הרובוט",
         "sections": {
           "identify": {
             "title": "זיהוי",

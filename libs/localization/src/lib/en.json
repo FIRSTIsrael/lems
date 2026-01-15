@@ -405,8 +405,11 @@
       "exceeds": "EXCEEDS"
     },
     "categories": {
-      "core-values": {},
+      "core-values": {
+        "title": "Core Values"
+      },
       "innovation-project": {
+        "title": "Innovation Project",
         "sections": {
           "identify": {
             "title": "IDENTIFY",
@@ -491,6 +494,7 @@
         }
       },
       "robot-design": {
+        "title": "Robot Design",
         "sections": {
           "identify": {
             "title": "IDENTIFY",
