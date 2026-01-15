@@ -61,8 +61,8 @@ export default function AudienceDisplayPage() {
     },
     (rawData): ParsedAudienceDisplayData => {
       const displayState = parseAudienceDisplayData(rawData);
-      const awards = rawData.division.field.judging?.awards ?? [];
-      const awardsAssigned = rawData.division.awards_assigned;
+      const awards = rawData.division.judging?.awards ?? [];
+      const awardsAssigned = rawData.division.awardsAssigned;
       return { displayState, awards, awardsAssigned };
     },
     subscriptions

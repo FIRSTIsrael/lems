@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { Box, Stack } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { useAudienceDisplayData } from '../audience-display-context';
+import { useAudienceDisplay } from '../audience-display-context';
 import {
   createMatchAbortedSubscription,
   createMatchCompletedSubscription,
@@ -25,7 +25,7 @@ import { useFieldSounds } from './hooks/use-field-sounds';
 
 export const ScoreboardDisplay = () => {
   const { currentDivision } = useEvent();
-  const { settings } = useAudienceDisplayData();
+  const { settings } = useAudienceDisplay();
   const scoreboardSettings = settings?.scoreboard;
   const playSound = useFieldSounds();
 

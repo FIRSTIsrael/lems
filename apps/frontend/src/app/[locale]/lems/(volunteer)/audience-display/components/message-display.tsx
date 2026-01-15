@@ -1,10 +1,10 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import { useAudienceDisplayData } from './audience-display-context';
+import { useAudienceDisplay } from './audience-display-context';
 
 export const MessageDisplay = () => {
-  const { settings } = useAudienceDisplayData();
+  const { settings } = useAudienceDisplay();
   const message = (settings?.message?.value as string) || '';
 
   return (

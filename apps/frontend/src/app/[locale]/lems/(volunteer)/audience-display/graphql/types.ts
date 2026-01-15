@@ -12,24 +12,16 @@ export interface AudienceDisplayState {
 }
 
 export interface TeamWinner {
-  id: string;
-  name: string;
-  number: number;
-  affiliation: {
+  team: {
     id: string;
     name: string;
-    city: string;
-  } | null;
+    number: string;
+    affiliation: string;
+  };
 }
 
 export interface PersonalWinner {
-  id: string;
   name: string;
-  team: {
-    id: string;
-    number: number;
-    name: string;
-  };
 }
 
 export interface Award {
@@ -45,12 +37,12 @@ export interface Award {
 export interface AudienceDisplayData {
   division: {
     id: string;
-    awards_assigned: boolean;
+    awardsAssigned: boolean;
     field: {
       audienceDisplay: AudienceDisplayState | null;
-      judging: {
-        awards: Award[];
-      } | null;
+    };
+    judging: {
+      awards: Award[];
     };
   };
 }

@@ -679,13 +679,18 @@
           "close": "סגירה",
           "sections": {
             "message": "הגדרות הודעה",
-            "scoreboard": "הגדרות לוח ניקוד"
+            "scoreboard": "הגדרות לוח ניקוד",
+            "awards": "הגדרות פרסים"
           },
           "fields": {
             "message-placeholder": "הזינו טקסט",
             "show-active-match": "הצג מקצה נוכחי",
             "show-previous-match": "הצג מקצה קודם",
-            "show-sponsors-row": "הצג שורת ספונסרים"
+            "show-sponsors-row": "הצג שורת ספונסרים",
+            "award-winner-slide-style": "סגנון שקופית זוכה הפרס",
+            "award-slide-style-chroma": "Chroma Key (מסך ירוק)",
+            "award-slide-style-full": "מסך מלא",
+            "award-slide-style-both": "שני הסגנונות"
           },
           "errors": {
             "update-failed": "עדכון הגדרת תצוגת הקהל נכשל."

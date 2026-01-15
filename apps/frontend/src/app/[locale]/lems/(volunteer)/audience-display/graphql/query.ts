@@ -1,45 +1,38 @@
 import { gql } from '@apollo/client';
-import { AudienceDisplayData, AudienceDisplayState } from './types';
+import { AudienceDisplayData } from './types';
 
 export const GET_AUDIENCE_DISPLAY_DATA = gql`
   query GetAudienceDisplayData($divisionId: String!) {
     division(id: $divisionId) {
       id
-      awards_assigned
+      awardsAssigned
       field {
         divisionId
         audienceDisplay {
           activeDisplay
           settings
         }
-        judging {
-          awards {
-            id
-            name
-            index
-            place
-            type
-            isOptional
-            winner {
-              ... on TeamWinner {
+      }
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          winner {
+            ... on TeamWinner {
+              team {
                 id
                 name
                 number
-                affiliation {
-                  id
-                  name
-                  city
-                }
+                affiliation
               }
-              ... on PersonalWinner {
-                id
-                name
-                team {
-                  id
-                  number
-                  name
-                }
-              }
+            }
+            ... on PersonalWinner {
+              name
             }
           }
         }
