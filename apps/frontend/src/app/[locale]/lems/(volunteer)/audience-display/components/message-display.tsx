@@ -4,7 +4,8 @@ import { Box, Typography } from '@mui/material';
 import { useAudienceDisplay } from './audience-display-context';
 
 export const MessageDisplay = () => {
-  const { settings } = useAudienceDisplay();
+  const { displayState } = useAudienceDisplay();
+  const settings = displayState?.settings;
   const message = (settings?.message?.value as string) || '';
 
   return (
