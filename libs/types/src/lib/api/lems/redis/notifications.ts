@@ -16,6 +16,7 @@ export enum RedisEventTypes {
   MATCH_ABORTED = 'matchAborted',
   AUDIENCE_DISPLAY_SWITCHED = 'audienceDisplaySwitched',
   AUDIENCE_DISPLAY_SETTING_UPDATED = 'audienceDisplaySettingUpdated',
+  AWARDS_PRESENTATION_UPDATED = 'awardsPresentationUpdated',
   PARTICIPANT_STATUS_UPDATED = 'participantStatusUpdated',
   RUBRIC_UPDATED = 'rubricUpdated',
   RUBRIC_STATUS_CHANGED = 'rubricStatusChanged',
@@ -24,5 +25,5 @@ export enum RedisEventTypes {
   DELIBERATION_UPDATED = 'deliberationUpdated',
   DELIBERATION_STATUS_CHANGED = 'deliberationStatusChanged',
   FINAL_DELIBERATION_UPDATED = 'finalDeliberationUpdated',
-  FINAL_DELIBERATION_STATUS_CHANGED = 'finalDeliberationStatusChanged',
+  FINAL_DELIBERATION_STATUS_CHANGED = 'finalDeliberationStatusChanged'
 }

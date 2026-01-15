@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, Box, Typography } from '@mui/material';
 import { Slide, Appear } from '@lems/presentations';
-import { Award, TeamWinner, PersonalWinner } from '../graphql/types';
+import { Award, TeamWinner, PersonalWinner } from '../graphql';
 
 interface AwardWinnerSlideProps {
   award: Award;

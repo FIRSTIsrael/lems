@@ -6,6 +6,12 @@ export type AudienceDisplayScreen =
   | 'message'
   | 'awards';
 
+export interface AwardsPresentation {
+  slideId?: string;
+  slideIndex: number;
+  stepIndex: number;
+}
+
 export interface DivisionState {
   divisionId: string;
   field?: {
@@ -15,6 +21,7 @@ export interface DivisionState {
   };
   audienceDisplay?: {
     activeDisplay: AudienceDisplayScreen;
+    awardsPresentation?: AwardsPresentation;
     settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
   };
 }

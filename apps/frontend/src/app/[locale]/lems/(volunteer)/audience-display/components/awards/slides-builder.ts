@@ -6,7 +6,7 @@ import {
   AdvancingTeamsSlide,
   BuildAwardsSlidesOptions
 } from '@lems/presentations';
-import { Award } from './graphql/types';
+import { Award } from './graphql';
 
 export type { AwardWinnerSlideStyle };
 

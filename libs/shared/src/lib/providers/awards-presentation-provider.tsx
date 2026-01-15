@@ -7,6 +7,17 @@ export interface AudienceDisplayState {
   settings?: Record<string, Record<string, unknown>>;
 }
 
+interface TeamWinner {
+  id: string;
+  name: string;
+  number: string;
+  affiliation: string;
+}
+
+interface PersonalWinner {
+  name: string;
+}
+
 export interface Award {
   id: string;
   name: string;
@@ -14,15 +25,7 @@ export interface Award {
   place: number;
   type: 'PERSONAL' | 'TEAM';
   isOptional: boolean;
-  winner?: {
-    team?: {
-      id: string;
-      name: string;
-      number: string;
-      affiliation: string;
-    };
-    name?: string;
-  } | null;
+  winner?: PersonalWinner | TeamWinner | null;
 }
 
 export interface AwardsPresentationContextData {

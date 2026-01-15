@@ -11,6 +11,20 @@ enum AudienceDisplayScreen {
 }
 
 """
+Awards presentation settings for the audience display
+"""
+type AwardsPresentation {
+  "Current slide id"
+  slideId: String
+
+  "Current slide index"
+  slideIndex: Int!
+
+  "Current step in slide"
+  stepIndex: Int!
+}
+
+"""
 Audience display configuration
 """
 type AudienceDisplay {
@@ -19,6 +33,9 @@ type AudienceDisplay {
 
   "Settings for each display screen"
   settings: JSON
+
+  "Awards presentation state"
+  awardsPresentation: AwardsPresentation
 }
 
 """
@@ -211,6 +228,14 @@ type AudienceDisplaySettingEvent {
 }
 
 """
+Represents an event when the awards presentation is updated
+"""
+type PresentationUpdatedEvent {
+  "Awards presentation state"
+  awardsPresentation: AwardsPresentation!
+}
+
+"""
 Represents an event when a participant's status (present/ready) is updated
 """
 type ParticipantStatusUpdatedEvent {
@@ -280,6 +305,20 @@ extend type Mutation {
     "The new value for the setting"
     settingValue: JSON!
   ): AudienceDisplaySettingEvent!
+
+  """
+  Update the awards presentation state for the audience display.
+  """
+  updatePresentation(
+    "The ID of the division containing the audience display"
+    divisionId: String!
+    "The new awards presentation slide ID"
+    slideId: String
+    "The new awards presentation slide index"
+    slideIndex: Int!
+    "The new awards presentation step index"
+    stepIndex: Int!
+  ): PresentationUpdatedEvent!
 
   """
   Update a participant's status (present/ready) in a match.
@@ -354,6 +393,14 @@ extend type Subscription {
     "The division ID to listen for updates in"
     divisionId: String!
   ): AudienceDisplaySettingEvent!
+
+  """
+  Subscribe to events when the awards presentation is updated in a division.
+  """
+  presentationUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): PresentationUpdatedEvent!
 
   """
   Subscribe to events when a participant's status is updated in a match.

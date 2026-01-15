@@ -1,1 +1,1 @@
-export type { Award } from '../../graphql/types';
+export type { Award, TeamWinner, PersonalWinner } from '../../../graphql/types';

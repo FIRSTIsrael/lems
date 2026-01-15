@@ -36,6 +36,7 @@ import {
   completeFinalDeliberationResolver,
   completeDeliberationResolver
 } from './deliberations';
+import { updatePresentationResolver } from './audience-display/update-presentation';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -48,6 +49,7 @@ export const mutationResolvers = {
   updateParticipantStatus: updateParticipantStatusResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
   updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
+  updatePresentation: updatePresentationResolver,
   updateRubricValue: updateRubricValueResolver,
   updateRubricFeedback: updateRubricFeedbackResolver,
   updateRubricStatus: updateRubricStatusResolver,

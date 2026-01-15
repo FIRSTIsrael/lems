@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, Box, Typography, Grid } from '@mui/material';
 import { Slide, Stepper } from '@lems/presentations';
-import { Award, TeamWinner } from '../graphql/types';
+import { Award, TeamWinner } from '../graphql';
 
 interface AdvancingTeamsSlideProps {
   awards: Award[];
@@ -38,9 +38,11 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
         </Typography>
         <Grid container spacing={4} sx={{ maxWidth: '64rem' }}>
           <Stepper
-            values={teams as unknown[]}
+            values={teams as TeamWinner[]}
             render={(team: unknown) => {
               const teamData = team as TeamWinner;
+
+              if (!teamData) return null;
               return (
                 <Grid size={6} key={teamData.team.id}>
                   <Box

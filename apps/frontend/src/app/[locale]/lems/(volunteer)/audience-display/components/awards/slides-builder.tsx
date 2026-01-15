@@ -2,7 +2,7 @@ import React from 'react';
 import { TitleSlide } from './slides/title-slide';
 import { AwardWinnerSlide } from './slides/award-winner-slide';
 import { AdvancingTeamsSlide } from './slides/advancing-teams-slide';
-import { Award } from './graphql/types';
+import { Award } from './graphql';
 
 export type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
 
