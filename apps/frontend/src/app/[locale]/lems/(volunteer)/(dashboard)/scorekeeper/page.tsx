@@ -74,7 +74,7 @@ export default function ScorekeeperPage() {
     );
   }
 
-  const isAwardsMode = data.audienceDisplay?.activeDisplay === 'awards';
+  const isAwardsMode = data.field?.audienceDisplay?.activeDisplay === 'awards';
 
   return (
     <>
