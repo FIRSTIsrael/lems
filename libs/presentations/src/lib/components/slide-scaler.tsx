@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef } from 'react';
 import { Box, BoxProps } from '@mui/material';
 import { useDimensions } from '../hooks/use-dimensions';
@@ -13,8 +15,21 @@ export const SlideScaler: React.FC<SlideScalerProps> = ({ children, ...props }) 
   const ref = useRef(null);
   const { width, height } = useDimensions(ref);
 
+  console.log(width, height);
+
   return (
-    <Box ref={ref} {...props}>
+    <Box
+      ref={ref}
+      {...props}
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        ...props.sx
+      }}
+    >
       <div
         style={{
           display: 'flex',
@@ -22,8 +37,7 @@ export const SlideScaler: React.FC<SlideScalerProps> = ({ children, ...props }) 
           justifyContent: 'center',
           height: DEFAULT_HEIGHT,
           width: DEFAULT_WIDTH,
-          transform: `scale(${Math.min(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT)})`,
-          transformOrigin: 'top right'
+          transform: `scale(${Math.min(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT)})`
         }}
       >
         {children}

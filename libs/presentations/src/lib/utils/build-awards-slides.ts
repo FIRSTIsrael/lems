@@ -1,4 +1,15 @@
+'use client';
+
 import React from 'react';
+import { TitleSlide } from '../components/slides/title-slide';
+import {
+  AwardWinnerSlide,
+  type AwardWinnerSlideAward
+} from '../components/slides/award-winner-slide';
+import {
+  AdvancingTeamsSlide,
+  type AdvancingTeamsAward
+} from '../components/slides/advancing-teams-slide';
 
 export type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
 
@@ -11,29 +22,23 @@ export interface Award {
   winner?: unknown;
 }
 
-export interface AwardSlideComponents {
-  TitleSlide: React.ComponentType<{
-    primary: string;
-    secondary?: string;
-    divisionColor?: string;
-  }>;
-  AwardWinnerSlide: React.ComponentType<{
-    award: Award & { place: number };
-    chromaKey: boolean;
-  }>;
-  AdvancingTeamsSlide: React.ComponentType<{ awards: Award[] }>;
-}
-
 export interface BuildAwardsSlidesOptions {
   getAwardName?: (awardId: string) => string | React.ReactNode;
   getAwardDescription?: (awardId: string) => string | React.ReactNode;
   divisionColor?: string;
 }
 
+/**
+ * Builds an array of slide components for awards presentation.
+ * Components are automatically imported from the presentations library.
+ * @param awards - Array of award objects to present
+ * @param style - Style of award winner slides: 'chroma', 'full', or 'both'
+ * @param options - Optional configuration including award name/description getters and division color
+ * @returns Array of React elements representing presentation slides
+ */
 export function buildAwardsSlides(
   awards: Award[],
   style: AwardWinnerSlideStyle = 'both',
-  components: AwardSlideComponents,
   options?: BuildAwardsSlidesOptions
 ): React.ReactNode[] {
   if (!awards || awards.length === 0) {
@@ -41,7 +46,6 @@ export function buildAwardsSlides(
   }
 
   const slides: React.ReactNode[] = [];
-  const { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } = components;
   const { getAwardName, getAwardDescription, divisionColor } = options || {};
 
   // Group awards by index
@@ -91,7 +95,7 @@ export function buildAwardsSlides(
         React.createElement(TitleSlide, {
           key: `title-description-${index}`,
           primary: `פרס ${awardDisplayName}`,
-          secondary: awardDescription,
+          secondary: String(awardDescription),
           divisionColor: color
         })
       );
@@ -99,10 +103,12 @@ export function buildAwardsSlides(
 
     // Add winner slides based on style
     awardGroup.forEach(award => {
-      const awardWithPlace = {
-        ...award,
+      const awardWithPlace: AwardWinnerSlideAward = {
+        id: award.id,
+        name: award.name,
         place: showPlace ? award.place : 0,
-        divisionColor: color
+        divisionColor: color,
+        winner: award.winner as AwardWinnerSlideAward['winner']
       };
 
       if (['chroma', 'both'].includes(style)) {
@@ -135,7 +141,7 @@ export function buildAwardsSlides(
     );
     const advancingSlide = React.createElement(AdvancingTeamsSlide, {
       key: 'advancing-teams',
-      awards: advancingAwards
+      awards: advancingAwards as AdvancingTeamsAward[]
     });
     if (firstChampionsIndex >= 0) {
       slides.splice(firstChampionsIndex, 0, advancingSlide);
@@ -146,3 +152,6 @@ export function buildAwardsSlides(
 
   return slides;
 }
+
+// Export component types for backward compatibility
+export { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide };

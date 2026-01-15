@@ -9,7 +9,7 @@ interface SlideDisplayProps {
   deckRef: React.RefObject<DeckRef>;
   initialState: DeckView;
   onViewUpdate?: (view: DeckView) => void;
-  awardSlides: React.ReactNode;
+  awardSlides: React.ReactNode[];
 }
 
 export const SlideDisplay: React.FC<SlideDisplayProps> = ({

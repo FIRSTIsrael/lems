@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useEffect, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { useSlide } from '../hooks/use-slides';

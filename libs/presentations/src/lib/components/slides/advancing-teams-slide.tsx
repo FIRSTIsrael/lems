@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import { Stack, Box, Typography, Paper } from '@mui/material';
 import { Slide } from '../slide';

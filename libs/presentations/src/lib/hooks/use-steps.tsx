@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useContext, useRef, useEffect, useId } from 'react';
 import { SlideContext } from '../components/slide';
 import sortByKeyComparator from '../utils/sort-by';

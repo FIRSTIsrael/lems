@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode, useContext, type JSX } from 'react';
 import { motion, TargetAndTransition } from 'motion/react';
 import { useSteps } from '../hooks/use-steps';

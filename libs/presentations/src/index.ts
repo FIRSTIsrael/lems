@@ -22,5 +22,5 @@ export { buildAwardsSlides } from './lib/utils/build-awards-slides';
 export type {
   AwardWinnerSlideStyle,
   Award,
-  AwardSlideComponents
+  BuildAwardsSlidesOptions
 } from './lib/utils/build-awards-slides';

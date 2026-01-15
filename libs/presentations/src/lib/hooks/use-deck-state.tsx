@@ -1,3 +1,5 @@
+'use client';
+
 import { useReducer, useMemo } from 'react';
 import { SlideId } from '../components/deck';
 import clamp from '../utils/clamp';
@@ -75,7 +77,11 @@ function deckReducer(state: DeckState, { type, payload = {} }: ReducerActions) {
       return {
         ...state,
         navigationDirection: 1,
-        pendingView: { ...state.pendingView, stepIndex: 0, slideIndex: state.pendingView.slideIndex + 1 }
+        pendingView: {
+          ...state.pendingView,
+          stepIndex: 0,
+          slideIndex: state.pendingView.slideIndex + 1
+        }
       };
     case 'REGRESS_SLIDE':
       return {

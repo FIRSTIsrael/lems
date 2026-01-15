@@ -1,3 +1,5 @@
+'use client';
+
 import React, { CSSProperties } from 'react';
 import { Stack, Box } from '@mui/material';
 import Image from 'next/image';

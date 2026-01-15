@@ -2,9 +2,8 @@
 
 import React, { useMemo, useRef, useState } from 'react';
 import { Stack } from '@mui/material';
-import { DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
+import { buildAwardsSlides, DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
 import { useAwardsPresentationContext } from '@lems/shared';
-import { buildAwardsSlides } from '../../../../audience-display/components/awards/slides-builder';
 import { SlideDisplay } from './slide-display';
 import { ControlsPanel } from './controls-panel';
 
@@ -18,8 +17,8 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
   nextSlideLabel
 }) => {
   const { awards, awardWinnerSlideStyle, presentationState } = useAwardsPresentationContext();
-  const deckRef = useRef<DeckRef>(null);
-  const previewDeckRef = useRef<DeckRef>(null);
+  const deckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
+  const previewDeckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
   const [currentView, setCurrentView] = useState<DeckView>(presentationState);
   const [showPreview, setShowPreview] = useState(true);
 

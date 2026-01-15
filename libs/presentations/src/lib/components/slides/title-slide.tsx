@@ -1,7 +1,8 @@
+'use client';
+
 import React from 'react';
-import { Stack, Typography, Box } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { Slide } from '../slide';
-import { Appear } from '../appear';
 import { LogoStack } from '../logo-stack';
 
 interface TitleSlideProps {
@@ -26,15 +27,12 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
           position: 'relative'
         }}
       >
-        <Appear activeStyle={{ opacity: 1, scale: 1 }} inactiveStyle={{ opacity: 0, scale: 0.8 }}>
-          <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'white' }}>
-            {primary}
-          </Typography>
-        </Appear>
+        <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'white' }}>
+          {primary}
+        </Typography>
+
         {secondary && (
-          <Appear activeStyle={{ opacity: 1, scale: 1 }} inactiveStyle={{ opacity: 0, scale: 0.8 }}>
-            <Typography sx={{ fontSize: '3rem', color: 'grey.300' }}>{secondary}</Typography>
-          </Appear>
+          <Typography sx={{ fontSize: '3rem', color: 'grey.300' }}>{secondary}</Typography>
         )}
         <LogoStack color={divisionColor} />
       </Stack>
