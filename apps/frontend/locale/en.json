@@ -1066,7 +1066,7 @@
           "approval-modal": {
             "title": "Confirm Awards",
             "description": "Are you sure you want to approve and lock these awards?",
-            "warning-text": "⚠️ Locking will immediately announce the awards to the Scorekeeper and MC, and unlock the awards presentation. This action cannot be undone.",
+            "warning-text": "Locking will immediately announce the awards to the Scorekeeper and MC, and unlock the awards presentation. This action cannot be undone.",
             "confirm": "Approve & Lock",
             "cancel": "Cancel",
             "submitting": "Locking...",
