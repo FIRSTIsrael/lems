@@ -1,13 +1,10 @@
 import { GraphQLScalarType, Kind } from 'graphql';
+import db from '../../database';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
-import {
-  volunteersResolver,
-  volunteerDivisionsResolver,
-  RoleInfoResolver
-} from './events/volunteers';
+import { volunteersResolver, volunteerDivisionsResolver, RoleInfoResolver } from './events/volunteers';
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
@@ -94,6 +91,15 @@ export const resolvers = {
   Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
+    seasonName: async event => {
+      const dbEvent = await db.events.byId(event.id).get();
+      if (!dbEvent) {
+        return null;
+      }
+
+      const season = await db.seasons.byId(dbEvent.season_id).get();
+      return season?.name ?? null;
+    },
     divisions: eventDivisionsResolver,
     volunteers: volunteersResolver
   },

@@ -17,11 +17,13 @@ import { CoreValuesFieldCheckedIcon, CoreValuesFieldUncheckedIcon } from '@lems/
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema, rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
+import { useTranslations } from 'next-intl';
 
 interface ExportRubricTableProps {
   sections: RubricsSchema[JudgingCategory]['sections'];
   category: JudgingCategory;
   scores: Record<string, number | null>;
+  notes?: Record<string, string>;
   feedback?: { greatJob: string; thinkAbout: string };
 }
 
@@ -41,11 +43,13 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
   sections,
   category,
   scores,
+  notes,
   feedback
 }) => {
   const { getColumnTitle } = useRubricsGeneralTranslations();
   const { getSectionTitle, getSectionDescription, getFieldLevel } =
     useRubricsTranslations(category);
+  const t = useTranslations('pages.rubric');
   const colors = categoryColors[category];
   const sectionBgColor = sectionColors[category];
 
@@ -140,76 +144,130 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                     </Stack>
                   </TableCell>
                 </TableRow>
-                {section.fields.map(field => (
-                  <TableRow key={field.id}>
-                    {rubricColumns.map((level, levelIndex) => {
-                      const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
-                      const isChecked = scores[field.id] === cellValue;
-                      const levelText =
-                        level === 'exceeds' ? null : getFieldLevel(section.id, field.id, level);
-                      return (
-                        <TableCell
-                          key={level}
-                          align="left"
-                          sx={{
-                            borderTop: '1px solid #000',
-                            borderRight: '1px solid rgba(0,0,0,0.2)',
-                            borderLeft: '1px solid rgba(0,0,0,0.2)',
-                            borderBottom: 'none',
-                            fontSize: '0.75em',
-                            p: '0.4em',
-                            pr: '0.3em',
-                            pl: '0.25em',
-                            backgroundColor: '#fff',
-                            verticalAlign: 'middle'
-                          }}
-                        >
-                          <Stack
-                            spacing={0.3}
-                            direction="row"
-                            alignItems={levelText ? 'flex-start' : 'center'}
-                            justifyContent={levelText ? 'flex-start' : 'center'}
+                {section.fields.map(field => {
+                  const hasNotes = scores[field.id] === 4 && Boolean(notes?.[field.id]);
+
+                  return (
+                    <React.Fragment key={field.id}>
+                      <TableRow>
+                        {rubricColumns.map((level, levelIndex) => {
+                          const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
+                          const isChecked = scores[field.id] === cellValue;
+                          const levelText =
+                            level === 'exceeds' ? null : getFieldLevel(section.id, field.id, level);
+
+                          return (
+                            <TableCell
+                              key={level}
+                              align="left"
+                              sx={{
+                                borderTop: '1px solid #000',
+                                borderRight: '1px solid rgba(0,0,0,0.2)',
+                                borderLeft: '1px solid rgba(0,0,0,0.2)',
+                                borderBottom: 'none',
+                                fontSize: '0.75em',
+                                p: '0.4em',
+                                pr: '0.3em',
+                                pl: '0.25em',
+                                backgroundColor: '#fff',
+                                verticalAlign: 'middle'
+                              }}
+                            >
+                              <Stack
+                                spacing={0.3}
+                                direction="row"
+                                alignItems={levelText ? 'flex-start' : 'center'}
+                                justifyContent={levelText ? 'flex-start' : 'center'}
+                              >
+                                {field.coreValues ? (
+                                  isChecked ? (
+                                    <CoreValuesFieldCheckedIcon
+                                      sx={{
+                                        color: 'primary.main',
+                                        fill: 'primary.main',
+                                        fontSize: '1.5em'
+                                      }}
+                                    />
+                                  ) : (
+                                    <CoreValuesFieldUncheckedIcon
+                                      sx={{
+                                        color: 'action.active',
+                                        fill: 'action.active',
+                                        fontSize: '1.5em'
+                                      }}
+                                    />
+                                  )
+                                ) : isChecked ? (
+                                  <TaskAltRounded
+                                    sx={{
+                                      color: 'primary.main',
+                                      fontSize: '1.5em'
+                                    }}
+                                  />
+                                ) : (
+                                  <CircleOutlined
+                                    sx={{
+                                      color: 'action.active',
+                                      fontSize: '1.5em'
+                                    }}
+                                  />
+                                )}
+                                {levelText && (
+                                  <Typography fontSize="0.85em">{levelText}</Typography>
+                                )}
+                              </Stack>
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+
+                      {hasNotes && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            sx={{
+                              borderTop: '1px solid rgba(0,0,0,0.2)',
+                              borderRight: '1px solid rgba(0,0,0,0.2)',
+                              borderLeft: '1px solid rgba(0,0,0,0.2)',
+                              borderBottom: 'none',
+                              backgroundColor: 'rgba(0,0,0,0.03)',
+                              py: 1
+                            }}
                           >
-                            {field.coreValues ? (
-                              isChecked ? (
-                                <CoreValuesFieldCheckedIcon
-                                  sx={{
-                                    color: 'primary.main',
-                                    fill: 'primary.main',
-                                    fontSize: '1.5em'
-                                  }}
-                                />
-                              ) : (
-                                <CoreValuesFieldUncheckedIcon
-                                  sx={{
-                                    color: 'action.active',
-                                    fill: 'action.active',
-                                    fontSize: '1.5em'
-                                  }}
-                                />
-                              )
-                            ) : isChecked ? (
-                              <TaskAltRounded
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              <Typography
                                 sx={{
-                                  color: 'primary.main',
-                                  fontSize: '1.5em'
+                                  fontWeight: 500,
+                                  lineHeight: 1.4375,
+                                  mr: 0.75,
+                                  color: 'rgba(0,0,0,0.6)',
+                                  fontSize: '0.85em',
+                                  '@media print': {
+                                    fontSize: '0.8em'
+                                  }
                                 }}
-                              />
-                            ) : (
-                              <CircleOutlined
+                              >
+                                {t('field-notes-label')}:
+                              </Typography>
+                              <Typography
                                 sx={{
-                                  color: 'action.active',
-                                  fontSize: '1.5em'
+                                  whiteSpace: 'pre-wrap',
+                                  fontSize: '0.8em',
+                                  lineHeight: 1.25,
+                                  '@media print': {
+                                    fontSize: '0.75em'
+                                  }
                                 }}
-                              />
-                            )}
-                            {levelText && <Typography fontSize="0.85em">{levelText}</Typography>}
-                          </Stack>
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                ))}
+                              >
+                                {notes?.[field.id]}
+                              </Typography>
+                            </Box>
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </React.Fragment>
             ))}
             {feedback && (

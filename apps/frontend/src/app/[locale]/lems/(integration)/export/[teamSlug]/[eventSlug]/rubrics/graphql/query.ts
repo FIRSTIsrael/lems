@@ -1,8 +1,13 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 
+export interface RubricFieldData {
+  value: number | null;
+  notes?: string | null;
+}
+
 export interface RubricData {
   awards?: string[];
-  fields: Record<string, number>;
+  fields: Record<string, RubricFieldData>;
   feedback?: {
     greatJob: string;
     thinkAbout: string;
@@ -34,6 +39,7 @@ export interface GetTeamInfoData {
   event: {
     id: string;
     name: string;
+    seasonName?: string | null;
     divisions: DivisionInfo[];
   };
 }
@@ -67,6 +73,7 @@ export const GET_TEAM_INFO_QUERY: TypedDocumentNode<GetTeamInfoData, GetTeamInfo
     event(slug: $eventSlug) {
       id
       name
+      seasonName
       divisions {
         id
         name

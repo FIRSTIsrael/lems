@@ -4,7 +4,7 @@ import { useMemo, use } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics as rubricSchemas } from '@lems/shared/rubrics';
+import { rubrics as rubricSchemas, type RubricCategorySchema } from '@lems/shared/rubrics';
 import Image from 'next/image';
 import { Box, CircularProgress, Alert, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client/react';
@@ -64,9 +64,10 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     seasonName: string;
     eventName: string;
     scores: Record<string, number>;
+    notes: Record<string, string>;
     status: string;
     feedback: { greatJob: string; thinkAbout: string };
-    schema: any;
+    schema: RubricCategorySchema;
   }> = [];
   if (rubricsData?.division && team && teamInfoData?.event) {
     const divisionData = rubricsData.division;
@@ -76,11 +77,18 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
 
       const fields = rubric.data?.fields || {};
       const scores: Record<string, number> = {};
+      const notes: Record<string, string> = {};
       Object.entries(fields).forEach(([fieldId, fieldData]) => {
         if (fieldData && typeof fieldData === 'object' && 'value' in fieldData) {
           const fieldValue = (fieldData as { value: number | null }).value;
+          const fieldNotes = (fieldData as { notes?: string | null }).notes;
+
           if (fieldValue !== null) {
             scores[fieldId] = fieldValue;
+          }
+
+          if (fieldValue === 4 && fieldNotes) {
+            notes[fieldId] = fieldNotes;
           }
         }
       });
@@ -90,9 +98,10 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
         teamNumber: team.number,
         teamName: team.name,
         rubricCategory: categoryKey,
-        seasonName: '',
+        seasonName: teamInfoData.event.seasonName ?? '',
         eventName: teamInfoData.event.name,
         scores: scores,
+        notes,
         status: rubric.status,
         feedback: rubric.data?.feedback || { greatJob: '', thinkAbout: '' },
         schema: schema
@@ -202,6 +211,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                     sections={rubric.schema.sections}
                     category={rubric.rubricCategory as JudgingCategory}
                     scores={rubric.scores}
+                    notes={rubric.notes}
                     feedback={rubric.feedback}
                   />
                 ) : (

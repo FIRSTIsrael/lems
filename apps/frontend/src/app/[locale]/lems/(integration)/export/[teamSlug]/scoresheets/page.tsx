@@ -1,17 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { use } from 'react';
 import { Box, CircularProgress, Alert, Typography, Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
+import { useQuery } from '@apollo/client/react';
 import { scoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { ExportScoresheetHeader } from './components/export-scoresheet-header';
 import { ExportScoresheetMission } from './components/export-scoresheet-mission';
+import { GET_SCORESHEETS_QUERY, GET_TEAM_INFO_QUERY } from './graphql/query';
+import type { ScoresheetInfo } from './graphql/types';
 
 interface ScoresExportPageProps {
   params: Promise<{
     locale: string;
-    eventSlug: string;
-    teamId: string;
+    teamSlug: string;
   }>;
 }
 
@@ -36,32 +39,87 @@ interface ScoresData {
 
 export default function ScoresExportPage({ params: paramsPromise }: ScoresExportPageProps) {
   const t = useTranslations('pages.exports.scores');
-  const [data, setData] = useState<ScoresData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const params = use(paramsPromise);
+  const searchParams = useSearchParams();
+  const eventSlug = searchParams.get('eventSlug') || '';
 
-  useEffect(() => {
-    const fetchScores = async () => {
-      try {
-        const params = await paramsPromise;
-        const { eventSlug, teamId } = params;
-        const response = await fetch(`/api/export/scores?eventSlug=${eventSlug}&teamId=${teamId}`);
+  const teamSlugUpper = params.teamSlug.toUpperCase();
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch scores');
-        }
+  const {
+    data: teamInfoData,
+    loading: teamInfoLoading,
+    error: teamInfoError
+  } = useQuery(GET_TEAM_INFO_QUERY, {
+    variables: {
+      eventSlug,
+      teamSlug: teamSlugUpper
+    },
+    skip: !eventSlug,
+    fetchPolicy: 'no-cache'
+  });
 
-        const scoresData: ScoresData = await response.json();
-        setData(scoresData);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load scores');
-      } finally {
-        setLoading(false);
-      }
+  const divisions = teamInfoData?.event?.divisions || [];
+  const division = divisions.find(div => div.teams?.length > 0);
+  const team = division?.teams?.[0];
+  const divisionId = division?.id;
+  const teamId = team?.id;
+
+  const teamNotFound = Boolean(teamInfoData?.event && divisions.length > 0 && !team);
+
+  const {
+    data: scoresheetsData,
+    loading: scoresheetsLoading,
+    error: scoresheetsError
+  } = useQuery(GET_SCORESHEETS_QUERY, {
+    variables: { divisionId: divisionId!, teamId: teamId! },
+    skip: Boolean(!eventSlug || !divisionId || !teamId || teamNotFound),
+    fetchPolicy: 'no-cache'
+  });
+
+  const data: ScoresData | null = (() => {
+    if (!teamInfoData?.event || !division || !team || !scoresheetsData?.division) {
+      return null;
+    }
+
+    const scoreTeam = scoresheetsData.division.teams?.[0];
+    const dbScoresheets = (scoreTeam?.scoresheets ?? []).filter(Boolean) as ScoresheetInfo[];
+    const sortedScoresheets = [...dbScoresheets].sort((a, b) => a.round - b.round);
+
+    const mappedScoresheets: ScoresheetData[] = sortedScoresheets.map(s => {
+      const missionsJson = (s.data?.missions ?? {}) as Record<
+        string,
+        Record<string, ScoresheetClauseValue>
+      >;
+
+      const missions: MissionData[] = scoresheet.missions.map(mission => {
+        const missionData = missionsJson[mission.id] ?? {};
+
+        return {
+          clauses: mission.clauses.map((_, clauseIndex) => ({
+            value: missionData[String(clauseIndex)] ?? null
+          }))
+        };
+      });
+
+      return {
+        round: s.round,
+        missions,
+        score: s.data?.score ?? 0
+      };
+    });
+
+    return {
+      teamNumber: Number(team.number),
+      teamName: team.name,
+      eventName: teamInfoData.event.name,
+      divisionName: division.name,
+      seasonName: teamInfoData.event.seasonName ?? '',
+      scoresheets: mappedScoresheets
     };
+  })();
 
-    fetchScores();
-  }, [paramsPromise]);
+  const loading = teamInfoLoading || scoresheetsLoading;
+  const error = teamInfoError?.message || scoresheetsError?.message || '';
 
   if (loading) {
     return (
@@ -69,6 +127,22 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
         sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}
       >
         <CircularProgress />
+      </Box>
+    );
+  }
+
+  if (!eventSlug) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">{t('no-scores-found')}</Alert>
+      </Box>
+    );
+  }
+
+  if (teamNotFound) {
+    return (
+      <Box sx={{ p: 2 }}>
+        <Alert severity="error">{t('no-scores-found')}</Alert>
       </Box>
     );
   }
