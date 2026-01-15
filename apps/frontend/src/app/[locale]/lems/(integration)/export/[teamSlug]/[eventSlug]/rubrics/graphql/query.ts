@@ -26,6 +26,7 @@ export interface TeamInfo {
   number: number;
   name: string;
   slug: string;
+  logoUrl: string | null;
 }
 
 export interface DivisionInfo {
@@ -81,6 +82,7 @@ export const GET_TEAM_INFO_QUERY: TypedDocumentNode<GetTeamInfoData, GetTeamInfo
           number
           name
           slug
+          logoUrl
         }
       }
     }

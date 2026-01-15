@@ -6,7 +6,7 @@ import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
 import { rubrics as rubricSchemas, type RubricCategorySchema } from '@lems/shared/rubrics';
 import Image from 'next/image';
-import { Box, CircularProgress, Alert, Typography } from '@mui/material';
+import { Box, CircularProgress, Alert, Typography, Avatar } from '@mui/material';
 import { useQuery } from '@apollo/client/react';
 import { ExportRubricTable } from './components/export-rubric-table';
 import { CombinedFeedbackTable } from './components/combined-feedback-table';
@@ -187,12 +187,20 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                       })}
                     </Box>
 
-                    <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold', mb: 1 }}>
-                      {t('title', {
-                        category: getTerm(`categories.${rubric.rubricCategory}.title`),
-                        teamNumber: rubric.teamNumber,
-                        teamName: rubric.teamName
-                      })}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                      <Avatar
+                        variant="square"
+                        src={team.logoUrl ?? '/assets/default-avatar.svg'}
+                        alt={`Team ${rubric.teamNumber}`}
+                        sx={{ width: 48, height: 48, objectFit: 'cover' }}
+                      />
+                      <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
+                        {t('title', {
+                          category: getTerm(`categories.${rubric.rubricCategory}.title`),
+                          teamNumber: rubric.teamNumber,
+                          teamName: rubric.teamName
+                        })}
+                      </Box>
                     </Box>
                   </Box>
                   <Box sx={{ width: '100px', height: '80px', position: 'relative', flexShrink: 0 }}>
@@ -253,12 +261,20 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                     })}
                 </Box>
 
-                <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold', mb: 1 }}>
-                  {rubrics[0] &&
-                    t('feedback.page-title', {
-                      teamNumber: rubrics[0].teamNumber,
-                      teamName: rubrics[0].teamName
-                    })}
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
+                  <Avatar
+                    variant="square"
+                    src={team.logoUrl ?? '/assets/default-avatar.svg'}
+                    alt={`Team ${rubrics[0]?.teamNumber}`}
+                    sx={{ width: 48, height: 48, objectFit: 'cover' }}
+                  />
+                  <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
+                    {rubrics[0] &&
+                      t('feedback.page-title', {
+                        teamNumber: rubrics[0].teamNumber,
+                        teamName: rubrics[0].teamName
+                      })}
+                  </Box>
                 </Box>
               </Box>
               <Box sx={{ width: '100px', height: '80px', position: 'relative', flexShrink: 0 }}>

@@ -3,6 +3,7 @@ export interface TeamInfo {
   number: number;
   name: string;
   slug: string;
+  logoUrl: string | null;
 }
 
 export interface DivisionInfo {

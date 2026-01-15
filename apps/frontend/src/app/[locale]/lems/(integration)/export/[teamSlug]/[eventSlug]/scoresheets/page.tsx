@@ -31,6 +31,7 @@ interface ScoresheetData {
 interface ScoresData {
   teamNumber: number;
   teamName: string;
+  teamLogoUrl: string | null;
   eventName: string;
   divisionName: string;
   seasonName: string;
@@ -108,6 +109,7 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
     return {
       teamNumber: Number(team.number),
       teamName: team.name,
+      teamLogoUrl: (team as { logoUrl?: string | null }).logoUrl ?? null,
       eventName: teamInfoData.event.name,
       divisionName: division.name,
       seasonName: teamInfoData.event.seasonName ?? '',
@@ -182,6 +184,7 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
             divisionName={data.divisionName}
             seasonName={data.seasonName}
             round={scoresheetData.round}
+            teamLogoUrl={data.teamLogoUrl}
           />
 
           <Stack spacing={1.5}>

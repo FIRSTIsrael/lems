@@ -20,6 +20,7 @@ export const GET_TEAM_INFO_QUERY: TypedDocumentNode<GetTeamInfoData, GetTeamInfo
           number
           name
           slug
+          logoUrl
         }
       }
     }
