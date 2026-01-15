@@ -20,8 +20,7 @@ export function PicklistPanel() {
     removeFromPicklist
   } = useCategoryDeliberation();
 
-  const isEditable =
-    deliberation?.status === 'in-progress' || deliberation?.status === 'not-started';
+  const isEditable = deliberation?.status === 'in-progress';
 
   const handleDragEnd = useCallback(
     async (result: DropResult) => {
