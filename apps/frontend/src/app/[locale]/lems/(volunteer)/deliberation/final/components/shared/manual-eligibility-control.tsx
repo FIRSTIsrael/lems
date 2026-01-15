@@ -38,8 +38,10 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
 
   const awardedTeamIds = useMemo(
     () =>
-      Object.values(awards)
-        .map(awardList => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+      Object.entries(awards)
+        .filter(([key]) => key !== 'robot-performance')
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
         .flat(),
     [awards]
   );
