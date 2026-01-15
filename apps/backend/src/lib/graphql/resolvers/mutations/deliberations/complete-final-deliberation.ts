@@ -73,6 +73,15 @@ export const completeFinalDeliberationResolver: GraphQLFieldResolver<
     );
   }
 
+  const updatedState = await db.divisions.byId(divisionId).update({ awards_assigned: true });
+
+  if (!updatedState) {
+    throw new MutationError(
+      MutationErrorCode.INTERNAL_ERROR,
+      `Failed to update division ${divisionId} state after completing final deliberation`
+    );
+  }
+
   // Publish events
   const pubSub = getRedisPubSub();
   await Promise.all([
