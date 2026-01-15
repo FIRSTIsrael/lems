@@ -6,7 +6,7 @@ import { underscoresToHyphens } from '@lems/shared/utils';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { authorizeDeliberationAccess } from './utils';
+import { assertDeliberationEditable, authorizeDeliberationAccess } from './utils';
 
 interface CompleteDeliberationArgs {
   divisionId: string;
@@ -29,6 +29,18 @@ export const completeDeliberationResolver: GraphQLFieldResolver<
   const hyphenatedCategory = underscoresToHyphens(category) as JudgingCategory;
   const deliberation = await authorizeDeliberationAccess(context, divisionId, hyphenatedCategory);
 
+  // Check if deliberation is editable
+  assertDeliberationEditable(deliberation.status);
+
+  // Check if deliberation is in IN_PROGRESS status
+  if (deliberation.status !== 'in-progress') {
+    throw new MutationError(
+      MutationErrorCode.FORBIDDEN,
+      `Cannot complete deliberation with status "${deliberation.status}". Must be "in-progress"`
+    );
+  }
+
+  // Update the deliberation status
   const updated = await db.judgingDeliberations.get(deliberation.id).update({
     status: 'completed'
   });
@@ -37,15 +49,6 @@ export const completeDeliberationResolver: GraphQLFieldResolver<
     throw new MutationError(
       MutationErrorCode.INTERNAL_ERROR,
       `Failed to complete deliberation ${deliberation.id}`
-    );
-  }
-
-  const updatedState = await db.divisions.byId(divisionId).update({ awards_assigned: true });
-
-  if (!updatedState) {
-    throw new MutationError(
-      MutationErrorCode.INTERNAL_ERROR,
-      `Failed to update division ${divisionId} state after completing deliberation ${deliberation.id}`
     );
   }
 

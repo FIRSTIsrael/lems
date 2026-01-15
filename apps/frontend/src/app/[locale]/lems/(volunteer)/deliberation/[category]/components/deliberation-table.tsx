@@ -56,7 +56,7 @@ export function DeliberationTable() {
             <Tooltip title={t('add-to-picklist')}>
               <IconButton
                 size="small"
-                disabled={deliberation?.status === 'completed'}
+                disabled={deliberation?.status !== 'in-progress'}
                 onClick={() => addToPicklist(team.id)}
                 color="success"
               >

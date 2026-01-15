@@ -110,7 +110,9 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
           isOptionEqualToValue={(option, value) => option.id === value.id}
           value={availableTeams.find(t => t.id === selectedTeamId) || null}
           onChange={(_, newValue) => setSelectedTeamId(newValue?.id || null)}
-          disabled={availableTeams.length === 0 || isAdding}
+          disabled={
+            availableTeams.length === 0 || isAdding || deliberation.status !== 'in-progress'
+          }
           sx={{ flex: 1, minWidth: 0 }}
           renderInput={params => (
             <TextField

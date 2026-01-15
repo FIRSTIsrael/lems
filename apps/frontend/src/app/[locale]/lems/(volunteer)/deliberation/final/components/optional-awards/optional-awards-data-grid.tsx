@@ -246,6 +246,7 @@ export function OptionalAwardsDataGrid() {
           return (
             <IconButton
               size="small"
+              disabled={deliberation.status !== 'in-progress'}
               onClick={e => handleOpenPopover(e, team.id)}
               sx={{ color: 'primary.main' }}
             >
@@ -347,7 +348,7 @@ export function OptionalAwardsDataGrid() {
                     }}
                   >
                     <Typography variant="body2" sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
-                      {t(`award.${award}`)}
+                      {getName(award)}
                     </Typography>
                   </Box>
                   {isTeamAlreadyAdded && (
