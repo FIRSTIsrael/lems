@@ -1,3 +1,5 @@
+import React from 'react';
+import { Stack, Box, Typography, Grid } from '@mui/material';
 import { Slide, Stepper } from '@lems/presentations';
 import { Award, TeamWinner } from '../graphql/types';
 
@@ -7,7 +9,7 @@ interface AdvancingTeamsSlideProps {
 
 export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards }) => {
   const teams: TeamWinner[] = awards
-    .filter(award => award.winner && 'number' in award.winner)
+    .filter(award => award.winner && 'team' in award.winner)
     .map(award => award.winner as TeamWinner);
 
   if (teams.length === 0) {
@@ -16,26 +18,53 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
 
   return (
     <Slide>
-      <div className="flex flex-col items-center justify-center h-full gap-8 px-20 text-center">
-        <h2 className="text-6xl font-bold text-white mb-8">קבוצות מתקדמות</h2>
-        <div className="grid grid-cols-2 gap-8 max-w-4xl">
+      <Stack
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        spacing={4}
+        sx={{
+          height: '100%',
+          width: '100%',
+          px: 20,
+          textAlign: 'center'
+        }}
+      >
+        <Typography
+          variant="h2"
+          sx={{ fontSize: '4.5rem', fontWeight: 'bold', color: 'white', mb: 4 }}
+        >
+          קבוצות מתקדמות
+        </Typography>
+        <Grid container spacing={4} sx={{ maxWidth: '64rem' }}>
           <Stepper
             values={teams as unknown[]}
             render={(team: unknown) => {
               const teamData = team as TeamWinner;
               return (
-                <div
-                  key={teamData.id}
-                  className="p-6 rounded-lg transition-all bg-green-500 scale-105"
-                >
-                  <p className="text-4xl font-bold text-white">#{teamData.number}</p>
-                  <p className="text-2xl text-white mt-2">{teamData.name}</p>
-                </div>
+                <Grid size={6} key={teamData.team.id}>
+                  <Box
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      backgroundColor: 'success.main',
+                      transform: 'scale(1.05)',
+                      transition: 'all 0.3s ease'
+                    }}
+                  >
+                    <Typography sx={{ fontSize: '3rem', fontWeight: 'bold', color: 'white' }}>
+                      #{teamData.team.number}
+                    </Typography>
+                    <Typography sx={{ fontSize: '1.5rem', color: 'white', mt: 1 }}>
+                      {teamData.team.name}
+                    </Typography>
+                  </Box>
+                </Grid>
               );
             }}
           />
-        </div>
-      </div>
+        </Grid>
+      </Stack>
     </Slide>
   );
 };

@@ -54,7 +54,8 @@ export function AwardsPresentationWrapper() {
     judging: data.judging,
     awards: data.judging?.awards,
     awardsCount: data.judging?.awards?.length,
-    awardsAssigned: data.awardsAssigned
+    awardsAssigned: data.awardsAssigned,
+    firstAwardDetail: data.judging?.awards?.[0]
   });
 
   return (

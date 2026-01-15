@@ -1,23 +1,40 @@
+import React from 'react';
+import { Stack, Typography } from '@mui/material';
 import { Slide, Appear } from '@lems/presentations';
 
 interface TitleSlideProps {
   primary: string;
   secondary?: string;
+  divisionColor?: string;
 }
 
 export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary }) => {
   return (
     <Slide>
-      <div className="flex flex-col items-center justify-center h-full gap-8 px-20 text-center">
+      <Stack
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+        spacing={4}
+        sx={{
+          height: '100%',
+          width: '100%',
+          px: 20,
+          textAlign: 'center',
+          position: 'relative'
+        }}
+      >
         <Appear activeStyle={{ opacity: 1, scale: 1 }} inactiveStyle={{ opacity: 0, scale: 0.8 }}>
-          <h1 className="text-8xl font-bold text-white">{primary}</h1>
+          <Typography variant="h1" sx={{ fontSize: '6rem', fontWeight: 'bold', color: 'white' }}>
+            {primary}
+          </Typography>
         </Appear>
         {secondary && (
           <Appear activeStyle={{ opacity: 1, scale: 1 }} inactiveStyle={{ opacity: 0, scale: 0.8 }}>
-            <p className="text-5xl text-gray-200">{secondary}</p>
+            <Typography sx={{ fontSize: '3rem', color: 'grey.300' }}>{secondary}</Typography>
           </Appear>
         )}
-      </div>
+      </Stack>
     </Slide>
   );
 };

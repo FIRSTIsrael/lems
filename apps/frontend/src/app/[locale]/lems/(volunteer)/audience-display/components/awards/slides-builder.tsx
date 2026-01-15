@@ -1,5 +1,7 @@
 import React from 'react';
-import { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } from '@lems/presentations';
+import { TitleSlide } from './slides/title-slide';
+import { AwardWinnerSlide } from './slides/award-winner-slide';
+import { AdvancingTeamsSlide } from './slides/advancing-teams-slide';
 import { Award } from './graphql/types';
 
 export type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
@@ -8,7 +10,10 @@ export function buildAwardsSlides(
   awards: Award[],
   style: AwardWinnerSlideStyle = 'both'
 ): React.ReactNode[] {
+  console.log('[buildAwardsSlides] Input:', { awards, awardsCount: awards.length, style });
+
   if (!awards || awards.length === 0) {
+    console.log('[buildAwardsSlides] No awards, returning empty array');
     return [];
   }
 
@@ -91,6 +96,12 @@ export function buildAwardsSlides(
       slides.push(advancingSlide);
     }
   }
+
+  console.log('[buildAwardsSlides] Created slides:', {
+    slidesCount: slides.length,
+    slideKeys: slides.map(s => (React.isValidElement(s) ? s.key : 'invalid')),
+    slides
+  });
 
   return slides;
 }
