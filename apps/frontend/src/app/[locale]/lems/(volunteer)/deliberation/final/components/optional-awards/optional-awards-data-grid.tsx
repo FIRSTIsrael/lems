@@ -347,7 +347,7 @@ export function OptionalAwardsDataGrid() {
                     }}
                   >
                     <Typography variant="body2" sx={{ fontSize: '0.875rem', fontWeight: 500 }}>
-                      {t(`award.${award}`)}
+                      {getName(award)}
                     </Typography>
                   </Box>
                   {isTeamAlreadyAdded && (
