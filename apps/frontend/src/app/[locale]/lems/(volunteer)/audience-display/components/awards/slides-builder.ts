@@ -1,15 +1,28 @@
-import { buildAwardsSlides as buildAwardsSlidesUtil, AwardWinnerSlideStyle, TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } from '@lems/presentations';
+import {
+  buildAwardsSlides as buildAwardsSlidesUtil,
+  AwardWinnerSlideStyle,
+  TitleSlide,
+  AwardWinnerSlide,
+  AdvancingTeamsSlide,
+  BuildAwardsSlidesOptions
+} from '@lems/presentations';
 import { Award } from './graphql/types';
 
 export type { AwardWinnerSlideStyle };
 
 export function buildAwardsSlides(
   awards: Award[],
-  style: AwardWinnerSlideStyle = 'both'
+  style: AwardWinnerSlideStyle = 'both',
+  options?: BuildAwardsSlidesOptions
 ) {
-  return buildAwardsSlidesUtil(awards, style, {
-    TitleSlide,
-    AwardWinnerSlide,
-    AdvancingTeamsSlide
-  });
+  return buildAwardsSlidesUtil(
+    awards,
+    style,
+    {
+      TitleSlide,
+      AwardWinnerSlide,
+      AdvancingTeamsSlide
+    },
+    options
+  );
 }

@@ -31,6 +31,7 @@ export interface Award {
   place: number;
   type: 'PERSONAL' | 'TEAM';
   isOptional: boolean;
+  divisionColor?: string;
   winner?: TeamWinner | PersonalWinner | null;
 }
 
