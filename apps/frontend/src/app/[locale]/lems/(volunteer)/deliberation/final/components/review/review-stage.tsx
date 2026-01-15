@@ -4,51 +4,36 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Grid, Button } from '@mui/material';
-import { useAwardTranslations } from '@lems/localization';
-import { PERSONAL_AWARDS } from '@lems/shared/awards';
 import { useFinalDeliberation } from '../../final-deliberation-context';
+import { EnrichedTeam } from '../../types';
 import { AwardSection } from './award-section';
 import { ApprovalModal } from './approval-modal';
 
 export const ReviewStage: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('pages.deliberations.final.review');
-  const { getName: getAwardName } = useAwardTranslations();
-  const { division, deliberation } = useFinalDeliberation();
+  const { awards, deliberation, division, teams } = useFinalDeliberation();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   // Filter out personal awards and group by name
-  const groupedAwards = useMemo(() => {
-    // Get all awards from the division, excluding personal awards
-    const teamAwards = division.judging.awards.filter(
-      award => !(PERSONAL_AWARDS as readonly string[]).includes(award.name)
-    );
-
-    // Group by name and sort by index
-    const grouped: Record<string, typeof teamAwards> = {};
-    teamAwards.forEach(award => {
-      if (!grouped[award.name]) {
-        grouped[award.name] = [];
+  const mappedWinners = useMemo(() => {
+    const mapped: Record<string, EnrichedTeam[]> = {};
+    for (const [awardName, value] of Object.entries(awards)) {
+      let teamIds: string[] = [];
+      if (awardName === 'champions') {
+        teamIds = Object.values(deliberation.champions);
+      } else {
+        teamIds = value as string[];
       }
-      grouped[award.name].push(award);
-    });
-
-    // Sort each group by place
-    Object.keys(grouped).forEach(name => {
-      grouped[name].sort((a, b) => a.place - b.place);
-    });
-
-    return grouped;
-  }, [division.judging.awards]);
-
-  // Get award order by lowest index in each group
-  const awardOrder = useMemo(() => {
-    return Object.keys(groupedAwards).sort((a, b) => {
-      const indexA = groupedAwards[a][0]?.index || 0;
-      const indexB = groupedAwards[b][0]?.index || 0;
-      return indexA - indexB;
-    });
-  }, [groupedAwards]);
+      const winners = [];
+      for (const teamId of teamIds) {
+        const team = teams.find(t => t.id === teamId);
+        winners.push(team!);
+      }
+      mapped[awardName] = winners;
+    }
+    return mapped;
+  }, [awards, deliberation.champions, teams]);
 
   const handleOpenConfirm = useCallback(() => {
     setOpenConfirmDialog(true);
@@ -72,13 +57,9 @@ export const ReviewStage: React.FC = () => {
 
       <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
         <Grid container spacing={2.5}>
-          {awardOrder.map(awardName => (
+          {Object.entries(mappedWinners).map(([awardName, winners]) => (
             <Grid key={awardName} size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: 'flex' }}>
-              <AwardSection
-                awardName={awardName}
-                awards={groupedAwards[awardName]}
-                getAwardName={getAwardName}
-              />
+              <AwardSection awardName={awardName} winners={winners} />
             </Grid>
           ))}
         </Grid>
