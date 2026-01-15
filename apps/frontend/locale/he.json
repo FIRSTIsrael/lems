@@ -1171,8 +1171,8 @@
     "rubrics": {
       "feedback": {
         "feedback": "משוב",
-        "great-job": "עבודה מעולה",
-        "think-about": "חשבו על"
+        "great-job": "עבודה מעולה...",
+        "think-about": "חשבו על..."
       }
     }
   }

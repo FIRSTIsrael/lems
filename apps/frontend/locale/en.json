@@ -1173,8 +1173,8 @@
     "rubrics": {
       "feedback": {
         "feedback": "Feedback",
-        "great-job": "Great Job",
-        "think-about": "Think About"
+        "great-job": "Great Job...",
+        "think-about": "Think About..."
       }
     }
   }
