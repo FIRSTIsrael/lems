@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import {
   useTheme,
   Tooltip,
@@ -35,23 +35,32 @@ export function OptionalAwardsDataGrid() {
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
   const { getName } = useAwardTranslations();
 
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set()
+  });
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
 
-  const handleRowSelectionChange = (newSelection: string[]) => {
-    if (newSelection.length <= 2) {
+  const getSelectedIds = (selection: GridRowSelectionModel): string[] => {
+    return Array.from(selection.ids as Set<string>);
+  };
+
+  const handleRowSelectionChange = (newSelection: GridRowSelectionModel) => {
+    const ids = getSelectedIds(newSelection);
+    if (ids.length <= 2) {
       setSelectedTeams(newSelection);
     }
   };
 
   const handleCompare = () => {
-    if (selectedTeams.length === 2) {
+    if (selectedTeams.ids.size === 2) {
       setCompareDialogOpen(true);
     }
   };
 
   const selectedTeamSlugs = useMemo(() => {
-    return teams.filter(t => selectedTeams.includes(t.id)).map(t => t.slug) as [string, string];
+    const selectedIds = getSelectedIds(selectedTeams);
+    return teams.filter(t => selectedIds.includes(t.id)).map(t => t.slug) as [string, string];
   }, [selectedTeams, teams]);
 
   // Get teams eligible for optional awards
@@ -295,7 +304,7 @@ export function OptionalAwardsDataGrid() {
 
   return (
     <>
-      {selectedTeams.length === 2 && (
+      {selectedTeams.ids.size === 2 && (
         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
@@ -312,15 +321,15 @@ export function OptionalAwardsDataGrid() {
       <DataGrid
         rows={filteredTeams}
         getRowId={row => row.id}
+        columns={columns}
         density="compact"
         checkboxSelection
         rowSelectionModel={selectedTeams}
-        onRowSelectionModelChange={newSelection =>
-          handleRowSelectionChange(newSelection as string[])
-        }
-        isRowSelectable={params =>
-          selectedTeams.length < 2 || selectedTeams.includes(params.id as string)
-        }
+        onRowSelectionModelChange={handleRowSelectionChange}
+        isRowSelectable={params => {
+          const selectedIds = getSelectedIds(selectedTeams);
+          return selectedIds.length < 2 || selectedIds.includes(params.id as string);
+        }}
         disableRowSelectionOnClick
         hideFooterSelectedRowCount
         hideFooter
@@ -411,7 +420,7 @@ export function OptionalAwardsDataGrid() {
         </Box>
       </Popover>
 
-      {selectedTeams.length === 2 && (
+      {selectedTeams.ids.size === 2 && (
         <TeamComparisonDialog
           open={compareDialogOpen}
           onClose={() => setCompareDialogOpen(false)}

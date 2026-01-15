@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import { useTheme, Tooltip, Box, alpha, IconButton, Button } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { Stars, Add, CompareArrows } from '@mui/icons-material';
@@ -22,23 +22,32 @@ export function CoreAwardsDataGrid() {
   const { teams, eligibleTeams, categoryPicklists, deliberation, awards, updateAward } =
     useFinalDeliberation();
 
-  const [selectedTeams, setSelectedTeams] = useState<string[]>([]);
+  const [selectedTeams, setSelectedTeams] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set()
+  });
   const [compareDialogOpen, setCompareDialogOpen] = useState(false);
 
-  const handleRowSelectionChange = (newSelection: string[]) => {
-    if (newSelection.length <= 2) {
+  const getSelectedIds = (selection: GridRowSelectionModel): string[] => {
+    return Array.from(selection.ids as Set<string>);
+  };
+
+  const handleRowSelectionChange = (newSelection: GridRowSelectionModel) => {
+    const ids = getSelectedIds(newSelection);
+    if (ids.length <= 2) {
       setSelectedTeams(newSelection);
     }
   };
 
   const handleCompare = () => {
-    if (selectedTeams.length === 2) {
+    if (selectedTeams.ids.size === 2) {
       setCompareDialogOpen(true);
     }
   };
 
   const selectedTeamSlugs = useMemo(() => {
-    return teams.filter(t => selectedTeams.includes(t.id)).map(t => t.slug) as [string, string];
+    const selectedIds = getSelectedIds(selectedTeams);
+    return teams.filter(t => selectedIds.includes(t.id)).map(t => t.slug) as [string, string];
   }, [selectedTeams, teams]);
 
   // Get teams from picklists and manually added teams
@@ -293,7 +302,7 @@ export function CoreAwardsDataGrid() {
 
   return (
     <>
-      {selectedTeams.length === 2 && (
+      {selectedTeams.ids.size === 2 && (
         <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
@@ -314,12 +323,11 @@ export function CoreAwardsDataGrid() {
         density="compact"
         checkboxSelection
         rowSelectionModel={selectedTeams}
-        onRowSelectionModelChange={newSelection =>
-          handleRowSelectionChange(newSelection as string[])
-        }
-        isRowSelectable={params =>
-          selectedTeams.length < 2 || selectedTeams.includes(params.id as string)
-        }
+        onRowSelectionModelChange={handleRowSelectionChange}
+        isRowSelectable={params => {
+          const selectedIds = getSelectedIds(selectedTeams);
+          return selectedIds.length < 2 || selectedIds.includes(params.id as string);
+        }}
         disableRowSelectionOnClick
         hideFooterSelectedRowCount
         hideFooter
@@ -344,7 +352,7 @@ export function CoreAwardsDataGrid() {
         }}
       />
 
-      {selectedTeams.length === 2 && (
+      {selectedTeams.ids.size === 2 && (
         <TeamComparisonDialog
           open={compareDialogOpen}
           onClose={() => setCompareDialogOpen(false)}

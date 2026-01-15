@@ -10,7 +10,7 @@ import { Box, CircularProgress, Alert, Typography, Avatar } from '@mui/material'
 import { useQuery } from '@apollo/client/react';
 import { ExportRubricTable } from './components/export-rubric-table';
 import { CombinedFeedbackTable } from './components/combined-feedback-table';
-import { GET_TEAM_INFO_QUERY, GET_RUBRICS_QUERY, RubricInfo } from './graphql/query';
+import { GET_TEAM_INFO_QUERY, GET_RUBRICS_QUERY } from './graphql/query';
 
 interface RubricsExportPageProps {
   params: Promise<{
@@ -72,7 +72,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
   }> = [];
   if (rubricsData?.division && team && event) {
     const divisionData = rubricsData.division;
-    rubrics = divisionData.judging.rubrics.map((rubric: RubricInfo) => {
+    rubrics = divisionData.judging.rubrics.map(rubric => {
       const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
       const schema = rubricSchemas[categoryKey];
 
