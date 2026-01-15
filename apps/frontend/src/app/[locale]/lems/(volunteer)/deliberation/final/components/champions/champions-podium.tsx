@@ -18,7 +18,8 @@ import { useFinalDeliberation } from '../../final-deliberation-context';
 export function ChampionsPodium() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.champions');
-  const { awards, awardCounts, availableTeams, teams, updateAward } = useFinalDeliberation();
+  const { awards, awardCounts, availableTeams, deliberation, teams, updateAward } =
+    useFinalDeliberation();
   const [isSaving, setIsSaving] = useState(false);
 
   // Create team lookup for display
@@ -150,7 +151,7 @@ export function ChampionsPodium() {
               value={awards.champions[place] || ''}
               label={t('place-label', { place })}
               onChange={e => handleTeamSelect(place, e.target.value)}
-              disabled={isSaving}
+              disabled={isSaving || deliberation.status !== 'in-progress'}
               sx={{ borderRadius: 1 }}
             >
               <MenuItem value="">

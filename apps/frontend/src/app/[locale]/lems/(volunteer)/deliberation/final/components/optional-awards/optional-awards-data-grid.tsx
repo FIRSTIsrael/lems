@@ -246,6 +246,7 @@ export function OptionalAwardsDataGrid() {
           return (
             <IconButton
               size="small"
+              disabled={deliberation.status !== 'in-progress'}
               onClick={e => handleOpenPopover(e, team.id)}
               sx={{ color: 'primary.main' }}
             >
