@@ -1018,6 +1018,7 @@
         "core-awards": {
           "title": "Core Awards",
           "description": "Select award winners from the picklists",
+          "select-team": "Select team...",
           "table-rank": "Rank",
           "table-team": "Team",
           "table-room": "Room",
