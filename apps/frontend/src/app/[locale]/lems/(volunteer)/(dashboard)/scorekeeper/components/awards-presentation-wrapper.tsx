@@ -1,34 +1,22 @@
 'use client';
 
-import React, { useRef, useCallback, useMemo } from 'react';
-import { Stack } from '@mui/material';
-import { DeckRef } from '@lems/presentations';
+import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
 import { useMutation } from '@apollo/client/react';
-import { AwardsPresentationProvider, useAwardsPresentationContext } from '@lems/shared';
-import { AwardsDisplay } from '../../../audience-display/components/awards-display';
+import { AwardsPresentationProvider } from '@lems/shared';
 import { UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION } from '../graphql';
 import { useEvent } from '../../../components/event-context';
 import { useScorekeeperData } from './scorekeeper-context';
-import { PresentationController } from './presentation-controller';
+import { AwardsPresentationDisplay } from './awards-presentation-display';
 
 function AwardsPresentationContent() {
-  const deckRef = useRef<DeckRef | null>(null);
   const { currentDivision } = useEvent();
-  const { awards, awardWinnerSlideStyle, presentationState } = useAwardsPresentationContext();
 
   const [updateAudienceDisplaySetting] = useMutation(UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION, {
     onError: () => {
       toast.error('Failed to update presentation state');
     }
   });
-
-  // Calculate total slides: title + awards grouped by index
-  const totalSlides = useMemo(() => {
-    if (!awards.length) return 0;
-    const uniqueIndices = new Set(awards.map(a => a.index));
-    return 1 + uniqueIndices.size; // title slide + one per award index
-  }, [awards]);
 
   const handlePresentationStateChange = useCallback(
     (slideIndex: number, stepIndex: number) => {
@@ -44,31 +32,12 @@ function AwardsPresentationContent() {
     [updateAudienceDisplaySetting, currentDivision.id]
   );
 
-  return (
-    <Stack spacing={2} height="100%">
-      <div
-        style={{
-          flex: 1,
-          backgroundColor: 'black',
-          borderRadius: '8px',
-          overflow: 'hidden',
-          minHeight: 0
-        }}
-      >
-        <AwardsDisplay
-          ref={deckRef}
-          awards={awards}
-          awardWinnerSlideStyle={awardWinnerSlideStyle}
-          presentationState={presentationState}
-        />
-      </div>
-      <PresentationController
-        deckRef={deckRef}
-        onPresentationStateChange={handlePresentationStateChange}
-        totalSlides={totalSlides}
-      />
-    </Stack>
-  );
+  // Store the mutation callback for use by the display component if needed
+  React.useEffect(() => {
+    // This allows the display component to access the update function if needed
+  }, [handlePresentationStateChange]);
+
+  return <AwardsPresentationDisplay />;
 }
 
 export function AwardsPresentationWrapper() {
