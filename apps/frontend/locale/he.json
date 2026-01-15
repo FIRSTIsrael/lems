@@ -714,7 +714,16 @@
         "teams": "קבוצות"
       },
       "awards-presentation": {
-        "title": "מצגת פרסים"
+        "title": "מצגת פרסים",
+        "current-slide": "שקף נוכחי",
+        "next-slide": "שקף הבא",
+        "slide-info": "שקף:",
+        "first-slide": "עבור לשקף הראשון",
+        "previous-slide": "שקף קודם",
+        "next-slide": "שקף הבא",
+        "last-slide": "עבור לשקף האחרון",
+        "previous-step": "שלב קודם",
+        "next-step": "שלב הבא"
       }
     },
     "head-referee": {

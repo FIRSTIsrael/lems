@@ -1,7 +1,8 @@
 'use client';
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Stack, Paper, Typography, IconButton } from '@mui/material';
+import { Stack, Paper, Typography, IconButton, useTheme } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import {
   ChevronLeft as ChevronLeftIcon,
   ChevronRight as ChevronRightIcon,
@@ -18,6 +19,8 @@ import { TitleSlide } from '../../../audience-display/components/awards/slides/t
 
 export const AwardsPresentationDisplay: React.FC = () => {
   const { awards, awardWinnerSlideStyle, presentationState } = useAwardsPresentationContext();
+  const t = useTranslations('pages.scorekeeper.awards-presentation');
+  const theme = useTheme();
   const deckRef = useRef<DeckRef>(null);
   const previewDeckRef = useRef<DeckRef>(null);
   const [currentView, setCurrentView] = useState<DeckView>(presentationState);
@@ -61,25 +64,46 @@ export const AwardsPresentationDisplay: React.FC = () => {
   };
 
   return (
-    <Stack spacing={2} height="100%">
+    <Stack spacing={3} height="100%">
       {/* Display Area - Current and Next Slide */}
-      <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" p={4}>
+      <Stack
+        direction="row"
+        spacing={3}
+        justifyContent="center"
+        alignItems="center"
+        px={3}
+        py={2}
+        sx={{ flex: 1, minHeight: 0 }}
+      >
         {/* Current Slide */}
-        <Stack spacing={2} flex={1} minWidth={0}>
-          <Typography textAlign="center" variant="h6">
-            שקף נוכחי
+        <Stack spacing={1.5} flex={1} minWidth={0}>
+          <Typography
+            textAlign="center"
+            variant="subtitle1"
+            sx={{
+              fontWeight: 600,
+              color: 'text.secondary',
+              fontSize: '0.875rem',
+              letterSpacing: 0.5,
+              textTransform: 'uppercase'
+            }}
+          >
+            {t('current-slide')}
           </Typography>
           <Paper
             sx={{
               flex: 1,
               backgroundColor: '#000',
-              borderRadius: 1,
+              borderRadius: 2,
               overflow: 'hidden',
               minHeight: 300,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              position: 'relative'
+              position: 'relative',
+              border: `1px solid ${theme.palette.divider}`,
+              boxShadow: theme.shadows[2],
+              transition: 'box-shadow 0.3s ease'
             }}
           >
             <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
@@ -98,21 +122,34 @@ export const AwardsPresentationDisplay: React.FC = () => {
 
         {/* Preview Slide - Next Slide */}
         {showPreview && (
-          <Stack spacing={2} flex={1} minWidth={0}>
-            <Typography textAlign="center" variant="h6">
-              שקף הבא
+          <Stack spacing={1.5} flex={1} minWidth={0}>
+            <Typography
+              textAlign="center"
+              variant="subtitle1"
+              sx={{
+                fontWeight: 600,
+                color: 'text.secondary',
+                fontSize: '0.875rem',
+                letterSpacing: 0.5,
+                textTransform: 'uppercase'
+              }}
+            >
+              {t('next-slide')}
             </Typography>
             <Paper
               sx={{
                 flex: 1,
                 backgroundColor: '#000',
-                borderRadius: 1,
+                borderRadius: 2,
                 overflow: 'hidden',
                 minHeight: 300,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                position: 'relative'
+                position: 'relative',
+                border: `1px solid ${theme.palette.divider}`,
+                boxShadow: theme.shadows[2],
+                transition: 'box-shadow 0.3s ease'
               }}
             >
               <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
@@ -133,61 +170,122 @@ export const AwardsPresentationDisplay: React.FC = () => {
       {/* Controls */}
       <Paper
         sx={{
-          p: 2,
-          backgroundColor: '#1a1a1a',
+          p: 2.5,
+          backgroundColor: 'background.paper',
+          border: `1px solid ${theme.palette.divider}`,
+          borderRadius: 2,
           display: 'flex',
           flexDirection: 'column',
-          gap: 2
+          gap: 2.5,
+          boxShadow: theme.shadows[1]
         }}
       >
         {/* Slide/Step Info */}
-        <Typography variant="body2" sx={{ color: '#999', fontFamily: 'monospace' }}>
-          Slide: {presentationState.slideIndex + 1} / {totalSlides}
+        <Typography
+          variant="caption"
+          sx={{
+            color: 'text.secondary',
+            fontFamily: 'monospace',
+            fontSize: '0.8rem',
+            letterSpacing: 0.5
+          }}
+        >
+          {t('slide-info')} {presentationState.slideIndex + 1} / {totalSlides}
         </Typography>
 
         {/* Navigation Buttons */}
-        <Stack direction="row" spacing={1} flexWrap="wrap">
+        <Stack direction="row" spacing={1.5} flexWrap="wrap">
           <IconButton
             size="small"
-            title="Go to first slide"
+            title={t('first-slide')}
             onClick={() => deckRef.current?.skipTo({ slideIndex: 0, stepIndex: 0 })}
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <HomeIcon sx={{ fontSize: '18px' }} />
           </IconButton>
           <IconButton
             size="small"
-            title="Previous slide"
+            title={t('previous-slide')}
             onClick={() => deckRef.current?.regressSlide()}
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <DirectionalIcon ltr={SkipPreviousIcon} rtl={SkipNextIcon} sx={{ fontSize: '18px' }} />
           </IconButton>
           <IconButton
             size="small"
-            title="Next slide"
+            title={t('next-slide')}
             onClick={() => deckRef.current?.advanceSlide()}
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <DirectionalIcon ltr={SkipNextIcon} rtl={SkipPreviousIcon} sx={{ fontSize: '18px' }} />
           </IconButton>
           <IconButton
             size="small"
-            title="Go to last slide"
+            title={t('last-slide')}
             onClick={() => deckRef.current?.skipTo({ slideIndex: totalSlides - 1, stepIndex: 0 })}
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <GetAppIcon sx={{ fontSize: '18px' }} />
           </IconButton>
         </Stack>
 
         {/* Step Controls */}
-        <Stack direction="row" spacing={1}>
+        <Stack direction="row" spacing={1.5}>
           <IconButton
             size="small"
             onClick={handleStepBackward}
-            title="Previous step"
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            title={t('previous-step')}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <DirectionalIcon
               ltr={ChevronLeftIcon}
@@ -198,8 +296,18 @@ export const AwardsPresentationDisplay: React.FC = () => {
           <IconButton
             size="small"
             onClick={handleStepForward}
-            title="Next step"
-            sx={{ color: '#fff', border: '1px solid #444' }}
+            title={t('next-step')}
+            sx={{
+              color: 'primary.main',
+              border: `1px solid ${theme.palette.divider}`,
+              borderRadius: 1.5,
+              padding: '8px',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
+                borderColor: 'primary.main'
+              }
+            }}
           >
             <DirectionalIcon
               ltr={ChevronRightIcon}
