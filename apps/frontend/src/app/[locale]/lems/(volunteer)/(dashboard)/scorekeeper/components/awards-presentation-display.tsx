@@ -78,18 +78,21 @@ export const AwardsPresentationDisplay: React.FC = () => {
               minHeight: 300,
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center'
+              justifyContent: 'center',
+              position: 'relative'
             }}
           >
-            <Deck
-              ref={deckRef}
-              initialState={presentationState}
-              enableReinitialize={true}
-              onViewUpdate={handleSlideUpdate}
-            >
-              <TitleSlide primary="טקס הפרסים" />
-              {awardSlides}
-            </Deck>
+            <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+              <Deck
+                ref={deckRef}
+                initialState={presentationState}
+                enableReinitialize={true}
+                onViewUpdate={handleSlideUpdate}
+              >
+                <TitleSlide primary="טקס הפרסים" />
+                {awardSlides}
+              </Deck>
+            </div>
           </Paper>
         </Stack>
 
@@ -108,17 +111,20 @@ export const AwardsPresentationDisplay: React.FC = () => {
                 minHeight: 300,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center'
+                justifyContent: 'center',
+                position: 'relative'
               }}
             >
-              <Deck
-                ref={previewDeckRef}
-                initialState={endOfNextSlide(currentView)}
-                enableReinitialize={true}
-              >
-                <TitleSlide primary="טקס הפרסים" />
-                {awardSlides}
-              </Deck>
+              <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+                <Deck
+                  ref={previewDeckRef}
+                  initialState={endOfNextSlide(currentView)}
+                  enableReinitialize={true}
+                >
+                  <TitleSlide primary="טקס הפרסים" />
+                  {awardSlides}
+                </Deck>
+              </div>
             </Paper>
           </Stack>
         )}
