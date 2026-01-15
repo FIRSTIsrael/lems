@@ -1,6 +1,6 @@
 export interface TeamInfo {
   id: string;
-  number: string;
+  number: number;
   name: string;
   slug: string;
 }
@@ -46,7 +46,7 @@ export interface GetScoresheetsData {
     name: string;
     teams: Array<{
       id: string;
-      number: string;
+      number: number;
       name: string;
       scoresheets: ScoresheetInfo[];
     }>;

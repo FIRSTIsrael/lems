@@ -26,7 +26,6 @@ export interface TeamInfo {
   number: number;
   name: string;
   slug: string;
-  divisionId: string;
 }
 
 export interface DivisionInfo {
@@ -41,7 +40,7 @@ export interface GetTeamInfoData {
     name: string;
     seasonName?: string | null;
     divisions: DivisionInfo[];
-  };
+  } | null;
 }
 
 export interface GetTeamInfoVariables {

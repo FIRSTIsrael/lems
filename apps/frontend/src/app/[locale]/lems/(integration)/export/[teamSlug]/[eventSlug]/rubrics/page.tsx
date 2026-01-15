@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, use } from 'react';
+import { use } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
@@ -38,13 +38,14 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     fetchPolicy: 'no-cache'
   });
 
+  const event = teamInfoData?.event;
   const divisions = teamInfoData?.event?.divisions || [];
   const division = divisions.find(div => div.teams?.length > 0);
   const team = division?.teams?.[0];
   const divisionId = division?.id;
   const teamId = team?.id;
 
-  const teamNotFound = teamInfoData?.event && divisions.length > 0 && !team;
+  const teamNotFound = Boolean(teamInfoData?.event && divisions.length > 0 && !team);
 
   const {
     data: rubricsData,
@@ -69,7 +70,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     feedback: { greatJob: string; thinkAbout: string };
     schema: RubricCategorySchema;
   }> = [];
-  if (rubricsData?.division && team && teamInfoData?.event) {
+  if (rubricsData?.division && team && event) {
     const divisionData = rubricsData.division;
     rubrics = divisionData.judging.rubrics.map((rubric: RubricInfo) => {
       const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
@@ -98,8 +99,8 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
         teamNumber: team.number,
         teamName: team.name,
         rubricCategory: categoryKey,
-        seasonName: teamInfoData.event.seasonName ?? '',
-        eventName: teamInfoData.event.name,
+        seasonName: event.seasonName ?? '',
+        eventName: event.name,
         scores: scores,
         notes,
         status: rubric.status,
@@ -109,9 +110,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     });
   }
 
-  const optionalAwards = useMemo(() => {
-    return rubricsData?.division?.judging?.awards || [];
-  }, [rubricsData]);
+  const optionalAwards = rubricsData?.division?.judging?.awards ?? [];
 
   const loading = teamInfoLoading || rubricsLoading;
   const error = teamInfoError?.message || rubricsError?.message || '';
