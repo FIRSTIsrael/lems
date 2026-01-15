@@ -2,14 +2,16 @@
 
 import React, { useCallback } from 'react';
 import toast from 'react-hot-toast';
+import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import { AwardsPresentationProvider } from '@lems/shared';
 import { UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION } from '../graphql';
 import { useEvent } from '../../../components/event-context';
 import { useScorekeeperData } from './scorekeeper-context';
-import { AwardsPresentationDisplay } from './awards-presentation-display';
+import { AwardsPresentationDisplay } from './awards-presentation';
 
 function AwardsPresentationContent() {
+  const t = useTranslations('pages.scorekeeper.awards-presentation');
   const { currentDivision } = useEvent();
 
   const [updateAudienceDisplaySetting] = useMutation(UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION, {
@@ -37,7 +39,12 @@ function AwardsPresentationContent() {
     // This allows the display component to access the update function if needed
   }, [handlePresentationStateChange]);
 
-  return <AwardsPresentationDisplay />;
+  return (
+    <AwardsPresentationDisplay
+      currentSlideLabel={t('current-slide')}
+      nextSlideLabel={t('next-slide')}
+    />
+  );
 }
 
 export function AwardsPresentationWrapper() {

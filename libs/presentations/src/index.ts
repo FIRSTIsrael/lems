@@ -5,3 +5,7 @@ export type { SlideProps } from './lib/components/slide';
 export { Appear, Stepper } from './lib/components/appear';
 export { GOTO_FINAL_STEP } from './lib/hooks/use-deck-state';
 export type { DeckView } from './lib/hooks/use-deck-state';
+export { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } from './lib/components/slides';
+export type { TeamWinner, PersonalWinner, AwardWinnerSlideAward, AdvancingTeamsAward } from './lib/components/slides';
+export { buildAwardsSlides } from './lib/utils/build-awards-slides';
+export type { AwardWinnerSlideStyle, Award, AwardSlideComponents } from './lib/utils/build-awards-slides';

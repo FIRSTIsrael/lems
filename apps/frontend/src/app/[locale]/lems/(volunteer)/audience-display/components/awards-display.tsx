@@ -1,9 +1,8 @@
 import React, { useMemo, forwardRef } from 'react';
-import { Deck, DeckRef } from '@lems/presentations';
+import { Deck, DeckRef, TitleSlide } from '@lems/presentations';
 import { useAwardsPresentationContext } from '@lems/shared';
 import { Award } from '../graphql';
 import { buildAwardsSlides, AwardWinnerSlideStyle } from './awards/slides-builder';
-import { TitleSlide } from './awards/slides/title-slide';
 
 export interface AwardsDisplayProps {
   awards: Award[];

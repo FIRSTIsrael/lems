@@ -1,18 +1,31 @@
 import React from 'react';
-import { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } from '@lems/presentations';
-import { Award } from './graphql/types';
 
 export type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
 
+export interface Award {
+  id: string;
+  name: string;
+  index: number;
+  place: number;
+}
+
+export interface AwardSlideComponents {
+  TitleSlide: React.ComponentType<{ primary: string; secondary?: string }>;
+  AwardWinnerSlide: React.ComponentType<{ award: Award & { place: number }; chromaKey: boolean }>;
+  AdvancingTeamsSlide: React.ComponentType<{ awards: Award[] }>;
+}
+
 export function buildAwardsSlides(
   awards: Award[],
-  style: AwardWinnerSlideStyle = 'both'
+  style: AwardWinnerSlideStyle = 'both',
+  components: AwardSlideComponents
 ): React.ReactNode[] {
   if (!awards || awards.length === 0) {
     return [];
   }
 
   const slides: React.ReactNode[] = [];
+  const { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide } = components;
 
   // Group awards by index
   const awardsByIndex = new Map<number, Award[]>();
