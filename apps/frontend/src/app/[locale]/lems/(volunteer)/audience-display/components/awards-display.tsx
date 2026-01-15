@@ -1,9 +1,9 @@
 import React, { useMemo, forwardRef } from 'react';
 import { Deck, DeckRef } from '@lems/presentations';
+import { useAwardsPresentationContext } from '@lems/shared';
 import { Award } from '../graphql';
 import { buildAwardsSlides, AwardWinnerSlideStyle } from './awards/slides-builder';
 import { TitleSlide } from './awards/slides/title-slide';
-import { useAudienceDisplay } from './audience-display-context';
 
 export interface AwardsDisplayProps {
   awards: Award[];
@@ -16,7 +16,7 @@ export const AwardsDisplay = forwardRef<DeckRef, AwardsDisplayProps>(
     { awards, awardWinnerSlideStyle = 'both', presentationState = { slideIndex: 0, stepIndex: 0 } },
     ref
   ) => {
-    const { awardsAssigned } = useAudienceDisplay();
+    const { awardsAssigned } = useAwardsPresentationContext();
 
     const awardSlides = useMemo(
       () => buildAwardsSlides(awards, awardWinnerSlideStyle),
