@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useMemo, useRef, useState } from 'react';
-import { Stack, Paper, Typography, IconButton, useTheme } from '@mui/material';
+import { Stack, Paper, Typography, useTheme, Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import {
   ChevronLeft as ChevronLeftIcon,
@@ -194,127 +194,89 @@ export const AwardsPresentationDisplay: React.FC = () => {
         </Typography>
 
         {/* Navigation Buttons */}
-        <Stack direction="row" spacing={1.5} flexWrap="wrap">
-          <IconButton
+        <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center">
+          <Button
             size="small"
-            title={t('first-slide')}
+            variant="outlined"
             onClick={() => deckRef.current?.skipTo({ slideIndex: 0, stepIndex: 0 })}
+            startIcon={<HomeIcon />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <HomeIcon sx={{ fontSize: '18px' }} />
-          </IconButton>
-          <IconButton
+            {t('first-slide')}
+          </Button>
+          <Button
             size="small"
-            title={t('previous-slide')}
+            variant="outlined"
             onClick={() => deckRef.current?.regressSlide()}
+            startIcon={<DirectionalIcon ltr={SkipPreviousIcon} rtl={SkipNextIcon} />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <DirectionalIcon ltr={SkipPreviousIcon} rtl={SkipNextIcon} sx={{ fontSize: '18px' }} />
-          </IconButton>
-          <IconButton
+            {t('previous-slide')}
+          </Button>
+          <Button
             size="small"
-            title={t('next-slide')}
+            variant="outlined"
             onClick={() => deckRef.current?.advanceSlide()}
+            startIcon={<DirectionalIcon ltr={SkipNextIcon} rtl={SkipPreviousIcon} />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <DirectionalIcon ltr={SkipNextIcon} rtl={SkipPreviousIcon} sx={{ fontSize: '18px' }} />
-          </IconButton>
-          <IconButton
+            {t('next-slide')}
+          </Button>
+          <Button
             size="small"
-            title={t('last-slide')}
+            variant="outlined"
             onClick={() => deckRef.current?.skipTo({ slideIndex: totalSlides - 1, stepIndex: 0 })}
+            startIcon={<GetAppIcon />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <GetAppIcon sx={{ fontSize: '18px' }} />
-          </IconButton>
+            {t('last-slide')}
+          </Button>
         </Stack>
 
         {/* Step Controls */}
-        <Stack direction="row" spacing={1.5}>
-          <IconButton
+        <Stack direction="row" spacing={1.5} justifyContent="center">
+          <Button
             size="small"
+            variant="outlined"
             onClick={handleStepBackward}
-            title={t('previous-step')}
+            startIcon={<DirectionalIcon ltr={ChevronLeftIcon} rtl={ChevronRightIcon} />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <DirectionalIcon
-              ltr={ChevronLeftIcon}
-              rtl={ChevronRightIcon}
-              sx={{ fontSize: '18px' }}
-            />
-          </IconButton>
-          <IconButton
+            {t('previous-step')}
+          </Button>
+          <Button
             size="small"
+            variant="outlined"
             onClick={handleStepForward}
-            title={t('next-step')}
+            startIcon={<DirectionalIcon ltr={ChevronRightIcon} rtl={ChevronLeftIcon} />}
             sx={{
-              color: 'primary.main',
-              border: `1px solid ${theme.palette.divider}`,
               borderRadius: 1.5,
-              padding: '8px',
-              transition: 'all 0.2s ease',
-              '&:hover': {
-                backgroundColor: theme.palette.primary.lighter || 'rgba(0, 61, 106, 0.08)',
-                borderColor: 'primary.main'
-              }
+              textTransform: 'none',
+              fontSize: '0.875rem'
             }}
           >
-            <DirectionalIcon
-              ltr={ChevronRightIcon}
-              rtl={ChevronLeftIcon}
-              sx={{ fontSize: '18px' }}
-            />
-          </IconButton>
+            {t('next-step')}
+          </Button>
         </Stack>
       </Paper>
     </Stack>

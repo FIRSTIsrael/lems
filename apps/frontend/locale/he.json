@@ -718,10 +718,9 @@
         "current-slide": "שקף נוכחי",
         "next-slide": "שקף הבא",
         "slide-info": "שקף:",
-        "first-slide": "עבור לשקף הראשון",
+        "first-slide": "שקף ראשון",
         "previous-slide": "שקף קודם",
-        "next-slide": "שקף הבא",
-        "last-slide": "עבור לשקף האחרון",
+        "last-slide": "שקף אחרון",
         "previous-step": "שלב קודם",
         "next-step": "שלב הבא"
       }

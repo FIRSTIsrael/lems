@@ -718,12 +718,11 @@
         "current-slide": "Current Slide",
         "next-slide": "Next Slide",
         "slide-info": "Slide:",
-        "first-slide": "Go to first slide",
-        "previous-slide": "Previous slide",
-        "next-slide": "Next slide",
-        "last-slide": "Go to last slide",
-        "previous-step": "Previous step",
-        "next-step": "Next step"
+        "first-slide": "First Slide",
+        "previous-slide": "Previous Slide",
+        "last-slide": "Last Slide",
+        "previous-step": "Previous Step",
+        "next-step": "Next Step"
       }
     },
     "head-referee": {
