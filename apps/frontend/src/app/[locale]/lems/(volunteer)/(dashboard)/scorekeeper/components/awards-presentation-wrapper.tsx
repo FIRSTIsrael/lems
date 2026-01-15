@@ -76,24 +76,16 @@ export function AwardsPresentationWrapper() {
       if (award.winner) {
         if ('team' in award.winner && award.winner.team) {
           winner = {
-            id: award.winner.team.id,
-            name: award.winner.team.name,
-            number: parseInt(award.winner.team.number),
-            affiliation: {
+            team: {
               id: award.winner.team.id,
-              name: award.winner.team.affiliation,
-              city: ''
+              name: award.winner.team.name,
+              number: award.winner.team.number,
+              affiliation: award.winner.team.affiliation
             }
           };
         } else if ('name' in award.winner && award.winner.name) {
           winner = {
-            id: '',
-            name: award.winner.name,
-            team: {
-              id: '',
-              number: 0,
-              name: ''
-            }
+            name: award.winner.name
           };
         }
       }
@@ -132,7 +124,15 @@ export function AwardsPresentationWrapper() {
 
   return (
     <Stack spacing={2} height="100%">
-      <div className="flex-1 bg-black rounded-lg overflow-hidden">
+      <div
+        style={{
+          flex: 1,
+          backgroundColor: 'black',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          minHeight: 0
+        }}
+      >
         <AwardsDisplay
           ref={deckRef}
           awards={awards}

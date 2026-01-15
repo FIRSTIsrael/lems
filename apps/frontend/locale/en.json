@@ -712,6 +712,9 @@
       },
       "active-match": {
         "teams": "Teams"
+      },
+      "awards-presentation": {
+        "title": "Awards Presentation"
       }
     },
     "head-referee": {
