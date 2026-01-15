@@ -1,8 +1,17 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Autocomplete, Button, Paper, Stack, TextField, Typography } from '@mui/material';
+import {
+  Autocomplete,
+  Button,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
+  IconButton
+} from '@mui/material';
 import { CompareArrows } from '@mui/icons-material';
 import { JudgingCategory } from '@lems/types/judging';
 import { TeamComparisonDialog } from './team-comparison-dialog';
@@ -15,6 +24,7 @@ interface CompareTeamsPickerProps {
 
 export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsPickerProps) {
   const t = useTranslations('pages.deliberations.compare');
+  const router = useRouter();
   const [selectedTeam1, setSelectedTeam1] = useState<string | null>(null);
   const [selectedTeam2, setSelectedTeam2] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -30,6 +40,22 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
       setDialogOpen(true);
       onCompare?.(selectedTeam1, selectedTeam2);
     }
+  };
+
+  const handleNavigateToComparePage = () => {
+    const params = new URLSearchParams();
+
+    if (category) {
+      params.set('category', category);
+    }
+
+    const validTeamSlugs = selectedTeamSlugs.filter(slug => slug && slug.trim() !== '');
+    if (validTeamSlugs.length > 0) {
+      params.set('teams', validTeamSlugs.join(','));
+    }
+
+    const queryString = params.toString();
+    router.push(`/lems/deliberation/compare${queryString ? `?${queryString}` : ''}`);
   };
 
   const selectedTeamSlugs: [string, string] = [
@@ -60,7 +86,9 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
         >
           {t('title')}
         </Typography>
-        <CompareArrows />
+        <IconButton size="small" onClick={handleNavigateToComparePage} sx={{ p: 0.5 }}>
+          <CompareArrows />
+        </IconButton>
       </Stack>
 
       <Autocomplete
