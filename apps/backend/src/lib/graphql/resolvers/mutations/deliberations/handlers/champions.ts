@@ -39,7 +39,7 @@ export async function handleChampionsStageCompletion(
     .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
     .slice(0, robotPerformanceAwards.length)
     .map(t => t.teamId);
-  await assignRobotPerformanceAwards(robotPerformanceWinners, robotPerformanceAwards);
+  await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);
 
   const advancementConfig = await getAdvancementConfig(divisionId);
   if (!advancementConfig) {
@@ -102,15 +102,25 @@ const assignChampionsToTeams = async (
 };
 
 const assignRobotPerformanceAwards = async (
-  teamsWithRanks: string[],
+  divisionId: string,
+  robotPerformanceTeams: string[],
   robotPerformanceAwards: Award[]
 ): Promise<void> => {
   for (let i = 0; i < robotPerformanceAwards.length; i++) {
     const award = robotPerformanceAwards[i];
-    const teamId = teamsWithRanks[i];
+    const teamId = robotPerformanceTeams[i];
     if (teamId) {
       await db.awards.assign(award.id, teamId);
     }
+  }
+
+  const finalDeliberation = await db.finalDeliberations.byDivision(divisionId).get();
+  if (finalDeliberation) {
+    const updatedAwards = { ...finalDeliberation.awards };
+    updatedAwards['robot-performance'] = robotPerformanceTeams;
+    await db.finalDeliberations.byDivision(divisionId).update({
+      awards: updatedAwards
+    });
   }
 };
 
