@@ -44,34 +44,27 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
         loadedMatch
         activeMatch
         matchLength
-        judging {
-          awards {
-            id
-            name
-            index
-            place
-            type
-            isOptional
-            winner {
-              ... on TeamWinner {
+      }
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          winner {
+            ... on TeamWinner {
+              team {
                 id
                 name
                 number
-                affiliation {
-                  id
-                  name
-                  city
-                }
+                affiliation
               }
-              ... on PersonalWinner {
-                id
-                name
-                team {
-                  id
-                  number
-                  name
-                }
-              }
+            }
+            ... on PersonalWinner {
+              name
             }
           }
         }
