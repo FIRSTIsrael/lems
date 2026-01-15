@@ -42,7 +42,7 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
           backgroundColor: '#000',
           borderRadius: 2,
           overflow: 'hidden',
-          minHeight: 300,
+          minHeight: 400,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
