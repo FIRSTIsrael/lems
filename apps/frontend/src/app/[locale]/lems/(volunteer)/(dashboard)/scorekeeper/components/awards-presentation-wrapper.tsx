@@ -50,6 +50,13 @@ function AwardsPresentationContent() {
 export function AwardsPresentationWrapper() {
   const data = useScorekeeperData();
 
+  console.log('[AwardsPresentationWrapper] Raw data:', {
+    judging: data.judging,
+    awards: data.judging?.awards,
+    awardsCount: data.judging?.awards?.length,
+    awardsAssigned: data.awardsAssigned
+  });
+
   return (
     <AwardsPresentationProvider
       awards={data.judging?.awards ?? []}

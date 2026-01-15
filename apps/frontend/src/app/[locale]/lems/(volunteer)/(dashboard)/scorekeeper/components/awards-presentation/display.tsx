@@ -23,10 +23,20 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
   const [currentView, setCurrentView] = useState<DeckView>(presentationState);
   const [showPreview, setShowPreview] = useState(true);
 
-  const awardSlides = useMemo(
-    () => buildAwardsSlides(awards, awardWinnerSlideStyle),
-    [awards, awardWinnerSlideStyle]
-  );
+  const awardSlides = useMemo(() => {
+    console.log('[AwardsPresentationDisplay] Building slides with:', {
+      awards,
+      awardsCount: awards.length,
+      awardWinnerSlideStyle,
+      firstAward: awards[0]
+    });
+    const slides = buildAwardsSlides(awards, awardWinnerSlideStyle);
+    console.log('[AwardsPresentationDisplay] Built slides:', {
+      slidesCount: slides.length,
+      slides
+    });
+    return slides;
+  }, [awards, awardWinnerSlideStyle]);
 
   // Calculate total slides: title + awards grouped by index
   const totalSlides = useMemo(() => {

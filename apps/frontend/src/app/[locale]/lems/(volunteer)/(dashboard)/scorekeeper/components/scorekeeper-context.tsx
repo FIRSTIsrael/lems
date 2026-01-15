@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import { MATCH_LOAD_THRESHOLD } from '@lems/shared/consts';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import { AudienceDisplayState, Match, MatchStage, ScorekeeperData } from '../graphql';
+import { AudienceDisplayState, Match, MatchStage, ScorekeeperData, Award } from '../graphql';
 
 interface ScorekeeperContextType {
   matches: Match[];
@@ -16,6 +16,10 @@ interface ScorekeeperContextType {
   testMatch: Match | null;
   nextMatch: Match | null;
   awardsAssigned: boolean;
+  judging: {
+    awards: Award[];
+  } | null;
+  field: ScorekeeperData['division']['field'] | null;
 }
 
 const ScorekeeperContext = createContext<ScorekeeperContextType | null>(null);
@@ -80,7 +84,9 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
       activeMatch,
       testMatch,
       nextMatch,
-      awardsAssigned: data.awardsAssigned
+      awardsAssigned: data.awardsAssigned,
+      judging: data.judging || null,
+      field: field || null
     };
   }, [
     activeMatchId,
@@ -90,7 +96,9 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     currentStage,
     currentTime,
     audienceDisplay,
-    data.awardsAssigned
+    data.awardsAssigned,
+    data.judging,
+    field
   ]);
 
   return <ScorekeeperContext.Provider value={value}>{children}</ScorekeeperContext.Provider>;
