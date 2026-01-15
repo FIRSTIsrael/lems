@@ -1,12 +1,11 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useLocale, useTranslations } from 'next-intl';
+import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
 import { TableCell, TableRow, Typography, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
-import dayjs from 'dayjs';
-import { Locale, Locales } from '@lems/localization';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { ScoresheetStatusButton } from '../scoresheet-status-button';
 
@@ -17,6 +16,7 @@ interface MatchRowProps {
   isActive: boolean;
   isLoaded: boolean;
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
+  searchQuery: string;
 }
 
 export function MatchRow({
@@ -25,11 +25,19 @@ export function MatchRow({
   scoresheets,
   isActive,
   isLoaded,
-  findScoresheetForTeam
+  findScoresheetForTeam,
+  searchQuery
 }: MatchRowProps) {
   const t = useTranslations('pages.head-referee');
   const rowRef = useRef<HTMLTableRowElement>(null);
-  const currentLocale = useLocale() as Locale;
+
+  // Check if a team matches the search query
+  const doesTeamMatchSearch = (teamNumber: string, teamName: string): boolean => {
+    if (!searchQuery.trim()) return true;
+    const escapedQuery = searchQuery.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedQuery, 'i');
+    return regex.test(teamNumber) || regex.test(teamName);
+  };
 
   // Auto-scroll to active match on mount
   useEffect(() => {
@@ -103,6 +111,9 @@ export function MatchRow({
         // Show icons only for the loaded match
         const showIcon = isLoaded;
 
+        // Check if team matches search filter
+        const isTeamFiltered = doesTeamMatchSearch(participant.team.number, participant.team.name);
+
         return (
           <TableCell
             key={table.id}
@@ -129,15 +140,31 @@ export function MatchRow({
               >
                 {showIcon &&
                   (isReady ? (
-                    <CheckCircleIcon sx={{ color: 'success.main', fontSize: '1.25rem' }} />
+                    <CheckCircleIcon
+                      sx={{
+                        color: 'success.main',
+                        fontSize: '1.25rem',
+                        opacity: isTeamFiltered ? 1 : 0.35,
+                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
+                      }}
+                    />
                   ) : (
-                    <CancelIcon sx={{ color: 'error.main', fontSize: '1.25rem' }} />
+                    <CancelIcon
+                      sx={{
+                        color: 'error.main',
+                        fontSize: '1.25rem',
+                        opacity: isTeamFiltered ? 1 : 0.35,
+                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
+                      }}
+                    />
                   ))}
                 <Stack
                   sx={{
                     alignItems: 'center',
                     minWidth: 0,
-                    flex: 1
+                    flex: 1,
+                    opacity: isTeamFiltered ? 1 : 0.35,
+                    filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
                   }}
                 >
                   <Typography variant="body2" fontWeight={600} noWrap>

@@ -93,6 +93,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           isOptional
           allowNominations
           automaticAssignment
+          showPlaces
           winner {
             ... on TeamWinner {
               team {
@@ -141,11 +142,18 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
 `;
 
 export function parseFinalDeliberationData(data: FinalDeliberationData) {
-  if (typeof data.division.judging.finalDeliberation.champions === 'string') {
-    const parsedChampions = JSON.parse(data.division.judging.finalDeliberation.champions);
+  const updates: Record<string, unknown> = {};
 
+  if (typeof data.division.judging.finalDeliberation.champions === 'string') {
+    updates.champions = JSON.parse(data.division.judging.finalDeliberation.champions);
+  }
+  if (typeof data.division.judging.finalDeliberation.optionalAwards === 'string') {
+    updates.optionalAwards = JSON.parse(data.division.judging.finalDeliberation.optionalAwards);
+  }
+
+  if (Object.keys(updates).length > 0) {
     return merge(data, {
-      division: { judging: { finalDeliberation: { champions: parsedChampions } } }
+      division: { judging: { finalDeliberation: updates } }
     }).division;
   }
   return data.division;

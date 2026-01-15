@@ -26,7 +26,7 @@ export default function JudgingSchedulePage() {
   );
 
   const {
-    data = { rooms: [], rows: [] },
+    data = { rooms: [], rows: [], sessionLength: 0 },
     loading,
     error
   } = usePageData(
@@ -53,7 +53,9 @@ export default function JudgingSchedulePage() {
 
           {!error && !hasData && !loading && <EmptyState />}
 
-          {!error && hasData && <ScheduleTable rooms={data.rooms} rows={data.rows} />}
+          {!error && hasData && (
+            <ScheduleTable rooms={data.rooms} rows={data.rows} sessionLength={data.sessionLength} />
+          )}
 
           {loading && <LoadingState />}
         </Box>

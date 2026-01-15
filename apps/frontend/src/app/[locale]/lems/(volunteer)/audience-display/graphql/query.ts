@@ -48,10 +48,8 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
   }
 `;
 
-export function parseAudienceDisplayData(data: AudienceDisplayData): AudienceDisplayState {
-  return (
-    data.division.field.audienceDisplay ?? {
-      activeDisplay: 'logo'
-    }
-  );
+export function parseAudienceDisplayData(data: AudienceDisplayData) {
+  return data.division.field.audienceDisplay ?? {
+    activeDisplay: 'logo'
+  };
 }

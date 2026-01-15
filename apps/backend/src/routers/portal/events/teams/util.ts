@@ -63,6 +63,7 @@ export const makeAgendaResponse = (agendaItem: DbAgendaEvent): AgendaEvent => {
     startTime: agendaItem.start_time,
     duration: agendaItem.duration,
     divisionId: agendaItem.division_id,
-    location: agendaItem.location
+    location: agendaItem.location,
+    visibility: agendaItem.visibility as 'public' | 'judging' | 'field' | 'teams'
   };
 };

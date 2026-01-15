@@ -78,7 +78,6 @@ export interface Award {
   place?: number;
 }
 
-
 export interface UnifiedDivisionData {
   division: {
     id: string;
@@ -89,7 +88,10 @@ export interface UnifiedDivisionData {
       name: string;
       slug: string;
     }[];
-    awards: Award[];
+    judging: {
+      divisionId: string;
+      awards: Award[];
+    };
   };
 }
 
@@ -97,3 +99,5 @@ export interface UnifiedDivisionVars {
   divisionId: string;
   teamSlugs?: string[] | null;
 }
+
+export type DivisionTeam = UnifiedDivisionData['division']['allTeams'][0];

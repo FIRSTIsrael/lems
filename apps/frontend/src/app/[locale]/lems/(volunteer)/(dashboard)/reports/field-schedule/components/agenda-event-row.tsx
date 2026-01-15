@@ -1,4 +1,5 @@
 import { TableCell, TableRow, Typography, useMediaQuery, useTheme, Chip } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import type { AgendaEvent } from '../graphql/types';
 
@@ -13,6 +14,7 @@ const VISIBILITY_COLORS: Record<string, string> = {
 };
 
 export const AgendaEventRow: React.FC<AgendaEventRowProps> = ({ event, tableCount }) => {
+  const t = useTranslations('pages.reports.field-schedule');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -51,7 +53,7 @@ export const AgendaEventRow: React.FC<AgendaEventRowProps> = ({ event, tableCoun
           {event.title}
           <Chip
             size="small"
-            label={event.visibility}
+            label={t(`visibility.${event.visibility}`)}
             sx={{
               ml: 1,
               height: 20,

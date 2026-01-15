@@ -1,7 +1,7 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { merge, updateInArray } from '@lems/shared/utils';
-import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
-import type { SubscriptionVars, QueryData, RobotGameMatch } from '../types';
+import { merge } from '@lems/shared/utils';
+import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
+import type { SubscriptionVars, QueryData } from '../types';
 
 interface SubscriptionData {
   matchLoaded: {

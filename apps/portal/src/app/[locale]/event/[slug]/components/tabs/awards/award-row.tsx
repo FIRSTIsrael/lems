@@ -59,12 +59,14 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
                 borderColor: 'grey.200'
               }}
             >
-              <EmojiEvents
-                sx={{
-                  color: trophyColor,
-                  fontSize: '1.5rem'
-                }}
-              />
+              {award.showPlaces && (
+                <EmojiEvents
+                  sx={{
+                    color: trophyColor,
+                    fontSize: '1.5rem'
+                  }}
+                />
+              )}
 
               {team ? (
                 <Typography

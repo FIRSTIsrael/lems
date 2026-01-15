@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Chip, Stack, Typography, TextField, Autocomplete } from '@mui/material';
 import { Close as CloseIcon } from '@mui/icons-material';
+import type { DivisionTeam } from '../graphql/types';
 import { useCompareContext } from '../compare-context';
 
 interface TeamSelectorProps {
@@ -11,7 +12,21 @@ interface TeamSelectorProps {
   compact?: boolean;
 }
 
-const TeamAutocomplete = ({ availableTeams, addTeam, currentTeams, t, size = 'medium' }: any) => (
+interface TeamAutocompleteProps {
+  availableTeams: DivisionTeam[];
+  addTeam: (slug: string) => void;
+  currentTeams: string[];
+  t: (key: string) => string;
+  size?: 'small' | 'medium';
+}
+
+const TeamAutocomplete = ({
+  availableTeams,
+  addTeam,
+  currentTeams,
+  t,
+  size = 'medium'
+}: TeamAutocompleteProps) => (
   <Autocomplete
     options={availableTeams}
     getOptionLabel={team => `#${team.number} - ${team.name}`}
@@ -39,20 +54,26 @@ export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProp
   const availableTeams = allTeams.filter(team => !currentTeams.includes(team.slug));
   const currentTeamObjects = currentTeams
     .map(slug => allTeams.find(team => team.slug === slug))
-    .filter(Boolean);
+    .filter((team): team is DivisionTeam => team !== undefined);
 
   const updateTeamsInUrl = (newTeamSlugs: string[]) => {
     const params = new URLSearchParams(searchParams.toString());
-    newTeamSlugs.length > 0 ? params.set('teams', newTeamSlugs.join(',')) : params.delete('teams');
+    if (newTeamSlugs.length > 0) {
+      params.set('teams', newTeamSlugs.join(','));
+    } else {
+      params.delete('teams');
+    }
     router.push(`?${params.toString()}`);
   };
 
-  const addTeam = (teamSlug: string) =>
-    currentTeams.length < 6 &&
-    !currentTeams.includes(teamSlug) &&
-    updateTeamsInUrl([...currentTeams, teamSlug]);
-  const removeTeam = (teamSlug: string) =>
+  const addTeam = (teamSlug: string) => {
+    if (currentTeams.length < 6 && !currentTeams.includes(teamSlug)) {
+      updateTeamsInUrl([...currentTeams, teamSlug]);
+    }
+  };
+  const removeTeam = (teamSlug: string) => {
     updateTeamsInUrl(currentTeams.filter(slug => slug !== teamSlug));
+  };
 
   if (compact) {
     return (

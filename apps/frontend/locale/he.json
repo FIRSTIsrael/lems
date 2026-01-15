@@ -166,6 +166,7 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
+        "field-status": "מצב הזירה",
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
@@ -174,6 +175,67 @@
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש",
         "judging-status": "מצב השיפוט"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "אין מקצה טעון",
+          "late": "מאחר!",
+          "tables-ready": "{ready} מתוך {total} שולחנות מוכנים"
+        },
+        "upcoming-matches": {
+          "title": "מקצים קרובים",
+          "no-matches": "אין מקצים קרובים",
+          "time": "זמן",
+          "next": "הבא",
+          "in-time": "בעוד {time}",
+          "team-number": "קבוצה {number}",
+          "match-number": "מקצה",
+          "scheduled-time": "זמן מתוכנן",
+          "teams": "קבוצות"
+        },
+        "active-match": {
+          "title": "מקצה רץ",
+          "no-match": "אין מקצה פעיל כרגע",
+          "match-title": "מקצה {slug}",
+          "started-at": "התחיל",
+          "deviation": "סטייה",
+          "participants": "משתתפים",
+          "team-label": "קבוצה",
+          "status": {
+            "in-progress": "רץ",
+            "completed": "הושלם"
+          }
+        },
+        "next-match": {
+          "title": "המקצה הבא",
+          "no-match": "אין מקצה טעון",
+          "match-title": "המקצה הבא: {slug}",
+          "tables-ready": "שולחנות מוכנים",
+          "team-number": "קבוצה {number}",
+          "judging-conflict": "שיפוט: {room}",
+          "status": {
+            "ready": "מוכן",
+            "present": "נוכח",
+            "queued": "בקיו",
+            "not-present": "לא נוכח"
+          }
+        },
+        "judging-integration": {
+          "title": "אינטגרציה עם שיפוט",
+          "active-sessions": "מפגשי שיפוט פעילים",
+          "team-info": "קבוצה {number} - {name}",
+          "conflicts": "התנגשויות זמן",
+          "team-number": "קבוצה {number}",
+          "conflict-details": "בשיפוט: {room} | נקראה למקצה {match}",
+          "no-conflicts": "אין התנגשויות זמן"
+        },
+        "queue-overview": {
+          "title": "מצב הקיו",
+          "no-matches": "אין מקצים בקיו כרגע",
+          "match-label": "מקצה",
+          "in-queue": "בקיו:",
+          "team-label": "קבוצה"
+        }
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -222,7 +284,8 @@
         "visibility": {
           "public": "כללי",
           "judging": "שיפוט",
-          "field": "זירה"
+          "field": "זירה",
+          "teams": "קבוצות"
         }
       },
       "field-timer": {
@@ -248,7 +311,13 @@
           "test": "סבב ניסוי"
         },
         "not-arrived": "לא הגיעה",
-        "loading": "טוען מקצים..."
+        "loading": "טוען מקצים...",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט",
+          "field": "זירה",
+          "teams": "קבוצות"
+        }
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",
@@ -916,6 +985,16 @@
           "optional-awards": "פרסים אופציונליים",
           "review": "סיכום"
         },
+        "errors": {
+          "award-limit-exceeded": "לא ניתן להוסיף זוכים נוספים לפרס זה."
+        },
+        "manual-eligibility-control": {
+          "title": "זכאות ידנית",
+          "description": "הוסף קבוצות שלא הועמדו לדיון",
+          "add-team": "הוסף קבוצה",
+          "select-team": "בחר קבוצה...",
+          "no-data-available": "אין קבוצות זמינות"
+        },
         "champions": {
           "title": "פרס האליפות",
           "description": "בחרו קבוצות לפרס האליפות.",
@@ -934,6 +1013,65 @@
           "not-started": "מחכה להתחלת דיון",
           "deliberation-finalized": "פרסי האליפות נבחרו, מחכה להמשך הדיון.",
           "completed": "הדיון הושלם"
+        },
+        "core-awards": {
+          "title": "פרסי ליבה",
+          "description": "בחרו קבוצות לפרסי הליבה",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-actions": "פעולות",
+          "table-robot-design": "תכנון הרובוט",
+          "table-innovation-project": "פרויקט החדשנות",
+          "table-core-values": "ערכי ליבה",
+          "robot-design": "תכנון הרובוט",
+          "innovation-project": "פרויקט החדשנות",
+          "core-values": "ערכי ליבה",
+          "save": "שמור פרסים",
+          "advance": "המשך לפרסים אופציונליים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-not-eligible-for-category": "הקבוצה לא זכאית ל-{category}",
+          "team-already-added-to-category": "הקבוצה כבר נוספה ל-{category}",
+          "add-team-to-category": "הוסף קבוצה ל-{category}"
+        },
+        "optional-awards": {
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-core-values": "ערכי ליבה",
+          "table-nominations": "מועמדויות",
+          "table-actions": "פעולות",
+          "start": "התחל דיון",
+          "advance": "המשך לסיכום",
+          "saving": "שומר...",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסים אופציונליים נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-already-added": "הקבוצה כבר נבחרה לפרס",
+          "no-data-available": "אין קבוצות זמינות",
+          "select-award": "בחר פרס"
+        },
+        "review": {
+          "title": "סיכום הפרסים",
+          "place": "מקום #{place}",
+          "approve-button": "אישור ונעילת הפרסים",
+          "approval-modal": {
+            "title": "אישור ונעילת הפרסים",
+            "description": "האם אתה בטוח שברצונך לאשר ולנעול את הפרסים האלה?",
+            "warning-text": "⚠️ נעילה תוביל להודעה מיידית על הפרסים ל- Scorekeeper ו- MC, ויפתח את מצגת הפרסים. פעולה זו לא ניתן לביטול.",
+            "confirm": "אישור ונעילה",
+            "cancel": "ביטול",
+            "submitting": "נועל...",
+            "success-message": "הפרסים ננעלו בהצלחה",
+            "error-message": "נעילה נכשלה."
+          }
         }
       }
     }

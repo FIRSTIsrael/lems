@@ -6,11 +6,11 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
     division(id: $divisionId) {
       id
       judging {
+        divisionId
         awards {
           id
           name
           place
-          description
         }
       }
     }
@@ -18,7 +18,7 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
 `;
 
 export function parseDivisionAwards(data: QueryData): Award[] {
-  const awards = data.division?.awards ?? [];
+  const awards = data.division?.judging.awards ?? [];
 
   // Group by award name and count places
   const awardGroups = awards.reduce(
@@ -27,8 +27,7 @@ export function parseDivisionAwards(data: QueryData): Award[] {
         groups[award.name] = {
           id: award.id,
           name: award.name,
-          placeCount: 0,
-          description: award.description
+          placeCount: 0
         };
       }
       groups[award.name].placeCount++;

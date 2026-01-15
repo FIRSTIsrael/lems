@@ -12,6 +12,7 @@ import {
   getCategoryColor,
   getCategoryBgColor,
   getFieldComparisonColor,
+  type RubricField,
   type FieldComparisons
 } from './rubric-scores-utils';
 import { SectionScoreRow } from './section-score-row';
@@ -20,36 +21,50 @@ interface RubricScoresProps {
   team: Team;
 }
 
+interface SectionFields {
+  [sectionId: string]: Array<{
+    fieldId: string;
+    value: number | null;
+    color: 'success' | 'error' | 'default';
+  }>;
+}
+
+interface FieldsByCategories {
+  [category: string]: SectionFields;
+}
+
 const processFieldsBySections = (
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
-) => {
+): FieldsByCategories => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
-  const result: any = {};
+  const result: FieldsByCategories = {};
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
       const fields = [
         ...Object.entries(team.rubrics.innovation_project?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['innovation-project'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'innovation-project' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
           })),
         ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
-          .filter(([id, field]) =>
+          .filter(([id]) =>
             rubrics['robot-design'].sections.some(s =>
               s.fields.some(f => f.id === id && f.coreValues)
             )
           )
           .map(([id, field]) => ({
             fieldId: id,
+            category: 'robot-design' as const,
             value: field.value,
             color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
           }))
@@ -58,14 +73,16 @@ const processFieldsBySections = (
     } else {
       const rubric = team.rubrics[cat.replace('-', '_') as keyof typeof team.rubrics];
       const schema = rubrics[cat as JudgingCategory];
-      if (rubric?.data?.fields && schema.sections) {
-        const sections: any = {};
+      const rubricData = rubric?.data;
+      if (rubricData?.fields && schema.sections) {
+        const sections: Record<string, RubricField[]> = {};
         schema.sections.forEach(section => {
           const sectionFields = section.fields
-            .filter(field => rubric.data.fields[field.id])
+            .filter(field => rubricData.fields[field.id])
             .map(field => ({
               fieldId: field.id,
-              value: rubric.data.fields[field.id].value,
+              category: cat,
+              value: rubricData.fields[field.id].value,
               color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
             }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
@@ -77,15 +94,13 @@ const processFieldsBySections = (
   return result;
 };
 
-const CategoryScoreCard = ({
-  cat,
-  sections,
-  getCategory
-}: {
+interface CategoryScoreCardProps {
   cat: string;
-  sections: any;
-  getCategory: any;
-}) => (
+  sections: SectionFields;
+  getCategory: (category: string) => string;
+}
+
+const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProps) => (
   <Paper
     sx={{
       p: 1.5,
@@ -106,10 +121,10 @@ const CategoryScoreCard = ({
         display: 'block'
       }}
     >
-      {getCategory(cat as any)}
+      {getCategory(cat)}
     </Typography>
     <Stack spacing={cat === 'core-values' ? 1.5 : 0.5}>
-      {Object.entries(sections).map(([sectionId, scores]: any) => (
+      {Object.entries(sections).map(([sectionId, scores]) => (
         <SectionScoreRow
           key={sectionId}
           category={cat as JudgingCategory}
@@ -134,7 +149,9 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
   );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>
-    Object.values(sections).some(fields => fields.length > 0)
+    Object.values(sections as SectionFields).some(
+      fields => Array.isArray(fields) && fields.length > 0
+    )
   );
 
   if (!hasAnyFields) {
@@ -163,27 +180,35 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
           }}
         >
           <Stack spacing={0.5}>
-            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => (
-              <SectionScoreRow
-                key={sectionId}
-                category={category as JudgingCategory}
-                sectionId={sectionId}
-                scores={scores}
-                showSectionName={category !== 'core-values'}
-                showAllScores={category === 'core-values'}
-              />
-            ))}
+            {Object.entries(fieldsBySections[category] || {}).map(([sectionId, scores]) => {
+              const typedScores = scores as Array<{
+                fieldId: string;
+                value: number | null;
+                color: 'success' | 'error' | 'default';
+              }>;
+              return (
+                <SectionScoreRow
+                  key={sectionId}
+                  category={category as JudgingCategory}
+                  sectionId={sectionId}
+                  scores={typedScores}
+                  showSectionName={category !== 'core-values'}
+                  showAllScores={category === 'core-values'}
+                />
+              );
+            })}
           </Stack>
         </Paper>
       ) : (
         <Grid container spacing={1}>
-          {Object.entries(fieldsBySections).map(([cat, sections]) =>
-            Object.keys(sections).length > 0 ? (
+          {Object.entries(fieldsBySections).map(([cat, sections]) => {
+            const typedSections = sections as SectionFields;
+            return Object.keys(typedSections).length > 0 ? (
               <Grid size={4} key={cat}>
-                <CategoryScoreCard cat={cat} sections={sections} getCategory={getCategory} />
+                <CategoryScoreCard cat={cat} sections={typedSections} getCategory={getCategory} />
               </Grid>
-            ) : null
-          )}
+            ) : null;
+          })}
         </Grid>
       )}
     </Stack>
