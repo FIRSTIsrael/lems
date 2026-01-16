@@ -33,12 +33,10 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
     return slides;
   }, [awards, awardWinnerSlideStyle, getName, getDescription, t]);
 
-  // Calculate total slides: title + awards grouped by index
+  // Calculate total slides
   const totalSlides = useMemo(() => {
-    if (!awards.length) return 0;
-    const uniqueIndices = new Set(awards.map(a => a.index));
-    return 1 + uniqueIndices.size; // title slide + one per award index
-  }, [awards]);
+    return awardSlides.length;
+  }, [awardSlides]);
 
   // Calculate next slide view (one step ahead)
   const endOfNextSlide = (view: DeckView): DeckView => ({
@@ -81,7 +79,7 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
         )}
       </Stack>
 
-      <ControlsPanel deckRef={deckRef} totalSlides={awardSlides.length + 1} />
+      <ControlsPanel deckRef={deckRef} totalSlides={totalSlides} />
     </Stack>
   );
 };

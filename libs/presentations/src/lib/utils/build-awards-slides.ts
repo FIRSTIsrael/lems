@@ -60,6 +60,14 @@ export function buildAwardsSlides(
 
   const { getAwardName, getAwardDescription, awardTranslation, divisionColor } = options || {};
 
+  // Add title slide after logo
+  slides.push(
+    React.createElement(TitleSlide, {
+      key: 'awards-title',
+      primary: awardTranslation ? awardTranslation('awards-presentation') : 'Awards Presentation'
+    })
+  );
+
   const awardsByIndex = new Map<number, Award[]>();
   const advancingAwards: Award[] = [];
 
