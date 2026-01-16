@@ -11,15 +11,27 @@ interface UpdatePresentationMutationData {
 
 interface UpdatePresentationMutationVars {
   divisionId: string;
-  awardsPresentation: AwardsPresentation;
+  slideIndex: number;
+  stepIndex: number;
+  slideId?: string;
 }
 
 export const UPDATE_PRESENTATION_MUTATION: TypedDocumentNode<
   UpdatePresentationMutationData,
   UpdatePresentationMutationVars
 > = gql`
-  mutation UpdatePresentation($divisionId: String!, $awardsPresentation: AwardsPresentation!) {
-    updatePresentation(divisionId: $divisionId, awardsPresentation: $awardsPresentation) {
+  mutation UpdatePresentation(
+    $divisionId: String!
+    $slideIndex: Int!
+    $stepIndex: Int!
+    $slideId: String
+  ) {
+    updatePresentation(
+      divisionId: $divisionId
+      slideIndex: $slideIndex
+      stepIndex: $stepIndex
+      slideId: $slideId
+    ) {
       awardsPresentation {
         slideId
         slideIndex

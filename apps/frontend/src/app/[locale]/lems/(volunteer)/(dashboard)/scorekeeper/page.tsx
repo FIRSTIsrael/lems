@@ -27,7 +27,7 @@ import { ControlButtons } from './components/control/control-buttons';
 import { AudienceDisplayControl } from './components/audience-display-control';
 import { ScorekeeperLoadingSkeleton } from './components/scorekeeper-loading-skeleton';
 import { ScorekeeperProvider } from './components/scorekeeper-context';
-import { AwardsPresentationWrapper } from './components/awards-presentation-wrapper';
+import { AwardsPresentationWrapper } from './components/awards-presentation/awards-presentation-wrapper';
 
 export default function ScorekeeperPage() {
   const t = useTranslations('pages.scorekeeper');

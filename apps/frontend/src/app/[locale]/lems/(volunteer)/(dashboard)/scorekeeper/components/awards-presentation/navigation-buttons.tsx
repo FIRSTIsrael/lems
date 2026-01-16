@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Stack, Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import {
@@ -11,6 +11,10 @@ import {
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { DeckRef } from '@lems/presentations';
+import { useMutation } from '@apollo/client/react';
+import toast from 'react-hot-toast';
+import { useEvent } from '../../../../components/event-context';
+import { UPDATE_PRESENTATION_MUTATION } from '../../graphql';
 
 interface NavigationButtonsProps {
   deckRef: React.RefObject<DeckRef>;
@@ -20,20 +24,60 @@ interface NavigationButtonsProps {
 export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, totalSlides }) => {
   const t = useTranslations('pages.scorekeeper.awards-presentation');
 
-  const handleStepBackward = () => {
-    deckRef.current?.stepBackward();
-  };
+  const { currentDivision } = useEvent();
 
-  const handleStepForward = () => {
+  const [updatePresentation] = useMutation(UPDATE_PRESENTATION_MUTATION, {
+    onError: () => {
+      toast.error('Failed to update presentation state');
+    }
+  });
+
+  const handlePresentationStateChange = useCallback(
+    (slideIndex: number, stepIndex: number, slideId?: string) => {
+      updatePresentation({
+        variables: {
+          divisionId: currentDivision.id,
+          slideIndex,
+          stepIndex,
+          slideId
+        }
+      });
+    },
+    [updatePresentation, currentDivision.id]
+  );
+
+  const handleStepBackward = useCallback(() => {
+    deckRef.current?.stepBackward();
+    const currentState = deckRef.current?.activeView;
+    if (currentState) {
+      handlePresentationStateChange(currentState.slideIndex, currentState.stepIndex);
+    }
+  }, [deckRef, handlePresentationStateChange]);
+
+  const handleStepForward = useCallback(() => {
     deckRef.current?.stepForward();
-  };
+    const currentState = deckRef.current?.activeView;
+    if (currentState) {
+      handlePresentationStateChange(currentState.slideIndex, currentState.stepIndex);
+    }
+  }, [deckRef, handlePresentationStateChange]);
+
+  const handleFirstSlide = useCallback(() => {
+    deckRef.current?.skipTo({ slideIndex: 0, stepIndex: 0 });
+    handlePresentationStateChange(0, 0);
+  }, [deckRef, handlePresentationStateChange]);
+
+  const handleLastSlide = useCallback(() => {
+    deckRef.current?.skipTo({ slideIndex: totalSlides - 1, stepIndex: 0 });
+    handlePresentationStateChange(totalSlides - 1, 0);
+  }, [deckRef, totalSlides, handlePresentationStateChange]);
 
   return (
     <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center">
       <Button
         size="small"
         variant="outlined"
-        onClick={() => deckRef.current?.skipTo({ slideIndex: 0, stepIndex: 0 })}
+        onClick={handleFirstSlide}
         startIcon={<HomeIcon />}
         sx={{
           borderRadius: 1.5,
@@ -72,7 +116,7 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, t
       <Button
         size="small"
         variant="outlined"
-        onClick={() => deckRef.current?.skipTo({ slideIndex: totalSlides - 1, stepIndex: 0 })}
+        onClick={handleLastSlide}
         startIcon={<GetAppIcon />}
         sx={{
           borderRadius: 1.5,

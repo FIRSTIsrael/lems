@@ -1,43 +1,14 @@
 'use client';
 
-import React, { useCallback, useMemo } from 'react';
-import toast from 'react-hot-toast';
+import React, { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { useMutation } from '@apollo/client/react';
 import { AwardsPresentationProvider, Award as PresentationAward } from '@lems/shared/providers';
-import { TeamWinner, UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION } from '../graphql';
-import { useEvent } from '../../../components/event-context';
-import { useScorekeeperData } from './scorekeeper-context';
-import { AwardsPresentationDisplay } from './awards-presentation';
+import { TeamWinner } from '../../graphql';
+import { useScorekeeperData } from '../scorekeeper-context';
+import { AwardsPresentationDisplay } from './display';
 
 function AwardsPresentationContent() {
   const t = useTranslations('pages.scorekeeper.awards-presentation');
-  const { currentDivision } = useEvent();
-
-  const [updateAudienceDisplaySetting] = useMutation(UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION, {
-    onError: () => {
-      toast.error('Failed to update presentation state');
-    }
-  });
-
-  const handlePresentationStateChange = useCallback(
-    (slideIndex: number, stepIndex: number) => {
-      updateAudienceDisplaySetting({
-        variables: {
-          divisionId: currentDivision.id,
-          display: 'awards',
-          settingKey: 'presentationState',
-          settingValue: { slideIndex, stepIndex }
-        }
-      });
-    },
-    [updateAudienceDisplaySetting, currentDivision.id]
-  );
-
-  // Store the mutation callback for use by the display component if needed
-  React.useEffect(() => {
-    // This allows the display component to access the update function if needed
-  }, [handlePresentationStateChange]);
 
   return (
     <AwardsPresentationDisplay
@@ -93,7 +64,7 @@ export function AwardsPresentationWrapper() {
           | 'both') || 'both'
       }
       presentationState={
-        (data.field?.audienceDisplay?.settings?.awards?.presentationState as {
+        (data.field?.audienceDisplay?.awardsPresentation as {
           slideIndex: number;
           stepIndex: number;
         }) || { slideIndex: 0, stepIndex: 0 }

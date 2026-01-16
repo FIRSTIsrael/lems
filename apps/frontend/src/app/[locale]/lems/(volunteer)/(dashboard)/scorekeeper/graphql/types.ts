@@ -1,3 +1,5 @@
+import { AwardsPresentation } from '@lems/database';
+
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
 export type AudienceDisplayScreen =
@@ -65,6 +67,7 @@ export interface Match {
 
 export interface AudienceDisplayState {
   activeDisplay: AudienceDisplayScreen;
+  awardsPresentation: AwardsPresentation;
   settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
 }
 
