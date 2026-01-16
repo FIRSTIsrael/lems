@@ -46,10 +46,12 @@ export function AwardsPresentationWrapper() {
           | 'both') || 'both'
       }
       presentationState={
-        (data.field?.audienceDisplay?.awardsPresentation as {
-          slideIndex: number;
-          stepIndex: number;
-        }) || { slideIndex: 0, stepIndex: 0 }
+        data.field?.audienceDisplay?.awardsPresentation != null
+          ? (data.field.audienceDisplay.awardsPresentation as {
+              slideIndex: number;
+              stepIndex: number;
+            })
+          : { slideIndex: 0, stepIndex: 0 }
       }
     >
       <AwardsPresentationDisplay

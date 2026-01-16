@@ -38,7 +38,10 @@ export function AudienceDisplayProvider({
 
   const awardWinnerSlideStyle = getAwardWinnerSlideStyle();
   // Read presentationState from awardsPresentation (where PRESENTATION_UPDATED_SUBSCRIPTION updates it)
-  const presentationState = displayState.awardsPresentation || { slideIndex: 0, stepIndex: 0 };
+  const presentationState =
+    displayState.awardsPresentation != null
+      ? displayState.awardsPresentation
+      : { slideIndex: 0, stepIndex: 0 };
 
   const contextValue = useMemo<AudienceDisplayContextData>(
     () => ({

@@ -52,7 +52,7 @@ function deckReducer(state: DeckState, { type, payload = {} }: ReducerActions) {
       };
     case 'SKIP_TO': {
       const navDir =
-        'slideIndex' in payload && payload.slideIndex
+        'slideIndex' in payload && payload.slideIndex != null
           ? clamp(payload.slideIndex - state.activeView.slideIndex, -1, 1)
           : state.navigationDirection;
       return {
