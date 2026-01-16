@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack } from '@mui/material';
 import { buildAwardsSlides, DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
@@ -23,24 +23,12 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
   const t = useTranslations('awards-presentation');
   const deckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
   const previewDeckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
-  const [currentView, setCurrentView] = useState<DeckView>(presentationState);
-  const [showPreview, setShowPreview] = useState(true);
 
   const awardSlides = useMemo(() => {
-    console.log('[AwardsPresentationDisplay] Building slides with:', {
-      awards,
-      awardsCount: awards.length,
-      awardWinnerSlideStyle,
-      firstAward: awards[0]
-    });
     const slides = buildAwardsSlides(awards, awardWinnerSlideStyle, {
       getAwardName: getName,
       getAwardDescription: getDescription,
       awardTranslation: (name: string) => t('prize', { name })
-    });
-    console.log('[AwardsPresentationDisplay] Built slides:', {
-      slidesCount: slides.length,
-      slides
     });
     return slides;
   }, [awards, awardWinnerSlideStyle, getName, getDescription, t]);
@@ -58,16 +46,9 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
     stepIndex: GOTO_FINAL_STEP
   });
 
-  // Handle slide update - update preview and show/hide it appropriately
-  const handleSlideUpdate = (newView: DeckView) => {
-    setCurrentView(newView);
-    const isOnFinalSlide = totalSlides - 1 === newView.slideIndex;
-    setShowPreview(!isOnFinalSlide);
-
-    if (previewDeckRef.current && !isOnFinalSlide) {
-      previewDeckRef.current.skipTo(endOfNextSlide(newView));
-    }
-  };
+  // Determine if we're on the final slide based on subscription state
+  const isOnFinalSlide = totalSlides > 0 && totalSlides - 1 === presentationState.slideIndex;
+  const showPreview = !isOnFinalSlide;
 
   return (
     <Stack spacing={3} height="100%">
@@ -86,7 +67,6 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
           label={currentSlideLabel}
           deckRef={deckRef}
           initialState={presentationState}
-          onViewUpdate={handleSlideUpdate}
           awardSlides={awardSlides}
         />
 
@@ -95,18 +75,14 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
           <SlideDisplay
             label={nextSlideLabel}
             deckRef={previewDeckRef}
-            initialState={endOfNextSlide(currentView)}
+            initialState={endOfNextSlide(presentationState)}
             awardSlides={awardSlides}
           />
         )}
       </Stack>
 
       {/* Controls */}
-      <ControlsPanel
-        deckRef={deckRef}
-        currentSlideIndex={presentationState.slideIndex}
-        totalSlides={totalSlides}
-      />
+      <ControlsPanel deckRef={deckRef} totalSlides={awardSlides.length + 1} />
     </Stack>
   );
 };

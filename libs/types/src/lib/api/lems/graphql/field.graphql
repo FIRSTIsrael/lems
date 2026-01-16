@@ -14,9 +14,6 @@ enum AudienceDisplayScreen {
 Awards presentation settings for the audience display
 """
 type AwardsPresentation {
-  "Current slide id"
-  slideId: String
-
   "Current slide index"
   slideIndex: Int!
 
@@ -312,8 +309,6 @@ extend type Mutation {
   updatePresentation(
     "The ID of the division containing the audience display"
     divisionId: String!
-    "The new awards presentation slide ID"
-    slideId: String
     "The new awards presentation slide index"
     slideIndex: Int!
     "The new awards presentation step index"

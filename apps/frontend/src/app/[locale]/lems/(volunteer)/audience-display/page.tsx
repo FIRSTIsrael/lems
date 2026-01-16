@@ -19,6 +19,7 @@ import {
   GET_AUDIENCE_DISPLAY_DATA,
   parseAudienceDisplayData
 } from './graphql';
+import { createPresentationUpdatedSubscription } from './components/awards/graphql';
 import type { AudienceDisplayState, Award } from './graphql';
 
 interface ParsedAudienceDisplayData {
@@ -49,7 +50,8 @@ export default function AudienceDisplayPage() {
   const subscriptions = useMemo(
     () => [
       createAudienceDisplaySwitchedSubscription(currentDivision.id),
-      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id)
+      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id),
+      createPresentationUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -97,12 +99,6 @@ export default function AudienceDisplayPage() {
               | 'chroma'
               | 'full'
               | 'both') || 'both'
-          }
-          presentationState={
-            (data.displayState.settings?.awards?.presentationState as {
-              slideIndex: number;
-              stepIndex: number;
-            }) || { slideIndex: 0, stepIndex: 0 }
           }
         />
       )}

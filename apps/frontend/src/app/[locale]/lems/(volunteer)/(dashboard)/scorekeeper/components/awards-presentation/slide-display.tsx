@@ -8,7 +8,6 @@ interface SlideDisplayProps {
   label: string;
   deckRef: React.RefObject<DeckRef>;
   initialState: DeckView;
-  onViewUpdate?: (view: DeckView) => void;
   awardSlides: React.ReactNode[];
 }
 
@@ -16,7 +15,6 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
   label,
   deckRef,
   initialState,
-  onViewUpdate,
   awardSlides
 }) => {
   const theme = useTheme();
@@ -53,12 +51,7 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
         }}
       >
         <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-          <Deck
-            ref={deckRef}
-            initialState={initialState}
-            enableReinitialize={true}
-            onViewUpdate={onViewUpdate}
-          >
+          <Deck ref={deckRef} initialState={initialState} enableReinitialize={true}>
             <TitleSlide primary="טקס הפרסים" />
             {awardSlides}
           </Deck>

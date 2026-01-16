@@ -7,7 +7,6 @@ export type AudienceDisplayScreen =
   | 'awards';
 
 export interface AwardsPresentation {
-  slideId?: string;
   slideIndex: number;
   stepIndex: number;
 }

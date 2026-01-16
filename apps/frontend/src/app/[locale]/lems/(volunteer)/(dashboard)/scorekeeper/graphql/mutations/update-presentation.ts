@@ -13,30 +13,35 @@ interface UpdatePresentationMutationVars {
   divisionId: string;
   slideIndex: number;
   stepIndex: number;
-  slideId?: string;
 }
 
 export const UPDATE_PRESENTATION_MUTATION: TypedDocumentNode<
   UpdatePresentationMutationData,
   UpdatePresentationMutationVars
 > = gql`
-  mutation UpdatePresentation(
-    $divisionId: String!
-    $slideIndex: Int!
-    $stepIndex: Int!
-    $slideId: String
-  ) {
-    updatePresentation(
-      divisionId: $divisionId
-      slideIndex: $slideIndex
-      stepIndex: $stepIndex
-      slideId: $slideId
-    ) {
+  mutation UpdatePresentation($divisionId: String!, $slideIndex: Int!, $stepIndex: Int!) {
+    updatePresentation(divisionId: $divisionId, slideIndex: $slideIndex, stepIndex: $stepIndex) {
       awardsPresentation {
-        slideId
         slideIndex
         stepIndex
       }
     }
   }
 `;
+
+/**
+ * Creates an optimistic response for the UPDATE_PRESENTATION_MUTATION
+ * This provides immediate UI feedback while waiting for the server response
+ */
+export function getUpdatePresentationOptimisticResponse(
+  variables: UpdatePresentationMutationVars
+): UpdatePresentationMutationData {
+  return {
+    updatePresentation: {
+      awardsPresentation: {
+        slideIndex: variables.slideIndex,
+        stepIndex: variables.stepIndex
+      }
+    }
+  };
+}

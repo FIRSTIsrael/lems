@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode, useMemo } from 'react';
-import { AwardsPresentationProvider } from '@lems/shared';
+import { AwardsPresentationProvider } from '@lems/shared/providers';
 import type { AudienceDisplayState, Award } from '../graphql';
 
 interface AudienceDisplayContextData {
@@ -27,7 +27,8 @@ export function AudienceDisplayProvider({
 }: AudienceDisplayProviderProps) {
   const awardWinnerSlideStyle =
     (displayState.settings?.awards?.awardWinnerSlideStyle as 'chroma' | 'full' | 'both') || 'both';
-  const presentationState = (displayState.settings?.awards?.presentationState as {
+  // Read presentationState from awardsPresentation (where PRESENTATION_UPDATED_SUBSCRIPTION updates it)
+  const presentationState = (displayState.awardsPresentation as {
     slideIndex: number;
     stepIndex: number;
   }) || { slideIndex: 0, stepIndex: 0 };

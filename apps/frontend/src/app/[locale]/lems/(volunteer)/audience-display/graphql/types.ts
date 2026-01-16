@@ -1,3 +1,5 @@
+import { AwardsPresentation } from '@lems/database';
+
 export type AudienceDisplayScreen =
   | 'scoreboard'
   | 'match_preview'
@@ -8,6 +10,7 @@ export type AudienceDisplayScreen =
 
 export interface AudienceDisplayState {
   activeDisplay: AudienceDisplayScreen;
+  awardsPresentation: AwardsPresentation;
   settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
 }
 
@@ -32,7 +35,7 @@ export interface Award {
   type: 'PERSONAL' | 'TEAM';
   isOptional: boolean;
   divisionColor?: string;
-  winner?: TeamWinner | PersonalWinner | null;
+  winner?: PersonalWinner | TeamWinner | null;
 }
 
 export interface AudienceDisplayData {

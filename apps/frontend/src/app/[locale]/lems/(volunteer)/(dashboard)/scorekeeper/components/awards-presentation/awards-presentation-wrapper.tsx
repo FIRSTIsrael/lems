@@ -7,19 +7,9 @@ import { TeamWinner } from '../../graphql';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { AwardsPresentationDisplay } from './display';
 
-function AwardsPresentationContent() {
-  const t = useTranslations('pages.scorekeeper.awards-presentation');
-
-  return (
-    <AwardsPresentationDisplay
-      currentSlideLabel={t('current-slide')}
-      nextSlideLabel={t('next-slide')}
-    />
-  );
-}
-
 export function AwardsPresentationWrapper() {
   const data = useScorekeeperData();
+  const t = useTranslations('pages.scorekeeper.awards-presentation');
 
   const mappedAwards = useMemo<PresentationAward[]>(() => {
     return (data.judging?.awards ?? [])
@@ -45,14 +35,6 @@ export function AwardsPresentationWrapper() {
       });
   }, [data.judging?.awards]);
 
-  console.log('[AwardsPresentationWrapper] Raw data:', {
-    judging: data.judging,
-    awards: data.judging?.awards,
-    awardsCount: data.judging?.awards?.length,
-    awardsAssigned: data.awardsAssigned,
-    firstAwardDetail: data.judging?.awards?.[0]
-  });
-
   return (
     <AwardsPresentationProvider
       awards={mappedAwards}
@@ -70,7 +52,10 @@ export function AwardsPresentationWrapper() {
         }) || { slideIndex: 0, stepIndex: 0 }
       }
     >
-      <AwardsPresentationContent />
+      <AwardsPresentationDisplay
+        currentSlideLabel={t('current-slide')}
+        nextSlideLabel={t('next-slide')}
+      />
     </AwardsPresentationProvider>
   );
 }

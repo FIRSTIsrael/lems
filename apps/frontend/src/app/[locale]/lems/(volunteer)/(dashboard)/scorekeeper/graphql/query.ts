@@ -39,7 +39,6 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
         audienceDisplay {
           activeDisplay
           awardsPresentation {
-            slideId
             slideIndex
             stepIndex
           }

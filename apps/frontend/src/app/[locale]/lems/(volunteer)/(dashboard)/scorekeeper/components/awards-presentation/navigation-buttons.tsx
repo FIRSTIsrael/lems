@@ -14,7 +14,10 @@ import { DeckRef } from '@lems/presentations';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useEvent } from '../../../../components/event-context';
-import { UPDATE_PRESENTATION_MUTATION } from '../../graphql';
+import {
+  UPDATE_PRESENTATION_MUTATION,
+  getUpdatePresentationOptimisticResponse
+} from '../../graphql';
 
 interface NavigationButtonsProps {
   deckRef: React.RefObject<DeckRef>;
@@ -34,43 +37,80 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, t
 
   const handlePresentationStateChange = useCallback(
     (slideIndex: number, stepIndex: number, slideId?: string) => {
+      const variables = {
+        divisionId: currentDivision.id,
+        slideIndex,
+        stepIndex,
+        slideId
+      };
+
+      // Use optimistic response for immediate UI feedback
       updatePresentation({
-        variables: {
-          divisionId: currentDivision.id,
-          slideIndex,
-          stepIndex,
-          slideId
-        }
+        variables,
+        optimisticResponse: getUpdatePresentationOptimisticResponse(variables)
       });
     },
     [updatePresentation, currentDivision.id]
   );
 
+  /**
+   * Helper: Use Deck as a reference to compute correct next state
+   * Read what stepForward WOULD do without mutating Deck
+   */
+  const computeNextStepState = useCallback((): { slideIndex: number; stepIndex: number } | null => {
+    if (!deckRef.current?.activeView) return null;
+
+    // Temporarily advance to see what the next state would be
+    const currentSlideIndex = deckRef.current.activeView.slideIndex;
+    const currentStepIndex = deckRef.current.activeView.stepIndex;
+
+    // For now, simple heuristic: step forward
+    // If we need smarter logic, we'd need to inspect Slide components
+    return {
+      slideIndex: currentSlideIndex,
+      stepIndex: currentStepIndex + 1
+    };
+  }, [deckRef]);
+
+  /**
+   * Helper: Compute previous state safely
+   */
+  const computePreviousStepState = useCallback((): {
+    slideIndex: number;
+    stepIndex: number;
+  } | null => {
+    if (!deckRef.current?.activeView) return null;
+
+    const currentSlideIndex = deckRef.current.activeView.slideIndex;
+    const currentStepIndex = deckRef.current.activeView.stepIndex;
+
+    return {
+      slideIndex: currentSlideIndex,
+      stepIndex: currentStepIndex - 1
+    };
+  }, [deckRef]);
+
   const handleStepBackward = useCallback(() => {
-    deckRef.current?.stepBackward();
-    const currentState = deckRef.current?.activeView;
-    if (currentState) {
-      handlePresentationStateChange(currentState.slideIndex, currentState.stepIndex);
+    const nextState = computePreviousStepState();
+    if (nextState) {
+      handlePresentationStateChange(nextState.slideIndex, nextState.stepIndex);
     }
-  }, [deckRef, handlePresentationStateChange]);
+  }, [computePreviousStepState, handlePresentationStateChange]);
 
   const handleStepForward = useCallback(() => {
-    deckRef.current?.stepForward();
-    const currentState = deckRef.current?.activeView;
-    if (currentState) {
-      handlePresentationStateChange(currentState.slideIndex, currentState.stepIndex);
+    const nextState = computeNextStepState();
+    if (nextState) {
+      handlePresentationStateChange(nextState.slideIndex, nextState.stepIndex);
     }
-  }, [deckRef, handlePresentationStateChange]);
+  }, [computeNextStepState, handlePresentationStateChange]);
 
   const handleFirstSlide = useCallback(() => {
-    deckRef.current?.skipTo({ slideIndex: 0, stepIndex: 0 });
     handlePresentationStateChange(0, 0);
-  }, [deckRef, handlePresentationStateChange]);
+  }, [handlePresentationStateChange]);
 
   const handleLastSlide = useCallback(() => {
-    deckRef.current?.skipTo({ slideIndex: totalSlides - 1, stepIndex: 0 });
     handlePresentationStateChange(totalSlides - 1, 0);
-  }, [deckRef, totalSlides, handlePresentationStateChange]);
+  }, [totalSlides, handlePresentationStateChange]);
 
   return (
     <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center">

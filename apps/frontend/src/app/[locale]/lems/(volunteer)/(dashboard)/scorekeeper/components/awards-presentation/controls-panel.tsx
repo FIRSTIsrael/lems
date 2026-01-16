@@ -4,21 +4,18 @@ import React from 'react';
 import { Paper, Typography, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { DeckRef } from '@lems/presentations';
+import { useAwardsPresentationContext } from '@lems/shared/providers';
 import { NavigationButtons } from './navigation-buttons';
 
 interface ControlsPanelProps {
   deckRef: React.RefObject<DeckRef>;
-  currentSlideIndex: number;
   totalSlides: number;
 }
 
-export const ControlsPanel: React.FC<ControlsPanelProps> = ({
-  deckRef,
-  currentSlideIndex,
-  totalSlides
-}) => {
+export const ControlsPanel: React.FC<ControlsPanelProps> = ({ deckRef, totalSlides }) => {
   const t = useTranslations('pages.scorekeeper.awards-presentation');
   const theme = useTheme();
+  const { presentationState } = useAwardsPresentationContext();
 
   return (
     <Paper
@@ -43,7 +40,7 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
           letterSpacing: 0.5
         }}
       >
-        {t('slide-info')} {currentSlideIndex + 1} / {totalSlides}
+        {t('slide-info')} {presentationState.slideIndex + 1} / {totalSlides}
       </Typography>
 
       {/* Navigation Buttons */}

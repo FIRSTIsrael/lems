@@ -9,7 +9,6 @@ import { authorizeAudienceDisplayAccess } from './utils';
 
 interface UpdatePresentationArgs {
   divisionId: string;
-  slideId?: string;
   slideIndex: number;
   stepIndex: number;
 }
@@ -27,7 +26,7 @@ export const updatePresentationResolver: GraphQLFieldResolver<
   GraphQLContext,
   UpdatePresentationArgs,
   Promise<UpdatePresentationResult>
-> = async (_root, { divisionId, slideId, slideIndex, stepIndex }, context) => {
+> = async (_root, { divisionId, slideIndex, stepIndex }, context) => {
   try {
     await authorizeAudienceDisplayAccess(context, divisionId);
 
@@ -48,7 +47,6 @@ export const updatePresentationResolver: GraphQLFieldResolver<
       {
         $set: {
           'audienceDisplay.awardsPresentation': {
-            slideId,
             slideIndex,
             stepIndex
           }

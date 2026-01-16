@@ -23,7 +23,6 @@ export const PRESENTATION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription PresentationUpdated($divisionId: String!) {
     presentationUpdated(divisionId: $divisionId) {
       awardsPresentation {
-        slideId
         slideIndex
         stepIndex
       }
