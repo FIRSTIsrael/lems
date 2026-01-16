@@ -17,16 +17,10 @@ import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
   GET_AUDIENCE_DISPLAY_DATA,
-  parseAudienceDisplayData
+  parseAudienceDisplayData,
+  TeamWinner
 } from './graphql';
 import { createPresentationUpdatedSubscription } from './components/awards/graphql';
-import type { AudienceDisplayState, Award } from './graphql';
-
-interface ParsedAudienceDisplayData {
-  displayState: AudienceDisplayState;
-  awards: Award[];
-  awardsAssigned: boolean;
-}
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -61,10 +55,32 @@ export default function AudienceDisplayPage() {
     {
       divisionId: currentDivision.id
     },
-    (rawData): ParsedAudienceDisplayData => {
+    rawData => {
       const displayState = parseAudienceDisplayData(rawData);
-      const awards = rawData.division.judging?.awards ?? [];
       const awardsAssigned = rawData.division.awardsAssigned;
+
+      const awards = (rawData.division.judging?.awards ?? [])
+        .filter(award => award.type === 'TEAM' && award.winner && 'team' in award.winner)
+        .map(award => {
+          const winner = award.winner as TeamWinner;
+
+          return {
+            id: award.id,
+            name: award.name,
+            index: award.index,
+            place: award.place,
+            type: award.type,
+            isOptional: award.isOptional,
+            winner: {
+              id: winner.team.id,
+              name: winner.team.name,
+              number: winner.team.number,
+              city: winner.team.city,
+              affiliation: winner.team.affiliation
+            }
+          };
+        });
+
       return { displayState, awards, awardsAssigned };
     },
     subscriptions

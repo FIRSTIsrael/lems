@@ -32,6 +32,7 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
                 id
                 name
                 number
+                city
                 affiliation
               }
             }

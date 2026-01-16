@@ -15,11 +15,13 @@ export interface AudienceDisplayState {
 }
 
 export interface TeamWinner {
-  id: string;
-  name: string;
-  number: string;
-  city: string;
-  affiliation: string;
+  team: {
+    id: string;
+    name: string;
+    number: string;
+    city: string;
+    affiliation: string;
+  };
 }
 
 export interface PersonalWinner {
