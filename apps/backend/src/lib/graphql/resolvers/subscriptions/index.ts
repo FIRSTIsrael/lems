@@ -19,7 +19,8 @@ import { scoresheetUpdatedResolver } from './scoresheet/scoresheet-updated';
 import { scoresheetStatusChangedResolver } from './scoresheet/scoresheet-status-changed';
 import {
   audienceDisplaySettingUpdatedResolver,
-  audienceDisplaySwitchedResolver
+  audienceDisplaySwitchedResolver,
+  presentationUpdatedResolver
 } from './audience-display';
 import {
   deliberationUpdatedResolver,
@@ -47,6 +48,7 @@ export const subscriptionResolvers = {
   participantStatusUpdated: participantStatusUpdatedResolver,
   audienceDisplaySwitched: audienceDisplaySwitchedResolver,
   audienceDisplaySettingUpdated: audienceDisplaySettingUpdatedResolver,
+  presentationUpdated: presentationUpdatedResolver,
   rubricUpdated: rubricUpdatedResolver,
   rubricStatusChanged: rubricStatusChangedResolver,
   scoresheetUpdated: scoresheetUpdatedResolver,

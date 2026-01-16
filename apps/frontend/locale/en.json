@@ -718,13 +718,18 @@
           "close": "Close",
           "sections": {
             "message": "Message Settings",
-            "scoreboard": "Scoreboard Settings"
+            "scoreboard": "Scoreboard Settings",
+            "awards": "Awards Settings"
           },
           "fields": {
             "message-placeholder": "Enter message text",
             "show-active-match": "Show Current Match",
             "show-previous-match": "Show Previous Match",
-            "show-sponsors-row": "Show Sponsors Row"
+            "show-sponsors-row": "Show Sponsors Row",
+            "award-winner-slide-style": "Award Winner Slide Style",
+            "award-slide-style-chroma": "Chroma Key (Green Screen)",
+            "award-slide-style-full": "Full Screen",
+            "award-slide-style-both": "Both Styles"
           },
           "errors": {
             "update-failed": "Failed to update audience display setting."
@@ -746,6 +751,17 @@
       },
       "active-match": {
         "teams": "Teams"
+      },
+      "awards-presentation": {
+        "title": "Awards Presentation",
+        "current-slide": "Current Slide",
+        "next-slide": "Next Slide",
+        "slide-info": "Slide:",
+        "first-slide": "First Slide",
+        "previous-slide": "Previous Slide",
+        "last-slide": "Last Slide",
+        "previous-step": "Previous Step",
+        "next-step": "Next Step"
       }
     },
     "head-referee": {
@@ -1199,5 +1215,13 @@
         "think-about": "Think About..."
       }
     }
+  },
+  "awards-presentation": {
+    "title-slide": "Awards Ceremony",
+    "place": "Place {place}",
+    "awarded-to-team": "Awarded to Team",
+    "awarded-to": "Awarded to",
+    "advancing-teams": "Advancing Teams",
+    "prize": "{name} Award"
   }
 }

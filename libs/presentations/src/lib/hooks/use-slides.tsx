@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect, useId } from 'react';
 import { SlideId } from '../components/deck';
 

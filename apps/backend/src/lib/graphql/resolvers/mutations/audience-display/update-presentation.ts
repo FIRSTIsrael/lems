@@ -1,41 +1,42 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, AudienceDisplayScreen } from '@lems/database';
+import { DivisionState, AwardsPresentation } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
 import { authorizeAudienceDisplayAccess } from './utils';
 
-interface SwitchActiveDisplayArgs {
+interface UpdatePresentationArgs {
   divisionId: string;
-  newDisplay: AudienceDisplayScreen;
+  slideIndex: number;
+  stepIndex: number;
 }
 
-interface SwitchAudienceDisplayEvent {
-  activeDisplay: AudienceDisplayScreen;
+interface UpdatePresentationResult {
+  awardsPresentation: AwardsPresentation;
 }
 
 /**
- * Resolver for Mutation.switchActiveDisplay
- * Switches the active display for a division.
+ * Resolver for Mutation.updatePresentation
+ * Updates the awards presentation for a division.
  */
-export const switchActiveDisplayResolver: GraphQLFieldResolver<
+export const updatePresentationResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  SwitchActiveDisplayArgs,
-  Promise<SwitchAudienceDisplayEvent>
-> = async (_root, { divisionId, newDisplay }, context) => {
+  UpdatePresentationArgs,
+  Promise<UpdatePresentationResult>
+> = async (_root, { divisionId, slideIndex, stepIndex }, context) => {
   try {
     await authorizeAudienceDisplayAccess(context, divisionId);
 
-    // Safety check: prevent switching to awards mode before awards have been assigned
-    if (newDisplay === 'awards') {
+    // Safety check: prevent updating presentation before awards have been assigned
+    if (slideIndex) {
       const division = await db.divisions.byId(divisionId).get();
       if (!division?.awards_assigned) {
         throw new MutationError(
           MutationErrorCode.CONFLICT,
-          'Cannot switch to awards display mode before awards have been assigned'
+          'Cannot update awards presentation before awards have been assigned'
         );
       }
     }
@@ -45,7 +46,10 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
       { divisionId },
       {
         $set: {
-          'audienceDisplay.activeDisplay': newDisplay
+          'audienceDisplay.awardsPresentation': {
+            slideIndex,
+            stepIndex
+          }
         }
       },
       { returnDocument: 'after' }
@@ -60,11 +64,11 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
 
     // Publish event to notify subscribers
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.AUDIENCE_DISPLAY_SWITCHED, {
-      activeDisplay: newDisplay
+    await pubSub.publish(divisionId, RedisEventTypes.AWARDS_PRESENTATION_UPDATED, {
+      awardsPresentation: result.audienceDisplay.awardsPresentation
     });
 
-    return { activeDisplay: newDisplay };
+    return { awardsPresentation: result.audienceDisplay.awardsPresentation };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

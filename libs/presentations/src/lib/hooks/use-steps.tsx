@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useContext, useRef, useEffect, useId } from 'react';
 import { SlideContext } from '../components/slide';
 import sortByKeyComparator from '../utils/sort-by';
@@ -13,11 +15,7 @@ const PLACEHOLDER_CLASS_NAME = 'step-placeholder';
  */
 export function useSteps(
   numSteps = 1,
-  {
-    id: userProvidedId,
-    priority,
-    stepIndex
-  }: { id?: string | number; priority?: number; stepIndex?: number } = {}
+  { id: userProvidedId, priority }: { id?: string | number; priority?: number } = {}
 ) {
   const id = useId();
   const [stepId] = useState(userProvidedId || id);
@@ -63,27 +61,16 @@ export function useSteps(
         `A placeholder ref does not appear to be present in the DOM for stepper element with id '${stepId}'. (Did you forget to render it?)`
       );
     }
-  });
+  }, [stepId]);
 
-  const basePlaceholderProps = {
+  const placeholderProps = {
     ref: placeholderRef as React.RefObject<HTMLDivElement>,
     className: PLACEHOLDER_CLASS_NAME,
     style: { display: 'none' } as const,
     'data-step-id': stepId,
-    'data-step-count': numSteps
+    'data-step-count': numSteps,
+    ...(priority !== undefined && { 'data-priority': priority })
   };
-
-  type PlaceholderProps = typeof basePlaceholderProps & { 'data-priority'?: number };
-
-  let placeholderProps: PlaceholderProps = basePlaceholderProps;
-  if (priority !== undefined) {
-    placeholderProps = { ...basePlaceholderProps, 'data-priority': priority };
-  } else if (stepIndex !== undefined) {
-    console.warn(
-      '`options.stepIndex` option to `useSteps` is deprecated- please use `priority` option instead.'
-    );
-    placeholderProps = { ...basePlaceholderProps, 'data-priority': stepIndex };
-  }
 
   return {
     stepId,

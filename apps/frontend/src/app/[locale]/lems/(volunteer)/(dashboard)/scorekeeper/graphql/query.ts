@@ -38,12 +38,41 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
         }
         audienceDisplay {
           activeDisplay
+          awardsPresentation {
+            slideIndex
+            stepIndex
+          }
           settings
         }
         currentStage
         loadedMatch
         activeMatch
         matchLength
+      }
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          winner {
+            ... on TeamWinner {
+              team {
+                id
+                name
+                number
+                city
+                affiliation
+              }
+            }
+            ... on PersonalWinner {
+              name
+            }
+          }
+        }
       }
     }
   }
