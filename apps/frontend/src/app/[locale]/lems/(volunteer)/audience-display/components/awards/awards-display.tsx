@@ -1,9 +1,16 @@
 import React, { useMemo, forwardRef } from 'react';
-import { Deck, DeckRef, TitleSlide, ImageSlide } from '@lems/presentations';
-import { useAwardsPresentationContext } from '@lems/shared';
+import {
+  Deck,
+  DeckRef,
+  TitleSlide,
+  ImageSlide,
+  buildAwardsSlides,
+  AwardWinnerSlideStyle
+} from '@lems/presentations';
 import { useAwardTranslations } from '@lems/localization';
-import { Award } from '../graphql';
-import { buildAwardsSlides, AwardWinnerSlideStyle } from './awards/slides-builder';
+import { useAwardsPresentationContext } from '@lems/shared/providers';
+import { useTranslations } from 'next-intl';
+import { Award } from '../../graphql';
 
 export interface AwardsDisplayProps {
   awards: Award[];
@@ -24,15 +31,17 @@ export const AwardsDisplay = forwardRef<DeckRef, AwardsDisplayProps>(
   ) => {
     const { awardsAssigned } = useAwardsPresentationContext();
     const { getName, getDescription } = useAwardTranslations();
+    const t = useTranslations('awards-presentation');
 
     const awardSlides = useMemo(
       () =>
         buildAwardsSlides(awards, awardWinnerSlideStyle, {
           getAwardName: getName,
           getAwardDescription: getDescription,
-          divisionColor
+          divisionColor,
+          awardTranslation: (name: string) => t('prize', { name })
         }),
-      [awards, awardWinnerSlideStyle, getName, getDescription, divisionColor]
+      [awards, awardWinnerSlideStyle, getName, getDescription, divisionColor, t]
     );
 
     if (!awardsAssigned) {

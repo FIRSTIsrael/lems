@@ -23,9 +23,10 @@ export interface Award {
 }
 
 export interface BuildAwardsSlidesOptions {
-  getAwardName?: (awardId: string) => string | React.ReactNode;
-  getAwardDescription?: (awardId: string) => string | React.ReactNode;
+  getAwardName?: (awardId: string) => string;
+  getAwardDescription?: (awardId: string) => React.ReactNode;
   divisionColor?: string;
+  awardTranslation: (name: string) => string;
 }
 
 /**
@@ -46,7 +47,7 @@ export function buildAwardsSlides(
   }
 
   const slides: React.ReactNode[] = [];
-  const { getAwardName, getAwardDescription, divisionColor } = options || {};
+  const { getAwardName, getAwardDescription, awardTranslation, divisionColor } = options || {};
 
   // Group awards by index
   const awardsByIndex = new Map<number, Award[]>();
@@ -77,6 +78,7 @@ export function buildAwardsSlides(
     // Get award display name
     const awardDisplayName = getAwardName ? getAwardName(firstAward.name) : firstAward.name;
     const awardDescription = getAwardDescription ? getAwardDescription(firstAward.name) : undefined;
+    const awardTitle = awardTranslation ? awardTranslation(awardDisplayName) : awardDisplayName;
 
     const color = firstAward.divisionColor || divisionColor;
 
@@ -84,7 +86,8 @@ export function buildAwardsSlides(
     slides.push(
       React.createElement(TitleSlide, {
         key: `title-${index}`,
-        primary: `פרס ${awardDisplayName}`,
+        primary: awardTitle,
+        awardId: firstAward.name,
         divisionColor: color
       })
     );
@@ -94,8 +97,9 @@ export function buildAwardsSlides(
       slides.push(
         React.createElement(TitleSlide, {
           key: `title-description-${index}`,
-          primary: `פרס ${awardDisplayName}`,
-          secondary: String(awardDescription),
+          primary: awardTitle,
+          secondary: awardDescription,
+          awardId: firstAward.name,
           divisionColor: color
         })
       );

@@ -5,7 +5,6 @@ import { Paper, Typography, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { DeckRef } from '@lems/presentations';
 import { NavigationButtons } from './navigation-buttons';
-import { StepControls } from './step-controls';
 
 interface ControlsPanelProps {
   deckRef: React.RefObject<DeckRef>;
@@ -49,9 +48,6 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({
 
       {/* Navigation Buttons */}
       <NavigationButtons deckRef={deckRef} totalSlides={totalSlides} />
-
-      {/* Step Controls */}
-      <StepControls deckRef={deckRef} />
     </Paper>
   );
 };

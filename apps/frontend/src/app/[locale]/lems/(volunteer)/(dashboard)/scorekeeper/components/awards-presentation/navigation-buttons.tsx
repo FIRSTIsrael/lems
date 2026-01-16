@@ -4,8 +4,8 @@ import React from 'react';
 import { Stack, Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import {
-  SkipNext as SkipNextIcon,
-  SkipPrevious as SkipPreviousIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
   Home as HomeIcon,
   GetApp as GetAppIcon
 } from '@mui/icons-material';
@@ -19,6 +19,14 @@ interface NavigationButtonsProps {
 
 export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, totalSlides }) => {
   const t = useTranslations('pages.scorekeeper.awards-presentation');
+
+  const handleStepBackward = () => {
+    deckRef.current?.stepBackward();
+  };
+
+  const handleStepForward = () => {
+    deckRef.current?.stepForward();
+  };
 
   return (
     <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center">
@@ -38,28 +46,28 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, t
       <Button
         size="small"
         variant="outlined"
-        onClick={() => deckRef.current?.regressSlide()}
-        startIcon={<DirectionalIcon ltr={SkipPreviousIcon} rtl={SkipNextIcon} />}
+        onClick={handleStepBackward}
+        startIcon={<DirectionalIcon ltr={ChevronLeftIcon} rtl={ChevronRightIcon} />}
         sx={{
           borderRadius: 1.5,
           textTransform: 'none',
           fontSize: '0.875rem'
         }}
       >
-        {t('previous-slide')}
+        {t('previous-step')}
       </Button>
       <Button
         size="small"
         variant="outlined"
-        onClick={() => deckRef.current?.advanceSlide()}
-        startIcon={<DirectionalIcon ltr={SkipNextIcon} rtl={SkipPreviousIcon} />}
+        onClick={handleStepForward}
+        startIcon={<DirectionalIcon ltr={ChevronRightIcon} rtl={ChevronLeftIcon} />}
         sx={{
           borderRadius: 1.5,
           textTransform: 'none',
           fontSize: '0.875rem'
         }}
       >
-        {t('next-slide')}
+        {t('next-step')}
       </Button>
       <Button
         size="small"

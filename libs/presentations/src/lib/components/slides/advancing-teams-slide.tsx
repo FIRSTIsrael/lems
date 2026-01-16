@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Stack, Box, Typography, Paper } from '@mui/material';
 import { Slide } from '../slide';
 import { Stepper } from '../appear';
@@ -22,6 +23,7 @@ interface AdvancingTeamsSlideProps {
 }
 
 export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards }) => {
+  const t = useTranslations('awards-presentation');
   const teams = awards
     .filter(award => award.winner && 'number' in award.winner)
     .map(award => award.winner as { id: string; name: string; number: number });
@@ -52,7 +54,7 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
           variant="h2"
           sx={{ fontSize: '4rem', fontWeight: 'bold', color: 'white', mb: 2 }}
         >
-          קבוצות מתקדמות
+          {t('advancing-teams')}
         </Typography>
         <Box
           sx={{

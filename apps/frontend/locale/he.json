@@ -1213,5 +1213,12 @@
         "think-about": "חשבו על..."
       }
     }
+  },
+  "awards-presentation": {
+    "place": "מקום {place}",
+    "awarded-to-team": "מוענק לקבוצה",
+    "awarded-to": "מוענק ל",
+    "advancing-teams": "קבוצות מעפילות",
+    "prize": "פרס {name}"
   }
 }

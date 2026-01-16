@@ -12,7 +12,7 @@ import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
-import { AwardsDisplay } from './components/awards-display';
+import { AwardsDisplay } from './components/awards/awards-display';
 import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,

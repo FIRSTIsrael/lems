@@ -1215,5 +1215,12 @@
         "think-about": "Think About..."
       }
     }
+  },
+  "awards-presentation": {
+    "place": "Place {place}",
+    "awarded-to-team": "Awarded to Team",
+    "awarded-to": "Awarded to",
+    "advancing-teams": "Advancing Teams",
+    "prize": "{name} Award"
   }
 }

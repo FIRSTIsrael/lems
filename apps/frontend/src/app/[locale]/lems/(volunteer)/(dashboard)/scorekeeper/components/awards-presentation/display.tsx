@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Stack } from '@mui/material';
 import { buildAwardsSlides, DeckRef, DeckView, GOTO_FINAL_STEP } from '@lems/presentations';
-import { useAwardsPresentationContext } from '@lems/shared';
+import { useAwardsPresentationContext } from '@lems/shared/providers';
+import { useAwardTranslations } from '@lems/localization';
 import { SlideDisplay } from './slide-display';
 import { ControlsPanel } from './controls-panel';
 
@@ -17,6 +19,8 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
   nextSlideLabel
 }) => {
   const { awards, awardWinnerSlideStyle, presentationState } = useAwardsPresentationContext();
+  const { getName, getDescription } = useAwardTranslations();
+  const t = useTranslations('awards-presentation');
   const deckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
   const previewDeckRef = useRef<DeckRef>(null) as React.RefObject<DeckRef>;
   const [currentView, setCurrentView] = useState<DeckView>(presentationState);
@@ -29,13 +33,17 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
       awardWinnerSlideStyle,
       firstAward: awards[0]
     });
-    const slides = buildAwardsSlides(awards, awardWinnerSlideStyle);
+    const slides = buildAwardsSlides(awards, awardWinnerSlideStyle, {
+      getAwardName: getName,
+      getAwardDescription: getDescription,
+      awardTranslation: (name: string) => t('prize', { name })
+    });
     console.log('[AwardsPresentationDisplay] Built slides:', {
       slidesCount: slides.length,
       slides
     });
     return slides;
-  }, [awards, awardWinnerSlideStyle]);
+  }, [awards, awardWinnerSlideStyle, getName, getDescription, t]);
 
   // Calculate total slides: title + awards grouped by index
   const totalSlides = useMemo(() => {

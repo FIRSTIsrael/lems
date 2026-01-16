@@ -60,6 +60,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
                 id
                 name
                 number
+                city
                 affiliation
               }
             }
