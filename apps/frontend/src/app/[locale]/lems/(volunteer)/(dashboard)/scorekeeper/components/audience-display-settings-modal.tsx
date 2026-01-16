@@ -41,7 +41,7 @@ export function AudienceDisplaySettingsModal({ open, onClose }: AudienceDisplayS
 
   const [awardWinnerSlideStyle, setAwardWinnerSlideStyle] = useState<'chroma' | 'full' | 'both'>(
     (audienceDisplay?.settings?.awards?.awardWinnerSlideStyle as 'chroma' | 'full' | 'both') ||
-      'both'
+      'full'
   );
 
   const [updateAudienceDisplaySetting] = useMutation(UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION, {

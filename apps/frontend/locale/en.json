@@ -1217,6 +1217,7 @@
     }
   },
   "awards-presentation": {
+    "title-slide": "Awards Ceremony",
     "place": "Place {place}",
     "awarded-to-team": "Awarded to Team",
     "awarded-to": "Awarded to",

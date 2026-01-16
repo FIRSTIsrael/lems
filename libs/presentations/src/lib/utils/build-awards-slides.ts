@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { TitleSlide } from '../components/slides/title-slide';
+import { ImageSlide } from '../components/slides/image-slide';
 import {
   AwardWinnerSlide,
   type AwardWinnerSlideAward
@@ -47,9 +48,18 @@ export function buildAwardsSlides(
   }
 
   const slides: React.ReactNode[] = [];
+
+  // Add season logo slide at the beginning
+  slides.push(
+    React.createElement(ImageSlide, {
+      key: 'season-logo',
+      src: '/assets/audience-display/season-logo.svg',
+      alt: 'Season Logo'
+    })
+  );
+
   const { getAwardName, getAwardDescription, awardTranslation, divisionColor } = options || {};
 
-  // Group awards by index
   const awardsByIndex = new Map<number, Award[]>();
   const advancingAwards: Award[] = [];
 
@@ -64,7 +74,6 @@ export function buildAwardsSlides(
     }
   });
 
-  // Sort indices
   const sortedIndices = Array.from(awardsByIndex.keys()).sort((a, b) => a - b);
 
   // Build slides for each award
@@ -156,6 +165,3 @@ export function buildAwardsSlides(
 
   return slides;
 }
-
-// Export component types for backward compatibility
-export { TitleSlide, AwardWinnerSlide, AdvancingTeamsSlide };

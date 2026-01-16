@@ -1215,6 +1215,7 @@
     }
   },
   "awards-presentation": {
+    "title-slide": "טקס הפרסים",
     "place": "מקום {place}",
     "awarded-to-team": "מוענק לקבוצה",
     "awarded-to": "מוענק ל",

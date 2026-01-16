@@ -2,11 +2,6 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 
-export interface AudienceDisplayState {
-  activeDisplay: 'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
-  settings?: Record<string, Record<string, unknown>>;
-}
-
 interface TeamWinner {
   id: string;
   name: string;
@@ -37,7 +32,7 @@ export interface AwardsPresentationContextData {
     slideIndex: number;
     stepIndex: number;
   };
-  displayState?: AudienceDisplayState;
+  isAwards: boolean;
 }
 
 const AwardsPresentationContext = createContext<AwardsPresentationContextData | null>(null);
@@ -50,16 +45,16 @@ export interface AwardsPresentationProviderProps {
     slideIndex: number;
     stepIndex: number;
   };
-  displayState?: AudienceDisplayState;
+  isAwards?: boolean;
   children?: ReactNode;
 }
 
 export function AwardsPresentationProvider({
   awards = [],
   awardsAssigned = false,
-  awardWinnerSlideStyle = 'both',
+  awardWinnerSlideStyle = 'full',
   presentationState = { slideIndex: 0, stepIndex: 0 },
-  displayState,
+  isAwards = false,
   children
 }: AwardsPresentationProviderProps) {
   return (
@@ -69,7 +64,7 @@ export function AwardsPresentationProvider({
         awardsAssigned,
         awardWinnerSlideStyle,
         presentationState,
-        displayState
+        isAwards
       }}
     >
       {children}

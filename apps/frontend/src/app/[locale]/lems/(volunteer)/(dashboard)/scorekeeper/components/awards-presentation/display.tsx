@@ -81,7 +81,6 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
         )}
       </Stack>
 
-      {/* Controls */}
       <ControlsPanel deckRef={deckRef} totalSlides={awardSlides.length + 1} />
     </Stack>
   );

@@ -2,11 +2,14 @@
 
 import { createContext, useContext, ReactNode, useMemo } from 'react';
 import { AwardsPresentationProvider } from '@lems/shared/providers';
-import type { AudienceDisplayState, Award } from '../graphql';
+import type { Award as PresentationAward } from '@lems/shared/providers';
+import type { AudienceDisplayState } from '../graphql';
+
+type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
 
 interface AudienceDisplayContextData {
   displayState: AudienceDisplayState;
-  awards: Award[];
+  awards: PresentationAward[];
   awardsAssigned: boolean;
 }
 
@@ -14,7 +17,7 @@ const AudienceDisplayContext = createContext<AudienceDisplayContextData | null>(
 
 interface AudienceDisplayProviderProps {
   displayState: AudienceDisplayState;
-  awards?: Award[];
+  awards?: PresentationAward[];
   awardsAssigned?: boolean;
   children?: ReactNode;
 }
@@ -25,13 +28,17 @@ export function AudienceDisplayProvider({
   awardsAssigned = false,
   children
 }: AudienceDisplayProviderProps) {
-  const awardWinnerSlideStyle =
-    (displayState.settings?.awards?.awardWinnerSlideStyle as 'chroma' | 'full' | 'both') || 'both';
+  const getAwardWinnerSlideStyle = (): AwardWinnerSlideStyle => {
+    const value = displayState.settings?.awards?.awardWinnerSlideStyle;
+    if (value === 'chroma' || value === 'full' || value === 'both') {
+      return value;
+    }
+    return 'both';
+  };
+
+  const awardWinnerSlideStyle = getAwardWinnerSlideStyle();
   // Read presentationState from awardsPresentation (where PRESENTATION_UPDATED_SUBSCRIPTION updates it)
-  const presentationState = (displayState.awardsPresentation as {
-    slideIndex: number;
-    stepIndex: number;
-  }) || { slideIndex: 0, stepIndex: 0 };
+  const presentationState = displayState.awardsPresentation || { slideIndex: 0, stepIndex: 0 };
 
   const contextValue = useMemo<AudienceDisplayContextData>(
     () => ({
@@ -45,7 +52,7 @@ export function AudienceDisplayProvider({
   return (
     <AudienceDisplayContext.Provider value={contextValue}>
       <AwardsPresentationProvider
-        displayState={displayState}
+        isAwards={displayState.activeDisplay === 'awards'}
         awards={awards}
         awardsAssigned={awardsAssigned}
         awardWinnerSlideStyle={awardWinnerSlideStyle}

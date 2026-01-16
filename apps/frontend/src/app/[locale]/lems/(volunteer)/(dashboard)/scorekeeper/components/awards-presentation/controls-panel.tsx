@@ -30,7 +30,6 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({ deckRef, totalSlid
         boxShadow: theme.shadows[1]
       }}
     >
-      {/* Slide/Step Info */}
       <Typography
         variant="caption"
         sx={{
@@ -43,7 +42,6 @@ export const ControlsPanel: React.FC<ControlsPanelProps> = ({ deckRef, totalSlid
         {t('slide-info')} {presentationState.slideIndex + 1} / {totalSlides}
       </Typography>
 
-      {/* Navigation Buttons */}
       <NavigationButtons deckRef={deckRef} totalSlides={totalSlides} />
     </Paper>
   );

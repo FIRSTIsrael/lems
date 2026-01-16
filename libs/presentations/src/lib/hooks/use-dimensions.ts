@@ -5,7 +5,6 @@ function useDimensions(ref: React.RefObject<HTMLElement | null>) {
     const element = ref.current;
     if (!element) return () => {};
 
-    // Use ResizeObserver to detect the specific element's size changes
     const resizeObserver = new ResizeObserver(() => {
       callback();
     });

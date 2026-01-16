@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useTranslations } from 'next-intl';
 import { Stack, Paper, Typography, useTheme } from '@mui/material';
 import { Deck, DeckRef, DeckView, TitleSlide } from '@lems/presentations';
 
@@ -18,9 +19,10 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
   awardSlides
 }) => {
   const theme = useTheme();
+  const t = useTranslations('awards-presentation');
 
   return (
-    <Stack spacing={1.5} flex={1} minWidth={0}>
+    <Stack spacing={1.5} flex={1} minWidth={0} sx={{ maxWidth: '50%' }}>
       <Typography
         textAlign="center"
         variant="subtitle1"
@@ -52,7 +54,7 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
       >
         <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
           <Deck ref={deckRef} initialState={initialState} enableReinitialize={true}>
-            <TitleSlide primary="טקס הפרסים" />
+            <TitleSlide primary={t('title-slide')} />
             {awardSlides}
           </Deck>
         </div>
