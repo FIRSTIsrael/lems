@@ -28,7 +28,8 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
     const slides = buildAwardsSlides(awards, awardWinnerSlideStyle, {
       getAwardName: getName,
       getAwardDescription: getDescription,
-      awardTranslation: (name: string) => t('prize', { name })
+      awardTranslation: (name: string) => t('prize', { name }),
+      awardSectionTitle: t('title-slide')
     });
     return slides;
   }, [awards, awardWinnerSlideStyle, getName, getDescription, t]);

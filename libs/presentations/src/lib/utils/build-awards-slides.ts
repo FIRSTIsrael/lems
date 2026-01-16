@@ -28,6 +28,7 @@ export interface BuildAwardsSlidesOptions {
   getAwardDescription?: (awardId: string) => React.ReactNode;
   divisionColor?: string;
   awardTranslation: (name: string) => string;
+  awardSectionTitle?: string;
 }
 
 /**
@@ -58,13 +59,14 @@ export function buildAwardsSlides(
     })
   );
 
-  const { getAwardName, getAwardDescription, awardTranslation, divisionColor } = options || {};
+  const { getAwardName, getAwardDescription, awardTranslation, divisionColor, awardSectionTitle } =
+    options || {};
 
   // Add title slide after logo
   slides.push(
     React.createElement(TitleSlide, {
       key: 'awards-title',
-      primary: awardTranslation ? awardTranslation('awards-presentation') : 'Awards Presentation'
+      primary: awardSectionTitle || 'Awards Presentation'
     })
   );
 

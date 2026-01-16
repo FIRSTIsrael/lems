@@ -23,7 +23,8 @@ export const AwardsDisplay = forwardRef<DeckRef, AwardsDisplayProps>(
           getAwardName: getName,
           getAwardDescription: getDescription,
           divisionColor,
-          awardTranslation: (name: string) => t('prize', { name })
+          awardTranslation: (name: string) => t('prize', { name }),
+          awardSectionTitle: t('title-slide')
         }),
       [awards, awardWinnerSlideStyle, getName, getDescription, divisionColor, t]
     );
