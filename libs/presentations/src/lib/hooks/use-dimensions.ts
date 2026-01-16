@@ -1,28 +1,22 @@
 import { useSyncExternalStore } from 'react';
 
-const subscribe = (callback: () => void) => {
-  // Use ResizeObserver to detect parent container size changes
-  const resizeObserver = new ResizeObserver(() => {
-    callback();
-  });
-
-  // Also listen to window resize as fallback
-  const handleWindowResize = () => callback();
-  window.addEventListener('resize', handleWindowResize);
-
-  // Observe all potential parent containers by observing document root
-  // This ensures we catch parent container resizing, not just window resizing
-  if (document.documentElement) {
-    resizeObserver.observe(document.documentElement);
-  }
-
-  return () => {
-    resizeObserver.disconnect();
-    window.removeEventListener('resize', handleWindowResize);
-  };
-};
-
 function useDimensions(ref: React.RefObject<HTMLElement | null>) {
+  const subscribe = (callback: () => void) => {
+    const element = ref.current;
+    if (!element) return () => {};
+
+    // Use ResizeObserver to detect the specific element's size changes
+    const resizeObserver = new ResizeObserver(() => {
+      callback();
+    });
+
+    resizeObserver.observe(element);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  };
+
   const getSnapshot = () => {
     const element = ref.current;
     if (!element) return '0,0';
