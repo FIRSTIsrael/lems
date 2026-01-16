@@ -2,29 +2,17 @@
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
+import { useAwardTranslations } from '@lems/localization';
+import { EnrichedTeam } from '../../types';
 import { AwardWinnerCard } from './award-winner-card';
 
 interface AwardSectionProps {
   awardName: string;
-  awards: Array<{
-    id: string;
-    name: string;
-    place: number;
-    showPlaces: boolean;
-    type: string;
-    winner?: {
-      team?: {
-        id: string;
-        name: string;
-        number: string;
-      };
-      name?: string;
-    };
-  }>;
-  getAwardName: (awardId: string) => string;
+  winners: EnrichedTeam[];
 }
 
-export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awards, getAwardName }) => {
+export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }) => {
+  const { getName } = useAwardTranslations();
   return (
     <Paper
       variant="outlined"
@@ -48,13 +36,13 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, awards, g
             color: 'text.primary'
           }}
         >
-          {getAwardName(awardName)}
+          {getName(awardName)}
         </Typography>
       </Box>
 
       <Stack spacing={1}>
-        {awards.map(award => (
-          <AwardWinnerCard key={award.id} award={award} />
+        {winners.map((winner, index) => (
+          <AwardWinnerCard key={winner.id} winner={winner} index={index} />
         ))}
       </Stack>
     </Paper>

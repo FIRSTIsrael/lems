@@ -1,5 +1,6 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
-import { merge, type Reconciler } from '@lems/shared/utils';
+import { kebabCaseToCamelCase, merge, type Reconciler } from '@lems/shared/utils';
+import { FinalDeliberationAwards } from '@lems/database';
 import type { FinalDeliberationData, FinalJudgingDeliberation } from '../types';
 
 interface FinalDeliberationUpdatedEvent {
@@ -45,18 +46,41 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
 
   const event = data.finalDeliberationUpdated;
 
-  let stageDataUpdate: Partial<FinalJudgingDeliberation> = {};
+  const awardsUpdate: Partial<FinalDeliberationAwards> = {};
+  if (event.awards) {
+    try {
+      const parsedAwardsUpdate = JSON.parse(event.awards);
+      // Keys to camelcase
+      for (const [key, value] of Object.entries(parsedAwardsUpdate)) {
+        if (key === 'champions') awardsUpdate['champions'] = value as Record<number, string>;
+        if (key === 'optional-awards')
+          awardsUpdate['optionalAwards'] = {
+            ...prev.division.judging.finalDeliberation.optionalAwards,
+            ...(value as Record<string, string[]>)
+          } as Record<string, string[]>;
+        const camelCaseKey = kebabCaseToCamelCase(key) as
+          | 'robot-performance'
+          | 'innovation-project'
+          | 'robot-design'
+          | 'core-values';
+        awardsUpdate[camelCaseKey] = value as string[];
+      }
+    } catch {
+      // Ignore JSON parse errors
+    }
+  }
+
+  const stageDataUpdate: Partial<FinalJudgingDeliberation> = {};
   if (event.stageData) {
     try {
       const parsedStageData = JSON.parse(event.stageData);
       if (parsedStageData['core-awards']?.manualEligibility) {
-        stageDataUpdate = {
-          coreAwardsManualEligibility: parsedStageData['core-awards'].manualEligibility
-        };
-      } else if (parsedStageData['optional-awards']?.manualEligibility) {
-        stageDataUpdate = {
-          optionalAwardsManualEligibility: parsedStageData['optional-awards'].manualEligibility
-        };
+        stageDataUpdate.coreAwardsManualEligibility =
+          parsedStageData['core-awards'].manualEligibility;
+      }
+      if (parsedStageData['optional-awards']?.manualEligibility) {
+        stageDataUpdate.optionalAwardsManualEligibility =
+          parsedStageData['optional-awards'].manualEligibility;
       }
     } catch {
       // Ignore JSON parse errors
@@ -75,7 +99,7 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
           ...(!!event.startTime && { startTime: event.startTime }),
           // Update completionTime if provided
           ...(!!event.completionTime && { completionTime: event.completionTime }),
-          ...(!!event.awards && JSON.parse(event.awards)),
+          ...awardsUpdate,
           ...stageDataUpdate
         }
       }

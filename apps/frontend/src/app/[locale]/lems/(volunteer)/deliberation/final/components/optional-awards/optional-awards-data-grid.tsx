@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import {
   useTheme,
   Tooltip,
@@ -12,25 +12,56 @@ import {
   Popover,
   Stack,
   Typography,
-  Chip
+  Chip,
+  Button
 } from '@mui/material';
-import { Stars, Add } from '@mui/icons-material';
+import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple } from '@mui/material/colors';
 import { OPTIONAL_AWARDS, Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
+import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
 
 const FIELD_COLUMN_WIDTH = 60;
 
 export function OptionalAwardsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
+  const tTable = useTranslations('pages.deliberations.category.table');
   const { teams, eligibleTeams, deliberation, awards, updateAward, awardCounts } =
     useFinalDeliberation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
   const { getName } = useAwardTranslations();
+
+  const [selectedTeams, setSelectedTeams] = useState<GridRowSelectionModel>({
+    type: 'include',
+    ids: new Set()
+  });
+  const [compareDialogOpen, setCompareDialogOpen] = useState(false);
+
+  const getSelectedIds = (selection: GridRowSelectionModel): string[] => {
+    return Array.from(selection.ids as Set<string>);
+  };
+
+  const handleRowSelectionChange = (newSelection: GridRowSelectionModel) => {
+    const ids = getSelectedIds(newSelection);
+    if (ids.length <= 2) {
+      setSelectedTeams(newSelection);
+    }
+  };
+
+  const handleCompare = () => {
+    if (selectedTeams.ids.size === 2) {
+      setCompareDialogOpen(true);
+    }
+  };
+
+  const selectedTeamSlugs = useMemo(() => {
+    const selectedIds = getSelectedIds(selectedTeams);
+    return teams.filter(t => selectedIds.includes(t.id)).map(t => t.slug) as [string, string];
+  }, [selectedTeams, teams]);
 
   // Get teams eligible for optional awards
   const optionalAwardsEligibleTeamIds = useMemo<Set<string>>(
@@ -273,11 +304,34 @@ export function OptionalAwardsDataGrid() {
 
   return (
     <>
+      {selectedTeams.ids.size === 2 && (
+        <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<CompareArrows />}
+            onClick={handleCompare}
+            sx={{ textTransform: 'none' }}
+          >
+            {tTable('compare-teams')}
+          </Button>
+        </Box>
+      )}
+
       <DataGrid
         rows={filteredTeams}
+        getRowId={row => row.id}
         columns={columns}
         density="compact"
+        checkboxSelection
+        rowSelectionModel={selectedTeams}
+        onRowSelectionModelChange={handleRowSelectionChange}
+        isRowSelectable={params => {
+          const selectedIds = getSelectedIds(selectedTeams);
+          return selectedIds.length < 2 || selectedIds.includes(params.id as string);
+        }}
         disableRowSelectionOnClick
+        hideFooterSelectedRowCount
         hideFooter
         sx={{
           width: '100%',
@@ -365,6 +419,14 @@ export function OptionalAwardsDataGrid() {
           </Stack>
         </Box>
       </Popover>
+
+      {selectedTeams.ids.size === 2 && (
+        <TeamComparisonDialog
+          open={compareDialogOpen}
+          onClose={() => setCompareDialogOpen(false)}
+          teamSlugs={selectedTeamSlugs}
+        />
+      )}
     </>
   );
 }

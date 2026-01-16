@@ -1,5 +1,43 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "מחוון {category} של קבוצה #{teamNumber} {teamName}",
+        "no-rubrics-found": "לא נמצאו מחוונים",
+        "team-not-found": "קבוצה {teamSlug} לא נמצאה באירוע {eventSlug}",
+        "no-rubric-data": "לא נמצאו נתוני מחוון",
+        "feedback": {
+          "title": "פידבק ממפגשי השיפוט",
+          "page-title": "פידבק ממפגשי השיפוט של קבוצה #{teamNumber} - {teamName}",
+          "great-job": "עבודה מעולה",
+          "think-about": "חשבו על",
+          "great-job-placeholder": "ציינו את הדברים שהקבוצה עשתה בצורה מצוינת...",
+          "think-about-placeholder": "דברים שעל הקבוצה לחשוב עליהם או לשפר...",
+          "categories": {
+            "core-values": "ערכי הליבה",
+            "innovation-project": "פרויקט החדשנות",
+            "robot-design": "תכנון הרובוט"
+          },
+          "category-descriptions": {
+            "core-values": "כיצד הקבוצה הדגימה עבודת צוות, גילוי, הכלה, חדשנות, השפעה והנאה בעבודתה?",
+            "innovation-project": "כיצד הקבוצה זיהתה בעיה הקשורה לנושא של עונה וניגשה לפתור אותה?",
+            "robot-design": "מה היתה גישת הקבוצה לפתרון משימות הרובוט בצורה בנויה ותכנית?"
+          },
+          "awards": {
+            "title": "מועמדות לפרסי רשות",
+            "description": "אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:",
+            "no-awards": "אין פרסים אופציונליים זמינים."
+          }
+        }
+      },
+      "scores": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "דף ניקוד {round} של קבוצה #{teamNumber} - {teamName}",
+        "total-points": "{points} נקודות",
+        "no-scores-found": "לא נמצאו ניקודים"
+      }
+    },
     "login": {
       "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
@@ -948,6 +986,11 @@
         "compare": "השוו",
         "no-data-available": "אין קבוצות זמינות"
       },
+      "compare-dialog": {
+        "title": "השוואת קבוצות",
+        "open-full-compare": "פתח דף השוואה מלא",
+        "error-loading-teams": "שגיאה בטעינת נתוני הקבוצות"
+      },
       "small-screen-block": {
         "title": "המסך קטן מדי",
         "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
@@ -990,7 +1033,8 @@
           "normalized": "מתוקנן",
           "actions": "פעולות",
           "view-rubric": "הצג מחוון",
-          "add-to-picklist": "הוסף לרשימת בחירה"
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "compare-teams": "השוו קבוצות"
         }
       },
       "final": {
@@ -1033,6 +1077,7 @@
         "core-awards": {
           "title": "פרסי ליבה",
           "description": "בחרו קבוצות לפרסי הליבה",
+          "select-team": "בחרו קבוצה...",
           "table-rank": "דירוג",
           "table-team": "קבוצה",
           "table-room": "חדר",
@@ -1157,6 +1202,15 @@
         "select-teams-to-compare": "בחר קבוצות להשוואה",
         "current-teams": "קבוצות נוכחיות",
         "done": "סיום"
+      }
+    }
+  },
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "משוב",
+        "great-job": "עבודה מעולה...",
+        "think-about": "חשבו על..."
       }
     }
   }

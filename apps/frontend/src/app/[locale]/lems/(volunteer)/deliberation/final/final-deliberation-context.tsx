@@ -95,6 +95,7 @@ export const FinalDeliberationProvider = ({
       'core-values': deliberation.coreValues || [],
       'innovation-project': deliberation.innovationProject || [],
       'robot-design': deliberation.robotDesign || [],
+      'robot-performance': deliberation.robotPerformance || [],
       ...optionalAwards
     }),
     [deliberation, optionalAwards]
@@ -172,12 +173,12 @@ export const FinalDeliberationProvider = ({
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
-          division.judging.awards,
+          awards,
           deliberation.coreAwardsManualEligibility || []
         ),
         'optional-awards': computeOptionalAwardsEligibility(
           { ...team, awardNominations },
-          division.judging.awards,
+          awards,
           deliberation.optionalAwardsManualEligibility || []
         )
       };

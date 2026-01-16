@@ -1,5 +1,44 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "Generated from FIRST Israel event system | {eventName} | Season {seasonName}",
+        "title": "Rubric {category} for Team #{teamNumber} {teamName}",
+        "no-rubrics-found": "No rubrics found",
+        "team-not-found": "Team {teamSlug} not found in event {eventSlug}",
+        "no-rubric-data": "No rubric data available",
+        "feedback": {
+          "title": "Judging Session Feedback",
+          "page-title": "Judging Session Feedback for Team #{teamNumber} - {teamName}",
+          "great-job": "Great Job",
+          "think-about": "Think About",
+          "great-job-placeholder": "Note the things the team did excellently...",
+          "think-about-placeholder": "Things the team should think about or improve...",
+          "categories": {
+            "core-values": "Core Values",
+            "innovation-project": "Innovation Project",
+            "robot-design": "Robot Design"
+          },
+          "category-descriptions": {
+            "core-values": "How did the team demonstrate teamwork, discovery, inclusion, innovation, impact, and fun in their work?",
+            "innovation-project": "How did the team identify a problem related to the season's theme and approach solving it?",
+            "robot-design": "What was the team's approach to solving robot missions in a structured and planned manner?"
+          },
+          "awards": {
+            "title": "Award Nomination",
+            "description": "If the team is nominated for one of these awards, please write in the appropriate box. Also check with the event organizer which optional awards are available in your division.",
+            "placeholder": "Is the team nominated for this award? Reasons...",
+            "no-awards": "No optional awards available."
+          }
+        }
+      },
+      "scores": {
+        "metadata": "Generated from FIRST Israel event system | {eventName}| Season {seasonName}",
+        "title": "Score Sheet {round} for Team #{teamNumber} - {teamName}",
+        "total-points": "{points} Points",
+        "no-scores-found": "No scores found"
+      }
+    },
     "login": {
       "subtitle": "Volunteer Login",
       "continue": "Continue",
@@ -948,6 +987,11 @@
         "compare": "Compare",
         "no-data-available": "No teams available"
       },
+      "compare-dialog": {
+        "title": "Team Comparison",
+        "open-full-compare": "Open Full Compare Page",
+        "error-loading-teams": "Error loading team data"
+      },
       "small-screen-block": {
         "title": "Screen Too Small",
         "message": "The deliberation view requires a larger screen to display all components properly.",
@@ -990,7 +1034,8 @@
           "normalized": "Normalized",
           "actions": "Actions",
           "view-rubric": "View Rubric",
-          "add-to-picklist": "Add to Picklist"
+          "add-to-picklist": "Add to Picklist",
+          "compare-teams": "Compare Teams"
         }
       },
       "final": {
@@ -1034,6 +1079,7 @@
         "core-awards": {
           "title": "Core Awards",
           "description": "Select award winners from the picklists",
+          "select-team": "Select team...",
           "table-rank": "Rank",
           "table-team": "Team",
           "table-room": "Room",
@@ -1158,6 +1204,15 @@
         "select-teams-to-compare": "Select teams to compare",
         "current-teams": "Current Teams",
         "done": "Done"
+      }
+    }
+  },
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "Feedback",
+        "great-job": "Great Job...",
+        "think-about": "Think About..."
       }
     }
   }
