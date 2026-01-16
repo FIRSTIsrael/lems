@@ -17,20 +17,11 @@ import {
   Language as WebsiteIcon,
   ArrowForward,
   ArrowBack,
-  Storage as GitHubIcon,
-  Map as MapIcon
+  Storage as GitHubIcon
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 
 const RESOURCES = [
-  {
-    title: 'fll-website',
-    description: 'fll-website-description',
-    icon: MapIcon,
-    href: 'https://firstisrael.org.il/fll/challenge',
-    color: 'primary' as const,
-    external: true
-  },
   {
     title: 'github',
     description: 'github-description',

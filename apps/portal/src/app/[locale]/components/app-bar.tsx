@@ -67,7 +67,7 @@ const DesktopAppBar: React.FC = () => {
         href="/"
       >
         <Image
-          src="/assets/first-israel-horizontal-reverse.svg"
+          src="/assets/first-horizontal-reverse.svg"
           alt=""
           fill
           style={{ objectFit: 'contain' }}
@@ -164,7 +164,7 @@ const MobileAppBar: React.FC = () => {
           href="/"
         >
           <Image
-            src="/assets/first-israel-horizontal-reverse.svg"
+            src="/assets/first-horizontal-reverse.svg"
             alt=""
             fill
             style={{ objectFit: 'contain' }}
