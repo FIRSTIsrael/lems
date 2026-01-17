@@ -192,12 +192,12 @@
         "button-label": "Test Sound",
         "dialog": {
           "title": "Sound Check",
-          "description": "During the judging session, several indicators will be played to update the team on the transition of their presentation stages. Please check that the audio clips are working before the teams enter.",
+          "description": "During the judging session, several indicators will be played to update the team on the change of their presentation stages. Please check that the audio clips are working before the teams enter.",
           "close": "Close",
           "sounds": {
             "start": "Start of session",
             "end": "End of session",
-            "transition": "Stage transition"
+            "change": "Stage transition"
           }
         }
       }

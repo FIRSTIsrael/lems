@@ -62,10 +62,12 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
           : notStartedMatches
     ).slice(0, 10);
 
+    const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
+
     return {
       division,
       field,
-      tables,
+      tables: sortedTables,
       matches,
       activeMatch,
       loadedMatch,

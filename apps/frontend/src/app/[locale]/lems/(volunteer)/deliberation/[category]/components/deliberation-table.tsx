@@ -79,6 +79,16 @@ export function DeliberationTable() {
         renderCell: params => params.row.rank || '-'
       },
       {
+        field: 'room',
+        headerName: t('room'),
+        width: 60,
+        sortable: true,
+        filterable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => params.row.room?.name || '-'
+      },
+      {
         field: 'teamDisplay',
         headerName: t('team'),
         width: 100,
@@ -95,17 +105,6 @@ export function DeliberationTable() {
           );
         }
       },
-      {
-        field: 'room',
-        headerName: t('room'),
-        width: 60,
-        sortable: true,
-        filterable: false,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: params => params.row.room?.name || '-'
-      },
-
       // Rubric field columns
       ...(fieldDisplayLabels || []).map(
         label =>
