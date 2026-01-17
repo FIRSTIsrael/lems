@@ -22,7 +22,7 @@ import UncheckedIcon from '@mui/icons-material/CircleOutlined';
 import CheckedIcon from '@mui/icons-material/TaskAltRounded';
 import { useEvent } from '../../../../../../components/event-context';
 import { useScoresheet } from '../scoresheet-context';
-import { UPDATE_SCORESHEET_GP_MUTATION } from '../graphql';
+import { UPDATE_SCORESHEET_ESCALATED_MUTATION, UPDATE_SCORESHEET_GP_MUTATION } from '../graphql';
 import { UPDATE_SCORESHEET_STATUS_MUTATION } from '../graphql/mutations/status';
 
 interface GPSelectorProps {
@@ -42,6 +42,7 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
   const { scoresheet } = useScoresheet();
   const [updateGP] = useMutation(UPDATE_SCORESHEET_GP_MUTATION);
   const [updateStatus] = useMutation(UPDATE_SCORESHEET_STATUS_MUTATION);
+  const [updateEscalated] = useMutation(UPDATE_SCORESHEET_ESCALATED_MUTATION);
   const [localNotes, setLocalNotes] = useState(scoresheet.data?.gp?.notes || '');
 
   const value = scoresheet.data?.gp?.value;
@@ -77,6 +78,13 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
 
   const handleSubmit = () => {
     if (!isFormValid()) return;
+    updateEscalated({
+      variables: {
+        divisionId: currentDivision.id,
+        scoresheetId: scoresheet.id,
+        escalated: false
+      }
+    });
     updateStatus({
       variables: {
         divisionId: currentDivision.id,

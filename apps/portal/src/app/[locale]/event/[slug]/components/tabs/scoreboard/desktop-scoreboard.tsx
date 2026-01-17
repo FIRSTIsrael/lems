@@ -26,16 +26,19 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
       field: 'rank',
       headerName: t('scoreboard.rank'),
       width: 90,
-      sortable: false,
       valueGetter: (_, row) => {
-        return row.robotGameRank ?? '-';
+        return row.robotGameRank ?? Infinity;
+      },
+      renderCell: params => {
+        const rank = params.row.robotGameRank as number;
+        console.log(rank);
+        return Number.isFinite(rank) ? rank : '-';
       }
     },
     {
       field: 'team',
       headerName: t('team'),
       width: 225,
-      sortable: false,
       renderCell: params => {
         return (
           <Typography
@@ -59,14 +62,12 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
       field: 'maxScore',
       headerName: t('scoreboard.best-score'),
       width: 120,
-      sortable: false,
       valueGetter: (_, row) => row.maxScore || '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: 100,
-      sortable: false,
       valueGetter: (_: never, row: ScoreboardEntry) => row.scores?.[index] || '-'
     }))
   ];
@@ -88,7 +89,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
         }}
         initialState={{
           sorting: {
-            sortModel: [{ field: 'rank', sort: 'desc' }]
+            sortModel: [{ field: 'rank', sort: 'asc' }]
           },
           pagination: {
             paginationModel: {
@@ -97,7 +98,6 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
           }
         }}
         sx={{ textAlign: 'left' }}
-        disableColumnMenu
         disableRowSelectionOnClick
       />
     </Box>
