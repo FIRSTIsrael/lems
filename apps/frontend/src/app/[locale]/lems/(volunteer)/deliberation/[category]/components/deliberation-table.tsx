@@ -144,7 +144,7 @@ export function DeliberationTable() {
                   align: 'center' as const,
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
-                    return value !== null ? value : '-';
+                    return value ?? 3; // Default GP score is 3 if not set
                   }
                 }) as GridColDef<EnrichedTeam>
             )
