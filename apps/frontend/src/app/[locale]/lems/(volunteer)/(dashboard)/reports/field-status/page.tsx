@@ -44,10 +44,6 @@ function FieldStatusContent() {
           </Grid>
         </Grid>
 
-        {/* Queue Overview - there is no queue yet
-        <QueueOverview matches={queuedMatches} />
-        */}
-
         <UpcomingMatches matches={upcomingMatches} loadedMatchId={loadedMatch?.id} />
       </Stack>
     </Container>
