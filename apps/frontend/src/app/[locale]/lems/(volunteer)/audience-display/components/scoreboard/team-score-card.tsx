@@ -1,4 +1,4 @@
-import { Paper, Stack, Typography } from '@mui/material';
+import { alpha, Paper, Stack, Typography, useTheme } from '@mui/material';
 import { useTranslations } from 'next-intl';
 
 interface TeamScoreCardProps {
@@ -17,13 +17,14 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
   escalated
 }) => {
   const t = useTranslations('pages.audience-display.scoreboard');
+  const theme = useTheme();
 
   let statusColor = '#757575'; // grey
   let backgroundColor = 'rgba(117, 117, 117, 0.08)';
 
   if (status === 'draft' || escalated) {
-    statusColor = '#f57f17'; // yellow
-    backgroundColor = 'rgba(245, 127, 23, 0.08)';
+    statusColor = theme.palette.warning.light; // yellow
+    backgroundColor = alpha(theme.palette.warning.light, 0.08);
   } else if (status === 'completed' || status === 'submitted' || status === 'gp') {
     statusColor = '#388e3c'; // green
     backgroundColor = 'rgba(56, 142, 60, 0.08)';
@@ -71,7 +72,10 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
 
       <Typography
         sx={{
-          fontSize: { xs: '1.25rem', md: '1.5rem', lg: '1.75rem' },
+          fontSize: escalated
+            ? { xs: '0.75rem', md: '1rem', lg: '1.25rem' }
+            : { xs: '1.25rem', md: '1.5rem', lg: '1.75rem' },
+          whiteSpace: escalated ? 'break-spaces' : 'nowrap',
           fontWeight: 700,
           color: statusColor,
           textAlign: 'center',
