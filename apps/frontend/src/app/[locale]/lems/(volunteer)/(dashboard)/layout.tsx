@@ -3,7 +3,7 @@
 import { Container, Box } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import { useConnectionResetOnNavigation } from '../../../../../lib/graphql/use-connection-reset-on-navigation';
-import { DesktopAppBar } from './components/desktop/app-bar';
+import { DesktopAppBar, DRAWER_WIDTH } from './components/desktop/app-bar';
 import { MobileAppBar } from './components/mobile/app-bar';
 
 export default function VolunteerDashboardLayout({ children }: { children: React.ReactNode }) {
@@ -23,6 +23,7 @@ export default function VolunteerDashboardLayout({ children }: { children: React
           sx={{
             pt: 3,
             minHeight: '100vh',
+            maxWidth: { xs: '100vw', lg: `calc(100vw - ${DRAWER_WIDTH}px)` },
             px: { xs: 2, md: 4 }
           }}
         >

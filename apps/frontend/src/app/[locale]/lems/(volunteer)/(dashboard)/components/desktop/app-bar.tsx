@@ -7,7 +7,7 @@ import { LanguageSwitcher } from './language-switcher';
 import { UserInfoSection } from './user-info-section';
 import { NavigationList } from './navigation-list';
 
-const DRAWER_WIDTH = 180;
+export const DRAWER_WIDTH = 180;
 
 export const DesktopAppBar = () => {
   const theme = useTheme();
