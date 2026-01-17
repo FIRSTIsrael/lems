@@ -11,8 +11,8 @@ export const JUDGING_STAGES = [
   { id: 'innovation-presentation', duration: 300 }, // 5 min
   { id: 'innovation-questions', duration: 300 }, // 5 min
   { id: 'robot-presentation', duration: 300 }, // 5 min
-  { id: 'robot-questions', duration: 300 }, // 5 min
-  { id: 'final-thoughts', duration: 360 } // 6 min
+  { id: 'robot-questions', duration: 300 } // 5 min
+  // Additional final-thoughts stage added dynamically based on session length
 ];
 
 export interface JudgingSessionTimerState {
@@ -26,17 +26,25 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
     dayjs(startTime).add(sessionLength, 'second').toDate()
   );
 
+  const adjustedStages = useMemo(() => {
+    const fixedStageDuration = JUDGING_STAGES.reduce((sum, stage) => sum + stage.duration, 0);
+
+    const finalThoughtsDuration = Math.max(0, sessionLength - fixedStageDuration);
+
+    return [...JUDGING_STAGES, { id: 'final-thoughts', duration: finalThoughtsDuration }];
+  }, [sessionLength]);
+
   const { currentStageIndex, stageTimeRemaining } = useMemo(() => {
     let result: { currentStageIndex: number; stageTimeRemaining: number } = {
-      currentStageIndex: JUDGING_STAGES.length - 1,
+      currentStageIndex: adjustedStages.length - 1,
       stageTimeRemaining: 0
     };
 
     let elapsedTime = sessionLength - (minutes * 60 + seconds);
 
-    for (let i = 0; i < JUDGING_STAGES.length; i++) {
-      if (elapsedTime >= JUDGING_STAGES[i].duration) {
-        elapsedTime -= JUDGING_STAGES[i].duration;
+    for (let i = 0; i < adjustedStages.length; i++) {
+      if (elapsedTime >= adjustedStages[i].duration) {
+        elapsedTime -= adjustedStages[i].duration;
         continue;
       }
 
@@ -45,13 +53,13 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
       // where if a memo returns an object it can only have one return statement
       result = {
         currentStageIndex: i,
-        stageTimeRemaining: JUDGING_STAGES[i].duration - elapsedTime
+        stageTimeRemaining: adjustedStages[i].duration - elapsedTime
       };
       break;
     }
 
     return result;
-  }, [minutes, seconds, sessionLength]);
+  }, [minutes, seconds, sessionLength, adjustedStages]);
 
   const { playSound } = useJudgingSounds();
   const previousStageRef = useRef(currentStageIndex);

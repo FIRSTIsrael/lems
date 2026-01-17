@@ -1,7 +1,17 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab, useTheme, useMediaQuery } from '@mui/material';
+import React, { useState, useRef, useCallback } from 'react';
+import {
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  Slide,
+  Box,
+  Fab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -16,7 +26,7 @@ import {
 import { DirectionalIcon, useJudgingSessionStageTranslations } from '@lems/localization';
 import { useJudgingTimer, formatTime, JUDGING_STAGES } from '../hooks/use-judging-timer';
 
-const JudgingTimer = () => {
+export const JudgingTimer = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -69,17 +79,20 @@ const JudgingTimer = () => {
     }
   };
 
-  const handleDragMove = (e: MouseEvent | TouchEvent) => {
-    if (!isDragging) return;
+  const handleDragMove = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if (!isDragging) return;
 
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
 
-    setPosition({
-      x: clientX - dragOffset.x,
-      y: clientY - dragOffset.y
-    });
-  };
+      setPosition({
+        x: clientX - dragOffset.x,
+        y: clientY - dragOffset.y
+      });
+    },
+    [isDragging, dragOffset]
+  );
 
   const handleDragEnd = () => {
     setIsDragging(false);
@@ -103,7 +116,7 @@ const JudgingTimer = () => {
       document.removeEventListener('mouseup', handleEnd);
       document.removeEventListener('touchend', handleEnd);
     };
-  }, [isDragging, dragOffset]);
+  }, [isDragging, dragOffset, handleDragMove]);
 
   return (
     <>
@@ -353,5 +366,3 @@ const JudgingTimer = () => {
     </>
   );
 };
-
-export { JudgingTimer };
