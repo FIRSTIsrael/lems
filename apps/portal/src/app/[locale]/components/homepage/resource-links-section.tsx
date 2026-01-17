@@ -17,11 +17,20 @@ import {
   Language as WebsiteIcon,
   ArrowForward,
   ArrowBack,
-  Storage as GitHubIcon
+  Storage as GitHubIcon,
+  Map as MapIcon
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 
 const RESOURCES = [
+  {
+    title: 'fll-website',
+    description: 'fll-website-description',
+    icon: MapIcon,
+    href: 'fll-website-link',
+    color: 'primary' as const,
+    external: true
+  },
   {
     title: 'github',
     description: 'github-description',
