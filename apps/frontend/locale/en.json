@@ -254,7 +254,7 @@
           "judging-conflict": "Judging: {room}",
           "status": {
             "ready": "Ready",
-            "present": "Present",
+            "present": "Preparing",
             "queued": "Queued",
             "not-present": "Not Present"
           }
