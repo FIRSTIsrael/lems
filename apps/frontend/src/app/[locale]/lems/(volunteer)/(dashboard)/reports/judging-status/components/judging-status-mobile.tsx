@@ -2,29 +2,22 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Box, Card, CardContent, Paper, Skeleton, Stack, Typography } from '@mui/material';
-import { JudgingSession, Room } from '../graphql';
+import { useJudgingStatus } from '../judging-status-context';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 import { SessionCard } from './session-card';
 
-interface JudgingStatusMobileProps {
-  currentSessions: JudgingSession[];
-  nextSessions: JudgingSession[];
-  rooms: Room[];
-  sessionLength: number;
-  loading: boolean;
-  currentTime: Dayjs;
-}
-
-export const JudgingStatusMobile: React.FC<JudgingStatusMobileProps> = ({
-  currentSessions,
-  nextSessions,
-  rooms,
-  sessionLength,
-  loading,
-  currentTime
-}) => {
+export const JudgingStatusMobile: React.FC = () => {
   const t = useTranslations('pages.judging-status');
+  const {
+    sessions: currentSessions,
+    nextSessions,
+    rooms,
+    sessionLength,
+    loading
+  } = useJudgingStatus();
+  const currentTime = useTime({ interval: 1000 });
 
   const sortedRooms = useMemo(() => {
     return [...rooms].sort((a, b) => a.name.localeCompare(b.name));

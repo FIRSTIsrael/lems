@@ -253,7 +253,7 @@
           "judging-conflict": "שיפוט: {room}",
           "status": {
             "ready": "מוכן",
-            "present": "נוכח",
+            "present": "מתכוננת",
             "queued": "בקיו",
             "not-present": "לא נוכח"
           }

@@ -81,12 +81,12 @@ export function MatchCountdown({
           <Countdown
             targetDate={targetDate}
             variant="h1"
+            dir="ltr"
             sx={{
               fontFamily: 'Roboto Mono, monospace',
               fontSize: { xs: '4rem', sm: '6rem', md: '8rem', lg: '10rem' },
               fontWeight: 700,
-              color: getCountdownColor(),
-              dir: 'ltr'
+              color: getCountdownColor()
             }}
             allowNegativeValues
           />
