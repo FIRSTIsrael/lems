@@ -44,7 +44,9 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [textColor, setTextColor] = useState<HsvaColor>(hexToHsva('#000000'));
+  const [usedColors, setUsedColors] = useState<string[]>(['#000000']);
   const editorRef = useRef<HTMLDivElement>(null);
+  const selectionRef = useRef<Range | null>(null);
 
   useEffect(() => {
     if (faq) {
@@ -67,14 +69,57 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     }
   }, [answer]);
 
+  useEffect(() => {
+    const colors = extractColors(answer);
+    setUsedColors(colors.length > 0 ? colors : ['#000000']);
+  }, [answer]);
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      selectionRef.current = selection.getRangeAt(0);
+    }
+  };
+
+  const restoreSelection = () => {
+    const selection = window.getSelection();
+    if (selectionRef.current && selection) {
+      selection.removeAllRanges();
+      selection.addRange(selectionRef.current);
+    }
+  };
+
   const applyCommand = (command: string, value?: string) => {
     if (!editorRef.current) return;
     editorRef.current.focus();
+    restoreSelection();
     document.execCommand(command, false, value);
     setAnswer(editorRef.current.innerHTML);
   };
 
   const currentColor = hsvaToHex(textColor);
+  const applyColor = (color: string) => {
+    setTextColor(hexToHsva(color));
+    applyCommand('foreColor', color);
+  };
+
+  const extractColors = (html: string) => {
+    const colors = new Set<string>();
+    const colorRegexes = [/color\s*=\s*"?([#a-fA-F0-9]{3,7})"?/g, /color\s*:\s*([^;"']+)/g];
+
+    colorRegexes.forEach(regex => {
+      let match = regex.exec(html);
+      while (match) {
+        const color = match[1].trim();
+        if (color.startsWith('#')) {
+          colors.add(color.toLowerCase());
+        }
+        match = regex.exec(html);
+      }
+    });
+
+    return Array.from(colors);
+  };
 
   const handleSubmit = async () => {
     if (!seasonId || !question.trim() || !answer.trim()) {
@@ -201,9 +246,10 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                   </IconButton>
                 </span>
               </Tooltip>
-              <ColorPicker value={textColor} onChange={color => setTextColor(color)}>
+              <ColorPicker value={textColor} onChange={color => applyColor(hsvaToHex(color))}>
                 <IconButton
                   size="small"
+                  onMouseDown={saveSelection}
                   onClick={() => applyCommand('foreColor', currentColor)}
                   disabled={isSubmitting}
                   sx={{
@@ -217,12 +263,45 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                   <Palette sx={{ color: currentColor }} />
                 </IconButton>
               </ColorPicker>
-              <Typography
-                variant="caption"
-                sx={{ fontFamily: 'monospace', color: 'text.secondary' }}
-              >
-                {currentColor}
-              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                {usedColors
+                  .filter(color => color.toLowerCase() !== currentColor.toLowerCase())
+                  .map(color => (
+                    <Tooltip key={color} title={color}>
+                      <Box
+                        onClick={() => applyColor(color)}
+                        sx={{
+                          width: 18,
+                          height: 18,
+                          borderRadius: '50%',
+                          bgcolor: color,
+                          cursor: isSubmitting ? 'default' : 'pointer',
+                          border: '1px solid',
+                          borderColor: 'divider'
+                        }}
+                      />
+                    </Tooltip>
+                  ))}
+              </Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box
+                  sx={{
+                    width: 16,
+                    height: 16,
+                    borderRadius: '50%',
+                    bgcolor: currentColor,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    boxShadow: theme => `0 0 0 2px ${theme.palette.primary.main}`
+                  }}
+                />
+                <Typography
+                  variant="caption"
+                  sx={{ fontFamily: 'monospace', color: 'text.secondary' }}
+                >
+                  {currentColor}
+                </Typography>
+              </Box>
             </Box>
             <Paper variant="outlined" sx={{ p: 2, minHeight: 180 }}>
               <Box
@@ -232,6 +311,8 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                 aria-label={t('fields.answer')}
                 onInput={() => setAnswer(editorRef.current?.innerHTML ?? '')}
                 onBlur={() => setAnswer(editorRef.current?.innerHTML ?? '')}
+                onMouseUp={saveSelection}
+                onKeyUp={saveSelection}
                 sx={{
                   outline: 'none',
                   minHeight: 140,
