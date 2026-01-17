@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Assign the user or unassign stale assignments
-        uses: takanome-dev/assign-issue-action@v2.3
+        uses: takanome-dev/assign-issue-action@50cd62a419fb6b4f1dcfc0d3976a7bfcabbb1151 #v3.0.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           self_assign_cmd: '/claim'
