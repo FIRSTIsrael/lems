@@ -8,7 +8,7 @@ import { useTime } from '../../../../../../../../lib/time/hooks';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 
 const getProgressColor = (progressPercent: number) => {
-  if (progressPercent < 80) return 'success';
+  if (progressPercent >= 20) return 'success';
   return 'warning';
 };
 
@@ -25,9 +25,9 @@ export const ActiveMatchTime = () => {
   const endTime = dayjs(match.startTime).add(matchLength, 'second');
 
   const elapsedTime = currentTime.diff(startTime, 'second');
-  const progressPercent = (elapsedTime / matchLength) * 100;
   const timeRemaining = Math.max(0, matchLength - elapsedTime);
-  const isEndgame = timeRemaining <= 30;
+  const progressPercent = (timeRemaining / matchLength) * 100;
+  const isEndgame = progressPercent <= 20;
 
   return (
     <Stack spacing={0.75} sx={{ mb: 1.5, flex: 1 }}>
