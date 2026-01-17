@@ -1058,6 +1058,59 @@
           "submitting": "מאפס..."
         }
       }
+    },
+    "faqs": {
+      "title": "שאלות נפוצות - חוקי משחק הרובוט",
+      "actions": {
+        "create": "יצירת שאלה נפוצה"
+      },
+      "filter": {
+        "season": "עונה",
+        "all-seasons": "כל העונות"
+      },
+      "table": {
+        "question": "שאלה",
+        "answer": "תשובה",
+        "season": "עונה",
+        "order": "סדר",
+        "actions": "פעולות"
+      },
+      "empty-state": "לא נמצאו שאלות נפוצות. צור את השאלה הנפוצה הראשונה שלך כדי להתחיל.",
+      "errors": {
+        "no-permission": "אין לך הרשאה לנהל שאלות נפוצות.",
+        "load-failed": "טעינת השאלות הנפוצות נכשלה. אנא נסה שוב."
+      },
+      "editor": {
+        "title-create": "יצירת שאלה נפוצה",
+        "title-edit": "עריכת שאלה נפוצה",
+        "fields": {
+          "season": "עונה",
+          "question": "שאלה",
+          "answer": "תשובה",
+          "display-order": "סדר תצוגה",
+          "display-order-help": "השאר ריק כדי להוסיף בסוף"
+        },
+        "errors": {
+          "required-fields": "אנא מלא את כל השדות הנדרשים.",
+          "save-failed": "שמירת השאלה הנפוצה נכשלה. אנא נסה שוב."
+        },
+        "actions": {
+          "cancel": "ביטול",
+          "save": "שמירה",
+          "saving": "שומר..."
+        }
+      },
+      "delete": {
+        "title": "מחיקת שאלה נפוצה",
+        "message": "האם אתה בטוח שברצונך למחוק שאלה נפוצה זו? פעולה זו אינה ניתנת לביטול.",
+        "question": "שאלה",
+        "error": "מחיקת השאלה הנפוצה נכשלה. אנא נסה שוב.",
+        "actions": {
+          "cancel": "ביטול",
+          "delete": "מחיקה",
+          "deleting": "מוחק..."
+        }
+      }
     }
   },
   "general": {
@@ -1067,7 +1120,8 @@
       "manage-events": "ניהול אירועים",
       "manage-event-details": "ניהול פרטי אירועים",
       "manage-teams": "ניהול קבוצות",
-      "view-insights": "צפייה בתובנות"
+      "view-insights": "צפייה בתובנות",
+      "manage-faq": "ניהול שאלות נפוצות"
     }
   },
   "layouts": {
@@ -1078,6 +1132,7 @@
         "events": "אירועים",
         "teams": "קבוצות",
         "insights": "תובנות",
+        "faqs": "שאלות נפוצות",
         "graphql": "GraphQL"
       },
       "user-menu": {

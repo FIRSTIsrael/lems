@@ -17,7 +17,8 @@ import {
   EmojiEventsOutlined,
   GroupOutlined,
   InsightsOutlined,
-  DataObjectOutlined
+  DataObjectOutlined,
+  QuestionAnswer
 } from '@mui/icons-material';
 import { PermissionType } from '@lems/database';
 import {
@@ -65,6 +66,11 @@ const navigator: Navigator = {
     icon: <PersonOutlined />,
     label: 'users',
     route: 'users'
+  },
+  MANAGE_FAQ: {
+    icon: <QuestionAnswer />,
+    label: 'faqs',
+    route: 'faqs'
   }
 };
 

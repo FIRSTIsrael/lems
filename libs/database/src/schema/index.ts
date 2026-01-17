@@ -36,3 +36,4 @@ export * from './documents/final-deliberation';
 
 export * from './tables/judging-deliberation';
 export * from './tables/awards';
+export * from './tables/faqs';

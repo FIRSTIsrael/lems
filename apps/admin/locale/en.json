@@ -1058,6 +1058,59 @@
           "submitting": "Resetting..."
         }
       }
+    },
+    "faqs": {
+      "title": "Robot Game Rules FAQ",
+      "actions": {
+        "create": "Create FAQ"
+      },
+      "filter": {
+        "season": "Season",
+        "all-seasons": "All Seasons"
+      },
+      "table": {
+        "question": "Question",
+        "answer": "Answer",
+        "season": "Season",
+        "order": "Order",
+        "actions": "Actions"
+      },
+      "empty-state": "No FAQs found. Create your first FAQ to get started.",
+      "errors": {
+        "no-permission": "You don't have permission to manage FAQs.",
+        "load-failed": "Failed to load FAQs. Please try again."
+      },
+      "editor": {
+        "title-create": "Create FAQ",
+        "title-edit": "Edit FAQ",
+        "fields": {
+          "season": "Season",
+          "question": "Question",
+          "answer": "Answer",
+          "display-order": "Display Order",
+          "display-order-help": "Leave empty to add at the end"
+        },
+        "errors": {
+          "required-fields": "Please fill in all required fields.",
+          "save-failed": "Failed to save FAQ. Please try again."
+        },
+        "actions": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "saving": "Saving..."
+        }
+      },
+      "delete": {
+        "title": "Delete FAQ",
+        "message": "Are you sure you want to delete this FAQ? This action cannot be undone.",
+        "question": "Question",
+        "error": "Failed to delete FAQ. Please try again.",
+        "actions": {
+          "cancel": "Cancel",
+          "delete": "Delete",
+          "deleting": "Deleting..."
+        }
+      }
     }
   },
   "general": {
@@ -1067,7 +1120,8 @@
       "manage-events": "Manage Events",
       "manage-event-details": "Manage Event Details",
       "manage-teams": "Manage Teams",
-      "view-insights": "View Insights"
+      "view-insights": "View Insights",
+      "manage-faq": "Manage FAQ"
     }
   },
   "layouts": {
@@ -1078,6 +1132,7 @@
         "events": "Events",
         "teams": "Teams",
         "insights": "Insights",
+        "faqs": "FAQ",
         "graphql": "GraphQL"
       },
       "user-menu": {
