@@ -49,27 +49,19 @@ export default function FaqsPage() {
   const loading = !faqs && !error;
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
       {/* Header Section */}
-      <Box
+      <Typography
+        variant="h3"
+        component="h1"
+        fontWeight="bold"
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          borderRadius: 2,
-          p: 4,
           mb: 4,
-          color: 'white'
+          fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem' }
         }}
       >
-        <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }}>
-          <QuestionAnswerIcon sx={{ fontSize: 40 }} />
-          <Typography variant="h3" component="h1">
-            {t('title')}
-          </Typography>
-        </Stack>
-        <Typography variant="h6" sx={{ opacity: 0.9 }}>
-          {t('subtitle')}
-        </Typography>
-      </Box>
+        {t('title')}
+      </Typography>
 
       {/* Search Section */}
       <Paper sx={{ p: 3, mb: 3 }}>
@@ -138,6 +130,14 @@ export default function FaqsPage() {
                 sx={{
                   '&:before': { display: 'none' },
                   boxShadow: 1,
+                  transition: 'all 0.3s ease-in-out',
+                  borderLeft: '3px solid transparent',
+                  '&:hover': {
+                    boxShadow: 4,
+                    transform: 'translateY(-4px)',
+                    borderLeft: theme => `3px solid ${theme.palette.primary.main}`,
+                    bgcolor: theme => `${theme.palette.primary.main}08`
+                  },
                   '&.Mui-expanded': {
                     boxShadow: 3
                   }
