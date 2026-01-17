@@ -57,7 +57,7 @@ export default function JudgingStatusPage() {
         currentTime={currentTime}
       />
 
-      <Box sx={{ py: 1 }}>
+      <Box py={1} width="100%">
         <ResponsiveComponent
           mobile={
             <JudgingStatusMobile
