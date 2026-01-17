@@ -1090,6 +1090,11 @@
           "display-order": "Display Order",
           "display-order-help": "Leave empty to add at the end"
         },
+        "toolbar": {
+          "bold": "Bold",
+          "italic": "Italic",
+          "color": "Text color"
+        },
         "errors": {
           "required-fields": "Please fill in all required fields.",
           "save-failed": "Failed to save FAQ. Please try again."

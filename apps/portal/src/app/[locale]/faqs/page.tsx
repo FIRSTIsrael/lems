@@ -22,6 +22,7 @@ import {
   QuestionAnswer as QuestionAnswerIcon
 } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import DOMPurify from 'dompurify';
 import useSWR from 'swr';
 import { PortalFaqResponse } from '@lems/types/api/portal';
 
@@ -160,9 +161,10 @@ export default function FaqsPage() {
                     variant="body1"
                     color="text.secondary"
                     sx={{ whiteSpace: 'pre-wrap' }}
-                  >
-                    {faq.answer}
-                  </Typography>
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(faq.answer)
+                    }}
+                  />
                 </AccordionDetails>
               </Accordion>
             ))}

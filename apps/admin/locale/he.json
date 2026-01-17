@@ -1090,6 +1090,11 @@
           "display-order": "סדר תצוגה",
           "display-order-help": "השאר ריק כדי להוסיף בסוף"
         },
+        "toolbar": {
+          "bold": "מודגש",
+          "italic": "נטוי",
+          "color": "צבע טקסט"
+        },
         "errors": {
           "required-fields": "אנא מלא את כל השדות הנדרשים.",
           "save-failed": "שמירת השאלה הנפוצה נכשלה. אנא נסה שוב."

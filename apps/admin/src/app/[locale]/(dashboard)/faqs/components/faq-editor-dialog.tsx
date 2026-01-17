@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,19 +8,25 @@ import {
   DialogActions,
   Button,
   TextField,
+  IconButton,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
   Alert,
   CircularProgress,
-  Box
+  Box,
+  Paper,
+  Typography,
+  Tooltip
 } from '@mui/material';
+import { FormatBold, FormatItalic, Palette } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { FaqResponse } from '@lems/types/api/admin';
 import { Season } from '@lems/database';
-import { apiFetch } from '@lems/shared';
+import { apiFetch, ColorPicker } from '@lems/shared';
+import { HsvaColor, hexToHsva, hsvaToHex } from '@uiw/react-color';
 
 interface FaqEditorDialogProps {
   open: boolean;
@@ -37,6 +43,8 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
   const [displayOrder, setDisplayOrder] = useState(faq?.displayOrder?.toString() || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [textColor, setTextColor] = useState<HsvaColor>(hexToHsva('#000000'));
+  const editorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (faq) {
@@ -52,6 +60,21 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     }
     setError(null);
   }, [faq, seasons]);
+
+  useEffect(() => {
+    if (editorRef.current && editorRef.current.innerHTML !== answer) {
+      editorRef.current.innerHTML = answer;
+    }
+  }, [answer]);
+
+  const applyCommand = (command: string, value?: string) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+    document.execCommand(command, false, value);
+    setAnswer(editorRef.current.innerHTML);
+  };
+
+  const currentColor = hsvaToHex(textColor);
 
   const handleSubmit = async () => {
     if (!seasonId || !question.trim() || !answer.trim()) {
@@ -141,16 +164,84 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
             disabled={isSubmitting}
           />
 
-          <TextField
-            label={t('fields.answer')}
-            value={answer}
-            onChange={e => setAnswer(e.target.value)}
-            fullWidth
-            required
-            multiline
-            rows={6}
-            disabled={isSubmitting}
-          />
+          <Box>
+            <Typography variant="subtitle2" sx={{ mb: 1 }}>
+              {t('fields.answer')}
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <Tooltip title={t('toolbar.bold')}>
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => applyCommand('bold')}
+                    disabled={isSubmitting}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <FormatBold />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title={t('toolbar.italic')}>
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => applyCommand('italic')}
+                    disabled={isSubmitting}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <FormatItalic />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <ColorPicker value={textColor} onChange={color => setTextColor(color)}>
+                <IconButton
+                  size="small"
+                  onClick={() => applyCommand('foreColor', currentColor)}
+                  disabled={isSubmitting}
+                  sx={{
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    '&:hover': {
+                      backgroundColor: 'action.hover'
+                    }
+                  }}
+                >
+                  <Palette sx={{ color: currentColor }} />
+                </IconButton>
+              </ColorPicker>
+              <Typography
+                variant="caption"
+                sx={{ fontFamily: 'monospace', color: 'text.secondary' }}
+              >
+                {currentColor}
+              </Typography>
+            </Box>
+            <Paper variant="outlined" sx={{ p: 2, minHeight: 180 }}>
+              <Box
+                ref={editorRef}
+                contentEditable={!isSubmitting}
+                role="textbox"
+                aria-label={t('fields.answer')}
+                onInput={() => setAnswer(editorRef.current?.innerHTML ?? '')}
+                onBlur={() => setAnswer(editorRef.current?.innerHTML ?? '')}
+                sx={{
+                  outline: 'none',
+                  minHeight: 140,
+                  '&:empty:before': {
+                    content: '""'
+                  }
+                }}
+              />
+            </Paper>
+          </Box>
 
           <TextField
             label={t('fields.display-order')}

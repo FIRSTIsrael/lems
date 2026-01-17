@@ -7,6 +7,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(_db: Kysely<any>): Promise<void> {
+  void _db;
   // Note: PostgreSQL doesn't support removing enum values directly
   // This would require recreating the enum type and all dependent objects
   // For safety, we'll leave the enum value in place
