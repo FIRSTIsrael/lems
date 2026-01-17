@@ -1093,7 +1093,8 @@
         "toolbar": {
           "bold": "מודגש",
           "italic": "נטוי",
-          "color": "צבע טקסט"
+          "color": "צבע טקסט",
+          "bullets": "רשימת נקודות"
         },
         "errors": {
           "required-fields": "אנא מלא את כל השדות הנדרשים.",

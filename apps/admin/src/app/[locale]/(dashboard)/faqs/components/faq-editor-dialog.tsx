@@ -20,7 +20,7 @@ import {
   Typography,
   Tooltip
 } from '@mui/material';
-import { FormatBold, FormatItalic, Palette } from '@mui/icons-material';
+import { FormatBold, FormatItalic, Palette, FormatListBulleted } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { FaqResponse } from '@lems/types/api/admin';
@@ -243,6 +243,22 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                     }}
                   >
                     <FormatItalic />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <Tooltip title={t('toolbar.bullets')}>
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => applyCommand('insertUnorderedList')}
+                    disabled={isSubmitting}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <FormatListBulleted />
                   </IconButton>
                 </span>
               </Tooltip>

@@ -1093,7 +1093,8 @@
         "toolbar": {
           "bold": "Bold",
           "italic": "Italic",
-          "color": "Text color"
+          "color": "Text color",
+          "bullets": "Bulleted list"
         },
         "errors": {
           "required-fields": "Please fill in all required fields.",
