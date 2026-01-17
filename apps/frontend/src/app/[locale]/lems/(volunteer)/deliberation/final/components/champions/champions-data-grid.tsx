@@ -43,6 +43,16 @@ export function ChampionsDataGrid() {
         renderCell: params => params.row.ranks.total || '-'
       },
       {
+        field: 'room',
+        headerName: t('table-room'),
+        width: 70,
+        sortable: false,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => params.row.room?.name || '-'
+      },
+      {
         field: 'teamDisplay',
         headerName: t('table-team'),
         width: 100,
@@ -58,16 +68,6 @@ export function ChampionsDataGrid() {
             </Tooltip>
           );
         }
-      },
-      {
-        field: 'room',
-        headerName: t('table-room'),
-        width: 70,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.room?.name || '-'
       },
       {
         field: 'robotDesignScore',

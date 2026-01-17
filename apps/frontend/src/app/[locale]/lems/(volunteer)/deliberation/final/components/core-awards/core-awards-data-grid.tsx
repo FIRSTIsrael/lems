@@ -112,6 +112,16 @@ export function CoreAwardsDataGrid() {
   const columns: GridColDef<EnrichedTeam>[] = useMemo(
     () => [
       {
+        field: 'room',
+        headerName: t('table-room'),
+        width: 80,
+        sortable: false,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => params.row.room?.name || '-'
+      },
+      {
         field: 'teamDisplay',
         headerName: t('table-team'),
         width: 110,
@@ -136,16 +146,6 @@ export function CoreAwardsDataGrid() {
             </Tooltip>
           );
         }
-      },
-      {
-        field: 'room',
-        headerName: t('table-room'),
-        width: 80,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.room?.name || '-'
       },
       {
         field: 'robotDesignRank',
