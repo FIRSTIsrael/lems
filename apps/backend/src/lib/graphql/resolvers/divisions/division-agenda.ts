@@ -15,6 +15,7 @@ export interface AgendaEventGraphQL {
   startTime: string;
   duration: number;
   visibility: string;
+  location: string | null;
 }
 
 /**
@@ -34,9 +35,7 @@ export const divisionAgendaResolver: GraphQLFieldResolver<
     let agendaEvents = await db.divisions.byId(division.id).agenda().getAll();
 
     if (args?.visibility && args.visibility.length > 0) {
-      agendaEvents = agendaEvents.filter(event =>
-        args.visibility!.includes(event.visibility)
-      );
+      agendaEvents = agendaEvents.filter(event => args.visibility!.includes(event.visibility));
     }
 
     return agendaEvents.map(event => ({
@@ -44,7 +43,8 @@ export const divisionAgendaResolver: GraphQLFieldResolver<
       title: event.title,
       startTime: event.start_time.toISOString(),
       duration: event.duration,
-      visibility: event.visibility
+      visibility: event.visibility,
+      location: event.location || undefined
     }));
   } catch (error) {
     console.error('Error fetching agenda events for division:', division.id, error);

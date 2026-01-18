@@ -1,3 +1,8 @@
+/* eslint-disable react-hooks/refs */
+/* TODO: Fix the render methods of this file to not access refs during render!! */
+
+'use client';
+
 import React, { ReactElement, useRef, useState } from 'react';
 import { WithId } from 'mongodb';
 import { Socket } from 'socket.io-client';
@@ -12,11 +17,11 @@ interface PresentationControllerProps {
   division: WithId<Division>;
   divisionState: WithId<DivisionState>;
   presentationId: string;
-  children: ReactElement<any>;
+  children: ReactElement<unknown>;
   socket: Socket<WSServerEmittedEvents, WSClientEmittedEvents>;
 }
 
-const PresentationController: React.FC<PresentationControllerProps> = ({
+export const PresentationController: React.FC<PresentationControllerProps> = ({
   division,
   divisionState,
   presentationId,
@@ -28,7 +33,7 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
   const [showFinalSlide, setShowFinalSlide] = useState(true);
 
   // Consider making this show 1 step ahead instead of 1 slide ahead
-  const endOfNextSlide = ({ slideIndex, stepIndex }: DeckView) => ({
+  const endOfNextSlide = ({ slideIndex }: DeckView) => ({
     slideIndex: slideIndex + 1,
     stepIndex: GOTO_FINAL_STEP
   });
@@ -96,5 +101,3 @@ const PresentationController: React.FC<PresentationControllerProps> = ({
     </Stack>
   );
 };
-
-export default PresentationController;

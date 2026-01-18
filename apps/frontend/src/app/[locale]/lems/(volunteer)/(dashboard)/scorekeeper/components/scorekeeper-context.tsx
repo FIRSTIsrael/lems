@@ -4,7 +4,7 @@ import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import { MATCH_LOAD_THRESHOLD } from '@lems/shared/consts';
 import { useTime } from '../../../../../../../lib/time/hooks';
-import { AudienceDisplayState, Match, MatchStage, ScorekeeperData } from '../graphql';
+import { AudienceDisplayState, Match, MatchStage, ScorekeeperData, Award } from '../graphql';
 
 interface ScorekeeperContextType {
   matches: Match[];
@@ -15,16 +15,22 @@ interface ScorekeeperContextType {
   activeMatch: Match | null;
   testMatch: Match | null;
   nextMatch: Match | null;
+  awardsAssigned: boolean;
+  judging: {
+    awards: Award[];
+  } | null;
+  field: ScorekeeperData['division']['field'] | null;
 }
 
 const ScorekeeperContext = createContext<ScorekeeperContextType | null>(null);
 
 interface ScorekeeperProviderProps {
-  data: ScorekeeperData['division']['field'];
+  data: ScorekeeperData['division'];
   children?: ReactNode;
 }
 
 export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps) {
+  const field = data.field;
   const {
     matches,
     audienceDisplay,
@@ -32,7 +38,7 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     currentStage,
     loadedMatch: loadedMatchId,
     activeMatch: activeMatchId
-  } = data;
+  } = field;
 
   const currentTime = useTime({ interval: 1000 });
 
@@ -77,7 +83,10 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
       loadedMatch,
       activeMatch,
       testMatch,
-      nextMatch
+      nextMatch,
+      awardsAssigned: data.awardsAssigned,
+      judging: data.judging || null,
+      field: field || null
     };
   }, [
     activeMatchId,
@@ -86,7 +95,10 @@ export function ScorekeeperProvider({ data, children }: ScorekeeperProviderProps
     matchLength,
     currentStage,
     currentTime,
-    audienceDisplay
+    audienceDisplay,
+    data.awardsAssigned,
+    data.judging,
+    field
   ]);
 
   return <ScorekeeperContext.Provider value={value}>{children}</ScorekeeperContext.Provider>;

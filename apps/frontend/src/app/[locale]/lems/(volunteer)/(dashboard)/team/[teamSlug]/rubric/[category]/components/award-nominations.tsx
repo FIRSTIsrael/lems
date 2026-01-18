@@ -2,38 +2,25 @@
 
 import { useCallback, useMemo } from 'react';
 import { Paper, Stack, Typography, FormControlLabel, Checkbox } from '@mui/material';
-import { useSuspenseQuery, useMutation } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
 import { useAwardTranslations } from '@lems/localization';
 import { useEvent } from '../../../../../../components/event-context';
-import {
-  GET_AWARD_OPTIONS_QUERY,
-  parseAwardOptions,
-  UPDATE_RUBRIC_AWARDS_MUTATION
-} from '../graphql';
+import { UPDATE_RUBRIC_AWARDS_MUTATION } from '../graphql';
 import { useRubric } from '../rubric-context';
 
 interface AwardNominationsProps {
-  hasAwards: boolean;
+  awards: { id: string; name: string }[];
   disabled?: boolean;
 }
 
-export const AwardNominations: React.FC<AwardNominationsProps> = ({
-  hasAwards,
-  disabled = false
-}) => {
+export const AwardNominations: React.FC<AwardNominationsProps> = ({ awards, disabled = false }) => {
   const t = useTranslations('pages.rubric.award-nominations');
   const { currentDivision } = useEvent();
   const { rubric } = useRubric();
   const { getName, getDescription } = useAwardTranslations();
 
-  const { data: awards } = useSuspenseQuery(GET_AWARD_OPTIONS_QUERY, {
-    variables: {
-      divisionId: currentDivision.id
-    }
-  });
-
-  const awardOptions = parseAwardOptions(awards);
+  const awardOptions = useMemo(() => new Set(awards.map(award => award.name)), [awards]);
   const currentAwards = useMemo(() => {
     const awards = rubric.data?.awards || {};
     if (Array.isArray(awards)) {
@@ -79,8 +66,6 @@ export const AwardNominations: React.FC<AwardNominationsProps> = ({
     },
     [updateRubricAwards, currentDivision.id, rubric.id, currentAwards, awardOptions]
   );
-
-  if (!hasAwards) return null;
 
   return (
     <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1, mb: 3 }}>

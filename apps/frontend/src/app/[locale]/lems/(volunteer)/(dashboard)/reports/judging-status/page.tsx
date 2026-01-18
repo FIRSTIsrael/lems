@@ -2,25 +2,37 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box } from '@mui/material';
+import { Box, Container, CircularProgress } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
-import { useTime } from '../../../../../../../lib/time/hooks';
 import { useEvent } from '../../../components/event-context';
 import { PageHeader } from '../../components/page-header';
 import { usePageData } from '../../../hooks/use-page-data';
-import { CountdownHeader } from './components/countdown-header';
 import {
   GET_JUDGING_STATUS,
-  parseJudgingStatus,
   createJudgingSessionStartedSubscription,
   createJudgingSessionCompletedSubscription,
   createTeamArrivalSubscription
 } from './graphql';
+import { JudgingStatusProvider } from './judging-status-context';
+import { CountdownHeader } from './components/countdown-header';
 import { JudgingStatusTable } from './components/judging-status-table';
 import { JudgingStatusMobile } from './components/judging-status-mobile';
 
-export default function JudgingStatusPage() {
+function JudgingStatusContent() {
   const t = useTranslations('pages.judging-status');
+
+  return (
+    <>
+      <PageHeader title={t('page-title')} />
+      <CountdownHeader />
+      <Box py={1} width="100%">
+        <ResponsiveComponent mobile={<JudgingStatusMobile />} desktop={<JudgingStatusTable />} />
+      </Box>
+    </>
+  );
+}
+
+export default function JudgingStatusPage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
@@ -32,55 +44,37 @@ export default function JudgingStatusPage() {
     [currentDivision.id]
   );
 
-  const { data, loading } = usePageData(
+  const { data, loading, error } = usePageData(
     GET_JUDGING_STATUS,
     { divisionId: currentDivision.id },
-    parseJudgingStatus,
+    undefined,
     subscriptions
   );
 
-  const currentTime = useTime({ interval: 1000 });
-
-  if (!data) {
-    return null;
+  if (error) {
+    throw error || new Error('Failed to load judging status data');
   }
 
-  const { sessions: currentSessions, nextSessions, rooms, sessionLength } = data;
+  if (loading || !data) {
+    return (
+      <Container maxWidth="xl">
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minHeight: '50vh'
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Container>
+    );
+  }
 
   return (
-    <>
-      <PageHeader title={t('page-title')} />
-
-      <CountdownHeader
-        currentSessions={currentSessions}
-        sessionLength={sessionLength}
-        currentTime={currentTime}
-      />
-
-      <Box sx={{ py: 1 }}>
-        <ResponsiveComponent
-          mobile={
-            <JudgingStatusMobile
-              currentSessions={currentSessions}
-              nextSessions={nextSessions}
-              rooms={rooms}
-              sessionLength={sessionLength}
-              loading={loading}
-              currentTime={currentTime}
-            />
-          }
-          desktop={
-            <JudgingStatusTable
-              currentSessions={currentSessions}
-              nextSessions={nextSessions}
-              rooms={rooms}
-              sessionLength={sessionLength}
-              loading={loading}
-              currentTime={currentTime}
-            />
-          }
-        />
-      </Box>
-    </>
+    <JudgingStatusProvider data={data} loading={loading}>
+      <JudgingStatusContent />
+    </JudgingStatusProvider>
   );
 }

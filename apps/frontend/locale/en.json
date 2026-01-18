@@ -1,5 +1,44 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "Generated from FIRST Israel event system | {eventName} | Season {seasonName}",
+        "title": "Rubric {category} for Team #{teamNumber} {teamName}",
+        "no-rubrics-found": "No rubrics found",
+        "team-not-found": "Team {teamSlug} not found in event {eventSlug}",
+        "no-rubric-data": "No rubric data available",
+        "feedback": {
+          "title": "Judging Session Feedback",
+          "page-title": "Judging Session Feedback for Team #{teamNumber} - {teamName}",
+          "great-job": "Great Job",
+          "think-about": "Think About",
+          "great-job-placeholder": "Note the things the team did excellently...",
+          "think-about-placeholder": "Things the team should think about or improve...",
+          "categories": {
+            "core-values": "Core Values",
+            "innovation-project": "Innovation Project",
+            "robot-design": "Robot Design"
+          },
+          "category-descriptions": {
+            "core-values": "How did the team demonstrate teamwork, discovery, inclusion, innovation, impact, and fun in their work?",
+            "innovation-project": "How did the team identify a problem related to the season's theme and approach solving it?",
+            "robot-design": "What was the team's approach to solving robot missions in a structured and planned manner?"
+          },
+          "awards": {
+            "title": "Award Nomination",
+            "description": "If the team is nominated for one of these awards, please write in the appropriate box. Also check with the event organizer which optional awards are available in your division.",
+            "placeholder": "Is the team nominated for this award? Reasons...",
+            "no-awards": "No optional awards available."
+          }
+        }
+      },
+      "scores": {
+        "metadata": "Generated from FIRST Israel event system | {eventName}| Season {seasonName}",
+        "title": "Score Sheet {round} for Team #{teamNumber} - {teamName}",
+        "total-points": "{points} Points",
+        "no-scores-found": "No scores found"
+      }
+    },
     "login": {
       "subtitle": "Volunteer Login",
       "continue": "Continue",
@@ -153,12 +192,12 @@
         "button-label": "Test Sound",
         "dialog": {
           "title": "Sound Check",
-          "description": "During the judging session, several indicators will be played to update the team on the transition of their presentation stages. Please check that the audio clips are working before the teams enter.",
+          "description": "During the judging session, several indicators will be played to update the team on the change of their presentation stages. Please check that the audio clips are working before the teams enter.",
           "close": "Close",
           "sounds": {
             "start": "Start of session",
             "end": "End of session",
-            "transition": "Stage transition"
+            "change": "Stage transition"
           }
         }
       }
@@ -166,6 +205,7 @@
     "reports": {
       "page-title": "Reports",
       "menu": {
+        "field-status": "Field Status",
         "team-list": "Team List",
         "pit-map": "Pit Map",
         "awards-list": "Awards list",
@@ -174,6 +214,67 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
         "judging-status": "Judging Status"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "No match loaded",
+          "late": "Late!",
+          "tables-ready": "{ready} of {total} tables ready"
+        },
+        "upcoming-matches": {
+          "title": "Upcoming Matches",
+          "no-matches": "No upcoming matches",
+          "time": "Time",
+          "next": "Next",
+          "in-time": "in {time}",
+          "team-number": "Team {number}",
+          "match-number": "Match",
+          "scheduled-time": "Scheduled Time",
+          "teams": "Teams"
+        },
+        "active-match": {
+          "title": "Active Match",
+          "no-match": "No active match",
+          "match-title": "Match {slug}",
+          "started-at": "Started",
+          "deviation": "Deviation",
+          "participants": "Participants",
+          "team-label": "Team",
+          "status": {
+            "in-progress": "Running",
+            "completed": "Completed"
+          }
+        },
+        "next-match": {
+          "title": "Next Match",
+          "no-match": "No match loaded",
+          "match-title": "Next Match: {slug}",
+          "tables-ready": "Tables Ready",
+          "team-number": "Team {number}",
+          "judging-conflict": "Judging: {room}",
+          "status": {
+            "ready": "Ready",
+            "present": "Preparing",
+            "queued": "Queued",
+            "not-present": "Not Present"
+          }
+        },
+        "judging-integration": {
+          "title": "Judging Integration",
+          "active-sessions": "Active Judging Sessions",
+          "team-info": "Team {number} - {name}",
+          "conflicts": "Time Conflicts",
+          "team-number": "Team {number}",
+          "conflict-details": "In judging: {room} | Called to match {match}",
+          "no-conflicts": "No time conflicts"
+        },
+        "queue-overview": {
+          "title": "Queue Status",
+          "no-matches": "No matches in queue right now",
+          "match-label": "Match",
+          "in-queue": "In queue:",
+          "team-label": "Team"
+        }
       },
       "awards-list": {
         "page-title": "Awards list",
@@ -218,10 +319,12 @@
         "no-events": "No agenda events have been scheduled yet.",
         "loading": "Loading agenda...",
         "duration-minutes": "{count, plural, one {1 minute} other {# minutes}}",
+        "location": "Location",
         "visibility": {
           "public": "General",
           "judging": "Judging",
-          "field": "Field"
+          "field": "Field",
+          "teams": "Teams"
         }
       },
       "field-timer": {
@@ -247,7 +350,13 @@
           "test": "Test Round"
         },
         "not-arrived": "Not arrived",
-        "loading": "Loading matches..."
+        "loading": "Loading matches...",
+        "visibility": {
+          "public": "General",
+          "judging": "Judging",
+          "field": "Field",
+          "teams": "Teams"
+        }
       },
       "judging-schedule": {
         "page-title": "Judging Schedule",
@@ -477,7 +586,11 @@
       },
       "awards": {
         "title": "Awards Presentation",
-        "description": "Awards presentation functionality will be available soon."
+        "description": "Awards presentation functionality will be available soon.",
+        "blocked": {
+          "title": "Awards Not Yet Assigned",
+          "description": "The awards have not yet been approved. Please check back later."
+        }
       }
     },
     "referee": {
@@ -605,13 +718,18 @@
           "close": "Close",
           "sections": {
             "message": "Message Settings",
-            "scoreboard": "Scoreboard Settings"
+            "scoreboard": "Scoreboard Settings",
+            "awards": "Awards Settings"
           },
           "fields": {
             "message-placeholder": "Enter message text",
             "show-active-match": "Show Current Match",
             "show-previous-match": "Show Previous Match",
-            "show-sponsors-row": "Show Sponsors Row"
+            "show-sponsors-row": "Show Sponsors Row",
+            "award-winner-slide-style": "Award Winner Slide Style",
+            "award-slide-style-chroma": "Chroma Key (Green Screen)",
+            "award-slide-style-full": "Full Screen",
+            "award-slide-style-both": "Both Styles"
           },
           "errors": {
             "update-failed": "Failed to update audience display setting."
@@ -633,6 +751,17 @@
       },
       "active-match": {
         "teams": "Teams"
+      },
+      "awards-presentation": {
+        "title": "Awards Presentation",
+        "current-slide": "Current Slide",
+        "next-slide": "Next Slide",
+        "slide-info": "Slide:",
+        "first-slide": "First Slide",
+        "previous-slide": "Previous Slide",
+        "last-slide": "Last Slide",
+        "previous-step": "Previous Step",
+        "next-step": "Next Step"
       }
     },
     "head-referee": {
@@ -843,6 +972,31 @@
       }
     },
     "deliberations": {
+      "scores-chart": {
+        "room-scores-distribution": "Room Scores Distribution",
+        "no-data-available": "No data available",
+        "innovation-project": "Innovation Project",
+        "robot-design": "Robot Design",
+        "core-values": "Core Values",
+        "aggregate-average": "Aggregate Average"
+      },
+      "compare": {
+        "title": "Compare Teams",
+        "team-1": "Team 1",
+        "team-2": "Team 2",
+        "compare": "Compare",
+        "no-data-available": "No teams available"
+      },
+      "compare-dialog": {
+        "title": "Team Comparison",
+        "open-full-compare": "Open Full Compare Page",
+        "error-loading-teams": "Error loading team data"
+      },
+      "small-screen-block": {
+        "title": "Screen Too Small",
+        "message": "The deliberation view requires a larger screen to display all components properly.",
+        "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+      },
       "category": {
         "title": "{category} Deliberation",
         "controls": {
@@ -872,21 +1026,6 @@
           "empty-state": "Add teams",
           "error-limit-exceeded": "Picklist limit reached. Cannot add more teams."
         },
-        "scores-chart": {
-          "room-scores-distribution": "Room Scores Distribution",
-          "no-data-available": "No data available",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "aggregate-average": "Aggregate Average"
-        },
-        "compare-teams-picker": {
-          "title": "Compare Teams",
-          "team-1": "Team 1",
-          "team-2": "Team 2",
-          "compare": "Compare",
-          "no-data-available": "No teams to compare"
-        },
         "table": {
           "rank": "Rank",
           "team": "Team",
@@ -895,12 +1034,107 @@
           "normalized": "Normalized",
           "actions": "Actions",
           "view-rubric": "View Rubric",
-          "add-to-picklist": "Add to Picklist"
+          "add-to-picklist": "Add to Picklist",
+          "compare-teams": "Compare Teams"
+        }
+      },
+      "final": {
+        "title": "Final Deliberation",
+        "stepper": {
+          "champions": "Champions Award",
+          "core-awards": "Core Awards",
+          "optional-awards": "Optional Awards",
+          "review": "Review"
         },
-        "small-screen-block": {
-          "title": "Screen Too Small",
-          "message": "The deliberation view requires a larger screen to display all components properly.",
-          "minimum-width": "Please use a desktop or rotate your device to landscape mode."
+        "errors": {
+          "award-limit-exceeded": "Cannot add more winners for this award."
+        },
+        "manual-eligibility-control": {
+          "title": "Manual Eligibility",
+          "description": "Add teams not nominated",
+          "add-team": "Add Team",
+          "select-team": "Select team...",
+          "add-to-award": "Add to Award",
+          "no-data-available": "No teams available"
+        },
+        "champions": {
+          "title": "Champions Award",
+          "description": "Select teams to award the Champions.",
+          "podium-title": "Champions Podium",
+          "place-label": "Place #{place}",
+          "select-team": "Select team...",
+          "table-rank": "Rank",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-score": "Total Score",
+          "save": "Save Champions",
+          "advance": "Advance to Core Awards",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Champions have been selected. Ready to advance."
+        },
+        "core-awards": {
+          "title": "Core Awards",
+          "description": "Select award winners from the picklists",
+          "select-team": "Select team...",
+          "table-rank": "Rank",
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-actions": "Actions",
+          "table-robot-design": "Robot Design",
+          "table-innovation-project": "Innovation",
+          "table-core-values": "Core Values",
+          "robot-design": "Robot Design",
+          "innovation-project": "Innovation Project",
+          "core-values": "Core Values",
+          "save": "Save Awards",
+          "advance": "Advance to Optional Awards",
+          "saving": "Saving...",
+          "start": "Start Deliberation",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Core awards have been selected. Ready to advance.",
+          "manual-team-indicator": "Added manually",
+          "team-not-eligible-for-category": "Team is not eligible for {category}",
+          "team-already-added-to-category": "Team already added to {category}",
+          "add-team-to-category": "Add team to {category}"
+        },
+        "optional-awards": {
+          "table-team": "Team",
+          "table-room": "Room",
+          "table-core-values": "Core Values",
+          "table-nominations": "Nominations",
+          "table-actions": "Actions",
+          "start": "Start Deliberation",
+          "advance": "Advance to Review",
+          "saving": "Saving...",
+          "time-remaining": "Time Remaining",
+          "not-started": "Waiting to start deliberation",
+          "completed": "Deliberation Complete",
+          "deliberation-finalized": "Optional awards have been selected. Ready to advance.",
+          "manual-team-indicator": "Added manually",
+          "team-already-added": "Team already selected for an award",
+          "no-data-available": "No teams available",
+          "select-award": "Select an award"
+        },
+        "review": {
+          "title": "Review Awards",
+          "place": "Place #{place}",
+          "approve-button": "Approve & Lock Awards",
+          "approval-modal": {
+            "title": "Confirm Awards",
+            "description": "Are you sure you want to approve and lock these awards?",
+            "warning-text": "Locking will immediately announce the awards to the Scorekeeper and MC, and unlock the awards presentation. This action cannot be undone.",
+            "confirm": "Approve & Lock",
+            "cancel": "Cancel",
+            "submitting": "Locking...",
+            "success-message": "Awards locked successfully",
+            "error-message": "Failed to lock awards"
+          }
         }
       }
     }
@@ -973,77 +1207,21 @@
       }
     }
   },
-  "deliberations": {
-    "final": {
-      "title": "Final Deliberation",
-      "error": {
-        "loadingData": "Failed to load deliberation data",
-        "notFound": "Final deliberation not found"
-      },
-      "stages": {
-        "champions": "Champions Selection",
-        "core-awards": "Core Awards",
-        "optional-awards": "Optional Awards",
-        "review": "Review & Finalize"
-      },
-      "buttons": {
-        "previous": "Previous Stage",
-        "next": "Next Stage",
-        "finalize": "Finalize Deliberation"
-      },
-      "teamCard": {
-        "totalRank": "Total Rank",
-        "overall": "Overall",
-        "robotGameRank": "Robot Game Rank",
-        "robotGame": "Robot Game"
-      },
-      "champions": {
-        "instruction": "Select teams for 1st, 2nd, 3rd, and 4th place champions. Teams are ranked by total judging score.",
-        "championsTitle": "Champions Selection",
-        "eligibleTeams": "{count} eligible teams",
-        "noEligibleTeams": "No teams are eligible for champions at this time",
-        "robotPerformanceTitle": "Robot Performance Winners",
-        "robotPerformanceDescription": "These teams are automatically ranked by their highest game score",
-        "maxScore": "Max Score"
-      },
-      "coreAwards": {
-        "instruction": "Select award winners for each judging category. Teams can only win one award per category.",
-        "categories": {
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values"
-        },
-        "selectWinners": "Select award winners for {category}",
-        "noEligibleTeams": "No teams are eligible for this award",
-        "selectedWinners": "Selected Winners",
-        "rank": "Rank",
-        "none": "None selected"
-      },
-      "optionalAwards": {
-        "instruction": "Select teams that have been nominated for optional awards. A team can receive multiple optional awards.",
-        "filterByAward": "Filter by Award",
-        "allAwards": "All Awards",
-        "nominatedTeams": "Teams with Optional Award Nominations",
-        "teamsNominatedFor": "Teams nominated for {award}",
-        "eligibleTeams": "{count} teams nominated",
-        "noEligibleTeams": "No teams have nominations for optional awards",
-        "selectedWinners": "Selected Winners",
-        "none": "None selected"
-      },
-      "review": {
-        "instruction": "Review all selected awards below. Click 'Finalize' to submit the deliberation results.",
-        "finalizationWarning": "Once finalized, the deliberation cannot be edited. Please review all selections carefully.",
-        "champions": "Champions",
-        "coreAwards": "Core Awards",
-        "optionalAwards": "Optional Awards",
-        "place": "Place",
-        "categories": {
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design",
-          "core-values": "Core Values",
-          "robot-performance": "Robot Performance"
-        }
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "Feedback",
+        "great-job": "Great Job...",
+        "think-about": "Think About..."
       }
     }
+  },
+  "awards-presentation": {
+    "title-slide": "Awards Ceremony",
+    "place": "Place {place}",
+    "awarded-to-team": "Awarded to Team",
+    "awarded-to": "Awarded to",
+    "advancing-teams": "Advancing Teams",
+    "prize": "{name} Award"
   }
 }

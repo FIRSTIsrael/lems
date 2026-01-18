@@ -1,4 +1,4 @@
-import { JudgingCategory } from '@lems/database';
+import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { OptionalAwardNominations, RanksPerCategory } from './types';
 
@@ -84,23 +84,32 @@ export function computeRank(
 
 export const computeChampionsEligibility = (
   team: Team & { ranks: RanksPerCategory },
-  numOfAwards: number
+  numOfEligibleTeams: number
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
 
-  return team.ranks.total <= numOfAwards;
+  return team.ranks.total <= numOfEligibleTeams;
 };
 
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
+
+  const winningTeamIds = Object.entries(awards)
+    .filter(([key]) => key !== 'robot-performance')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+    .flat();
+  // Check if team has already won an award
+  if (winningTeamIds.includes(team.id)) return false;
 
   return (
     Object.values(picklists).some(list => list.includes(team.id)) ||
@@ -110,11 +119,20 @@ export const computeCoreAwardsEligibility = (
 
 export const computeOptionalAwardsEligibility = (
   team: Team & { awardNominations: OptionalAwardNominations },
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
 
   if (team.disqualified) return false;
+
+  const winningTeamIds = Object.entries(awards)
+    .filter(([key]) => key !== 'robot-performance')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
+    .flat();
+  // Check if team has already won an award
+  if (winningTeamIds.includes(team.id)) return false;
 
   return Object.keys(team.awardNominations).length > 0 || manualNominations.includes(team.id);
 };

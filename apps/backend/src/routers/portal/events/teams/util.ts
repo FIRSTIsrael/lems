@@ -5,7 +5,7 @@ import {
   JudgingRoom as DbJudgingRoom,
   AgendaEvent as DbAgendaEvent
 } from '@lems/database';
-import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
+import { AgendaEvent, TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,
@@ -62,6 +62,8 @@ export const makeAgendaResponse = (agendaItem: DbAgendaEvent): AgendaEvent => {
     title: agendaItem.title,
     startTime: agendaItem.start_time,
     duration: agendaItem.duration,
-    divisionId: agendaItem.division_id
+    divisionId: agendaItem.division_id,
+    location: agendaItem.location,
+    visibility: agendaItem.visibility as 'public' | 'judging' | 'field' | 'teams'
   };
 };

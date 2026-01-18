@@ -85,6 +85,7 @@ export default function McPage() {
       matches={data.matches}
       currentStage={data.currentStage}
       loadedMatch={data.loadedMatch}
+      awardsAssigned={data.awardsAssigned}
       loading={loading}
     >
       <PageHeader title={t('page-title')}>

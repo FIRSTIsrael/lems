@@ -1,5 +1,43 @@
 {
   "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "מחוון {category} של קבוצה #{teamNumber} {teamName}",
+        "no-rubrics-found": "לא נמצאו מחוונים",
+        "team-not-found": "קבוצה {teamSlug} לא נמצאה באירוע {eventSlug}",
+        "no-rubric-data": "לא נמצאו נתוני מחוון",
+        "feedback": {
+          "title": "פידבק ממפגשי השיפוט",
+          "page-title": "פידבק ממפגשי השיפוט של קבוצה #{teamNumber} - {teamName}",
+          "great-job": "עבודה מעולה",
+          "think-about": "חשבו על",
+          "great-job-placeholder": "ציינו את הדברים שהקבוצה עשתה בצורה מצוינת...",
+          "think-about-placeholder": "דברים שעל הקבוצה לחשוב עליהם או לשפר...",
+          "categories": {
+            "core-values": "ערכי הליבה",
+            "innovation-project": "פרויקט החדשנות",
+            "robot-design": "תכנון הרובוט"
+          },
+          "category-descriptions": {
+            "core-values": "כיצד הקבוצה הדגימה עבודת צוות, גילוי, הכלה, חדשנות, השפעה והנאה בעבודתה?",
+            "innovation-project": "כיצד הקבוצה זיהתה בעיה הקשורה לנושא של עונה וניגשה לפתור אותה?",
+            "robot-design": "מה היתה גישת הקבוצה לפתרון משימות הרובוט בצורה בנויה ותכנית?"
+          },
+          "awards": {
+            "title": "מועמדות לפרסי רשות",
+            "description": "אם הקבוצה הצטיינה באחד התחומים הבאים, נא לסמן את המשבצת המתאימה:",
+            "no-awards": "אין פרסים אופציונליים זמינים."
+          }
+        }
+      },
+      "scores": {
+        "metadata": "הופק מתוך מערכת האירועים של FIRST ישראל | {eventName} | עונת {seasonName}",
+        "title": "דף ניקוד {round} של קבוצה #{teamNumber} - {teamName}",
+        "total-points": "{points} נקודות",
+        "no-scores-found": "לא נמצאו ניקודים"
+      }
+    },
     "login": {
       "subtitle": "כניסת מתנדבים",
       "continue": "המשך",
@@ -158,7 +196,7 @@
           "sounds": {
             "start": "תחילת מפגש",
             "end": "סוף מפגש",
-            "transition": "מעבר שלב"
+            "change": "מעבר שלב"
           }
         }
       }
@@ -166,6 +204,7 @@
     "reports": {
       "page-title": "דוחות",
       "menu": {
+        "field-status": "מצב הזירה",
         "team-list": "רשימת קבוצות",
         "pit-map": "מפת פיטים",
         "awards-list": "רשימת פרסים",
@@ -174,6 +213,67 @@
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש",
         "judging-status": "מצב השיפוט"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "אין מקצה טעון",
+          "late": "מאחר!",
+          "tables-ready": "{ready} מתוך {total} שולחנות מוכנים"
+        },
+        "upcoming-matches": {
+          "title": "מקצים קרובים",
+          "no-matches": "אין מקצים קרובים",
+          "time": "זמן",
+          "next": "הבא",
+          "in-time": "בעוד {time}",
+          "team-number": "קבוצה {number}",
+          "match-number": "מקצה",
+          "scheduled-time": "זמן מתוכנן",
+          "teams": "קבוצות"
+        },
+        "active-match": {
+          "title": "מקצה רץ",
+          "no-match": "אין מקצה פעיל כרגע",
+          "match-title": "מקצה {slug}",
+          "started-at": "התחיל",
+          "deviation": "סטייה",
+          "participants": "משתתפים",
+          "team-label": "קבוצה",
+          "status": {
+            "in-progress": "רץ",
+            "completed": "הושלם"
+          }
+        },
+        "next-match": {
+          "title": "המקצה הבא",
+          "no-match": "אין מקצה טעון",
+          "match-title": "המקצה הבא: {slug}",
+          "tables-ready": "שולחנות מוכנים",
+          "team-number": "קבוצה {number}",
+          "judging-conflict": "שיפוט: {room}",
+          "status": {
+            "ready": "מוכן",
+            "present": "מתכוננת",
+            "queued": "בקיו",
+            "not-present": "לא נוכח"
+          }
+        },
+        "judging-integration": {
+          "title": "אינטגרציה עם שיפוט",
+          "active-sessions": "מפגשי שיפוט פעילים",
+          "team-info": "קבוצה {number} - {name}",
+          "conflicts": "התנגשויות זמן",
+          "team-number": "קבוצה {number}",
+          "conflict-details": "בשיפוט: {room} | נקראה למקצה {match}",
+          "no-conflicts": "אין התנגשויות זמן"
+        },
+        "queue-overview": {
+          "title": "מצב הקיו",
+          "no-matches": "אין מקצים בקיו כרגע",
+          "match-label": "מקצה",
+          "in-queue": "בקיו:",
+          "team-label": "קבוצה"
+        }
       },
       "awards-list": {
         "page-title": "רשימת פרסים",
@@ -218,10 +318,12 @@
         "no-events": "לא נקבעו אירועים בלו״ז.",
         "loading": "טוען לו״ז...",
         "duration-minutes": "{count, plural, one {דקה אחת} other {# דקות}}",
+        "location": "מיקום",
         "visibility": {
           "public": "כללי",
           "judging": "שיפוט",
-          "field": "זירה"
+          "field": "זירה",
+          "teams": "קבוצות"
         }
       },
       "field-timer": {
@@ -247,7 +349,13 @@
           "test": "סבב ניסוי"
         },
         "not-arrived": "לא הגיעה",
-        "loading": "טוען מקצים..."
+        "loading": "טוען מקצים...",
+        "visibility": {
+          "public": "כללי",
+          "judging": "שיפוט",
+          "field": "זירה",
+          "teams": "קבוצות"
+        }
       },
       "judging-schedule": {
         "page-title": "לו״ז שיפוט",
@@ -477,7 +585,11 @@
       },
       "awards": {
         "title": "טקס פרסים",
-        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב."
+        "description": "פונקציונליות טקס הפרסים תהיה זמינה בקרוב.",
+        "blocked": {
+          "title": "הפרסים טרם אושרו",
+          "description": "הפרסים עדיין לא אושרו ופורסמו. אנא חזרו מאוחר יותר."
+        }
       }
     },
     "referee": {
@@ -605,13 +717,18 @@
           "close": "סגירה",
           "sections": {
             "message": "הגדרות הודעה",
-            "scoreboard": "הגדרות לוח ניקוד"
+            "scoreboard": "הגדרות לוח ניקוד",
+            "awards": "הגדרות פרסים"
           },
           "fields": {
             "message-placeholder": "הזינו טקסט",
             "show-active-match": "הצג מקצה נוכחי",
             "show-previous-match": "הצג מקצה קודם",
-            "show-sponsors-row": "הצג שורת ספונסרים"
+            "show-sponsors-row": "הצג שורת ספונסרים",
+            "award-winner-slide-style": "סגנון שקופית זוכה הפרס",
+            "award-slide-style-chroma": "Chroma Key (מסך ירוק)",
+            "award-slide-style-full": "מסך מלא",
+            "award-slide-style-both": "שני הסגנונות"
           },
           "errors": {
             "update-failed": "עדכון הגדרת תצוגת הקהל נכשל."
@@ -633,6 +750,17 @@
       },
       "active-match": {
         "teams": "קבוצות"
+      },
+      "awards-presentation": {
+        "title": "מצגת פרסים",
+        "current-slide": "שקף נוכחי",
+        "next-slide": "שקף הבא",
+        "slide-info": "שקף:",
+        "first-slide": "שקף ראשון",
+        "previous-slide": "שקף קודם",
+        "last-slide": "שקף אחרון",
+        "previous-step": "שלב קודם",
+        "next-step": "שלב הבא"
       }
     },
     "head-referee": {
@@ -718,7 +846,7 @@
           "title": "מקצה קודם",
           "match": "מקצה",
           "disclaimer": "הניקוד אינו סופי ויכול להשתנות בכל רגע",
-          "under-review": "בבדיקה"
+          "under-review": "הניקוד בבדיקה"
         },
         "scores-table": {
           "rank": "דירוג",
@@ -843,6 +971,31 @@
       }
     },
     "deliberations": {
+      "scores-chart": {
+        "room-scores-distribution": "התפלגות ניקוד חדרים",
+        "no-data-available": "אין נתונים זמינים",
+        "innovation-project": "פרויקט חדשנות",
+        "robot-design": "עיצוב רובוט",
+        "core-values": "ערכי ליבה",
+        "aggregate-average": "ממוצע כללי"
+      },
+      "compare": {
+        "title": "השוו קבוצות",
+        "team-1": "קבוצה 1",
+        "team-2": "קבוצה 2",
+        "compare": "השוו",
+        "no-data-available": "אין קבוצות זמינות"
+      },
+      "compare-dialog": {
+        "title": "השוואת קבוצות",
+        "open-full-compare": "פתח דף השוואה מלא",
+        "error-loading-teams": "שגיאה בטעינת נתוני הקבוצות"
+      },
+      "small-screen-block": {
+        "title": "המסך קטן מדי",
+        "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
+        "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+      },
       "category": {
         "title": "דיונים | {category}",
         "controls": {
@@ -856,13 +1009,13 @@
           "time-remaining": "זמן נותר",
           "complete-modal": {
             "title": "סיום הדיון",
-            "description": "האם אתה בטוח שברצונך להשלים דיון זה? לאחר אישור, תהיה הפניה לדף הבית.",
-            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שרשימת הבחירה שלך סופית לפני המשך.",
+            "description": "האם אתה בטוח שברצונך לסיים דיון זה? לאחר אישור, תופנה לדף הבית.",
+            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שהסדר הקבוצות שנבחרו סופי לפני המשך.",
             "confirm": "סיום",
             "cancel": "ביטול",
             "submitting": "בתהליך...",
             "success-message": "הדיון הושלם בהצלחה",
-            "error-message": "כישלון בהשלמת הדיון"
+            "error-message": "סיום הדיון נכשל."
           }
         },
         "picklist": {
@@ -872,21 +1025,6 @@
           "empty-state": "הוסף קבוצות",
           "error-limit-exceeded": "הגעת למגבלת רשימת הבחירה. לא ניתן להוסיף קבוצות נוספות."
         },
-        "scores-chart": {
-          "room-scores-distribution": "התפלגות ניקוד חדרים",
-          "no-data-available": "אין נתונים זמינים",
-          "innovation-project": "פרויקט חדשנות",
-          "robot-design": "עיצוב רובוט",
-          "core-values": "ערכי ליבה",
-          "aggregate-average": "ממוצע כללי"
-        },
-        "compare-teams-picker": {
-          "title": "השוואת קבוצות",
-          "team-1": "קבוצה 1",
-          "team-2": "קבוצה 2",
-          "compare": "השווה",
-          "no-data-available": "אין קבוצות להשוואה"
-        },
         "table": {
           "rank": "דירוג",
           "team": "קבוצה",
@@ -895,12 +1033,106 @@
           "normalized": "מתוקנן",
           "actions": "פעולות",
           "view-rubric": "הצג מחוון",
-          "add-to-picklist": "הוסף לרשימת בחירה"
+          "add-to-picklist": "הוסף לרשימת בחירה",
+          "compare-teams": "השוו קבוצות"
+        }
+      },
+      "final": {
+        "title": "דיון סופי",
+        "stepper": {
+          "champions": "פרס האליפות",
+          "core-awards": "פרסי ליבה",
+          "optional-awards": "פרסים אופציונליים",
+          "review": "סיכום"
         },
-        "small-screen-block": {
-          "title": "המסך קטן מדי",
-          "message": "תצוגת הדיון דורשת מסך גדול יותר כדי להציג את כל הרכיבים בצורה נכונה.",
-          "minimum-width": "אנא השתמש במסך גדול יותר או הטה את המכשיר אופקית."
+        "errors": {
+          "award-limit-exceeded": "לא ניתן להוסיף זוכים נוספים לפרס זה."
+        },
+        "manual-eligibility-control": {
+          "title": "זכאות ידנית",
+          "description": "הוסף קבוצות שלא הועמדו לדיון",
+          "add-team": "הוסף קבוצה",
+          "select-team": "בחר קבוצה...",
+          "no-data-available": "אין קבוצות זמינות"
+        },
+        "champions": {
+          "title": "פרס האליפות",
+          "description": "בחרו קבוצות לפרס האליפות.",
+          "podium-title": "קרנבל האליפות",
+          "place-label": "מקום #{place}",
+          "select-team": "בחרו קבוצה...",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-score": "ציון כולל",
+          "save": "שמור אליפות",
+          "advance": "קדם לפרסים בסיסיים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "deliberation-finalized": "פרסי האליפות נבחרו, מחכה להמשך הדיון.",
+          "completed": "הדיון הושלם"
+        },
+        "core-awards": {
+          "title": "פרסי ליבה",
+          "description": "בחרו קבוצות לפרסי הליבה",
+          "select-team": "בחרו קבוצה...",
+          "table-rank": "דירוג",
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-actions": "פעולות",
+          "table-robot-design": "תכנון הרובוט",
+          "table-innovation-project": "פרויקט החדשנות",
+          "table-core-values": "ערכי ליבה",
+          "robot-design": "תכנון הרובוט",
+          "innovation-project": "פרויקט החדשנות",
+          "core-values": "ערכי ליבה",
+          "save": "שמור פרסים",
+          "advance": "המשך לפרסים אופציונליים",
+          "saving": "שומר...",
+          "start": "התחל דיון",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסי הליבה נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-not-eligible-for-category": "הקבוצה לא זכאית ל-{category}",
+          "team-already-added-to-category": "הקבוצה כבר נוספה ל-{category}",
+          "add-team-to-category": "הוסף קבוצה ל-{category}"
+        },
+        "optional-awards": {
+          "table-team": "קבוצה",
+          "table-room": "חדר",
+          "table-core-values": "ערכי ליבה",
+          "table-nominations": "מועמדויות",
+          "table-actions": "פעולות",
+          "start": "התחל דיון",
+          "advance": "המשך לסיכום",
+          "saving": "שומר...",
+          "time-remaining": "זמן נותר",
+          "not-started": "מחכה להתחלת דיון",
+          "completed": "הדיון הושלם",
+          "deliberation-finalized": "פרסים אופציונליים נבחרו, מחכה להמשך הדיון.",
+          "manual-team-indicator": "נוספו ידנית",
+          "team-already-added": "הקבוצה כבר נבחרה לפרס",
+          "no-data-available": "אין קבוצות זמינות",
+          "select-award": "בחר פרס"
+        },
+        "review": {
+          "title": "סיכום הפרסים",
+          "place": "מקום #{place}",
+          "approve-button": "אישור ונעילת הפרסים",
+          "approval-modal": {
+            "title": "אישור ונעילת הפרסים",
+            "description": "האם אתה בטוח שברצונך לאשר ולנעול את הפרסים האלה?",
+            "warning-text": "נעילה תוביל להודעה מיידית על הפרסים ל- Scorekeeper ו- MC, ויפתח את מצגת הפרסים. פעולה זו לא ניתן לביטול.",
+            "confirm": "אישור ונעילה",
+            "cancel": "ביטול",
+            "submitting": "נועל...",
+            "success-message": "הפרסים ננעלו בהצלחה",
+            "error-message": "נעילה נכשלה."
+          }
         }
       }
     }
@@ -973,77 +1205,21 @@
       }
     }
   },
-  "deliberations": {
-    "final": {
-      "title": "דיון סופי",
-      "error": {
-        "loadingData": "נכשל בטעינת נתוני הדיון",
-        "notFound": "הדיון הסופי לא נמצא"
-      },
-      "stages": {
-        "champions": "בחירת אלופים",
-        "core-awards": "פרסי ליבה",
-        "optional-awards": "פרסים אופציונליים",
-        "review": "סקירה וסיום"
-      },
-      "buttons": {
-        "previous": "שלב קודם",
-        "next": "שלב הבא",
-        "finalize": "סיום דיון"
-      },
-      "teamCard": {
-        "totalRank": "דירוג כולל",
-        "overall": "כולל",
-        "robotGameRank": "דירוג משחק רובוט",
-        "robotGame": "משחק רובוט"
-      },
-      "champions": {
-        "instruction": "בחרו קבוצות למקום ראשון, שני, שלישי ורביעי. קבוצות מדורגות לפי ניקוד השיפוט הכולל.",
-        "championsTitle": "בחירת אלופים",
-        "eligibleTeams": "{count} קבוצות זכאיות",
-        "noEligibleTeams": "אין קבוצות זכאיות לאלופים בשלב זה",
-        "robotPerformanceTitle": "זוכי ביצוע הרובוט",
-        "robotPerformanceDescription": "קבוצות אלו מדורגות אוטומטית לפי ניקוד המשחק הגבוה ביותר שלהן",
-        "maxScore": "ניקוד מקסימום"
-      },
-      "coreAwards": {
-        "instruction": "בחרו זוכים בפרסים לכל קטגוריית שיפוט. קבוצה יכולה לזכות בפרס אחד בלבד לקטגוריה.",
-        "categories": {
-          "innovation-project": "פרויקט חדשנות",
-          "robot-design": "עיצוב רובוט",
-          "core-values": "ערכי ליבה"
-        },
-        "selectWinners": "בחרו זוכים בפרס עבור {category}",
-        "noEligibleTeams": "אין קבוצות זכאיות לפרס זה",
-        "selectedWinners": "זוכים שנבחרו",
-        "rank": "דירוג",
-        "none": "לא נבחרו"
-      },
-      "optionalAwards": {
-        "instruction": "בחרו קבוצות שהיו מועמדות לפרסים אופציונליים. קבוצה יכולה לקבל מספר פרסים אופציונליים.",
-        "filterByAward": "סננו לפי פרס",
-        "allAwards": "כל הפרסים",
-        "nominatedTeams": "קבוצות עם מועמדויות לפרס אופציונלי",
-        "teamsNominatedFor": "קבוצות שהיו מועמדות ל {award}",
-        "eligibleTeams": "{count} קבוצות מועמדות",
-        "noEligibleTeams": "אין קבוצות עם מועמדויות לפרסים אופציונליים",
-        "selectedWinners": "זוכים שנבחרו",
-        "none": "לא נבחרו"
-      },
-      "review": {
-        "instruction": "סקרו את כל הפרסים שנבחרו מטה. לחצו על 'סיום' כדי להגיש את תוצאות הדיון.",
-        "finalizationWarning": "לאחר סיום לא ניתן יהיה לערוך את הדיון. אנא סקרו את כל הבחירות בעיון לפני המשך.",
-        "champions": "אלופים",
-        "coreAwards": "פרסי ליבה",
-        "optionalAwards": "פרסים אופציונליים",
-        "place": "מקום",
-        "categories": {
-          "innovation-project": "פרויקט חדשנות",
-          "robot-design": "עיצוב רובוט",
-          "core-values": "ערכי ליבה",
-          "robot-performance": "ביצוע רובוט"
-        }
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "משוב",
+        "great-job": "עבודה מעולה...",
+        "think-about": "חשבו על..."
       }
     }
+  },
+  "awards-presentation": {
+    "title-slide": "טקס הפרסים",
+    "place": "מקום {place}",
+    "awarded-to-team": "מוענק לקבוצה",
+    "awarded-to": "מוענק ל",
+    "advancing-teams": "קבוצות מעפילות",
+    "prize": "פרס {name}"
   }
 }

@@ -1,10 +1,11 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
-import { useAudienceDisplayData } from './audience-display-context';
+import { useAudienceDisplay } from './audience-display-context';
 
 export const MessageDisplay = () => {
-  const { settings } = useAudienceDisplayData();
+  const { displayState } = useAudienceDisplay();
+  const settings = displayState?.settings;
   const message = (settings?.message?.value as string) || '';
 
   return (
@@ -15,7 +16,7 @@ export const MessageDisplay = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+        backgroundImage: 'url(/assets/audience-display/audience-display-background.webp)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',

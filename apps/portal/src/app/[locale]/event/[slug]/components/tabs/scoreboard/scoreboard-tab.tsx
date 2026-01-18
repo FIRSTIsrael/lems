@@ -29,7 +29,7 @@ export const ScoreboardTab = () => {
 
   const matchesPerTeam = Math.max(...scoreboard.map(entry => entry.scores?.length || 0));
   const sortedData = [...scoreboard].sort(
-    (a, b) => (a.robotGameRank ?? 0) - (b.robotGameRank ?? 0)
+    (a, b) => (a.robotGameRank ?? Infinity) - (b.robotGameRank ?? Infinity)
   );
 
   return (

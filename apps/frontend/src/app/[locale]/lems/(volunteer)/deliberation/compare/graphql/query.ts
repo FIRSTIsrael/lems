@@ -81,10 +81,13 @@ export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, Unifie
         name
         slug
       }
-      awards {
-        id
-        name
-        place
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          place
+        }
       }
     }
   }

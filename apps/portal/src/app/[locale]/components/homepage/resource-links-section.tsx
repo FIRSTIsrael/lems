@@ -27,7 +27,7 @@ const RESOURCES = [
     title: 'fll-website',
     description: 'fll-website-description',
     icon: MapIcon,
-    href: 'https://firstisrael.org.il/fll/challenge',
+    href: 'fll-website-link',
     color: 'primary' as const,
     external: true
   },

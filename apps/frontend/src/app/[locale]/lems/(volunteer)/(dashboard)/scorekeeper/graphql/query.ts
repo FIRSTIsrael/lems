@@ -5,6 +5,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
   query GetScorekeeperData($divisionId: String!) {
     division(id: $divisionId) {
       id
+      awardsAssigned
       field {
         divisionId
         matches {
@@ -37,6 +38,10 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
         }
         audienceDisplay {
           activeDisplay
+          awardsPresentation {
+            slideIndex
+            stepIndex
+          }
           settings
         }
         currentStage
@@ -44,10 +49,35 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
         activeMatch
         matchLength
       }
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          index
+          place
+          type
+          isOptional
+          winner {
+            ... on TeamWinner {
+              team {
+                id
+                name
+                number
+                city
+                affiliation
+              }
+            }
+            ... on PersonalWinner {
+              name
+            }
+          }
+        }
+      }
     }
   }
 `;
 
 export function parseScorekeeperData(data: ScorekeeperData) {
-  return data.division.field;
+  return data.division;
 }

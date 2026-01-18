@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useEffect, useId, useState, forwardRef, useImperativeHandle } from 'react';
 import { useCollectSlides } from '../hooks/use-slides';
 import useDeckState, { DeckStateAndActions, DeckView } from '../hooks/use-deck-state';

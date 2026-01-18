@@ -27,7 +27,7 @@ interface DesktopScheduleTableProps {
 
 export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTableProps) {
   const t = useTranslations('pages.head-referee');
-  const { data, findScoresheetForTeam } = useHeadRefereeData();
+  const { data, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
   const currentTime = useTime({ interval: 1000 });
 
   // Sort matches by scheduled time
@@ -106,6 +106,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               isActive={match.id === activeMatchId}
               isLoaded={match.id === data.loadedMatch}
               findScoresheetForTeam={findScoresheetForTeam}
+              searchQuery={filterOptions.searchQuery}
             />
           ))}
         </TableBody>

@@ -1,22 +1,15 @@
 'use client';
 
 import { Box, Paper, Stack, LinearProgress } from '@mui/material';
-import dayjs, { Dayjs } from 'dayjs';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
-import { JudgingSession } from '../graphql';
+import { useJudgingStatus } from '../judging-status-context';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
-interface CountdownHeaderProps {
-  currentSessions: JudgingSession[];
-  sessionLength: number;
-  currentTime: Dayjs;
-}
+export const CountdownHeader: React.FC = () => {
+  const { countdownTargetTime, sessionLength } = useJudgingStatus();
+  const currentTime = useTime({ interval: 1000 });
 
-export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
-  currentSessions,
-  sessionLength,
-  currentTime
-}) => {
-  if (currentSessions.length === 0) return null;
+  if (!countdownTargetTime) return null;
 
   return (
     <Paper
@@ -41,7 +34,7 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
           }}
         >
           <Countdown
-            targetDate={new Date(currentSessions[0].scheduledTime)}
+            targetDate={countdownTargetTime.toDate()}
             allowNegativeValues={true}
             fontFamily="monospace"
             fontWeight={900}
@@ -53,8 +46,7 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
           <LinearProgress
             variant="determinate"
             value={(() => {
-              const scheduledTime = dayjs(currentSessions[0].scheduledTime);
-              const minutesDiff = scheduledTime.diff(currentTime, 'minute');
+              const minutesDiff = countdownTargetTime.diff(currentTime, 'minute');
               if (minutesDiff < 0) {
                 const elapsedMinutes = Math.abs(minutesDiff);
                 const sessionDurationMinutes = sessionLength / 60;
@@ -76,8 +68,7 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({
               bgcolor: 'grey.200',
               '& .MuiLinearProgress-bar': {
                 bgcolor: (() => {
-                  const scheduledTime = dayjs(currentSessions[0].scheduledTime);
-                  const minutesDiff = scheduledTime.diff(currentTime, 'minute');
+                  const minutesDiff = countdownTargetTime.diff(currentTime, 'minute');
 
                   if (minutesDiff > 2) return 'success.main';
                   if (minutesDiff > 0) return 'warning.main';

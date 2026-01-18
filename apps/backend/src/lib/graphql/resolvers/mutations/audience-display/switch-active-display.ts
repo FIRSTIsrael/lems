@@ -29,6 +29,17 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
   try {
     await authorizeAudienceDisplayAccess(context, divisionId);
 
+    // Safety check: prevent switching to awards mode before awards have been assigned
+    if (newDisplay === 'awards') {
+      const division = await db.divisions.byId(divisionId).get();
+      if (!division?.awards_assigned) {
+        throw new MutationError(
+          MutationErrorCode.CONFLICT,
+          'Cannot switch to awards display mode before awards have been assigned'
+        );
+      }
+    }
+
     // Update the division's active display in MongoDB
     const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
       { divisionId },

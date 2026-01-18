@@ -7,6 +7,7 @@ interface McContextType {
   matches: Match[];
   currentStage: MatchStage;
   loadedMatch: string | null;
+  awardsAssigned: boolean;
   loading: boolean;
 }
 
@@ -16,6 +17,7 @@ interface McProviderProps {
   matches: Match[];
   currentStage: MatchStage;
   loadedMatch: string | null;
+  awardsAssigned: boolean;
   loading?: boolean;
   children?: ReactNode;
 }
@@ -24,6 +26,7 @@ export function McProvider({
   matches,
   currentStage,
   loadedMatch,
+  awardsAssigned,
   loading = false,
   children
 }: McProviderProps) {
@@ -32,9 +35,10 @@ export function McProvider({
       matches,
       currentStage,
       loadedMatch,
+      awardsAssigned,
       loading
     }),
-    [matches, currentStage, loadedMatch, loading]
+    [matches, currentStage, loadedMatch, awardsAssigned, loading]
   );
 
   return <McContext.Provider value={value}>{children}</McContext.Provider>;

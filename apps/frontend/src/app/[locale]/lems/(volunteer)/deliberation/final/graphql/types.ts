@@ -8,11 +8,12 @@ export interface FinalJudgingDeliberation {
   status: DeliberationStatus;
   startTime: string | null;
   completionTime: string | null;
-  champions: string; // JSON string of Record<number, string>
+  champions: Record<number, string>;
   innovationProject: string[];
   robotDesign: string[];
   coreValues: string[];
-  optionalAwards: string; // JSON string of Record<string, string[]>
+  robotPerformance: string[];
+  optionalAwards: Record<string, string[]>;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];
 }
@@ -26,10 +27,11 @@ interface Award {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
+  showPlaces: boolean;
   winner?: TeamWinner | PersonalWinner;
 }
 
-interface TeamWinner {
+export interface TeamWinner {
   team: Team;
 }
 
@@ -53,6 +55,7 @@ export interface Division {
     robotDesignDeliberation: CategoryDeliberation;
     coreValuesDeliberation: CategoryDeliberation;
     finalDeliberation: FinalJudgingDeliberation;
+    advancementPercentage: number | null;
   };
 }
 

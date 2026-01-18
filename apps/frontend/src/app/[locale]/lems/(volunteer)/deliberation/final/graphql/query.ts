@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import { merge } from '@lems/shared/utils';
 import type { FinalDeliberationData, FinalDeliberationVars } from './types';
 
 export const GET_FINAL_DELIBERATION: TypedDocumentNode<
@@ -92,6 +93,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           isOptional
           allowNominations
           automaticAssignment
+          showPlaces
           winner {
             ... on TeamWinner {
               team {
@@ -130,14 +132,30 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           robotDesign
           coreValues
           optionalAwards
+          robotPerformance
           coreAwardsManualEligibility
           optionalAwardsManualEligibility
         }
+        advancementPercentage
       }
     }
   }
 `;
 
 export function parseFinalDeliberationData(data: FinalDeliberationData) {
+  const updates: Record<string, unknown> = {};
+
+  if (typeof data.division.judging.finalDeliberation.champions === 'string') {
+    updates.champions = JSON.parse(data.division.judging.finalDeliberation.champions);
+  }
+  if (typeof data.division.judging.finalDeliberation.optionalAwards === 'string') {
+    updates.optionalAwards = JSON.parse(data.division.judging.finalDeliberation.optionalAwards);
+  }
+
+  if (Object.keys(updates).length > 0) {
+    return merge(data, {
+      division: { judging: { finalDeliberation: updates } }
+    }).division;
+  }
   return data.division;
 }

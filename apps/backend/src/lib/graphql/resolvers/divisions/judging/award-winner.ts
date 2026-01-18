@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import db from '../../../../database';
 import { TeamGraphQL, buildTeamGraphQL } from '../../../utils/team-builder';
+import { GraphQLContext } from '../../../apollo-server';
 
 interface AwardWithDivisionId {
   id: string;
@@ -22,21 +23,42 @@ type AwardWinner = PersonalWinnerData | TeamWinnerData | null;
 /**
  * Resolver for Award.winner field.
  * Fetches the winner of an award, which can be either a team or a personal winner.
- * This is a computed resolver that can be extended with permissions later.
  *
  * @param award - The award object containing winner information
  * @param args - Resolver arguments
- * @param context - GraphQL context
- * @returns The award winner (team or person), or null if not set
+ * @param context - GraphQL context containing user information
+ * @returns The award winner (team or person), or null if not set or not authorized
  */
 export const awardWinnerResolver: GraphQLFieldResolver<
   AwardWithDivisionId,
-  unknown,
+  GraphQLContext,
   unknown,
   Promise<AwardWinner>
-> = async (award: AwardWithDivisionId): Promise<AwardWinner> => {
+> = async (award: AwardWithDivisionId, args, context: GraphQLContext): Promise<AwardWinner> => {
   try {
-    const awardRecord = (await db.awards.byDivisionId(award.divisionId).getAll()).find(a => a.id === award.id);
+    // Check if awards have been assigned in this division
+    const division = await db.divisions.byId(award.divisionId).get();
+    if (!division) {
+      return null;
+    }
+
+    if (!division.awards_assigned) {
+      const isJudgeAdvisor = context.user?.role === 'judge-advisor';
+      if (!isJudgeAdvisor) {
+        return null;
+      }
+    } else {
+      const isPresentor = ['mc', 'judge-advisor', 'scorekeeper', 'audience-display'].includes(
+        context.user?.role || ''
+      );
+      if (!isPresentor) {
+        return null; // No permission
+      }
+    }
+
+    const awardRecord = (await db.awards.byDivisionId(award.divisionId).getAll()).find(
+      a => a.id === award.id
+    );
     if (!awardRecord) {
       return null;
     }

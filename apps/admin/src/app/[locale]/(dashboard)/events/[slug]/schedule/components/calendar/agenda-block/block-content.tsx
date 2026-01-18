@@ -12,6 +12,7 @@ interface BlockContentProps {
   startTime: Dayjs;
   durationSeconds: number;
   visibility: AgendaBlockVisibility;
+  location?: string | null;
   size?: 'normal' | 'small' | 'tiny';
   onEditClick: (e: React.MouseEvent) => void;
   onDeleteClick: (e: React.MouseEvent) => void;
@@ -24,6 +25,7 @@ export const BlockContent: React.FC<BlockContentProps> = ({
   startTime,
   durationSeconds,
   visibility = 'public',
+  location,
   size = 'normal',
   onEditClick,
   onDeleteClick
@@ -38,7 +40,7 @@ export const BlockContent: React.FC<BlockContentProps> = ({
         alignItems: 'flex-start'
       }}
     >
-      <Stack 
+      <Stack
         direction={size === 'tiny' ? 'row' : 'column'}
         spacing={size === 'normal' ? 2 : size === 'small' ? 1 : 0.5}
       >
@@ -73,19 +75,44 @@ export const BlockContent: React.FC<BlockContentProps> = ({
           >
             {`${formatTime(startTime)} - ${formatTime(startTime.clone().add(durationSeconds, 'second'))}`}
           </Typography>
-          <Typography
-            sx={{
-              color: 'rgba(255,255,255,0.9)',
-              fontSize: '0.625rem',
-              lineHeight: 1
-            }}
-          >
-            {t(visibility)}
-          </Typography>
+          <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+            <Typography
+              sx={{
+                color: 'rgba(255,255,255,0.9)',
+                fontSize: '0.625rem',
+                lineHeight: 1
+              }}
+            >
+              {t(visibility)}
+            </Typography>
+            {location && (
+              <>
+                <Typography
+                  sx={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.625rem',
+                    lineHeight: 1
+                  }}
+                >
+                  •
+                </Typography>
+                <Typography
+                  sx={{
+                    color: 'rgba(255,255,255,0.9)',
+                    fontSize: '0.625rem',
+                    lineHeight: 1,
+                    fontWeight: 500
+                  }}
+                >
+                  {location}
+                </Typography>
+              </>
+            )}
+          </Stack>
         </Stack>
       </Stack>
 
-      { size !== 'tiny' &&
+      {size !== 'tiny' && (
         <Box sx={{ display: 'flex', gap: 0.25 }} data-no-drag>
           <IconButton
             size="small"
@@ -120,7 +147,7 @@ export const BlockContent: React.FC<BlockContentProps> = ({
             <Delete fontSize="small" />
           </IconButton>
         </Box>
-      }
+      )}
     </Box>
   );
 };

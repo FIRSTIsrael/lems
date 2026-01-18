@@ -1,9 +1,10 @@
+'use client';
+
 import { useReducer, useMemo } from 'react';
-import { merge } from 'merge-anything';
 import { SlideId } from '../components/deck';
 import clamp from '../utils/clamp';
 
-export const GOTO_FINAL_STEP = null as unknown as number;
+export const GOTO_FINAL_STEP = -Infinity;
 
 export type DeckView = {
   slideId?: SlideId;
@@ -45,67 +46,65 @@ function deckReducer(state: DeckState, { type, payload = {} }: ReducerActions) {
     case 'INITIALIZE_TO':
       return {
         navigationDirection: 0,
-        activeView: merge(state.activeView, payload),
-        pendingView: merge(state.pendingView, payload),
+        activeView: { ...state.activeView, ...payload },
+        pendingView: { ...state.pendingView, ...payload },
         initialized: true
       };
-    case 'SKIP_TO':
-      // eslint-disable-next-line no-case-declarations
-      const navigationDirection = (() => {
-        if ('slideIndex' in payload && payload.slideIndex) {
-          return clamp(payload.slideIndex - state.activeView.slideIndex, -1, 1);
-        }
-        return null;
-      })();
+    case 'SKIP_TO': {
+      const navDir =
+        'slideIndex' in payload && payload.slideIndex != null
+          ? clamp(payload.slideIndex - state.activeView.slideIndex, -1, 1)
+          : state.navigationDirection;
       return {
         ...state,
-        navigationDirection: navigationDirection || state.navigationDirection,
-        pendingView: merge(state.pendingView, payload)
+        navigationDirection: navDir,
+        pendingView: { ...state.pendingView, ...payload }
       };
+    }
     case 'STEP_FORWARD':
       return {
         ...state,
         navigationDirection: 1,
-        pendingView: merge(state.pendingView, {
-          stepIndex: state.pendingView.stepIndex + 1
-        })
+        pendingView: { ...state.pendingView, stepIndex: state.pendingView.stepIndex + 1 }
       };
     case 'STEP_BACKWARD':
       return {
         ...state,
         navigationDirection: -1,
-        pendingView: merge(state.pendingView, {
-          stepIndex: state.pendingView.stepIndex - 1
-        })
+        pendingView: { ...state.pendingView, stepIndex: state.pendingView.stepIndex - 1 }
       };
     case 'ADVANCE_SLIDE':
       return {
         ...state,
         navigationDirection: 1,
-        pendingView: merge(state.pendingView, {
+        pendingView: {
+          ...state.pendingView,
           stepIndex: 0,
           slideIndex: state.pendingView.slideIndex + 1
-        })
+        }
       };
     case 'REGRESS_SLIDE':
       return {
         ...state,
         navigationDirection: -1,
-        pendingView: merge(state.pendingView, {
+        pendingView: {
+          ...state.pendingView,
           stepIndex: payload?.stepIndex ?? GOTO_FINAL_STEP,
           slideIndex: state.pendingView.slideIndex - 1
-        })
+        }
       };
-    case 'COMMIT_TRANSITION':
+    case 'COMMIT_TRANSITION': {
+      const newPendingView = { ...state.pendingView, ...payload };
       return {
         ...state,
-        pendingView: merge(state.pendingView, payload),
-        activeView: merge(state.activeView, merge(state.pendingView, payload))
+        pendingView: newPendingView,
+        activeView: { ...state.activeView, ...newPendingView }
       };
+    }
     case 'CANCEL_TRANSITION':
       return {
         ...state,
-        pendingView: merge(state.pendingView, state.activeView)
+        pendingView: { ...state.pendingView, ...state.activeView }
       };
     default:
       return state;

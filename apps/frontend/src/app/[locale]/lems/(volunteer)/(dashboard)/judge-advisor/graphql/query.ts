@@ -17,7 +17,6 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
           isOptional
           allowNominations
           automaticAssignment
-          description
         }
         sessions {
           id
@@ -112,7 +111,7 @@ export function parseDivisionSessions(queryData: QueryData) {
   const sessions = division.judging.sessions ?? [];
   const filteredSessions = sessions.filter(session => !!session.team);
 
-  const personalAwards = (division.awards ?? []).filter(award => award.type === 'PERSONAL');
+  const personalAwards = (division.judging.awards ?? []).filter(award => award.type === 'PERSONAL');
 
   const judgingData = division.judging as JudgingData;
   const deliberations = {

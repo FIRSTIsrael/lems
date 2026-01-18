@@ -11,20 +11,16 @@ import {
 } from '@mui/material';
 import VolumeUpRoundedIcon from '@mui/icons-material/VolumeUpRounded';
 import { useTranslations } from 'next-intl';
+import { useJudgingSounds } from '@lems/shared';
 
 interface SoundTestDialogProps {
   open: boolean;
   setOpen: (newValue: boolean) => void;
 }
 
-const sounds = [
-  { key: 'start', audio: new Audio('/assets/sounds/judging/judging-start.wav') },
-  { key: 'end', audio: new Audio('/assets/sounds/judging/judging-end.wav') },
-  { key: 'transition', audio: new Audio('/assets/sounds/judging/judging-change.wav') }
-];
-
 export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen }) => {
   const t = useTranslations('pages.judge.sound-test.dialog');
+  const { playSound } = useJudgingSounds();
 
   return (
     <Dialog
@@ -37,10 +33,10 @@ export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen 
       <DialogContent>
         <DialogContentText id="delete-data-description">{t('description')}</DialogContentText>
         <Stack justifyContent="space-evenly" width="100%" direction="row" mt={2}>
-          {sounds.map(({ key, audio }) => (
+          {['start', 'change', 'end'].map(key => (
             <Stack key={key} alignItems="center">
               <IconButton
-                onClick={() => audio.play()}
+                onClick={() => playSound(key as 'start' | 'change' | 'end')}
                 sx={{ width: 36, height: 36 }}
                 color="primary"
               >

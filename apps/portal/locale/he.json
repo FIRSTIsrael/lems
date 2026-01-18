@@ -48,6 +48,7 @@
         "title": "משאבים וקישורים",
         "fll-website": "מפת משאבים",
         "fll-website-description": "מצאו משאבים ומדריכים שימושיים",
+        "fll-website-link": "https://firstisrael.org.il/fll/challenge",
         "github": "GitHub",
         "github-description": "צפו בקוד המקור ותרמו לפרויקט",
         "resource-map": "מפת משאבים",
@@ -155,6 +156,7 @@
         "awards": "פרסים",
         "field-schedule": "לוח זמנים זירה",
         "judging-schedule": "לוח זמנים שיפוט",
+        "agenda": "סדר יום",
         "general-schedule": "לוח זמנים כללי"
       },
       "scoreboard": {
@@ -181,6 +183,13 @@
         "advancement": "זכאים להעפלה",
         "place": "מקום {place}",
         "no-data": "טרם הוכרזו פרסים"
+      },
+      "agenda": {
+        "no-data": "אין אירועי סדר יום זמינים",
+        "visibility": {
+          "public": "ציבורי",
+          "teams": "קבוצות"
+        }
       },
       "division-teams": "קבוצות {divisionName}",
       "region": "מדינה"

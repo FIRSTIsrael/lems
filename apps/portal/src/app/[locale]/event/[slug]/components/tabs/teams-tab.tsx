@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
+  Avatar,
   Table,
   Typography,
   TableRow,
@@ -88,7 +89,16 @@ export const TeamsTab: React.FC = () => {
                         padding: '16px'
                       }}
                     >
-                      {team.name} #{team.number}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Avatar
+                          src={team.logoUrl ?? '/assets/default-avatar.svg'}
+                          variant="rounded"
+                          sx={{ width: 32, height: 32 }}
+                        />
+                        <span>
+                          {team.name} #{team.number}
+                        </span>
+                      </Box>
                     </Link>
                   </TableCell>
                   <TableCell sx={{ p: 0 }}>

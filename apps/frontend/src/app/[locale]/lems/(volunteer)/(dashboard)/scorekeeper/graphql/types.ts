@@ -1,3 +1,5 @@
+import { AwardsPresentation } from '@lems/database';
+
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
 export type AudienceDisplayScreen =
@@ -7,6 +9,30 @@ export type AudienceDisplayScreen =
   | 'logo'
   | 'message'
   | 'awards';
+
+export interface TeamWinner {
+  team: {
+    id: string;
+    name: string;
+    number: string;
+    city: string;
+    affiliation: string;
+  };
+}
+
+export interface PersonalWinner {
+  name: string;
+}
+
+export interface Award {
+  id: string;
+  name: string;
+  index: number;
+  place: number;
+  type: 'PERSONAL' | 'TEAM';
+  isOptional: boolean;
+  winner?: TeamWinner | PersonalWinner | null;
+}
 
 export interface MatchParticipant {
   id: string;
@@ -41,12 +67,14 @@ export interface Match {
 
 export interface AudienceDisplayState {
   activeDisplay: AudienceDisplayScreen;
+  awardsPresentation: AwardsPresentation;
   settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
 }
 
 export interface ScorekeeperData {
   division: {
     id: string;
+    awardsAssigned: boolean;
     field: {
       matches: Match[];
       audienceDisplay: AudienceDisplayState | null;
@@ -54,6 +82,9 @@ export interface ScorekeeperData {
       loadedMatch: string | null;
       activeMatch: string | null;
       matchLength: number;
+    };
+    judging: {
+      awards: Award[];
     };
   };
 }

@@ -6,7 +6,7 @@ import { underscoresToHyphens } from '@lems/shared/utils';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { authorizeDeliberationAccess, assertDeliberationEditable } from './utils';
+import { assertDeliberationEditable, authorizeDeliberationAccess } from './utils';
 
 interface CompleteDeliberationArgs {
   divisionId: string;

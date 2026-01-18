@@ -1,7 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Box, Fab } from '@mui/material';
+import React, { useState, useRef, useCallback } from 'react';
+import {
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  Slide,
+  Box,
+  Fab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -10,14 +20,22 @@ import {
   Refresh as RefreshIcon,
   Close as CloseIcon,
   SkipNext as SkipNextIcon,
-  SkipPrevious as SkipPreviousIcon
+  SkipPrevious as SkipPreviousIcon,
+  DragIndicator as DragIndicatorIcon
 } from '@mui/icons-material';
 import { DirectionalIcon, useJudgingSessionStageTranslations } from '@lems/localization';
 import { useJudgingTimer, formatTime, JUDGING_STAGES } from '../hooks/use-judging-timer';
 
-const JudgingTimer = () => {
+export const JudgingTimer = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const paperRef = useRef<HTMLDivElement>(null);
   const { getStage } = useJudgingSessionStageTranslations();
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const [timerState, timerControls] = useJudgingTimer();
   const { currentStage, stageTimeRemaining, totalTimeRemaining, isRunning, isFinished } =
@@ -35,6 +53,70 @@ const JudgingTimer = () => {
       resume();
     }
   };
+
+  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+    // Disable dragging on mobile devices
+    if (isMobile) {
+      return;
+    }
+
+    const target = e.target as HTMLElement;
+    // Prevent dragging if clicking on a button or input element
+    if (target.closest('button, [role="button"], input')) {
+      return;
+    }
+
+    setIsDragging(true);
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+    if (paperRef.current) {
+      const rect = paperRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      });
+    }
+  };
+
+  const handleDragMove = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if (!isDragging) return;
+
+      const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+      const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY;
+
+      setPosition({
+        x: clientX - dragOffset.x,
+        y: clientY - dragOffset.y
+      });
+    },
+    [isDragging, dragOffset]
+  );
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
+  // Attach drag listeners when dragging
+  React.useEffect(() => {
+    if (!isDragging) return;
+
+    const handleMove = (e: MouseEvent | TouchEvent) => handleDragMove(e);
+    const handleEnd = () => handleDragEnd();
+
+    document.addEventListener('mousemove', handleMove);
+    document.addEventListener('touchmove', handleMove, { passive: false });
+    document.addEventListener('mouseup', handleEnd);
+    document.addEventListener('touchend', handleEnd);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMove);
+      document.removeEventListener('touchmove', handleMove);
+      document.removeEventListener('mouseup', handleEnd);
+      document.removeEventListener('touchend', handleEnd);
+    };
+  }, [isDragging, dragOffset, handleDragMove]);
 
   return (
     <>
@@ -60,11 +142,14 @@ const JudgingTimer = () => {
 
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
+          ref={paperRef}
           elevation={8}
           sx={{
             position: 'fixed',
-            bottom: { xs: 16, md: 24 },
-            right: { xs: 16, md: 24 },
+            left: position.x !== 0 ? `${position.x}px` : 'auto',
+            top: position.y !== 0 ? `${position.y}px` : 'auto',
+            bottom: position.x === 0 && position.y === 0 ? { xs: 16, md: 24 } : 'auto',
+            right: position.x === 0 && position.y === 0 ? { xs: 16, md: 24 } : 'auto',
             zIndex: 1001,
             width: { xs: 'calc(100vw - 32px)', sm: 380, md: 420 },
             borderRadius: 3,
@@ -73,21 +158,48 @@ const JudgingTimer = () => {
               'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.9) 100%)',
             backdropFilter: 'blur(10px)',
             border: '1px solid rgba(255,255,255,0.2)',
-            transition: 'bottom 0.3s ease-in-out'
+            transition: isDragging ? 'none' : 'bottom 0.3s ease-in-out',
+            cursor: isDragging ? 'grabbing' : 'grab',
+            userSelect: 'none'
           }}
+          onMouseDown={handleDragStart}
+          onTouchStart={handleDragStart}
         >
-          <IconButton
-            onClick={() => setIsOpen(false)}
+          <Box
             sx={{
-              position: 'absolute',
-              top: 8,
-              right: 8,
-              color: 'grey.600',
-              '&:hover': { bgcolor: 'grey.100' }
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 2,
+              py: 1,
+              borderBottom: '1px solid rgba(0,0,0,0.1)'
             }}
           >
-            <CloseIcon />
-          </IconButton>
+            <Stack
+              data-drag-handle
+              sx={{
+                color: 'grey.400',
+                cursor: isDragging ? 'grabbing' : 'grab',
+                '&:hover': { color: 'grey.600' },
+                display: isMobile ? 'none' : 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <DragIndicatorIcon fontSize="small" />
+            </Stack>
+
+            <Box flex={1} />
+
+            <IconButton
+              onClick={() => setIsOpen(false)}
+              sx={{
+                color: 'grey.600',
+                '&:hover': { bgcolor: 'grey.100' }
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+          </Box>
 
           <Box sx={{ px: 3, py: 2, textAlign: 'center' }}>
             <Typography
@@ -254,5 +366,3 @@ const JudgingTimer = () => {
     </>
   );
 };
-
-export { JudgingTimer };

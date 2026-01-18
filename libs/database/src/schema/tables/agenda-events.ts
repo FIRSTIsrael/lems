@@ -8,6 +8,7 @@ export interface AgendaEventsTable {
   start_time: Date;
   duration: number; // Duration in minutes
   visibility: string; // e.g., 'public', 'private', 'judges-only'
+  location: string | null; // Optional location for the agenda event
 }
 
 export type AgendaEvent = Selectable<AgendaEventsTable>;

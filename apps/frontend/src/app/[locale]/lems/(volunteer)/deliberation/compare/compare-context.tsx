@@ -3,11 +3,10 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import { JudgingCategory } from '@lems/types/judging';
 import { inferCoreValuesFields } from '@lems/shared/rubrics';
-import type { Team, Rubric, RubricFieldValue, Award } from './graphql/types';
+import type { Team, Rubric, RubricFieldValue, Award, DivisionTeam } from './graphql/types';
 import { getFieldComparisonColor } from './components/rubric-scores-utils';
 
 export interface FieldComparison {
-  fieldId: string;
   values: Map<string, number>;
   min: number;
   max: number;
@@ -23,7 +22,7 @@ export interface TeamComparison {
 export interface CompareContextType {
   teams: Team[];
   awards: Award[];
-  allTeams: Team[];
+  allTeams: DivisionTeam[];
   category?: JudgingCategory;
   fieldComparisons: Map<string, FieldComparison>;
   teamComparisons: Map<string, TeamComparison>;
@@ -44,7 +43,7 @@ interface CompareProviderProps {
   children: ReactNode;
   teams: Team[];
   awards: Award[];
-  allTeams: Team[];
+  allTeams: DivisionTeam[];
   category?: JudgingCategory;
 }
 
@@ -117,7 +116,7 @@ export const CompareProvider = ({
       });
 
       if (values.size > 0) {
-        fieldComparisons.set(fieldId, { fieldId, values, min, max });
+        fieldComparisons.set(fieldId, { values, min, max });
       }
     });
 
@@ -126,6 +125,7 @@ export const CompareProvider = ({
       let wins = 0;
       let ties = 0;
       let losses = 0;
+      const countedFields = new Set<string>();
 
       categories.forEach(cat => {
         const rubric = team.rubrics[
@@ -134,7 +134,8 @@ export const CompareProvider = ({
 
         if (rubric?.data?.fields) {
           Object.keys(rubric.data.fields).forEach(fieldId => {
-            if (fieldComparisons.has(fieldId)) {
+            if (fieldComparisons.has(fieldId) && !countedFields.has(fieldId)) {
+              countedFields.add(fieldId);
               const color = getFieldComparisonColor(fieldId, team.id, fieldComparisons);
               if (color === 'success') {
                 wins++;

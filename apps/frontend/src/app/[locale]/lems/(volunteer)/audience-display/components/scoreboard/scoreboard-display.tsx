@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react';
 import { Box, Stack } from '@mui/material';
+import { useAudienceDisplay } from '../audience-display-context';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { useAudienceDisplayData } from '../audience-display-context';
 import {
   createMatchAbortedSubscription,
   createMatchCompletedSubscription,
@@ -25,8 +25,8 @@ import { useFieldSounds } from './hooks/use-field-sounds';
 
 export const ScoreboardDisplay = () => {
   const { currentDivision } = useEvent();
-  const { settings } = useAudienceDisplayData();
-  const scoreboardSettings = settings?.scoreboard;
+  const { displayState } = useAudienceDisplay();
+  const scoreboardSettings = displayState?.settings?.scoreboard;
   const playSound = useFieldSounds();
 
   const subscriptions = useMemo(
@@ -69,7 +69,7 @@ export const ScoreboardDisplay = () => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+          backgroundImage: 'url(/assets/audience-display/audience-display-background.webp)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           position: 'relative',

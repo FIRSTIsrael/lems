@@ -11,7 +11,7 @@ export const JUDGING_STAGES = [
   { id: 'innovation-questions', duration: 300 }, // 5 min
   { id: 'robot-presentation', duration: 300 }, // 5 min
   { id: 'robot-questions', duration: 300 }, // 5 min
-  { id: 'final-thoughts', duration: 360 } // 6 min
+  { id: 'final-thoughts', duration: 480 } // 8 min (International default)
 ];
 
 export interface JudgingTimerState {

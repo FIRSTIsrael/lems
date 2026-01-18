@@ -62,7 +62,7 @@ export const MatchPreviewDisplay = () => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundImage: 'url(/assets/audience-display/season-background.webp)',
+        backgroundImage: 'url(/assets/audience-display/audience-display-background.webp)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         position: 'relative',

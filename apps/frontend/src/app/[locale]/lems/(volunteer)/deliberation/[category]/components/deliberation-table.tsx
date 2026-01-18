@@ -25,7 +25,10 @@ export function DeliberationTable() {
     fieldDisplayLabels
   } = useCategoryDeliberation();
 
-  const pickedTeamIds = useMemo(() => new Set(picklistTeams.map(t => t.id)), [picklistTeams]);
+  const pickedTeamIds = useMemo(
+    () => new Set((picklistTeams || []).map(t => t.id)),
+    [picklistTeams]
+  );
   const hypenatedCategory = underscoresToHyphens(
     deliberation?.category as string
   ) as JudgingCategory;
@@ -56,7 +59,7 @@ export function DeliberationTable() {
             <Tooltip title={t('add-to-picklist')}>
               <IconButton
                 size="small"
-                disabled={deliberation?.status === 'completed'}
+                disabled={deliberation?.status !== 'in-progress'}
                 onClick={() => addToPicklist(team.id)}
                 color="success"
               >
@@ -76,6 +79,16 @@ export function DeliberationTable() {
         renderCell: params => params.row.rank || '-'
       },
       {
+        field: 'room',
+        headerName: t('room'),
+        width: 60,
+        sortable: true,
+        filterable: false,
+        headerAlign: 'center',
+        align: 'center',
+        renderCell: params => params.row.room?.name || '-'
+      },
+      {
         field: 'teamDisplay',
         headerName: t('team'),
         width: 100,
@@ -92,19 +105,8 @@ export function DeliberationTable() {
           );
         }
       },
-      {
-        field: 'room',
-        headerName: t('room'),
-        width: 60,
-        sortable: true,
-        filterable: false,
-        headerAlign: 'center',
-        align: 'center',
-        renderCell: params => params.row.room?.name || '-'
-      },
-
       // Rubric field columns
-      ...fieldDisplayLabels.map(
+      ...(fieldDisplayLabels || []).map(
         label =>
           ({
             field: label,
@@ -122,7 +124,7 @@ export function DeliberationTable() {
       ),
 
       // GP score columns (only shown for core-values category)
-      ...(hypenatedCategory === 'core-values'
+      ...(hypenatedCategory === 'core-values' && teams && teams.length > 0
         ? Object.keys(teams[0]?.gpScores ?? {})
             .sort((a, b) => {
               const roundA = parseInt(a.split('-')[1], 10);
@@ -141,7 +143,7 @@ export function DeliberationTable() {
                   align: 'center' as const,
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
-                    return value !== null ? value : '-';
+                    return value ?? 3; // Default GP score is 3 if not set
                   }
                 }) as GridColDef<EnrichedTeam>
             )
@@ -203,8 +205,9 @@ export function DeliberationTable() {
 
   return (
     <DataGrid
-      rows={teams}
+      rows={teams || []}
       columns={columns}
+      getRowId={row => row.id}
       pageSizeOptions={[50]}
       density="compact"
       initialState={{
@@ -214,7 +217,11 @@ export function DeliberationTable() {
       disableVirtualization={theme.direction === 'rtl'}
       getRowClassName={params => {
         const team = params.row as EnrichedTeam;
-        if (suggestedTeam?.id === team.id && picklistTeams.length < picklistLimit) {
+        if (
+          suggestedTeam?.id === team.id &&
+          picklistTeams &&
+          picklistTeams.length < picklistLimit
+        ) {
           return 'suggested-team';
         }
         return '';

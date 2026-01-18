@@ -25,25 +25,18 @@ export interface RubricItem {
   data?: RubricData;
 }
 
+export interface PageData {
+  awards: { id: string; name: string }[];
+  rubric: RubricItem;
+}
+
 export type QueryResult = {
   division: {
     judging: {
+      awards: { id: string; name: string }[];
       rubrics: RubricItem[];
     };
   };
-};
-
-export type AwardOptionsQueryResult = {
-  division: {
-    awards: Array<{
-      id: string;
-      name: string;
-    }>;
-  };
-};
-
-export type AwardOptionsQueryVariables = {
-  divisionId: string;
 };
 
 export type QueryVariables = {

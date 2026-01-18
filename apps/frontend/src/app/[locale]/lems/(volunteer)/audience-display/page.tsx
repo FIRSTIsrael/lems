@@ -12,12 +12,15 @@ import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
+import { AwardsDisplay } from './components/awards/awards-display';
 import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
   GET_AUDIENCE_DISPLAY_DATA,
-  parseAudienceDisplayData
+  parseAudienceDisplayData,
+  TeamWinner
 } from './graphql';
+import { createPresentationUpdatedSubscription } from './components/awards/graphql';
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
@@ -41,7 +44,8 @@ export default function AudienceDisplayPage() {
   const subscriptions = useMemo(
     () => [
       createAudienceDisplaySwitchedSubscription(currentDivision.id),
-      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id)
+      createAudienceDisplaySettingUpdatedSubscription(currentDivision.id),
+      createPresentationUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -51,7 +55,34 @@ export default function AudienceDisplayPage() {
     {
       divisionId: currentDivision.id
     },
-    parseAudienceDisplayData,
+    rawData => {
+      const displayState = parseAudienceDisplayData(rawData);
+      const awardsAssigned = rawData.division.awardsAssigned;
+
+      const awards = (rawData.division.judging?.awards ?? [])
+        .filter(award => award.type === 'TEAM' && award.winner && 'team' in award.winner)
+        .map(award => {
+          const winner = award.winner as TeamWinner;
+
+          return {
+            id: award.id,
+            name: award.name,
+            index: award.index,
+            place: award.place,
+            type: award.type,
+            isOptional: award.isOptional,
+            winner: {
+              id: winner.team.id,
+              name: winner.team.name,
+              number: winner.team.number,
+              city: winner.team.city,
+              affiliation: winner.team.affiliation
+            }
+          };
+        });
+
+      return { displayState, awards, awardsAssigned };
+    },
     subscriptions
   );
 
@@ -63,15 +94,30 @@ export default function AudienceDisplayPage() {
     return null;
   }
 
-  const activeDisplay = data.activeDisplay;
+  const activeDisplay = data.displayState.activeDisplay;
 
   return (
-    <AudienceDisplayProvider data={data}>
+    <AudienceDisplayProvider
+      displayState={data.displayState}
+      awards={data.awards}
+      awardsAssigned={data.awardsAssigned}
+    >
       {activeDisplay === 'logo' && <LogoDisplay />}
       {activeDisplay === 'message' && <MessageDisplay />}
       {activeDisplay === 'sponsors' && <SponsorsDisplay />}
       {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
       {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
+      {activeDisplay === 'awards' && (
+        <AwardsDisplay
+          awards={data.awards}
+          awardWinnerSlideStyle={
+            (data.displayState.settings?.awards?.awardWinnerSlideStyle as
+              | 'chroma'
+              | 'full'
+              | 'both') || 'both'
+          }
+        />
+      )}
     </AudienceDisplayProvider>
   );
 }

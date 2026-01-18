@@ -10,6 +10,7 @@ export default function ReportsPage() {
   const t = useTranslations('pages.reports');
 
   const reportItems = [
+    { path: 'field-status', label: t('menu.field-status'), icon: <Stadium /> },
     { path: 'team-list', label: t('menu.team-list'), icon: <Groups /> },
     { path: 'pit-map', label: t('menu.pit-map'), icon: <Map /> },
     { path: 'awards-list', label: t('menu.awards-list'), icon: <EmojiEvents /> },

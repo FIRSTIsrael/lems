@@ -37,7 +37,6 @@ export function DeliberationStatusSection() {
           {t('deliberations')}
         </Typography>
         <Stack spacing={3}>
-          {/* Category Deliberations */}
           <Box display="flex" flexWrap="wrap" gap={2}>
             {categoriesWithStatuses.map(({ category, deliberation }) => (
               <CategoryDeliberationCard

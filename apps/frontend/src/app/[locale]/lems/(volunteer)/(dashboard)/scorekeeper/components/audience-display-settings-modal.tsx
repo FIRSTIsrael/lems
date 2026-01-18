@@ -13,7 +13,11 @@ import {
   FormControlLabel,
   Switch,
   Box,
-  Typography
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
 } from '@mui/material';
 import toast from 'react-hot-toast';
 import { useMutation } from '@apollo/client/react';
@@ -33,6 +37,11 @@ export function AudienceDisplaySettingsModal({ open, onClose }: AudienceDisplayS
 
   const [messageValue, setMessageValue] = useState(
     (audienceDisplay?.settings?.message?.value as string) || ''
+  );
+
+  const [awardWinnerSlideStyle, setAwardWinnerSlideStyle] = useState<'chroma' | 'full' | 'both'>(
+    (audienceDisplay?.settings?.awards?.awardWinnerSlideStyle as 'chroma' | 'full' | 'both') ||
+      'full'
   );
 
   const [updateAudienceDisplaySetting] = useMutation(UPDATE_AUDIENCE_DISPLAY_SETTING_MUTATION, {
@@ -80,6 +89,18 @@ export function AudienceDisplaySettingsModal({ open, onClose }: AudienceDisplayS
         settingValue: checked
       }
     });
+
+  const handleAwardWinnerSlideStyleChange = async (style: 'chroma' | 'full' | 'both') => {
+    setAwardWinnerSlideStyle(style);
+    await updateAudienceDisplaySetting({
+      variables: {
+        divisionId: currentDivision.id,
+        display: 'awards',
+        settingKey: 'awardWinnerSlideStyle',
+        settingValue: style
+      }
+    });
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
@@ -148,6 +169,29 @@ export function AudienceDisplaySettingsModal({ open, onClose }: AudienceDisplayS
                 label={t('fields.show-sponsors-row')}
               />
             </Stack>
+          </Box>
+
+          <Box>
+            <Typography
+              variant="subtitle2"
+              sx={{ mb: 1.5, fontWeight: 600, color: 'text.primary' }}
+            >
+              {t('sections.awards')}
+            </Typography>
+            <FormControl fullWidth size="small">
+              <InputLabel>{t('fields.award-winner-slide-style')}</InputLabel>
+              <Select
+                value={awardWinnerSlideStyle}
+                label={t('fields.award-winner-slide-style')}
+                onChange={e =>
+                  handleAwardWinnerSlideStyleChange(e.target.value as 'chroma' | 'full' | 'both')
+                }
+              >
+                <MenuItem value="chroma">{t('fields.award-slide-style-chroma')}</MenuItem>
+                <MenuItem value="full">{t('fields.award-slide-style-full')}</MenuItem>
+                <MenuItem value="both">{t('fields.award-slide-style-both')}</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         </Stack>
       </DialogContent>

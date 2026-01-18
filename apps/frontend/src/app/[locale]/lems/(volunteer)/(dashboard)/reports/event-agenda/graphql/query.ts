@@ -11,6 +11,7 @@ export const GET_DIVISION_AGENDA: TypedDocumentNode<QueryData, QueryVars> = gql`
         startTime
         duration
         visibility
+        location
       }
     }
   }

@@ -1,13 +1,10 @@
 import { GraphQLScalarType, Kind } from 'graphql';
+import db from '../../database';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { eventDivisionsResolver } from './events/event-divisions';
-import {
-  volunteersResolver,
-  volunteerDivisionsResolver,
-  RoleInfoResolver
-} from './events/volunteers';
+import { volunteersResolver, volunteerDivisionsResolver, RoleInfoResolver } from './events/volunteers';
 import { divisionTablesResolver } from './divisions/division-tables';
 import { divisionRoomsResolver } from './divisions/division-rooms';
 import { divisionTeamsResolver } from './divisions/division-teams';
@@ -17,6 +14,7 @@ import { divisionJudgingResolver } from './divisions/judging/judging';
 import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
+import { judgingAdvancementPercentageResolver } from './divisions/judging/judging-advancement-percentage';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
@@ -93,6 +91,15 @@ export const resolvers = {
   Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
+    seasonName: async event => {
+      const dbEvent = await db.events.byId(event.id).get();
+      if (!dbEvent) {
+        return null;
+      }
+
+      const season = await db.seasons.byId(dbEvent.season_id).get();
+      return season?.name ?? null;
+    },
     divisions: eventDivisionsResolver,
     volunteers: volunteersResolver
   },
@@ -108,6 +115,7 @@ export const resolvers = {
     sessions: judgingSessionsResolver,
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
+    advancementPercentage: judgingAdvancementPercentageResolver,
     rubrics: judgingRubricsResolver,
     deliberation: judgingDeliberationResolver,
     finalDeliberation: judgingFinalDeliberationResolver,

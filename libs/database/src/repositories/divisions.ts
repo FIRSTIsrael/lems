@@ -222,10 +222,17 @@ export class DivisionsRepository {
       .returningAll()
       .execute();
 
-    // Create division state in MongoDB
-    await this.mongo
-      .collection<DivisionState>('division_states')
-      .insertOne({ divisionId: createdDivision.id });
+    // Create division state in MongoDB with default audience display
+    await this.mongo.collection<DivisionState>('division_states').insertOne({
+      divisionId: createdDivision.id,
+      audienceDisplay: {
+        activeDisplay: 'logo',
+        awardsPresentation: {
+          slideIndex: 0,
+          stepIndex: 0
+        }
+      }
+    });
 
     return createdDivision;
   }
@@ -241,9 +248,16 @@ export class DivisionsRepository {
       .returningAll()
       .execute();
 
-    // Create division states in MongoDB for each division
+    // Create division states in MongoDB for each division with default audience display
     const divisionStates: DivisionState[] = createdDivisions.map(division => ({
-      divisionId: division.id
+      divisionId: division.id,
+      audienceDisplay: {
+        activeDisplay: 'logo',
+        awardsPresentation: {
+          slideIndex: 0,
+          stepIndex: 0
+        }
+      }
     }));
 
     if (divisionStates.length > 0) {
