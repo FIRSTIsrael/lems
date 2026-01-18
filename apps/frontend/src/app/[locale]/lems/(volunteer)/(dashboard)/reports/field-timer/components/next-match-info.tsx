@@ -6,12 +6,13 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Chip } from '@mui/material';
 import { Schedule as ScheduleIcon, Timer as TimerIcon } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
+import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useFieldTimer } from './field-timer-context';
 
 export function NextMatchInfo() {
   const t = useTranslations('pages.reports.field-timer');
   const { getStage } = useMatchTranslations();
-  const { nextMatch, currentTime } = useFieldTimer();
+  const { nextMatch } = useFieldTimer();
 
   const getMatchLabel = () => {
     if (!nextMatch) return '';
@@ -31,19 +32,6 @@ export function NextMatchInfo() {
     if (!nextMatch) return null;
     return dayjs(nextMatch.scheduledTime).toDate();
   }, [nextMatch]);
-
-  const timeUntilStart = useMemo(() => {
-    if (!scheduledTime) {
-      return { minutes: 0, seconds: 0 };
-    }
-    const diff = dayjs(scheduledTime).diff(currentTime, 'milliseconds');
-    if (diff <= 0) {
-      return { minutes: 0, seconds: 0 };
-    }
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return { minutes, seconds };
-  }, [scheduledTime, currentTime]);
 
   const formattedScheduledTime = useMemo(() => {
     if (!scheduledTime) return '';
@@ -111,16 +99,28 @@ export function NextMatchInfo() {
           <Chip
             icon={<TimerIcon />}
             label={
-              timeUntilStart.minutes > 0
-                ? `${timeUntilStart.minutes}:${String(timeUntilStart.seconds).padStart(2, '0')}`
-                : `${timeUntilStart.seconds}s`
+              scheduledTime ? (
+                <Countdown
+                  targetDate={scheduledTime}
+                  expiredText="00:00"
+                  fontWeight={600}
+                  color="#fff"
+                  allowNegativeValues
+                  sx={{ display: 'inline' }}
+                />
+              ) : (
+                '00:00'
+              )
             }
             variant="filled"
             size={isDesktop ? 'medium' : 'small'}
             sx={{
               backgroundColor: theme => theme.palette.primary.light,
               color: theme => theme.palette.primary.dark,
-              fontWeight: 600
+              fontWeight: 600,
+              '& .MuiChip-icon': {
+                color: 'white'
+              }
             }}
           />
         </Stack>

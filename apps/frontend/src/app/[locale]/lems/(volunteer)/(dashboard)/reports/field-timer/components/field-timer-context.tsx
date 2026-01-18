@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import type { Match } from '../graphql/types';
 
@@ -10,7 +10,6 @@ interface FieldTimerContextType {
   nextMatch: Match | null;
   matchEndTime: Date;
   percentRemaining: number;
-  currentTime: Dayjs;
 }
 
 const FieldTimerContext = createContext<FieldTimerContextType | null>(null);
@@ -59,10 +58,9 @@ export function FieldTimerProvider({
       activeMatch,
       nextMatch,
       matchEndTime,
-      percentRemaining,
-      currentTime
+      percentRemaining
     }),
-    [activeMatch, nextMatch, matchEndTime, percentRemaining, currentTime]
+    [activeMatch, nextMatch, matchEndTime, percentRemaining]
   );
 
   return <FieldTimerContext.Provider value={value}>{children}</FieldTimerContext.Provider>;
