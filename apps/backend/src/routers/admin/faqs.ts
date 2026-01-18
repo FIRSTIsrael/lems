@@ -9,7 +9,8 @@ import { requirePermission } from './middleware/require-permission';
 
 const router = express.Router();
 
-const FILE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
+const IMAGE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
+const VIDEO_SIZE_LIMIT = 50 * 1024 * 1024; // 50 MB
 
 // Helper function to format FAQ response
 const formatFaqResponse = (faq: Faq) => ({
@@ -156,7 +157,7 @@ router.post(
       return;
     }
 
-    if (imageFile.size > FILE_SIZE_LIMIT) {
+    if (imageFile.size > IMAGE_SIZE_LIMIT) {
       res.status(400).json({ error: 'Image file size must not exceed 2 MB' });
       return;
     }
@@ -173,6 +174,47 @@ router.post(
     } catch (error) {
       console.error('Error uploading FAQ image:', error);
       res.status(500).json({ error: 'Failed to upload image' });
+    }
+  }
+);
+
+router.post(
+  '/upload-video',
+  requirePermission('MANAGE_FAQ'),
+  fileUpload(),
+  async (req: AdminRequest, res) => {
+    if (!req.files || !req.files.video) {
+      res.status(400).json({ error: 'No video file provided' });
+      return;
+    }
+
+    const videoFile = req.files.video as fileUpload.UploadedFile;
+
+    if (
+      !videoFile.mimetype?.startsWith('video/') ||
+      (!videoFile.name.endsWith('.mp4') && !videoFile.name.endsWith('.webm'))
+    ) {
+      res.status(400).json({ error: 'Video must be an MP4 or WebM file' });
+      return;
+    }
+
+    if (videoFile.size > VIDEO_SIZE_LIMIT) {
+      res.status(400).json({ error: 'Video file size must not exceed 50 MB' });
+      return;
+    }
+
+    try {
+      const timestamp = Date.now();
+      const extension = videoFile.name.split('.').pop();
+      const filename = `faq-video-${timestamp}.${extension}`;
+      const key = `faqs/${filename}`;
+
+      const videoUrl = await uploadFile(videoFile.data, key);
+
+      res.status(200).json({ url: videoUrl });
+    } catch (error) {
+      console.error('Error uploading FAQ video:', error);
+      res.status(500).json({ error: 'Failed to upload video' });
     }
   }
 );

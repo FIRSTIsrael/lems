@@ -1096,15 +1096,21 @@
           "color": "Text color",
           "bullets": "Bulleted list",
           "image": "Insert image",
+          "media": "Insert media",
           "delete-image": "Click to delete image",
-          "confirm-delete-image": "Are you sure you want to delete this image?"
+          "delete-video": "Click to delete video",
+          "confirm-delete-image": "Are you sure you want to delete this image?",
+          "confirm-delete-video": "Are you sure you want to delete this video?"
         },
         "errors": {
           "required-fields": "Please fill in all required fields.",
           "save-failed": "Failed to save FAQ. Please try again.",
           "invalid-image-type": "Image must be a PNG or JPEG file.",
           "image-too-large": "Image size must not exceed 2 MB.",
-          "image-upload-failed": "Failed to upload image. Please try again."
+          "image-upload-failed": "Failed to upload image. Please try again.",
+          "invalid-video-type": "Video must be an MP4 or WebM file.",
+          "video-too-large": "Video size must not exceed 50 MB.",
+          "video-upload-failed": "Failed to upload video. Please try again."
         },
         "actions": {
           "cancel": "Cancel",

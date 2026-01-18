@@ -52,6 +52,7 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
   const [textColor, setTextColor] = useState<HsvaColor>(hexToHsva('#000000'));
   const [usedColors, setUsedColors] = useState<string[]>(['#000000']);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<Range | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -129,11 +130,133 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     return Array.from(colors);
   };
 
-  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleVideoUpload = async (file: File) => {
+    if (
+      !file.type.startsWith('video/') ||
+      (!file.name.endsWith('.mp4') && !file.name.endsWith('.webm'))
+    ) {
+      setError(t('errors.invalid-video-type'));
+      return;
+    }
 
-    // Validate file type
+    if (file.size > 50 * 1024 * 1024) {
+      setError(t('errors.video-too-large'));
+      return;
+    }
+
+    setIsUploadingVideo(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('video', file);
+
+      const result = await apiFetch('/admin/faqs/upload-video', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (result.ok) {
+        const videoUrl = (result.data as { url: string }).url;
+
+        if (editorRef.current) {
+          editorRef.current.focus();
+          restoreSelection();
+
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'relative';
+          wrapper.style.display = 'inline-block';
+          wrapper.style.maxWidth = '100%';
+          wrapper.style.margin = '10px 0';
+
+          const video = document.createElement('video');
+          video.src = videoUrl;
+          video.controls = true;
+          video.style.maxWidth = '100%';
+          video.style.height = 'auto';
+          video.style.display = 'block';
+
+          const deleteBtn = document.createElement('button');
+          deleteBtn.innerHTML = '✕';
+          deleteBtn.title = t('toolbar.delete-video');
+          deleteBtn.style.position = 'absolute';
+          deleteBtn.style.top = '5px';
+          deleteBtn.style.right = '5px';
+          deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
+          deleteBtn.style.color = 'white';
+          deleteBtn.style.border = 'none';
+          deleteBtn.style.borderRadius = '50%';
+          deleteBtn.style.width = '28px';
+          deleteBtn.style.height = '28px';
+          deleteBtn.style.cursor = 'pointer';
+          deleteBtn.style.fontSize = '16px';
+          deleteBtn.style.fontWeight = 'bold';
+          deleteBtn.style.display = 'flex';
+          deleteBtn.style.alignItems = 'center';
+          deleteBtn.style.justifyContent = 'center';
+          deleteBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+          deleteBtn.style.transition = 'all 0.2s';
+          deleteBtn.style.zIndex = '10';
+
+          deleteBtn.onmouseover = () => {
+            deleteBtn.style.backgroundColor = 'rgba(211, 47, 47, 1)';
+            deleteBtn.style.transform = 'scale(1.1)';
+          };
+
+          deleteBtn.onmouseout = () => {
+            deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
+            deleteBtn.style.transform = 'scale(1)';
+          };
+
+          deleteBtn.onclick = e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (confirm(t('toolbar.confirm-delete-video'))) {
+              wrapper.remove();
+              setAnswer(editorRef.current?.innerHTML ?? '');
+            }
+          };
+
+          wrapper.appendChild(video);
+          wrapper.appendChild(deleteBtn);
+
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(wrapper);
+
+            const br = document.createElement('br');
+            range.collapse(false);
+            range.insertNode(br);
+
+            range.setStartAfter(br);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } else {
+            editorRef.current.appendChild(wrapper);
+            const br = document.createElement('br');
+            editorRef.current.appendChild(br);
+          }
+
+          setAnswer(editorRef.current.innerHTML);
+        }
+      } else {
+        setError(t('errors.video-upload-failed'));
+      }
+    } catch (err) {
+      console.error('Error uploading video:', err);
+      setError(t('errors.video-upload-failed'));
+    } finally {
+      setIsUploadingVideo(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
+  const handleImageUpload = async (file: File) => {
     if (
       !file.type.startsWith('image/') ||
       (!file.name.endsWith('.jpg') && !file.name.endsWith('.jpeg') && !file.name.endsWith('.png'))
@@ -142,7 +265,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
       return;
     }
 
-    // Validate file size (2MB)
     if (file.size > 2 * 1024 * 1024) {
       setError(t('errors.image-too-large'));
       return;
@@ -167,7 +289,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
           editorRef.current.focus();
           restoreSelection();
 
-          // Create wrapper div for image with delete button
           const wrapper = document.createElement('div');
           wrapper.style.position = 'relative';
           wrapper.style.display = 'inline-block';
@@ -180,7 +301,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
           img.style.height = 'auto';
           img.style.display = 'block';
 
-          // Create delete button overlay
           const deleteBtn = document.createElement('button');
           deleteBtn.innerHTML = '✕';
           deleteBtn.title = t('toolbar.delete-image');
@@ -231,12 +351,10 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
             range.deleteContents();
             range.insertNode(wrapper);
 
-            // Insert a line break after the wrapper to allow typing
             const br = document.createElement('br');
             range.collapse(false);
             range.insertNode(br);
 
-            // Move cursor after the line break
             range.setStartAfter(br);
             range.collapse(true);
             selection.removeAllRanges();
@@ -260,6 +378,17 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
+    }
+  };
+
+  const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type.startsWith('video/')) {
+      await handleVideoUpload(file);
+    } else {
+      await handleImageUpload(file);
     }
   };
 
@@ -404,12 +533,12 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                   </IconButton>
                 </span>
               </Tooltip>
-              <Tooltip title={t('toolbar.image')}>
+              <Tooltip title={t('toolbar.media')}>
                 <span>
                   <IconButton
                     size="small"
                     onClick={() => fileInputRef.current?.click()}
-                    disabled={isSubmitting || isUploadingImage}
+                    disabled={isSubmitting || isUploadingImage || isUploadingVideo}
                     sx={{
                       '&:hover': {
                         backgroundColor: 'action.hover'
@@ -423,9 +552,9 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
               <input
                 ref={fileInputRef}
                 type="file"
-                accept="image/png,image/jpeg,image/jpg"
+                accept="image/png,image/jpeg,image/jpg,video/mp4,video/webm"
                 style={{ display: 'none' }}
-                onChange={handleImageUpload}
+                onChange={handleMediaUpload}
               />
               <ColorPicker value={textColor} onChange={color => applyColor(hsvaToHex(color))}>
                 <IconButton
