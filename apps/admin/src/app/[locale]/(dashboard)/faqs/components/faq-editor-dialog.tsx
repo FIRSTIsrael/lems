@@ -8,7 +8,6 @@ import {
   DialogActions,
   Button,
   TextField,
-  IconButton,
   FormControl,
   InputLabel,
   Select,
@@ -17,22 +16,18 @@ import {
   CircularProgress,
   Box,
   Paper,
-  Typography,
-  Tooltip
+  Typography
 } from '@mui/material';
-import {
-  FormatBold,
-  FormatItalic,
-  Palette,
-  FormatListBulleted,
-  Image as ImageIcon
-} from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { FaqResponse } from '@lems/types/api/admin';
 import { Season } from '@lems/database';
-import { apiFetch, ColorPicker } from '@lems/shared';
-import { HsvaColor, hexToHsva, hsvaToHex } from '@uiw/react-color';
+import { apiFetch } from '@lems/shared';
+import { HsvaColor, hexToHsva } from '@uiw/react-color';
+import { RichTextToolbar } from './rich-text-toolbar';
+import { ColorPalette } from './color-palette';
+import { MediaUploadButton } from './media-upload-button';
+import { useMediaUpload } from './use-media-upload';
 
 interface FaqEditorDialogProps {
   open: boolean;
@@ -48,14 +43,10 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
   const [answer, setAnswer] = useState(faq?.answer || '');
   const [displayOrder, setDisplayOrder] = useState(faq?.displayOrder?.toString() || '');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [textColor, setTextColor] = useState<HsvaColor>(hexToHsva('#000000'));
   const [usedColors, setUsedColors] = useState<string[]>(['#000000']);
-  const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [isUploadingVideo, setIsUploadingVideo] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<Range | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (faq) {
@@ -69,7 +60,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
       setAnswer('');
       setDisplayOrder('');
     }
-    setError(null);
   }, [faq, seasons]);
 
   useEffect(() => {
@@ -106,7 +96,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     setAnswer(editorRef.current.innerHTML);
   };
 
-  const currentColor = hsvaToHex(textColor);
   const applyColor = (color: string) => {
     setTextColor(hexToHsva(color));
     applyCommand('foreColor', color);
@@ -130,267 +119,32 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     return Array.from(colors);
   };
 
-  const handleVideoUpload = async (file: File) => {
-    if (
-      !file.type.startsWith('video/') ||
-      (!file.name.endsWith('.mp4') && !file.name.endsWith('.webm'))
-    ) {
-      setError(t('errors.invalid-video-type'));
-      return;
-    }
+  const sanitizeFaqHtml = (html: string): string => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
 
-    if (file.size > 50 * 1024 * 1024) {
-      setError(t('errors.video-too-large'));
-      return;
-    }
+    // Remove all delete links
+    tempDiv.querySelectorAll('a.media-delete-link').forEach(link => link.remove());
 
-    setIsUploadingVideo(true);
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('video', file);
-
-      const result = await apiFetch('/admin/faqs/upload-video', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (result.ok) {
-        const videoUrl = (result.data as { url: string }).url;
-
-        if (editorRef.current) {
-          editorRef.current.focus();
-          restoreSelection();
-
-          const wrapper = document.createElement('div');
-          wrapper.style.position = 'relative';
-          wrapper.style.display = 'inline-block';
-          wrapper.style.maxWidth = '100%';
-          wrapper.style.margin = '10px 0';
-
-          const video = document.createElement('video');
-          video.src = videoUrl;
-          video.controls = true;
-          video.style.maxWidth = '100%';
-          video.style.height = 'auto';
-          video.style.display = 'block';
-
-          const deleteBtn = document.createElement('button');
-          deleteBtn.innerHTML = '✕';
-          deleteBtn.title = t('toolbar.delete-video');
-          deleteBtn.style.position = 'absolute';
-          deleteBtn.style.top = '5px';
-          deleteBtn.style.right = '5px';
-          deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
-          deleteBtn.style.color = 'white';
-          deleteBtn.style.border = 'none';
-          deleteBtn.style.borderRadius = '50%';
-          deleteBtn.style.width = '28px';
-          deleteBtn.style.height = '28px';
-          deleteBtn.style.cursor = 'pointer';
-          deleteBtn.style.fontSize = '16px';
-          deleteBtn.style.fontWeight = 'bold';
-          deleteBtn.style.display = 'flex';
-          deleteBtn.style.alignItems = 'center';
-          deleteBtn.style.justifyContent = 'center';
-          deleteBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-          deleteBtn.style.transition = 'all 0.2s';
-          deleteBtn.style.zIndex = '10';
-
-          deleteBtn.onmouseover = () => {
-            deleteBtn.style.backgroundColor = 'rgba(211, 47, 47, 1)';
-            deleteBtn.style.transform = 'scale(1.1)';
-          };
-
-          deleteBtn.onmouseout = () => {
-            deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
-            deleteBtn.style.transform = 'scale(1)';
-          };
-
-          deleteBtn.onclick = e => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm(t('toolbar.confirm-delete-video'))) {
-              wrapper.remove();
-              setAnswer(editorRef.current?.innerHTML ?? '');
-            }
-          };
-
-          wrapper.appendChild(video);
-          wrapper.appendChild(deleteBtn);
-
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(wrapper);
-
-            const br = document.createElement('br');
-            range.collapse(false);
-            range.insertNode(br);
-
-            range.setStartAfter(br);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editorRef.current.appendChild(wrapper);
-            const br = document.createElement('br');
-            editorRef.current.appendChild(br);
-          }
-
-          setAnswer(editorRef.current.innerHTML);
-        }
-      } else {
-        setError(t('errors.video-upload-failed'));
+    // Unwrap media from wrappers
+    tempDiv.querySelectorAll('div.media-wrapper').forEach(wrapper => {
+      const media = wrapper.querySelector('img, video');
+      if (media && wrapper.parentNode) {
+        wrapper.parentNode.replaceChild(media, wrapper);
       }
-    } catch (err) {
-      console.error('Error uploading video:', err);
-      setError(t('errors.video-upload-failed'));
-    } finally {
-      setIsUploadingVideo(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
+    });
+
+    return tempDiv.innerHTML;
   };
 
-  const handleImageUpload = async (file: File) => {
-    if (
-      !file.type.startsWith('image/') ||
-      (!file.name.endsWith('.jpg') && !file.name.endsWith('.jpeg') && !file.name.endsWith('.png'))
-    ) {
-      setError(t('errors.invalid-image-type'));
-      return;
+  const { isUploadingImage, isUploadingVideo, error, setError, handleMediaUpload } = useMediaUpload(
+    {
+      editorRef,
+      onAnswerChange: setAnswer,
+      saveSelection,
+      restoreSelection
     }
-
-    if (file.size > 2 * 1024 * 1024) {
-      setError(t('errors.image-too-large'));
-      return;
-    }
-
-    setIsUploadingImage(true);
-    setError(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('image', file);
-
-      const result = await apiFetch('/admin/faqs/upload-image', {
-        method: 'POST',
-        body: formData
-      });
-
-      if (result.ok) {
-        const imageUrl = (result.data as { url: string }).url;
-
-        if (editorRef.current) {
-          editorRef.current.focus();
-          restoreSelection();
-
-          const wrapper = document.createElement('div');
-          wrapper.style.position = 'relative';
-          wrapper.style.display = 'inline-block';
-          wrapper.style.maxWidth = '100%';
-          wrapper.style.margin = '10px 0';
-
-          const img = document.createElement('img');
-          img.src = imageUrl;
-          img.style.maxWidth = '100%';
-          img.style.height = 'auto';
-          img.style.display = 'block';
-
-          const deleteBtn = document.createElement('button');
-          deleteBtn.innerHTML = '✕';
-          deleteBtn.title = t('toolbar.delete-image');
-          deleteBtn.style.position = 'absolute';
-          deleteBtn.style.top = '5px';
-          deleteBtn.style.right = '5px';
-          deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
-          deleteBtn.style.color = 'white';
-          deleteBtn.style.border = 'none';
-          deleteBtn.style.borderRadius = '50%';
-          deleteBtn.style.width = '28px';
-          deleteBtn.style.height = '28px';
-          deleteBtn.style.cursor = 'pointer';
-          deleteBtn.style.fontSize = '16px';
-          deleteBtn.style.fontWeight = 'bold';
-          deleteBtn.style.display = 'flex';
-          deleteBtn.style.alignItems = 'center';
-          deleteBtn.style.justifyContent = 'center';
-          deleteBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
-          deleteBtn.style.transition = 'all 0.2s';
-          deleteBtn.style.zIndex = '10';
-
-          deleteBtn.onmouseover = () => {
-            deleteBtn.style.backgroundColor = 'rgba(211, 47, 47, 1)';
-            deleteBtn.style.transform = 'scale(1.1)';
-          };
-
-          deleteBtn.onmouseout = () => {
-            deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
-            deleteBtn.style.transform = 'scale(1)';
-          };
-
-          deleteBtn.onclick = e => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm(t('toolbar.confirm-delete-image'))) {
-              wrapper.remove();
-              setAnswer(editorRef.current?.innerHTML ?? '');
-            }
-          };
-
-          wrapper.appendChild(img);
-          wrapper.appendChild(deleteBtn);
-
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0) {
-            const range = selection.getRangeAt(0);
-            range.deleteContents();
-            range.insertNode(wrapper);
-
-            const br = document.createElement('br');
-            range.collapse(false);
-            range.insertNode(br);
-
-            range.setStartAfter(br);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-          } else {
-            editorRef.current.appendChild(wrapper);
-            const br = document.createElement('br');
-            editorRef.current.appendChild(br);
-          }
-
-          setAnswer(editorRef.current.innerHTML);
-        }
-      } else {
-        setError(t('errors.image-upload-failed'));
-      }
-    } catch (err) {
-      console.error('Error uploading image:', err);
-      setError(t('errors.image-upload-failed'));
-    } finally {
-      setIsUploadingImage(false);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
-    }
-  };
-
-  const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    if (file.type.startsWith('video/')) {
-      await handleVideoUpload(file);
-    } else {
-      await handleImageUpload(file);
-    }
-  };
+  );
 
   const handleSubmit = async () => {
     if (!seasonId || !question.trim() || !answer.trim()) {
@@ -409,7 +163,7 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
         displayOrder?: number;
       } = {
         question: question.trim(),
-        answer: answer.trim()
+        answer: sanitizeFaqHtml(answer.trim())
       };
 
       if (!faq) {
@@ -433,7 +187,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
         throw new Error('Failed to save FAQ');
       }
 
-      // Refresh FAQ lists
       await Promise.all([
         mutate('/admin/faqs'),
         mutate(key => typeof key === 'string' && key.startsWith('/admin/faqs/season/'))
@@ -484,134 +237,19 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
             <Typography variant="subtitle2" sx={{ mb: 1 }}>
               {t('fields.answer')}
             </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-              <Tooltip title={t('toolbar.bold')}>
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={() => applyCommand('bold')}
-                    disabled={isSubmitting}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <FormatBold />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <Tooltip title={t('toolbar.italic')}>
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={() => applyCommand('italic')}
-                    disabled={isSubmitting}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <FormatItalic />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <Tooltip title={t('toolbar.bullets')}>
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={() => applyCommand('insertUnorderedList')}
-                    disabled={isSubmitting}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <FormatListBulleted />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <Tooltip title={t('toolbar.media')}>
-                <span>
-                  <IconButton
-                    size="small"
-                    onClick={() => fileInputRef.current?.click()}
-                    disabled={isSubmitting || isUploadingImage || isUploadingVideo}
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <ImageIcon />
-                  </IconButton>
-                </span>
-              </Tooltip>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/jpg,video/mp4,video/webm"
-                style={{ display: 'none' }}
-                onChange={handleMediaUpload}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1, flexWrap: 'wrap' }}>
+              <RichTextToolbar onCommand={applyCommand} disabled={isSubmitting} />
+              <MediaUploadButton
+                onFileSelect={handleMediaUpload}
+                disabled={isSubmitting || isUploadingImage || isUploadingVideo}
               />
-              <ColorPicker value={textColor} onChange={color => applyColor(hsvaToHex(color))}>
-                <IconButton
-                  size="small"
-                  onMouseDown={saveSelection}
-                  onClick={() => applyCommand('foreColor', currentColor)}
-                  disabled={isSubmitting}
-                  sx={{
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    '&:hover': {
-                      backgroundColor: 'action.hover'
-                    }
-                  }}
-                >
-                  <Palette sx={{ color: currentColor }} />
-                </IconButton>
-              </ColorPicker>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                {usedColors
-                  .filter(color => color.toLowerCase() !== currentColor.toLowerCase())
-                  .map(color => (
-                    <Tooltip key={color} title={color}>
-                      <Box
-                        onClick={() => applyColor(color)}
-                        sx={{
-                          width: 18,
-                          height: 18,
-                          borderRadius: '50%',
-                          bgcolor: color,
-                          cursor: isSubmitting ? 'default' : 'pointer',
-                          border: '1px solid',
-                          borderColor: 'divider'
-                        }}
-                      />
-                    </Tooltip>
-                  ))}
-              </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <Box
-                  sx={{
-                    width: 16,
-                    height: 16,
-                    borderRadius: '50%',
-                    bgcolor: currentColor,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    boxShadow: theme => `0 0 0 2px ${theme.palette.primary.main}`
-                  }}
-                />
-                <Typography
-                  variant="caption"
-                  sx={{ fontFamily: 'monospace', color: 'text.secondary' }}
-                >
-                  {currentColor}
-                </Typography>
-              </Box>
+              <ColorPalette
+                textColor={textColor}
+                usedColors={usedColors}
+                onColorChange={applyColor}
+                onSaveSelection={saveSelection}
+                disabled={isSubmitting}
+              />
             </Box>
             <Paper variant="outlined" sx={{ p: 2, minHeight: 180 }}>
               <Box
