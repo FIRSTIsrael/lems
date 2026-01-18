@@ -5,6 +5,5 @@ export {
 export type {
   AwardsPresentationContextData,
   AwardsPresentationProviderProps,
-  Award,
-  AudienceDisplayState
+  Award
 } from './awards-presentation-provider';
