@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
@@ -83,6 +82,15 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
     return `${sign}${minutes}:${String(seconds).padStart(2, '0')}`;
   };
 
+  const getTimeParts = (value: string) => {
+    const date = new Date(value);
+    return {
+      hour: date.getHours(),
+      minute: date.getMinutes(),
+      second: date.getSeconds()
+    };
+  };
+
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
@@ -105,12 +113,32 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               sx={{ fontSize: '1.05rem', fontWeight: 700 }}
             >
               {t('active-match.started-at')}:{' '}
-              {currentTime
-                .set('hour', dayjs(match.startTime).hour())
-                .set('minute', dayjs(match.startTime).minute())
-                .set('second', dayjs(match.startTime).second())
-                .format('HH:mm:ss')}
+              {(() => {
+                const { hour, minute, second } = getTimeParts(match.startTime);
+                return currentTime
+                  .set('hour', hour)
+                  .set('minute', minute)
+                  .set('second', second)
+                  .format('HH:mm:ss');
+              })()}
             </Typography>
+            {match.scheduledTime && (
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+              >
+                {t('active-match.scheduled-at')}:{' '}
+                {(() => {
+                  const { hour, minute, second } = getTimeParts(match.scheduledTime);
+                  return currentTime
+                    .set('hour', hour)
+                    .set('minute', minute)
+                    .set('second', second)
+                    .format('HH:mm:ss');
+                })()}
+              </Typography>
+            )}
             {match.startDelta !== null && match.startDelta !== undefined && (
               <Typography
                 variant="body2"

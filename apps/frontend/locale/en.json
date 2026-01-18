@@ -237,6 +237,7 @@
           "no-match": "No active match",
           "match-title": "Match {slug}",
           "started-at": "Started",
+          "scheduled-at": "Scheduled",
           "deviation": "Deviation",
           "participants": "Participants",
           "team-label": "Team",

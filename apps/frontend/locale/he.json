@@ -236,6 +236,7 @@
           "no-match": "אין מקצה פעיל כרגע",
           "match-title": "מקצה {slug}",
           "started-at": "התחיל",
+          "scheduled-at": "מתוכנן",
           "deviation": "סטייה",
           "participants": "משתתפים",
           "team-label": "קבוצה",
