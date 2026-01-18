@@ -213,7 +213,8 @@
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
-        "judging-status": "Judging Status"
+        "judging-status": "Judging Status",
+        "scoreboard": "Scoreboard"
       },
       "field-status": {
         "countdown": {
@@ -284,6 +285,16 @@
         "loading": "Loading awards…",
         "places-count": "{count, plural, one {1 Award} other {# Awards}}",
         "place-label": "Place #{place}"
+      },
+      "scoreboard": {
+        "page-title": "Scoreboard",
+        "loading": "Loading scoreboard...",
+        "error-loading": "Failed to load scoreboard",
+        "rank": "Rank",
+        "team": "Team",
+        "best-score": "Best Score",
+        "match": "Match",
+        "no-data": "No scoreboard data available"
       },
       "team-list": {
         "page-title": "Team List",

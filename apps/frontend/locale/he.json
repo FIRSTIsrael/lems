@@ -212,7 +212,8 @@
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש",
-        "judging-status": "מצב השיפוט"
+        "judging-status": "מצב השיפוט",
+        "scoreboard": "טבלת ניקוד"
       },
       "field-status": {
         "countdown": {
@@ -283,6 +284,16 @@
         "loading": "טוען פרסים…",
         "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
         "place-label": "מקום #{place}"
+      },
+      "scoreboard": {
+        "page-title": "לוח תוצאות",
+        "loading": "טוען לוח תוצאות...",
+        "error-loading": "שגיאה בטעינת לוח התוצאות",
+        "rank": "דירוג",
+        "team": "קבוצה",
+        "best-score": "ניקוד מירבי",
+        "match": "מקצה",
+        "no-data": "אין נתוני לוח תוצאות זמינים"
       },
       "team-list": {
         "page-title": "רשימת קבוצות",
