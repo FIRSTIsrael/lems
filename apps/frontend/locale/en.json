@@ -294,6 +294,7 @@
         "team": "Team",
         "best-score": "Best Score",
         "match": "Match",
+        "match-scores": "Match Scores",
         "no-data": "No scoreboard data available"
       },
       "team-list": {

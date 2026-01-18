@@ -3,15 +3,16 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Container, Box } from '@mui/material';
+import { ResponsiveComponent } from '@lems/shared';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { GET_SCOREBOARD, parseScoreboard } from './graphql/query';
 import { createScoresheetStatusChangedSubscription } from './graphql/subscriptions/scoresheet-status-changed';
 import { ScoreboardTable } from './components/scoreboard-table';
-import { ErrorState } from './components/error-state';
-import { EmptyState } from './components/empty-state';
+import { MobileScoreboard } from './components/mobile-scoreboard';
 import { LoadingState } from './components/loading-state';
+import { ErrorState } from './components/error-state';
 
 export default function ScoreboardPage() {
   const t = useTranslations('pages.reports.scoreboard');
@@ -33,7 +34,7 @@ export default function ScoreboardPage() {
     subscriptions
   );
 
-  const hasData = scoreboard.length > 0;
+  const matchesPerTeam = Math.max(...scoreboard.map(entry => entry.scores.length), 0);
 
   return (
     <Container maxWidth="lg" disableGutters>
@@ -48,11 +49,14 @@ export default function ScoreboardPage() {
         >
           {error && <ErrorState />}
 
-          {!error && !hasData && !loading && <EmptyState />}
-
-          {!error && hasData && <ScoreboardTable teams={scoreboard} />}
-
           {loading && <LoadingState />}
+
+          {!error && !loading && (
+            <ResponsiveComponent
+              desktop={<ScoreboardTable data={scoreboard} matchesPerTeam={matchesPerTeam} />}
+              mobile={<MobileScoreboard data={scoreboard} matchesPerTeam={matchesPerTeam} />}
+            />
+          )}
         </Box>
       </Stack>
     </Container>
