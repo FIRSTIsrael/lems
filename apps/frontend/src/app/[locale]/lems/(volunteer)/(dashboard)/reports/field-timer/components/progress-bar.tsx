@@ -5,8 +5,7 @@ interface ProgressBarProps {
 }
 
 const getColor = (percentRemaining: number) => {
-  if (percentRemaining <= 25) return 'error';
-  else if (percentRemaining <= 10) return 'warning';
+  if (percentRemaining <= 20) return 'warning';
   return 'primary';
 };
 
