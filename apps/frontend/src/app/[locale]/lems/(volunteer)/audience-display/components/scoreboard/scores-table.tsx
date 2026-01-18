@@ -101,66 +101,60 @@ export const ScoresTable = () => {
     return <Typography>{score}</Typography>;
   };
 
-  const tableContent = (
-    <TableBody sx={{ animation: 'scroll-up 45s linear infinite' }}>
-      {teamScores.map((team, index) => (
-        <TableRow
-          key={team.teamId}
-          sx={{
-            bgcolor:
-              index % 2 === 0
-                ? 'background.paper'
-                : theme => alpha(theme.palette.primary.main, 0.02),
-            '&:hover': {
-              bgcolor: theme => alpha(theme.palette.primary.main, 0.05)
-            },
-            transition: 'background-color 0.2s'
-          }}
+  const tableContent = teamScores.map((team, index) => (
+    <TableRow
+      key={team.teamId}
+      sx={{
+        bgcolor:
+          index % 2 === 0 ? 'background.paper' : theme => alpha(theme.palette.primary.main, 0.02),
+        '&:hover': {
+          bgcolor: theme => alpha(theme.palette.primary.main, 0.05)
+        },
+        transition: 'background-color 0.2s'
+      }}
+    >
+      <TableCell align="center" sx={{ fontWeight: 600, py: 1.25, fontSize: '0.95rem' }}>
+        {team.rank}
+      </TableCell>
+      <TableCell sx={{ py: 1.25 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+          <Avatar
+            src={team.logoUrl ?? '/assets/default-avatar.svg'}
+            sx={{
+              width: 36,
+              height: 36,
+              color: 'white',
+              objectFit: 'cover',
+              flexShrink: 0
+            }}
+          />
+          <Box sx={{ minWidth: 0, flex: 1 }}>
+            <Typography sx={{ fontWeight: 700, fontSize: '1.15rem' }}>
+              #{team.number} | {team.name}
+            </Typography>
+            <Typography sx={{ fontSize: '0.9rem', color: 'text.secondary' }}>
+              {team.affiliation}, {team.city}
+            </Typography>
+          </Box>
+        </Box>
+      </TableCell>
+      {team.scores.map((score, scoreIndex) => (
+        <TableCell
+          key={`score-${team.teamId}-${scoreIndex}`}
+          align="center"
+          sx={{ py: 1.25, fontSize: '1rem', fontWeight: 500 }}
         >
-          <TableCell align="center" sx={{ fontWeight: 600, py: 1.25, fontSize: '0.95rem' }}>
-            {team.rank}
-          </TableCell>
-          <TableCell sx={{ py: 1.25 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-              <Avatar
-                src={team.logoUrl ?? '/assets/default-avatar.svg'}
-                sx={{
-                  width: 36,
-                  height: 36,
-                  color: 'white',
-                  objectFit: 'cover',
-                  flexShrink: 0
-                }}
-              />
-              <Box sx={{ minWidth: 0, flex: 1 }}>
-                <Typography sx={{ fontWeight: 700, fontSize: '1.15rem' }}>
-                  #{team.number} | {team.name}
-                </Typography>
-                <Typography sx={{ fontSize: '0.9rem', color: 'text.secondary' }}>
-                  {team.affiliation}, {team.city}
-                </Typography>
-              </Box>
-            </Box>
-          </TableCell>
-          {team.scores.map((score, scoreIndex) => (
-            <TableCell
-              key={`score-${team.teamId}-${scoreIndex}`}
-              align="center"
-              sx={{ py: 1.25, fontSize: '1rem', fontWeight: 500 }}
-            >
-              {renderScoreCell(score)}
-            </TableCell>
-          ))}
-          <TableCell
-            align="center"
-            sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.1rem' }}
-          >
-            {team.maxScore}
-          </TableCell>
-        </TableRow>
+          {renderScoreCell(score)}
+        </TableCell>
       ))}
-    </TableBody>
-  );
+      <TableCell
+        align="center"
+        sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.1rem' }}
+      >
+        {team.maxScore}
+      </TableCell>
+    </TableRow>
+  ));
 
   return (
     <Paper
@@ -197,8 +191,10 @@ export const ScoresTable = () => {
               </TableCell>
             </TableRow>
           </TableHead>
-          {tableContent}
-          {tableContent}
+          <TableBody sx={{ animation: 'scroll-up 45s linear infinite' }}>
+            {tableContent}
+            {tableContent}
+          </TableBody>
         </Table>
       </TableContainer>
 
