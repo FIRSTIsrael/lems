@@ -255,7 +255,8 @@
             "ready": "מוכן",
             "present": "מתכוננת",
             "queued": "בקיו",
-            "not-present": "לא נוכח"
+            "not-present": "לא נוכח",
+            "not-arrived": "לא הגיעה לאירוע"
           }
         },
         "judging-integration": {
