@@ -1,14 +1,9 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
-import dayjs from 'dayjs';
-import { useTranslations } from 'next-intl';
-import { Stack, Container, Box, Typography, Alert, IconButton } from '@mui/material';
-import { Fullscreen, FullscreenExit } from '@mui/icons-material';
-import { ResponsiveComponent } from '@lems/shared';
+import { useMemo, useState, useCallback, useEffect } from 'react';
+import { Box, Container } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
-import { useTime } from '../../../../../../../lib/time/hooks';
 import {
   GET_FIELD_TIMER_DATA,
   parseFieldTimerData,
@@ -16,16 +11,17 @@ import {
   createMatchCompletedSubscription,
   createMatchAbortedSubscription
 } from './graphql';
-import { TimerDisplay } from './components/timer-display';
-import { MatchInfo } from './components/match-info';
-import { ProgressBar } from './components/progress-bar';
+import { LoadingState } from './components/loading-state';
+import { ErrorState } from './components/error-state';
+import { TimerContent } from './components/timer-content';
+import { FullscreenButton } from './components/fullscreen-button';
+import { FieldTimerProvider } from './components/field-timer-context';
 
 export default function FieldTimerPage() {
-  const t = useTranslations('pages.reports.field-timer');
   const { currentDivision } = useEvent();
-  const currentTime = useTime({ interval: 100 });
   const [isFullscreen, setIsFullscreen] = useState(false);
 
+  // Handle fullscreen toggle
   const handleFullscreenToggle = useCallback(async () => {
     const elem = document.documentElement;
     try {
@@ -42,7 +38,7 @@ export default function FieldTimerPage() {
   }, [isFullscreen]);
 
   // Listen for fullscreen changes from external triggers (e.g., ESC key)
-  useMemo(() => {
+  useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(!!document.fullscreenElement);
     };
@@ -50,6 +46,7 @@ export default function FieldTimerPage() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
+  // Setup GraphQL subscriptions
   const subscriptions = useMemo(
     () => [
       createMatchStartedSubscription(currentDivision.id),
@@ -74,132 +71,41 @@ export default function FieldTimerPage() {
     matchLength
   } = data || { matches: [], matchLength: 150 };
 
-  const activeMatch = useMemo(() => {
-    return matches.find(m => m.id === activeMatchId) || null;
-  }, [matches, activeMatchId]);
-
-  const matchEndTime = useMemo(() => {
-    if (!activeMatch?.startTime) return null;
-    return dayjs(activeMatch.startTime).add(matchLength, 'seconds').toDate();
-  }, [activeMatch, matchLength]);
-
-  const percentRemaining = useMemo(() => {
-    if (!matchEndTime) return 100;
-    const remaining = dayjs(matchEndTime).diff(currentTime, 'milliseconds');
-    const total = matchLength * 1000;
-    return Math.max(0, Math.min(100, (remaining / total) * 100));
-  }, [matchEndTime, currentTime, matchLength]);
-
+  // Loading state
   if (loading) {
-    return (
-      <Container maxWidth="xl">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: 'calc(100vh - 200px)'
-          }}
-        >
-          <Typography variant="h4" color="text.secondary">
-            {t('loading')}
-          </Typography>
-        </Box>
-      </Container>
-    );
+    return <LoadingState />;
   }
 
+  // Error state
   if (error) {
-    return (
-      <Container maxWidth="xl">
-        <Box sx={{ mt: 4 }}>
-          <Alert severity="error">{t('error-loading')}</Alert>
-        </Box>
-      </Container>
-    );
+    return <ErrorState />;
   }
 
-  const renderContent = (isDesktop: boolean) => (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        minHeight: 'calc(100vh - 24px)'
-      }}
-    >
-      {activeMatch === null || matchEndTime === null ? (
-        <Typography
-          variant="h2"
-          color="text.secondary"
-          fontWeight={300}
-          sx={{
-            textAlign: 'center',
-            opacity: 0.6
-          }}
-        >
-          {t('no-active-match')}
-        </Typography>
-      ) : (
-        <Stack spacing={isDesktop ? 4 : 2}>
-          <MatchInfo match={activeMatch} isDesktop={isDesktop} />
-          <Box>
-            <TimerDisplay targetDate={matchEndTime} isDesktop={isDesktop} />
-            <ProgressBar percentRemaining={percentRemaining} />
-          </Box>
-        </Stack>
-      )}
-    </Box>
-  );
-
+  // Main content
   return (
-    <Box
-      sx={
-        isFullscreen
-          ? {
-              position: 'fixed',
-              inset: 0,
-              zIndex: 9998,
-              overflow: 'auto',
-              backgroundColor: 'background.default'
-            }
-          : {}
-      }
+    <FieldTimerProvider
+      matches={matches}
+      activeMatchId={activeMatchId || null}
+      matchLength={matchLength}
     >
-      <Container sx={isFullscreen ? { minWidth: '100%' } : { minWidth: '100vh' }}>
-        {isFullscreen && (
-          <IconButton
-            onClick={handleFullscreenToggle}
-            sx={{
-              position: 'fixed',
-              top: 16,
-              right: 16,
-              zIndex: 9999,
-              backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'rgba(0, 0, 0, 0.7)'
+      <Box
+        sx={
+          isFullscreen
+            ? {
+                position: 'fixed',
+                inset: 0,
+                zIndex: 9998,
+                overflow: 'auto',
+                backgroundColor: 'background.default'
               }
-            }}
-          >
-            <FullscreenExit />
-          </IconButton>
-        )}
-        {!isFullscreen && (
-          <IconButton
-            onClick={handleFullscreenToggle}
-            sx={{
-              position: 'absolute',
-              top: 16,
-              right: 16
-            }}
-          >
-            <Fullscreen />
-          </IconButton>
-        )}
-        <ResponsiveComponent desktop={renderContent(true)} mobile={renderContent(false)} />
-      </Container>
-    </Box>
+            : {}
+        }
+      >
+        <Container maxWidth="lg" sx={isFullscreen ? { minWidth: '100%', p: 0 } : {}}>
+          <FullscreenButton isFullscreen={isFullscreen} onToggle={handleFullscreenToggle} />
+          <TimerContent />
+        </Container>
+      </Box>
+    </FieldTimerProvider>
   );
 }

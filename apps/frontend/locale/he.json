@@ -332,7 +332,8 @@
         "loading": "טוען נתוני מקצה...",
         "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
         "test-match": "מקצה בדיקה",
-        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}"
+        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}",
+        "next-match": "מקצה הבא"
       },
       "field-schedule": {
         "page-title": "לו״ז זירה",
