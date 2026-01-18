@@ -42,6 +42,7 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
   const params = use(paramsPromise);
   const t = useTranslations('pages.exports.scores');
 
+  const eventSlugLower = params.eventSlug.toLowerCase();
   const teamSlugUpper = params.teamSlug.toUpperCase();
 
   const {
@@ -50,7 +51,7 @@ export default function ScoresExportPage({ params: paramsPromise }: ScoresExport
     error: teamInfoError
   } = useQuery(GET_TEAM_INFO_QUERY, {
     variables: {
-      eventSlug: params.eventSlug,
+      eventSlug: eventSlugLower,
       teamSlug: teamSlugUpper
     },
     fetchPolicy: 'no-cache'

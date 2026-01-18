@@ -24,6 +24,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
   const params = use(paramsPromise);
   const t = useTranslations('pages.exports.rubrics');
   const { getTerm } = useRubricsGeneralTranslations();
+  const eventSlugLower = params.eventSlug.toLowerCase();
   const teamSlugUpper = params.teamSlug.toUpperCase();
 
   const {
@@ -32,7 +33,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     error: teamInfoError
   } = useQuery(GET_TEAM_INFO_QUERY, {
     variables: {
-      eventSlug: params.eventSlug,
+      eventSlug: eventSlugLower,
       teamSlug: teamSlugUpper
     },
     fetchPolicy: 'no-cache'
@@ -129,7 +130,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
     return (
       <Box sx={{ p: 2 }}>
         <Alert severity="error">
-          {t('team-not-found', { teamSlug: teamSlugUpper, eventSlug: params.eventSlug })}
+          {t('team-not-found', { teamSlug: teamSlugUpper, eventSlug: eventSlugLower })}
         </Alert>
       </Box>
     );
