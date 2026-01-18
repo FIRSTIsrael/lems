@@ -9,16 +9,18 @@ interface TimerDisplayProps {
 export function TimerDisplay({ targetDate, isDesktop }: TimerDisplayProps) {
   return (
     <Paper
-      elevation={3}
+      elevation={0}
       sx={{
-        py: isDesktop ? 8 : 4,
-        px: isDesktop ? 6 : 3,
+        py: isDesktop ? 8 : 5,
+        px: isDesktop ? 8 : 4,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         background: theme =>
-          `linear-gradient(135deg, ${theme.palette.background.paper} 0%, ${theme.palette.grey[50]} 100%)`,
-        borderRadius: 4
+          `linear-gradient(135deg, ${theme.palette.primary.main}14 0%, ${theme.palette.primary.light}08 100%)`,
+        borderRadius: 3,
+        border: theme => `2px solid ${theme.palette.primary.light}`,
+        backdropFilter: 'blur(8px)'
       }}
     >
       <Box
@@ -36,7 +38,8 @@ export function TimerDisplay({ targetDate, isDesktop }: TimerDisplayProps) {
           letterSpacing="-0.02em"
           sx={{
             color: theme => theme.palette.primary.main,
-            textShadow: '0 2px 8px rgba(0,0,0,0.1)'
+            textShadow: theme => `0 4px 12px ${theme.palette.primary.main}30`,
+            fontVariantNumeric: 'tabular-nums'
           }}
         />
       </Box>
