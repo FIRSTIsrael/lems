@@ -56,10 +56,7 @@ export default function RefereePage() {
     subscriptions
   );
 
-  const tableName = useMemo(
-    () => data?.tables?.find(table => table.id === tableId)?.name,
-    [data?.tables, tableId]
-  );
+  const tableName = data?.tableNames?.[tableId];
 
   if (error) {
     throw error || new Error('Failed to load referee data');

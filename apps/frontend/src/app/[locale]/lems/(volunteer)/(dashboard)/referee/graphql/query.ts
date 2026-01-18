@@ -60,6 +60,6 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
 export function parseRefereeData(data: RefereeData) {
   return {
     ...data.division.field,
-    tables: data.division.tables
+    tableNames: Object.fromEntries(data.division.tables.map(({ id, name }) => [id, name]))
   };
 }

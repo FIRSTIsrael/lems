@@ -52,7 +52,7 @@ export interface RefereeFieldData {
   activeMatch: string | null;
   matchLength: number;
   tableId: string;
-  tables?: { id: string; name: string }[];
+  tableNames?: Record<string, string>;
 }
 
 export interface RefereeData {
