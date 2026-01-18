@@ -1,9 +1,19 @@
 'use client';
 
-import { Box, Paper, Typography, LinearProgress, Stack, Divider, Avatar } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Typography,
+  LinearProgress,
+  Stack,
+  Divider,
+  Avatar,
+  Chip
+} from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
 import { useMemo } from 'react';
+import { WarningAmberRounded } from '@mui/icons-material';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useReferee } from './referee-context';
@@ -96,7 +106,8 @@ export const RefereeMatchTimer = () => {
                     borderRadius: 2,
                     backgroundColor: 'background.default',
                     border: '1px solid',
-                    borderColor: 'divider'
+                    borderColor: participant.present === false ? 'error.light' : 'divider',
+                    opacity: participant.present === false ? 0.7 : 1
                   }}
                 >
                   {participant.team ? (
@@ -104,31 +115,50 @@ export const RefereeMatchTimer = () => {
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 2
+                        justifyContent: 'space-between',
+                        gap: 2,
+                        flexWrap: 'wrap'
                       }}
                     >
-                      <Avatar
-                        src={participant.team.logoUrl ?? '/assets/default-avatar.svg'}
+                      <Box
                         sx={{
-                          width: 56,
-                          height: 56,
-                          bgcolor: 'primary.main',
-                          color: 'white',
-                          fontSize: '1.2rem',
-                          fontWeight: 700
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 2
                         }}
                       >
-                        {participant.team.number || '?'}
-                      </Avatar>
-                      <Box sx={{ textAlign: 'center' }}>
-                        <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                          {participant.team.name} #{participant.team.number}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {participant.team.affiliation}, {participant.team.city}
-                        </Typography>
+                        <Avatar
+                          src={participant.team.logoUrl ?? '/assets/default-avatar.svg'}
+                          sx={{
+                            width: 56,
+                            height: 56,
+                            bgcolor: 'primary.main',
+                            color: 'white',
+                            fontSize: '1.2rem',
+                            fontWeight: 700
+                          }}
+                        >
+                          {participant.team.number || '?'}
+                        </Avatar>
+                        <Box sx={{ textAlign: 'left' }}>
+                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                            {participant.team.name} #{participant.team.number}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            {participant.team.affiliation}, {participant.team.city}
+                          </Typography>
+                        </Box>
                       </Box>
+                      {!participant.present && (
+                        <Chip
+                          icon={<WarningAmberRounded />}
+                          label={t('absent')}
+                          color="error"
+                          variant="outlined"
+                          size="small"
+                          sx={{ ml: 'auto' }}
+                        />
+                      )}
                     </Box>
                   ) : (
                     <Typography variant="body2" color="text.secondary" textAlign="center">

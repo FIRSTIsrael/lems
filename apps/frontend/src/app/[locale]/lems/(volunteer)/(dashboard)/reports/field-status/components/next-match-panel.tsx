@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
+import { WarningAmberRounded } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -15,6 +16,7 @@ interface Participant {
     id: string;
     number: number;
     name: string;
+    arrived: boolean;
   } | null;
   table: {
     id: string;
@@ -180,6 +182,16 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
                       {getStatusText(status)}
                     </Typography>
                   </Stack>
+                  {participant.team?.arrived === false && (
+                    <Chip
+                      icon={<WarningAmberRounded />}
+                      label={t('next-match.status.not-arrived')}
+                      color="warning"
+                      variant="outlined"
+                      size="small"
+                      sx={{ ml: 1 }}
+                    />
+                  )}
                 </Stack>
               );
             })}

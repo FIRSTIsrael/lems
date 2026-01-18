@@ -13,7 +13,8 @@ import {
   createMatchLoadedSubscription,
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
-  createTeamArrivedSubscription
+  createTeamArrivedSubscription,
+  createMatchStageAdvancedSubscription
 } from './graphql';
 import { CurrentMatchHero } from './components/current-match-hero';
 import { MatchScheduleTable } from './components/match-schedule-table';
@@ -51,7 +52,8 @@ export default function McPage() {
       createMatchLoadedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
-      createTeamArrivedSubscription(currentDivision.id)
+      createTeamArrivedSubscription(currentDivision.id),
+      createMatchStageAdvancedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

@@ -6,6 +6,7 @@ export interface MatchParticipant {
     id: string;
     name: string;
     number: number;
+    arrived: boolean;
   } | null;
   table: {
     id: string;
@@ -52,7 +53,6 @@ export interface Field {
   matches: Match[];
 }
 
-
 export interface FieldStatusData {
   division: Division & {
     field: Field;
@@ -70,7 +70,6 @@ export interface MatchEvent {
   startDelta?: number;
   autoLoadedMatchId?: string;
 }
-
 
 export interface ParticipantStatusEvent {
   participantId: string;

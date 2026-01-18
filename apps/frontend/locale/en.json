@@ -256,7 +256,8 @@
             "ready": "Ready",
             "present": "Preparing",
             "queued": "Queued",
-            "not-present": "Not Present"
+            "not-present": "Not Present",
+            "not-arrived": "Didn't Arrive to Event"
           }
         },
         "judging-integration": {
