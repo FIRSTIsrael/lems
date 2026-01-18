@@ -225,6 +225,11 @@ export class DivisionsRepository {
     // Create division state in MongoDB with default audience display
     await this.mongo.collection<DivisionState>('division_states').insertOne({
       divisionId: createdDivision.id,
+      field: {
+        loadedMatch: null,
+        activeMatch: null,
+        currentStage: 'PRACTICE'
+      },
       audienceDisplay: {
         activeDisplay: 'logo',
         awardsPresentation: {
@@ -251,6 +256,11 @@ export class DivisionsRepository {
     // Create division states in MongoDB for each division with default audience display
     const divisionStates: DivisionState[] = createdDivisions.map(division => ({
       divisionId: division.id,
+      field: {
+        loadedMatch: null,
+        activeMatch: null,
+        currentStage: 'PRACTICE'
+      },
       audienceDisplay: {
         activeDisplay: 'logo',
         awardsPresentation: {
