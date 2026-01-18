@@ -1,11 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import { useMatchTranslations } from '@lems/localization';
-import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
   id: string;
@@ -48,7 +48,6 @@ interface ActiveMatchPanelProps {
 export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   const t = useTranslations('pages.reports.field-status');
   const { getStage } = useMatchTranslations();
-  const currentTime = useTime({ interval: 1000 });
 
   if (!match) {
     return (
@@ -82,15 +81,6 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
     return `${sign}${minutes}:${String(seconds).padStart(2, '0')}`;
   };
 
-  const getTimeParts = (value: string) => {
-    const date = new Date(value);
-    return {
-      hour: date.getHours(),
-      minute: date.getMinutes(),
-      second: date.getSeconds()
-    };
-  };
-
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
@@ -112,15 +102,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               color="text.secondary"
               sx={{ fontSize: '1.05rem', fontWeight: 700 }}
             >
-              {t('active-match.started-at')}:{' '}
-              {(() => {
-                const { hour, minute, second } = getTimeParts(match.startTime);
-                return currentTime
-                  .set('hour', hour)
-                  .set('minute', minute)
-                  .set('second', second)
-                  .format('HH:mm:ss');
-              })()}
+              {t('active-match.started-at')}: {dayjs(match.startTime).format('HH:mm:ss')}
             </Typography>
             {match.scheduledTime && (
               <Typography
@@ -128,15 +110,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                 color="text.secondary"
                 sx={{ fontSize: '1.05rem', fontWeight: 700 }}
               >
-                {t('active-match.scheduled-at')}:{' '}
-                {(() => {
-                  const { hour, minute, second } = getTimeParts(match.scheduledTime);
-                  return currentTime
-                    .set('hour', hour)
-                    .set('minute', minute)
-                    .set('second', second)
-                    .format('HH:mm:ss');
-                })()}
+                {t('active-match.scheduled-at')}: {dayjs(match.scheduledTime).format('HH:mm:ss')}
               </Typography>
             )}
             {match.startDelta !== null && match.startDelta !== undefined && (
