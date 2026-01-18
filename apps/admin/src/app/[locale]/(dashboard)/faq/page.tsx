@@ -81,6 +81,12 @@ export default function FaqsPage() {
     return season?.name || seasonId;
   };
 
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
   return (
     <Box sx={{ p: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
@@ -155,7 +161,7 @@ export default function FaqsPage() {
                     </TableCell>
                     <TableCell sx={{ maxWidth: 400 }}>
                       <Typography variant="body2" noWrap color="text.secondary">
-                        {faq.answer}
+                        {stripHtml(faq.answer)}
                       </Typography>
                     </TableCell>
                     <TableCell>

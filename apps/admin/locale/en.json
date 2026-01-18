@@ -1094,11 +1094,17 @@
           "bold": "Bold",
           "italic": "Italic",
           "color": "Text color",
-          "bullets": "Bulleted list"
+          "bullets": "Bulleted list",
+          "image": "Insert image",
+          "delete-image": "Click to delete image",
+          "confirm-delete-image": "Are you sure you want to delete this image?"
         },
         "errors": {
           "required-fields": "Please fill in all required fields.",
-          "save-failed": "Failed to save FAQ. Please try again."
+          "save-failed": "Failed to save FAQ. Please try again.",
+          "invalid-image-type": "Image must be a PNG or JPEG file.",
+          "image-too-large": "Image size must not exceed 2 MB.",
+          "image-upload-failed": "Failed to upload image. Please try again."
         },
         "actions": {
           "cancel": "Cancel",

@@ -51,7 +51,6 @@ export default function FaqsPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, sm: 4 } }}>
-      {/* Header Section */}
       <Typography
         variant="h3"
         component="h1"
@@ -64,7 +63,6 @@ export default function FaqsPage() {
         {t('title')}
       </Typography>
 
-      {/* Search Section */}
       <Paper sx={{ p: 3, mb: 3 }}>
         <TextField
           fullWidth
@@ -81,7 +79,6 @@ export default function FaqsPage() {
         />
       </Paper>
 
-      {/* Results Section */}
       {error && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {t('errors.load-failed')}

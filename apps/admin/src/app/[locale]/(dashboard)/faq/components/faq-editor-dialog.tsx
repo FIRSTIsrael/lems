@@ -20,7 +20,13 @@ import {
   Typography,
   Tooltip
 } from '@mui/material';
-import { FormatBold, FormatItalic, Palette, FormatListBulleted } from '@mui/icons-material';
+import {
+  FormatBold,
+  FormatItalic,
+  Palette,
+  FormatListBulleted,
+  Image as ImageIcon
+} from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { FaqResponse } from '@lems/types/api/admin';
@@ -45,8 +51,10 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
   const [error, setError] = useState<string | null>(null);
   const [textColor, setTextColor] = useState<HsvaColor>(hexToHsva('#000000'));
   const [usedColors, setUsedColors] = useState<string[]>(['#000000']);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const editorRef = useRef<HTMLDivElement>(null);
   const selectionRef = useRef<Range | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (faq) {
@@ -119,6 +127,140 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     });
 
     return Array.from(colors);
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (
+      !file.type.startsWith('image/') ||
+      (!file.name.endsWith('.jpg') && !file.name.endsWith('.jpeg') && !file.name.endsWith('.png'))
+    ) {
+      setError(t('errors.invalid-image-type'));
+      return;
+    }
+
+    // Validate file size (2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      setError(t('errors.image-too-large'));
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const result = await apiFetch('/admin/faqs/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (result.ok) {
+        const imageUrl = (result.data as { url: string }).url;
+
+        if (editorRef.current) {
+          editorRef.current.focus();
+          restoreSelection();
+
+          // Create wrapper div for image with delete button
+          const wrapper = document.createElement('div');
+          wrapper.style.position = 'relative';
+          wrapper.style.display = 'inline-block';
+          wrapper.style.maxWidth = '100%';
+          wrapper.style.margin = '10px 0';
+
+          const img = document.createElement('img');
+          img.src = imageUrl;
+          img.style.maxWidth = '100%';
+          img.style.height = 'auto';
+          img.style.display = 'block';
+
+          // Create delete button overlay
+          const deleteBtn = document.createElement('button');
+          deleteBtn.innerHTML = '✕';
+          deleteBtn.title = t('toolbar.delete-image');
+          deleteBtn.style.position = 'absolute';
+          deleteBtn.style.top = '5px';
+          deleteBtn.style.right = '5px';
+          deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
+          deleteBtn.style.color = 'white';
+          deleteBtn.style.border = 'none';
+          deleteBtn.style.borderRadius = '50%';
+          deleteBtn.style.width = '28px';
+          deleteBtn.style.height = '28px';
+          deleteBtn.style.cursor = 'pointer';
+          deleteBtn.style.fontSize = '16px';
+          deleteBtn.style.fontWeight = 'bold';
+          deleteBtn.style.display = 'flex';
+          deleteBtn.style.alignItems = 'center';
+          deleteBtn.style.justifyContent = 'center';
+          deleteBtn.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+          deleteBtn.style.transition = 'all 0.2s';
+          deleteBtn.style.zIndex = '10';
+
+          deleteBtn.onmouseover = () => {
+            deleteBtn.style.backgroundColor = 'rgba(211, 47, 47, 1)';
+            deleteBtn.style.transform = 'scale(1.1)';
+          };
+
+          deleteBtn.onmouseout = () => {
+            deleteBtn.style.backgroundColor = 'rgba(244, 67, 54, 0.9)';
+            deleteBtn.style.transform = 'scale(1)';
+          };
+
+          deleteBtn.onclick = e => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (confirm(t('toolbar.confirm-delete-image'))) {
+              wrapper.remove();
+              setAnswer(editorRef.current?.innerHTML ?? '');
+            }
+          };
+
+          wrapper.appendChild(img);
+          wrapper.appendChild(deleteBtn);
+
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(wrapper);
+
+            // Insert a line break after the wrapper to allow typing
+            const br = document.createElement('br');
+            range.collapse(false);
+            range.insertNode(br);
+
+            // Move cursor after the line break
+            range.setStartAfter(br);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+          } else {
+            editorRef.current.appendChild(wrapper);
+            const br = document.createElement('br');
+            editorRef.current.appendChild(br);
+          }
+
+          setAnswer(editorRef.current.innerHTML);
+        }
+      } else {
+        setError(t('errors.image-upload-failed'));
+      }
+    } catch (err) {
+      console.error('Error uploading image:', err);
+      setError(t('errors.image-upload-failed'));
+    } finally {
+      setIsUploadingImage(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
   };
 
   const handleSubmit = async () => {
@@ -262,6 +404,29 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
                   </IconButton>
                 </span>
               </Tooltip>
+              <Tooltip title={t('toolbar.image')}>
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isSubmitting || isUploadingImage}
+                    sx={{
+                      '&:hover': {
+                        backgroundColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <ImageIcon />
+                  </IconButton>
+                </span>
+              </Tooltip>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg"
+                style={{ display: 'none' }}
+                onChange={handleImageUpload}
+              />
               <ColorPicker value={textColor} onChange={color => applyColor(hsvaToHex(color))}>
                 <IconButton
                   size="small"
