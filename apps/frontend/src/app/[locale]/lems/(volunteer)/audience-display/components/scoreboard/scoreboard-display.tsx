@@ -19,7 +19,7 @@ import {
 import { ScoreboardProvider } from './scoreboard-context';
 import { ActiveMatch } from './active-match';
 import { PreviousMatch } from './previous-match';
-import { ScoresTable } from './scores-table';
+import { ScoresTable } from './table/scores-table';
 import { SponsorsRow } from './sponsors-row';
 import { useFieldSounds } from './hooks/use-field-sounds';
 
