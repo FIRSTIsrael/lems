@@ -1,12 +1,12 @@
 'use client';
 
 import { Paper, Table, TableBody, TableContainer, alpha } from '@mui/material';
-import { useScoreboard } from './scoreboard-context';
-import { useScoreboardRounds } from './hooks/use-scoreboard-rounds';
-import { useTeamScores } from './hooks/use-team-scores';
-import { useInfiniteScroll } from './hooks/use-infinite-scroll';
-import { ScoresTableHeader } from './components/scores-table-header';
-import { ScoresTableRow } from './components/scores-table-row';
+import { useScoreboard } from '../scoreboard-context';
+import { useScoreboardRounds } from '../hooks/use-scoreboard-rounds';
+import { useTeamScores } from '../hooks/use-team-scores';
+import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
+import { ScoresTableHeader } from './scores-table-header';
+import { ScoresTableRow } from './scores-table-row';
 
 const SCROLL_DURATION = 45;
 
