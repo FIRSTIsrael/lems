@@ -13,6 +13,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
 import { useMemo } from 'react';
+import { WarningAmberRounded } from '@mui/icons-material';
 import { Countdown } from '../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useReferee } from './referee-context';
@@ -150,6 +151,7 @@ export const RefereeMatchTimer = () => {
                       </Box>
                       {!participant.present && (
                         <Chip
+                          icon={<WarningAmberRounded />}
                           label={t('absent')}
                           color="error"
                           variant="outlined"
