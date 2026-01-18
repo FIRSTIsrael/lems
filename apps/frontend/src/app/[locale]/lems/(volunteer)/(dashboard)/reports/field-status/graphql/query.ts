@@ -34,6 +34,7 @@ export const GET_FIELD_STATUS_DATA: TypedDocumentNode<FieldStatusData, FieldStat
               id
               number
               name
+              arrived
             }
             table {
               id

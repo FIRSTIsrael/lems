@@ -36,11 +36,11 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
       </Typography>
       <Paper
         sx={{
-          flex: 1,
           backgroundColor: '#000',
           borderRadius: 2,
           overflow: 'hidden',
-          minHeight: 400,
+          aspectRatio: '16/9',
+          width: '100%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

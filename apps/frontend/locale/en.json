@@ -238,6 +238,7 @@
           "no-match": "No active match",
           "match-title": "Match {slug}",
           "started-at": "Started",
+          "scheduled-at": "Scheduled",
           "deviation": "Deviation",
           "participants": "Participants",
           "team-label": "Team",
@@ -257,7 +258,8 @@
             "ready": "Ready",
             "present": "Preparing",
             "queued": "Queued",
-            "not-present": "Not Present"
+            "not-present": "Not Present",
+            "not-arrived": "Didn't Arrive to Event"
           }
         },
         "judging-integration": {
@@ -345,7 +347,8 @@
         "loading": "Loading match data...",
         "error-loading": "Failed to load field data. Please try again.",
         "test-match": "Test Match",
-        "match-info": "{stage} Round #{round} Match #{number}"
+        "match-info": "{stage} Round #{round} Match #{number}",
+        "next-match": "Next Match"
       },
       "field-schedule": {
         "page-title": "Field Schedule",
