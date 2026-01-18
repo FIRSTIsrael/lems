@@ -4,13 +4,14 @@ interface ProgressBarProps {
   percentRemaining: number;
 }
 
-export function ProgressBar({ percentRemaining }: ProgressBarProps) {
-  const isWarning = percentRemaining <= 25;
-  const isDanger = percentRemaining <= 10;
+const getColor = (percentRemaining: number) => {
+  if (percentRemaining <= 25) return 'error';
+  else if (percentRemaining <= 10) return 'warning';
+  return 'primary';
+};
 
-  let color: 'primary' | 'error' | 'warning' = 'primary';
-  if (isDanger) color = 'error';
-  else if (isWarning) color = 'warning';
+export function ProgressBar({ percentRemaining }: ProgressBarProps) {
+  const color = getColor(percentRemaining);
 
   return (
     <Box sx={{ mt: 0 }}>
