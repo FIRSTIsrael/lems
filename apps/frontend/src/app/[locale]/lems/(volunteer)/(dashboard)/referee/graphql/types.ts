@@ -52,11 +52,13 @@ export interface RefereeFieldData {
   activeMatch: string | null;
   matchLength: number;
   tableId: string;
+  tables?: { id: string; name: string }[];
 }
 
 export interface RefereeData {
   division: {
     id: string;
+    tables: { id: string; name: string }[];
     field: RefereeFieldData;
   };
 }

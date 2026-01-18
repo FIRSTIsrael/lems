@@ -56,6 +56,11 @@ export default function RefereePage() {
     subscriptions
   );
 
+  const tableName = useMemo(
+    () => data?.tables?.find(table => table.id === tableId)?.name,
+    [data?.tables, tableId]
+  );
+
   if (error) {
     throw error || new Error('Failed to load referee data');
   }
@@ -73,7 +78,7 @@ export default function RefereePage() {
 
   return (
     <>
-      <PageHeader title={t('page-title')} />
+      <PageHeader title={`${t('page-title')} - ${tableName}`} />
       <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
         <RefereeProvider data={data}>
           <RefereeContent />
