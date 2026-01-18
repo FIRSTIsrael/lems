@@ -25,7 +25,6 @@ export function GpScores({ team }: GpScoresProps) {
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, width: '100%' }}>
         {scoresheets.map(scoresheet => {
           const gp = scoresheet.data?.gp;
-          if (!gp?.value) return null;
 
           return (
             <Box
@@ -49,7 +48,7 @@ export function GpScores({ team }: GpScoresProps) {
                 {t('round')} {scoresheet.round}
               </Typography>
               <Box sx={{ display: 'flex', gap: 0.5, mt: 1, justifyContent: 'center' }}>
-                {Array.from({ length: gp.value }).map((_, i) => (
+                {Array.from({ length: gp?.value ?? 3 }).map((_, i) => (
                   <Box
                     key={i}
                     sx={{
@@ -61,7 +60,7 @@ export function GpScores({ team }: GpScoresProps) {
                   />
                 ))}
               </Box>
-              {gp.notes && (
+              {gp?.notes && (
                 <Typography
                   variant="caption"
                   sx={{
