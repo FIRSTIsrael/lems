@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { compareScoreArrays } from '@lems/shared/utils';
-import { Scoresheet } from '@lems/database';
+import { DivisionState, Scoresheet } from '@lems/database';
 import db from '../../../lib/database';
 
 export interface RankingData {
@@ -23,7 +23,14 @@ export interface RankingData {
 export async function calculateRobotGameRankings(
   divisionId: string
 ): Promise<Map<string, RankingData>> {
-  const scoresheets = await db.scoresheets.byDivision(divisionId).byStage('RANKING').getAll();
+  const divisionState = await db.raw.mongo
+    .collection<DivisionState>('division_states')
+    .findOne({ divisionId });
+
+  const scoresheets = await db.scoresheets
+    .byDivision(divisionId)
+    .byStage(divisionState.field.currentStage)
+    .getAll();
 
   const submitted = scoresheets.filter(
     (s): s is WithId<Scoresheet> => s.status === 'submitted' && s.data?.score != null
