@@ -22,6 +22,14 @@ export interface ScoresheetItem {
   status: string;
   escalated?: boolean;
   data: ScoresheetData;
+  allTeamScoresheets?: Array<{
+    id: string;
+    slug: string;
+    stage: string;
+    round: number;
+    status: string;
+    escalated?: boolean;
+  }>;
 }
 
 export type QueryResult = {
@@ -29,6 +37,14 @@ export type QueryResult = {
     id: string;
     field: {
       scoresheets: ScoresheetItem[];
+      allTeamScoresheets: Array<{
+        id: string;
+        slug: string;
+        stage: string;
+        round: number;
+        status: string;
+        escalated?: boolean;
+      }>;
     };
   };
 };

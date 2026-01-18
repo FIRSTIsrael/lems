@@ -35,6 +35,14 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
             score
           }
         }
+        allTeamScoresheets: scoresheets(teamIds: [$teamId]) {
+          id
+          slug
+          stage
+          round
+          status
+          escalated
+        }
       }
     }
   }

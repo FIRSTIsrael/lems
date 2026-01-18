@@ -13,6 +13,7 @@ import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
 import { GPSelector } from './components/gp-selector';
+import { ScoresheetSwitcher } from './components/scoresheet-switcher';
 import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
@@ -79,7 +80,9 @@ export default function ScoresheetPage() {
           stage: getStage(scoresheet.stage),
           round: scoresheet.round
         })}
-      />
+      >
+        <ScoresheetSwitcher scoresheets={scoresheet.allTeamScoresheets || []} />
+      </PageHeader>
 
       <ScoresheetProvider scoresheet={scoresheet}>
         <Container maxWidth="md" sx={{ mt: 2 }}>
