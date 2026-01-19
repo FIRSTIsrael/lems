@@ -956,6 +956,10 @@
       "processing": "מעבד...",
       "error-failed-to-escalate": "העברה נכשלה",
       "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "selectScoresheet": {
+        "label": "בחרו דף ניקוד",
+        "round": "סבב"
+      },
       "reset-dialog": {
         "title": "איפוס דף ניקוד",
         "warning": "לא ניתן לבטל פעולה זו!",
