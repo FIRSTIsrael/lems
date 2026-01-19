@@ -5,7 +5,6 @@ import { Faq } from '@lems/database';
 import db from '../../lib/database';
 import { uploadFile } from '../../lib/blob-storage/upload';
 import { AdminRequest } from '../../types/express';
-import { requirePermission } from './middleware/require-permission';
 
 const router = express.Router();
 
@@ -33,7 +32,7 @@ const formatFaqResponse = (faq: Faq) => ({
   updatedAt: faq.updatedAt.toISOString()
 });
 
-router.get('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.get('/', async (req: AdminRequest, res) => {
   try {
     const faqs = await db.faqs.all().getAll();
     res.json(faqs.map(formatFaqResponse));
@@ -42,7 +41,7 @@ router.get('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) 
   }
 });
 
-router.get('/season/:seasonId', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.get('/season/:seasonId', async (req: AdminRequest, res) => {
   try {
     const { seasonId } = req.params;
     const faqs = await db.faqs.bySeason(seasonId).getAll();
@@ -52,7 +51,7 @@ router.get('/season/:seasonId', requirePermission('MANAGE_FAQ'), async (req: Adm
   }
 });
 
-router.get('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.get('/:id', async (req: AdminRequest, res) => {
   try {
     const { id } = req.params;
     const faq = await db.faqs.byId(id).get();
@@ -68,7 +67,7 @@ router.get('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
   }
 });
 
-router.post('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.post('/', async (req: AdminRequest, res) => {
   try {
     const validation = CreateFaqRequestSchema.safeParse(req.body);
     
@@ -106,7 +105,7 @@ router.post('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res)
   }
 });
 
-router.put('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.put('/:id', async (req: AdminRequest, res) => {
   try {
     const { id } = req.params;
     const validation = UpdateFaqRequestSchema.safeParse(req.body);
@@ -134,7 +133,7 @@ router.put('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
   }
 });
 
-router.delete('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
+router.delete('/:id', async (req: AdminRequest, res) => {
   try {
     const { id } = req.params;
     
@@ -153,7 +152,6 @@ router.delete('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest,
 
 router.post(
   '/upload-image',
-  requirePermission('MANAGE_FAQ'),
   fileUpload(),
   async (req: AdminRequest, res) => {
     if (!req.files || !req.files.image) {
@@ -196,7 +194,6 @@ router.post(
 
 router.post(
   '/upload-video',
-  requirePermission('MANAGE_FAQ'),
   fileUpload(),
   async (req: AdminRequest, res) => {
     if (!req.files || !req.files.video) {
