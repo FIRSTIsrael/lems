@@ -6,6 +6,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Container, Box, CircularProgress } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { PageHeader } from '../../../../components/page-header';
+import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 import { useTeam } from '../../components/team-context';
 import { useEvent } from '../../../../../components/event-context';
 import { useUser } from '../../../../../../components/user-context';
@@ -13,6 +14,7 @@ import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
 import { GPSelector } from './components/gp-selector';
+import { ScoresheetSwitcher } from './components/scoresheet-switcher';
 import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
@@ -72,14 +74,20 @@ export default function ScoresheetPage() {
   }
 
   return (
-    <>
-      <PageHeader
-        title={t('title', {
-          teamNumber: team.number,
-          stage: getStage(scoresheet.stage),
-          round: scoresheet.round
-        })}
-      />
+    <Container disableGutters maxWidth="md">
+      <Box sx={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'background.paper' }}>
+        <PageHeader
+          title={t('title', {
+            teamNumber: team.number,
+            stage: getStage(scoresheet.stage),
+            round: scoresheet.round
+          })}
+        >
+          <RoleAuthorizer user={user} allowedRoles="head-referee">
+            <ScoresheetSwitcher />
+          </RoleAuthorizer>
+        </PageHeader>
+      </Box>
 
       <ScoresheetProvider scoresheet={scoresheet}>
         <Container maxWidth="md" sx={{ mt: 2 }}>
@@ -87,6 +95,6 @@ export default function ScoresheetPage() {
           {scoresheet.status === 'gp' && <GPSelector />}
         </Container>
       </ScoresheetProvider>
-    </>
+    </Container>
   );
 }

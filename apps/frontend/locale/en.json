@@ -957,6 +957,10 @@
       "processing": "Processing...",
       "error-failed-to-escalate": "Failed to update escalation status",
       "error-failed-to-reset": "Failed to reset scoresheet",
+      "selectScoresheet": {
+        "label": "Select a scoresheet",
+        "round": "round"
+      },
       "reset-dialog": {
         "title": "Reset Scoresheet",
         "warning": "This action cannot be undone!",
