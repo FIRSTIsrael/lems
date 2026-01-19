@@ -6,6 +6,10 @@ export const FaqResponseSchema = z.object({
   question: z.string(),
   answer: z.string(),
   displayOrder: z.number(),
+  createdBy: z.object({
+    id: z.string(),
+    name: z.string()
+  }),
   createdAt: z.string(),
   updatedAt: z.string()
 });

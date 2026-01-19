@@ -2,6 +2,11 @@ import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableFaq, Faq, UpdateableFaq } from '../schema/tables/faqs';
 
+export interface FaqWithCreator extends Faq {
+  creator_first_name: string;
+  creator_last_name: string;
+}
+
 class FaqSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -9,21 +14,41 @@ class FaqSelector {
   ) {}
 
   private getFaqQuery() {
-    return this.db.selectFrom('faqs').selectAll().where('id', '=', this.faqId);
+    return this.db
+      .selectFrom('faqs')
+      .innerJoin('admins', 'faqs.created_by', 'admins.id')
+      .select([
+        'faqs.pk',
+        'faqs.id',
+        'faqs.season_id',
+        'faqs.question',
+        'faqs.answer',
+        'faqs.display_order',
+        'faqs.created_by',
+        'faqs.created_at',
+        'faqs.updated_at',
+        'admins.first_name as creator_first_name',
+        'admins.last_name as creator_last_name'
+      ])
+      .where('faqs.id', '=', this.faqId);
   }
 
-  async get(): Promise<Faq | null> {
+  async get(): Promise<FaqWithCreator | null> {
     const faq = await this.getFaqQuery().executeTakeFirst();
     return faq || null;
   }
 
-  async update(updates: UpdateableFaq): Promise<Faq> {
-    const [updatedFaq] = await this.db
+  async update(updates: UpdateableFaq): Promise<FaqWithCreator> {
+    await this.db
       .updateTable('faqs')
       .set({ ...updates, updated_at: new Date() })
       .where('id', '=', this.faqId)
-      .returningAll()
       .execute();
+    
+    const updatedFaq = await this.get();
+    if (!updatedFaq) {
+      throw new Error('FAQ not found after update');
+    }
     return updatedFaq;
   }
 
@@ -39,18 +64,33 @@ class FaqsSelector {
   ) {}
 
   private getBaseQuery() {
-    let query = this.db.selectFrom('faqs').selectAll();
+    let query = this.db
+      .selectFrom('faqs')
+      .innerJoin('admins', 'faqs.created_by', 'admins.id')
+      .select([
+        'faqs.pk',
+        'faqs.id',
+        'faqs.season_id',
+        'faqs.question',
+        'faqs.answer',
+        'faqs.display_order',
+        'faqs.created_by',
+        'faqs.created_at',
+        'faqs.updated_at',
+        'admins.first_name as creator_first_name',
+        'admins.last_name as creator_last_name'
+      ]);
     if (this.seasonId) {
       query = query.where('season_id', '=', this.seasonId);
     }
     return query;
   }
 
-  async getAll(): Promise<Faq[]> {
+  async getAll(): Promise<FaqWithCreator[]> {
     return await this.getBaseQuery().orderBy('display_order', 'asc').execute();
   }
 
-  async search(searchTerm: string): Promise<Faq[]> {
+  async search(searchTerm: string): Promise<FaqWithCreator[]> {
     const term = `%${searchTerm}%`;
     return await this.getBaseQuery()
       .where(eb =>
@@ -79,13 +119,18 @@ export class FaqsRepository {
     return new FaqsSelector(this.db);
   }
 
-  async create(faq: InsertableFaq): Promise<Faq> {
+  async create(faq: InsertableFaq): Promise<FaqWithCreator> {
     const [createdFaq] = await this.db
       .insertInto('faqs')
       .values(faq)
-      .returningAll()
+      .returning('id')
       .execute();
-    return createdFaq;
+    
+    const faqWithCreator = await this.byId(createdFaq.id).get();
+    if (!faqWithCreator) {
+      throw new Error('FAQ not found after creation');
+    }
+    return faqWithCreator;
   }
 
   async getMaxDisplayOrder(seasonId: string): Promise<number> {

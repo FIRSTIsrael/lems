@@ -138,6 +138,7 @@ export default function FaqsPage() {
                 <TableCell>{t('table.question')}</TableCell>
                 <TableCell>{t('table.answer')}</TableCell>
                 <TableCell>{t('table.season')}</TableCell>
+                <TableCell>{t('table.created-by')}</TableCell>
                 <TableCell>{t('table.order')}</TableCell>
                 <TableCell align="right">{t('table.actions')}</TableCell>
               </TableRow>
@@ -145,7 +146,7 @@ export default function FaqsPage() {
             <TableBody>
               {faqs && faqs.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} align="center">
+                  <TableCell colSpan={6} align="center">
                     <Typography color="text.secondary" sx={{ py: 4 }}>
                       {t('empty-state')}
                     </Typography>
@@ -166,6 +167,9 @@ export default function FaqsPage() {
                     </TableCell>
                     <TableCell>
                       <Chip label={getSeasonName(faq.seasonId)} size="small" />
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2">{faq.createdBy.name}</Typography>
                     </TableCell>
                     <TableCell>{faq.displayOrder}</TableCell>
                     <TableCell align="right">

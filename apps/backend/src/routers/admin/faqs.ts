@@ -1,7 +1,7 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import { CreateFaqRequestSchema, UpdateFaqRequestSchema } from '@lems/types/api/admin';
-import { Faq } from '@lems/database';
+import { FaqWithCreator } from '@lems/database';
 import db from '../../lib/database';
 import { uploadFile } from '../../lib/blob-storage/upload';
 import { AdminRequest } from '../../types/express';
@@ -13,12 +13,16 @@ const IMAGE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 const VIDEO_SIZE_LIMIT = 50 * 1024 * 1024; // 50 MB
 
 // Helper function to format FAQ response
-const formatFaqResponse = (faq: Faq) => ({
+const formatFaqResponse = (faq: FaqWithCreator) => ({
   id: faq.id,
   seasonId: faq.season_id,
   question: faq.question,
   answer: faq.answer,
   displayOrder: faq.display_order,
+  createdBy: {
+    id: faq.created_by,
+    name: `${faq.creator_first_name} ${faq.creator_last_name}`
+  },
   createdAt: faq.created_at.toISOString(),
   updatedAt: faq.updated_at.toISOString()
 });
@@ -78,7 +82,8 @@ router.post('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res)
       season_id: seasonId,
       question,
       answer,
-      display_order: order
+      display_order: order,
+      created_by: req.userId
     });
     
     res.status(201).json(formatFaqResponse(faq));

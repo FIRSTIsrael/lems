@@ -7,6 +7,7 @@ export interface FaqsTable {
   question: string;
   answer: string;
   display_order: number;
+  created_by: string; // UUID foreign key to admins.id
   created_at: ColumnType<Date, never, never>; // Generated on insert
   updated_at: ColumnType<Date, never, Date>; // Updated on modification
 }

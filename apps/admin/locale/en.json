@@ -1072,6 +1072,7 @@
         "question": "Question",
         "answer": "Answer",
         "season": "Season",
+        "created-by": "Created By",
         "order": "Order",
         "actions": "Actions"
       },
