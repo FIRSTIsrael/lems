@@ -16,7 +16,6 @@ import {
   Typography
 } from '@mui/material';
 import { useJudgingStatus } from '../judging-status-context';
-import { useTime } from '../../../../../../../../lib/time/hooks';
 import { SessionRow } from './session-row';
 import { NextSessionRow } from './next-session-row';
 
@@ -29,7 +28,6 @@ export const JudgingStatusTable: React.FC = () => {
     sessionLength,
     loading
   } = useJudgingStatus();
-  const currentTime = useTime({ interval: 1000 });
 
   const sortedRooms = useMemo(() => {
     return [...rooms].sort((a, b) => a.name.localeCompare(b.name));
@@ -116,22 +114,14 @@ export const JudgingStatusTable: React.FC = () => {
                     {t('table.current-round')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {currentTime
-                      .hour(dayjs(currentSessions[0].scheduledTime).hour())
-                      .minute(dayjs(currentSessions[0].scheduledTime).minute())
-                      .format('HH:mm')}
+                    {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
                   </Typography>
                 </Stack>
               </TableCell>
               {sortedRooms.map(room => {
                 const session = currentSessions.find(s => s.room.id === room.id);
                 return (
-                  <SessionRow
-                    key={room.id}
-                    session={session!}
-                    currentTime={currentTime}
-                    sessionLength={sessionLength}
-                  />
+                  <SessionRow key={room.id} session={session!} sessionLength={sessionLength} />
                 );
               })}
             </TableRow>
@@ -149,10 +139,7 @@ export const JudgingStatusTable: React.FC = () => {
                     {t('table.next-round')}
                   </Typography>
                   <Typography variant="caption" color="text.secondary">
-                    {currentTime
-                      .hour(dayjs(nextSessions[0].scheduledTime).hour())
-                      .minute(dayjs(nextSessions[0].scheduledTime).minute())
-                      .format('HH:mm')}
+                    {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
                   </Typography>
                 </Stack>
               </TableCell>

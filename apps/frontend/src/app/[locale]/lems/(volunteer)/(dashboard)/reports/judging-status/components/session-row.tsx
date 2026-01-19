@@ -2,18 +2,17 @@
 
 import { Box, Stack, TableCell, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { JudgingSession } from '../graphql';
 import { TeamInfo } from '../../../components/team-info';
 import { SessionStatusChip } from './session-status-chip';
 
 interface SessionRowProps {
   session: JudgingSession;
-  currentTime: Dayjs;
   sessionLength: number;
 }
 
-export const SessionRow: React.FC<SessionRowProps> = ({ session, currentTime, sessionLength }) => {
+export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }) => {
   const t = useTranslations('pages.judging-status');
   const team = session.team;
 
@@ -32,10 +31,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, currentTime, se
           {session.startTime && session.startDelta !== undefined && (
             <Typography variant="caption" color="text.secondary">
               {t('table.started-at', {
-                time: currentTime
-                  .hour(dayjs(session.startTime).hour())
-                  .minute(dayjs(session.startTime).minute())
-                  .format('HH:mm')
+                time: dayjs(session.startTime).format('HH:mm')
               })}
             </Typography>
           )}
@@ -43,11 +39,7 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, currentTime, se
           {session.status === 'in-progress' && session.startTime && (
             <Typography variant="caption" color="text.secondary">
               {t('table.ends-at', {
-                time: currentTime
-                  .hour(dayjs(session.startTime).hour())
-                  .minute(dayjs(session.startTime).minute())
-                  .add(sessionLength, 'seconds')
-                  .format('HH:mm')
+                time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
               })}
             </Typography>
           )}

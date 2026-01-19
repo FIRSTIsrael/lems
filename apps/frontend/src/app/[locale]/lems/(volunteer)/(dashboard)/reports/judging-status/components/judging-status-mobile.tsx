@@ -5,7 +5,6 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Box, Card, CardContent, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { useJudgingStatus } from '../judging-status-context';
-import { useTime } from '../../../../../../../../lib/time/hooks';
 import { SessionCard } from './session-card';
 
 export const JudgingStatusMobile: React.FC = () => {
@@ -17,7 +16,6 @@ export const JudgingStatusMobile: React.FC = () => {
     sessionLength,
     loading
   } = useJudgingStatus();
-  const currentTime = useTime({ interval: 1000 });
 
   const sortedRooms = useMemo(() => {
     return [...rooms].sort((a, b) => a.name.localeCompare(b.name));
@@ -62,10 +60,7 @@ export const JudgingStatusMobile: React.FC = () => {
                 {t('table.current-round')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {currentTime
-                  .hour(dayjs(currentSessions[0].scheduledTime).hour())
-                  .minute(dayjs(currentSessions[0].scheduledTime).minute())
-                  .format('HH:mm')}
+                {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>
@@ -79,7 +74,6 @@ export const JudgingStatusMobile: React.FC = () => {
                 room={room}
                 isCurrentRound={true}
                 sessionLength={sessionLength}
-                currentTime={currentTime}
               />
             ) : null;
           })}
@@ -94,10 +88,7 @@ export const JudgingStatusMobile: React.FC = () => {
                 {t('table.next-round')}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                {currentTime
-                  .hour(dayjs(nextSessions[0].scheduledTime).hour())
-                  .minute(dayjs(nextSessions[0].scheduledTime).minute())
-                  .format('HH:mm')}
+                {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>
@@ -111,7 +102,6 @@ export const JudgingStatusMobile: React.FC = () => {
                 room={room}
                 isCurrentRound={false}
                 sessionLength={sessionLength}
-                currentTime={currentTime}
               />
             ) : null;
           })}

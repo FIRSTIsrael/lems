@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { Card, CardContent, Stack, Typography } from '@mui/material';
 import { JudgingSession, Room } from '../graphql';
 import { TeamInfo } from '../../../components/team-info';
@@ -12,15 +12,13 @@ interface SessionCardProps {
   room: Room;
   isCurrentRound: boolean;
   sessionLength: number;
-  currentTime: Dayjs;
 }
 
 export const SessionCard: React.FC<SessionCardProps> = ({
   session,
   room,
   isCurrentRound,
-  sessionLength,
-  currentTime
+  sessionLength
 }) => {
   const t = useTranslations('pages.judging-status');
   const team = session.team;
@@ -50,10 +48,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               {session.startTime && session.startDelta !== undefined && (
                 <Typography variant="caption" color="text.secondary">
                   {t('table.started-at', {
-                    time: currentTime
-                      .hour(parseInt(session.startTime.split('T')[1].split(':')[0]))
-                      .minute(parseInt(session.startTime.split('T')[1].split(':')[1]))
-                      .format('HH:mm')
+                    time: dayjs(session.startTime).format('HH:mm')
                   })}
                   {session.startDelta !== 0 && (
                     <Typography
@@ -72,11 +67,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               {session.status === 'in-progress' && session.startTime && (
                 <Typography variant="caption" color="text.secondary">
                   {t('table.ends-at', {
-                    time: currentTime
-                      .hour(parseInt(session.startTime.split('T')[1].split(':')[0]))
-                      .minute(parseInt(session.startTime.split('T')[1].split(':')[1]))
-                      .add(sessionLength, 'seconds')
-                      .format('HH:mm')
+                    time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
                   })}
                 </Typography>
               )}
