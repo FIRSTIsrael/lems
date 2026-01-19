@@ -141,7 +141,6 @@ export function FaqEditorDialog({ open, faq, seasons, onClose }: FaqEditorDialog
     {
       editorRef,
       onAnswerChange: setAnswer,
-      saveSelection,
       restoreSelection
     }
   );

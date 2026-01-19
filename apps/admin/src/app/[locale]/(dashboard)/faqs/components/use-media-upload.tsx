@@ -3,9 +3,8 @@ import { apiFetch } from '@lems/shared';
 import { useTranslations } from 'next-intl';
 
 interface UseMediaUploadProps {
-  editorRef: React.RefObject<HTMLDivElement>;
+  editorRef: React.RefObject<HTMLDivElement | null>;
   onAnswerChange: (html: string) => void;
-  saveSelection: () => void;
   restoreSelection: () => void;
 }
 

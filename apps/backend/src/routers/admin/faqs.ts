@@ -109,7 +109,7 @@ router.put('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
       return;
     }
     
-    const updates: Partial<{ question: string; answer: string; display_order: number }> = {};
+    const updates: Record<string, string | number> = {};
     if (validation.data.question !== undefined) updates.question = validation.data.question;
     if (validation.data.answer !== undefined) updates.answer = validation.data.answer;
     if (validation.data.displayOrder !== undefined) updates.display_order = validation.data.displayOrder;

@@ -7,6 +7,20 @@ export interface FaqWithCreator extends Faq {
   creator_last_name: string;
 }
 
+const FAQ_FIELDS = [
+  'faqs.pk',
+  'faqs.id',
+  'faqs.season_id',
+  'faqs.question',
+  'faqs.answer',
+  'faqs.display_order',
+  'faqs.created_by',
+  'faqs.created_at',
+  'faqs.updated_at',
+  'admins.first_name as creator_first_name',
+  'admins.last_name as creator_last_name'
+] as const;
+
 class FaqSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -17,19 +31,7 @@ class FaqSelector {
     return this.db
       .selectFrom('faqs')
       .innerJoin('admins', 'faqs.created_by', 'admins.id')
-      .select([
-        'faqs.pk',
-        'faqs.id',
-        'faqs.season_id',
-        'faqs.question',
-        'faqs.answer',
-        'faqs.display_order',
-        'faqs.created_by',
-        'faqs.created_at',
-        'faqs.updated_at',
-        'admins.first_name as creator_first_name',
-        'admins.last_name as creator_last_name'
-      ])
+      .select(FAQ_FIELDS)
       .where('faqs.id', '=', this.faqId);
   }
 
@@ -67,19 +69,7 @@ class FaqsSelector {
     let query = this.db
       .selectFrom('faqs')
       .innerJoin('admins', 'faqs.created_by', 'admins.id')
-      .select([
-        'faqs.pk',
-        'faqs.id',
-        'faqs.season_id',
-        'faqs.question',
-        'faqs.answer',
-        'faqs.display_order',
-        'faqs.created_by',
-        'faqs.created_at',
-        'faqs.updated_at',
-        'admins.first_name as creator_first_name',
-        'admins.last_name as creator_last_name'
-      ]);
+      .select(FAQ_FIELDS);
     if (this.seasonId) {
       query = query.where('season_id', '=', this.seasonId);
     }

@@ -1,11 +1,11 @@
 import express from 'express';
-import { Faq } from '@lems/database';
+import { FaqWithCreator } from '@lems/database';
 import db from '../../lib/database';
 
 const router = express.Router();
 
-// Helper function to format FAQ response for portal (excludes timestamps and seasonId)
-const formatPortalFaqResponse = (faq: Faq) => ({
+// Format FAQ response for portal - excludes creator info, timestamps, and seasonId for public consumption
+const formatPortalFaqResponse = (faq: FaqWithCreator) => ({
   id: faq.id,
   question: faq.question,
   answer: faq.answer,
@@ -45,7 +45,7 @@ router.get('/search', async (req, res) => {
       return;
     }
     
-    let faqs: Faq[];
+    let faqs: FaqWithCreator[];
     if (seasonId && typeof seasonId === 'string') {
       faqs = await db.faqs.bySeason(seasonId).search(q);
     } else {
