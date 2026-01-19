@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import type { Division, Field, Match, Table } from '../graphql';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface FieldStatusContextType {
   division: Division;
@@ -30,6 +31,7 @@ interface FieldStatusProviderProps {
 export function FieldStatusProvider({ data, children }: FieldStatusProviderProps) {
   const { division, field, tables } = data;
   const matches = field.matches;
+  const now = useTime({ interval: 1000 });
 
   const value = useMemo<FieldStatusContextType>(() => {
     const activeMatch = field.activeMatch
@@ -42,7 +44,6 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
 
     const queuedMatches = matches.filter(m => m.called && m.status === 'not-started');
 
-    const now = dayjs();
     const currentStage = field.currentStage;
 
     const notStartedMatches = matches
@@ -75,7 +76,7 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       upcomingMatches,
       matchLength: field.matchLength
     };
-  }, [division, field, tables, matches]);
+  }, [division, field, tables, matches, now]);
 
   return <FieldStatusContext.Provider value={value}>{children}</FieldStatusContext.Provider>;
 }
