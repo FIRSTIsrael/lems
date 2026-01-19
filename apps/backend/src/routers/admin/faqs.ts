@@ -1,7 +1,7 @@
 import express from 'express';
 import fileUpload from 'express-fileupload';
 import { CreateFaqRequestSchema, UpdateFaqRequestSchema } from '@lems/types/api/admin';
-import { FaqWithCreator } from '@lems/database';
+import { Faq } from '@lems/database';
 import db from '../../lib/database';
 import { uploadFile } from '../../lib/blob-storage/upload';
 import { AdminRequest } from '../../types/express';
@@ -19,18 +19,18 @@ const handleError = (res: express.Response, error: unknown, context: string) => 
 };
 
 //to format FAQ response
-const formatFaqResponse = (faq: FaqWithCreator) => ({
-  id: faq.id,
-  seasonId: faq.season_id,
+const formatFaqResponse = (faq: Faq) => ({
+  id: faq._id?.toString() || '',
+  seasonId: faq.seasonId,
   question: faq.question,
   answer: faq.answer,
-  displayOrder: faq.display_order,
+  displayOrder: faq.displayOrder,
   createdBy: {
-    id: faq.created_by,
-    name: `${faq.creator_first_name} ${faq.creator_last_name}`
+    id: faq.createdBy.id,
+    name: `${faq.createdBy.firstName} ${faq.createdBy.lastName}`
   },
-  createdAt: faq.created_at.toISOString(),
-  updatedAt: faq.updated_at.toISOString()
+  createdAt: faq.createdAt.toISOString(),
+  updatedAt: faq.updatedAt.toISOString()
 });
 
 router.get('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) => {
@@ -81,12 +81,23 @@ router.post('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res)
     
     const order = displayOrder ?? (await db.faqs.getMaxDisplayOrder(seasonId)) + 1;
     
+    // Get admin info for creator
+    const admin = await db.admins.byId(req.userId).get();
+    if (!admin) {
+      res.status(401).json({ error: 'Admin not found' });
+      return;
+    }
+    
     const faq = await db.faqs.create({
-      season_id: seasonId,
+      seasonId,
       question,
       answer,
-      display_order: order,
-      created_by: req.userId
+      displayOrder: order,
+      createdBy: {
+        id: req.userId,
+        firstName: admin.first_name,
+        lastName: admin.last_name
+      }
     });
     
     res.status(201).json(formatFaqResponse(faq));
@@ -111,10 +122,10 @@ router.put('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
       return;
     }
     
-    const updates: Record<string, string | number> = {};
+    const updates: { question?: string; answer?: string; displayOrder?: number } = {};
     if (validation.data.question !== undefined) updates.question = validation.data.question;
     if (validation.data.answer !== undefined) updates.answer = validation.data.answer;
-    if (validation.data.displayOrder !== undefined) updates.display_order = validation.data.displayOrder;
+    if (validation.data.displayOrder !== undefined) updates.displayOrder = validation.data.displayOrder;
     
     const updatedFaq = await db.faqs.byId(id).update(updates);
     res.json(formatFaqResponse(updatedFaq));

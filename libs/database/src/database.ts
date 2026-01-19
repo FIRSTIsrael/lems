@@ -18,7 +18,7 @@ import { RubricsRepository } from './repositories/rubrics';
 import { ScoresheetsRepository } from './repositories/scoresheets';
 import { JudgingDeliberationsRepository } from './repositories/judging-deliberations';
 import { FinalDeliberationsRepository } from './repositories/final-deliberations';
-import { FaqsRepository } from './repositories/faqs';
+import { FaqsRepository } from './repositories/faqs-mongo';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -140,7 +140,7 @@ export class Database {
     this.scoresheets = new ScoresheetsRepository(this.kysely, this.mongoDb);
 
     this.awards = new AwardsRepository(this.kysely);
-    this.faqs = new FaqsRepository(this.kysely);
+    this.faqs = new FaqsRepository(this.mongoDb);
   }
 
   async connect(): Promise<void> {

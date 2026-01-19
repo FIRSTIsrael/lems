@@ -1,5 +1,5 @@
 import express from 'express';
-import { FaqWithCreator } from '@lems/database';
+import { Faq } from '@lems/database';
 import db from '../../lib/database';
 
 const router = express.Router();
@@ -11,11 +11,11 @@ const handleError = (res: express.Response, error: unknown, context: string) => 
 };
 
 // Format FAQ response for portal - excludes creator info, timestamps, and seasonId for public consumption
-const formatPortalFaqResponse = (faq: FaqWithCreator) => ({
-  id: faq.id,
+const formatPortalFaqResponse = (faq: Faq) => ({
+  id: faq._id?.toString() || '',
   question: faq.question,
   answer: faq.answer,
-  displayOrder: faq.display_order
+  displayOrder: faq.displayOrder
 });
 
 // GET /portal/faqs - Get all FAQs
@@ -49,7 +49,7 @@ router.get('/search', async (req, res) => {
       return;
     }
     
-    let faqs: FaqWithCreator[];
+    let faqs: Faq[];
     if (seasonId && typeof seasonId === 'string') {
       faqs = await db.faqs.bySeason(seasonId).search(q);
     } else {
