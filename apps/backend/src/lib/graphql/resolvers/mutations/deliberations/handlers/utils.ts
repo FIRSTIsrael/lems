@@ -1,5 +1,5 @@
 import { Scoresheet, JudgingCategory } from '@lems/database';
-import { calculateTeamRanks } from '@lems/shared/deliberation';
+import { calculateTeamRanks, TeamWithRanks } from '@lems/shared/deliberation';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
 import { getRedisPubSub } from '../../../../../redis/redis-pubsub';
@@ -72,10 +72,7 @@ function calculateRubricScores(
 /**
  * Calculates GP score for a specific team
  */
-function calculateGPScore(
-  teamId: string,
-  scoresheets: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
-): number {
+function calculateGPScore(teamId: string, scoresheets: Scoresheet[]): number {
   return scoresheets
     .filter(s => s.teamId === teamId)
     .reduce((sum, sheet) => {
@@ -89,8 +86,7 @@ function calculateGPScore(
 export async function rankTeams(
   teamScores: TeamScoreData[],
   divisionId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
+): Promise<TeamWithRanks[]> {
   const picklists = await fetchPicklists(divisionId);
 
   return teamScores.map(teamData => {
