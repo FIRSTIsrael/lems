@@ -41,7 +41,13 @@ type Navigator = {
   };
 };
 
-const navigator: Navigator = {
+type NavItem = {
+  icon: React.ReactNode;
+  label: string;
+  route: string;
+};
+
+const permissionBasedNavigator: Navigator = {
   MANAGE_SEASONS: {
     icon: <CalendarMonthOutlined />,
     label: 'seasons',
@@ -66,13 +72,16 @@ const navigator: Navigator = {
     icon: <PersonOutlined />,
     label: 'users',
     route: 'users'
-  },
-  MANAGE_FAQ: {
+  }
+};
+
+const alwaysVisibleNav: NavItem[] = [
+  {
     icon: <QuestionAnswer />,
     label: 'faqs',
     route: 'faqs'
   }
-};
+];
 
 interface AppBarProps {
   width: number;
@@ -107,11 +116,11 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
       </Toolbar>
       <Divider />
       <List sx={{ flexGrow: 1 }}>
-        {Object.keys(navigator).map(permissionKey => {
+        {Object.keys(permissionBasedNavigator).map(permissionKey => {
           const permission = permissionKey as PermissionType;
           if (!permissions.includes(permission)) return null;
 
-          const navItem = navigator[permission];
+          const navItem = permissionBasedNavigator[permission];
           if (!navItem) return null;
 
           return (
@@ -125,6 +134,16 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
             </Link>
           );
         })}
+        {alwaysVisibleNav.map(navItem => (
+          <Link key={navItem.route} href={`/${navItem.route}`}>
+            <ListItem disablePadding>
+              <ListItemButton>
+                <ListItemIcon>{navItem.icon}</ListItemIcon>
+                <ListItemText primary={t(`sidebar.${navItem.label}`)} />
+              </ListItemButton>
+            </ListItem>
+          </Link>
+        ))}
       </List>
       <Divider />
       <List>

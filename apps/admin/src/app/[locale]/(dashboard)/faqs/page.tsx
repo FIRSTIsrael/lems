@@ -26,14 +26,11 @@ import { useTranslations } from 'next-intl';
 import useSWR from 'swr';
 import { FaqResponse } from '@lems/types/api/admin';
 import { Season } from '@lems/database';
-import { useSession } from '../components/session-context';
 import { FaqEditorDialog } from './components/faq-editor-dialog';
 import { DeleteConfirmDialog } from './components/delete-confirm-dialog';
 
 export default function FaqsPage() {
   const t = useTranslations('pages.faqs');
-  const { permissions } = useSession();
-  const hasPermission = permissions.includes('MANAGE_FAQ');
   const [selectedSeasonId, setSelectedSeasonId] = useState<string>('all');
   const [editingFaq, setEditingFaq] = useState<FaqResponse | null>(null);
   const [deletingFaq, setDeletingFaq] = useState<FaqResponse | null>(null);
@@ -43,14 +40,6 @@ export default function FaqsPage() {
   const { data: faqs, error: faqsError } = useSWR<FaqResponse[]>(
     selectedSeasonId === 'all' ? '/admin/faqs' : `/admin/faqs/season/${selectedSeasonId}`
   );
-
-  if (!hasPermission) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Alert severity="error">{t('errors.no-permission')}</Alert>
-      </Box>
-    );
-  }
 
   const loading = !faqs || !seasons;
   const error = faqsError || seasonsError;
