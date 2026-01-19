@@ -12,7 +12,13 @@ const router = express.Router();
 const IMAGE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 const VIDEO_SIZE_LIMIT = 50 * 1024 * 1024; // 50 MB
 
-// Helper function to format FAQ response
+//to handle errors consistently
+const handleError = (res: express.Response, error: unknown, context: string) => {
+  console.error(`Error ${context}:`, error);
+  res.status(500).json({ error: 'Internal server error' });
+};
+
+//to format FAQ response
 const formatFaqResponse = (faq: FaqWithCreator) => ({
   id: faq.id,
   seasonId: faq.season_id,
@@ -32,8 +38,7 @@ router.get('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res) 
     const faqs = await db.faqs.all().getAll();
     res.json(faqs.map(formatFaqResponse));
   } catch (error) {
-    console.error('Error fetching FAQs:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'fetching FAQs');
   }
 });
 
@@ -43,8 +48,7 @@ router.get('/season/:seasonId', requirePermission('MANAGE_FAQ'), async (req: Adm
     const faqs = await db.faqs.bySeason(seasonId).getAll();
     res.json(faqs.map(formatFaqResponse));
   } catch (error) {
-    console.error('Error fetching FAQs by season:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'fetching FAQs by season');
   }
 });
 
@@ -60,8 +64,7 @@ router.get('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
     
     res.json(formatFaqResponse(faq));
   } catch (error) {
-    console.error('Error fetching FAQ:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'fetching FAQ');
   }
 });
 
@@ -88,8 +91,7 @@ router.post('/', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, res)
     
     res.status(201).json(formatFaqResponse(faq));
   } catch (error) {
-    console.error('Error creating FAQ:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'creating FAQ');
   }
 });
 
@@ -117,8 +119,7 @@ router.put('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest, re
     const updatedFaq = await db.faqs.byId(id).update(updates);
     res.json(formatFaqResponse(updatedFaq));
   } catch (error) {
-    console.error('Error updating FAQ:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'updating FAQ');
   }
 });
 
@@ -135,8 +136,7 @@ router.delete('/:id', requirePermission('MANAGE_FAQ'), async (req: AdminRequest,
     await db.faqs.byId(id).delete();
     res.status(204).send();
   } catch (error) {
-    console.error('Error deleting FAQ:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'deleting FAQ');
   }
 });
 

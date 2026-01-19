@@ -4,6 +4,12 @@ import db from '../../lib/database';
 
 const router = express.Router();
 
+// Helper function to handle errors consistently
+const handleError = (res: express.Response, error: unknown, context: string) => {
+  console.error(`Error ${context}:`, error);
+  res.status(500).json({ error: 'Internal server error' });
+};
+
 // Format FAQ response for portal - excludes creator info, timestamps, and seasonId for public consumption
 const formatPortalFaqResponse = (faq: FaqWithCreator) => ({
   id: faq.id,
@@ -18,8 +24,7 @@ router.get('/', async (req, res) => {
     const faqs = await db.faqs.all().getAll();
     res.json(faqs.map(formatPortalFaqResponse));
   } catch (error) {
-    console.error('Error fetching FAQs:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'fetching FAQs');
   }
 });
 
@@ -30,8 +35,7 @@ router.get('/season/:seasonId', async (req, res) => {
     const faqs = await db.faqs.bySeason(seasonId).getAll();
     res.json(faqs.map(formatPortalFaqResponse));
   } catch (error) {
-    console.error('Error fetching FAQs by season:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'fetching FAQs by season');
   }
 });
 
@@ -54,8 +58,7 @@ router.get('/search', async (req, res) => {
     
     res.json(faqs.map(formatPortalFaqResponse));
   } catch (error) {
-    console.error('Error searching FAQs:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    handleError(res, error, 'searching FAQs');
   }
 });
 

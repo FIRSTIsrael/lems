@@ -36,7 +36,7 @@ export async function up(db: Kysely<any>): Promise<void> {
     .onDelete('restrict')
     .execute();
 
-  // Create index 
+  // Create index for created_by lookups
   await db.schema
     .createIndex('idx_faqs_created_by')
     .on('faqs')
@@ -45,7 +45,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
-  // Drop
+  // Drop index and constraints
   await db.schema.dropIndex('idx_faqs_created_by').ifExists().execute();
 
   await db.schema
