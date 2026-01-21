@@ -22,3 +22,8 @@ export {
   TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
   createTeamArrivalSubscription
 } from './team-arrival-updated';
+
+export {
+  DELIBERATION_UPDATED_SUBSCRIPTION,
+  createDeliberationUpdatedSubscription
+} from './deliberation-updated';
