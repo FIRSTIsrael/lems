@@ -597,7 +597,7 @@
       }
     },
     "referee": {
-      "page-title": "Referee Dashboard",
+      "page-title": "Referee Dashboard | Table {table}",
       "match-running": "Match Running",
       "match-slug": "Match",
       "prestart-title": "Match Preparation",

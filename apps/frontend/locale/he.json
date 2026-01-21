@@ -596,7 +596,7 @@
       }
     },
     "referee": {
-      "page-title": "שופט זירה",
+      "page-title": "שופט זירה | שולחן {table}",
       "match-running": "מקצה פעיל",
       "match-slug": "צקצה",
       "prestart-title": "התכוננת למקצה",

@@ -65,7 +65,7 @@ export default function RefereePage() {
   if (loading || !data || !tableId) {
     return (
       <>
-        <PageHeader title={t('page-title')} />
+        <PageHeader title={t('page-title', { table: tableId })} />
         <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
           <Box sx={{ animation: 'pulse 2s infinite' }}>Loading referee data...</Box>
         </Container>
@@ -75,7 +75,7 @@ export default function RefereePage() {
 
   return (
     <>
-      <PageHeader title={t('page-title')} />
+      <PageHeader title={t('page-title', { table: tableId })} />
       <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
         <RefereeProvider data={data}>
           <RefereeContent />
