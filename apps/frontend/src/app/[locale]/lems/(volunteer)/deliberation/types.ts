@@ -81,6 +81,7 @@ export interface ScoresheetData {
 export interface Scoresheet {
   id: string;
   round: number;
+  stage: 'PRACTICE' | 'RANKING';
   slug: string;
   data?: ScoresheetData;
 }

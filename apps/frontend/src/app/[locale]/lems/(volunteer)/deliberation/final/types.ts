@@ -7,7 +7,7 @@ export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awa
 export type StagesWithNomination = 'champions' | 'core-awards' | 'optional-awards';
 
 export type OptionalAwardNominations = Partial<Record<OptionalAwards, boolean>>;
-export type RanksPerCategory = Record<JudgingCategory | 'total', number>;
+export type RanksPerCategory = Record<JudgingCategory | 'total' | 'robot-game', number>;
 export type EligiblityPerStage = Record<StagesWithNomination, boolean>;
 export type RubricFields = Record<string, number | null>;
 export type RubricsFields = Record<JudgingCategory, RubricFields>;

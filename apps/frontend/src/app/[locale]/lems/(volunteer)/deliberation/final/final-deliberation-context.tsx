@@ -142,7 +142,8 @@ export const FinalDeliberationProvider = ({
 
     const teamsWithScores = division.teams.map((team, index) => ({
       ...team,
-      scores: teamScores[index]
+      scores: teamScores[index],
+      robotGameScores: team.scoresheets.map(s => s.data?.score || 0)
     }));
 
     // Step 2: Compute room metrics (aggregated scores per room)
@@ -163,13 +164,7 @@ export const FinalDeliberationProvider = ({
       // Compute ranks
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
 
-      const eligibilites: EligiblityPerStage = {
-        champions: computeChampionsEligibility(
-          { ...team, ranks },
-          division.judging.advancementPercentage
-            ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
-            : (awardCounts.champions || 0) + 3
-        ),
+      const eligibilites: Partial<EligiblityPerStage> = {
         'core-awards': computeCoreAwardsEligibility(
           team,
           categoryPicklists,
@@ -217,7 +212,20 @@ export const FinalDeliberationProvider = ({
         },
         gpScores,
         awardNominations
-      };
+      } as EnrichedTeam;
+    });
+
+    const teamsSortedByTotalRank = [...enrichedTeams].sort((a, b) => a.ranks.total - b.ranks.total);
+
+    // Compute champions eligibility
+    enrichedTeams.forEach(team => {
+      team.eligibility.champions = computeChampionsEligibility(
+        team.id,
+        teamsSortedByTotalRank,
+        division.judging.advancementPercentage
+          ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
+          : (awardCounts.champions || 0) + 3
+      );
     });
 
     const eligibleTeams: Record<StagesWithNomination, string[]> = {
