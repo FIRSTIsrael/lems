@@ -26,16 +26,16 @@ export const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
     >
       <Box sx={{ position: 'relative', height: '100%', width: '200px', padding: 2 }}>
         <Image
-          src="/assets/audience-display/sponsors/first-israel-horizontal.svg"
-          alt="FIRST Israel"
+          src="/assets/audience-display/sponsors/first-horizontal.svg"
+          alt="FIRST Logo"
           fill
           style={{ objectFit: 'contain' }}
         />
       </Box>
       <Box sx={{ position: 'relative', height: '100%', width: '200px', padding: 2 }}>
         <Image
-          src="/assets/audience-display/sponsors/technion-horizontal.svg"
-          alt="Technion"
+          src="/assets/audience-display/sponsors/lego-education.svg"
+          alt="Lego Education"
           fill
           style={{ objectFit: 'contain' }}
         />
