@@ -1,5 +1,6 @@
 import { Scoresheet, JudgingCategory } from '@lems/database';
-import { calculateTeamRanks } from '@lems/shared/deliberation';
+import { rubrics } from '@lems/shared/rubrics';
+import { calculateTeamRanks, TeamWithRanks } from '@lems/shared/deliberation';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
 import { getRedisPubSub } from '../../../../../redis/redis-pubsub';
@@ -35,8 +36,32 @@ export async function calculateAllTeamScores(
     teamNumber: team.number,
     rubricScores: calculateRubricScores(team.id, rubrics),
     gpScore: calculateGPScore(team.id, scoresheets),
-    robotGameScores: scoresheets.filter(s => s.teamId === team.id).map(s => s.data?.score || 0)
+    robotGameScores: scoresheets
+      .filter(s => s.teamId === team.id && s.stage === 'RANKING')
+      .map(s => s.data?.score || 0)
   }));
+}
+
+/**
+ * Returns core values field names
+ */
+
+function getCoreValuesFieldNames(): string[] {
+  const innovationProjectSchema = rubrics['innovation-project'];
+  const robotDesignSchema = rubrics['robot-design'];
+  const coreValuesFields: string[] = [];
+
+  innovationProjectSchema.sections.forEach(section => {
+    section.fields.forEach(field => {
+      if (field.coreValues) coreValuesFields.push(`IP-${field.id}`);
+    });
+  });
+  robotDesignSchema.sections.forEach(section => {
+    section.fields.forEach(field => {
+      if (field.coreValues) coreValuesFields.push(`RD-${field.id}`);
+    });
+  });
+  return coreValuesFields;
 }
 
 /**
@@ -44,7 +69,7 @@ export async function calculateAllTeamScores(
  */
 function calculateRubricScores(
   teamId: string,
-  rubrics: Array<{
+  teamRubrics: Array<{
     teamId: string;
     data?: { fields?: Record<string, { value?: number }> };
     category: JudgingCategory;
@@ -56,8 +81,27 @@ function calculateRubricScores(
     'core-values': 0
   };
 
-  const rubricsForTeam = rubrics.filter(r => r.teamId === teamId);
+  const rubricsForTeam = teamRubrics.filter(r => r.teamId === teamId);
   rubricsForTeam.forEach(rubric => {
+    if (rubric.category === 'core-values') {
+      let coreValuesScore = 0;
+      const innovationProjectRubric = rubricsForTeam.find(r => r.category === 'innovation-project');
+      const robotDesignRubric = rubricsForTeam.find(r => r.category === 'robot-design');
+      const coreValuesFieldNames = getCoreValuesFieldNames();
+
+      if (innovationProjectRubric?.data?.fields) {
+        Object.entries(innovationProjectRubric.data.fields).forEach(([key, field]) => {
+          if (coreValuesFieldNames.includes(`IP-${key}`)) coreValuesScore += field.value ?? 0;
+        });
+      }
+      if (robotDesignRubric?.data?.fields) {
+        Object.entries(robotDesignRubric.data.fields).forEach(([key, field]) => {
+          if (coreValuesFieldNames.includes(`RD-${key}`)) coreValuesScore += field.value ?? 0;
+        });
+      }
+      rubricScores['core-values'] = coreValuesScore;
+      return;
+    }
     if (rubric.data?.fields) {
       const fieldSum = Object.values(rubric.data.fields).reduce((sum, field) => {
         return sum + (field.value ?? 0);
@@ -72,14 +116,11 @@ function calculateRubricScores(
 /**
  * Calculates GP score for a specific team
  */
-function calculateGPScore(
-  teamId: string,
-  scoresheets: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
-): number {
+function calculateGPScore(teamId: string, scoresheets: Scoresheet[]): number {
   return scoresheets
-    .filter(s => s.teamId === teamId)
+    .filter(s => s.teamId === teamId && s.stage === 'RANKING')
     .reduce((sum, sheet) => {
-      return sum + (sheet.data?.gp?.value ?? 0);
+      return sum + (sheet.data?.gp?.value ?? 3);
     }, 0);
 }
 
@@ -89,20 +130,22 @@ function calculateGPScore(
 export async function rankTeams(
   teamScores: TeamScoreData[],
   divisionId: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): Promise<any[]> {
+): Promise<TeamWithRanks[]> {
   const picklists = await fetchPicklists(divisionId);
 
-  return teamScores.map(teamData => {
-    // For core-values rank tiebreaker, add GP score
-    const teamDataWithGP = {
-      ...teamData,
-      rubricScores: {
-        ...teamData.rubricScores,
-        'core-values': teamData.rubricScores['core-values'] + teamData.gpScore
-      }
-    };
-    return calculateTeamRanks(teamDataWithGP, teamScores, picklists);
+  // Calculate modified scores for all teams first (add GP score to core-values)
+  const teamScoresWithGP = teamScores.map(teamData => ({
+    ...teamData,
+    rubricScores: {
+      ...teamData.rubricScores,
+      'core-values': teamData.rubricScores['core-values'] + teamData.gpScore
+    }
+  }));
+
+  return teamScoresWithGP.map(teamData => {
+    const teamDataCopy = structuredClone(teamData);
+    const teamScoresWithGPCopy = structuredClone(teamScoresWithGP);
+    return calculateTeamRanks(teamDataCopy, teamScoresWithGPCopy, picklists);
   });
 }
 
