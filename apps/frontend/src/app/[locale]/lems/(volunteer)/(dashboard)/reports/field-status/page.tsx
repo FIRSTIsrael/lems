@@ -37,10 +37,10 @@ function FieldStatusContent() {
         />
 
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <ActiveMatchPanel match={activeMatch} />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <NextMatchPanel match={loadedMatch} />
           </Grid>
         </Grid>
