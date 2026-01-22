@@ -88,19 +88,6 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
     }
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'ready':
-        return t('next-match.status.ready');
-      case 'present':
-        return t('next-match.status.present');
-      case 'queued':
-        return t('next-match.status.queued');
-      default:
-        return t('next-match.status.not-present');
-    }
-  };
-
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
@@ -139,63 +126,63 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
           />
         </Stack>
 
-        <Box>
-          <Stack spacing={1}>
-            {participants.map(participant => {
-              const status = getParticipantStatus(participant);
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+            gap: 1
+          }}
+        >
+          {participants.map(participant => {
+            const status = getParticipantStatus(participant);
 
-              return (
-                <Stack
-                  key={participant.id}
-                  direction="row"
-                  spacing={0.5}
-                  alignItems="center"
-                  sx={{
-                    py: 1,
-                    px: 2,
-                    bgcolor: 'background.default',
-                    borderRadius: 1
-                  }}
+            return (
+              <Stack
+                key={participant.id}
+                direction="row"
+                spacing={0.5}
+                alignItems="center"
+                sx={{
+                  py: 0.75,
+                  px: 2,
+                  borderRadius: 1,
+                  border: '2px solid',
+                  borderColor:
+                    status === 'ready'
+                      ? 'success.main'
+                      : status === 'present'
+                        ? 'warning.main'
+                        : status === 'queued'
+                          ? 'info.main'
+                          : 'error.main'
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  fontWeight={500}
+                  sx={{ minWidth: 80, fontSize: '1.05rem' }}
                 >
-                  <Typography
-                    variant="body2"
-                    fontWeight={500}
-                    sx={{ maxWidth: 80, fontSize: '1.05rem' }}
-                  >
-                    {participant.table.name}:
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}
-                  >
-                    {participant.team
-                      ? t('next-match.team-number', { number: participant.team.number })
-                      : '—'}
-                  </Typography>
-                  <Stack direction="row" spacing={0.5} alignItems="center">
-                    {getStatusIcon(status)}
-                    <Typography
-                      variant="caption"
-                      color="text.secondary"
-                      sx={{ fontSize: '0.95rem', fontWeight: 500 }}
-                    >
-                      {getStatusText(status)}
-                    </Typography>
-                  </Stack>
-                  {participant.team?.arrived === false && (
-                    <Chip
-                      icon={<WarningAmberRounded />}
-                      label={t('next-match.status.not-arrived')}
-                      color="warning"
-                      variant="outlined"
-                      size="small"
-                      sx={{ ml: 1 }}
-                    />
-                  )}
-                </Stack>
-              );
-            })}
-          </Stack>
+                  {participant.table.name}:
+                </Typography>
+                <Typography variant="body2" sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}>
+                  {participant.team
+                    ? t('next-match.team-number', { number: participant.team.number })
+                    : '—'}
+                </Typography>
+                <Box sx={{ ml: 0.5 }}>{getStatusIcon(status)}</Box>
+                {participant.team?.arrived === false && (
+                  <Chip
+                    icon={<WarningAmberRounded />}
+                    label={t('next-match.status.not-arrived')}
+                    color="warning"
+                    variant="outlined"
+                    size="small"
+                    sx={{ ml: 1 }}
+                  />
+                )}
+              </Stack>
+            );
+          })}
         </Box>
       </Stack>
     </Paper>

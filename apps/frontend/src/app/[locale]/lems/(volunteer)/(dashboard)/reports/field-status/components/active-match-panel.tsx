@@ -96,7 +96,7 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
         </Stack>
 
         {match.startTime && (
-          <Stack spacing={0.5}>
+          <Stack direction="row" spacing={3} flexWrap="wrap">
             <Typography
               variant="body2"
               color="text.secondary"
@@ -139,7 +139,13 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
           >
             {t('active-match.participants')}:
           </Typography>
-          <Stack spacing={1}>
+          <Box
+            sx={{
+              display: 'grid',
+              gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+              gap: 1
+            }}
+          >
             {match.participants
               .filter(p => p.team)
               .map(participant => (
@@ -151,8 +157,9 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                   sx={{
                     py: 1,
                     px: 2,
-                    bgcolor: 'background.default',
-                    borderRadius: 1
+                    borderRadius: 1,
+                    border: '2px solid',
+                    borderColor: participant.ready ? 'success.main' : 'grey.400'
                   }}
                 >
                   <Typography
@@ -162,14 +169,17 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                   >
                     {participant.table.name}:
                   </Typography>
-                  <Typography variant="body2" sx={{ fontSize: '1.05rem', fontWeight: 700 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
+                  >
                     {t('active-match.team-label')} {participant.team?.number} -{' '}
                     {participant.team?.name}
                   </Typography>
                   {participant.ready && <CheckCircleIcon fontSize="small" color="success" />}
                 </Stack>
               ))}
-          </Stack>
+          </Box>
         </Box>
       </Stack>
     </Paper>
