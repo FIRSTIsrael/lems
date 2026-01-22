@@ -71,13 +71,13 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
       <Table sx={{ borderCollapse: 'collapse' }}>
         <TableHead sx={{ backgroundColor: 'primary.main' }}>
           <TableRow>
-            <TableCell sx={{ fontWeight: 600, fontSize: '1rem', py: 2, color: 'common.white' }}>
+            <TableCell sx={{ fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' }}>
               {t('table.match')}
             </TableCell>
             <TableCell
               sx={{
                 fontWeight: 600,
-                fontSize: '1rem',
+                fontSize: '1.25rem',
                 py: 2,
                 textAlign: 'center',
                 color: 'common.white'
@@ -89,7 +89,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               <TableCell
                 key={table.id}
                 align="center"
-                sx={{ fontWeight: 600, fontSize: '1rem', py: 2, color: 'common.white' }}
+                sx={{ fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' }}
               >
                 {table.name}
               </TableCell>
