@@ -108,14 +108,19 @@ function MatchCard({
     >
       <CardContent sx={{ pb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight={600} color="text.primary">
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            color="text.primary"
+            sx={{ fontSize: '1.5rem' }}
+          >
             #{match.number}
           </Typography>
           <Chip
             label={scheduledTime}
-            size="small"
+            size="medium"
             variant="outlined"
-            sx={{ fontFamily: 'monospace', fontWeight: 500 }}
+            sx={{ fontFamily: 'monospace', fontWeight: 500, fontSize: '1.1rem' }}
           />
         </Box>
 
@@ -160,10 +165,19 @@ function MatchCard({
                     }}
                   >
                     <Box>
-                      <Typography variant="body2" fontWeight={600} color="text.primary">
+                      <Typography
+                        variant="body2"
+                        fontWeight={700}
+                        color="text.primary"
+                        sx={{ fontSize: '1.25rem' }}
+                      >
                         {participant.table.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: '1rem' }}
+                      >
                         {participant.team!.name}
                       </Typography>
                     </Box>
@@ -223,10 +237,19 @@ function MatchCard({
                     }}
                   >
                     <Box>
-                      <Typography variant="body2" fontWeight={600} color="text.primary">
+                      <Typography
+                        variant="body2"
+                        fontWeight={700}
+                        color="text.primary"
+                        sx={{ fontSize: '1.25rem' }}
+                      >
                         {participant.table.name}
                       </Typography>
-                      <Typography variant="caption" color="text.secondary">
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: '1rem' }}
+                      >
                         {participant.team!.name}
                       </Typography>
                     </Box>
@@ -235,14 +258,14 @@ function MatchCard({
                         <CheckCircleSharp
                           color="success"
                           sx={{
-                            fontSize: '1.25rem'
+                            fontSize: '1.5rem'
                           }}
                         />
                       ) : (
                         <Cancel
                           color="error"
                           sx={{
-                            fontSize: '1.25rem'
+                            fontSize: '1.5rem'
                           }}
                         />
                       ))}
