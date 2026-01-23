@@ -44,11 +44,12 @@ export const updateScoresheetSignatureResolver: GraphQLFieldResolver<
   }
 
   // Validate scoresheet status can be submitted
-  // Allow transition from 'completed' to 'gp' only
-  if (dbScoresheet.status !== 'completed') {
+  // Allow transition from 'completed' or 'gp' (head ref reviewed) to 'gp'
+  const allowedStatuses = ['completed', 'gp'];
+  if (!allowedStatuses.includes(dbScoresheet.status)) {
     throw new MutationError(
       MutationErrorCode.INVALID_INPUT,
-      `Cannot submit scoresheet with status '${dbScoresheet.status}'. Must be in 'completed' status.`
+      `Cannot submit scoresheet with status '${dbScoresheet.status}'. Must be in 'completed' or 'gp' status.`
     );
   }
 
