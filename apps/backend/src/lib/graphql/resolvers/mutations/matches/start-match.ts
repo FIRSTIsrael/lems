@@ -113,7 +113,7 @@ export const startMatchResolver: GraphQLFieldResolver<
     if (match.stage !== 'TEST') {
       const currentStage = divisionUpdateResult.field?.currentStage || 'PRACTICE';
       try {
-        const autoLoadedMatchId = await getAutoLoadMatch(divisionId, currentStage);
+        const autoLoadedMatchId = await getAutoLoadMatch(divisionId, currentStage, matchId);
         if (autoLoadedMatchId) {
           await db.raw.mongo
             .collection<DivisionState>('division_states')

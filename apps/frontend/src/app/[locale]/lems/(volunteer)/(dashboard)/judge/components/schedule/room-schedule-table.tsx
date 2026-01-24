@@ -214,7 +214,7 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     />
                     <RubricStatusButton
                       category="core-values"
-                      status={session.rubrics?.coreValues?.status}
+                      status={session.rubrics?.core_values?.status}
                       label={t('rubric-labels.core-values')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}

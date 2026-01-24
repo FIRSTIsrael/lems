@@ -564,6 +564,7 @@
           "title": "Pit Map",
           "upload-button": "Upload Pit Map",
           "view-button": "View Current Map",
+          "delete-button": "Delete Map",
           "no-map": "No pit map uploaded",
           "view-dialog": {
             "close": "Close",
@@ -578,6 +579,15 @@
             "cancel": "Cancel",
             "upload": "Upload",
             "uploading": "Uploading..."
+          },
+          "delete-dialog": {
+            "title": "Delete Pit Map",
+            "confirmation": "Are you sure you want to delete the pit map? This action cannot be undone.",
+            "delete-success": "Pit map deleted successfully",
+            "delete-error": "Failed to delete pit map",
+            "cancel": "Cancel",
+            "delete": "Delete",
+            "deleting": "Deleting..."
           },
           "upload-placeholder": "Choose file"
         },

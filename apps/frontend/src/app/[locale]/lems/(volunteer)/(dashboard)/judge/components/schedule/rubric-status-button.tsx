@@ -25,7 +25,7 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   const rubricColor = getRubricColor(category);
   const statusIcon = getRubricIcon(status, rubricColor);
 
-  const isCompleted = status === 'completed';
+  const isCompleted = ['completed', 'locked', 'approved'].includes(status);
   const isDraft = status === 'draft';
 
   return (
