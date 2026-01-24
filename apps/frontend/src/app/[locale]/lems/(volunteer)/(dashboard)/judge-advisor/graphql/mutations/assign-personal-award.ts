@@ -1,31 +1,26 @@
-// TODO: Implement actual mutation once backend is ready
-// For now, this is a placeholder that logs the award assignment
+import { gql, TypedDocumentNode } from '@apollo/client';
 
-export interface AssignPersonalAwardVars {
+interface AssignPersonalAwardVars {
   awardId: string;
-  teamId: string;
+  winnerName: string;
   divisionId: string;
 }
 
-export interface AssignPersonalAwardData {
+interface AssignPersonalAwardData {
   assignPersonalAward: {
     awardId: string;
-    teamId: string;
+    winnerName: string;
   };
 }
 
-/**
- * Placeholder for personal award assignment
- * Currently logs to console - will send mutation once backend implements
- */
-export function assignPersonalAward(vars: AssignPersonalAwardVars) {
-  console.log('[PLACEHOLDER] Assigning personal award:', vars);
-  return Promise.resolve({
-    data: {
-      assignPersonalAward: {
-        awardId: vars.awardId,
-        teamId: vars.teamId
-      }
+export const ASSIGN_PERSONAL_AWARD: TypedDocumentNode<
+  AssignPersonalAwardData,
+  AssignPersonalAwardVars
+> = gql`
+  mutation AssignPersonalAward($awardId: String!, $winnerName: String!, $divisionId: String!) {
+    assignPersonalAward(awardId: $awardId, winnerName: $winnerName, divisionId: $divisionId) {
+      awardId
+      winnerName
     }
-  });
-}
+  }
+`;

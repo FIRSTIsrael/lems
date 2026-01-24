@@ -564,7 +564,20 @@
           "optional": "אופציונלי",
           "team-placeholder": "הכנס שם קבוצה או מספר",
           "submit": "שלח פרסים",
-          "placeholder-message": "פרסים נשלחו"
+          "placeholder-message": "פרסים נשלחו",
+          "winner-name-placeholder": "הכנס שם הזוכה",
+          "assign-button": "הקצה",
+          "cancel": "ביטול",
+          "confirm": "אישור",
+          "assigning": "מקצה...",
+          "confirm-assignment-title": "אישור הקצאת פרס",
+          "confirm-assignment-message": "אנא אשר כי ברצונך להקצות את הפרס הזה. לא ניתן לבטל פעולה זו.",
+          "confirm-assignment-warning": "לאחר הקצאה, לא ניתן להקצות או לשנות פרס זה מחדש.",
+          "award-label": "פרס",
+          "winner-label": "זוכה",
+          "error-empty-winner-name": "אנא הכנס שם זוכה",
+          "error-assigning-award": "שגיאה בהקצאת פרס",
+          "award-assigned-success": "הפרס הוקצה בהצלחה"
         },
         "deliberations": "דיוני שופטים"
       }

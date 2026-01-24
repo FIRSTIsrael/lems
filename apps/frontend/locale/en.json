@@ -565,7 +565,20 @@
           "optional": "Optional",
           "team-placeholder": "Enter team name or number",
           "submit": "Submit Awards",
-          "placeholder-message": "Awards submitted"
+          "placeholder-message": "Awards submitted",
+          "winner-name-placeholder": "Enter winner name",
+          "assign-button": "Assign",
+          "cancel": "Cancel",
+          "confirm": "Confirm",
+          "assigning": "Assigning...",
+          "confirm-assignment-title": "Confirm Award Assignment",
+          "confirm-assignment-message": "Please confirm that you want to assign this award. This action cannot be undone.",
+          "confirm-assignment-warning": "Once assigned, this award cannot be reassigned or modified.",
+          "award-label": "Award",
+          "winner-label": "Winner",
+          "error-empty-winner-name": "Please enter a winner name",
+          "error-assigning-award": "Error assigning award",
+          "award-assigned-success": "Award successfully assigned"
         },
         "deliberations": "Deliberations"
       }

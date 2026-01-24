@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -14,60 +14,128 @@ import {
   Alert,
   Paper,
   useTheme,
-  alpha
+  alpha,
+  CircularProgress
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useMutation } from '@apollo/client/react';
 import { useAwardTranslations } from '@lems/localization';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import SendIcon from '@mui/icons-material/Send';
-import { assignPersonalAward } from '../graphql/mutations/assign-personal-award';
+import ErrorIcon from '@mui/icons-material/Error';
+import toast from 'react-hot-toast';
+import { ASSIGN_PERSONAL_AWARD } from '../graphql/mutations/assign-personal-award';
 import { useJudgeAdvisor } from './judge-advisor-context';
+import { useEvent } from '../../components/event-context';
+import { AssignAwardConfirmationDialog } from './personal-awards/assign-award-confirmation-dialog';
+import type { Award } from '../graphql/types';
 
 export function PersonalAwardsSection() {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
   const { getDescription } = useAwardTranslations();
   const { awards, loading } = useJudgeAdvisor();
-  const [awardValues, setAwardValues] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
+  const { currentDivision } = useEvent();
   const theme = useTheme();
 
-  // Filter only personal awards
+  // Dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    open: boolean;
+    award: Award | null;
+    winnerName: string;
+  }>({
+    open: false,
+    award: null,
+    winnerName: ''
+  });
+
+  // Local input state for unassigned awards
+  const [awardInputs, setAwardInputs] = useState<Record<string, string>>({});
+
+  // Mutation setup
+  const [assignPersonalAward, { loading: mutationLoading, error: mutationError }] =
+    useMutation(ASSIGN_PERSONAL_AWARD);
+
+  // Filter personal awards
   const personalAwards = useMemo(() => {
     return awards.filter(award => award.type === 'PERSONAL').sort((a, b) => a.index - b.index);
   }, [awards]);
 
-  const handleAwardChange = useCallback((awardId: string, value: string) => {
-    setAwardValues(prev => ({
+  // Auto-dismiss errors after 5 seconds
+  useEffect(() => {
+    if (mutationError) {
+      const timer = setTimeout(() => {
+        // Error will be shown as a toast instead
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mutationError]);
+
+  const handleAwardInputChange = useCallback((awardId: string, value: string) => {
+    // Enforce max length of 64 characters
+    const truncated = value.slice(0, 64);
+    setAwardInputs(prev => ({
       ...prev,
-      [awardId]: value
+      [awardId]: truncated
     }));
-    setSubmitted(false);
   }, []);
 
-  const handleSubmit = useCallback(async () => {
-    // Call placeholder mutation for each award that has a value
-    const promises = Object.entries(awardValues)
-      .filter(([, value]) => value.trim() !== '')
-      .map(([awardId, value]) =>
-        assignPersonalAward({
-          awardId,
-          teamId: value,
-          divisionId: ''
-        })
-      );
-
-    if (promises.length > 0) {
-      try {
-        await Promise.all(promises);
-        setSubmitted(true);
-        // Reset form after 3 seconds
-        setTimeout(() => setSubmitted(false), 3000);
-      } catch (error) {
-        console.error('Error submitting personal awards:', error);
+  const handleAssignClick = useCallback(
+    (award: Award) => {
+      const winnerName = awardInputs[award.id]?.trim() || '';
+      if (!winnerName) {
+        toast.error(t('error-empty-winner-name'));
+        return;
       }
+
+      setConfirmDialog({
+        open: true,
+        award,
+        winnerName
+      });
+    },
+    [awardInputs, t]
+  );
+
+  const handleConfirmAssign = useCallback(async () => {
+    if (!confirmDialog.award) return;
+
+    try {
+      await assignPersonalAward({
+        variables: {
+          awardId: confirmDialog.award.id,
+          winnerName: confirmDialog.winnerName,
+          divisionId: currentDivision.id
+        }
+      });
+
+      // Clear the input for this award
+      setAwardInputs(prev => ({
+        ...prev,
+        [confirmDialog.award!.id]: ''
+      }));
+
+      // Close dialog
+      setConfirmDialog({
+        open: false,
+        award: null,
+        winnerName: ''
+      });
+
+      toast.success(t('award-assigned-success'));
+    } catch (error) {
+      console.error('Error assigning personal award:', error);
+      const errorMessage = error instanceof Error ? error.message : t('error-assigning-award');
+      toast.error(errorMessage);
     }
-  }, [awardValues]);
+  }, [confirmDialog, assignPersonalAward, currentDivision.id, t]);
+
+  const handleCancelAssign = useCallback(() => {
+    setConfirmDialog({
+      open: false,
+      award: null,
+      winnerName: ''
+    });
+  }, []);
 
   if (personalAwards.length === 0) {
     return (
@@ -105,96 +173,147 @@ export function PersonalAwardsSection() {
       />
       <CardContent>
         <Stack spacing={3}>
-          {submitted && (
+          {mutationError && (
             <Alert
-              severity="success"
-              icon={<CheckCircleIcon />}
-              onClose={() => setSubmitted(false)}
+              severity="error"
+              icon={<ErrorIcon />}
+              onClose={() => {
+                // Error will be cleared on next successful mutation or dialog close
+              }}
             >
-              {t('placeholder-message')}
+              {typeof mutationError.message === 'string'
+                ? mutationError.message
+                : t('error-assigning-award')}
             </Alert>
           )}
 
           <Grid container spacing={2}>
-            {personalAwards.map(award => (
-              <Grid size={{ xs: 12, sm: 6 }} key={award.id}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    backgroundColor: alpha(theme.palette.primary.main, 0.03),
-                    border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                    transition: 'all 0.2s',
-                    '&:hover': {
-                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                      borderColor: theme.palette.primary.main
-                    }
-                  }}
-                >
-                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
-                    <EmojiEventsIcon
-                      sx={{
-                        fontSize: 20,
-                        color: 'primary.main',
-                        mt: 0.25
-                      }}
-                    />
-                    <Box sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                        {award.name}
-                      </Typography>
-                      {award.isOptional && (
-                        <Typography
-                          component="span"
-                          variant="caption"
-                          color="text.secondary"
-                          sx={{ display: 'block', mt: 0.25 }}
-                        >
-                          ({t('optional')})
-                        </Typography>
-                      )}
-                    </Box>
-                  </Box>
-                  <Box sx={{ mb: 1.5 }}>
-                    {getDescription(award.id)}
-                  </Box>
-                  <TextField
-                    fullWidth
-                    size="small"
-                    placeholder={t('team-placeholder')}
-                    value={awardValues[award.id] ?? ''}
-                    onChange={e => handleAwardChange(award.id, e.target.value)}
-                    disabled={loading}
-                    variant="outlined"
+            {personalAwards.map(award => {
+              const isAssigned = !!award.winner;
+              const assignedWinner =
+                award.winner && 'name' in award.winner ? award.winner.name : null;
+
+              return (
+                <Grid size={{ xs: 12, sm: 6 }} key={award.id}>
+                  <Paper
                     sx={{
-                      '& .MuiOutlinedInput-root': {
-                        backgroundColor: 'background.paper'
+                      p: 2,
+                      backgroundColor: alpha(theme.palette.primary.main, 0.03),
+                      border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                      transition: 'all 0.2s',
+                      '&:hover': {
+                        backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                        borderColor: theme.palette.primary.main
                       }
                     }}
-                  />
-                </Paper>
-              </Grid>
-            ))}
-          </Grid>
+                  >
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
+                      <EmojiEventsIcon
+                        sx={{
+                          fontSize: 20,
+                          color: 'primary.main',
+                          mt: 0.25
+                        }}
+                      />
+                      <Box sx={{ flex: 1 }}>
+                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                          {award.name}
+                        </Typography>
+                        {award.isOptional && (
+                          <Typography
+                            component="span"
+                            variant="caption"
+                            color="text.secondary"
+                            sx={{ display: 'block', mt: 0.25 }}
+                          >
+                            ({t('optional')})
+                          </Typography>
+                        )}
+                      </Box>
+                    </Box>
+                    <Box sx={{ mb: 1.5 }}>{getDescription(award.id)}</Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', pt: 1 }}>
-            <Button
-              variant="contained"
-              size="large"
-              onClick={handleSubmit}
-              disabled={loading || personalAwards.length === 0}
-              endIcon={<SendIcon />}
-              sx={{
-                fontWeight: 600,
-                textTransform: 'none',
-                fontSize: '1rem',
-                px: 3
-              }}
-            >
-              {t('submit')}
-            </Button>
-          </Box>
+                    {isAssigned ? (
+                      // Assigned award: show winner name as text
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          mb: 1.5,
+                          p: 1.5,
+                          backgroundColor: alpha(theme.palette.success.main, 0.05),
+                          borderRadius: 1,
+                          border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
+                        }}
+                      >
+                        <CheckCircleIcon
+                          sx={{
+                            fontSize: 18,
+                            color: 'success.main',
+                            flexShrink: 0
+                          }}
+                        />
+                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                          {assignedWinner}
+                        </Typography>
+                      </Box>
+                    ) : (
+                      // Unassigned award: show input field
+                      <TextField
+                        fullWidth
+                        size="small"
+                        placeholder={t('winner-name-placeholder')}
+                        value={awardInputs[award.id] ?? ''}
+                        onChange={e => handleAwardInputChange(award.id, e.target.value)}
+                        disabled={loading || mutationLoading}
+                        variant="outlined"
+                        inputProps={{
+                          maxLength: 64
+                        }}
+                        sx={{
+                          '& .MuiOutlinedInput-root': {
+                            backgroundColor: 'background.paper'
+                          },
+                          mb: 1.5
+                        }}
+                      />
+                    )}
+
+                    {/* Assign button - only show for unassigned awards */}
+                    {!isAssigned && (
+                      <Button
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                        onClick={() => handleAssignClick(award)}
+                        disabled={loading || mutationLoading || !awardInputs[award.id]?.trim()}
+                        sx={{
+                          textTransform: 'none',
+                          fontWeight: 500
+                        }}
+                      >
+                        {mutationLoading ? <CircularProgress size={16} sx={{ mr: 1 }} /> : null}
+                        {t('assign-button')}
+                      </Button>
+                    )}
+                  </Paper>
+                </Grid>
+              );
+            })}
+          </Grid>
         </Stack>
       </CardContent>
+
+      {/* Confirmation Dialog */}
+      <AssignAwardConfirmationDialog
+        open={confirmDialog.open}
+        awardName={confirmDialog.award?.name ?? null}
+        winnerName={confirmDialog.winnerName}
+        loading={mutationLoading}
+        onConfirm={handleConfirmAssign}
+        onCancel={handleCancelAssign}
+      />
     </Card>
   );
 }
