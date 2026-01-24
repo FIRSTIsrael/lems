@@ -70,8 +70,8 @@ export const LogoDisplay = () => {
         >
           <Box
             component="img"
-            src="/assets/first-israel-vertical.png"
-            alt="FIRST Israel Logo"
+            src="/assets/audience-display/first-vertical.svg"
+            alt="FIRST Logo"
             sx={{
               maxWidth: '500px',
               width: '90%',

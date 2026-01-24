@@ -28,11 +28,11 @@ export {
 } from './team-disqualified';
 
 export {
-  JUDGING_DELIBERATION_CHANGED_SUBSCRIPTION,
-  createJudgingDeliberationChangedSubscription
-} from './judging-deliberation-changed';
+  DELIBERATION_UPDATED_SUBSCRIPTION,
+  createDeliberationUpdatedSubscription
+} from './deliberation-updated';
 
 export {
-  FINAL_DELIBERATION_CHANGED_SUBSCRIPTION,
-  createFinalDeliberationChangedSubscription
-} from './final-deliberation-changed';
+  FINAL_DELIBERATION_STATUS_CHANGED_SUBSCRIPTION,
+  createFinalDeliberationStatusChangedSubscription
+} from './final-deliberation-status-changed';

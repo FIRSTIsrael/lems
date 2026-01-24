@@ -608,7 +608,7 @@
       }
     },
     "referee": {
-      "page-title": "שופט זירה",
+      "page-title": "שופט זירה | שולחן {table}",
       "match-running": "מקצה פעיל",
       "match-slug": "צקצה",
       "prestart-title": "התכוננת למקצה",
@@ -968,6 +968,10 @@
       "processing": "מעבד...",
       "error-failed-to-escalate": "העברה נכשלה",
       "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "selectScoresheet": {
+        "label": "בחרו דף ניקוד",
+        "round": "סבב"
+      },
       "reset-dialog": {
         "title": "איפוס דף ניקוד",
         "warning": "לא ניתן לבטל פעולה זו!",
@@ -1076,12 +1080,16 @@
           "podium-title": "קרנבל האליפות",
           "place-label": "מקום #{place}",
           "select-team": "בחרו קבוצה...",
-          "table-rank": "דירוג",
+          "table-rank": "דירוג כולל",
           "table-team": "קבוצה",
           "table-room": "חדר",
           "table-score": "ציון כולל",
+          "table-innovation-project-rank": "דירוג פרויקט חדשנות",
+          "table-robot-design-rank": "דירוג עיצוב רובוט",
+          "table-core-values-rank": "דירוג ערכי הליבה",
+          "table-robot-game-rank": "דירוג משחק הרובוט",
           "save": "שמור אליפות",
-          "advance": "קדם לפרסים בסיסיים",
+          "advance": "המשך לפרסי חובה",
           "saving": "שומר...",
           "start": "התחל דיון",
           "time-remaining": "זמן נותר",

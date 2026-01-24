@@ -23,7 +23,8 @@ export function MatchCountdown({
   matchLength
 }: MatchCountdownProps) {
   const t = useTranslations('pages.reports.field-status');
-  const [days, hours, minutes, seconds] = useCountdown(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_days, _hours, _minutes, seconds] = useCountdown(
     scheduledTime ? new Date(scheduledTime) : new Date()
   );
 
@@ -49,22 +50,17 @@ export function MatchCountdown({
   }
 
   const targetDate = new Date(scheduledTime);
-  const totalCountdown = days + hours + minutes + seconds;
-  const isLate = totalCountdown < 0;
 
-  const remainingMinutes = Math.max(0, minutes + hours * 60 + days * 24 * 60);
-  const progress = Math.min(100, (remainingMinutes / matchLength) * 100);
+  const progress = Math.min(100, (Math.abs(seconds) / matchLength) * 100);
 
   const getCountdownColor = () => {
-    if (isLate) return 'error.main';
-    if (totalCountdown > 0) return 'success.main';
-    return 'text.secondary';
+    if (seconds >= 0) return 'success.main';
+    return 'error.main';
   };
 
-  const getProgressColor = (): 'success' | 'warning' | 'error' => {
-    if (isLate) return 'error';
-    if (totalCountdown > 0) return 'success';
-    return 'warning';
+  const getProgressColor = (): 'success' | 'error' => {
+    if (seconds >= 0) return 'success';
+    return 'error';
   };
 
   return (

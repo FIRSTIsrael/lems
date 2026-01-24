@@ -48,8 +48,8 @@ export const ActiveMatch = () => {
           }}
         >
           <Image
-            src="/assets/audience-display/first-israel-horizontal.svg"
-            alt="FIRST Israel"
+            src="/assets/audience-display/first-horizontal.svg"
+            alt="FIRST Logo"
             fill
             style={{ objectFit: 'contain' }}
           />
@@ -135,8 +135,8 @@ export const ActiveMatch = () => {
           }}
         >
           <Image
-            src="/assets/audience-display/technion-horizontal.svg"
-            alt="Technion"
+            src="/assets/audience-display/sponsors/lego-education.svg"
+            alt="Lego Education"
             fill
             style={{ objectFit: 'contain' }}
           />

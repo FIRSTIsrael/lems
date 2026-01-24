@@ -1,9 +1,11 @@
 'use client';
 
 import { useMemo, useEffect, useRef } from 'react';
-import { Card, CardContent, Stack, Typography, Box, Divider, Chip } from '@mui/material';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import { useTranslations } from 'next-intl';
+import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
+import { Cancel, CheckCircleSharp } from '@mui/icons-material';
 import type { Match, Scoresheet } from '../graphql/types';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from './head-referee-context';
@@ -47,6 +49,7 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
           match={match}
           scoresheets={scoresheets}
           isActive={match.id === activeMatchId}
+          isLoaded={match.id === data.loadedMatch}
           findScoresheetForTeam={findScoresheetForTeam}
           searchQuery={filterOptions.searchQuery}
         />
@@ -59,11 +62,20 @@ interface MatchCardProps {
   match: Match;
   scoresheets: Scoresheet[];
   isActive: boolean;
+  isLoaded: boolean;
   findScoresheetForTeam: (teamId: string, stage: string, round: number) => Scoresheet | undefined;
   searchQuery: string;
 }
 
-function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam, searchQuery }: MatchCardProps) {
+function MatchCard({
+  match,
+  scoresheets,
+  isActive,
+  isLoaded,
+  findScoresheetForTeam,
+  searchQuery
+}: MatchCardProps) {
+  const t = useTranslations('pages.head-referee');
   const cardRef = useRef<HTMLDivElement>(null);
 
   // Check if a team matches the search query
@@ -96,14 +108,19 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam, search
     >
       <CardContent sx={{ pb: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h6" fontWeight={600} color="text.primary">
+          <Typography
+            variant="h6"
+            fontWeight={600}
+            color="text.primary"
+            sx={{ fontSize: '1.5rem' }}
+          >
             #{match.number}
           </Typography>
           <Chip
             label={scheduledTime}
-            size="small"
+            size="medium"
             variant="outlined"
-            sx={{ fontFamily: 'monospace', fontWeight: 500 }}
+            sx={{ fontFamily: 'monospace', fontWeight: 500, fontSize: '1.1rem' }}
           />
         </Box>
 
@@ -120,53 +137,140 @@ function MatchCard({ match, scoresheets, isActive, findScoresheetForTeam, search
               );
 
               const isFiltered = scoresheet ? scoresheets.some(s => s.id === scoresheet.id) : false;
-              const isTeamFiltered = doesTeamMatchSearch(participant.team!.number, participant.team!.name);
+              const isTeamFiltered = doesTeamMatchSearch(
+                participant.team!.number,
+                participant.team!.name
+              );
+
+              if (match.status === 'completed' && scoresheet) {
+                return (
+                  <Box
+                    key={participant.id}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      p: 1.5,
+                      backgroundColor: 'background.default',
+                      borderRadius: 1.5,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      opacity: isTeamFiltered ? 1 : 0.35,
+                      filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                        borderColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight={700}
+                        color="text.primary"
+                        sx={{ fontSize: '1.25rem' }}
+                      >
+                        {participant.table.name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: '1rem' }}
+                      >
+                        {participant.team!.name}
+                      </Typography>
+                    </Box>
+
+                    {match.status === 'completed' && scoresheet && (
+                      <ScoresheetStatusButton
+                        teamNumber={participant.team!.number}
+                        teamSlug={participant.team!.slug}
+                        teamName={participant.team!.name}
+                        scoresheetSlug={scoresheet.slug}
+                        status={scoresheet.status}
+                        escalated={scoresheet.escalated}
+                        score={scoresheet.data?.score}
+                        gp={scoresheet.data?.gp?.value}
+                        disabled={!participant.team!.arrived || match.status !== 'completed'}
+                        dimmed={!isFiltered}
+                      />
+                    )}
+                  </Box>
+                );
+              }
+
+              // Show participant readiness state for non-completed matches
+              const isReady = participant.ready;
+
+              // Show icons only for the loaded match
+              const showIcon = isLoaded;
 
               return (
-                <Box
+                <Tooltip
                   key={participant.id}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    p: 1.5,
-                    backgroundColor: 'background.default',
-                    borderRadius: 1.5,
-                    border: '1px solid',
-                    borderColor: 'divider',
-                    transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                    opacity: isTeamFiltered ? 1 : 0.35,
-                    filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
-                    '&:hover': {
-                      backgroundColor: 'action.hover',
-                      borderColor: 'action.hover'
-                    }
-                  }}
+                  title={
+                    isLoaded && isReady
+                      ? t('table.participant-ready')
+                      : isLoaded && !isReady
+                        ? t('table.participant-not-ready')
+                        : ''
+                  }
                 >
-                  <Box>
-                    <Typography variant="body2" fontWeight={600} color="text.primary">
-                      {participant.table.name}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {participant.team!.name}
-                    </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      p: 1.5,
+                      backgroundColor: 'background.default',
+                      borderRadius: 1.5,
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                      opacity: isTeamFiltered ? 1 : 0.35,
+                      filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                        borderColor: 'action.hover'
+                      }
+                    }}
+                  >
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight={700}
+                        color="text.primary"
+                        sx={{ fontSize: '1.25rem' }}
+                      >
+                        {participant.table.name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        color="text.secondary"
+                        sx={{ fontSize: '1rem' }}
+                      >
+                        {participant.team!.name}
+                      </Typography>
+                    </Box>
+                    {showIcon &&
+                      (isReady ? (
+                        <CheckCircleSharp
+                          color="success"
+                          sx={{
+                            fontSize: '1.5rem'
+                          }}
+                        />
+                      ) : (
+                        <Cancel
+                          color="error"
+                          sx={{
+                            fontSize: '1.5rem'
+                          }}
+                        />
+                      ))}
                   </Box>
-
-                  {scoresheet && (
-                    <ScoresheetStatusButton
-                      teamNumber={participant.team!.number}
-                      teamSlug={participant.team!.slug}
-                      teamName={participant.team!.name}
-                      scoresheetSlug={scoresheet.slug}
-                      status={scoresheet.status}
-                      escalated={scoresheet.escalated}
-                      score={scoresheet.data?.score}
-                      gp={scoresheet.data?.gp?.value}
-                      disabled={!participant.team!.arrived || match.status !== 'completed'}
-                      dimmed={!isFiltered}
-                    />
-                  )}
-                </Box>
+                </Tooltip>
               );
             })}
         </Stack>

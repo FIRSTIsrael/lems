@@ -4,19 +4,15 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, Tooltip, Box, alpha } from '@mui/material';
-import { useJudgingCategoryTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
-
-const FIELD_COLUMN_WIDTH = 150;
 
 export function ChampionsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.champions');
-  const { getCategory } = useJudgingCategoryTranslations();
   const { teams, eligibleTeams, awards } = useFinalDeliberation();
 
-  // Filter and sort teams: eligible for champions, sorted by total rank descending
+  // Filter and sort teams: eligible for champions, sorted by total rank ascending
   const filteredTeams = useMemo(() => {
     const championsTeamIds = new Set(eligibleTeams['champions']);
     return teams
@@ -32,26 +28,6 @@ export function ChampionsDataGrid() {
 
   const columns: GridColDef<EnrichedTeam>[] = useMemo(
     () => [
-      {
-        field: 'rank',
-        headerName: t('table-rank'),
-        width: 70,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.ranks.total || '-'
-      },
-      {
-        field: 'room',
-        headerName: t('table-room'),
-        width: 70,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.room?.name || '-'
-      },
       {
         field: 'teamDisplay',
         headerName: t('table-team'),
@@ -70,54 +46,58 @@ export function ChampionsDataGrid() {
         }
       },
       {
-        field: 'robotDesignScore',
-        headerName: getCategory('robot-design'),
-        width: FIELD_COLUMN_WIDTH,
+        field: 'innovationProjectRank',
+        headerName: t('table-innovation-project-rank'),
+        width: 140,
         sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
-        renderCell: params => params.row.scores['robot-design'].toFixed(1)
+        renderCell: params => params.row.ranks['innovation-project']
       },
       {
-        field: 'innovationProjectScore',
-        headerName: getCategory('innovation-project'),
-        width: FIELD_COLUMN_WIDTH,
+        field: 'robotDesignRank',
+        headerName: t('table-robot-design-rank'),
+        width: 140,
         sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
-        renderCell: params => params.row.scores['innovation-project'].toFixed(1)
+        renderCell: params => params.row.ranks['robot-design']
       },
       {
-        field: 'coreValuesScore',
-        headerName: getCategory('core-values'),
-        width: FIELD_COLUMN_WIDTH,
+        field: 'coreValuesRank',
+        headerName: t('table-core-values-rank'),
+        width: 140,
         sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
-        renderCell: params => params.row.scores['core-values'].toFixed(1)
+        renderCell: params => params.row.ranks['core-values']
       },
       {
-        field: 'totalScore',
-        headerName: t('table-score'),
+        field: 'robotGameRank',
+        headerName: t('table-robot-game-rank'),
+        width: 140,
+        sortable: false,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => params.row.ranks['robot-game']
+      },
+      {
+        field: 'totalRank',
+        headerName: t('table-rank'),
         width: 100,
         sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
-        cellClassName: 'total-score-cell',
-        renderCell: params => {
-          const total =
-            params.row.scores['robot-design'] +
-            params.row.scores['innovation-project'] +
-            params.row.scores['core-values'];
-          return total.toFixed(1);
-        }
+        cellClassName: 'total-rank-cell',
+        renderCell: params => params.row.ranks.total
       }
     ],
-    [t, getCategory]
+    [t]
   );
 
   return (
@@ -142,7 +122,7 @@ export function ChampionsDataGrid() {
             backgroundColor: alpha(theme.palette.success.main, 0.25)
           }
         },
-        '& .total-score-cell': {
+        '& .total-rank-cell': {
           backgroundColor: alpha(theme.palette.primary.main, 0.1),
           fontWeight: 600,
           '&:hover': {

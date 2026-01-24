@@ -39,6 +39,30 @@ export type QueryVariables = {
   slug: string;
 };
 
+export type GetTeamScoresheetsItem = {
+  id: string;
+  slug: string;
+  stage: string;
+  round: number;
+  status: string;
+  escalated?: boolean;
+};
+
+export type GetTeamScoresheetsQueryData = {
+  division: {
+    id: string;
+    field: {
+      divisionId: string;
+      scoresheets: GetTeamScoresheetsItem[];
+    };
+  };
+};
+
+export type GetTeamScoresheetsQueryVars = {
+  divisionId: string;
+  teamId: string;
+};
+
 export type SubscriptionVariables = {
   divisionId: string;
 };
