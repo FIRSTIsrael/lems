@@ -8,6 +8,7 @@ import { Division } from '@lems/types/api/admin';
 import { FileUpload } from '@lems/shared';
 import { UploadPitMapDialog } from './upload-pit-map-dialog';
 import { ViewPitMapDialog } from './view-pit-map-dialog';
+import { DeletePitMapDialog } from './delete-pit-map-dialog';
 
 interface PitMapManagerProps {
   division: Division;
@@ -20,6 +21,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
   const [uploading, setUploading] = useState(false);
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [viewMapOpen, setViewMapOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [successMessage, setSuccessMessage] = useState<string>('');
 
@@ -50,7 +52,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
   };
 
   const handleUploadSuccess = () => {
-    setSuccessMessage(t('upload-success'));
+    setSuccessMessage(t('upload-dialog.upload-success'));
     setUploadDialogOpen(false);
     setSelectedFile(null);
     onDivisionUpdate?.();
@@ -63,6 +65,17 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
     setUploading(false);
   };
 
+  const handleDeleteSuccess = () => {
+    setSuccessMessage(t('delete-dialog.delete-success'));
+    setDeleteDialogOpen(false);
+    onDivisionUpdate?.();
+    setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const handleDeleteError = (message: string) => {
+    setErrorMessage(message);
+  };
+
   return (
     <Paper sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
@@ -70,41 +83,40 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
       </Typography>
 
       <Stack spacing={2}>
-        <Box maxWidth={300}>
-          <FileUpload
-            label={t('upload-button')}
-            placeholder={t('upload-placeholder')}
-            accept="image/jpeg,image/jpg,image/png"
-            selectedFile={selectedFile}
-            setSelectedFile={handleFileChange}
-            description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
+        <Stack direction="row" spacing={2} alignItems="flex-end">
+          <Box sx={{ maxWidth: 300 }}>
+            <FileUpload
+              label={t('upload-button')}
+              placeholder={t('upload-placeholder')}
+              accept="image/jpeg,image/jpg,image/png"
+              selectedFile={selectedFile}
+              setSelectedFile={handleFileChange}
+              description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
+              disabled={uploading}
+            />
+          </Box>
+
+          {division.pitMapUrl && (
+            <Button
+              variant="outlined"
+              startIcon={<Visibility />}
+              onClick={() => setViewMapOpen(true)}
+            >
+              {t('view-button')}
+            </Button>
+          )}
+        </Stack>
+
+        {selectedFile && (
+          <Button
+            variant="contained"
+            startIcon={<Upload />}
+            onClick={() => setUploadDialogOpen(true)}
             disabled={uploading}
-          />
-        </Box>
-
-        {(selectedFile || division.pitMapUrl) && (
-          <Stack direction="row" spacing={2} alignItems="center">
-            {selectedFile && (
-              <Button
-                variant="contained"
-                startIcon={<Upload />}
-                onClick={() => setUploadDialogOpen(true)}
-                disabled={uploading}
-              >
-                {t('upload-button')}
-              </Button>
-            )}
-
-            {division.pitMapUrl && (
-              <Button
-                variant="outlined"
-                startIcon={<Visibility />}
-                onClick={() => setViewMapOpen(true)}
-              >
-                {t('view-button')}
-              </Button>
-            )}
-          </Stack>
+            sx={{ alignSelf: 'flex-start' }}
+          >
+            {t('upload-button')}
+          </Button>
         )}
 
         {errorMessage && (
@@ -142,6 +154,15 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         open={viewMapOpen}
         onClose={() => setViewMapOpen(false)}
         division={division}
+        onDelete={() => setDeleteDialogOpen(true)}
+      />
+
+      <DeletePitMapDialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        division={division}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
       />
     </Paper>
   );

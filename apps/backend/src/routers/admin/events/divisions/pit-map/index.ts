@@ -45,4 +45,25 @@ router.post(
   }
 );
 
+router.delete(
+  '/',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminDivisionRequest, res) => {
+    try {
+      const success = await db.divisions.byId(req.divisionId).update({ pit_map_url: null });
+      if (success) {
+        res.status(200).json({ success: true });
+        return;
+      } else {
+        res.status(500).json({ error: 'Failed to delete pit map' });
+        return;
+      }
+    } catch (error) {
+      console.error('Error deleting pit map:', error);
+      res.status(500).json({ error: 'Failed to delete pit map' });
+      return;
+    }
+  }
+);
+
 export default router;
