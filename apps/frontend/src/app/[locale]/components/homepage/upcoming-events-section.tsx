@@ -15,19 +15,17 @@ export const UpcomingEventsSection: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('homepage');
 
-  const { endOfDay, endOfWeek } = useMemo(() => {
+  const { endOfDay } = useMemo(() => {
     const currentTime = dayjs();
     return {
-      endOfDay: currentTime.endOf('day').toISOString(),
-      endOfWeek: currentTime.endOf('week').toISOString()
+      endOfDay: currentTime.endOf('day').toISOString()
     };
   }, []);
 
   const { data, loading } = useQuery(GET_EVENTS_QUERY, {
     variables: {
       fullySetUp: true,
-      startAfter: endOfDay,
-      endBefore: endOfWeek
+      startAfter: endOfDay
     }
   });
 

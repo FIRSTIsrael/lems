@@ -16,12 +16,24 @@ interface AuthCheckProviderProps {
 export function AuthCheckProvider({ children }: AuthCheckProviderProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [loading, setLoading] = useState(true);
-
   const locale = useLocale();
 
+  // Determine if current page is public
+  const localeRegex = new RegExp(`^/${locale}`);
+  const publicPages = ['/', '/events'];
+  const cleanPath = pathname.replace(localeRegex, '/');
+  const isPublicPage =
+    publicPages.includes(cleanPath) ||
+    cleanPath.startsWith('/event/') ||
+    cleanPath.endsWith('/login');
+
+  const [loading, setLoading] = useState(!isPublicPage);
+
   useEffect(() => {
-    const localeRegex = new RegExp(`^/${locale}`);
+    // Skip auth check on public pages and login pages
+    if (isPublicPage) {
+      return;
+    }
 
     const checkAuth = async () => {
       try {
@@ -29,30 +41,20 @@ export function AuthCheckProvider({ children }: AuthCheckProviderProps) {
         const authResult = await apiFetch('/lems/auth/verify');
 
         if (authResult.ok) {
-          // Authenticated user on public page - redirect to /lems
-          const publicPages = ['/', '/events'];
-          const cleanPath = pathname.replace(localeRegex, '/');
-
-          if (publicPages.includes(cleanPath) || cleanPath.startsWith('/lems/')) {
-            // On event page or login page - allow access
-            setLoading(false);
-            return;
-          }
-
-          // Redirect to /lems dashboard
-          router.push(`/lems`);
-        } else {
-          // Not authenticated - allow access to public pages
+          // Authenticated user - allow access
           setLoading(false);
+        } else {
+          // Not authenticated on protected page - redirect to homepage
+          router.push('/');
         }
       } catch {
-        // On error, allow access
-        setLoading(false);
+        // On error, redirect to homepage
+        router.push('/');
       }
     };
 
     checkAuth();
-  }, [locale, pathname, router]);
+  }, [isPublicPage, router]);
 
   if (loading) {
     return (

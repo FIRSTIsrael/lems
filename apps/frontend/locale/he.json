@@ -1246,6 +1246,12 @@
     "prize": "פרס {name}"
   },
   "homepage": {
+    "hero": {
+      "badge": "פלטפורמת ניהול אירועים",
+      "title": "LEMS",
+      "subtitle": "ניהול תחרויות <i>FIRST</i> LEGO League Challenge",
+      "description": "גישה לאירועים חיים, סקירת תחרויות קרובות, ותפעול פשוט של התחרות."
+    },
     "live-events-title": "אירועים חיים",
     "live-events-subtitle": "אירועים המתרחשים כעת",
     "upcoming-events-title": "אירועים קרובים",
