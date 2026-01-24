@@ -564,6 +564,7 @@
           "title": "מפת פיטים",
           "upload-button": "העלה מפת פיטים",
           "view-button": "צפה במפה הנוכחית",
+          "delete-button": "מחק מפה",
           "no-map": "לא הועלתה מפת פיטים",
           "view-dialog": {
             "current-map": "מפת פיטים נוכחית",
@@ -578,6 +579,15 @@
             "cancel": "ביטול",
             "upload": "העלה",
             "uploading": "מעלה..."
+          },
+          "delete-dialog": {
+            "title": "מחיקת מפת פיטים",
+            "confirmation": "האם אתם בטוחים שברצונכם למחוק את מפת הפיטים? פעולה זו אינה ניתנת לביטול.",
+            "delete-success": "מפת פיטים נמחקה בהצלחה",
+            "delete-error": "שגיאה במחיקת מפת פיטים",
+            "cancel": "ביטול",
+            "delete": "מחק",
+            "deleting": "מוחק..."
           },
           "upload-placeholder": "בחרו קובץ"
         },
