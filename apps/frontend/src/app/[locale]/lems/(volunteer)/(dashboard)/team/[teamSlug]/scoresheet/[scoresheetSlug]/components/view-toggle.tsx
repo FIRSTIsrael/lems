@@ -2,22 +2,17 @@
 
 import { Button, ButtonGroup } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useScoresheet } from '../scoresheet-context';
 
-export type ScoresheetView = 'score' | 'gp';
-
-interface HeadRefViewToggleProps {
-  view: ScoresheetView;
-  setView: (mode: ScoresheetView) => void;
-}
-
-export const HeadRefViewToggle: React.FC<HeadRefViewToggleProps> = ({ view, setView }) => {
+export const HeadRefViewToggle: React.FC = () => {
   const t = useTranslations('pages.scoresheet');
+  const { viewMode, setViewMode } = useScoresheet();
 
   return (
     <ButtonGroup variant="outlined" sx={{ height: '40px' }}>
       <Button
-        onClick={() => setView('score')}
-        variant={view === 'score' ? 'contained' : 'outlined'}
+        onClick={() => setViewMode('score')}
+        variant={viewMode === 'score' ? 'contained' : 'outlined'}
         sx={{
           textTransform: 'none',
           fontSize: '0.9375rem',
@@ -29,8 +24,8 @@ export const HeadRefViewToggle: React.FC<HeadRefViewToggleProps> = ({ view, setV
         {t('view.score')}
       </Button>
       <Button
-        onClick={() => setView('gp')}
-        variant={view === 'gp' ? 'contained' : 'outlined'}
+        onClick={() => setViewMode('gp')}
+        variant={viewMode === 'gp' ? 'contained' : 'outlined'}
         sx={{
           textTransform: 'none',
           fontSize: '0.9375rem',

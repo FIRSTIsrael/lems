@@ -953,6 +953,7 @@
     },
     "scoresheet": {
       "title": "קבוצה #{teamNumber} | סבב {stage} {round}",
+      "table": "שולחן {table}",
       "clear-signature": "נקה חתימה",
       "signature-alt": "חתימה",
       "form-complete": "הטופס הושלם",
@@ -960,6 +961,7 @@
       "complete-form-to-sign": "השלם את הטופס ותקן כל שגיאות כדי לחתום על דף הניקוד",
       "complete-form-to-proceed": "השלם את כל המשימות ותקן את כל השגיאות לפני שתוכל לחתום ולהגיש את דף הניקוד",
       "submit-scoresheet": "הגש דף ניקוד",
+      "gp-next": "עבור לניקוד GP",
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
@@ -988,7 +990,8 @@
         "level-4": "מצטיינת",
         "notes-placeholder-2": "נמקו מדוע נתתם לקבוצה ציון מתפתחת",
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
-        "submit-button": "הגשת דף ניקוד"
+        "submit-button": "הגשת דף ניקוד",
+        "back-to-scores": "חזרה לניקוד"
       },
       "view": {
         "score": "ניקוד",

@@ -76,6 +76,9 @@ type Scoresheet {
   "Whether this scoresheet has been escalated"
   escalated: Boolean
 
+  "The table where this scoresheet's match was played"
+  table: Table
+
   "Scoresheet data including scores and mission values"
   data: ScoresheetData
 }

@@ -27,6 +27,10 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
           round
           status
           escalated
+          table {
+            id
+            name
+          }
           data {
             missions
             signature

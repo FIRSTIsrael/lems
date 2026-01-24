@@ -954,6 +954,7 @@
     },
     "scoresheet": {
       "title": "Team #{teamNumber}, {stage} round {round}",
+      "table": "Table {table}",
       "clear-signature": "Clear Signature",
       "signature-alt": "Signature",
       "form-complete": "Form Complete",
@@ -961,6 +962,7 @@
       "complete-form-to-sign": "Complete the form and fix any errors to sign this scoresheet",
       "complete-form-to-proceed": "Complete all missions and resolve all errors before you can sign and submit the scoresheet",
       "submit-scoresheet": "Submit Scoresheet",
+      "gp-next": "Fill out GP",
       "submitting": "Submitting...",
       "error-signature-required": "A signature is required to submit the scoresheet",
       "error-failed-to-submit": "Failed to submit scoresheet",
@@ -989,7 +991,8 @@
         "level-4": "EXCEEDS",
         "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
-        "submit-button": "Submit"
+        "submit-button": "Submit",
+        "back-to-scores": "Back to scores"
       },
       "view": {
         "score": "Score",
