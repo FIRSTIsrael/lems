@@ -2,8 +2,8 @@
 
 import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useParams, useRouter } from 'next/navigation';
-import { Container, Box, CircularProgress } from '@mui/material';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { Container, Box, CircularProgress, Stack } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { PageHeader } from '../../../../components/page-header';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
@@ -15,6 +15,8 @@ import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetForm } from './components/scoresheet-form';
 import { GPSelector } from './components/gp-selector';
 import { ScoresheetSwitcher } from './components/scoresheet-switcher';
+import { EditButton } from './components/edit-button';
+import { HeadRefViewToggle, type ScoresheetView } from './components/view-toggle';
 import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
@@ -26,6 +28,7 @@ export default function ScoresheetPage() {
   const { getStage } = useMatchTranslations();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useUser();
   const team = useTeam();
   const { currentDivision } = useEvent();
@@ -58,6 +61,26 @@ export default function ScoresheetPage() {
     }
   }, [router, scoresheet, loading, user.role]);
 
+  // Compute desired view mode based on status and URL override
+  const viewMode: ScoresheetView = useMemo(() => {
+    if (!scoresheet) return 'score';
+    const override = searchParams.get('view');
+
+    if (user.role === 'head-referee' && (override === 'gp' || override === 'score')) {
+      return override;
+    }
+
+    return scoresheet.status === 'gp' ? 'gp' : 'score';
+  }, [scoresheet, searchParams, user.role]);
+
+  const forceEdit = user.role === 'head-referee' && searchParams.get('editMode') === 'true';
+
+  const handleSetViewMode = (newView: ScoresheetView) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('view', newView);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
+
   if (loading || !scoresheet) {
     return (
       <Box
@@ -84,15 +107,25 @@ export default function ScoresheetPage() {
           })}
         >
           <RoleAuthorizer user={user} allowedRoles="head-referee">
-            <ScoresheetSwitcher />
+            <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="top">
+              <EditButton scoresheet={scoresheet} isEditMode={forceEdit} />
+              <HeadRefViewToggle view={viewMode} setView={handleSetViewMode} />
+              <ScoresheetSwitcher />
+            </Stack>
           </RoleAuthorizer>
         </PageHeader>
       </Box>
 
-      <ScoresheetProvider scoresheet={scoresheet}>
+      <ScoresheetProvider scoresheet={scoresheet} forceEdit={forceEdit}>
         <Container maxWidth="md" sx={{ mt: 2 }}>
-          {scoresheet.status !== 'gp' && <ScoresheetForm />}
-          {scoresheet.status === 'gp' && <GPSelector />}
+          {viewMode === 'score' && (
+            <ScoresheetForm
+              disabled={
+                scoresheet.status === 'gp' || scoresheet.status === 'submitted' ? !forceEdit : false
+              }
+            />
+          )}
+          {viewMode === 'gp' && <GPSelector disabled={scoresheet.status !== 'gp' && !forceEdit} />}
         </Container>
       </ScoresheetProvider>
     </Container>

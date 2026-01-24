@@ -7,22 +7,28 @@ import { validateScoresheet, type ScoresheetValidationResult } from './scoreshee
 interface ScoresheetContextValue {
   scoresheet: ScoresheetItem;
   validation: ScoresheetValidationResult;
+  forceEdit?: boolean;
 }
 
 const ScoresheetContext = createContext<ScoresheetContextValue | undefined>(undefined);
 
 interface ScoresheetProviderProps {
   scoresheet: ScoresheetItem;
+  forceEdit?: boolean;
   children: React.ReactNode;
 }
 
-export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({ scoresheet, children }) => {
+export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({
+  scoresheet,
+  forceEdit = false,
+  children
+}) => {
   const validation = useMemo(() => {
     return validateScoresheet(scoresheet.data);
   }, [scoresheet.data]);
 
   return (
-    <ScoresheetContext.Provider value={{ scoresheet, validation }}>
+    <ScoresheetContext.Provider value={{ scoresheet, validation, forceEdit }}>
       {children}
     </ScoresheetContext.Provider>
   );

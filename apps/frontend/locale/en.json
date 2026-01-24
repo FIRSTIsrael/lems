@@ -955,6 +955,7 @@
     "scoresheet": {
       "title": "Team #{teamNumber}, {stage} round {round}",
       "clear-signature": "Clear Signature",
+      "signature-alt": "Signature",
       "form-complete": "Form Complete",
       "form-incomplete": "Form Incomplete",
       "complete-form-to-sign": "Complete the form and fix any errors to sign this scoresheet",
@@ -969,8 +970,9 @@
       "processing": "Processing...",
       "error-failed-to-escalate": "Failed to update escalation status",
       "error-failed-to-reset": "Failed to reset scoresheet",
+      "enable-edit-mode": "Enable edit mode to modify scoresheet",
+      "disable-edit-mode": "Disable edit mode",
       "selectScoresheet": {
-        "label": "Select a scoresheet",
         "round": "round"
       },
       "reset-dialog": {
@@ -988,6 +990,10 @@
         "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
         "submit-button": "Submit"
+      },
+      "view": {
+        "score": "Score",
+        "gp": "GP"
       }
     },
     "deliberations": {
