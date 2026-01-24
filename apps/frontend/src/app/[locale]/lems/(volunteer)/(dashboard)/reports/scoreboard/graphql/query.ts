@@ -6,13 +6,18 @@ export const GET_SCOREBOARD: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetScoreboard($divisionId: String!) {
     division(id: $divisionId) {
       id
+      field {
+        divisionId
+        currentStage
+      }
       teams {
         id
         number
         name
-        scoresheets(stage: RANKING) {
+        scoresheets {
           id
           round
+          stage
           status
           data {
             score
@@ -27,17 +32,24 @@ export function parseScoreboard(data: QueryData): ScoreboardTeam[] {
   if (!data.division) return [];
 
   const teams = data.division.teams;
+  const currentStage = data.division.field?.currentStage || 'PRACTICE';
 
   // Get all submitted rounds
   const rounds = [
     ...new Set(
-      teams.flatMap(t => t.scoresheets.filter(s => s.status === 'submitted').map(s => s.round))
+      teams.flatMap(t =>
+        t.scoresheets
+          .filter(s => s.status === 'submitted' && s.stage === currentStage)
+          .map(s => s.round)
+      )
     )
   ].sort((a, b) => a - b);
 
   // Build team rows
   const rows: ScoreboardTeam[] = teams.map(team => {
-    const submitted = team.scoresheets.filter(s => s.status === 'submitted');
+    const submitted = team.scoresheets.filter(
+      s => s.status === 'submitted' && s.stage === currentStage
+    );
     const scores = rounds.map(r => submitted.find(s => s.round === r)?.data?.score ?? null);
     const validScores = scores.filter((s): s is number => s !== null);
 

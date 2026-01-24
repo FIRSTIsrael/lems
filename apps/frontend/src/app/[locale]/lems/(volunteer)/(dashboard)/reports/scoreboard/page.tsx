@@ -9,6 +9,7 @@ import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { GET_SCOREBOARD, parseScoreboard } from './graphql/query';
 import { createScoresheetStatusChangedSubscription } from './graphql/subscriptions/scoresheet-status-changed';
+import { createScoresheetUpdatedSubscription } from './graphql/subscriptions/scoresheet-updated';
 import { ScoreboardTable } from './components/scoreboard-table';
 import { MobileScoreboard } from './components/mobile-scoreboard';
 import { LoadingState } from './components/loading-state';
@@ -19,7 +20,10 @@ export default function ScoreboardPage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [createScoresheetStatusChangedSubscription(currentDivision.id)],
+    () => [
+      createScoresheetStatusChangedSubscription(currentDivision.id),
+      createScoresheetUpdatedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

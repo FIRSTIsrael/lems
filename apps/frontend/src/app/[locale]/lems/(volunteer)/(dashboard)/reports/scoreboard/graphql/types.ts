@@ -10,6 +10,9 @@ export interface ScoreboardTeam {
 export interface QueryData {
   division?: {
     id: string;
+    field: {
+      currentStage: string;
+    };
     teams: {
       id: string;
       number: string;
@@ -17,6 +20,7 @@ export interface QueryData {
       scoresheets: {
         id: string;
         round: number;
+        stage: string;
         status: string;
         data: { score: number } | null;
       }[];
