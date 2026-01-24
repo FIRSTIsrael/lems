@@ -9,6 +9,7 @@ import { ApolloClientProvider } from '../../lib/graphql/apollo-client-provider';
 import { TimeSyncProvider } from './components/time-sync-provider';
 import { MuiProvider } from './components/mui-provider';
 import { LemsToaster } from './components/toaster';
+import { AuthCheckProvider } from './components/auth-check-provider';
 
 export const metadata: Metadata = {
   title: 'LEMS - FIRST LEGO League Events Management System',
@@ -60,8 +61,10 @@ export default async function RootLayout({ children, params }: RootLayoutProps) 
             <ApolloClientProvider>
               <SWRProvider>
                 <MuiProvider locale={locale}>
-                  {children}
-                  <LemsToaster dir={dir} />
+                  <AuthCheckProvider>
+                    {children}
+                    <LemsToaster dir={dir} />
+                  </AuthCheckProvider>
                 </MuiProvider>
               </SWRProvider>
             </ApolloClientProvider>
