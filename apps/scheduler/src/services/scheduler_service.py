@@ -1,5 +1,6 @@
 import logging
 import math
+import random
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -19,6 +20,9 @@ class SchedulerService:
         self.teams = lems_repository.get_teams()
         self.rooms = lems_repository.get_rooms()
         self.tables = lems_repository.get_tables()
+        if request.seed is not None:
+            random.seed(request.seed)
+            np.random.seed(request.seed)
         self._validate_schedule(request)
 
     def _validate_schedule(self, request: SchedulerRequest):
@@ -184,6 +188,21 @@ class SchedulerService:
             return table_columns[: len(table_columns) // 2]
         return table_columns[len(table_columns) // 2 :]
 
+    def _weighted_random_choice(self, waiting_times: dict[str, float]) -> str:
+        """Select a team from eligible candidates weighted by waiting time.
+
+        Teams with longer waits are more likely to be selected, but randomness
+        is introduced to prevent deterministic greedy assignments.
+        """
+        teams = list(waiting_times.keys())
+        times = list(waiting_times.values())
+
+        # Replace inf with max finite value for weighting
+        max_time = max((t for t in times if t != float("inf")), default=0)
+        weights = [t if t != float("inf") else max_time * 2 for t in times]
+
+        return random.choices(teams, weights=weights, k=1)[0]
+
     def _get_last_event_time(
         self, team: str, current_time: pd.Timestamp
     ) -> pd.Timestamp | None:
@@ -228,6 +247,7 @@ class SchedulerService:
             round_num = match["round"]
 
             available_tables = self._get_available_tables(match_num)
+            random.shuffle(available_tables)
             assigned_teams = {}  # Keep track of teams assigned in this match
             unassigned_tables = []  # Tables that need teams
 
@@ -265,7 +285,7 @@ class SchedulerService:
                                 current_time - last_event_time
                             ).total_seconds()
 
-                    selected_team = max(waiting_times.items(), key=lambda x: x[1])[0]
+                    selected_team = self._weighted_random_choice(waiting_times)
                     self.match_schedule.at[match_num, table] = selected_team
                     assigned_teams[table] = selected_team
                 else:

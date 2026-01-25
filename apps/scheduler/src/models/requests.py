@@ -29,6 +29,7 @@ class SchedulerRequest(BaseModel):
 
     breaks: list[Break]
     timezone: str = "UTC"
+    seed: int | None = None
 
 
 class CreateScheduleResponse(BaseModel):
