@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import { Card, CardContent, CardMedia, Grid, Typography } from '@mui/material';
 import { Season } from '@lems/types/api/admin';
+import { getAsset } from '../../../../../lib/assets';
 
 interface SeasonCardProps {
   season: Season;
@@ -20,7 +21,7 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
     >
       <CardMedia
         sx={{ height: 140, objectFit: 'contain' }}
-        src={season.logoUrl || '/admin/assets/FIRST-Logo.svg'}
+        src={season.logoUrl || getAsset('FIRST-Logo.svg')}
         component="img"
         title={season.name}
       />

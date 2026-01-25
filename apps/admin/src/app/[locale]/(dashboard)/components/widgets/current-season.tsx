@@ -3,6 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Avatar, Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { AdminSeasonResponseSchema } from '@lems/types/api/admin/seasons';
 import { apiFetch } from '@lems/shared';
+import { getAsset } from '../../../../../lib/assets';
 
 export default async function CurrentSeasonWidget() {
   const t = await getTranslations('pages.index.widgets.current-season');
@@ -50,7 +51,7 @@ export default async function CurrentSeasonWidget() {
         <Box display="flex" alignItems="center" gap={3} width="100%">
           <Avatar
             variant="rounded"
-            src={season.logoUrl || '/admin/assets/FIRST-Logo.svg'}
+            src={season.logoUrl || getAsset('FIRST-Logo.svg')}
             sx={{
               width: 120,
               height: 120,

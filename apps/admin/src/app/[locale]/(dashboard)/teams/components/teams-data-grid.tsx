@@ -3,11 +3,12 @@
 import { useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { DataGrid, GridActionsCell, GridColDef } from '@mui/x-data-grid';
-import { Avatar, Box, Chip, IconButton, useTheme } from '@mui/material';
+import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { Team } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
+import { getAsset } from '../../../../../lib/assets';
 import { TeamsSearch } from './teams-search';
 import { DeleteTeamButton } from './delete-team-button';
 import { UpdateTeamButton } from './update-team-button';
@@ -80,7 +81,7 @@ export const TeamsDataGrid: React.FC<TeamsDataGridProps> = ({ teams: initialTeam
             }}
           >
             <Avatar
-              src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
+              src={params.row.logoUrl || getAsset('default-avatar.svg')}
               alt={params.row.name}
             >
               #{params.row.number}

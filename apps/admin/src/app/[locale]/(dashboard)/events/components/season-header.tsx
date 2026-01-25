@@ -5,6 +5,7 @@ import { Typography, Button, Stack, Avatar, Box } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
+import { getAsset } from '../../../../../lib/assets';
 
 interface SeasonHeaderProps {
   seasonName: string;
@@ -27,7 +28,7 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
         <Avatar
           variant="rounded"
           sx={{ width: 64, height: 64 }}
-          src={logoUrl ?? '/admin/assets/FIRST-Logo.svg'}
+          src={logoUrl ?? getAsset('FIRST-Logo.svg')}
         />
         <Box>
           <Typography variant="h4" component="h2" dir="ltr">
