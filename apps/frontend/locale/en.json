@@ -1248,6 +1248,12 @@
     "prize": "{name} Award"
   },
   "homepage": {
+    "hero": {
+      "badge": "Event Management Platform",
+      "title": "LEMS",
+      "subtitle": "Streamlined management for <i>FIRST</i> LEGO League Challenge events",
+      "description": "Access live events, explore upcoming competitions, and manage every aspect of your tournament with ease."
+    },
     "live-events-title": "Live Events",
     "live-events-subtitle": "Events happening right now",
     "upcoming-events-title": "Upcoming Events",
