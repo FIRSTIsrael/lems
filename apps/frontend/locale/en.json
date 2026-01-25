@@ -630,7 +630,8 @@
       "team-not-available": "Team information not available",
       "break-message": "This is a good time to drink water and refresh",
       "no-show-title": "Team Did Not Arrive",
-      "no-show-description": "This team has not arrived at the event and will not participate in this match."
+      "no-show-description": "This team has not arrived at the event and will not participate in this match.",
+      "loading": "Loading referee data..."
     },
     "judging-status": {
       "page-title": "Judging Status",

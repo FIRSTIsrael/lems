@@ -629,7 +629,8 @@
       "team-not-available": "מידע הקבוצה לא זמין",
       "break-message": "זה זמן טוב לשתות מים ולהתרענן",
       "no-show-title": "הקבוצה לא הגיעה",
-      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה.",
+      "loading": "בטעינה..."
     },
     "judging-status": {
       "page-title": "מצב השיפוט",

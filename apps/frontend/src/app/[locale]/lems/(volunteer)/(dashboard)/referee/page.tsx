@@ -67,15 +67,17 @@ export default function RefereePage() {
       <>
         <PageHeader title={t('page-title', { table: tableId })} />
         <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
-          <Box sx={{ animation: 'pulse 2s infinite' }}>Loading referee data...</Box>
+          <Box sx={{ animation: 'pulse 2s infinite' }}>{t('loading')}</Box>
         </Container>
       </>
     );
   }
 
+  const tableName = data.matches[0]?.participants[0]?.table?.name || '';
+
   return (
     <>
-      <PageHeader title={t('page-title', { table: tableId })} />
+      <PageHeader title={t('page-title', { table: tableName })} />
       <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
         <RefereeProvider data={data}>
           <RefereeContent />
