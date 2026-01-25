@@ -21,6 +21,10 @@ export interface ScoresheetItem {
   round: number;
   status: string;
   escalated?: boolean;
+  table?: {
+    id: string;
+    name?: string;
+  };
   data: ScoresheetData;
 }
 

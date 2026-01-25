@@ -11,6 +11,7 @@ interface ScoresheetActionButtonsProps {
   onEscalate: () => void;
   onReset: () => void;
   onSubmit: () => void;
+  onSwitchToGP?: () => void;
 }
 
 export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = ({
@@ -18,19 +19,30 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
   isLoading,
   onEscalate,
   onReset,
-  onSubmit
+  onSubmit,
+  onSwitchToGP
 }) => {
   const t = useTranslations('pages.scoresheet');
-  const { scoresheet } = useScoresheet();
+  const { scoresheet, forceEdit, viewMode } = useScoresheet();
   const user = useUser();
 
   const isHeadReferee = user.role === 'head-referee';
   const isReferee = user.role === 'referee';
   const isEscalated = scoresheet.escalated || false;
+  const isSubmitted = scoresheet.status === 'submitted';
+  const hasSignature = !!scoresheet.data.signature;
 
   const showResetButton = isHeadReferee;
   const showEscalateButton = (isReferee && !isEscalated) || isHeadReferee;
-  const escalateButtonDisabled = scoresheet.status === 'submitted';
+
+  // Disable escalate and reset buttons if submitted (unless forceEdit)
+  const escalateDisabled = isSubmitted && !forceEdit;
+  const resetDisabled = isSubmitted && !forceEdit;
+
+  // Button text and behavior when signature exists
+  const shouldSwitchToGP = hasSignature && viewMode === 'score';
+  const submitButtonText = shouldSwitchToGP ? t('gp-next') : t('submit-scoresheet');
+  const submitButtonHandler = shouldSwitchToGP ? onSwitchToGP : onSubmit;
 
   return (
     <Stack direction="row" spacing={2} justifyContent="flex-end">
@@ -38,7 +50,7 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
         <Button
           variant={isEscalated && isHeadReferee ? 'outlined' : 'contained'}
           color={isEscalated && isHeadReferee ? 'warning' : 'primary'}
-          disabled={escalateButtonDisabled || isLoading}
+          disabled={escalateDisabled || isLoading}
           onClick={onEscalate}
           sx={{
             textTransform: 'none',
@@ -63,7 +75,7 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
         <Button
           variant="outlined"
           color="error"
-          disabled={isLoading}
+          disabled={resetDisabled || isLoading}
           onClick={onReset}
           sx={{
             textTransform: 'none',
@@ -85,8 +97,13 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
       <Button
         variant="contained"
         size="large"
-        disabled={!isSigned || isLoading}
-        onClick={onSubmit}
+        disabled={
+          isLoading ||
+          (!hasSignature && !isSigned) ||
+          (hasSignature && !shouldSwitchToGP) ||
+          !forceEdit
+        }
+        onClick={submitButtonHandler}
         sx={{
           textTransform: 'none',
           fontWeight: 600,
@@ -101,7 +118,7 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
             {t('submitting')}
           </Stack>
         ) : (
-          t('submit-scoresheet')
+          submitButtonText
         )}
       </Button>
     </Stack>

@@ -20,7 +20,7 @@ import { ResetScoresheetDialog } from './reset-scoresheet-dialog';
 
 export const ScoresheetSubmission: React.FC = () => {
   const t = useTranslations('pages.scoresheet');
-  const { scoresheet, validation } = useScoresheet();
+  const { scoresheet, validation, setViewMode } = useScoresheet();
   const { currentDivision } = useEvent();
 
   const signatureRef = useRef<SignatureCanvasHandle>(null);
@@ -165,6 +165,7 @@ export const ScoresheetSubmission: React.FC = () => {
           onEscalate={handleEscalate}
           onReset={handleReset}
           onSubmit={handleSubmit}
+          onSwitchToGP={() => setViewMode('gp')}
         />
 
         <ResetScoresheetDialog

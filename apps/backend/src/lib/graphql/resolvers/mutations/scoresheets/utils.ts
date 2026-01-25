@@ -116,5 +116,16 @@ export async function authorizeScoresheetAccess(
  * Helper function to check if scoresheet is editable
  */
 export function assertScoresheetEditable(status: string, userRole?: string): void {
-  return; // TODO: implement
+  // Head-referees can always edit
+  if (userRole === 'head-referee') {
+    return;
+  }
+
+  // Referees cannot edit submitted scoresheets
+  if (userRole === 'referee' && status === 'submitted') {
+    throw new MutationError(
+      MutationErrorCode.FORBIDDEN,
+      `Scoresheet with status 'submitted' cannot be edited by a referee`
+    );
+  }
 }
