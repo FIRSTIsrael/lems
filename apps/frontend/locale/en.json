@@ -1255,5 +1255,32 @@
     "awarded-to": "Awarded to",
     "advancing-teams": "Advancing Teams",
     "prize": "{name} Award"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "Event Management Platform",
+      "title": "LEMS",
+      "subtitle": "Streamlined management for <i>FIRST</i> LEGO League Challenge events",
+      "description": "Access live events, explore upcoming competitions, and manage every aspect of your tournament with ease."
+    },
+    "live-events-title": "Live Events",
+    "live-events-subtitle": "Events happening right now",
+    "upcoming-events-title": "Upcoming Events",
+    "upcoming-events-subtitle": "Events happening through the end of this week",
+    "no-upcoming-events": "No upcoming events this week",
+    "no-live-events": "No events currently live",
+    "view-all": "View All Events",
+    "view-event": "View Event",
+    "view-details": "View Details"
+  },
+  "browse-events": {
+    "page-title": "Browse Events",
+    "title": "All Events",
+    "description": "Discover all available FIRST LEGO League events",
+    "loading": "Loading events...",
+    "no-events": "No events found",
+    "no-events-description": "Try again later or contact support for more information",
+    "go-home": "Back to Home",
+    "back": "Back"
   }
 }

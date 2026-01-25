@@ -5,9 +5,8 @@ export interface HomepageEvent {
   startDate: string;
   endDate: string;
   isFullySetUp: boolean;
-  location: string;
   region: string;
-  seasonId: string;
+  seasonName: string;
 }
 
 export type GetEventsQuery = {

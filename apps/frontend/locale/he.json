@@ -1253,5 +1253,32 @@
     "awarded-to": "מוענק ל",
     "advancing-teams": "קבוצות מעפילות",
     "prize": "פרס {name}"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "פלטפורמת ניהול אירועים",
+      "title": "LEMS",
+      "subtitle": "ניהול תחרויות <i>FIRST</i> LEGO League Challenge",
+      "description": "גישה לאירועים חיים, סקירת תחרויות קרובות, ותפעול פשוט של התחרות."
+    },
+    "live-events-title": "אירועים חיים",
+    "live-events-subtitle": "אירועים המתרחשים כעת",
+    "upcoming-events-title": "אירועים קרובים",
+    "upcoming-events-subtitle": "אירועים המתרחשים עד סוף השבוע",
+    "no-upcoming-events": "אין אירועים קרובים השבוע",
+    "no-live-events": "אין אירועים חיים כרגע",
+    "view-all": "צפה בכל האירועים",
+    "view-event": "צפה באירוע",
+    "view-details": "צפה בפרטים"
+  },
+  "browse-events": {
+    "page-title": "עיון באירועים",
+    "title": "כל האירועים",
+    "description": "גלו את כל אירועי FIRST LEGO League הזמינים",
+    "loading": "טוען אירועים...",
+    "no-events": "לא נמצאו אירועים",
+    "no-events-description": "נסו שוב מאוחר יותר או צרו קשר עם התמיכה למידע נוסף",
+    "go-home": "חזרה לעמוד הבית",
+    "back": "חזור"
   }
 }

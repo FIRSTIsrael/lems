@@ -22,9 +22,8 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       startDate
       endDate
       isFullySetUp
-      location
       region
-      seasonId
+      seasonName
     }
   }
 `;
