@@ -2,14 +2,19 @@
 
 import React, { useMemo } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Box, Typography, Stack } from '@mui/material';
-import { FiberManualRecord as LiveIcon } from '@mui/icons-material';
+import { Box, Typography, Stack, Button } from '@mui/material';
+import { FiberManualRecord as LiveIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { Event } from '@lems/types/api/lems';
 import { EventCard } from './event-card';
 import { GET_EVENTS_QUERY, HomepageEvent } from './graphql';
 
 export const LiveEventsSection: React.FC = () => {
+  const router = useRouter();
+  const t = useTranslations('homepage');
+
   const { now, oneDayAgo } = useMemo(() => {
     const currentTime = dayjs();
     return {
@@ -34,10 +39,10 @@ export const LiveEventsSection: React.FC = () => {
       slug: event.slug,
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
-      location: event.location,
+      location: '', // Not fetched anymore
       region: event.region,
       coordinates: null,
-      seasonId: event.seasonId
+      seasonId: '' // Placeholder - not available from current query
     })) || [];
 
   if (loading) {
@@ -45,7 +50,42 @@ export const LiveEventsSection: React.FC = () => {
   }
 
   if (liveEvents.length === 0) {
-    return null;
+    return (
+      <Box sx={{ mb: 6 }}>
+        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+          <LiveIcon
+            sx={{
+              color: 'error.main',
+              fontSize: 20,
+              animation: 'pulse 2s ease-in-out infinite',
+              '@keyframes pulse': {
+                '0%, 100%': { opacity: 1 },
+                '50%': { opacity: 0.5 }
+              }
+            }}
+          />
+          <Typography
+            variant="h4"
+            fontWeight="700"
+            sx={{
+              fontSize: { xs: '1.75rem', md: '2.125rem' }
+            }}
+          >
+            {t('live-events-title')}
+          </Typography>
+        </Stack>
+
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5, mb: 2 }} />
+          <Typography variant="h6" color="text.secondary" gutterBottom>
+            {t('no-live-events')}
+          </Typography>
+          <Button variant="contained" onClick={() => router.push('/events')} sx={{ mt: 3 }}>
+            {t('view-all')}
+          </Button>
+        </Box>
+      </Box>
+    );
   }
 
   return (
@@ -69,12 +109,12 @@ export const LiveEventsSection: React.FC = () => {
             fontSize: { xs: '1.75rem', md: '2.125rem' }
           }}
         >
-          Live Events
+          {t('live-events-title')}
         </Typography>
       </Stack>
 
       <Typography variant="body1" color="text.secondary" sx={{ mb: 3, fontSize: '1.125rem' }}>
-        Events happening right now
+        {t('live-events-subtitle')}
       </Typography>
 
       <Stack spacing={3}>
@@ -82,6 +122,12 @@ export const LiveEventsSection: React.FC = () => {
           <EventCard key={event.id} event={event} variant="live" />
         ))}
       </Stack>
+
+      <Box sx={{ mt: 4, textAlign: 'center' }}>
+        <Button variant="outlined" onClick={() => router.push('/events')}>
+          {t('view-all')}
+        </Button>
+      </Box>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Typography, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
 import type { Match } from '../graphql/types';
@@ -26,22 +26,28 @@ export function MatchInfo({ match, isDesktop }: MatchInfoProps) {
   };
 
   return (
-    <Box
+    <Paper
+      elevation={0}
       sx={{
+        px: isDesktop ? 6 : 4,
+        py: isDesktop ? 3 : 2,
         textAlign: 'center',
-        mb: isDesktop ? 4 : 2
+        background: theme => `${theme.palette.background.paper}E6`,
+        border: theme => `1px solid ${theme.palette.divider}`,
+        borderRadius: 2,
+        backdropFilter: 'blur(4px)'
       }}
     >
       <Typography
-        variant={isDesktop ? 'h2' : 'h4'}
-        fontWeight={600}
+        variant={isDesktop ? 'h3' : 'h5'}
+        fontWeight={700}
         sx={{
-          mb: 2,
-          color: theme => theme.palette.text.primary
+          color: theme => theme.palette.text.primary,
+          letterSpacing: '0.5px'
         }}
       >
         {getMatchLabel()}
       </Typography>
-    </Box>
+    </Paper>
   );
 }

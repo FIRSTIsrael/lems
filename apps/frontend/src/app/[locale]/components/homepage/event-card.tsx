@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import {
   Card,
   CardContent,
@@ -12,12 +13,8 @@ import {
   alpha,
   useTheme
 } from '@mui/material';
-import {
-  LocationOn as LocationIcon,
-  CalendarToday as CalendarIcon,
-  ArrowForward as ArrowIcon
-} from '@mui/icons-material';
-import { apiFetch, Flag } from '@lems/shared';
+import { CalendarToday as CalendarIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import { Flag } from '@lems/shared';
 import { Event } from '@lems/types/api/lems';
 
 interface EventCardProps {
@@ -30,19 +27,12 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
   const router = useRouter();
   const params = useParams();
   const locale = params.locale as string;
+  const t = useTranslations('homepage');
 
-  const handleClick = async () => {
-    // Check if user is authenticated
-    const authResult = await apiFetch('/lems/auth/verify');
-
-    if (authResult.ok) {
-      // Authenticated: redirect to role page (to be implemented)
-      // For now, redirect to dashboard
-      router.push(`/${event.slug}/dashboard`);
-    } else {
-      // Not authenticated: redirect to login page
-      router.push(`/${event.slug}/login`);
-    }
+  const handleClick = () => {
+    // Navigation is now handled at layout level
+    // Simply navigate to event login page
+    router.push(`/${event.slug}/login`);
   };
 
   const isLive = variant === 'live';
@@ -145,15 +135,9 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
               </Stack>
 
               <Stack direction="row" alignItems="center" spacing={1.5}>
-                <LocationIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  fontSize="0.95rem"
-                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                >
-                  {event.location}
-                  <Flag region={event.region} size={18} />
+                <Flag region={event.region} size={18} />
+                <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
+                  {event.region}
                 </Typography>
               </Stack>
             </Stack>
@@ -170,7 +154,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
               }}
             >
               <Typography variant="body2" fontWeight="600">
-                {isLive ? 'View Event' : 'View Details'}
+                {isLive ? t('view-event') : t('view-details')}
               </Typography>
               <ArrowIcon fontSize="small" />
             </Stack>

@@ -212,7 +212,8 @@
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
         "field-timer": "שעון זמן מגרש",
-        "judging-status": "מצב השיפוט"
+        "judging-status": "מצב השיפוט",
+        "scoreboard": "טבלת ניקוד"
       },
       "field-status": {
         "countdown": {
@@ -236,6 +237,7 @@
           "no-match": "אין מקצה פעיל כרגע",
           "match-title": "מקצה {slug}",
           "started-at": "התחיל",
+          "scheduled-at": "מתוכנן",
           "deviation": "סטייה",
           "participants": "משתתפים",
           "team-label": "קבוצה",
@@ -285,6 +287,17 @@
         "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
         "place-label": "מקום #{place}"
       },
+      "scoreboard": {
+        "page-title": "לוח תוצאות",
+        "loading": "טוען לוח תוצאות...",
+        "error-loading": "שגיאה בטעינת לוח התוצאות",
+        "rank": "דירוג",
+        "team": "קבוצה",
+        "best-score": "ניקוד מירבי",
+        "match": "מקצה",
+        "match-scores": "ניקוד מקצים",
+        "no-data": "אין נתוני לוח תוצאות זמינים"
+      },
       "team-list": {
         "page-title": "רשימת קבוצות",
         "total-teams": "סה״כ קבוצות",
@@ -333,7 +346,8 @@
         "loading": "טוען נתוני מקצה...",
         "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
         "test-match": "מקצה בדיקה",
-        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}"
+        "match-info": "מקצה {stage} סבב #{round} מקצה #{number}",
+        "next-match": "מקצה הבא"
       },
       "field-schedule": {
         "page-title": "לו״ז זירה",
@@ -594,7 +608,7 @@
       }
     },
     "referee": {
-      "page-title": "שופט זירה",
+      "page-title": "שופט זירה | שולחן {table}",
       "match-running": "מקצה פעיל",
       "match-slug": "צקצה",
       "prestart-title": "התכוננת למקצה",
@@ -615,7 +629,8 @@
       "team-not-available": "מידע הקבוצה לא זמין",
       "break-message": "זה זמן טוב לשתות מים ולהתרענן",
       "no-show-title": "הקבוצה לא הגיעה",
-      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה."
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה.",
+      "loading": "בטעינה..."
     },
     "judging-status": {
       "page-title": "מצב השיפוט",
@@ -939,12 +954,15 @@
     },
     "scoresheet": {
       "title": "קבוצה #{teamNumber} | סבב {stage} {round}",
+      "table": "שולחן {table}",
       "clear-signature": "נקה חתימה",
+      "signature-alt": "חתימה",
       "form-complete": "הטופס הושלם",
       "form-incomplete": "הטופס לא שלם",
       "complete-form-to-sign": "השלם את הטופס ותקן כל שגיאות כדי לחתום על דף הניקוד",
       "complete-form-to-proceed": "השלם את כל המשימות ותקן את כל השגיאות לפני שתוכל לחתום ולהגיש את דף הניקוד",
       "submit-scoresheet": "הגש דף ניקוד",
+      "gp-next": "עבור לניקוד GP",
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
@@ -954,6 +972,11 @@
       "processing": "מעבד...",
       "error-failed-to-escalate": "העברה נכשלה",
       "error-failed-to-reset": "איפוס דף הניקוד נכשל",
+      "enable-edit-mode": "אפשר מצב עריכה לשינוי דף הניקוד",
+      "disable-edit-mode": "כבה מצב עריכה",
+      "selectScoresheet": {
+        "round": "סבב"
+      },
       "reset-dialog": {
         "title": "איפוס דף ניקוד",
         "warning": "לא ניתן לבטל פעולה זו!",
@@ -968,7 +991,12 @@
         "level-4": "מצטיינת",
         "notes-placeholder-2": "נמקו מדוע נתתם לקבוצה ציון מתפתחת",
         "notes-placeholder-4": "נמקו מדוע נתתם לקבוצה ציון מצטיינת",
-        "submit-button": "הגשת דף ניקוד"
+        "submit-button": "הגשת דף ניקוד",
+        "back-to-scores": "חזרה לניקוד"
+      },
+      "view": {
+        "score": "ניקוד",
+        "gp": "GP"
       }
     },
     "deliberations": {
@@ -1062,12 +1090,16 @@
           "podium-title": "קרנבל האליפות",
           "place-label": "מקום #{place}",
           "select-team": "בחרו קבוצה...",
-          "table-rank": "דירוג",
+          "table-rank": "דירוג כולל",
           "table-team": "קבוצה",
           "table-room": "חדר",
           "table-score": "ציון כולל",
+          "table-innovation-project-rank": "דירוג פרויקט חדשנות",
+          "table-robot-design-rank": "דירוג עיצוב רובוט",
+          "table-core-values-rank": "דירוג ערכי הליבה",
+          "table-robot-game-rank": "דירוג משחק הרובוט",
           "save": "שמור אליפות",
-          "advance": "קדם לפרסים בסיסיים",
+          "advance": "המשך לפרסי חובה",
           "saving": "שומר...",
           "start": "התחל דיון",
           "time-remaining": "זמן נותר",
@@ -1222,5 +1254,32 @@
     "awarded-to": "מוענק ל",
     "advancing-teams": "קבוצות מעפילות",
     "prize": "פרס {name}"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "פלטפורמת ניהול אירועים",
+      "title": "LEMS",
+      "subtitle": "ניהול תחרויות <i>FIRST</i> LEGO League Challenge",
+      "description": "גישה לאירועים חיים, סקירת תחרויות קרובות, ותפעול פשוט של התחרות."
+    },
+    "live-events-title": "אירועים חיים",
+    "live-events-subtitle": "אירועים המתרחשים כעת",
+    "upcoming-events-title": "אירועים קרובים",
+    "upcoming-events-subtitle": "אירועים המתרחשים עד סוף השבוע",
+    "no-upcoming-events": "אין אירועים קרובים השבוע",
+    "no-live-events": "אין אירועים חיים כרגע",
+    "view-all": "צפה בכל האירועים",
+    "view-event": "צפה באירוע",
+    "view-details": "צפה בפרטים"
+  },
+  "browse-events": {
+    "page-title": "עיון באירועים",
+    "title": "כל האירועים",
+    "description": "גלו את כל אירועי FIRST LEGO League הזמינים",
+    "loading": "טוען אירועים...",
+    "no-events": "לא נמצאו אירועים",
+    "no-events-description": "נסו שוב מאוחר יותר או צרו קשר עם התמיכה למידע נוסף",
+    "go-home": "חזרה לעמוד הבית",
+    "back": "חזור"
   }
 }

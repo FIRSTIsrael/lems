@@ -11,7 +11,8 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
-  createParticipantStatusUpdatedSubscription
+  createParticipantStatusUpdatedSubscription,
+  createMatchStageAdvancedSubscription
 } from './graphql';
 import { MatchCountdown } from './components/match-countdown';
 import { ActiveMatchPanel } from './components/active-match-panel';
@@ -36,10 +37,10 @@ function FieldStatusContent() {
         />
 
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <ActiveMatchPanel match={activeMatch} />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <NextMatchPanel match={loadedMatch} />
           </Grid>
         </Grid>
@@ -59,7 +60,8 @@ export default function FieldStatusPage() {
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchAbortedSubscription(currentDivision.id),
-      createParticipantStatusUpdatedSubscription(currentDivision.id)
+      createParticipantStatusUpdatedSubscription(currentDivision.id),
+      createMatchStageAdvancedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

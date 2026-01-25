@@ -21,6 +21,10 @@ export interface ScoresheetItem {
   round: number;
   status: string;
   escalated?: boolean;
+  table?: {
+    id: string;
+    name?: string;
+  };
   data: ScoresheetData;
 }
 
@@ -37,6 +41,30 @@ export type QueryVariables = {
   divisionId: string;
   teamId: string;
   slug: string;
+};
+
+export type GetTeamScoresheetsItem = {
+  id: string;
+  slug: string;
+  stage: string;
+  round: number;
+  status: string;
+  escalated?: boolean;
+};
+
+export type GetTeamScoresheetsQueryData = {
+  division: {
+    id: string;
+    field: {
+      divisionId: string;
+      scoresheets: GetTeamScoresheetsItem[];
+    };
+  };
+};
+
+export type GetTeamScoresheetsQueryVars = {
+  divisionId: string;
+  teamId: string;
 };
 
 export type SubscriptionVariables = {

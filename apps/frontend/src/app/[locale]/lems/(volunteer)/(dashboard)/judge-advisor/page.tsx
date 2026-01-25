@@ -25,7 +25,9 @@ import {
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
   createTeamDisqualifiedSubscription,
-  parseDivisionSessions
+  parseDivisionSessions,
+  createDeliberationUpdatedSubscription,
+  createFinalDeliberationStatusChangedSubscription
 } from './graphql';
 
 export default function JudgeAdvisorPage() {
@@ -59,7 +61,9 @@ export default function JudgeAdvisorPage() {
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createRubricStatusChangedSubscription(currentDivision.id),
       createTeamArrivalSubscription(currentDivision.id),
-      createTeamDisqualifiedSubscription(currentDivision.id)
+      createTeamDisqualifiedSubscription(currentDivision.id),
+      createDeliberationUpdatedSubscription(currentDivision.id),
+      createFinalDeliberationStatusChangedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

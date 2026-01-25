@@ -4,6 +4,8 @@ import type {
   QueryResult,
   QueryVariables,
   ScoresheetItem,
+  GetTeamScoresheetsQueryData,
+  GetTeamScoresheetsQueryVars,
   GetTeamMatchQueryData,
   GetTeamMatchQueryVars
 } from './types';
@@ -25,6 +27,10 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
           round
           status
           escalated
+          table {
+            id
+            name
+          }
           data {
             missions
             signature
@@ -56,6 +62,28 @@ export function parseScoresheetData(queryData: QueryResult): ScoresheetItem {
 
   return scoresheet;
 }
+
+export const GET_TEAM_SCORESHEETS_QUERY: TypedDocumentNode<
+  GetTeamScoresheetsQueryData,
+  GetTeamScoresheetsQueryVars
+> = gql`
+  query GetTeamScoresheets($divisionId: String!, $teamId: String!) {
+    division(id: $divisionId) {
+      id
+      field {
+        divisionId
+        scoresheets(teamIds: [$teamId]) {
+          id
+          slug
+          stage
+          round
+          status
+          escalated
+        }
+      }
+    }
+  }
+`;
 
 export const GET_TEAM_MATCH_QUERY: TypedDocumentNode<GetTeamMatchQueryData, GetTeamMatchQueryVars> =
   gql`

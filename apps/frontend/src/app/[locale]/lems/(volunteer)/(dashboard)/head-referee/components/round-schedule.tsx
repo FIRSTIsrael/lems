@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { CardHeader, CardContent, Typography, useTheme, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import type { RoundGroup } from './utils';
-import { DesktopScheduleTable } from './desktop-schedule';
+import { DesktopScheduleTable } from './desktop-schedule/desktop-schedule-table';
 import { MobileScheduleCards } from './mobile-schedule-cards';
 
 interface RoundScheduleProps {
@@ -42,7 +42,14 @@ export function RoundSchedule({ roundGroup }: RoundScheduleProps) {
           px: 3
         }}
       />
-      <CardContent sx={{ p: 0, display: 'flex', flexDirection: 'column' }}>
+      <CardContent
+        sx={{
+          p: 0,
+          display: 'flex',
+          flexDirection: 'column',
+          '&.MuiCardContent-root:last-child': { pb: 0 }
+        }}
+      >
         <ResponsiveComponent
           desktop={<DesktopScheduleTable matches={matches} scoresheets={scoresheets} />}
           mobile={<MobileScheduleCards matches={matches} scoresheets={scoresheets} />}

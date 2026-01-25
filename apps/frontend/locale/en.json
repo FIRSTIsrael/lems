@@ -213,7 +213,8 @@
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
-        "judging-status": "Judging Status"
+        "judging-status": "Judging Status",
+        "scoreboard": "Scoreboard"
       },
       "field-status": {
         "countdown": {
@@ -237,6 +238,7 @@
           "no-match": "No active match",
           "match-title": "Match {slug}",
           "started-at": "Started",
+          "scheduled-at": "Scheduled",
           "deviation": "Deviation",
           "participants": "Participants",
           "team-label": "Team",
@@ -286,6 +288,17 @@
         "places-count": "{count, plural, one {1 Award} other {# Awards}}",
         "place-label": "Place #{place}"
       },
+      "scoreboard": {
+        "page-title": "Scoreboard",
+        "loading": "Loading scoreboard...",
+        "error-loading": "Failed to load scoreboard",
+        "rank": "Rank",
+        "team": "Team",
+        "best-score": "Best Score",
+        "match": "Match",
+        "match-scores": "Match Scores",
+        "no-data": "No scoreboard data available"
+      },
       "team-list": {
         "page-title": "Team List",
         "total-teams": "Total Teams",
@@ -334,7 +347,8 @@
         "loading": "Loading match data...",
         "error-loading": "Failed to load field data. Please try again.",
         "test-match": "Test Match",
-        "match-info": "{stage} Round #{round} Match #{number}"
+        "match-info": "{stage} Round #{round} Match #{number}",
+        "next-match": "Next Match"
       },
       "field-schedule": {
         "page-title": "Field Schedule",
@@ -595,7 +609,7 @@
       }
     },
     "referee": {
-      "page-title": "Referee Dashboard",
+      "page-title": "Referee Dashboard | Table {table}",
       "match-running": "Match Running",
       "match-slug": "Match",
       "prestart-title": "Match Preparation",
@@ -616,7 +630,8 @@
       "team-not-available": "Team information not available",
       "break-message": "This is a good time to drink water and refresh",
       "no-show-title": "Team Did Not Arrive",
-      "no-show-description": "This team has not arrived at the event and will not participate in this match."
+      "no-show-description": "This team has not arrived at the event and will not participate in this match.",
+      "loading": "Loading referee data..."
     },
     "judging-status": {
       "page-title": "Judging Status",
@@ -940,12 +955,15 @@
     },
     "scoresheet": {
       "title": "Team #{teamNumber}, {stage} round {round}",
+      "table": "Table {table}",
       "clear-signature": "Clear Signature",
+      "signature-alt": "Signature",
       "form-complete": "Form Complete",
       "form-incomplete": "Form Incomplete",
       "complete-form-to-sign": "Complete the form and fix any errors to sign this scoresheet",
       "complete-form-to-proceed": "Complete all missions and resolve all errors before you can sign and submit the scoresheet",
       "submit-scoresheet": "Submit Scoresheet",
+      "gp-next": "Fill out GP",
       "submitting": "Submitting...",
       "error-signature-required": "A signature is required to submit the scoresheet",
       "error-failed-to-submit": "Failed to submit scoresheet",
@@ -955,6 +973,11 @@
       "processing": "Processing...",
       "error-failed-to-escalate": "Failed to update escalation status",
       "error-failed-to-reset": "Failed to reset scoresheet",
+      "enable-edit-mode": "Enable edit mode to modify scoresheet",
+      "disable-edit-mode": "Disable edit mode",
+      "selectScoresheet": {
+        "round": "round"
+      },
       "reset-dialog": {
         "title": "Reset Scoresheet",
         "warning": "This action cannot be undone!",
@@ -969,7 +992,12 @@
         "level-4": "EXCEEDS",
         "notes-placeholder-2": "Explain why you gave the team a DEVELOPING score",
         "notes-placeholder-4": "Explain why you gave the team an EXCEEDS score",
-        "submit-button": "Submit"
+        "submit-button": "Submit",
+        "back-to-scores": "Back to scores"
+      },
+      "view": {
+        "score": "Score",
+        "gp": "GP"
       }
     },
     "deliberations": {
@@ -1064,10 +1092,14 @@
           "podium-title": "Champions Podium",
           "place-label": "Place #{place}",
           "select-team": "Select team...",
-          "table-rank": "Rank",
+          "table-rank": "Total Rank",
           "table-team": "Team",
           "table-room": "Room",
           "table-score": "Total Score",
+          "table-innovation-project-rank": "Innovation Project Rank",
+          "table-robot-design-rank": "Robot Design Rank",
+          "table-core-values-rank": "Core Values Rank",
+          "table-robot-game-rank": "Robot Game Rank",
           "save": "Save Champions",
           "advance": "Advance to Core Awards",
           "saving": "Saving...",
@@ -1224,5 +1256,32 @@
     "awarded-to": "Awarded to",
     "advancing-teams": "Advancing Teams",
     "prize": "{name} Award"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "Event Management Platform",
+      "title": "LEMS",
+      "subtitle": "Streamlined management for <i>FIRST</i> LEGO League Challenge events",
+      "description": "Access live events, explore upcoming competitions, and manage every aspect of your tournament with ease."
+    },
+    "live-events-title": "Live Events",
+    "live-events-subtitle": "Events happening right now",
+    "upcoming-events-title": "Upcoming Events",
+    "upcoming-events-subtitle": "Events happening through the end of this week",
+    "no-upcoming-events": "No upcoming events this week",
+    "no-live-events": "No events currently live",
+    "view-all": "View All Events",
+    "view-event": "View Event",
+    "view-details": "View Details"
+  },
+  "browse-events": {
+    "page-title": "Browse Events",
+    "title": "All Events",
+    "description": "Discover all available FIRST LEGO League events",
+    "loading": "Loading events...",
+    "no-events": "No events found",
+    "no-events-description": "Try again later or contact support for more information",
+    "go-home": "Back to Home",
+    "back": "Back"
   }
 }

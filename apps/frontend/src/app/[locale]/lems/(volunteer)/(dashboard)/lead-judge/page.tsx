@@ -21,7 +21,8 @@ import {
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
   getLeadJudgeCategory,
-  parseLeadJudgeData
+  parseLeadJudgeData,
+  createDeliberationUpdatedSubscription
 } from './graphql';
 
 export default function LeadJudgePage() {
@@ -42,7 +43,8 @@ export default function LeadJudgePage() {
       createJudgingSessionAbortedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createRubricStatusChangedSubscription(currentDivision.id),
-      createTeamArrivalSubscription(currentDivision.id)
+      createTeamArrivalSubscription(currentDivision.id),
+      createDeliberationUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

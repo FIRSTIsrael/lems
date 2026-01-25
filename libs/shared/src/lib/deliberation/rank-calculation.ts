@@ -99,7 +99,8 @@ export function calculateTeamRanks(
   ranks['robot-game'] =
     allTeams
       .sort((a, b) => compareScoreArrays(a.robotGameScores, b.robotGameScores))
-      .indexOf(teamData) + 1;
+      .map(t => t.teamId)
+      .indexOf(teamData.teamId) + 1;
 
   // Calculate average rank
   const averageRank =
