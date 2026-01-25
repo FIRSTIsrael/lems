@@ -2,8 +2,8 @@
 
 import { useMemo, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { useParams, useRouter } from 'next/navigation';
-import { Container, Box, CircularProgress } from '@mui/material';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { Container, Box, CircularProgress, Stack } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { PageHeader } from '../../../../components/page-header';
 import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
@@ -12,20 +12,22 @@ import { useEvent } from '../../../../../components/event-context';
 import { useUser } from '../../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
-import { ScoresheetForm } from './components/scoresheet-form';
-import { GPSelector } from './components/gp-selector';
 import { ScoresheetSwitcher } from './components/scoresheet-switcher';
+import { EditButton } from './components/edit-button';
+import { HeadRefViewToggle } from './components/view-toggle';
 import {
   GET_SCORESHEET_QUERY,
   parseScoresheetData,
   createScoresheetUpdatedSubscription
 } from './graphql';
+import { ScoresheetPageContent } from './scoresheet-page-content';
 
 export default function ScoresheetPage() {
   const t = useTranslations('pages.scoresheet');
   const { getStage } = useMatchTranslations();
 
   const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useUser();
   const team = useTeam();
   const { currentDivision } = useEvent();
@@ -58,6 +60,8 @@ export default function ScoresheetPage() {
     }
   }, [router, scoresheet, loading, user.role]);
 
+  const forceEdit = user.role === 'head-referee' && searchParams.get('editMode') === 'true';
+
   if (loading || !scoresheet) {
     return (
       <Box
@@ -75,25 +79,29 @@ export default function ScoresheetPage() {
 
   return (
     <Container disableGutters maxWidth="md">
-      <Box sx={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'background.paper' }}>
-        <PageHeader
-          title={t('title', {
-            teamNumber: team.number,
-            stage: getStage(scoresheet.stage),
-            round: scoresheet.round
-          })}
-        >
-          <RoleAuthorizer user={user} allowedRoles="head-referee">
-            <ScoresheetSwitcher />
-          </RoleAuthorizer>
-        </PageHeader>
-      </Box>
+      <ScoresheetProvider scoresheet={scoresheet} forceEdit={forceEdit}>
+        <Box sx={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: 'background.paper' }}>
+          <PageHeader
+            title={t('title', {
+              teamNumber: team.number,
+              stage: getStage(scoresheet.stage),
+              round: scoresheet.round
+            })}
+            subtitle={
+              scoresheet.table?.name ? t('table', { table: scoresheet.table.name }) : undefined
+            }
+          >
+            <RoleAuthorizer user={user} allowedRoles="head-referee">
+              <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="top">
+                <EditButton scoresheet={scoresheet} isEditMode={forceEdit} />
+                <HeadRefViewToggle />
+                <ScoresheetSwitcher />
+              </Stack>
+            </RoleAuthorizer>
+          </PageHeader>
+        </Box>
 
-      <ScoresheetProvider scoresheet={scoresheet}>
-        <Container maxWidth="md" sx={{ mt: 2 }}>
-          {scoresheet.status !== 'gp' && <ScoresheetForm />}
-          {scoresheet.status === 'gp' && <GPSelector />}
-        </Container>
+        <ScoresheetPageContent />
       </ScoresheetProvider>
     </Container>
   );

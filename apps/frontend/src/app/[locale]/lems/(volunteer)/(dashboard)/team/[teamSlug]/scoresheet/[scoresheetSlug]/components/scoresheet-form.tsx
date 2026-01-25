@@ -9,7 +9,11 @@ import { ScoresheetIncompleteAlert } from './scoresheet-alert';
 import { ScoreFloater } from './score-floater';
 import { ScoresheetSubmission } from './scoresheet-submission';
 
-export const ScoresheetForm: React.FC = () => {
+interface ScoresheetFormProps {
+  disabled?: boolean;
+}
+
+export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false }) => {
   const { validation } = useScoresheet();
   const { getError } = useScoresheetTranslations();
 
@@ -22,6 +26,7 @@ export const ScoresheetForm: React.FC = () => {
           src={`/assets/scoresheet/missions/${mission.id}.webp`}
           mission={mission}
           missionErrors={validation.missionErrors.get(mission.id)?.errors}
+          disabled={disabled}
         />
       ))}
 

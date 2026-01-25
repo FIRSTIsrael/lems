@@ -39,7 +39,7 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
   const t = useTranslations('pages.scoresheet.gp-selector');
   const theme = useTheme();
   const { currentDivision } = useEvent();
-  const { scoresheet } = useScoresheet();
+  const { scoresheet, setViewMode } = useScoresheet();
   const [updateGP] = useMutation(UPDATE_SCORESHEET_GP_MUTATION);
   const [updateStatus] = useMutation(UPDATE_SCORESHEET_STATUS_MUTATION);
   const [updateEscalated] = useMutation(UPDATE_SCORESHEET_ESCALATED_MUTATION);
@@ -93,6 +93,16 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
       }
     });
   };
+
+  const handleButtonClick = () => {
+    if (scoresheet.status === 'submitted') {
+      setViewMode('score');
+    } else {
+      handleSubmit();
+    }
+  };
+
+  const buttonText = scoresheet.status === 'submitted' ? t('back-to-scores') : t('submit-button');
 
   return (
     <Paper sx={{ p: 4, mt: 2, borderRadius: 2 }}>
@@ -213,11 +223,11 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleSubmit}
+          onClick={handleButtonClick}
           disabled={!isFormValid() || disabled}
           size="large"
         >
-          {t('submit-button')}
+          {buttonText}
         </Button>
       </Box>
     </Paper>

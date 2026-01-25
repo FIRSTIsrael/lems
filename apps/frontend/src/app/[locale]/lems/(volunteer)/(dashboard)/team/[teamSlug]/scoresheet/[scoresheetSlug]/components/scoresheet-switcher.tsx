@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Box, FormControl, FormHelperText, MenuItem, Select, useTheme, alpha } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, useTheme, alpha } from '@mui/material';
 import { Check as CheckIcon, Warning as WarningIcon } from '@mui/icons-material';
 import { useQuery } from '@apollo/client/react';
 import { useMatchTranslations } from '@lems/localization';
@@ -111,7 +111,6 @@ export const ScoresheetSwitcher: React.FC = () => {
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText sx={{ fontSize: '0.75rem' }}>{t('selectScoresheet.label')}</FormHelperText>
     </FormControl>
   );
 };

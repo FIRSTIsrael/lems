@@ -19,13 +19,15 @@ interface ScoresheetMissionProps {
   mission: MissionSchema;
   src: string;
   missionErrors?: string[];
+  disabled?: boolean;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   missionIndex,
   mission,
   src,
-  missionErrors
+  missionErrors,
+  disabled = false
 }) => {
   const t = useTranslations('layouts.scoresheet');
   const theme = useTheme();
@@ -119,7 +121,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               clause={clause}
               maxWidth={missionWidth * 0.9}
               value={value}
-              disabled={false}
+              disabled={disabled}
               onChange={newValue => handleClauseChange(index, newValue)}
             />
           );
