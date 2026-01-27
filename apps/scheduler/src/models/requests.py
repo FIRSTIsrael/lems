@@ -41,3 +41,4 @@ class ValidateScheduleResponse(BaseModel):
     is_valid: bool
     data: list[ValidatorData] = None
     error: str = None
+    seed: int | None = None

@@ -1,5 +1,6 @@
 import math
 import logging
+import random
 from typing import Iterable
 from datetime import timedelta
 
@@ -27,6 +28,7 @@ class ValidatorService:
         self._sessions = self._get_sessions()
         self._matches = self._get_matches()
         self.padding = timedelta(minutes=MIN_MINUTES_BETWEEN_EVENTS)
+        self.successful_seed = None
 
     @property
     def sessions(self) -> list[ValidatorSession]:
@@ -278,7 +280,7 @@ class ValidatorService:
 
         return data
 
-    def validate(self):
+    def _validate_internal(self):
         data = self._create_validator_data()
         self._cross_reference_match_slots(data)  # Modifies in place
 
@@ -294,3 +296,22 @@ class ValidatorService:
                     )
 
         return data
+
+    def validate(self):
+        max_attempts = 16
+        last_error = None
+
+        for attempt in range(max_attempts):
+            try:
+                seed = random.randint(0, 2**31 - 1)
+                random.seed(seed)
+                data = self._validate_internal()
+                self.successful_seed = seed
+                logger.info(f"Validation succeeded on attempt {attempt + 1} with seed {seed}")
+                return data
+            except ValidatorError as e:
+                last_error = e
+                logger.debug(f"Validation attempt {attempt + 1} failed: {e}")
+
+        logger.info(f"Validation failed after {max_attempts} attempts")
+        raise last_error
