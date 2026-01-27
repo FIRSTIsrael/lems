@@ -169,7 +169,6 @@ export function PersonalAwardsSection() {
         title={t('title')}
         slotProps={{ title: { variant: 'h6' } }}
         avatar={<EmojiEventsIcon sx={{ color: 'primary.main' }} />}
-        subheader={`${personalAwards.length} award${personalAwards.length !== 1 ? 's' : ''}`}
       />
       <CardContent>
         <Stack spacing={3}>
@@ -259,43 +258,42 @@ export function PersonalAwardsSection() {
                         </Typography>
                       </Box>
                     ) : (
-                      // Unassigned award: show input field
-                      <TextField
-                        fullWidth
-                        size="small"
-                        placeholder={t('winner-name-placeholder')}
-                        value={awardInputs[award.id] ?? ''}
-                        onChange={e => handleAwardInputChange(award.id, e.target.value)}
-                        disabled={loading || mutationLoading}
-                        variant="outlined"
-                        inputProps={{
-                          maxLength: 64
-                        }}
-                        sx={{
-                          '& .MuiOutlinedInput-root': {
-                            backgroundColor: 'background.paper'
-                          },
-                          mb: 1.5
-                        }}
-                      />
-                    )}
-
-                    {/* Assign button - only show for unassigned awards */}
-                    {!isAssigned && (
-                      <Button
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        onClick={() => handleAssignClick(award)}
-                        disabled={loading || mutationLoading || !awardInputs[award.id]?.trim()}
-                        sx={{
-                          textTransform: 'none',
-                          fontWeight: 500
-                        }}
-                      >
-                        {mutationLoading ? <CircularProgress size={16} sx={{ mr: 1 }} /> : null}
-                        {t('assign-button')}
-                      </Button>
+                      // Unassigned award: show input field and button on same line
+                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
+                        <TextField
+                          fullWidth
+                          size="medium"
+                          placeholder={t('winner-name-placeholder')}
+                          value={awardInputs[award.id] ?? ''}
+                          onChange={e => handleAwardInputChange(award.id, e.target.value)}
+                          disabled={loading || mutationLoading}
+                          variant="outlined"
+                          inputProps={{
+                            maxLength: 64
+                          }}
+                          sx={{
+                            '& .MuiOutlinedInput-root': {
+                              backgroundColor: 'background.paper'
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="outlined"
+                          size="medium"
+                          onClick={() => handleAssignClick(award)}
+                          disabled={loading || mutationLoading || !awardInputs[award.id]?.trim()}
+                          sx={{
+                            textTransform: 'none',
+                            fontWeight: 500,
+                            flexShrink: 0,
+                            minWidth: 'fit-content',
+                            px: 3
+                          }}
+                        >
+                          {mutationLoading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
+                          {t('assign-button')}
+                        </Button>
+                      </Box>
                     )}
                   </Paper>
                 </Grid>
