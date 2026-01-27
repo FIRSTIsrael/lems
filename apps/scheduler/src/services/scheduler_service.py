@@ -201,6 +201,10 @@ class SchedulerService:
         max_time = max((t for t in times if t != float("inf")), default=0)
         weights = [t if t != float("inf") else max_time * 2 for t in times]
 
+        # Fallback to uniform weighting if all weights are zero
+        if sum(weights) == 0:
+            weights = [1] * len(teams)
+
         return random.choices(teams, weights=weights, k=1)[0]
 
     def _get_last_event_time(
