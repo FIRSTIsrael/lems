@@ -55,9 +55,30 @@ export function PersonalAwardsSection() {
   const [assignPersonalAward, { loading: mutationLoading, error: mutationError }] =
     useMutation(ASSIGN_PERSONAL_AWARD);
 
-  // Filter personal awards
-  const personalAwards = useMemo(() => {
-    return awards.filter(award => award.type === 'PERSONAL').sort((a, b) => a.index - b.index);
+  // Filter and group personal awards by name
+  const groupedPersonalAwards = useMemo(() => {
+    const personalAwards = awards.filter(award => award.type === 'PERSONAL');
+
+    // Group awards by name
+    const grouped = personalAwards.reduce(
+      (acc, award) => {
+        if (!acc[award.name]) {
+          acc[award.name] = [];
+        }
+        acc[award.name].push(award);
+        return acc;
+      },
+      {} as Record<string, Award[]>
+    );
+
+    // Convert to array and sort by the first award's index
+    return Object.values(grouped)
+      .map(awardGroup => ({
+        name: awardGroup[0].name,
+        awards: awardGroup.sort((a, b) => a.place - b.place),
+        isOptional: awardGroup[0].isOptional
+      }))
+      .sort((a, b) => a.awards[0].index - b.awards[0].index);
   }, [awards]);
 
   // Auto-dismiss errors after 5 seconds
@@ -137,7 +158,7 @@ export function PersonalAwardsSection() {
     });
   }, []);
 
-  if (personalAwards.length === 0) {
+  if (groupedPersonalAwards.length === 0) {
     return (
       <Card>
         <CardHeader
@@ -187,118 +208,128 @@ export function PersonalAwardsSection() {
           )}
 
           <Grid container spacing={2}>
-            {personalAwards.map(award => {
-              const isAssigned = !!award.winner;
-              const assignedWinner =
-                award.winner && 'name' in award.winner ? award.winner.name : null;
-
-              return (
-                <Grid size={{ xs: 12, sm: 6 }} key={award.id}>
-                  <Paper
-                    sx={{
-                      p: 2,
-                      backgroundColor: alpha(theme.palette.primary.main, 0.03),
-                      border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
-                      transition: 'all 0.2s',
-                      '&:hover': {
-                        backgroundColor: alpha(theme.palette.primary.main, 0.05),
-                        borderColor: theme.palette.primary.main
-                      }
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
-                      <EmojiEventsIcon
-                        sx={{
-                          fontSize: 20,
-                          color: 'primary.main',
-                          mt: 0.25
-                        }}
-                      />
-                      <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          {getName(award.name)}
-                        </Typography>
-                        {award.isOptional && (
-                          <Typography
-                            component="span"
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{ display: 'block', mt: 0.25 }}
-                          >
-                            ({t('optional')})
-                          </Typography>
-                        )}
-                      </Box>
-                    </Box>
-                    <Box sx={{ mb: 1.5 }}>{getDescription(award.name)}</Box>
-
-                    {isAssigned ? (
-                      // Assigned award: show winner name as text
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: 1,
-                          mb: 1.5,
-                          p: 1.5,
-                          backgroundColor: alpha(theme.palette.success.main, 0.05),
-                          borderRadius: 1,
-                          border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
-                        }}
-                      >
-                        <CheckCircleIcon
-                          sx={{
-                            fontSize: 18,
-                            color: 'success.main',
-                            flexShrink: 0
-                          }}
-                        />
-                        <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                          {assignedWinner}
-                        </Typography>
-                      </Box>
-                    ) : (
-                      // Unassigned award: show input field and button on same line
-                      <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
-                        <TextField
-                          fullWidth
-                          size="medium"
-                          placeholder={t('winner-name-placeholder')}
-                          value={awardInputs[award.id] ?? ''}
-                          onChange={e => handleAwardInputChange(award.id, e.target.value)}
-                          disabled={loading || mutationLoading}
-                          variant="outlined"
-                          inputProps={{
-                            maxLength: 64
-                          }}
-                          sx={{
-                            '& .MuiOutlinedInput-root': {
-                              backgroundColor: 'background.paper'
-                            }
-                          }}
-                        />
-                        <Button
-                          variant="outlined"
-                          size="medium"
-                          onClick={() => handleAssignClick(award)}
-                          disabled={loading || mutationLoading || !awardInputs[award.id]?.trim()}
-                          sx={{
-                            textTransform: 'none',
-                            fontWeight: 500,
-                            flexShrink: 0,
-                            minWidth: 'fit-content',
-                            px: 3
-                          }}
+            {groupedPersonalAwards.map(awardGroup => (
+              <Grid size={{ xs: 12, sm: 6 }} key={awardGroup.name}>
+                <Paper
+                  sx={{
+                    p: 2,
+                    backgroundColor: alpha(theme.palette.primary.main, 0.03),
+                    border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
+                    transition: 'all 0.2s',
+                    '&:hover': {
+                      backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                      borderColor: theme.palette.primary.main
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1, mb: 1 }}>
+                    <EmojiEventsIcon
+                      sx={{
+                        fontSize: 20,
+                        color: 'primary.main',
+                        mt: 0.25
+                      }}
+                    />
+                    <Box sx={{ flex: 1 }}>
+                      <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                        {getName(awardGroup.name)}
+                      </Typography>
+                      {awardGroup.isOptional && (
+                        <Typography
+                          component="span"
+                          variant="caption"
+                          color="text.secondary"
+                          sx={{ display: 'block', mt: 0.25 }}
                         >
-                          {mutationLoading ? <CircularProgress size={20} sx={{ mr: 1 }} /> : null}
-                          {t('assign-button')}
-                        </Button>
-                      </Box>
-                    )}
-                  </Paper>
-                </Grid>
-              );
-            })}
+                          ({t('optional')})
+                        </Typography>
+                      )}
+                    </Box>
+                  </Box>
+                  <Box sx={{ mb: 1.5 }}>{getDescription(awardGroup.name)}</Box>
+
+                  <Stack spacing={1.5}>
+                    {awardGroup.awards.map(award => {
+                      const isAssigned = !!award.winner;
+                      const assignedWinner =
+                        award.winner && 'name' in award.winner ? award.winner.name : null;
+
+                      return (
+                        <Box key={award.id}>
+                          {isAssigned ? (
+                            // Assigned award: show winner name as text
+                            <Box
+                              sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                mb: 1.5,
+                                p: 1.5,
+                                backgroundColor: alpha(theme.palette.success.main, 0.05),
+                                borderRadius: 1,
+                                border: `1px solid ${alpha(theme.palette.success.main, 0.2)}`
+                              }}
+                            >
+                              <CheckCircleIcon
+                                sx={{
+                                  fontSize: 18,
+                                  color: 'success.main',
+                                  flexShrink: 0
+                                }}
+                              />
+                              <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                                {assignedWinner}
+                              </Typography>
+                            </Box>
+                          ) : (
+                            // Unassigned award: show input field and button on same line
+                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
+                              <TextField
+                                fullWidth
+                                size="medium"
+                                placeholder={t('winner-name-placeholder')}
+                                value={awardInputs[award.id] ?? ''}
+                                onChange={e => handleAwardInputChange(award.id, e.target.value)}
+                                disabled={loading || mutationLoading}
+                                variant="outlined"
+                                inputProps={{
+                                  maxLength: 64
+                                }}
+                                sx={{
+                                  '& .MuiOutlinedInput-root': {
+                                    backgroundColor: 'background.paper'
+                                  }
+                                }}
+                              />
+                              <Button
+                                variant="outlined"
+                                size="medium"
+                                onClick={() => handleAssignClick(award)}
+                                disabled={
+                                  loading || mutationLoading || !awardInputs[award.id]?.trim()
+                                }
+                                sx={{
+                                  textTransform: 'none',
+                                  fontWeight: 500,
+                                  flexShrink: 0,
+                                  minWidth: 'fit-content',
+                                  px: 3
+                                }}
+                              >
+                                {mutationLoading ? (
+                                  <CircularProgress size={20} sx={{ mr: 1 }} />
+                                ) : null}
+                                {t('assign-button')}
+                              </Button>
+                            </Box>
+                          )}
+                        </Box>
+                      );
+                    })}
+                  </Stack>
+                </Paper>
+              </Grid>
+            ))}
           </Grid>
         </Stack>
       </CardContent>
