@@ -53,3 +53,29 @@ type TeamWinner {
   "The winning team for this award"
   team: Team!
 }
+
+extend type Mutation {
+  """
+  Assign a personal award to an individual winner by name.
+  Only Judge Advisors can assign personal awards in their assigned divisions.
+  Personal awards can only be assigned if they have not been assigned yet.
+  """
+  assignPersonalAward(
+    "The award ID to assign"
+    awardId: String!
+
+    "The name of the winner"
+    winnerName: String!
+
+    "Relevant division ID"
+    divisionId: String!
+  ): AwardEvent!
+}
+
+type AwardEvent {
+  "Award identifier"
+  awardId: String!
+
+  "The assigned winner name"
+  winnerName: String!
+}

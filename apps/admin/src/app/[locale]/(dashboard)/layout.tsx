@@ -28,6 +28,7 @@ import {
 } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { Link } from '../../../i18n/navigation';
+import { getAsset } from '../../../lib/assets';
 import { DialogProvider } from './components/dialog-provider';
 import { SessionProvider } from './components/session-context';
 import { PermissionGuard } from './components/permission-guard';
@@ -110,7 +111,7 @@ const AppBar: React.FC<AppBarProps> = ({ width, permissions, user }) => {
       <Toolbar>
         <Box width="100%" height="80%" position="relative">
           <Link href="/">
-            <Image src="/admin/assets/FLLC-Logo.svg" alt="" fill />
+            <Image src={getAsset('FLLC-Logo.svg')} alt="" fill />
           </Link>
         </Box>
       </Toolbar>

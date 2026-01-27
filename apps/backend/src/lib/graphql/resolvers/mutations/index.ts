@@ -1,5 +1,6 @@
 import { teamArrivedResolver } from './team-arrived';
 import { disqualifyTeamResolver } from './disqualify-team';
+import { assignPersonalAwardResolver } from './assign-personal-award';
 import { abortJudgingSessionResolver, startJudgingSessionResolver } from './judging-sessions/index';
 import {
   loadMatchResolver,
@@ -41,6 +42,7 @@ import { updatePresentationResolver } from './audience-display/update-presentati
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
   disqualifyTeam: disqualifyTeamResolver,
+  assignPersonalAward: assignPersonalAwardResolver,
   startJudgingSession: startJudgingSessionResolver,
   abortJudgingSession: abortJudgingSessionResolver,
   loadMatch: loadMatchResolver,

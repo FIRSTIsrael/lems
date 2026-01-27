@@ -3,16 +3,12 @@
 import { useMemo, useState, useCallback } from 'react';
 import { mutate } from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
-import {
-  Avatar,
-  Box,
-  Chip,
-  useTheme
-} from '@mui/material';
+import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { apiFetch } from '@lems/shared';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
+import { getAsset } from '../../../../../../../lib/assets';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
 import { ChangeDivisionMenu } from './change-division-menu';
@@ -34,37 +30,45 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  const handleChangeDivision = useCallback(async (newDivisionId: string) => {
-    if (!selectedTeam || newDivisionId === selectedTeam.division.id) return;
+  const handleChangeDivision = useCallback(
+    async (newDivisionId: string) => {
+      if (!selectedTeam || newDivisionId === selectedTeam.division.id) return;
 
-    try {
-      const response = await apiFetch(`/admin/events/${eventId}/teams/${selectedTeam.id}/division`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ divisionId: newDivisionId })
-      });
+      try {
+        const response = await apiFetch(
+          `/admin/events/${eventId}/teams/${selectedTeam.id}/division`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ divisionId: newDivisionId })
+          }
+        );
 
-      if (!response.ok) {
-        throw new Error('Failed to change team division');
+        if (!response.ok) {
+          throw new Error('Failed to change team division');
+        }
+
+        setSelectedTeam(null);
+        setAnchorEl(null);
+
+        mutate(`/admin/events/${eventId}/teams`);
+      } catch (error) {
+        console.error('Failed to change team division:', error);
       }
+    },
+    [selectedTeam, eventId]
+  );
 
-      setSelectedTeam(null);
-      setAnchorEl(null);
-
-      mutate(`/admin/events/${eventId}/teams`);
-
-    } catch (error) {
-      console.error('Failed to change team division:', error);
-    }
-  }, [selectedTeam, eventId]);
-
-  const handleOpenDivisionMenu = useCallback((event: React.MouseEvent<HTMLDivElement>, team: TeamWithDivision) => {
-    event.stopPropagation();
-    setSelectedTeam(team);
-    setAnchorEl(event.currentTarget);
-  }, []);
+  const handleOpenDivisionMenu = useCallback(
+    (event: React.MouseEvent<HTMLDivElement>, team: TeamWithDivision) => {
+      event.stopPropagation();
+      setSelectedTeam(team);
+      setAnchorEl(event.currentTarget);
+    },
+    []
+  );
 
   const handleCloseDivisionMenu = useCallback(() => {
     setSelectedTeam(null);
@@ -105,10 +109,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         <Box
           sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
         >
-          <Avatar
-            src={params.row.logoUrl || '/admin/assets/default-avatar.svg'}
-            alt={params.row.name}
-          >
+          <Avatar src={params.row.logoUrl || getAsset('default-avatar.svg')} alt={params.row.name}>
             #{params.row.number}
           </Avatar>
         </Box>
@@ -137,12 +138,18 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
                 <Chip
                   label={params.row.division.name}
                   size="small"
-                  onClick={hasScheduleInAnyDivision ? undefined : (e) => handleOpenDivisionMenu(e, params.row)}
+                  onClick={
+                    hasScheduleInAnyDivision
+                      ? undefined
+                      : e => handleOpenDivisionMenu(e, params.row)
+                  }
                   sx={{
                     backgroundColor: params.row.division.color,
                     color: 'white',
                     fontWeight: 'bold',
-                    ...(hasScheduleInAnyDivision ? {} : { cursor: 'pointer', '&:hover': { opacity: 0.8 } }),
+                    ...(hasScheduleInAnyDivision
+                      ? {}
+                      : { cursor: 'pointer', '&:hover': { opacity: 0.8 } }),
                     '& .MuiChip-label': {
                       px: 1
                     }
