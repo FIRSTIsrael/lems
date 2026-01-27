@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react';
+import { useLocale } from 'next-intl';
 import { useJudgingSounds } from '@lems/shared';
 
-// TODO: Allow selecting from a set of predefined templates
-// That will accommodate multiple regions
-export const JUDGING_STAGES = [
+// Locale-aware judging stages
+// Hebrew: 6 min final stage, English: 8 min final stage
+export const getJudgingStages = (locale: string) => [
   { id: 'setup', duration: 120 }, // 2 min
   { id: 'innovation-presentation', duration: 300 }, // 5 min
   { id: 'innovation-questions', duration: 300 }, // 5 min
   { id: 'robot-presentation', duration: 300 }, // 5 min
   { id: 'robot-questions', duration: 300 }, // 5 min
-  { id: 'final-thoughts', duration: 360 } // 6 min
+  { id: 'final-thoughts', duration: locale === 'he' ? 360 : 480 } // 6 min (Hebrew) / 8 min (English)
 ];
 
 export interface JudgingTimerState {
@@ -49,84 +50,90 @@ type TimerAction =
   | 'BACK'
   | { type: 'STAGE_COMPLETE'; nextStage: number };
 
-const timerReducer = (state: TimerState, action: TimerAction): TimerState => {
-  if (typeof action === 'object' && action.type === 'STAGE_COMPLETE') {
-    return {
-      currentStage: action.nextStage,
-      stageTimeRemaining: JUDGING_STAGES[action.nextStage].duration,
-      isRunning: false
-    };
-  }
+const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
+  return (state: TimerState, action: TimerAction): TimerState => {
+    if (typeof action === 'object' && action.type === 'STAGE_COMPLETE') {
+      return {
+        currentStage: action.nextStage,
+        stageTimeRemaining: stages[action.nextStage].duration,
+        isRunning: false
+      };
+    }
 
-  switch (action) {
-    case 'START':
-      return { ...state, isRunning: true };
-    case 'PAUSE':
-      return { ...state, isRunning: false };
-    case 'RESUME':
-      return { ...state, isRunning: true };
-    case 'STOP':
-      return {
-        currentStage: 0,
-        stageTimeRemaining: JUDGING_STAGES[0].duration,
-        isRunning: false
-      };
-    case 'RESET':
-      return {
-        currentStage: 0,
-        stageTimeRemaining: JUDGING_STAGES[0].duration,
-        isRunning: false
-      };
-    case 'TICK': {
-      const newTime = state.stageTimeRemaining - 1;
-      if (newTime <= 0 && state.currentStage < JUDGING_STAGES.length - 1) {
+    switch (action) {
+      case 'START':
+        return { ...state, isRunning: true };
+      case 'PAUSE':
+        return { ...state, isRunning: false };
+      case 'RESUME':
+        return { ...state, isRunning: true };
+      case 'STOP':
+        return {
+          currentStage: 0,
+          stageTimeRemaining: stages[0].duration,
+          isRunning: false
+        };
+      case 'RESET':
+        return {
+          currentStage: 0,
+          stageTimeRemaining: stages[0].duration,
+          isRunning: false
+        };
+      case 'TICK': {
+        const newTime = state.stageTimeRemaining - 1;
+        if (newTime <= 0 && state.currentStage < stages.length - 1) {
+          return {
+            ...state,
+            currentStage: state.currentStage + 1,
+            stageTimeRemaining: stages[state.currentStage + 1].duration
+          };
+        }
+        if (newTime <= 0) {
+          return { ...state, isRunning: false, stageTimeRemaining: 0 };
+        }
+        return { ...state, stageTimeRemaining: newTime };
+      }
+      case 'FORWARD': {
+        if (state.currentStage < stages.length - 1) {
+          const nextIndex = state.currentStage + 1;
+          return {
+            currentStage: nextIndex,
+            stageTimeRemaining: stages[nextIndex].duration,
+            isRunning: false
+          };
+        }
+        return state;
+      }
+      case 'BACK': {
+        // If at the start of current stage (within 1 second), go to previous stage
+        // Otherwise, restart current stage
+        const currentStageDuration = stages[state.currentStage].duration;
+        if (state.stageTimeRemaining >= currentStageDuration - 1 && state.currentStage > 0) {
+          const prevIndex = state.currentStage - 1;
+          return {
+            currentStage: prevIndex,
+            stageTimeRemaining: stages[prevIndex].duration,
+            isRunning: false
+          };
+        }
         return {
           ...state,
-          currentStage: state.currentStage + 1,
-          stageTimeRemaining: JUDGING_STAGES[state.currentStage + 1].duration
-        };
-      }
-      if (newTime <= 0) {
-        return { ...state, isRunning: false, stageTimeRemaining: 0 };
-      }
-      return { ...state, stageTimeRemaining: newTime };
-    }
-    case 'FORWARD': {
-      if (state.currentStage < JUDGING_STAGES.length - 1) {
-        const nextIndex = state.currentStage + 1;
-        return {
-          currentStage: nextIndex,
-          stageTimeRemaining: JUDGING_STAGES[nextIndex].duration,
+          stageTimeRemaining: currentStageDuration,
           isRunning: false
         };
       }
-      return state;
+      default:
+        return state;
     }
-    case 'BACK': {
-      // If at the start of current stage (within 1 second), go to previous stage
-      // Otherwise, restart current stage
-      const currentStageDuration = JUDGING_STAGES[state.currentStage].duration;
-      if (state.stageTimeRemaining >= currentStageDuration - 1 && state.currentStage > 0) {
-        const prevIndex = state.currentStage - 1;
-        return {
-          currentStage: prevIndex,
-          stageTimeRemaining: JUDGING_STAGES[prevIndex].duration,
-          isRunning: false
-        };
-      }
-      return {
-        ...state,
-        stageTimeRemaining: currentStageDuration,
-        isRunning: false
-      };
-    }
-    default:
-      return state;
-  }
+  };
 };
 
 export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => {
+  const locale = useLocale();
   const { playSound } = useJudgingSounds();
+  
+  const JUDGING_STAGES = useMemo(() => getJudgingStages(locale), [locale]);
+  const timerReducer = useMemo(() => createTimerReducer(JUDGING_STAGES), [JUDGING_STAGES]);
 
   const [state, dispatch] = useReducer(timerReducer, {
     currentStage: 0,
@@ -198,13 +205,13 @@ export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => 
     if (state.currentStage === JUDGING_STAGES.length - 1 && state.stageTimeRemaining === 0) {
       playSound('end');
     }
-  }, [state.currentStage, state.stageTimeRemaining, playSound]);
+  }, [JUDGING_STAGES.length, state.currentStage, state.stageTimeRemaining, playSound]);
 
   const totalTimeRemaining = useMemo(
     () =>
       JUDGING_STAGES.slice(state.currentStage + 1).reduce((sum, stage) => sum + stage.duration, 0) +
       state.stageTimeRemaining,
-    [state.currentStage, state.stageTimeRemaining]
+    [JUDGING_STAGES, state.currentStage, state.stageTimeRemaining]
   );
 
   const isFinished =
