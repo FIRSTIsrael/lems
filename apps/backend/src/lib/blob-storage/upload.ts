@@ -3,6 +3,7 @@ import { s3Client } from './s3-client';
 
 export const uploadFile = async (data: Buffer, key: string) => {
   const bucket = process.env.DIGITALOCEAN_SPACE;
+  const endpoint = process.env.DIGITALOCEAN_ENDPOINT;
   const bucketParams = {
     ACL: 'public-read' as ObjectCannedACL,
     Bucket: bucket,
@@ -11,5 +12,5 @@ export const uploadFile = async (data: Buffer, key: string) => {
   };
 
   await s3Client.send(new PutObjectCommand(bucketParams));
-  return `${bucket}/${key}`;
+  return `https://${bucket}.${endpoint}/${key}`;
 };
