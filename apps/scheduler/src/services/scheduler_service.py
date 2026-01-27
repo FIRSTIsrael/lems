@@ -10,6 +10,8 @@ from services.validator_service import ValidatorService
 from models.errors import ValidatorError, SchedulerError
 from models.requests import SchedulerRequest
 
+from config import MIN_MINUTES_BETWEEN_EVENTS
+
 logger = logging.getLogger("lems.scheduler")
 
 
@@ -20,9 +22,6 @@ class SchedulerService:
         self.teams = lems_repository.get_teams()
         self.rooms = lems_repository.get_rooms()
         self.tables = lems_repository.get_tables()
-        if request.seed is not None:
-            random.seed(request.seed)
-            np.random.seed(request.seed)
         self._validate_schedule(request)
 
     def _validate_schedule(self, request: SchedulerRequest):
@@ -371,7 +370,7 @@ class SchedulerService:
                 )
 
     def _analyze_schedule(self):
-        """Analyze the schedule and log statistics."""
+        """Analyze the schedule, log statistics, and validate minimum gap constraint."""
 
         team_intervals = {}
 
@@ -416,19 +415,43 @@ class SchedulerService:
             f"Minimum time between events: {int(overall_min//60):02d}:{int(overall_min%60):02d}"
         )
 
+        # Validate minimum gap constraint
+        min_gap_seconds = MIN_MINUTES_BETWEEN_EVENTS * 60
+        for team_slug, diffs in team_intervals.items():
+            for diff in diffs:
+                if diff < min_gap_seconds:
+                    raise SchedulerError(
+                        f"Schedule violates minimum gap: team {team_slug} has {int(diff//60)}m gap"
+                    )
+
     def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Create the schedule by populating the match schedule and ensuring constraints.
-        Returns (match_schedule, session_schedule).
+        """Create the schedule with constraint validation and automatic retries.
+
+        Retries up to 16 times with different random states if minimum gap constraint
+        is violated, as validator confirmed theoretical feasibility.
         """
+        max_attempts = 16
 
-        self.session_schedule = self._make_sessions()
-        self.match_schedule = self._make_matches()
+        for attempt in range(max_attempts):
+            try:
+                self.session_schedule = self._make_sessions()
+                self.match_schedule = self._make_matches()
 
-        self._use_constraints()
-        self._populate_match_schedule()
+                self._use_constraints()
+                self._populate_match_schedule()
 
-        self._ensure_constraints("practice")
-        self._ensure_constraints("ranking")
-        self._analyze_schedule()
+                self._ensure_constraints("practice")
+                self._ensure_constraints("ranking")
+                self._analyze_schedule()
 
-        return self.match_schedule.copy(), self.session_schedule.copy()
+                logger.info(f"Schedule created successfully on attempt {attempt + 1}")
+                return self.match_schedule.copy(), self.session_schedule.copy()
+            except SchedulerError as e:
+                if attempt < max_attempts - 1:
+                    logger.debug(f"Attempt {attempt + 1} failed: {e}, retrying...")
+                    continue
+                else:
+                    logger.info(
+                        f"Schedule creation failed after {max_attempts} attempts"
+                    )
+                    raise

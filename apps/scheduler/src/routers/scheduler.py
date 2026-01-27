@@ -37,9 +37,7 @@ async def validate_schedule(
 
     logger.info("Validation successful")
     response.status_code = status.HTTP_200_OK
-    return ValidateScheduleResponse(
-        is_valid=True, data=validator_data, seed=validator.successful_seed
-    )
+    return ValidateScheduleResponse(is_valid=True, data=validator_data)
 
 
 @router.post("/", status_code=status.HTTP_201_CREATED)

@@ -1,6 +1,5 @@
 import math
 import logging
-import random
 from typing import Iterable
 from datetime import timedelta
 
@@ -13,10 +12,9 @@ from models.errors import ValidatorError
 from models.requests import SchedulerRequest, Break
 from repository.lems_repository import LemsRepository
 
+from config import MIN_MINUTES_BETWEEN_EVENTS
+
 logger = logging.getLogger("lems.scheduler")
-
-
-MIN_MINUTES_BETWEEN_EVENTS = 15
 
 
 class ValidatorService:
@@ -28,7 +26,6 @@ class ValidatorService:
         self._sessions = self._get_sessions()
         self._matches = self._get_matches()
         self.padding = timedelta(minutes=MIN_MINUTES_BETWEEN_EVENTS)
-        self.successful_seed = None
 
     @property
     def sessions(self) -> list[ValidatorSession]:
@@ -276,13 +273,15 @@ class ValidatorService:
 
         if len(duplicate_matches) > 0:
             logger.debug(f"Duplicate matches: {duplicate_match_details}")
-            logger.info(f"Schedule has duplicate available matches: {duplicate_matches}")
+            logger.info(
+                f"Schedule has duplicate available matches: {duplicate_matches}"
+            )
 
         return data
 
-    def _validate_internal(self):
+    def validate(self):
         data = self._create_validator_data()
-        self._cross_reference_match_slots(data)  # Modifies in place
+        self._cross_reference_match_slots(data)
 
         for entry in data:
             for overlapping_round in entry["overlapping_rounds"]:
@@ -296,22 +295,3 @@ class ValidatorService:
                     )
 
         return data
-
-    def validate(self):
-        max_attempts = 16
-        last_error = None
-
-        for attempt in range(max_attempts):
-            try:
-                seed = random.randint(0, 2**31 - 1)
-                random.seed(seed)
-                data = self._validate_internal()
-                self.successful_seed = seed
-                logger.info(f"Validation succeeded on attempt {attempt + 1} with seed {seed}")
-                return data
-            except ValidatorError as e:
-                last_error = e
-                logger.debug(f"Validation attempt {attempt + 1} failed: {e}")
-
-        logger.info(f"Validation failed after {max_attempts} attempts")
-        raise last_error

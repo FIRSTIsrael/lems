@@ -29,7 +29,6 @@ class SchedulerRequest(BaseModel):
 
     breaks: list[Break]
     timezone: str = "UTC"
-    seed: int | None = None
 
 
 class CreateScheduleResponse(BaseModel):
@@ -41,4 +40,3 @@ class ValidateScheduleResponse(BaseModel):
     is_valid: bool
     data: list[ValidatorData] = None
     error: str = None
-    seed: int | None = None
