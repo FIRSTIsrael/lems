@@ -14,6 +14,8 @@ from config import MIN_MINUTES_BETWEEN_EVENTS
 
 logger = logging.getLogger("lems.scheduler")
 
+MAX_RETRIES = 16
+
 
 class SchedulerService:
     def __init__(self, lems_repository: LemsRepository, request: SchedulerRequest):
@@ -427,12 +429,11 @@ class SchedulerService:
     def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Create the schedule with constraint validation and automatic retries.
 
-        Retries up to 16 times with different random states if minimum gap constraint
+        Retries with different random states if minimum gap constraint
         is violated, as validator confirmed theoretical feasibility.
         """
-        max_attempts = 16
 
-        for attempt in range(max_attempts):
+        for attempt in range(MAX_RETRIES):
             try:
                 self.session_schedule = self._make_sessions()
                 self.match_schedule = self._make_matches()
@@ -447,11 +448,11 @@ class SchedulerService:
                 logger.info(f"Schedule created successfully on attempt {attempt + 1}")
                 return self.match_schedule.copy(), self.session_schedule.copy()
             except SchedulerError as e:
-                if attempt < max_attempts - 1:
+                if attempt < MAX_RETRIES - 1:
                     logger.debug(f"Attempt {attempt + 1} failed: {e}, retrying...")
                     continue
                 else:
                     logger.info(
-                        f"Schedule creation failed after {max_attempts} attempts"
+                        f"Schedule creation failed after {MAX_RETRIES} attempts"
                     )
                     raise
