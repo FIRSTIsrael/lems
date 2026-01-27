@@ -24,7 +24,8 @@ import {
   DragIndicator as DragIndicatorIcon
 } from '@mui/icons-material';
 import { DirectionalIcon, useJudgingSessionStageTranslations } from '@lems/localization';
-import { useJudgingTimer, formatTime, JUDGING_STAGES } from '../hooks/use-judging-timer';
+import { useLocale } from 'next-intl';
+import { useJudgingTimer, formatTime, getJudgingStages } from '../hooks/use-judging-timer';
 
 interface DragState {
   isDragging: boolean;
@@ -35,6 +36,9 @@ interface DragState {
 }
 
 export const JudgingTimer = () => {
+  const locale = useLocale();
+  const JUDGING_STAGES = getJudgingStages(locale);
+
   const [isOpen, setIsOpen] = useState(false);
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,
@@ -224,7 +228,7 @@ export const JudgingTimer = () => {
           <Box width="100%" px="15%" mb={2}>
             <Box sx={{ px: 2, pb: 1 }}>
               <Stack direction="row" spacing={1} alignItems="center">
-                {JUDGING_STAGES.map((stage, index) => {
+                {JUDGING_STAGES.map((stage: { id: string; duration: number }, index: number) => {
                   let progressPercentage = 0;
 
                   if (index < currentStage) {
