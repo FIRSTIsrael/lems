@@ -10,11 +10,9 @@ from services.validator_service import ValidatorService
 from models.errors import ValidatorError, SchedulerError
 from models.requests import SchedulerRequest
 
-from config import MIN_MINUTES_BETWEEN_EVENTS
+from config import MIN_MINUTES_BETWEEN_EVENTS, MAX_RETRIES
 
 logger = logging.getLogger("lems.scheduler")
-
-MAX_RETRIES = 16
 
 
 class SchedulerService:
