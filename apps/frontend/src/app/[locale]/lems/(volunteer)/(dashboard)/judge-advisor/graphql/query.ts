@@ -17,6 +17,18 @@ export const GET_ALL_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> =
           isOptional
           allowNominations
           automaticAssignment
+          winner {
+            ... on PersonalWinner {
+              name
+            }
+            ... on TeamWinner {
+              team {
+                id
+                number
+                name
+              }
+            }
+          }
         }
         sessions {
           id
