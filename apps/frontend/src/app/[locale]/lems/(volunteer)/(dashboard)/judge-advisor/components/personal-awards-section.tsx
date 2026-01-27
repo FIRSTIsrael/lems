@@ -25,14 +25,14 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import toast from 'react-hot-toast';
 import { ASSIGN_PERSONAL_AWARD } from '../graphql/mutations/assign-personal-award';
-import { useJudgeAdvisor } from './judge-advisor-context';
-import { useEvent } from '../../components/event-context';
-import { AssignAwardConfirmationDialog } from './personal-awards/assign-award-confirmation-dialog';
+import { useEvent } from '../../../components/event-context';
 import type { Award } from '../graphql/types';
+import { useJudgeAdvisor } from './judge-advisor-context';
+import { AssignAwardConfirmationDialog } from './personal-awards/assign-award-confirmation-dialog';
 
 export function PersonalAwardsSection() {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
-  const { getDescription } = useAwardTranslations();
+  const { getName, getDescription } = useAwardTranslations();
   const { awards, loading } = useJudgeAdvisor();
   const { currentDivision } = useEvent();
   const theme = useTheme();
@@ -217,7 +217,7 @@ export function PersonalAwardsSection() {
                       />
                       <Box sx={{ flex: 1 }}>
                         <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                          {award.name}
+                          {getName(award.name)}
                         </Typography>
                         {award.isOptional && (
                           <Typography
@@ -231,7 +231,7 @@ export function PersonalAwardsSection() {
                         )}
                       </Box>
                     </Box>
-                    <Box sx={{ mb: 1.5 }}>{getDescription(award.id)}</Box>
+                    <Box sx={{ mb: 1.5 }}>{getDescription(award.name)}</Box>
 
                     {isAssigned ? (
                       // Assigned award: show winner name as text
