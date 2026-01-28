@@ -6,6 +6,7 @@ import { Box, Paper, AppBar, Toolbar, IconButton, Typography } from '@mui/materi
 import { ArrowBack } from '@mui/icons-material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { underscoresToHyphens } from '@lems/shared/utils';
+import { useWindowResize } from '../../hooks/useWindowResize';
 import { useCategoryDeliberation } from '../deliberation-context';
 import { DeliberationTable } from './deliberation-table';
 import { PicklistPanel } from './picklist-panel';
@@ -17,6 +18,9 @@ export const DeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.category');
   const { getCategory } = useJudgingCategoryTranslations();
   const { deliberation } = useCategoryDeliberation();
+
+  // Handle window resize/zoom to recalculate layout
+  useWindowResize();
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>

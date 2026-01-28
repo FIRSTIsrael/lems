@@ -18,6 +18,7 @@ import { useMemo } from 'react';
 import { OPTIONAL_AWARDS } from '@lems/shared';
 import { ArrowBack } from '@mui/icons-material';
 import router from 'next/router';
+import { useWindowResize } from '../../hooks/useWindowResize';
 import { useFinalDeliberation } from '../final-deliberation-context';
 import { ChampionsStage } from './champions/champions-stage';
 import { CoreAwardsStage } from './core-awards/core-awards-stage';
@@ -30,6 +31,9 @@ export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
   const { awardCounts, deliberation } = useFinalDeliberation();
+
+  // Handle window resize/zoom to recalculate layout
+  useWindowResize();
 
   // Determine visible stages based on whether optional awards exist
   const visibleStages = useMemo(() => {
