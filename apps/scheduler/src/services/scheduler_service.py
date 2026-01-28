@@ -1,5 +1,6 @@
 import logging
 import math
+import random
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -13,7 +14,15 @@ logger = logging.getLogger("lems.scheduler")
 
 
 class SchedulerService:
-    def __init__(self, lems_repository: LemsRepository, request: SchedulerRequest):
+    def __init__(
+        self,
+        lems_repository: LemsRepository,
+        request: SchedulerRequest,
+        seed: int | None = None,
+    ):
+        if seed is not None:
+            random.seed(seed)
+            np.random.seed(seed)
         self.lems_repository = lems_repository
         self.staggered = request.stagger_matches
         self.teams = lems_repository.get_teams()
@@ -228,6 +237,7 @@ class SchedulerService:
             round_num = match["round"]
 
             available_tables = self._get_available_tables(match_num)
+            available_tables = random.shuffle(np.copy(available_tables))
             assigned_teams = {}  # Keep track of teams assigned in this match
             unassigned_tables = []  # Tables that need teams
 
@@ -252,7 +262,7 @@ class SchedulerService:
                 ]
 
                 if eligible_teams:
-                    # Calculate waiting times for eligible teams
+                    # Calculate waiting times and use weighted random selection
                     current_time = pd.to_datetime(match["start_time"])
                     waiting_times = {}
 
@@ -265,7 +275,15 @@ class SchedulerService:
                                 current_time - last_event_time
                             ).total_seconds()
 
-                    selected_team = max(waiting_times.items(), key=lambda x: x[1])[0]
+                    # Weighted random selection: teams with longer waits have higher probability
+                    min_wait = min(waiting_times.values())
+                    weights = [
+                        max(0.1, waiting_times[team] - min_wait + 1)
+                        for team in eligible_teams
+                    ]
+                    selected_team = random.choices(
+                        eligible_teams, weights=weights, k=1
+                    )[0]
                     self.match_schedule.at[match_num, table] = selected_team
                     assigned_teams[table] = selected_team
                 else:
@@ -286,6 +304,8 @@ class SchedulerService:
 
                     for team in unplayed_teams:
                         swap_found = False
+                        # Sort swap candidates: prefer teams that minimize reuse
+                        swap_candidates = []
                         for assigned_table, assigned_team in assigned_teams.items():
                             swap_valid = not (
                                 self._did_team_reach_limit_on_table(
@@ -297,14 +317,31 @@ class SchedulerService:
                             )
 
                             if swap_valid:
-                                self.match_schedule.at[match_num, assigned_table] = team
-                                self.match_schedule.at[match_num, unassigned_table] = (
-                                    assigned_team
+                                # Prioritize: teams that move to new tables
+                                has_played_unassigned = self._did_team_reach_limit_on_table(
+                                    assigned_team,
+                                    unassigned_table,
+                                    stage,
+                                    0,  # Check if they've played on this table at all
                                 )
-                                assigned_teams[assigned_table] = team
-                                assigned_teams[unassigned_table] = assigned_team
-                                swap_found = True
-                                break
+                                swap_candidates.append(
+                                    (
+                                        assigned_table,
+                                        assigned_team,
+                                        not has_played_unassigned,
+                                    )
+                                )
+
+                        if swap_candidates:
+                            swap_candidates.sort(key=lambda x: x[2], reverse=True)
+                            assigned_table, assigned_team, _ = swap_candidates[0]
+                            self.match_schedule.at[match_num, assigned_table] = team
+                            self.match_schedule.at[match_num, unassigned_table] = (
+                                assigned_team
+                            )
+                            assigned_teams[assigned_table] = team
+                            assigned_teams[unassigned_table] = assigned_team
+                            swap_found = True
 
                         if swap_found:
                             break
@@ -350,6 +387,7 @@ class SchedulerService:
         """Analyze the schedule and log statistics."""
 
         team_intervals = {}
+        table_reuse_counts = {}
 
         for team in self.teams:
             team_events = []
@@ -377,6 +415,19 @@ class SchedulerService:
                 ]
                 team_intervals[team.slug] = time_diffs
 
+            # Track table reuse for each team and stage
+            for stage in ["practice", "ranking"]:
+                stage_matches = self.match_schedule[
+                    self.match_schedule["stage"] == stage
+                ]
+                table_counts = {}
+                for table in [str(table.id) for table in self.tables]:
+                    count = stage_matches[table].value_counts().get(team.slug, 0)
+                    if count > 1:
+                        table_counts[table] = count
+                if table_counts:
+                    table_reuse_counts[f"{team.slug}_{stage}"] = table_counts
+
         team_averages = [
             sum(diffs) / len(diffs) for diffs in team_intervals.values() if diffs
         ]
@@ -391,6 +442,11 @@ class SchedulerService:
         logger.info(
             f"Minimum time between events: {int(overall_min//60):02d}:{int(overall_min%60):02d}"
         )
+
+        if table_reuse_counts:
+            logger.info(
+                f"Teams with same-table reuse: {len(table_reuse_counts)} instances"
+            )
 
     def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Create the schedule by populating the match schedule and ensuring constraints.
