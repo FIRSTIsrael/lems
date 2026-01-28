@@ -123,23 +123,53 @@ export function parseFieldScheduleData(data: QueryData) {
     return dayjs(firstMatchA.scheduledTime).diff(dayjs(firstMatchB.scheduledTime));
   });
 
-  // For each round, slice the rows array to get only events that belong to that round
+  // For each round, create rows with only matches and events that belong to that round
   const roundRowsMap = sortedRoundKeys.reduce(
     (result: { [key: string]: typeof rows }, roundKey, roundIndex) => {
-      const isFirstRound = roundIndex === 0;
-      const isLastRound = roundIndex === sortedRoundKeys.length - 1;
+      const currentRoundMatches = roundMatches[roundKey];
+      const roundRows: typeof rows = [];
 
-      // Find start index (0 for first round, first match of current round for others)
-      const startIndex = isFirstRound
-        ? 0
-        : matchIdToRowIndex.get(roundMatches[roundKey][0].id);
+      // Get time boundaries for this round
+      const lastMatchTime = dayjs(currentRoundMatches[currentRoundMatches.length - 1].scheduledTime);
+      
+      // Get the start boundary (before first match of this round)
+      const startBoundary = roundIndex > 0 
+        ? dayjs(roundMatches[sortedRoundKeys[roundIndex - 1]][roundMatches[sortedRoundKeys[roundIndex - 1]].length - 1].scheduledTime)
+        : dayjs(0);
+      
+      // Get the end boundary (before first match of next round, or infinity for last round)
+      const endBoundary = roundIndex < sortedRoundKeys.length - 1
+        ? dayjs(roundMatches[sortedRoundKeys[roundIndex + 1]][0].scheduledTime)
+        : dayjs('9999-12-31');
 
-      // Find end index (last row for last round, first match of next round for others)
-      const endIndex = isLastRound
-        ? rows.length
-        : matchIdToRowIndex.get(roundMatches[sortedRoundKeys[roundIndex + 1]][0].id);
+      // Add matches and events for this round in chronological order
+      currentRoundMatches.forEach((match, matchIndex) => {
+        const matchTime = dayjs(match.scheduledTime);
+        const previousMatchTime = matchIndex > 0 
+          ? dayjs(currentRoundMatches[matchIndex - 1].scheduledTime)
+          : startBoundary;
 
-      result[roundKey] = rows.slice(startIndex, endIndex);
+        // Add agenda events that fall between previous match and this match
+        agenda.forEach(event => {
+          const eventStart = dayjs(event.startTime);
+          if (eventStart.isAfter(previousMatchTime) && eventStart.isBefore(matchTime)) {
+            roundRows.push({ type: 'event', data: event });
+          }
+        });
+
+        // Add the match
+        roundRows.push({ type: 'match', data: match });
+      });
+
+      // Add events after the last match of this round but before the next round
+      agenda.forEach(event => {
+        const eventStart = dayjs(event.startTime);
+        if (eventStart.isAfter(lastMatchTime) && eventStart.isBefore(endBoundary)) {
+          roundRows.push({ type: 'event', data: event });
+        }
+      });
+
+      result[roundKey] = roundRows;
 
       return result;
     },
