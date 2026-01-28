@@ -90,3 +90,35 @@ extend type Query {
   """
   division("Division ID to retrieve" id: String!): Division
 }
+
+extend type Mutation {
+  """
+  Swap two teams in a specific match.
+  Only swaps the teams for this particular match, not all matches.
+  Both participants must be from the same match and the match must not be started.
+  """
+  swapMatchTeams(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match containing the participants"
+    matchId: String!
+    "The ID of the first participant to swap"
+    participantId1: String!
+    "The ID of the second participant to swap"
+    participantId2: String!
+  ): Match!
+
+  """
+  Swap two teams between judging sessions.
+  Only swaps the teams for these particular sessions, not all sessions.
+  Both sessions must not be started.
+  """
+  swapSessionTeams(
+    "The ID of the division containing the sessions"
+    divisionId: String!
+    "The ID of the first judging session"
+    sessionId1: String!
+    "The ID of the second judging session"
+    sessionId2: String!
+  ): [JudgingSession!]!
+}
