@@ -9,6 +9,7 @@ from repository.lems_repository import LemsRepository
 from services.validator_service import ValidatorService
 from models.errors import ValidatorError, SchedulerError
 from models.requests import SchedulerRequest
+from config import MIN_MINUTES_BETWEEN_EVENTS
 
 logger = logging.getLogger("lems.scheduler")
 
@@ -213,6 +214,51 @@ class SchedulerService:
 
         return max(filter(None, [last_match_time, last_session_time]), default=None)
 
+    def _get_last_event_end_time(
+        self, team: str, current_time: pd.Timestamp
+    ) -> pd.Timestamp | None:
+        """Get the end time of the last event for a team before current_time."""
+
+        def _get_end_time(df: pd.DataFrame) -> pd.Timestamp | None:
+            events = df[
+                (df.isin([team]).any(axis=1))
+                & (pd.to_datetime(df["start_time"]) < current_time)
+            ]
+            if not events.empty:
+                last_event = events.loc[pd.to_datetime(events["start_time"]).idxmax()]
+                return pd.to_datetime(last_event["end_time"])
+            return None
+
+        last_match_end = _get_end_time(self.match_schedule)
+        last_session_end = _get_end_time(self.session_schedule)
+
+        return max(filter(None, [last_match_end, last_session_end]), default=None)
+
+    def _has_minimum_gap(self, team: str, match_start_time: pd.Timestamp) -> bool:
+        """Check if team has at least MIN_MINUTES_BETWEEN_EVENTS gap before match."""
+        last_event_end = self._get_last_event_end_time(team, match_start_time)
+        if last_event_end is None:
+            return True
+
+        gap = (match_start_time - last_event_end).total_seconds() / 60
+        return gap >= MIN_MINUTES_BETWEEN_EVENTS
+
+    def _select_team_by_waiting_time(
+        self, teams: list[str], current_time: pd.Timestamp
+    ) -> str:
+        """Select a team from candidates using weighted random selection based on waiting time."""
+        waiting_times = {}
+        for team in teams:
+            last_event_time = self._get_last_event_time(team, current_time)
+            if last_event_time is None:
+                waiting_times[team] = float("inf")
+            else:
+                waiting_times[team] = (current_time - last_event_time).total_seconds()
+
+        min_wait = min(waiting_times.values())
+        weights = [max(0.1, waiting_times[team] - min_wait + 1) for team in teams]
+        return random.choices(teams, weights=weights, k=1)[0]
+
     def _populate_match_schedule(self):
         """Populate the remaining slots in the match schedule while respecting constraints.
 
@@ -263,28 +309,26 @@ class SchedulerService:
                 ]
 
                 if eligible_teams:
-                    # Calculate waiting times and use weighted random selection
                     current_time = pd.to_datetime(match["start_time"])
-                    waiting_times = {}
 
-                    for team in eligible_teams:
-                        last_event_time = self._get_last_event_time(team, current_time)
-                        if last_event_time is None:
-                            waiting_times[team] = float("inf")
-                        else:
-                            waiting_times[team] = (
-                                current_time - last_event_time
-                            ).total_seconds()
-
-                    # Weighted random selection: teams with longer waits have higher probability
-                    min_wait = min(waiting_times.values())
-                    weights = [
-                        max(0.1, waiting_times[team] - min_wait + 1)
+                    # Separate teams by gap compliance
+                    teams_with_gap = [
+                        team
                         for team in eligible_teams
+                        if self._has_minimum_gap(team, current_time)
                     ]
-                    selected_team = random.choices(
-                        eligible_teams, weights=weights, k=1
-                    )[0]
+                    teams_without_gap = [
+                        team for team in eligible_teams if team not in teams_with_gap
+                    ]
+
+                    # Prefer teams with sufficient gap, fall back to teams without
+                    candidate_teams = (
+                        teams_with_gap if teams_with_gap else teams_without_gap
+                    )
+
+                    selected_team = self._select_team_by_waiting_time(
+                        candidate_teams, current_time
+                    )
                     self.match_schedule.at[match_num, table] = selected_team
                     assigned_teams[table] = selected_team
                 else:
