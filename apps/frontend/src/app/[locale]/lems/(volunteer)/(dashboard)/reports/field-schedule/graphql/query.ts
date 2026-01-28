@@ -69,6 +69,11 @@ export function parseFieldScheduleData(data: QueryData) {
   // Sort matches by number
   const sortedMatches = [...matches].sort((a, b) => a.number - b.number);
 
+  // If no matches, return empty data
+  if (sortedMatches.length === 0) {
+    return { teams: [], tables: [], roundMatches: {}, roundRowsMap: {} };
+  }
+
   // Create rows combining matches and agenda events, sorted by time
   const rows: Array<
     { type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }
