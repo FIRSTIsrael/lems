@@ -792,6 +792,43 @@
         "next-step": "שלב הבא"
       }
     },
+    "tournament-manager": {
+      "title": "מנהל/ת טורניר",
+      "match-swaps": "החלפות מקצים",
+      "judging-swaps": "החלפות שיפוט",
+      "select-match": "בחרו מקצה",
+      "select-participant-1": "בחרו משתתף ראשון",
+      "select-participant-2": "בחרו משתתף שני",
+      "select-session-1": "בחרו מפגש ראשון",
+      "select-session-2": "בחרו מפגש שני",
+      "swap-preview": "תצוגה מקדימה של החלפה",
+      "swap-teams": "החליפו קבוצות",
+      "cancel": "ביטול",
+      "confirm": "אישור",
+      "confirm-swap": "אישור החלפת קבוצות",
+      "confirm-swap-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בשולחן {table1} עם {team2} בשולחן {table2}?",
+      "confirm-session-swap-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בחדר {room1} עם {team2} בחדר {room2}?",
+      "swap-success": "הקבוצות הוחלפו בהצלחה",
+      "swap-error": "נכשל בהחלפת הקבוצות",
+      "no-eligible-matches": "אין מקצים זמינים להחלפה. מקצים חייבים להיות בסטטוס 'טרם התחיל' ולא טעונים כרגע.",
+      "no-eligible-sessions": "אין מפגשים זמינים להחלפה. מפגשים חייבים להיות בסטטוס 'טרם התחיל' ולא נקראו.",
+      "schedule-reference": "לוח זמנים לעיון",
+      "match-schedule": "לוח זמנים - מקצים",
+      "judging-schedule": "לוח זמנים - שיפוט",
+      "match": "מקצה",
+      "time": "שעה",
+      "status": "סטטוס",
+      "participants": "משתתפים",
+      "room": "חדר",
+      "team": "קבוצה",
+      "called": "נקרא",
+      "no-team": "אין קבוצה",
+      "status": {
+        "not-started": "טרם התחיל",
+        "in-progress": "מתרחש",
+        "completed": "הסתיים"
+      }
+    },
     "head-referee": {
       "page-title": "לוח בקרה - שופט ראשי",
       "escalation-alert": "דף ניקוד הועבר לטיפולך!",

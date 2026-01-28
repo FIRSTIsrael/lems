@@ -793,6 +793,43 @@
         "next-step": "Next Step"
       }
     },
+    "tournament-manager": {
+      "title": "Tournament Manager",
+      "match-swaps": "Match Swaps",
+      "judging-swaps": "Judging Swaps",
+      "select-match": "Select Match",
+      "select-participant-1": "Select First Participant",
+      "select-participant-2": "Select Second Participant",
+      "select-session-1": "Select First Session",
+      "select-session-2": "Select Second Session",
+      "swap-preview": "Swap Preview",
+      "swap-teams": "Swap Teams",
+      "cancel": "Cancel",
+      "confirm": "Confirm",
+      "confirm-swap": "Confirm Team Swap",
+      "confirm-swap-message": "Are you sure you want to swap {team1} at {table1} with {team2} at {table2}?",
+      "confirm-session-swap-message": "Are you sure you want to swap {team1} in {room1} with {team2} in {room2}?",
+      "swap-success": "Teams swapped successfully",
+      "swap-error": "Failed to swap teams",
+      "no-eligible-matches": "No eligible matches for swapping. Matches must be in not-started status and not currently loaded.",
+      "no-eligible-sessions": "No eligible sessions for swapping. Sessions must be in not-started status and not called.",
+      "schedule-reference": "Schedule Reference",
+      "match-schedule": "Match Schedule",
+      "judging-schedule": "Judging Schedule",
+      "match": "Match",
+      "time": "Time",
+      "status": "Status",
+      "participants": "Participants",
+      "room": "Room",
+      "team": "Team",
+      "called": "Called",
+      "no-team": "No Team",
+      "status": {
+        "not-started": "Not Started",
+        "in-progress": "In Progress",
+        "completed": "Completed"
+      }
+    },
     "head-referee": {
       "page-title": "Head Referee Dashboard",
       "escalation-alert": "A scoresheet has been escalated to you for review",
