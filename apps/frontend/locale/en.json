@@ -1213,12 +1213,17 @@
       "error-match-not-found": "Match not found",
       "error-match-not-completed": "Match not completed",
       "error-not-assigned-to-table": "No permission to access this scoresheet",
+      "error-participant-not-present": "Team was not present for this match. Please contact the head referee.",
       "error-failed-to-update": "Failed to update scoresheet",
       "incomplete-title": "Scoresheet is incomplete",
       "incomplete-message": "Please fill out all missions before submitting the scoresheet.",
       "incomplete-with-errors": "There are errors in the scoresheet that need to be corrected.",
       "incomplete-action": "Go to the issue",
-      "points-unit": "pts."
+      "points-unit": "pts.",
+      "participant-not-present-title": "Team Not Present",
+      "participant-not-present-message": "Team #{teamNumber} was not marked as present for this match. You can mark them as present to continue, or go back.",
+      "go-back": "Go Back",
+      "mark-as-present": "Mark as Present"
     },
     "deliberation": {
       "error-not-authorized": "Unauthorized to access deliberation",
