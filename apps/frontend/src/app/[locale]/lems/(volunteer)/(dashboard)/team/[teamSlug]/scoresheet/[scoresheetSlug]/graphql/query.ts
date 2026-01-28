@@ -104,6 +104,7 @@ export const GET_TEAM_MATCH_QUERY: TypedDocumentNode<GetTeamMatchQueryData, GetT
               table {
                 id
               }
+              present
             }
           }
         }

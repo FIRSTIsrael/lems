@@ -1211,12 +1211,17 @@
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
       "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
+      "error-participant-not-present": "הקבוצה לא סומנה כנוכחת במקצה זה. אנא פנו לשופט הראשי.",
       "error-failed-to-update": "עדכון דף הניקוד נכשל",
       "incomplete-title": "דף הניקוד אינו מלא",
       "incomplete-message": "אנא נקדו את כל המשימות.",
       "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
       "incomplete-action": "מעבר למשימה",
-      "points-unit": "נק'"
+      "points-unit": "נק'",
+      "participant-not-present-title": "הקבוצה לא נוכחת",
+      "participant-not-present-message": "קבוצה #{teamNumber} לא סומנה כנוכחת במקצה זה. ניתן לסמן אותה כנוכחת כדי להמשיך, או לחזור אחורה.",
+      "go-back": "חזרה",
+      "mark-as-present": "סמן כנוכח"
     },
     "deliberation": {
       "error-not-authorized": "אין לך הרשאות לגשת לדיון זה",
