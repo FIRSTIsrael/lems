@@ -1,5 +1,6 @@
 import logging
 import math
+import random
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -228,6 +229,8 @@ class SchedulerService:
             round_num = match["round"]
 
             available_tables = self._get_available_tables(match_num)
+            available_tables = np.copy(available_tables)
+            random.shuffle(available_tables)
             assigned_teams = {}  # Keep track of teams assigned in this match
             unassigned_tables = []  # Tables that need teams
 
