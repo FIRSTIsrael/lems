@@ -73,15 +73,15 @@ const RegisterForm: React.FC<{
     try {
       const formData = new FormData();
       formData.append('file', selectedFile);
-      formData.append('divisionId', selectedDivisionId === 'random' ? 'random' : selectedDivisionId);
-
-      const result = await apiFetch(
-        `/admin/events/${eventId}/teams/register-from-csv`,
-        {
-          method: 'POST',
-          body: formData
-        }
+      formData.append(
+        'divisionId',
+        selectedDivisionId === 'random' ? 'random' : selectedDivisionId
       );
+
+      const result = await apiFetch(`/admin/events/${eventId}/teams/register-from-csv`, {
+        method: 'POST',
+        body: formData
+      });
 
       if (result.ok) {
         mutate(`/admin/events/${eventId}/teams`);
@@ -235,81 +235,89 @@ const RegisterForm: React.FC<{
   );
 };
 
-const SuccessView: React.FC<{ result: RegisterTeamsCSVResult; onClose: () => void }> = ({
-  result,
-  onClose
-}) => {
+const SuccessView: React.FC<{
+  result: RegisterTeamsCSVResult;
+  onClose: () => void;
+  hasMultipleDivisions: boolean;
+}> = ({ result, onClose, hasMultipleDivisions }) => {
   const t = useTranslations('pages.events.teams.register-from-csv-dialog.success');
 
   return (
-    <Stack spacing={3} alignItems="center" sx={{ width: '100%', height: '100%' }}>
+    <Stack spacing={3} alignItems="center">
       <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
 
       <Typography variant="h6" textAlign="center">
         {t('title')}
       </Typography>
 
-      <Box sx={{ display: 'flex', gap: 3, width: '100%', flex: 1, minHeight: 0 }}>
-        {result.registered.length > 0 && (
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <Typography variant="subtitle2" gutterBottom textAlign="center">
-              {t('registered', { count: result.registered.length })}
-            </Typography>
-            <List dense sx={{ width: '100%', overflow: 'auto', flex: 1 }}>
-              {result.registered.map(team => (
-                <ListItem key={team.number} disablePadding sx={{ justifyContent: 'center' }}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <ListItemText
-                      primary={`#${team.number} - ${team.name}`}
-                      secondary={
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, justifyContent: 'center', mt: 0.5 }}>
-                          <Box
-                            sx={{
-                              width: 12,
-                              height: 12,
-                              borderRadius: '50%',
-                              backgroundColor: team.division.color
-                            }}
-                          />
-                          {team.division.name}
-                        </Box>
-                      }
-                      slotProps={{ 
-                        primary: { variant: 'body2' },
-                        secondary: { sx: { display: 'flex' } }
+      {result.registered.length > 0 && (
+        <Box>
+          <Typography variant="subtitle2" gutterBottom>
+            {t('registered', { count: result.registered.length })}
+          </Typography>
+          <List dense>
+            {result.registered.slice(0, 5).map(team => (
+              <ListItem key={team.number} disablePadding>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  {hasMultipleDivisions && (
+                    <Box
+                      sx={{
+                        width: 12,
+                        height: 12,
+                        borderRadius: '50%',
+                        backgroundColor: team.division.color,
+                        flexShrink: 0
                       }}
                     />
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
+                  )}
+                  <ListItemText
+                    primary={`#${team.number} - ${team.name}`}
+                    slotProps={{ primary: { variant: 'body2' } }}
+                  />
+                </Box>
+              </ListItem>
+            ))}
+            {result.registered.length > 5 && (
+              <ListItem disablePadding>
+                <ListItemText
+                  primary={t('and-more', { count: result.registered.length - 5 })}
+                  slotProps={{ primary: { variant: 'body2', color: 'text.secondary' } }}
+                />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      )}
 
-        {result.skipped.length > 0 && (
-          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0 }}>
-            <Typography variant="subtitle2" gutterBottom textAlign="center">
-              {t('skipped', { count: result.skipped.length })}
-            </Typography>
-            <List dense sx={{ width: '100%', overflow: 'auto', flex: 1 }}>
-              {result.skipped.map(team => (
-                <ListItem key={team.number} disablePadding sx={{ justifyContent: 'center' }}>
-                  <Box sx={{ textAlign: 'center' }}>
-                    <ListItemText
-                      primary={`#${team.number} - ${team.name}`}
-                      secondary={team.reason}
-                      slotProps={{
-                        primary: { variant: 'body2' },
-                        secondary: { variant: 'body2' }
-                      }}
-                    />
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
-        )}
-      </Box>
+      {result.skipped.length > 0 && (
+        <Box>
+          <Typography variant="subtitle2" gutterBottom>
+            {t('skipped', { count: result.skipped.length })}
+          </Typography>
+          <List dense>
+            {result.skipped.slice(0, 5).map(team => (
+              <ListItem key={team.number} disablePadding>
+                <ListItemText
+                  primary={`#${team.number} - ${team.name}`}
+                  secondary={t(`skip-reasons.${team.reason}`)}
+                  slotProps={{
+                    primary: { variant: 'body2' },
+                    secondary: { variant: 'body2' }
+                  }}
+                />
+              </ListItem>
+            ))}
+            {result.skipped.length > 5 && (
+              <ListItem disablePadding>
+                <ListItemText
+                  primary={t('and-more', { count: result.skipped.length - 5 })}
+                  slotProps={{ primary: { variant: 'body2', color: 'text.secondary' } }}
+                />
+              </ListItem>
+            )}
+          </List>
+        </Box>
+      )}
 
       <Button variant="contained" onClick={onClose} sx={{ minWidth: 200 }}>
         {t('close')}
@@ -336,13 +344,19 @@ export const RegisterTeamsFromCSVDialog: React.FC<RegisterTeamsFromCSVDialogProp
   return (
     <>
       <DialogTitle>{t('title')}</DialogTitle>
-      <DialogContent sx={{ minWidth: 600, maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+      <DialogContent
+        sx={{ minWidth: 600, maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
+      >
         {divisionsLoading ? (
           <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
             <CircularProgress size={60} />
           </Box>
         ) : result ? (
-          <SuccessView result={result} onClose={close} />
+          <SuccessView
+            result={result}
+            onClose={close}
+            hasMultipleDivisions={divisions.length > 1}
+          />
         ) : (
           <RegisterForm eventId={eventId} divisions={divisions} onSuccess={handleSuccess} />
         )}

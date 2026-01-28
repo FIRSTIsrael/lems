@@ -444,7 +444,12 @@
             "registered": "{count, plural, =1 {קבוצה אחת נרשמה:} other {# קבוצות נרשמו:}}",
             "skipped": "{count, plural, =1 {קבוצה אחת דולגה:} other {# קבוצות דולגו:}}",
             "and-more": "...ו{count} נוספות",
-            "close": "סגור"
+            "close": "סגור",
+            "skip-reasons": {
+              "team-not-found": "קבוצה לא נמצאה",
+              "already-registered": "כבר רשומה לאירוע זה",
+              "registration-failed": "הרישום נכשל"
+            }
           }
         },
         "remove-dialog": {
