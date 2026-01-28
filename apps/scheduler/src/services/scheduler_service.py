@@ -1,5 +1,6 @@
 import logging
 import math
+import random
 from typing import Literal
 import pandas as pd
 import numpy as np
@@ -8,6 +9,8 @@ from repository.lems_repository import LemsRepository
 from services.validator_service import ValidatorService
 from models.errors import ValidatorError, SchedulerError
 from models.requests import SchedulerRequest
+
+from config import MIN_MINUTES_BETWEEN_EVENTS, MAX_RETRIES
 
 logger = logging.getLogger("lems.scheduler")
 
@@ -184,6 +187,25 @@ class SchedulerService:
             return table_columns[: len(table_columns) // 2]
         return table_columns[len(table_columns) // 2 :]
 
+    def _weighted_random_choice(self, waiting_times: dict[str, float]) -> str:
+        """Select a team from eligible candidates weighted by waiting time.
+
+        Teams with longer waits are more likely to be selected, but randomness
+        is introduced to prevent deterministic greedy assignments.
+        """
+        teams = list(waiting_times.keys())
+        times = list(waiting_times.values())
+
+        # Replace inf with max finite value for weighting
+        max_time = max((t for t in times if t != float("inf")), default=0)
+        weights = [t if t != float("inf") else max_time * 2 for t in times]
+
+        # Fallback to uniform weighting if all weights are zero
+        if sum(weights) == 0:
+            weights = [1] * len(teams)
+
+        return random.choices(teams, weights=weights, k=1)[0]
+
     def _get_last_event_time(
         self, team: str, current_time: pd.Timestamp
     ) -> pd.Timestamp | None:
@@ -228,6 +250,7 @@ class SchedulerService:
             round_num = match["round"]
 
             available_tables = self._get_available_tables(match_num)
+            random.shuffle(available_tables)
             assigned_teams = {}  # Keep track of teams assigned in this match
             unassigned_tables = []  # Tables that need teams
 
@@ -265,7 +288,7 @@ class SchedulerService:
                                 current_time - last_event_time
                             ).total_seconds()
 
-                    selected_team = max(waiting_times.items(), key=lambda x: x[1])[0]
+                    selected_team = self._weighted_random_choice(waiting_times)
                     self.match_schedule.at[match_num, table] = selected_team
                     assigned_teams[table] = selected_team
                 else:
@@ -347,7 +370,7 @@ class SchedulerService:
                 )
 
     def _analyze_schedule(self):
-        """Analyze the schedule and log statistics."""
+        """Analyze the schedule, log statistics, and validate minimum gap constraint."""
 
         team_intervals = {}
 
@@ -392,19 +415,42 @@ class SchedulerService:
             f"Minimum time between events: {int(overall_min//60):02d}:{int(overall_min%60):02d}"
         )
 
+        # Validate minimum gap constraint
+        min_gap_seconds = MIN_MINUTES_BETWEEN_EVENTS * 60
+        for team_slug, diffs in team_intervals.items():
+            for diff in diffs:
+                if diff < min_gap_seconds:
+                    raise SchedulerError(
+                        f"Schedule violates minimum gap: team {team_slug} has {int(diff//60)}m gap"
+                    )
+
     def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
-        """Create the schedule by populating the match schedule and ensuring constraints.
-        Returns (match_schedule, session_schedule).
+        """Create the schedule with constraint validation and automatic retries.
+
+        Retries with different random states if minimum gap constraint
+        is violated, as validator confirmed theoretical feasibility.
         """
 
-        self.session_schedule = self._make_sessions()
-        self.match_schedule = self._make_matches()
+        for attempt in range(MAX_RETRIES):
+            try:
+                self.session_schedule = self._make_sessions()
+                self.match_schedule = self._make_matches()
 
-        self._use_constraints()
-        self._populate_match_schedule()
+                self._use_constraints()
+                self._populate_match_schedule()
 
-        self._ensure_constraints("practice")
-        self._ensure_constraints("ranking")
-        self._analyze_schedule()
+                self._ensure_constraints("practice")
+                self._ensure_constraints("ranking")
+                self._analyze_schedule()
 
-        return self.match_schedule.copy(), self.session_schedule.copy()
+                logger.info(f"Schedule created successfully on attempt {attempt + 1}")
+                return self.match_schedule.copy(), self.session_schedule.copy()
+            except SchedulerError as e:
+                if attempt < MAX_RETRIES - 1:
+                    logger.debug(f"Attempt {attempt + 1} failed: {e}, retrying...")
+                    continue
+                else:
+                    logger.info(
+                        f"Schedule creation failed after {MAX_RETRIES} attempts"
+                    )
+                    raise
