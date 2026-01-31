@@ -869,9 +869,41 @@
       },
       "integrations": {
         "title": "{eventName}: אינטגרציות",
-        "coming-soon": {
-          "title": "אינטגרציות בקרוב",
-          "description": "אנחנו עובדים על הבאת אינטגרציות חזקות כדי לייעל את ניהול האירועים שלכם."
+        "add-tooltip": "הוסף אינטגרציה חדשה",
+        "empty-state": "לא נוספו אינטגרציות עדיין. לחצו על כפתור ה'+' כדי להתחיל.",
+        "add-dialog": {
+          "title": "הוספת אינטגרציה",
+          "search-placeholder": "חיפוש אינטגרציות...",
+          "no-results": "לא נמצאו אינטגרציות",
+          "no-available-integrations": "אין אינטגרציות זמינות להוספה",
+          "cancel": "ביטול",
+          "add": "הוסף",
+          "adding": "מוסיף...",
+          "error": "הוספת האינטגרציה נכשלה"
+        },
+        "detail-panel": {
+          "no-selection": "בחר אינטגרציה כדי להצג הגדרות",
+          "settings-placeholder": "הגדרות האינטגרציה יופיעו כאן",
+          "save": "שמור",
+          "delete": "מחק",
+          "deleting": "מוחק...",
+          "delete-confirmation": "האם אתה בטוח שברצונך למחוק אינטגרציה זו? לא ניתן לבטל פעולה זו.",
+          "delete-error": "מחיקת האינטגרציה נכשלה",
+          "save-error": "שמירת הגדרות האינטגרציה נכשלה",
+          "save-success": "הגדרות האינטגרציה נשמרו בהצלחה",
+          "settings": {
+            "first-israel-dashboard": {
+              "sfid-label": "מזהה אירוע של Salesforce",
+              "sfid-placeholder": "הזן את מזהה ה-Salesforce Event ID שלך",
+              "sfid-help": "המזהה הייחודי של האירוע שלך ב-Salesforce"
+            }
+          }
+        },
+        "integration-types": {
+          "first-israel-dashboard": {
+            "name": "לוח בקרה FIRST Israel",
+            "description": "העלה מידע קבוצות וייצא תוצאות מחשבון לוח הבקרה של FIRST Israel שלך"
+          }
         }
       },
       "users": {
