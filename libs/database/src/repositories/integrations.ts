@@ -1,10 +1,14 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql, RawBuilder } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   EventIntegration,
   InsertableEventIntegration,
   UpdateableEventIntegration
 } from '../schema/tables/event-integrations';
+
+function jsonbContains<T>(value: T): RawBuilder<boolean> {
+  return sql`settings @> ${JSON.stringify(value)}::jsonb`;
+}
 
 class EventIntegrationSelector {
   constructor(
@@ -51,6 +55,30 @@ class EventIntegrationSelector {
   }
 }
 
+class EventIntegrationsSettingsSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private settings: Record<string, string>
+  ) {}
+
+  async get(): Promise<EventIntegration | null> {
+    const result = await this.db
+      .selectFrom('event_integrations')
+      .selectAll()
+      .where(jsonbContains(this.settings))
+      .executeTakeFirst();
+    return result || null;
+  }
+
+  async getAll(): Promise<EventIntegration[]> {
+    return this.db
+      .selectFrom('event_integrations')
+      .selectAll()
+      .where(jsonbContains(this.settings))
+      .execute();
+  }
+}
+
 class EventIntegrationsSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -90,6 +118,10 @@ export class EventIntegrationsRepository {
 
   byEventId(eventId: string) {
     return new EventIntegrationsSelector(this.db, eventId);
+  }
+
+  bySettings(settings: Record<string, string>) {
+    return new EventIntegrationsSettingsSelector(this.db, settings);
   }
 
   async create(data: InsertableEventIntegration): Promise<EventIntegration> {
