@@ -444,7 +444,12 @@
             "registered": "{count, plural, =1 {1 team registered:} other {# teams registered:}}",
             "skipped": "{count, plural, =1 {1 team skipped:} other {# teams skipped:}}",
             "and-more": "...and {count} more",
-            "close": "Close"
+            "close": "Close",
+            "skip-reasons": {
+              "team-not-found": "Team not found",
+              "already-registered": "Already registered to this event",
+              "registration-failed": "Registration failed"
+            }
           }
         },
         "remove-dialog": {
