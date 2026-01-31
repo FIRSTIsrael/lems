@@ -59,3 +59,28 @@ export const SET_MATCH_PARTICIPANT_TEAM: TypedDocumentNode<
     }
   }
 `;
+
+export interface SetJudgingSessionTeamVars {
+  divisionId: string;
+  sessionId: string;
+  teamId: string | null;
+}
+
+export const SET_JUDGING_SESSION_TEAM: TypedDocumentNode<
+  { setJudgingSessionTeam: { id: string } },
+  SetJudgingSessionTeamVars
+> = gql`
+  mutation SetJudgingSessionTeam(
+    $divisionId: String!
+    $sessionId: String!
+    $teamId: String
+  ) {
+    setJudgingSessionTeam(
+      divisionId: $divisionId
+      sessionId: $sessionId
+      teamId: $teamId
+    ) {
+      id
+    }
+  }
+`;

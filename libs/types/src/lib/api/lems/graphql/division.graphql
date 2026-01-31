@@ -121,4 +121,17 @@ extend type Mutation {
     "The ID of the second judging session"
     sessionId2: String!
   ): [JudgingSession!]!
+
+  """
+  Set a judging session's team (or unassign by passing null).
+  Used by tournament managers to assign or remove teams from judging session slots.
+  """
+  setJudgingSessionTeam(
+    "The ID of the division containing the session"
+    divisionId: String!
+    "The ID of the judging session"
+    sessionId: String!
+    "The ID of the team to assign (or null to unassign)"
+    teamId: String
+  ): JudgingSession!
 }

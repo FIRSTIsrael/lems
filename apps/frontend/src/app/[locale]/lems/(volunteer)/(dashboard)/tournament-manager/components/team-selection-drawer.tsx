@@ -199,7 +199,7 @@ export function TeamSelectionDrawer({
                 <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                   {t('second-team-selected')}
                 </Typography>
-                <Paper sx={{ p: 1.5, bgcolor: 'info.light' }}>
+                <Paper sx={{ p: 1.5, bgcolor: 'rgba(25, 118, 210, 0.3)' }}>
                   <Typography variant="body1" fontWeight={700} noWrap>
                     #{secondSlot.team?.number} {secondSlot.team?.name}
                   </Typography>

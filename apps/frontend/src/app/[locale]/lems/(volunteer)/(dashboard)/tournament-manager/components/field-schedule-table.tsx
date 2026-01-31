@@ -11,7 +11,7 @@ import {
   ToggleButtonGroup,
   ToggleButton
 } from '@mui/material';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../graphql';
 import { TeamSlot } from './team-slot';
@@ -24,10 +24,12 @@ interface FieldScheduleTableProps {
   secondSlot: SlotInfo | null;
   isMobile: boolean;
   onSlotClick: (slot: SlotInfo) => void;
+  onSlotDrop?: (slot: SlotInfo) => void;
   onRoundChange?: (
     matches: TournamentManagerData['division']['field']['matches'],
     roundTitle: string
   ) => void;
+  renderRoundSelector?: (selector: React.ReactNode) => void;
   getStage: (stage: string) => string;
   t: (key: string) => string;
 }
@@ -39,25 +41,41 @@ export function FieldScheduleTable({
   secondSlot,
   isMobile,
   onSlotClick,
+  onSlotDrop,
   onRoundChange,
+  renderRoundSelector,
   getStage,
   t
 }: FieldScheduleTableProps) {
   // Group matches by stage and round, filtering out TEST matches
-  const groupedMatches: Record<string, Record<number, typeof matches>> = {};
-  matches.forEach(match => {
-    if (match.stage === 'TEST') return; // Filter out test matches
-    if (!groupedMatches[match.stage]) {
-      groupedMatches[match.stage] = {};
-    }
-    if (!groupedMatches[match.stage][match.round]) {
-      groupedMatches[match.stage][match.round] = [];
-    }
-    groupedMatches[match.stage][match.round].push(match);
-  });
+  const groupedMatches = useMemo(() => {
+    const grouped: Record<string, Record<number, typeof matches>> = {};
+    matches.forEach(match => {
+      if (match.stage === 'TEST') return; // Filter out test matches
+      if (!grouped[match.stage]) {
+        grouped[match.stage] = {};
+      }
+      if (!grouped[match.stage][match.round]) {
+        grouped[match.stage][match.round] = [];
+      }
+      grouped[match.stage][match.round].push(match);
+    });
+    return grouped;
+  }, [matches]);
 
   // Build toggle button options
-  const roundOptions: Array<{ key: string; title: string; matches: typeof matches }> = [];
+  const roundOptions = useMemo(() => {
+    const options: Array<{ key: string; title: string; matches: typeof matches }> = [];
+    Object.entries(groupedMatches).forEach(([stage, rounds]) => {
+      Object.entries(rounds).forEach(([round, matchGroup]) => {
+        const firstMatch = matchGroup[0];
+        const roundTitle = `${getStage(firstMatch.stage)} ${firstMatch.round}`;
+        const key = `${stage}-${round}`;
+        options.push({ key, title: roundTitle, matches: matchGroup });
+      });
+    });
+    return options;
+  }, [groupedMatches, getStage]);
 
   // Get first round key as default
   const firstRoundKey =
@@ -65,14 +83,6 @@ export function FieldScheduleTable({
       ? `${Object.keys(groupedMatches)[0]}-${Object.keys(groupedMatches[Object.keys(groupedMatches)[0]])[0]}`
       : '';
   const [selectedRound, setSelectedRound] = useState<string>(firstRoundKey);
-  Object.entries(groupedMatches).forEach(([stage, rounds]) => {
-    Object.entries(rounds).forEach(([round, matchGroup]) => {
-      const firstMatch = matchGroup[0];
-      const roundTitle = `${getStage(firstMatch.stage)} ${firstMatch.round}`;
-      const key = `${stage}-${round}`;
-      roundOptions.push({ key, title: roundTitle, matches: matchGroup });
-    });
-  });
 
   const currentRound = roundOptions.find(r => r.key === selectedRound) || roundOptions[0];
 
@@ -83,135 +93,177 @@ export function FieldScheduleTable({
     }
   }, [currentRound, onRoundChange]);
 
+  // Provide round selector to parent
+  useEffect(() => {
+    if (renderRoundSelector && roundOptions.length > 0) {
+      renderRoundSelector(
+        <ToggleButtonGroup
+          value={selectedRound}
+          exclusive
+          onChange={(_, newValue) => {
+            if (newValue !== null) {
+              setSelectedRound(newValue);
+            }
+          }}
+          size="small"
+          sx={{
+            flexWrap: 'wrap',
+            gap: 0.5,
+            '& .MuiToggleButton-root': {
+              px: 2,
+              py: 0.75,
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: 1,
+              textTransform: 'none',
+              '&:hover': {
+                bgcolor: 'action.hover'
+              },
+              '&.Mui-selected': {
+                bgcolor: 'primary.main',
+                color: 'primary.contrastText',
+                borderColor: 'primary.main',
+                '&:hover': {
+                  bgcolor: 'primary.dark'
+                }
+              }
+            }
+          }}
+        >
+          {roundOptions.map(option => (
+            <ToggleButton key={option.key} value={option.key}>
+              {option.title}
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
+      );
+    }
+  }, [renderRoundSelector, roundOptions, selectedRound]);
+
   return (
     <Box sx={{ p: 2 }}>
-      {roundOptions.length > 0 && (
+      {roundOptions.length > 0 && currentRound && (
         <>
-          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-            <ToggleButtonGroup
-              value={selectedRound}
-              exclusive
-              onChange={(_, newValue) => {
-                if (newValue !== null) {
-                  setSelectedRound(newValue);
-                }
-              }}
+          <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', boxShadow: 'none' }}>
+            <Table
               size="small"
-              sx={{ flexWrap: 'wrap' }}
+              sx={{
+                tableLayout: 'fixed',
+                width: '100%',
+                minWidth: Math.max(400, 100 + tables.length * 100)
+              }}
             >
-              {roundOptions.map(option => (
-                <ToggleButton key={option.key} value={option.key}>
-                  {option.title}
-                </ToggleButton>
-              ))}
-            </ToggleButtonGroup>
-          </Box>
+              <TableHead>
+                <TableRow sx={{ bgcolor: 'grey.200' }}>
+                  <TableCell width={80} align="center">
+                    <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      {t('match-number')}
+                    </Typography>
+                  </TableCell>
+                  <TableCell width={80} align="center">
+                    <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      {t('start-time')}
+                    </Typography>
+                  </TableCell>
+                  <TableCell width={80} align="center">
+                    <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      {t('end-time')}
+                    </Typography>
+                  </TableCell>
+                  {tables.map(table => (
+                    <TableCell key={table.id} align="center">
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {table.name}
+                      </Typography>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {currentRound.matches.map(match => {
+                  const matchTime = dayjs(match.scheduledTime);
+                  const endTime = matchTime.add(150, 'seconds');
 
-          {currentRound && (
-            <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', boxShadow: 'none' }}>
-              <Table
-                size="small"
-                sx={{
-                  tableLayout: 'fixed',
-                  width: '100%',
-                  minWidth: Math.max(400, 100 + tables.length * 100)
-                }}
-              >
-                <TableHead>
-                  <TableRow sx={{ bgcolor: 'grey.200' }}>
-                    <TableCell width={80} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                        {t('match-number')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell width={80} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                        {t('start-time')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell width={80} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                        {t('end-time')}
-                      </Typography>
-                    </TableCell>
-                    {tables.map(table => (
-                      <TableCell key={table.id} align="center">
-                        <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                          {table.name}
+                  const tableParticipants = new Map(match.participants.map(p => [p.table.id, p]));
+
+                  return (
+                    <TableRow key={match.id}>
+                      <TableCell align="center">
+                        <Typography
+                          fontFamily="monospace"
+                          fontWeight={500}
+                          fontSize={isMobile ? '0.75rem' : '1rem'}
+                        >
+                          {match.number}
                         </Typography>
                       </TableCell>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentRound.matches.map(match => {
-                    const matchTime = dayjs(match.scheduledTime);
-                    const endTime = matchTime.add(150, 'seconds');
+                      <TableCell align="center">
+                        <Typography
+                          fontFamily="monospace"
+                          fontWeight={500}
+                          fontSize={isMobile ? '0.75rem' : '1rem'}
+                        >
+                          {matchTime.format('HH:mm')}
+                        </Typography>
+                      </TableCell>
+                      <TableCell align="center">
+                        <Typography
+                          fontFamily="monospace"
+                          fontWeight={500}
+                          fontSize={isMobile ? '0.75rem' : '1rem'}
+                        >
+                          {endTime.format('HH:mm')}
+                        </Typography>
+                      </TableCell>
+                      {tables.map(table => {
+                        const participant = tableParticipants.get(table.id);
+                        const team = participant?.team;
 
-                    const tableParticipants = new Map(match.participants.map(p => [p.table.id, p]));
-
-                    return (
-                      <TableRow key={match.id}>
-                        <TableCell align="center">
-                          <Typography
-                            fontFamily="monospace"
-                            fontWeight={500}
-                            fontSize={isMobile ? '0.75rem' : '1rem'}
-                          >
-                            {match.number}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography
-                            fontFamily="monospace"
-                            fontWeight={500}
-                            fontSize={isMobile ? '0.75rem' : '1rem'}
-                          >
-                            {matchTime.format('HH:mm')}
-                          </Typography>
-                        </TableCell>
-                        <TableCell align="center">
-                          <Typography
-                            fontFamily="monospace"
-                            fontWeight={500}
-                            fontSize={isMobile ? '0.75rem' : '1rem'}
-                          >
-                            {endTime.format('HH:mm')}
-                          </Typography>
-                        </TableCell>
-                        {tables.map(table => {
-                          const participant = tableParticipants.get(table.id);
-                          const team = participant?.team;
-
-                          return (
-                            <TableCell key={table.id} align="center">
-                              <TeamSlot
-                                team={team || null}
-                                isSelected={selectedSlot?.participantId === participant?.id}
-                                isSecondSelected={secondSlot?.participantId === participant?.id}
-                                isMobile={isMobile}
-                                onClick={() => {
-                                  const slot = {
-                                    type: 'match' as const,
-                                    matchId: match.id,
-                                    participantId: participant?.id,
-                                    team: team || null,
-                                    tableName: table.name,
-                                    time: matchTime.format('HH:mm')
-                                  };
-                                  onSlotClick(slot);
-                                }}
-                              />
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          )}
+                        return (
+                          <TableCell key={table.id} align="center">
+                            <TeamSlot
+                              team={team || null}
+                              isSelected={selectedSlot?.participantId === participant?.id}
+                              isSecondSelected={secondSlot?.participantId === participant?.id}
+                              isMobile={isMobile}
+                              onClick={() => {
+                                const slot = {
+                                  type: 'match' as const,
+                                  matchId: match.id,
+                                  participantId: participant?.id,
+                                  team: team || null,
+                                  tableName: table.name,
+                                  time: matchTime.format('HH:mm')
+                                };
+                                onSlotClick(slot);
+                              }}
+                              onDrop={
+                                onSlotDrop
+                                  ? () => {
+                                      const slot = {
+                                        type: 'match' as const,
+                                        matchId: match.id,
+                                        participantId: participant?.id,
+                                        team: team || null,
+                                        tableName: table.name,
+                                        time: matchTime.format('HH:mm')
+                                      };
+                                      onSlotDrop(slot);
+                                    }
+                                  : undefined
+                              }
+                            />
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </>
       )}
     </Box>

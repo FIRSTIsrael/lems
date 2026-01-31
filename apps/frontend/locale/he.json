@@ -839,6 +839,7 @@
       "missing-teams-title": "קבוצות חסרות בלוח הזמנים",
       "missing-teams-from-round": "קבוצות חסרות מהסבב",
       "missing-teams-description": "{count} קבוצות לא משובצות",
+      "click-empty-slot-to-assign": "לחצו על משבצת ריקה כדי לשבץ קבוצה זו",
       "status": {
         "not-started": "טרם התחיל",
         "in-progress": "מתרחש",

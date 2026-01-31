@@ -840,6 +840,7 @@
       "missing-teams-title": "Teams Missing from Schedule",
       "missing-teams-from-round": "Teams Missing from Round",
       "missing-teams-description": "{count} team(s) not assigned",
+      "click-empty-slot-to-assign": "Click an empty slot to assign this team",
       "status": {
         "not-started": "Not Started",
         "in-progress": "In Progress",

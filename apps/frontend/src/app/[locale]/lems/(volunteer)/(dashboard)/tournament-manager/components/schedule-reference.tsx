@@ -3,13 +3,25 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
-import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme, Alert, AlertTitle } from '@mui/material';
+import {
+  Paper,
+  Tabs,
+  Tab,
+  Box,
+  useMediaQuery,
+  useTheme,
+  Alert,
+  AlertTitle,
+  Chip,
+  Stack
+} from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import type { TournamentManagerData } from '../graphql';
 import {
   SWAP_MATCH_TEAMS,
   SWAP_SESSION_TEAMS,
   SET_MATCH_PARTICIPANT_TEAM,
+  SET_JUDGING_SESSION_TEAM,
   GET_TOURNAMENT_MANAGER_DATA
 } from '../graphql';
 import { FieldScheduleTable } from './field-schedule-table';
@@ -32,6 +44,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
     TournamentManagerData['division']['field']['matches']
   >([]);
   const [currentRoundTitle, setCurrentRoundTitle] = useState<string>('');
+  const [selectedMissingTeamId, setSelectedMissingTeamId] = useState<string | null>(null);
+  const [draggedTeamId, setDraggedTeamId] = useState<string | null>(null);
+  const [roundSelector, setRoundSelector] = useState<React.ReactNode>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg')); // lg = 1200px, includes tablets/iPad
 
@@ -47,20 +62,19 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
     refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId: division.id } }]
   });
 
+  const [setJudgingSessionTeam] = useMutation(SET_JUDGING_SESSION_TEAM, {
+    refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId: division.id } }]
+  });
+
   const handleMove = async () => {
     if (!selectedSlot || !secondSlot) return;
 
     setError(null);
     try {
       if (selectedSlot.type === 'match' && secondSlot.type === 'match') {
-        if (
-          !selectedSlot.participantId ||
-          !secondSlot.participantId ||
-          !selectedSlot.matchId ||
-          !secondSlot.matchId
-        )
-          return;
+        if (!secondSlot.participantId || !secondSlot.matchId) return;
 
+        // Assign selected team to destination
         await setMatchParticipantTeam({
           variables: {
             divisionId: division.id,
@@ -70,14 +84,39 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           }
         });
 
-        await setMatchParticipantTeam({
+        // Clear original slot only if it has a matchId (not from warning alert)
+        if (selectedSlot.matchId && selectedSlot.participantId) {
+          await setMatchParticipantTeam({
+            variables: {
+              divisionId: division.id,
+              matchId: selectedSlot.matchId,
+              participantId: selectedSlot.participantId,
+              teamId: null
+            }
+          });
+        }
+      } else if (selectedSlot.type === 'session' && secondSlot.type === 'session') {
+        if (!secondSlot.sessionId) return;
+
+        // Assign selected team to destination session
+        await setJudgingSessionTeam({
           variables: {
             divisionId: division.id,
-            matchId: selectedSlot.matchId,
-            participantId: selectedSlot.participantId,
-            teamId: null
+            sessionId: secondSlot.sessionId,
+            teamId: selectedSlot.team?.id || null
           }
         });
+
+        // Clear original session only if it has a sessionId (not from warning alert)
+        if (selectedSlot.sessionId) {
+          await setJudgingSessionTeam({
+            variables: {
+              divisionId: division.id,
+              sessionId: selectedSlot.sessionId,
+              teamId: null
+            }
+          });
+        }
       }
 
       setSelectedSlot(null);
@@ -138,15 +177,27 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           });
         }
       } else if (selectedSlot.type === 'session' && secondSlot.type === 'session') {
-        if (!selectedSlot.sessionId || !secondSlot.sessionId) return;
+        if (!secondSlot.sessionId) return;
 
-        await swapSessionTeams({
-          variables: {
-            divisionId: division.id,
-            sessionId1: selectedSlot.sessionId,
-            sessionId2: secondSlot.sessionId
-          }
-        });
+        // If selected slot has no sessionId (from warning alert), just assign to destination
+        if (!selectedSlot.sessionId) {
+          await setJudgingSessionTeam({
+            variables: {
+              divisionId: division.id,
+              sessionId: secondSlot.sessionId,
+              teamId: selectedSlot.team?.id || null
+            }
+          });
+        } else {
+          // Both have sessionIds, use swap
+          await swapSessionTeams({
+            variables: {
+              divisionId: division.id,
+              sessionId1: selectedSlot.sessionId,
+              sessionId2: secondSlot.sessionId
+            }
+          });
+        }
       }
 
       setSelectedSlot(null);
@@ -183,7 +234,27 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
 
   const missingTeams = getMissingTeams();
 
-  const handleSlotClick = (slot: SlotInfo) => {
+  const handleSlotClick = async (slot: SlotInfo) => {
+    // If a missing team is selected, assign it to the clicked empty slot
+    if (selectedMissingTeamId && !slot.team) {
+      try {
+        if (slot.type === 'match' && slot.participantId && slot.matchId) {
+          await setMatchParticipantTeam({
+            variables: {
+              divisionId: division.id,
+              matchId: slot.matchId,
+              participantId: slot.participantId,
+              teamId: selectedMissingTeamId
+            }
+          });
+          setSelectedMissingTeamId(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to assign team');
+      }
+      return;
+    }
+
     if (!selectedSlot) {
       if (slot.team) {
         setSelectedSlot(slot);
@@ -193,6 +264,34 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
       (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
     ) {
       setSecondSlot(slot);
+    }
+  };
+
+  const handleDragStart = (teamId: string) => {
+    setDraggedTeamId(teamId);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTeamId(null);
+  };
+
+  const handleDrop = async (slot: SlotInfo) => {
+    if (draggedTeamId && !slot.team) {
+      try {
+        if (slot.type === 'match' && slot.participantId && slot.matchId) {
+          await setMatchParticipantTeam({
+            variables: {
+              divisionId: division.id,
+              matchId: slot.matchId,
+              participantId: slot.participantId,
+              teamId: draggedTeamId
+            }
+          });
+          setDraggedTeamId(null);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to assign team');
+      }
     }
   };
 
@@ -222,16 +321,69 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           marginBottom: selectedSlot && isMobile ? '60vh' : 0
         }}
       >
-        {missingTeams.length > 0 && (
-          <Alert severity="warning" sx={{ m: 2, mb: 0 }}>
-            <AlertTitle>
-              {activeTab === 0 && currentRoundTitle
-                ? `${t('missing-teams-from-round')}: ${currentRoundTitle}`
-                : t('missing-teams-title')}
-            </AlertTitle>
-            {t('missing-teams-description', { count: missingTeams.length })}:{' '}
-            {missingTeams.map(team => `#${team.number}`).join(', ')}
-          </Alert>
+        {activeTab === 0 && (missingTeams.length > 0 || roundSelector) && (
+          <Box
+            sx={{
+              m: 2,
+              mb: 0,
+              display: 'flex',
+              gap: 2,
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              justifyContent: 'space-between'
+            }}
+          >
+            {missingTeams.length > 0 && (
+              <Alert
+                severity="warning"
+                sx={{ flex: 1, minWidth: 300, order: 1 }}
+                onClose={() => setSelectedMissingTeamId(null)}
+              >
+                <AlertTitle sx={{ mb: 0.5 }}>
+                  {currentRoundTitle
+                    ? `${t('missing-teams-from-round')}: ${currentRoundTitle}`
+                    : t('missing-teams-title')}
+                </AlertTitle>
+                <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
+                  {missingTeams.map(team => (
+                    <Chip
+                      key={team.id}
+                      label={`#${team.number} ${team.name}`}
+                      size="small"
+                      color={selectedSlot?.team?.id === team.id ? 'primary' : 'default'}
+                      onClick={() => {
+                        const slot: SlotInfo = {
+                          type: activeTab === 0 ? 'match' : 'session',
+                          team: team,
+                          matchId: undefined,
+                          participantId: undefined,
+                          sessionId: undefined,
+                          tableName: undefined,
+                          roomName: undefined,
+                          time: undefined
+                        };
+                        setSelectedSlot(slot);
+                        setSecondSlot(null);
+                      }}
+                      draggable
+                      onDragStart={() => handleDragStart(team.id)}
+                      onDragEnd={handleDragEnd}
+                      sx={{
+                        cursor: draggedTeamId === team.id ? 'grabbing' : 'grab',
+                        opacity: draggedTeamId === team.id ? 0.5 : 1,
+                        '&:hover': { bgcolor: 'action.hover' }
+                      }}
+                    />
+                  ))}
+                </Stack>
+              </Alert>
+            )}
+            {roundSelector && (
+              <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.5, order: 2 }}>
+                {roundSelector}
+              </Box>
+            )}
+          </Box>
         )}
         <Tabs
           value={activeTab}
@@ -261,10 +413,12 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               secondSlot={secondSlot}
               isMobile={isMobile}
               onSlotClick={handleSlotClick}
+              onSlotDrop={handleDrop}
               onRoundChange={(matches, title) => {
                 setCurrentRoundMatches(matches);
                 setCurrentRoundTitle(title);
               }}
+              renderRoundSelector={setRoundSelector}
               getStage={getStage}
               t={t}
             />
