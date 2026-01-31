@@ -1,4 +1,6 @@
-import React from 'react';
+'use client';
+
+import { useState, useCallback } from 'react';
 import {
   Card,
   CardHeader,
@@ -6,7 +8,6 @@ import {
   Stack,
   Typography,
   Button,
-  Alert,
   CircularProgress,
   Box
 } from '@mui/material';
@@ -15,31 +16,49 @@ import { useTranslations } from 'next-intl';
 
 interface IntegrationSettings {
   id: string;
-  name: string;
+  type: string;
   enabled: boolean;
   settings?: Record<string, unknown>;
 }
 
 interface IntegrationDetailPanelProps {
   integration: IntegrationSettings | null;
+  getIntegrationName: (type: string) => string;
   isLoading?: boolean;
-  error?: string | null;
-  onSave?: (settings: Record<string, unknown>) => void | Promise<void>;
+  onUpdate?: (settings: Record<string, unknown>) => void | Promise<void>;
   onDelete?: () => void | Promise<void>;
-  isSaving?: boolean;
-  isDeleting?: boolean;
 }
 
-const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
+export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
   integration,
+  getIntegrationName,
   isLoading = false,
-  error = null,
-  onSave,
-  onDelete,
-  isSaving = false,
-  isDeleting = false
+  onUpdate,
+  onDelete
 }) => {
   const t = useTranslations('pages.events.integrations');
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleSave = useCallback(async () => {
+    if (!onUpdate) return;
+    setIsSaving(true);
+    try {
+      await onUpdate({});
+    } finally {
+      setIsSaving(false);
+    }
+  }, [onUpdate]);
+
+  const handleDelete = useCallback(async () => {
+    if (!onDelete) return;
+    setIsDeleting(true);
+    try {
+      await onDelete();
+    } finally {
+      setIsDeleting(false);
+    }
+  }, [onDelete]);
 
   if (!integration) {
     return (
@@ -82,12 +101,10 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
         avatar={<CableIcon sx={{ color: 'primary.main' }} />}
         title={
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            {integration.name}
+            {getIntegrationName(integration.type)}
           </Typography>
         }
-        sx={{
-          pb: 2
-        }}
+        sx={{ pb: 2 }}
       />
 
       <CardContent
@@ -100,8 +117,7 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
           p: 2
         }}
       >
-        {/* Loading State */}
-        {isLoading ? (
+        {isLoading && (
           <Box
             sx={{
               display: 'flex',
@@ -112,12 +128,10 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
           >
             <CircularProgress />
           </Box>
-        ) : (
-          <>
-            {/* Error Alert */}
-            {error && <Alert severity="error">{error}</Alert>}
+        )}
 
-            {/* Settings Content Placeholder */}
+        {!isLoading && (
+          <>
             <Box
               sx={{
                 p: 2,
@@ -133,15 +147,15 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
               </Typography>
             </Box>
 
-            {/* Actions */}
             <Stack direction="row" spacing={1} sx={{ mt: 'auto', pt: 2 }}>
               <Button
                 variant="contained"
                 size="small"
                 disabled={isSaving || isDeleting}
-                onClick={() => onSave?.({})}
+                onClick={handleSave}
+                startIcon={isSaving && <CircularProgress size={16} />}
               >
-                {isSaving ? <CircularProgress size={16} /> : t('detail-panel.save')}
+                {t('detail-panel.save')}
               </Button>
               <Button
                 variant="outlined"
@@ -149,7 +163,7 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
                 size="small"
                 startIcon={isDeleting ? <CircularProgress size={16} /> : <DeleteIcon />}
                 disabled={isSaving || isDeleting}
-                onClick={onDelete}
+                onClick={handleDelete}
               >
                 {t('detail-panel.delete')}
               </Button>
@@ -160,5 +174,3 @@ const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
     </Card>
   );
 };
-
-export default IntegrationDetailPanel;

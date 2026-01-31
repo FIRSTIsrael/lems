@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+
 import { Card, CardActionArea, Stack, Typography, Box, Avatar } from '@mui/material';
 
 interface IntegrationCardProps {
@@ -11,7 +12,7 @@ interface IntegrationCardProps {
   disabled?: boolean;
 }
 
-const IntegrationCard: React.FC<IntegrationCardProps> = ({
+export const IntegrationCard: React.FC<IntegrationCardProps> = ({
   id,
   name,
   icon,
@@ -20,12 +21,6 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
   onClick,
   disabled = false
 }) => {
-  const handleClick = () => {
-    if (!disabled && onClick) {
-      onClick(id);
-    }
-  };
-
   return (
     <Card
       sx={{
@@ -47,7 +42,7 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
       variant={isSelected ? 'elevation' : 'outlined'}
     >
       <CardActionArea
-        onClick={handleClick}
+        onClick={() => !disabled && onClick?.(id)}
         disabled={disabled}
         sx={{
           display: 'flex',
@@ -59,13 +54,7 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
           height: '100%'
         }}
       >
-        <Stack
-          spacing={2}
-          alignItems="center"
-          justifyContent="center"
-          sx={{ height: '100%', width: '100%' }}
-        >
-          {/* Logo/Icon Display */}
+        <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ height: '100%' }}>
           <Box
             sx={{
               display: 'flex',
@@ -96,7 +85,6 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
             )}
           </Box>
 
-          {/* Integration Name */}
           <Typography
             variant="subtitle1"
             component="span"
@@ -113,5 +101,3 @@ const IntegrationCard: React.FC<IntegrationCardProps> = ({
     </Card>
   );
 };
-
-export default IntegrationCard;

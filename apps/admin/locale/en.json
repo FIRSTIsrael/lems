@@ -869,6 +869,8 @@
       },
       "integrations": {
         "title": "{eventName}: Integrations",
+        "add-tooltip": "Add integration",
+        "empty-state": "No integrations added yet. Click the + card to get started.",
         "add-dialog": {
           "title": "Add Integration",
           "search-placeholder": "Search integrations...",

@@ -869,6 +869,8 @@
       },
       "integrations": {
         "title": "{eventName}: אינטגרציות",
+        "add-tooltip": "הוסף אינטגרציה חדשה",
+        "empty-state": "לא נוספו אינטגרציות עדיין. לחצו על כפתור ה'+' כדי להתחיל.",
         "add-dialog": {
           "title": "הוספת אינטגרציה",
           "search-placeholder": "חיפוש אינטגרציות...",

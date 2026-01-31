@@ -1,14 +1,18 @@
-import React from 'react';
+'use client';
+
 import { Card, CardActionArea, Stack, Box, Tooltip } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
+import { useTranslations } from 'next-intl';
 
 interface AddIntegrationCardProps {
   onClick: () => void;
 }
 
-const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick }) => {
+export const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick }) => {
+  const t = useTranslations('pages.events.integrations');
+
   return (
-    <Tooltip title="Add integration">
+    <Tooltip title={t('add-tooltip')}>
       <Card
         sx={{
           height: '100%',
@@ -36,12 +40,7 @@ const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick }) => {
             height: '100%'
           }}
         >
-          <Stack
-            spacing={2}
-            alignItems="center"
-            justifyContent="center"
-            sx={{ height: '100%', width: '100%' }}
-          >
+          <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ height: '100%' }}>
             <Box
               sx={{
                 display: 'flex',
@@ -55,7 +54,7 @@ const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick }) => {
                 transition: 'all 0.2s ease-in-out'
               }}
             >
-              <AddIcon sx={{ fontSize: 28, color: 'inherit' }} />
+              <AddIcon sx={{ fontSize: 28 }} />
             </Box>
           </Stack>
         </CardActionArea>
@@ -63,5 +62,3 @@ const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick }) => {
     </Tooltip>
   );
 };
-
-export default AddIntegrationCard;

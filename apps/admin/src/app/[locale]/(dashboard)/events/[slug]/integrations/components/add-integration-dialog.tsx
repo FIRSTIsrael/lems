@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import { useMemo, useCallback, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -14,92 +16,67 @@ import {
   Avatar
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import {
-  Search as SearchIcon,
-  Webhook as WebhookIcon,
-  Email as EmailIcon,
-  ChatBubble as SlackIcon,
-  TableChart as GoogleSheetsIcon,
-  Download as CsvExportIcon
-} from '@mui/icons-material';
+import { Search as SearchIcon } from '@mui/icons-material';
+import { IntegrationConfig } from '@lems/shared';
 
 export interface DialogComponentProps {
   close: () => void;
 }
 
-interface IntegrationOption {
-  id: string;
-  name: string;
-  description?: string;
-  icon?: React.ReactElement;
-}
-
 interface AddIntegrationDialogProps extends DialogComponentProps {
-  onAdd?: (integrationId: string) => void | Promise<void>;
-  existingIntegrationIds?: string[];
+  onAdd?: (integrationType: string, settings: Record<string, unknown>) => void | Promise<void>;
+  availableIntegrations?: IntegrationConfig[];
 }
 
-// Mock integration types - will be replaced with API call
-const AVAILABLE_INTEGRATIONS: IntegrationOption[] = [
-  {
-    id: 'webhook',
-    name: 'Webhook',
-    description: 'Send events to external URLs',
-    icon: <WebhookIcon />
-  },
-  {
-    id: 'email',
-    name: 'Email Notifications',
-    description: 'Send email alerts and updates',
-    icon: <EmailIcon />
-  },
-  {
-    id: 'slack',
-    name: 'Slack',
-    description: 'Integrate with Slack workspace',
-    icon: <SlackIcon />
-  },
-  {
-    id: 'google-sheets',
-    name: 'Google Sheets',
-    description: 'Sync data with Google Sheets',
-    icon: <GoogleSheetsIcon />
-  },
-  {
-    id: 'csv-export',
-    name: 'CSV Export',
-    description: 'Export event data as CSV',
-    icon: <CsvExportIcon />
-  }
-];
-
-const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
+export const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
   close,
   onAdd,
-  existingIntegrationIds = []
+  availableIntegrations = []
 }) => {
   const t = useTranslations('pages.events.integrations');
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const filteredIntegrations = AVAILABLE_INTEGRATIONS.filter(
-    integration =>
-      !existingIntegrationIds.includes(integration.id) &&
-      (integration.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        integration.description?.toLowerCase().includes(searchQuery.toLowerCase()))
+  const getIntegrationName = useCallback(
+    (type: string): string => {
+      const name = t(`integration-types.${type}.name`);
+      return name !== `integration-types.${type}.name` ? name : type;
+    },
+    [t]
   );
 
-  const handleAdd = async () => {
-    if (!selectedId) return;
+  const getIntegrationDescription = useCallback(
+    (type: string): string => {
+      const description = t(`integration-types.${type}.description`);
+      return description !== `integration-types.${type}.description` ? description : '';
+    },
+    [t]
+  );
+
+  const filteredIntegrations = useMemo(
+    () =>
+      availableIntegrations.filter(integration => {
+        const name = getIntegrationName(integration.type);
+        const description = getIntegrationDescription(integration.type);
+        return (
+          name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          description.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+      }),
+    [availableIntegrations, searchQuery, getIntegrationName, getIntegrationDescription]
+  );
+
+  const handleAdd = useCallback(async () => {
+    if (!selectedType) return;
 
     try {
       setIsLoading(true);
       setError(null);
 
       if (onAdd) {
-        await onAdd(selectedId);
+        await onAdd(selectedType, {});
       }
 
       close();
@@ -108,7 +85,7 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [selectedType, onAdd, close, t]);
 
   return (
     <Dialog
@@ -136,7 +113,6 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
           pt: 2
         }}
       >
-        {/* Search Field */}
         <TextField
           fullWidth
           placeholder={t('add-dialog.search-placeholder')}
@@ -149,10 +125,8 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
           }}
         />
 
-        {/* Error Message */}
         {error && <Alert severity="error">{error}</Alert>}
 
-        {/* Integration List - Scrollable */}
         {filteredIntegrations.length > 0 ? (
           <Box
             sx={{
@@ -167,16 +141,16 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
           >
             {filteredIntegrations.map(integration => (
               <Box
-                key={integration.id}
-                onClick={() => setSelectedId(integration.id)}
+                key={integration.type}
+                onClick={() => setSelectedType(integration.type)}
                 sx={{
                   p: 2,
                   border: '1px solid',
-                  borderColor: selectedId === integration.id ? 'primary.main' : 'divider',
+                  borderColor: selectedType === integration.type ? 'primary.main' : 'divider',
                   borderRadius: 1,
                   cursor: 'pointer',
                   backgroundColor:
-                    selectedId === integration.id ? 'action.selected' : 'background.paper',
+                    selectedType === integration.type ? 'action.selected' : 'background.paper',
                   transition: 'all 0.2s',
                   display: 'flex',
                   alignItems: 'center',
@@ -188,29 +162,25 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
                   }
                 }}
               >
-                {/* Icon */}
-                {integration.icon && (
-                  <Avatar
-                    sx={{
-                      bgcolor: 'action.hover',
-                      color: 'primary.main',
-                      width: 40,
-                      height: 40,
-                      flexShrink: 0
-                    }}
-                  >
-                    {integration.icon}
-                  </Avatar>
-                )}
+                <Avatar
+                  sx={{
+                    bgcolor: 'action.hover',
+                    color: 'primary.main',
+                    width: 40,
+                    height: 40,
+                    flexShrink: 0
+                  }}
+                >
+                  {integration.type === 'first-israel-dashboard' ? '🎯' : '🔌'}
+                </Avatar>
 
-                {/* Text Content */}
                 <Stack spacing={0.25} flex={1}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                    {integration.name}
+                    {getIntegrationName(integration.type)}
                   </Typography>
-                  {integration.description && (
+                  {getIntegrationDescription(integration.type) && (
                     <Typography variant="caption" color="text.secondary">
-                      {integration.description}
+                      {getIntegrationDescription(integration.type)}
                     </Typography>
                   )}
                 </Stack>
@@ -233,7 +203,7 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
         <Button
           onClick={handleAdd}
           variant="contained"
-          disabled={!selectedId || isLoading}
+          disabled={!selectedType || isLoading}
           startIcon={isLoading ? <CircularProgress size={16} /> : undefined}
         >
           {isLoading ? t('add-dialog.adding') : t('add-dialog.add')}
@@ -243,4 +213,6 @@ const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
   );
 };
 
-export default AddIntegrationDialog;
+export interface DialogComponentProps {
+  close: () => void;
+}

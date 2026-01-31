@@ -7,7 +7,7 @@ export const IntegrationTypes = {
 export type IntegrationType = (typeof IntegrationTypes)[keyof typeof IntegrationTypes];
 
 export const FirstIsraelDashboardSettingsSchema = z.object({
-  sfid: z.string().describe('Event ID in Salesforce')
+  sfid: z.string().nullable().default(null).describe('Event ID in Salesforce')
 });
 
 export type FirstIsraelDashboardSettings = z.infer<typeof FirstIsraelDashboardSettingsSchema>;

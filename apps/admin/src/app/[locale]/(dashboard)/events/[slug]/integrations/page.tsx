@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl';
 import { Box } from '@mui/material';
 import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
-import IntegrationGrid from './components/integration-grid';
+import { IntegrationGrid } from './components/integration-grid';
 
 const IntegrationsPage = () => {
   const t = useTranslations('pages.events.integrations');

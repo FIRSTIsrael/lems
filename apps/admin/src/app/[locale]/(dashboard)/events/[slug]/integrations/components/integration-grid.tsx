@@ -1,93 +1,164 @@
-import React, { useState } from 'react';
+'use client';
+
+import { useState, useCallback, useMemo } from 'react';
 import { Box, Grid, Typography, Stack, Alert } from '@mui/material';
-import { Webhook as WebhookIcon, Email as EmailIcon } from '@mui/icons-material';
+import useSWR, { mutate } from 'swr';
+import { useTranslations } from 'next-intl';
+import { apiFetch, getAllIntegrations } from '@lems/shared';
+import { AdminIntegrationResponseSchema, type Integration } from '@lems/types/api/admin';
+import { useEvent } from '../../components/event-context';
 import { useDialog } from '../../../../components/dialog-provider';
-import IntegrationCard from './integration-card';
-import AddIntegrationCard from './add-integration-card';
-import AddIntegrationDialog, { DialogComponentProps } from './add-integration-dialog';
-import IntegrationDetailPanel from './integration-detail-panel';
+import { IntegrationCard } from './integration-card';
+import { AddIntegrationCard } from './add-integration-card';
+import { AddIntegrationDialog, type DialogComponentProps } from './add-integration-dialog';
+import { IntegrationDetailPanel } from './integration-detail-panel';
 
-interface Integration {
-  id: string;
-  name: string;
-  type: string;
-  enabled: boolean;
-  icon?: React.ReactElement;
-  logo?: string;
-}
-
-const IntegrationGrid: React.FC = () => {
+export const IntegrationGrid: React.FC = () => {
+  const event = useEvent();
+  const t = useTranslations('pages.events.integrations');
   const { showDialog } = useDialog();
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
-  const [integrations, setIntegrations] = useState<Integration[]>([
-    {
-      id: 'webhook-1',
-      name: 'Webhook Integration',
-      type: 'webhook',
-      enabled: true,
-      icon: <WebhookIcon />
-    },
-    {
-      id: 'email-1',
-      name: 'Email Notifications',
-      type: 'email',
-      enabled: true,
-      icon: <EmailIcon />
-    }
-  ]);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleAddIntegration = () => {
+  const apiPath = `/admin/events/${event.id}/integrations`;
+
+  const { data: integrations = [] } = useSWR<Integration[]>(apiPath, {
+    suspense: true,
+    fallbackData: []
+  });
+
+  const availableIntegrations = useMemo(() => {
+    const allIntegrations = getAllIntegrations();
+    const usedTypes = new Set(integrations.map(i => i.type));
+    return allIntegrations.filter(i => !usedTypes.has(i.type));
+  }, [integrations]);
+
+  const getIntegrationName = useCallback(
+    (type: string): string => {
+      const name = t(`integration-types.${type}.name`);
+      return name !== `integration-types.${type}.name` ? name : type;
+    },
+    [t]
+  );
+
+  const handleAddIntegration = useCallback(() => {
     const AddIntegrationDialogWrapper: React.FC<DialogComponentProps> = ({ close }) => (
       <AddIntegrationDialog
         close={close}
-        existingIntegrationIds={integrations.map(i => i.type)}
-        onAdd={async integrationId => {
-          // Mock adding integration
-          const newIntegration: Integration = {
-            id: `${integrationId}-${Date.now()}`,
-            name: integrationId.replace('-', ' ').toUpperCase(),
-            type: integrationId,
-            enabled: true
-          };
-          setIntegrations([...integrations, newIntegration]);
-          setSelectedIntegration(newIntegration);
+        availableIntegrations={availableIntegrations}
+        onAdd={async (integrationType, settings) => {
+          try {
+            setError(null);
+            const result = await apiFetch(
+              apiPath,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ type: integrationType, settings })
+              },
+              AdminIntegrationResponseSchema
+            );
+
+            if (!result.ok) {
+              setError(t('add-dialog.error'));
+              return;
+            }
+
+            setSelectedIntegration(result.data);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : t('add-dialog.error'));
+          }
         }}
       />
     );
 
     showDialog(AddIntegrationDialogWrapper);
-  };
+  }, [apiPath, availableIntegrations, showDialog, t]);
+
+  const handleDeleteIntegration = useCallback(
+    async (integrationId: string) => {
+      try {
+        setError(null);
+        const result = await apiFetch(`${apiPath}/${integrationId}`, {
+          method: 'DELETE'
+        });
+
+        if (!result.ok) {
+          setError(t('detail-panel.delete-error'));
+          return;
+        }
+
+        await mutate(apiPath);
+        setSelectedIntegration(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t('detail-panel.delete-error'));
+      }
+    },
+    [apiPath, t]
+  );
+
+  const handleDeleteSelectedIntegration = useCallback(() => {
+    if (selectedIntegration) {
+      handleDeleteIntegration(selectedIntegration.id);
+    }
+  }, [selectedIntegration, handleDeleteIntegration]);
+
+  const handleUpdateIntegration = useCallback(
+    async (updatedSettings: Record<string, unknown>) => {
+      if (!selectedIntegration) return;
+
+      try {
+        setError(null);
+        const result = await apiFetch(`${apiPath}/${selectedIntegration.id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ settings: updatedSettings })
+        });
+
+        if (!result.ok) {
+          setError(t('detail-panel.save-error'));
+          return;
+        }
+
+        await mutate(apiPath);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : t('detail-panel.save-error'));
+      }
+    },
+    [selectedIntegration, apiPath, t]
+  );
 
   return (
     <>
-      {/* Empty State Alert */}
-      {integrations.length === 0 && (
+      {error && (
+        <Box sx={{ mb: 3 }}>
+          <Alert severity="error" onClose={() => setError(null)}>
+            {error}
+          </Alert>
+        </Box>
+      )}
+
+      {!integrations.length && (
         <Box sx={{ mb: 3 }}>
           <Alert severity="info" icon={false}>
-            <Typography variant="body2">
-              No integrations added yet. Click the + card to get started.
-            </Typography>
+            <Typography variant="body2">{t('empty-state')}</Typography>
           </Alert>
         </Box>
       )}
 
       <Grid container spacing={3} sx={{ height: 'calc(100vh - 200px)' }}>
-        {/* Left Column: Integration Grid */}
         <Grid size={{ xs: 12, md: 8 }} sx={{ overflowY: 'auto' }}>
           <Grid container spacing={2}>
-            {/* Add Integration Card */}
             <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
               <AddIntegrationCard onClick={handleAddIntegration} />
             </Grid>
 
-            {/* Integration Cards */}
             {integrations.map(integration => (
               <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={integration.id}>
                 <IntegrationCard
                   id={integration.id}
-                  name={integration.name}
-                  icon={integration.icon}
-                  logo={integration.logo}
+                  name={getIntegrationName(integration.type)}
                   isSelected={selectedIntegration?.id === integration.id}
                   onClick={() => setSelectedIntegration(integration)}
                 />
@@ -95,26 +166,13 @@ const IntegrationGrid: React.FC = () => {
             ))}
           </Grid>
         </Grid>
-
-        {/* Right Column: Detail Panel */}
         <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex' }}>
           <Stack sx={{ width: '100%', height: '100%' }}>
             <IntegrationDetailPanel
-              integration={
-                selectedIntegration
-                  ? {
-                      id: selectedIntegration.id,
-                      name: selectedIntegration.name,
-                      enabled: selectedIntegration.enabled
-                    }
-                  : null
-              }
-              onDelete={() => {
-                if (selectedIntegration) {
-                  setIntegrations(integrations.filter(i => i.id !== selectedIntegration.id));
-                  setSelectedIntegration(null);
-                }
-              }}
+              integration={selectedIntegration || null}
+              getIntegrationName={getIntegrationName}
+              onDelete={selectedIntegration ? handleDeleteSelectedIntegration : undefined}
+              onUpdate={handleUpdateIntegration}
             />
           </Stack>
         </Grid>
@@ -122,5 +180,3 @@ const IntegrationGrid: React.FC = () => {
     </>
   );
 };
-
-export default IntegrationGrid;
