@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
+import { useMatchTranslations } from '@lems/localization';
 import type { TournamentManagerData } from '../graphql';
 
 interface SlotInfo {
@@ -55,6 +56,7 @@ export function TeamSelectionDrawer({
   getStage,
   t
 }: TeamSelectionDrawerProps) {
+  const { getStatus } = useMatchTranslations();
   return (
     <Drawer
       anchor={isMobile ? 'bottom' : 'right'}
@@ -182,7 +184,9 @@ export function TeamSelectionDrawer({
                         {dayjs(session.scheduledTime).format('HH:mm')}
                       </Typography>
                       <Chip
-                        label={session.status}
+                        label={getStatus(
+                          session.status as 'not-started' | 'in-progress' | 'completed'
+                        )}
                         size="small"
                         sx={{ fontSize: '0.65rem', height: 20 }}
                       />
@@ -210,15 +214,6 @@ export function TeamSelectionDrawer({
                         .join(' • ')}
                     </Typography>
                   )}
-                  <Typography
-                    variant="caption"
-                    color="text.secondary"
-                    sx={{ mt: 0.5, display: 'block' }}
-                  >
-                    {secondSlot.type === 'match'
-                      ? `${secondSlot.tableName} • ${secondSlot.time}`
-                      : `${secondSlot.roomName} • ${secondSlot.time}`}
-                  </Typography>
                 </Paper>
               </Box>
 
@@ -304,7 +299,9 @@ export function TeamSelectionDrawer({
                                 {dayjs(session.scheduledTime).format('HH:mm')}
                               </Typography>
                               <Chip
-                                label={session.status}
+                                label={getStatus(
+                                  session.status as 'not-started' | 'in-progress' | 'completed'
+                                )}
                                 size="small"
                                 sx={{ fontSize: '0.65rem', height: 20 }}
                               />
