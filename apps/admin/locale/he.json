@@ -869,9 +869,33 @@
       },
       "integrations": {
         "title": "{eventName}: אינטגרציות",
-        "coming-soon": {
-          "title": "אינטגרציות בקרוב",
-          "description": "אנחנו עובדים על הבאת אינטגרציות חזקות כדי לייעל את ניהול האירועים שלכם."
+        "add-dialog": {
+          "title": "הוספת אינטגרציה",
+          "search-placeholder": "חיפוש אינטגרציות...",
+          "no-results": "לא נמצאו אינטגרציות",
+          "no-available-integrations": "אין אינטגרציות זמינות להוספה",
+          "cancel": "ביטול",
+          "add": "הוסף",
+          "adding": "מוסיף...",
+          "error": "הוספת האינטגרציה נכשלה"
+        },
+        "detail-panel": {
+          "no-selection": "בחר אינטגרציה כדי להצג הגדרות",
+          "settings-placeholder": "הגדרות האינטגרציה יופיעו כאן",
+          "save": "שמור",
+          "delete": "מחק",
+          "deleting": "מוחק...",
+          "delete-confirmation": "האם אתה בטוח שברצונך למחוק אינטגרציה זו? לא ניתן לבטל פעולה זו.",
+          "delete-error": "מחיקת האינטגרציה נכשלה",
+          "save-error": "שמירת הגדרות האינטגרציה נכשלה",
+          "save-success": "הגדרות האינטגרציה נשמרו בהצלחה"
+        },
+        "integration-types": {
+          "webhook": "Webhook",
+          "email": "הודעות דוא״ל",
+          "slack": "Slack",
+          "google-sheets": "Google Sheets",
+          "csv-export": "ייצוא CSV"
         }
       },
       "users": {

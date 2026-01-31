@@ -869,9 +869,33 @@
       },
       "integrations": {
         "title": "{eventName}: Integrations",
-        "coming-soon": {
-          "title": "Integrations Coming Soon",
-          "description": "We're working on bringing you powerful integrations to streamline your event management."
+        "add-dialog": {
+          "title": "Add Integration",
+          "search-placeholder": "Search integrations...",
+          "no-results": "No integrations found",
+          "no-available-integrations": "No available integrations to add",
+          "cancel": "Cancel",
+          "add": "Add",
+          "adding": "Adding...",
+          "error": "Failed to add integration"
+        },
+        "detail-panel": {
+          "no-selection": "Select an integration to view settings",
+          "settings-placeholder": "Integration settings will appear here",
+          "save": "Save",
+          "delete": "Delete",
+          "deleting": "Deleting...",
+          "delete-confirmation": "Are you sure you want to delete this integration? This action cannot be undone.",
+          "delete-error": "Failed to delete integration",
+          "save-error": "Failed to save integration settings",
+          "save-success": "Integration settings saved successfully"
+        },
+        "integration-types": {
+          "webhook": "Webhook",
+          "email": "Email Notifications",
+          "slack": "Slack",
+          "google-sheets": "Google Sheets",
+          "csv-export": "CSV Export"
         }
       },
       "users": {
