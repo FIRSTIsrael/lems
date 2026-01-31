@@ -31,3 +31,31 @@ export const SWAP_SESSION_TEAMS: TypedDocumentNode<
     }
   }
 `;
+
+export interface SetMatchParticipantTeamVars {
+  divisionId: string;
+  matchId: string;
+  participantId: string;
+  teamId: string | null;
+}
+
+export const SET_MATCH_PARTICIPANT_TEAM: TypedDocumentNode<
+  { setMatchParticipantTeam: { id: string } },
+  SetMatchParticipantTeamVars
+> = gql`
+  mutation SetMatchParticipantTeam(
+    $divisionId: String!
+    $matchId: String!
+    $participantId: String!
+    $teamId: String
+  ) {
+    setMatchParticipantTeam(
+      divisionId: $divisionId
+      matchId: $matchId
+      participantId: $participantId
+      teamId: $teamId
+    ) {
+      id
+    }
+  }
+`;

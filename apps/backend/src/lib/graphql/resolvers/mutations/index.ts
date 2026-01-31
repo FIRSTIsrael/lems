@@ -38,7 +38,7 @@ import {
   completeDeliberationResolver
 } from './deliberations';
 import { updatePresentationResolver } from './audience-display/update-presentation';
-import { swapMatchTeamsResolver, swapSessionTeamsResolver } from './schedule';
+import { swapMatchTeamsResolver, swapSessionTeamsResolver, setMatchParticipantTeamResolver } from './schedule';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -73,5 +73,6 @@ export const mutationResolvers = {
   updateManualEligibility: updateManualEligibilityResolver,
   completeFinalDeliberation: completeFinalDeliberationResolver,
   swapMatchTeams: swapMatchTeamsResolver,
-  swapSessionTeams: swapSessionTeamsResolver
+  swapSessionTeams: swapSessionTeamsResolver,
+  setMatchParticipantTeam: setMatchParticipantTeamResolver
 };
