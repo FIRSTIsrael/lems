@@ -3,6 +3,8 @@ export interface Team {
   number: number;
   name: string;
   slug: string;
+  affiliation?: string;
+  city?: string;
 }
 
 export interface Table {

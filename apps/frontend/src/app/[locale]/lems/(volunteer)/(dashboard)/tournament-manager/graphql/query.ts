@@ -14,6 +14,8 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
         number
         name
         slug
+        affiliation
+        city
       }
       tables {
         id
@@ -40,6 +42,8 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
               number
               name
               slug
+              affiliation
+              city
             }
             table {
               id
@@ -68,6 +72,8 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
             number
             name
             slug
+            affiliation
+            city
           }
         }
       }

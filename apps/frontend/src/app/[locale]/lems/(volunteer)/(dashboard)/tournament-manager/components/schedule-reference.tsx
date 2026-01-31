@@ -29,7 +29,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const [secondSlot, setSecondSlot] = useState<SlotInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg')); // lg = 1200px, includes tablets/iPad
 
   const [swapMatchTeams] = useMutation(SWAP_MATCH_TEAMS, {
     refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId: division.id } }]
@@ -157,7 +157,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
 
   const handleSlotClick = (slot: SlotInfo) => {
     if (!selectedSlot) {
-      setSelectedSlot(slot);
+      if (slot.team) {
+        setSelectedSlot(slot);
+      }
     } else if (
       (slot.type === 'match' && selectedSlot.participantId !== slot.participantId) ||
       (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
@@ -187,8 +189,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           display: 'flex',
           flexDirection: 'column',
           height: '100%',
-          transition: 'margin-right 0.3s',
-          marginRight: selectedSlot ? (isMobile ? '90%' : '400px') : 0
+          transition: isMobile ? 'margin-bottom 0.3s' : 'margin-right 0.3s',
+          marginRight: selectedSlot && !isMobile ? '400px' : 0,
+          marginBottom: selectedSlot && isMobile ? '60vh' : 0
         }}
       >
         <Tabs

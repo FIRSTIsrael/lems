@@ -1,7 +1,7 @@
 import { Box, Typography } from '@mui/material';
 
 interface TeamSlotProps {
-  team: { id: string; number: number; name: string } | null;
+  team: { id: string; number: number; name: string; affiliation?: string; city?: string } | null;
   isSelected: boolean;
   isSecondSelected: boolean;
   isMobile: boolean;
@@ -20,20 +20,21 @@ export function TeamSlot({ team, isSelected, isSecondSelected, isMobile, onClick
         cursor: 'pointer',
         p: 0.5,
         borderRadius: 1,
-        bgcolor: isSelected ? 'primary.light' : isSecondSelected ? 'secondary.light' : 'transparent',
+        bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'warning.main' : 'transparent',
         '&:hover': {
-          bgcolor: isSelected ? 'primary.light' : isSecondSelected ? 'secondary.light' : 'action.hover'
+          bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'warning.main' : 'action.hover'
         },
         transition: 'background-color 0.2s'
       }}
     >
       {team ? (
-        <>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.25 }}>
           <Typography
             component="span"
             sx={{
               fontSize: isMobile ? '0.7rem' : '0.9rem',
-              fontWeight: 600
+              fontWeight: 600,
+              color: isSelected || isSecondSelected ? 'white' : 'text.primary'
             }}
           >
             #{team.number}
@@ -42,7 +43,7 @@ export function TeamSlot({ team, isSelected, isSecondSelected, isMobile, onClick
             component="span"
             sx={{
               fontSize: isMobile ? '0.65rem' : '0.75rem',
-              color: 'text.secondary',
+              color: isSelected || isSecondSelected ? 'rgba(255,255,255,0.9)' : 'text.secondary',
               textAlign: 'center',
               lineHeight: 1.2,
               maxWidth: '100px',
@@ -53,7 +54,41 @@ export function TeamSlot({ team, isSelected, isSecondSelected, isMobile, onClick
           >
             {team.name}
           </Typography>
-        </>
+          {team.affiliation && (
+            <Typography
+              component="span"
+              sx={{
+                fontSize: isMobile ? '0.6rem' : '0.7rem',
+                color: isSelected || isSecondSelected ? 'rgba(255,255,255,0.8)' : 'text.secondary',
+                textAlign: 'center',
+                lineHeight: 1.1,
+                maxWidth: '100px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {team.affiliation}
+            </Typography>
+          )}
+          {team.city && (
+            <Typography
+              component="span"
+              sx={{
+                fontSize: isMobile ? '0.6rem' : '0.7rem',
+                color: isSelected || isSecondSelected ? 'rgba(255,255,255,0.7)' : 'text.disabled',
+                textAlign: 'center',
+                lineHeight: 1.1,
+                maxWidth: '100px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+              }}
+            >
+              {team.city}
+            </Typography>
+          )}
+        </Box>
       ) : (
         <Typography variant="caption" color="text.secondary">
           -

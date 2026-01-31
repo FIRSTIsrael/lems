@@ -8,7 +8,8 @@ import {
   Divider,
   Paper,
   Chip,
-  Button
+  Button,
+  Tooltip
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
@@ -19,7 +20,7 @@ interface SlotInfo {
   matchId?: string;
   participantId?: string;
   sessionId?: string;
-  team: { id: string; number: number; name: string } | null;
+  team: { id: string; number: number; name: string; affiliation?: string; city?: string } | null;
   tableName?: string;
   roomName?: string;
   time?: string;
@@ -56,30 +57,43 @@ export function TeamSelectionDrawer({
 }: TeamSelectionDrawerProps) {
   return (
     <Drawer
-      anchor="right"
+      anchor={isMobile ? 'bottom' : 'right'}
       open={open}
       onClose={onClose}
       variant="persistent"
       sx={{
         '& .MuiDrawer-paper': {
-          width: isMobile ? '90%' : 400,
+          width: isMobile ? '100%' : 400,
+          height: isMobile ? '60vh' : 'auto',
+          maxHeight: isMobile ? '60vh' : '100vh',
           boxSizing: 'border-box',
-          p: 3
+          p: 3,
+          overflowY: 'auto'
         }
       }}
     >
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
-        <Box>
-          <Typography variant="subtitle2" color="text.secondary">
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ flex: 1, minWidth: 0 }}>
+          <Typography variant="caption" color="text.secondary" display="block">
             {selectedSlot?.type === 'match'
               ? `${t('match')} - ${selectedSlot.tableName}`
               : `${t('session')} - ${selectedSlot?.roomName}`}
           </Typography>
-          <Typography variant="h6" fontWeight={700} color="primary">
+          <Typography variant="h6" fontWeight={700} color="primary" noWrap>
             #{selectedSlot?.team?.number} {selectedSlot?.team?.name}
           </Typography>
+          {selectedSlot?.team?.affiliation && (
+            <Typography variant="body2" color="text.secondary" noWrap>
+              {selectedSlot.team.affiliation}
+            </Typography>
+          )}
+          {selectedSlot?.team?.city && (
+            <Typography variant="caption" color="text.disabled" noWrap>
+              {selectedSlot.team.city}
+            </Typography>
+          )}
         </Box>
-        <IconButton onClick={onClose} sx={{ color: 'text.secondary' }}>
+        <IconButton onClick={onClose} size="small" sx={{ color: 'text.secondary', ml: 1 }}>
           <CloseIcon />
         </IconButton>
       </Box>
@@ -100,23 +114,35 @@ export function TeamSelectionDrawer({
             </Typography>
             <Stack spacing={1}>
               {division.field.matches
-                .filter((match) => match.participants.some((p) => p.team?.id === selectedSlot?.team?.id))
-                .map((match) => {
+                .filter(match =>
+                  match.participants.some(p => p.team?.id === selectedSlot?.team?.id)
+                )
+                .map(match => {
                   const participant = match.participants.find(
-                    (p) => p.team?.id === selectedSlot?.team?.id
+                    p => p.team?.id === selectedSlot?.team?.id
                   );
                   return (
-                    <Paper key={match.id} sx={{ p: 1.5, bgcolor: 'action.hover' }}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Box>
-                          <Typography variant="body2" fontWeight={600}>
-                            {getStage(match.stage)} #{match.number}
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            {participant?.table.name} • {dayjs(match.scheduledTime).format('HH:mm')}
-                          </Typography>
-                        </Box>
-                        <Chip label={match.status} size="small" sx={{ fontSize: '0.7rem' }} />
+                    <Paper key={match.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        spacing={1}
+                      >
+                        <Typography
+                          variant="body2"
+                          fontWeight={600}
+                          noWrap
+                          sx={{ flex: 1, minWidth: 0 }}
+                        >
+                          {getStage(match.stage)} #{match.number} • {participant?.table.name} •{' '}
+                          {dayjs(match.scheduledTime).format('HH:mm')}
+                        </Typography>
+                        <Chip
+                          label={match.status}
+                          size="small"
+                          sx={{ fontSize: '0.65rem', height: 20 }}
+                        />
                       </Stack>
                     </Paper>
                   );
@@ -130,19 +156,29 @@ export function TeamSelectionDrawer({
             </Typography>
             <Stack spacing={1}>
               {division.judging.sessions
-                .filter((session) => session.team?.id === selectedSlot?.team?.id)
-                .map((session) => (
-                  <Paper key={session.id} sx={{ p: 1.5, bgcolor: 'action.hover' }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
-                      <Box>
-                        <Typography variant="body2" fontWeight={600}>
-                          {t('session')} #{session.number}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {session.room.name} • {dayjs(session.scheduledTime).format('HH:mm')}
-                        </Typography>
-                      </Box>
-                      <Chip label={session.status} size="small" sx={{ fontSize: '0.7rem' }} />
+                .filter(session => session.team?.id === selectedSlot?.team?.id)
+                .map(session => (
+                  <Paper key={session.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
+                    <Stack
+                      direction="row"
+                      justifyContent="space-between"
+                      alignItems="center"
+                      spacing={1}
+                    >
+                      <Typography
+                        variant="body2"
+                        fontWeight={600}
+                        noWrap
+                        sx={{ flex: 1, minWidth: 0 }}
+                      >
+                        {t('session')} #{session.number} • {session.room.name} •{' '}
+                        {dayjs(session.scheduledTime).format('HH:mm')}
+                      </Typography>
+                      <Chip
+                        label={session.status}
+                        size="small"
+                        sx={{ fontSize: '0.65rem', height: 20 }}
+                      />
                     </Stack>
                   </Paper>
                 ))}
@@ -156,11 +192,25 @@ export function TeamSelectionDrawer({
                 <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                   {t('second-team-selected')}
                 </Typography>
-                <Paper sx={{ p: 2, bgcolor: 'secondary.light' }}>
-                  <Typography variant="body1" fontWeight={700}>
+                <Paper sx={{ p: 1.5, bgcolor: 'warning.light' }}>
+                  <Typography variant="body1" fontWeight={700} noWrap>
                     #{secondSlot.team?.number} {secondSlot.team?.name}
                   </Typography>
-                  <Typography variant="caption" color="text.secondary">
+                  {secondSlot.team?.affiliation && (
+                    <Typography variant="body2" color="text.secondary" noWrap>
+                      {secondSlot.team.affiliation}
+                    </Typography>
+                  )}
+                  {secondSlot.team?.city && (
+                    <Typography variant="caption" color="text.disabled" noWrap>
+                      {secondSlot.team.city}
+                    </Typography>
+                  )}
+                  <Typography
+                    variant="caption"
+                    color="text.secondary"
+                    sx={{ mt: 0.5, display: 'block' }}
+                  >
                     {secondSlot.type === 'match'
                       ? `${secondSlot.tableName} • ${secondSlot.time}`
                       : `${secondSlot.roomName} • ${secondSlot.time}`}
@@ -168,17 +218,113 @@ export function TeamSelectionDrawer({
                 </Paper>
               </Box>
 
-              <Stack spacing={2}>
-                <Button variant="contained" color="primary" fullWidth onClick={onMove}>
-                  {t('move-team')}
-                </Button>
-                <Button variant="contained" color="secondary" fullWidth onClick={onReplace}>
-                  {t('replace-team')}
-                </Button>
-                <Button variant="outlined" fullWidth onClick={onClose}>
-                  {t('cancel')}
-                </Button>
+              {secondSlot.team && (
+                <>
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                      {t('field-matches')}
+                    </Typography>
+                    <Stack spacing={1}>
+                      {division.field.matches
+                        .filter(match =>
+                          match.participants.some(p => p.team?.id === secondSlot.team?.id)
+                        )
+                        .map(match => {
+                          const participant = match.participants.find(
+                            p => p.team?.id === secondSlot.team?.id
+                          );
+                          return (
+                            <Paper key={match.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
+                              <Stack
+                                direction="row"
+                                justifyContent="space-between"
+                                alignItems="center"
+                                spacing={1}
+                              >
+                                <Typography
+                                  variant="body2"
+                                  fontWeight={600}
+                                  noWrap
+                                  sx={{ flex: 1, minWidth: 0 }}
+                                >
+                                  {getStage(match.stage)} #{match.number} •{' '}
+                                  {participant?.table.name} •{' '}
+                                  {dayjs(match.scheduledTime).format('HH:mm')}
+                                </Typography>
+                                <Chip
+                                  label={match.status}
+                                  size="small"
+                                  sx={{ fontSize: '0.65rem', height: 20 }}
+                                />
+                              </Stack>
+                            </Paper>
+                          );
+                        })}
+                    </Stack>
+                  </Box>
+
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                      {t('judging-sessions')}
+                    </Typography>
+                    <Stack spacing={1}>
+                      {division.judging.sessions
+                        .filter(session => session.team?.id === secondSlot.team?.id)
+                        .map(session => (
+                          <Paper key={session.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
+                            <Stack
+                              direction="row"
+                              justifyContent="space-between"
+                              alignItems="center"
+                              spacing={1}
+                            >
+                              <Typography
+                                variant="body2"
+                                fontWeight={600}
+                                noWrap
+                                sx={{ flex: 1, minWidth: 0 }}
+                              >
+                                {t('session')} #{session.number} • {session.room.name} •{' '}
+                                {dayjs(session.scheduledTime).format('HH:mm')}
+                              </Typography>
+                              <Chip
+                                label={session.status}
+                                size="small"
+                                sx={{ fontSize: '0.65rem', height: 20 }}
+                              />
+                            </Stack>
+                          </Paper>
+                        ))}
+                    </Stack>
+                  </Box>
+                </>
+              )}
+
+              <Stack direction="row" spacing={1}>
+                <Tooltip title={t('move-tooltip')} arrow>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={onMove}
+                    sx={{ flex: 1, minWidth: 120 }}
+                  >
+                    {t('move')}
+                  </Button>
+                </Tooltip>
+                <Tooltip title={t('replace-tooltip')} arrow>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={onReplace}
+                    sx={{ flex: 1, minWidth: 120 }}
+                  >
+                    {t('replace')}
+                  </Button>
+                </Tooltip>
               </Stack>
+              <Button variant="outlined" fullWidth onClick={onClose} sx={{ minWidth: 120 }}>
+                {t('cancel')}
+              </Button>
             </>
           )}
 
