@@ -818,6 +818,8 @@
       "judging-schedule": "Judging Schedule",
       "match": "Match",
       "time": "Time",
+      "start-time": "Start Time",
+      "end-time": "End Time",
       "status-column": "Status",
       "participants": "Participants",
       "room": "Room",

@@ -17,6 +17,7 @@ export interface TournamentManagerData {
     };
     judging: {
       divisionId: string;
+      sessionLength: number;
       sessions: JudgingSession[];
     };
   };

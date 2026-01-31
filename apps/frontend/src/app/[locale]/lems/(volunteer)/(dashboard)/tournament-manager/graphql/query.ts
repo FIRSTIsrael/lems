@@ -52,6 +52,7 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
       }
       judging {
         divisionId
+        sessionLength
         sessions {
           id
           number
