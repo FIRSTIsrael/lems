@@ -20,7 +20,8 @@ import {
   CalculateOutlined,
   Group,
   Event,
-  MenuRounded
+  MenuRounded,
+  QuestionAnswer
 } from '@mui/icons-material';
 import { ResponsiveComponent } from '@lems/shared';
 import { Link } from '../../../i18n/navigation';
@@ -31,7 +32,8 @@ const pages = [
   { name: 'teams', href: '/teams', icon: <Group /> },
   { name: 'events', href: '/events', icon: <Event /> },
   { name: 'scorer', href: '/tools/scorer', icon: <CalculateOutlined /> },
-  { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> }
+  { name: 'rubrics', href: '/tools/rubrics', icon: <AssignmentOutlined /> },
+  { name: 'faqs', href: '/faqs', icon: <QuestionAnswer /> }
 ];
 
 interface PortalAppBarProps {

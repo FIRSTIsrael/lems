@@ -19,7 +19,8 @@ export const ALL_ADMIN_PERMISSIONS = [
   'MANAGE_EVENTS',
   'MANAGE_EVENT_DETAILS',
   'MANAGE_TEAMS',
-  'VIEW_INSIGHTS'
+  'VIEW_INSIGHTS',
+  'MANAGE_FAQ'
 ] as const satisfies readonly PermissionType[];
 
 export const AdminUserPermissionsResponseSchema = z.array(z.enum(ALL_ADMIN_PERMISSIONS));

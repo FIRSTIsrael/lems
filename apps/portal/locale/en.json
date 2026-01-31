@@ -266,6 +266,19 @@
         "mobile-placeholder": "Choose value...",
         "mobile-feedback": "Feedback"
       }
+    },
+    "faqs": {
+      "title": "Robot Game Rules FAQ",
+      "subtitle": "Frequently Asked Questions about FIRST LEGO League Challenge Robot Game Rules",
+      "search-placeholder": "Search questions and answers...",
+      "results-count": "{count} questions",
+      "search-active": "Searching",
+      "no-results": "No questions found",
+      "empty-state": "No FAQs available yet",
+      "try-different-search": "Try searching with different keywords",
+      "errors": {
+        "load-failed": "Failed to load FAQs. Please try again later."
+      }
     }
   },
   "layouts": {
@@ -274,7 +287,8 @@
         "teams": "Teams",
         "events": "Events",
         "scorer": "Scorer",
-        "rubrics": "Rubrics"
+        "rubrics": "Rubrics",
+        "faqs": "FAQ"
       }
     }
   }

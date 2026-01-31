@@ -266,6 +266,19 @@
         "mobile-placeholder": "סמנו ניקוד...",
         "mobile-feedback": "משוב"
       }
+    },
+    "faqs": {
+      "title": "שאלות נפוצות - חוקי משחק הרובוט",
+      "subtitle": "שאלות נפוצות על חוקי משחק הרובוט של FIRST LEGO League Challenge",
+      "search-placeholder": "חיפוש שאלות ותשובות...",
+      "results-count": "{count} שאלות",
+      "search-active": "מחפש",
+      "no-results": "לא נמצאו שאלות",
+      "empty-state": "אין עדיין שאלות נפוצות זמינות",
+      "try-different-search": "נסה לחפש עם מילות מפתח שונות",
+      "errors": {
+        "load-failed": "טעינת השאלות הנפוצות נכשלה. אנא נסה שוב מאוחר יותר."
+      }
     }
   },
   "layouts": {
@@ -274,7 +287,8 @@
         "teams": "קבוצות",
         "events": "אירועים",
         "scorer": "מחשבון ניקוד",
-        "rubrics": "מחווני שיפוט"
+        "rubrics": "מחווני שיפוט",
+        "faqs": "שאלות נפוצות"
       }
     }
   }
