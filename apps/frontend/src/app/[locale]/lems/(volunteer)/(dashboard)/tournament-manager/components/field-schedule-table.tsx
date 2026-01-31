@@ -8,12 +8,10 @@ import {
   TableHead,
   TableRow,
   Typography,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
+  ToggleButtonGroup,
+  ToggleButton
 } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../graphql';
 import { TeamSlot } from './team-slot';
@@ -26,6 +24,10 @@ interface FieldScheduleTableProps {
   secondSlot: SlotInfo | null;
   isMobile: boolean;
   onSlotClick: (slot: SlotInfo) => void;
+  onRoundChange?: (
+    matches: TournamentManagerData['division']['field']['matches'],
+    roundTitle: string
+  ) => void;
   getStage: (stage: string) => string;
   t: (key: string) => string;
 }
@@ -37,11 +39,10 @@ export function FieldScheduleTable({
   secondSlot,
   isMobile,
   onSlotClick,
+  onRoundChange,
   getStage,
   t
 }: FieldScheduleTableProps) {
-  const [expandedRound, setExpandedRound] = useState<string | false>(false);
-
   // Group matches by stage and round, filtering out TEST matches
   const groupedMatches: Record<string, Record<number, typeof matches>> = {};
   matches.forEach(match => {
@@ -55,148 +56,164 @@ export function FieldScheduleTable({
     groupedMatches[match.stage][match.round].push(match);
   });
 
+  // Build toggle button options
+  const roundOptions: Array<{ key: string; title: string; matches: typeof matches }> = [];
+
+  // Get first round key as default
+  const firstRoundKey =
+    Object.keys(groupedMatches).length > 0
+      ? `${Object.keys(groupedMatches)[0]}-${Object.keys(groupedMatches[Object.keys(groupedMatches)[0]])[0]}`
+      : '';
+  const [selectedRound, setSelectedRound] = useState<string>(firstRoundKey);
+  Object.entries(groupedMatches).forEach(([stage, rounds]) => {
+    Object.entries(rounds).forEach(([round, matchGroup]) => {
+      const firstMatch = matchGroup[0];
+      const roundTitle = `${getStage(firstMatch.stage)} ${firstMatch.round}`;
+      const key = `${stage}-${round}`;
+      roundOptions.push({ key, title: roundTitle, matches: matchGroup });
+    });
+  });
+
+  const currentRound = roundOptions.find(r => r.key === selectedRound) || roundOptions[0];
+
+  // Notify parent of current round matches and title
+  useEffect(() => {
+    if (currentRound && onRoundChange) {
+      onRoundChange(currentRound.matches, currentRound.title);
+    }
+  }, [currentRound, onRoundChange]);
+
   return (
     <Box sx={{ p: 2 }}>
-      {Object.entries(groupedMatches).map(([stage, rounds]) => {
-        return Object.entries(rounds).map(([round, matchGroup]) => {
-          const firstMatch = matchGroup[0];
-          const roundTitle = `${getStage(firstMatch.stage)} ${firstMatch.round}`;
-          const key = `${stage}-${round}`;
-
-          return (
-            <Accordion
-              key={key}
-              expanded={expandedRound === key}
-              onChange={(_, isExpanded) => setExpandedRound(isExpanded ? key : false)}
-              sx={{ mb: 2, '&:before': { display: 'none' } }}
+      {roundOptions.length > 0 && (
+        <>
+          <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
+            <ToggleButtonGroup
+              value={selectedRound}
+              exclusive
+              onChange={(_, newValue) => {
+                if (newValue !== null) {
+                  setSelectedRound(newValue);
+                }
+              }}
+              size="small"
+              sx={{ flexWrap: 'wrap' }}
             >
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
+              {roundOptions.map(option => (
+                <ToggleButton key={option.key} value={option.key}>
+                  {option.title}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          </Box>
+
+          {currentRound && (
+            <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', boxShadow: 'none' }}>
+              <Table
+                size="small"
                 sx={{
-                  bgcolor: 'grey.100',
-                  '&:hover': { bgcolor: 'grey.200' },
-                  minHeight: 48,
-                  '& .MuiAccordionSummary-content': { my: 1 }
+                  tableLayout: 'fixed',
+                  width: '100%',
+                  minWidth: Math.max(400, 100 + tables.length * 100)
                 }}
               >
-                <Typography fontWeight={700} fontSize={isMobile ? '0.85rem' : '1rem'}>
-                  {roundTitle}
-                </Typography>
-              </AccordionSummary>
-              <AccordionDetails sx={{ p: 0 }}>
-                <TableContainer
-                  component={Paper}
-                  sx={{ p: 0, bgcolor: 'white', boxShadow: 'none' }}
-                >
-                  <Table
-                    size="small"
-                    sx={{
-                      tableLayout: 'fixed',
-                      width: '100%',
-                      minWidth: Math.max(400, 100 + tables.length * 100)
-                    }}
-                  >
-                    <TableHead>
-                      <TableRow sx={{ bgcolor: 'grey.200' }}>
-                        <TableCell width={80} align="center">
-                          <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                            {t('match-number')}
+                <TableHead>
+                  <TableRow sx={{ bgcolor: 'grey.200' }}>
+                    <TableCell width={80} align="center">
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {t('match-number')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell width={80} align="center">
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {t('start-time')}
+                      </Typography>
+                    </TableCell>
+                    <TableCell width={80} align="center">
+                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        {t('end-time')}
+                      </Typography>
+                    </TableCell>
+                    {tables.map(table => (
+                      <TableCell key={table.id} align="center">
+                        <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                          {table.name}
+                        </Typography>
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {currentRound.matches.map(match => {
+                    const matchTime = dayjs(match.scheduledTime);
+                    const endTime = matchTime.add(150, 'seconds');
+
+                    const tableParticipants = new Map(match.participants.map(p => [p.table.id, p]));
+
+                    return (
+                      <TableRow key={match.id}>
+                        <TableCell align="center">
+                          <Typography
+                            fontFamily="monospace"
+                            fontWeight={500}
+                            fontSize={isMobile ? '0.75rem' : '1rem'}
+                          >
+                            {match.number}
                           </Typography>
                         </TableCell>
-                        <TableCell width={80} align="center">
-                          <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                            {t('start-time')}
+                        <TableCell align="center">
+                          <Typography
+                            fontFamily="monospace"
+                            fontWeight={500}
+                            fontSize={isMobile ? '0.75rem' : '1rem'}
+                          >
+                            {matchTime.format('HH:mm')}
                           </Typography>
                         </TableCell>
-                        <TableCell width={80} align="center">
-                          <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                            {t('end-time')}
+                        <TableCell align="center">
+                          <Typography
+                            fontFamily="monospace"
+                            fontWeight={500}
+                            fontSize={isMobile ? '0.75rem' : '1rem'}
+                          >
+                            {endTime.format('HH:mm')}
                           </Typography>
                         </TableCell>
-                        {tables.map(table => (
-                          <TableCell key={table.id} align="center">
-                            <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                              {table.name}
-                            </Typography>
-                          </TableCell>
-                        ))}
+                        {tables.map(table => {
+                          const participant = tableParticipants.get(table.id);
+                          const team = participant?.team;
+
+                          return (
+                            <TableCell key={table.id} align="center">
+                              <TeamSlot
+                                team={team || null}
+                                isSelected={selectedSlot?.participantId === participant?.id}
+                                isSecondSelected={secondSlot?.participantId === participant?.id}
+                                isMobile={isMobile}
+                                onClick={() => {
+                                  const slot = {
+                                    type: 'match' as const,
+                                    matchId: match.id,
+                                    participantId: participant?.id,
+                                    team: team || null,
+                                    tableName: table.name,
+                                    time: matchTime.format('HH:mm')
+                                  };
+                                  onSlotClick(slot);
+                                }}
+                              />
+                            </TableCell>
+                          );
+                        })}
                       </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {matchGroup.map(match => {
-                        const matchTime = dayjs(match.scheduledTime);
-                        const endTime = matchTime.add(150, 'seconds');
-
-                        const tableParticipants = new Map(
-                          match.participants.map(p => [p.table.id, p])
-                        );
-
-                        return (
-                          <TableRow key={match.id}>
-                            <TableCell align="center">
-                              <Typography
-                                fontFamily="monospace"
-                                fontWeight={500}
-                                fontSize={isMobile ? '0.75rem' : '1rem'}
-                              >
-                                {match.number}
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="center">
-                              <Typography
-                                fontFamily="monospace"
-                                fontWeight={500}
-                                fontSize={isMobile ? '0.75rem' : '1rem'}
-                              >
-                                {matchTime.format('HH:mm')}
-                              </Typography>
-                            </TableCell>
-                            <TableCell align="center">
-                              <Typography
-                                fontFamily="monospace"
-                                fontWeight={500}
-                                fontSize={isMobile ? '0.75rem' : '1rem'}
-                              >
-                                {endTime.format('HH:mm')}
-                              </Typography>
-                            </TableCell>
-                            {tables.map(table => {
-                              const participant = tableParticipants.get(table.id);
-                              const team = participant?.team;
-
-                              return (
-                                <TableCell key={table.id} align="center">
-                                  <TeamSlot
-                                    team={team || null}
-                                    isSelected={selectedSlot?.participantId === participant?.id}
-                                    isSecondSelected={secondSlot?.participantId === participant?.id}
-                                    isMobile={isMobile}
-                                    onClick={() => {
-                                      const slot = {
-                                        type: 'match' as const,
-                                        matchId: match.id,
-                                        participantId: participant?.id,
-                                        team: team || null,
-                                        tableName: table.name,
-                                        time: matchTime.format('HH:mm')
-                                      };
-                                      onSlotClick(slot);
-                                    }}
-                                  />
-                                </TableCell>
-                              );
-                            })}
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </AccordionDetails>
-            </Accordion>
-          );
-        });
-      })}
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </>
+      )}
     </Box>
   );
 }

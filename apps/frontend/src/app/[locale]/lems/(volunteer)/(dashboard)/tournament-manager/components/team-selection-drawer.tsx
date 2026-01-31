@@ -82,14 +82,9 @@ export function TeamSelectionDrawer({
           <Typography variant="h6" fontWeight={700} color="primary" noWrap>
             #{selectedSlot?.team?.number} {selectedSlot?.team?.name}
           </Typography>
-          {selectedSlot?.team?.affiliation && (
+          {(selectedSlot?.team?.affiliation || selectedSlot?.team?.city) && (
             <Typography variant="body2" color="text.secondary" noWrap>
-              {selectedSlot.team.affiliation}
-            </Typography>
-          )}
-          {selectedSlot?.team?.city && (
-            <Typography variant="caption" color="text.disabled" noWrap>
-              {selectedSlot.team.city}
+              {[selectedSlot.team.affiliation, selectedSlot.team.city].filter(Boolean).join(' • ')}
             </Typography>
           )}
         </Box>
@@ -112,7 +107,13 @@ export function TeamSelectionDrawer({
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
               {t('field-matches')}
             </Typography>
-            <Stack spacing={1}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '1fr',
+                gap: 1
+              }}
+            >
               {division.field.matches
                 .filter(match =>
                   match.participants.some(p => p.team?.id === selectedSlot?.team?.id)
@@ -147,14 +148,20 @@ export function TeamSelectionDrawer({
                     </Paper>
                   );
                 })}
-            </Stack>
+            </Box>
           </Box>
 
           <Box>
             <Typography variant="subtitle2" fontWeight={600} gutterBottom>
               {t('judging-sessions')}
             </Typography>
-            <Stack spacing={1}>
+            <Box
+              sx={{
+                display: 'grid',
+                gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '1fr',
+                gap: 1
+              }}
+            >
               {division.judging.sessions
                 .filter(session => session.team?.id === selectedSlot?.team?.id)
                 .map(session => (
@@ -182,7 +189,7 @@ export function TeamSelectionDrawer({
                     </Stack>
                   </Paper>
                 ))}
-            </Stack>
+            </Box>
           </Box>
 
           {secondSlot && (
@@ -192,18 +199,15 @@ export function TeamSelectionDrawer({
                 <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                   {t('second-team-selected')}
                 </Typography>
-                <Paper sx={{ p: 1.5, bgcolor: 'warning.light' }}>
+                <Paper sx={{ p: 1.5, bgcolor: 'info.light' }}>
                   <Typography variant="body1" fontWeight={700} noWrap>
                     #{secondSlot.team?.number} {secondSlot.team?.name}
                   </Typography>
-                  {secondSlot.team?.affiliation && (
+                  {(secondSlot?.team?.affiliation || secondSlot?.team?.city) && (
                     <Typography variant="body2" color="text.secondary" noWrap>
-                      {secondSlot.team.affiliation}
-                    </Typography>
-                  )}
-                  {secondSlot.team?.city && (
-                    <Typography variant="caption" color="text.disabled" noWrap>
-                      {secondSlot.team.city}
+                      {[secondSlot.team.affiliation, secondSlot.team.city]
+                        .filter(Boolean)
+                        .join(' • ')}
                     </Typography>
                   )}
                   <Typography
@@ -224,7 +228,13 @@ export function TeamSelectionDrawer({
                     <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                       {t('field-matches')}
                     </Typography>
-                    <Stack spacing={1}>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '1fr',
+                        gap: 1
+                      }}
+                    >
                       {division.field.matches
                         .filter(match =>
                           match.participants.some(p => p.team?.id === secondSlot.team?.id)
@@ -260,14 +270,20 @@ export function TeamSelectionDrawer({
                             </Paper>
                           );
                         })}
-                    </Stack>
+                    </Box>
                   </Box>
 
                   <Box>
                     <Typography variant="subtitle2" fontWeight={600} gutterBottom>
                       {t('judging-sessions')}
                     </Typography>
-                    <Stack spacing={1}>
+                    <Box
+                      sx={{
+                        display: 'grid',
+                        gridTemplateColumns: isMobile ? 'repeat(2, 1fr)' : '1fr',
+                        gap: 1
+                      }}
+                    >
                       {division.judging.sessions
                         .filter(session => session.team?.id === secondSlot.team?.id)
                         .map(session => (
@@ -295,7 +311,7 @@ export function TeamSelectionDrawer({
                             </Stack>
                           </Paper>
                         ))}
-                    </Stack>
+                    </Box>
                   </Box>
                 </>
               )}
@@ -306,7 +322,7 @@ export function TeamSelectionDrawer({
                     variant="contained"
                     color="primary"
                     onClick={onMove}
-                    sx={{ flex: 1, minWidth: 120 }}
+                    sx={{ flex: 1, minWidth: 150, px: 3 }}
                   >
                     {t('move')}
                   </Button>
@@ -316,13 +332,13 @@ export function TeamSelectionDrawer({
                     variant="contained"
                     color="secondary"
                     onClick={onReplace}
-                    sx={{ flex: 1, minWidth: 120 }}
+                    sx={{ flex: 1, minWidth: 150, px: 3 }}
                   >
                     {t('replace')}
                   </Button>
                 </Tooltip>
               </Stack>
-              <Button variant="outlined" fullWidth onClick={onClose} sx={{ minWidth: 120 }}>
+              <Button variant="outlined" fullWidth onClick={onClose} sx={{ minWidth: 150, px: 3 }}>
                 {t('cancel')}
               </Button>
             </>

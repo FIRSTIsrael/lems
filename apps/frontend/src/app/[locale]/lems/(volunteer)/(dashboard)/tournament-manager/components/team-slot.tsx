@@ -20,9 +20,9 @@ export function TeamSlot({ team, isSelected, isSecondSelected, isMobile, onClick
         cursor: 'pointer',
         p: 0.5,
         borderRadius: 1,
-        bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'warning.main' : 'transparent',
+        bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'info.light' : 'transparent',
         '&:hover': {
-          bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'warning.main' : 'action.hover'
+          bgcolor: isSelected ? 'primary.main' : isSecondSelected ? 'info.light' : 'action.hover'
         },
         transition: 'background-color 0.2s'
       }}

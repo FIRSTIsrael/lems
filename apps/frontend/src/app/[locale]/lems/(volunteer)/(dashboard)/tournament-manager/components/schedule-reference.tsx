@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
-import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme } from '@mui/material';
+import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme, Alert, AlertTitle } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import type { TournamentManagerData } from '../graphql';
 import {
@@ -28,6 +28,10 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
   const [secondSlot, setSecondSlot] = useState<SlotInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [currentRoundMatches, setCurrentRoundMatches] = useState<
+    TournamentManagerData['division']['field']['matches']
+  >([]);
+  const [currentRoundTitle, setCurrentRoundTitle] = useState<string>('');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg')); // lg = 1200px, includes tablets/iPad
 
@@ -155,6 +159,30 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const tables = division.tables || [];
   const rooms = division.rooms || [];
 
+  // Calculate missing teams for current round
+  const getMissingTeams = () => {
+    const allTeams = division.teams || [];
+    const assignedTeamIds = new Set<string>();
+
+    if (activeTab === 0) {
+      // Field schedule - get teams from current round only
+      currentRoundMatches.forEach(match => {
+        match.participants.forEach(p => {
+          if (p.team) assignedTeamIds.add(p.team.id);
+        });
+      });
+    } else {
+      // Judging schedule - get teams from all sessions
+      division.judging.sessions.forEach(session => {
+        if (session.team) assignedTeamIds.add(session.team.id);
+      });
+    }
+
+    return allTeams.filter(team => !assignedTeamIds.has(team.id));
+  };
+
+  const missingTeams = getMissingTeams();
+
   const handleSlotClick = (slot: SlotInfo) => {
     if (!selectedSlot) {
       if (slot.team) {
@@ -194,6 +222,17 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           marginBottom: selectedSlot && isMobile ? '60vh' : 0
         }}
       >
+        {missingTeams.length > 0 && (
+          <Alert severity="warning" sx={{ m: 2, mb: 0 }}>
+            <AlertTitle>
+              {activeTab === 0 && currentRoundTitle
+                ? `${t('missing-teams-from-round')}: ${currentRoundTitle}`
+                : t('missing-teams-title')}
+            </AlertTitle>
+            {t('missing-teams-description', { count: missingTeams.length })}:{' '}
+            {missingTeams.map(team => `#${team.number}`).join(', ')}
+          </Alert>
+        )}
         <Tabs
           value={activeTab}
           onChange={(_, newValue) => setActiveTab(newValue)}
@@ -222,6 +261,10 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               secondSlot={secondSlot}
               isMobile={isMobile}
               onSlotClick={handleSlotClick}
+              onRoundChange={(matches, title) => {
+                setCurrentRoundMatches(matches);
+                setCurrentRoundTitle(title);
+              }}
               getStage={getStage}
               t={t}
             />

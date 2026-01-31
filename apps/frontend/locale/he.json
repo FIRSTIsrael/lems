@@ -836,6 +836,9 @@
       "move-tooltip": "העבר קבוצה ראשונה למשבצת שנייה (מסיר מהמקור)",
       "replace-tooltip": "החלף בין שתי הקבוצות במשבצות שלהן",
       "team-schedule": "לוח זמנים של הקבוצה",
+      "missing-teams-title": "קבוצות חסרות בלוח הזמנים",
+      "missing-teams-from-round": "קבוצות חסרות מהסבב",
+      "missing-teams-description": "{count} קבוצות לא משובצות",
       "status": {
         "not-started": "טרם התחיל",
         "in-progress": "מתרחש",

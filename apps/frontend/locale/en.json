@@ -837,6 +837,9 @@
       "move-tooltip": "Move first team to second slot (removes from original)",
       "replace-tooltip": "Swap both teams between their slots",
       "team-schedule": "Team Schedule",
+      "missing-teams-title": "Teams Missing from Schedule",
+      "missing-teams-from-round": "Teams Missing from Round",
+      "missing-teams-description": "{count} team(s) not assigned",
       "status": {
         "not-started": "Not Started",
         "in-progress": "In Progress",
