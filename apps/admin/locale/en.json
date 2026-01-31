@@ -890,7 +890,14 @@
           "delete-confirmation": "Are you sure you want to delete this integration? This action cannot be undone.",
           "delete-error": "Failed to delete integration",
           "save-error": "Failed to save integration settings",
-          "save-success": "Integration settings saved successfully"
+          "save-success": "Integration settings saved successfully",
+          "settings": {
+            "first-israel-dashboard": {
+              "sfid-label": "Salesforce Event ID",
+              "sfid-placeholder": "Enter your Salesforce Event ID",
+              "sfid-help": "The unique identifier of your event in Salesforce"
+            }
+          }
         },
         "integration-types": {
           "first-israel-dashboard": {

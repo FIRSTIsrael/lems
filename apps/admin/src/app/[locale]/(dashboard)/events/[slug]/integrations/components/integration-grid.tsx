@@ -19,6 +19,8 @@ export const IntegrationGrid: React.FC = () => {
   const { showDialog } = useDialog();
   const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const apiPath = `/admin/events/${event.id}/integrations`;
 
@@ -66,6 +68,7 @@ export const IntegrationGrid: React.FC = () => {
               return;
             }
 
+            await mutate(apiPath);
             setSelectedIntegration(result.data);
           } catch (err) {
             setError(err instanceof Error ? err.message : t('add-dialog.error'));
@@ -81,6 +84,7 @@ export const IntegrationGrid: React.FC = () => {
     async (integrationId: string) => {
       try {
         setError(null);
+        setIsDeleting(true);
         const result = await apiFetch(`${apiPath}/${integrationId}`, {
           method: 'DELETE'
         });
@@ -94,6 +98,8 @@ export const IntegrationGrid: React.FC = () => {
         setSelectedIntegration(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : t('detail-panel.delete-error'));
+      } finally {
+        setIsDeleting(false);
       }
     },
     [apiPath, t]
@@ -111,8 +117,12 @@ export const IntegrationGrid: React.FC = () => {
 
       try {
         setError(null);
+        setIsSaving(true);
         const result = await apiFetch(`${apiPath}/${selectedIntegration.id}`, {
           method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
           body: JSON.stringify({ settings: updatedSettings })
         });
 
@@ -124,6 +134,8 @@ export const IntegrationGrid: React.FC = () => {
         await mutate(apiPath);
       } catch (err) {
         setError(err instanceof Error ? err.message : t('detail-panel.save-error'));
+      } finally {
+        setIsSaving(false);
       }
     },
     [selectedIntegration, apiPath, t]
@@ -171,6 +183,8 @@ export const IntegrationGrid: React.FC = () => {
             <IntegrationDetailPanel
               integration={selectedIntegration || null}
               getIntegrationName={getIntegrationName}
+              isSaving={isSaving}
+              isDeleting={isDeleting}
               onDelete={selectedIntegration ? handleDeleteSelectedIntegration : undefined}
               onUpdate={handleUpdateIntegration}
             />

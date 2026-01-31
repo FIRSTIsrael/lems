@@ -1,18 +1,9 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  Stack,
-  Typography,
-  Button,
-  CircularProgress,
-  Box
-} from '@mui/material';
-import { Cable as CableIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Card, CardHeader, CardContent, Typography, CircularProgress, Box } from '@mui/material';
+import { Cable as CableIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { getSettingsComponent, SettingsWrapper } from './settings';
 
 interface IntegrationSettings {
   id: string;
@@ -25,6 +16,8 @@ interface IntegrationDetailPanelProps {
   integration: IntegrationSettings | null;
   getIntegrationName: (type: string) => string;
   isLoading?: boolean;
+  isSaving?: boolean;
+  isDeleting?: boolean;
   onUpdate?: (settings: Record<string, unknown>) => void | Promise<void>;
   onDelete?: () => void | Promise<void>;
 }
@@ -33,32 +26,14 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
   integration,
   getIntegrationName,
   isLoading = false,
+  isSaving = false,
+  isDeleting = false,
   onUpdate,
   onDelete
 }) => {
   const t = useTranslations('pages.events.integrations');
-  const [isSaving, setIsSaving] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const handleSave = useCallback(async () => {
-    if (!onUpdate) return;
-    setIsSaving(true);
-    try {
-      await onUpdate({});
-    } finally {
-      setIsSaving(false);
-    }
-  }, [onUpdate]);
-
-  const handleDelete = useCallback(async () => {
-    if (!onDelete) return;
-    setIsDeleting(true);
-    try {
-      await onDelete();
-    } finally {
-      setIsDeleting(false);
-    }
-  }, [onDelete]);
+  const settingsComponent = integration ? getSettingsComponent(integration.type) : null;
 
   if (!integration) {
     return (
@@ -130,8 +105,21 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
           </Box>
         )}
 
-        {!isLoading && (
-          <>
+        {!isLoading && settingsComponent ? (
+          <SettingsWrapper
+            settingsComponent={settingsComponent}
+            settings={integration.settings || {}}
+            isSaving={isSaving}
+            isDeleting={isDeleting}
+            onSave={async newSettings => {
+              if (onUpdate) {
+                await onUpdate(newSettings);
+              }
+            }}
+            onDelete={onDelete ? () => Promise.resolve(onDelete()) : undefined}
+          />
+        ) : (
+          !isLoading && (
             <Box
               sx={{
                 p: 2,
@@ -146,29 +134,7 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
                 {t('detail-panel.settings-placeholder')}
               </Typography>
             </Box>
-
-            <Stack direction="row" spacing={1} sx={{ mt: 'auto', pt: 2 }}>
-              <Button
-                variant="contained"
-                size="small"
-                disabled={isSaving || isDeleting}
-                onClick={handleSave}
-                startIcon={isSaving && <CircularProgress size={16} />}
-              >
-                {t('detail-panel.save')}
-              </Button>
-              <Button
-                variant="outlined"
-                color="error"
-                size="small"
-                startIcon={isDeleting ? <CircularProgress size={16} /> : <DeleteIcon />}
-                disabled={isSaving || isDeleting}
-                onClick={handleDelete}
-              >
-                {t('detail-panel.delete')}
-              </Button>
-            </Stack>
-          </>
+          )
         )}
       </CardContent>
     </Card>
