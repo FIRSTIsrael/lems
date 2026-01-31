@@ -891,11 +891,10 @@
           "save-success": "Integration settings saved successfully"
         },
         "integration-types": {
-          "webhook": "Webhook",
-          "email": "Email Notifications",
-          "slack": "Slack",
-          "google-sheets": "Google Sheets",
-          "csv-export": "CSV Export"
+          "first-israel-dashboard": {
+            "name": "FIRST Israel Dashboard",
+            "description": "Upload team information and export results from your FIRST Israel Dashboard account"
+          }
         }
       },
       "users": {

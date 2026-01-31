@@ -4,6 +4,7 @@ import { AdminEventsTable } from './tables/admin-events';
 import { SeasonsTable } from './tables/seasons';
 import { EventsTable } from './tables/events';
 import { EventSettingsTable } from './tables/event-settings';
+import { EventIntegrationsTable } from './tables/event-integrations';
 import { DivisionsTable } from './tables/divisions';
 import { EventUsersTable } from './tables/event-users';
 import { EventUserDivisionsTable } from './tables/event-user-divisions';
@@ -26,6 +27,7 @@ export interface KyselyDatabaseSchema {
   seasons: SeasonsTable;
   events: EventsTable;
   event_settings: EventSettingsTable;
+  event_integrations: EventIntegrationsTable;
   divisions: DivisionsTable;
   event_users: EventUsersTable;
   event_user_divisions: EventUserDivisionsTable;

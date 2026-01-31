@@ -9,6 +9,7 @@ import eventUsersRouter from './users';
 import eventTeamsRouter from './teams';
 import eventDivisionsRouter from './divisions';
 import eventSettingsRouter from './settings';
+import eventIntegrationsRouter from './integrations';
 
 const router = express.Router({ mergeParams: true });
 
@@ -142,6 +143,7 @@ router.use('/:eventId/divisions', eventDivisionsRouter);
 router.use('/:eventId/teams', eventTeamsRouter);
 router.use('/:eventId/users', eventUsersRouter);
 router.use('/:eventId/settings', eventSettingsRouter);
+router.use('/:eventId/integrations', eventIntegrationsRouter);
 
 router.get('/:eventId', async (req: AdminEventRequest, res) => {
   const event = await db.events.byId(req.eventId).get();
@@ -189,7 +191,9 @@ router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminReq
 
     if (region !== undefined) {
       if (typeof region !== 'string' || region.length !== 2 || !/^[A-Z]{2}$/.test(region)) {
-        res.status(400).json({ error: 'Region must be a 2-letter ISO 3166-1 alpha-2 country code' });
+        res
+          .status(400)
+          .json({ error: 'Region must be a 2-letter ISO 3166-1 alpha-2 country code' });
         return;
       }
       updateData.region = region;

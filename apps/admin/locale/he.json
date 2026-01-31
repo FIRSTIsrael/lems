@@ -891,11 +891,10 @@
           "save-success": "הגדרות האינטגרציה נשמרו בהצלחה"
         },
         "integration-types": {
-          "webhook": "Webhook",
-          "email": "הודעות דוא״ל",
-          "slack": "Slack",
-          "google-sheets": "Google Sheets",
-          "csv-export": "ייצוא CSV"
+          "first-israel-dashboard": {
+            "name": "לוח בקרה FIRST Israel",
+            "description": "העלה מידע קבוצות וייצא תוצאות מחשבון לוח הבקרה של FIRST Israel שלך"
+          }
         }
       },
       "users": {
