@@ -1,8 +1,8 @@
 'use client';
 
 import { Box } from '@mui/material';
-import { PageHeader } from '../components/page-header';
 import { useTranslations } from 'next-intl';
+import { PageHeader } from '../components/page-header';
 
 interface TournamentManagerLayoutProps {
   children: React.ReactNode;

@@ -793,7 +793,7 @@
       }
     },
     "tournament-manager": {
-      "title": "מנהל/ת טורניר",
+      "title": "מנהל/ת תחרות",
       "match-swaps": "החלפות מקצים",
       "judging-swaps": "החלפות שיפוט",
       "select-match": "בחרו מקצה",
@@ -813,8 +813,9 @@
       "no-eligible-matches": "אין מקצים זמינים להחלפה. מקצים חייבים להיות בסטטוס 'טרם התחיל' ולא טעונים כרגע.",
       "no-eligible-sessions": "אין מפגשים זמינים להחלפה. מפגשים חייבים להיות בסטטוס 'טרם התחיל' ולא נקראו.",
       "schedule-reference": "לוח זמנים לעיון",
-      "match-schedule": "לוח זמנים - מקצים",
+      "match-schedule": "לוח זמנים - משחקים",
       "judging-schedule": "לוח זמנים - שיפוט",
+      "match-number": "משחק מס'",
       "match": "מקצה",
       "time": "זמן",
       "start-time": "שעת התחלה",
