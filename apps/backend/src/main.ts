@@ -44,7 +44,8 @@ app.use(favicon(path.join(__dirname, 'assets', 'favicon.ico')));
 
 app.use('/timesync', timesyncServer.requestHandler);
 
-app.use(express.json());
+// Default JSON body parser with standard limit for most endpoints
+app.use(express.json({ limit: '100kb' }));
 
 // Redis: Initialize connection on startup
 try {
@@ -115,6 +116,7 @@ logger.info({ component: 'graphql' }, 'Apollo Server initialized');
 
 app.use(
   '/lems/graphql',
+  express.json({ limit: '10mb' }), // Increased limit for scoresheet signatures
   expressMiddleware(apolloServer, {
     context: async ({ req }): Promise<GraphQLContext> => {
       const user = await authenticateHttp(req);
