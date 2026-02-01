@@ -27,6 +27,14 @@ export interface TournamentManagerVars {
   divisionId: string;
 }
 
+export interface QueryData {
+  division?: TournamentManagerData['division'] | null;
+}
+
+export interface SubscriptionVars {
+  divisionId: string;
+}
+
 export interface SwapMatchTeamsVars {
   divisionId: string;
   matchId: string;
