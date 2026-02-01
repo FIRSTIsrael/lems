@@ -19,7 +19,8 @@ import {
   People as PeopleIcon,
   ArrowForward,
   ArrowBack,
-  CalendarToday as CalendarIcon
+  CalendarToday as CalendarIcon,
+  InfoOutlined
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { EventSummary } from '@lems/types/api/portal';
@@ -137,9 +138,10 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               </Typography>
               {!event.official && (
                 <Chip
+                  icon={<InfoOutlined />}
                   label={t('unofficial-event')}
                   size="small"
-                  color="warning"
+                  variant="outlined"
                   sx={{ fontWeight: 'medium' }}
                 />
               )}

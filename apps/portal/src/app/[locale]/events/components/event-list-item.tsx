@@ -9,7 +9,8 @@ import {
   People as PeopleIcon,
   CalendarToday as CalendarIcon,
   ArrowForward,
-  ArrowBack
+  ArrowBack,
+  InfoOutlined
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { Flag } from '@lems/shared';
@@ -100,9 +101,10 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               </Typography>
               {!event.official && (
                 <Chip
+                  icon={<InfoOutlined />}
                   label={tEvents('unofficial-event')}
                   size="small"
-                  color="warning"
+                  variant="outlined"
                   sx={{ fontWeight: 'medium' }}
                 />
               )}
