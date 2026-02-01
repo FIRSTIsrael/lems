@@ -10,6 +10,7 @@ import {
   Stack,
   Box,
   Typography,
+  Chip,
   alpha,
   useTheme
 } from '@mui/material';
@@ -130,9 +131,19 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
           spacing={{ xs: 2, sm: 0 }}
         >
           <Box sx={{ flex: 1, pr: variant === 'active' ? { xs: 6, sm: 0 } : 0 }}>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              {event.name}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={1} mb={1}>
+              <Typography variant="h6" fontWeight="bold">
+                {event.name}
+              </Typography>
+              {!event.official && (
+                <Chip
+                  label={t('unofficial-event')}
+                  size="small"
+                  color="warning"
+                  sx={{ fontWeight: 'medium' }}
+                />
+              )}
+            </Stack>
             <Stack spacing={1}>
               <Stack direction="row" alignItems="center" spacing={1}>
                 <CalendarIcon fontSize="small" color="action" />

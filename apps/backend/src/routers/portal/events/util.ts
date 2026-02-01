@@ -51,7 +51,8 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     seasonId: event.season_id,
     teamsRegistered: event.team_count,
     status: eventStatus,
-    completed: event.completed
+    completed: event.completed,
+    official: event.official
   };
 };
 
@@ -71,5 +72,6 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
     teamCount: division.team_count
   })),
   seasonName: event.season_name,
-  seasonSlug: event.season_slug
+  seasonSlug: event.season_slug,
+  official: event.official
 });

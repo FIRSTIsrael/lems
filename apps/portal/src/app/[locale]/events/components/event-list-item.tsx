@@ -52,8 +52,8 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
             sx={{ minWidth: 80 }}
           />
         );
-    };
-  }
+    }
+  };
 
   const getHoverStyles = () => {
     switch (variant) {
@@ -98,6 +98,14 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               <Typography variant="h6" fontWeight="600" sx={{ color: 'text.primary' }}>
                 {event.name}
               </Typography>
+              {!event.official && (
+                <Chip
+                  label={tEvents('unofficial-event')}
+                  size="small"
+                  color="warning"
+                  sx={{ fontWeight: 'medium' }}
+                />
+              )}
               {getStatusChip()}
             </Stack>
 

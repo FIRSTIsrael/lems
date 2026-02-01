@@ -2,7 +2,8 @@
 
 import dayjs from 'dayjs';
 import Link from 'next/link';
-import { Box, Typography, Stack } from '@mui/material';
+import { useTranslations } from 'next-intl';
+import { Box, Typography, Stack, Chip } from '@mui/material';
 import { CalendarToday, LocationOn } from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
 interface EventHeaderProps {
@@ -10,7 +11,8 @@ interface EventHeaderProps {
 }
 
 export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
-  const { seasonName, seasonSlug, name: eventName, startDate, location } = eventData;
+  const { seasonName, seasonSlug, name: eventName, startDate, location, official } = eventData;
+  const t = useTranslations('pages.index.events');
 
   return (
     <Stack spacing={1} mb={3}>
@@ -22,7 +24,12 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
           {seasonName}
         </Typography>
       </Link>
-      <Typography variant="h2">{eventName}</Typography>
+      <Stack direction="row" alignItems="center" spacing={2}>
+        <Typography variant="h2">{eventName}</Typography>
+        {!official && (
+          <Chip label={t('unofficial-event')} color="warning" sx={{ fontWeight: 'medium' }} />
+        )}
+      </Stack>
 
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
