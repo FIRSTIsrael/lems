@@ -3,7 +3,6 @@
 import { Drawer, Box, Alert, Divider, Stack, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import type { TournamentManagerData } from '../../graphql';
-import { isSlotCompleted, isSlotInProgress } from '../types';
 import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from '../constants';
 import type { SlotInfo } from '../types';
 import {
@@ -44,10 +43,6 @@ export function TeamSelectionDrawerWrapper({
   getStage
 }: TeamSelectionDrawerProps) {
   const t = useTranslations('pages.tournament-manager');
-
-  const isSourceCompletedOrInProgress =
-    selectedSlot &&
-    (isSlotCompleted(selectedSlot, division) || isSlotInProgress(selectedSlot, division));
 
   return (
     <Drawer
@@ -107,7 +102,6 @@ export function TeamSelectionDrawerWrapper({
                 selectedSlot={selectedSlot}
                 secondSlot={secondSlot}
                 division={division}
-                isSourceCompletedOrInProgress={isSourceCompletedOrInProgress}
                 onMove={onMove}
                 onReplace={onReplace}
                 onClear={onClear}

@@ -115,6 +115,8 @@ export function ActionButtonsComponent({
     selectedSlot &&
     (isSlotCompleted(selectedSlot, division) || isSlotInProgress(selectedSlot, division));
 
+  const isJudgingSession = selectedSlot?.type === 'session';
+
   const moveTitle = moveState.reasonKey ? t(moveState.reasonKey) : t('move-tooltip');
   const replaceTitle = replaceState.reasonKey ? t(replaceState.reasonKey) : t('replace-tooltip');
   const insertTitle = insertState.reasonKey
@@ -141,55 +143,80 @@ export function ActionButtonsComponent({
     <Stack spacing={2}>
       {secondSlot && (
         <>
-          <Stack direction="row" spacing={1}>
-            {isSourceCompletedOrInProgress ? (
-              <Tooltip title={insertTitle} arrow>
-                <span style={{ flex: 1 }}>
+          {isJudgingSession ? (
+            // For judging sessions: only show replace button (swap sessions)
+            <>
+              <Tooltip title={replaceTitle} arrow>
+                <span style={{ display: 'block' }}>
                   <Button
                     variant="contained"
                     color="primary"
-                    onClick={handleMoveClick}
-                    disabled={insertState.disabled}
+                    onClick={handleReplaceClick}
+                    disabled={replaceState.disabled}
                     fullWidth
                   >
-                    {t('insert-rematch')}
+                    {t('replace')}
                   </Button>
                 </span>
               </Tooltip>
-            ) : (
-              <>
-                <Tooltip title={moveTitle} arrow>
-                  <span style={{ flex: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleMoveClick}
-                      disabled={moveState.disabled}
-                      fullWidth
-                    >
-                      {t('move')}
-                    </Button>
-                  </span>
-                </Tooltip>
-                <Tooltip title={replaceTitle} arrow>
-                  <span style={{ flex: 1 }}>
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={handleReplaceClick}
-                      disabled={replaceState.disabled}
-                      fullWidth
-                    >
-                      {t('replace')}
-                    </Button>
-                  </span>
-                </Tooltip>
-              </>
-            )}
-          </Stack>
-          <Button variant="outlined" fullWidth onClick={handleCloseClick}>
-            {t('cancel')}
-          </Button>
+              <Button variant="outlined" fullWidth onClick={handleCloseClick}>
+                {t('cancel')}
+              </Button>
+            </>
+          ) : (
+            // For match slots: show move/replace buttons
+            <>
+              <Stack direction="row" spacing={1}>
+                {isSourceCompletedOrInProgress ? (
+                  <Tooltip title={insertTitle} arrow>
+                    <span style={{ flex: 1 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleMoveClick}
+                        disabled={insertState.disabled}
+                        fullWidth
+                      >
+                        {t('insert-rematch')}
+                      </Button>
+                    </span>
+                  </Tooltip>
+                ) : (
+                  <>
+                    <Tooltip title={moveTitle} arrow>
+                      <span style={{ flex: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleMoveClick}
+                          disabled={moveState.disabled}
+                          fullWidth
+                        >
+                          {t('move')}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                    <Tooltip title={replaceTitle} arrow>
+                      <span style={{ flex: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={handleReplaceClick}
+                          disabled={replaceState.disabled}
+                          fullWidth
+                        >
+                          {t('replace')}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  </>
+                )}
+              </Stack>
+              <Button variant="outlined" fullWidth onClick={handleCloseClick}>
+                {t('cancel')}
+              </Button>
+            </>
+          )}
         </>
       )}
 
