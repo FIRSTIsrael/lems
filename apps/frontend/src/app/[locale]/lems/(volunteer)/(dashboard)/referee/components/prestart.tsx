@@ -64,7 +64,27 @@ export function RefereePrestart() {
   const { getStage } = useMatchTranslations();
   const { currentDivision } = useEvent();
   const { loadedMatch } = useReferee();
-  const [updateParticipant] = useMutation(UPDATE_PARTICIPANT_STATUS);
+  const [updateParticipant] = useMutation(UPDATE_PARTICIPANT_STATUS, {
+    update(cache, { data }) {
+      if (!data?.updateParticipantStatus) return;
+
+      const { participantId, present, ready } = data.updateParticipantStatus;
+
+      // Update the cache by modifying the participant's present/ready fields
+      // Convert timestamp strings to booleans
+      cache.modify({
+        id: cache.identify({ __typename: 'MatchParticipant', id: participantId }),
+        fields: {
+          present() {
+            return !!present;
+          },
+          ready() {
+            return !!ready;
+          }
+        }
+      });
+    }
+  });
 
   const [inspectionStartTime, setInspectionStartTime] = useState<number | null>(null);
   const prevAnyPresentRef = useRef<boolean>(false);
