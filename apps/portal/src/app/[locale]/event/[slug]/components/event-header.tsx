@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Chip } from '@mui/material';
-import { CalendarToday, LocationOn, InfoOutlined } from '@mui/icons-material';
+import { CalendarToday, LocationOn, Celebration as CelebrationIcon } from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
 interface EventHeaderProps {
   eventData: EventDetails;
@@ -28,7 +28,7 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
         <Typography variant="h2">{eventName}</Typography>
         {!official && (
           <Chip
-            icon={<InfoOutlined />}
+            icon={<CelebrationIcon />}
             label={t('unofficial-event')}
             variant="outlined"
             sx={{ fontWeight: 'medium' }}
