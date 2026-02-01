@@ -21,7 +21,8 @@
         "view-results": "View Results",
         "view-details": "View Details",
         "status-completed": "Completed",
-        "status-upcoming": "Upcoming"
+        "status-upcoming": "Upcoming",
+        "unofficial-event": "Unofficial Event"
       },
       "search": {
         "title": "Search Teams & Events",
