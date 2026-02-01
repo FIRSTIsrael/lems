@@ -21,7 +21,8 @@
         "view-results": "צפייה בתוצאות",
         "view-details": "פרטים נוספים",
         "status-completed": "הושלם",
-        "status-upcoming": "קרוב"
+        "status-upcoming": "קרוב",
+        "unofficial-event": "אירוע לא רשמי"
       },
       "search": {
         "title": "חיפוש קבוצות ואירועים",

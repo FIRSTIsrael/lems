@@ -11,11 +11,9 @@ from models.validator import (
 from models.errors import ValidatorError
 from models.requests import SchedulerRequest, Break
 from repository.lems_repository import LemsRepository
+from config import MIN_MINUTES_BETWEEN_EVENTS
 
 logger = logging.getLogger("lems.scheduler")
-
-
-MIN_MINUTES_BETWEEN_EVENTS = 15
 
 
 class ValidatorService:
@@ -274,7 +272,9 @@ class ValidatorService:
 
         if len(duplicate_matches) > 0:
             logger.debug(f"Duplicate matches: {duplicate_match_details}")
-            logger.info(f"Schedule has duplicate available matches: {duplicate_matches}")
+            logger.info(
+                f"Schedule has duplicate available matches: {duplicate_matches}"
+            )
 
         return data
 

@@ -9,7 +9,8 @@ export const LemsEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   coordinates: z.string().nullish(),
-  seasonId: z.string()
+  seasonId: z.string(),
+  official: z.boolean()
 });
 
 export type Event = z.infer<typeof LemsEventResponseSchema>;

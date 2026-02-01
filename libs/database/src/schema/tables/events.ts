@@ -38,6 +38,7 @@ export interface EventSummary {
   visible: boolean;
   published: boolean;
   completed: boolean;
+  official: boolean;
   is_fully_set_up: boolean;
   assigned_admin_ids: string[];
 }
@@ -55,4 +56,5 @@ export interface EventDetails {
   divisions: DivisionSummary[];
   season_name: string;
   season_slug: string;
+  official: boolean;
 }
