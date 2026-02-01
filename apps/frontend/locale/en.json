@@ -1285,7 +1285,8 @@
     "no-live-events": "No events currently live",
     "view-all": "View All Events",
     "view-event": "View Event",
-    "view-details": "View Details"
+    "view-details": "View Details",
+    "unofficial-event": "Unofficial Event"
   },
   "browse-events": {
     "page-title": "Browse Events",

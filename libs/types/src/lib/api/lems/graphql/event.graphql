@@ -29,6 +29,9 @@ type Event {
   "Whether all divisions have awards, users, and schedules configured"
   isFullySetUp: Boolean!
 
+  "Whether this is an official FIRST LEGO League event"
+  official: Boolean!
+
   "All divisions participating in this event"
   divisions: [Division!]!
 
