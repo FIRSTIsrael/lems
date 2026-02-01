@@ -11,31 +11,22 @@ import type { SlotInfo } from '../components/types';
 import { isSlotCompleted, isSlotInProgress, isSlotBlockedAsDestination } from '../components/types';
 import type { TournamentManagerData } from '../graphql';
 
+const createMutationOptions = (divisionId: string) => ({
+  refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId } }],
+  awaitRefetchQueries: true
+});
+
 export function useTeamOperations(
   divisionId: string,
   division?: TournamentManagerData['division']
 ) {
   const [error, setError] = useState<string | null>(null);
+  const mutationOpts = createMutationOptions(divisionId);
 
-  const [swapMatchTeams] = useMutation(SWAP_MATCH_TEAMS, {
-    refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId } }],
-    awaitRefetchQueries: true
-  });
-
-  const [swapSessionTeams] = useMutation(SWAP_SESSION_TEAMS, {
-    refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId } }],
-    awaitRefetchQueries: true
-  });
-
-  const [setMatchParticipantTeam] = useMutation(SET_MATCH_PARTICIPANT_TEAM, {
-    refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId } }],
-    awaitRefetchQueries: true
-  });
-
-  const [setJudgingSessionTeam] = useMutation(SET_JUDGING_SESSION_TEAM, {
-    refetchQueries: [{ query: GET_TOURNAMENT_MANAGER_DATA, variables: { divisionId } }],
-    awaitRefetchQueries: true
-  });
+  const [swapMatchTeams] = useMutation(SWAP_MATCH_TEAMS, mutationOpts);
+  const [swapSessionTeams] = useMutation(SWAP_SESSION_TEAMS, mutationOpts);
+  const [setMatchParticipantTeam] = useMutation(SET_MATCH_PARTICIPANT_TEAM, mutationOpts);
+  const [setJudgingSessionTeam] = useMutation(SET_JUDGING_SESSION_TEAM, mutationOpts);
 
   const shouldCopyInsteadOfMove = (selectedSlot: SlotInfo | null): boolean => {
     if (!selectedSlot || !division) return false;
@@ -44,10 +35,8 @@ export function useTeamOperations(
 
   const handleMove = async (selectedSlot: SlotInfo | null, secondSlot: SlotInfo | null) => {
     if (!selectedSlot || !secondSlot || !division) return;
-
     setError(null);
 
-    // Validate destination before proceeding
     if (isSlotBlockedAsDestination(secondSlot, division)) {
       setError('Cannot move to in-progress or completed matches/sessions');
       return;
@@ -107,10 +96,8 @@ export function useTeamOperations(
 
   const handleReplace = async (selectedSlot: SlotInfo | null, secondSlot: SlotInfo | null) => {
     if (!selectedSlot || !secondSlot || !division) return;
-
     setError(null);
 
-    // Validate destination before proceeding
     if (isSlotBlockedAsDestination(secondSlot, division)) {
       setError('Cannot move to in-progress or completed matches/sessions');
       return;
@@ -224,8 +211,8 @@ export function useTeamOperations(
 
   const clearTeam = async (selectedSlot: SlotInfo | null) => {
     if (!selectedSlot) return;
-
     setError(null);
+
     try {
       if (selectedSlot.type === 'match' && selectedSlot.matchId && selectedSlot.participantId) {
         await setMatchParticipantTeam({

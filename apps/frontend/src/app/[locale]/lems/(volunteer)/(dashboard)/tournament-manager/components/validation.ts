@@ -7,47 +7,48 @@ export function getSlotStatus(
   division: TournamentManagerData['division']
 ): MatchStatus | SessionStatus | null {
   if (slot.type === 'match' && slot.matchId) {
-    const match = division.field.matches.find(m => m.id === slot.matchId);
-    return (match?.status as MatchStatus) ?? null;
-  } else if (slot.type === 'session' && slot.sessionId) {
-    const session = division.judging.sessions.find(s => s.id === slot.sessionId);
-    return (session?.status as SessionStatus) ?? null;
+    return (division.field.matches.find(m => m.id === slot.matchId)?.status as MatchStatus) ?? null;
+  }
+  if (slot.type === 'session' && slot.sessionId) {
+    return (
+      (division.judging.sessions.find(s => s.id === slot.sessionId)?.status as SessionStatus) ??
+      null
+    );
   }
   return null;
 }
+
+const matchesStatus = (
+  status: MatchStatus | SessionStatus | null,
+  statuses: readonly string[]
+): boolean => (status ? statuses.includes(status) : false);
 
 export function isSlotBlockedForSelection(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  const status = getSlotStatus(slot, division);
-  return status ? BLOCKED_STATUSES.includes(status as (typeof BLOCKED_STATUSES)[number]) : false;
+  return matchesStatus(getSlotStatus(slot, division), BLOCKED_STATUSES);
 }
 
 export function isSlotBlockedAsDestination(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  const status = getSlotStatus(slot, division);
-  return status
-    ? DESTINATION_BLOCKED_STATUSES.includes(status as (typeof DESTINATION_BLOCKED_STATUSES)[number])
-    : false;
+  return matchesStatus(getSlotStatus(slot, division), DESTINATION_BLOCKED_STATUSES);
 }
 
 export function isSlotCompleted(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  const status = getSlotStatus(slot, division);
-  return status === 'completed';
+  return getSlotStatus(slot, division) === 'completed';
 }
 
 export function isSlotInProgress(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  const status = getSlotStatus(slot, division);
-  return status === 'in-progress';
+  return getSlotStatus(slot, division) === 'in-progress';
 }
 
 export function isMissingTeamSlot(slot: SlotInfo): boolean {
@@ -58,18 +59,14 @@ export function isSlotCurrentlyLoaded(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  if (slot.type === 'match' && slot.matchId) {
-    return division.field.loadedMatch === slot.matchId;
-  }
-  return false;
+  return slot.type === 'match' && slot.matchId === division.field.loadedMatch;
 }
 
 export function isSourceCompleted(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  const status = getSlotStatus(slot, division);
-  return status === 'completed';
+  return isSlotCompleted(slot, division);
 }
 
 export function canPerformSwap(

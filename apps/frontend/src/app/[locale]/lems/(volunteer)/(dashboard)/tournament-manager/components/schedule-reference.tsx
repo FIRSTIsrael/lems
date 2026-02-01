@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
+import type { Dispatch } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import type { TournamentManagerData } from '../graphql';
+import type { TournamentManagerAction } from '../context';
 import { useTeamOperations } from '../hooks/useTeamOperations';
 import { useTournamentManager } from '../context';
 import { calculateMissingTeams, createMissingTeamSlot } from '../utils';
@@ -23,6 +25,11 @@ import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from './constants';
 interface ScheduleReferenceProps {
   division: TournamentManagerData['division'];
 }
+
+const clearSelection = (dispatch: Dispatch<TournamentManagerAction>): void => {
+  dispatch({ type: 'SELECT_SLOT', payload: null });
+  dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+};
 
 export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const t = useTranslations('pages.tournament-manager');
@@ -46,9 +53,10 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
     division
   );
 
+  // Update missing teams when tab or round changes
   useEffect(() => {
     const teams = calculateMissingTeams(
-      division.teams || [],
+      division.teams ?? [],
       activeTab,
       currentRoundMatches,
       division.judging.sessions
@@ -56,81 +64,103 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
     dispatch({ type: 'SET_MISSING_TEAMS', payload: teams });
   }, [activeTab, currentRoundMatches, division, dispatch]);
 
-  // Clear selected teams when switching tabs
+  // Clear selection when switching tabs
   useEffect(() => {
-    dispatch({ type: 'SELECT_SLOT', payload: null });
-    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+    clearSelection(dispatch);
   }, [activeTab, dispatch]);
 
-  // Clear selected teams when switching rounds
-  const handleRoundChange = (
-    matches: TournamentManagerData['division']['field']['matches'],
-    title: string
-  ) => {
-    dispatch({ type: 'SELECT_SLOT', payload: null });
-    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-    dispatch({ type: 'SET_CURRENT_ROUND_MATCHES', payload: matches });
-    dispatch({ type: 'SET_CURRENT_ROUND_TITLE', payload: title });
-  };
+  // Memoized round change handler
+  const handleRoundChange = useCallback(
+    (matches: TournamentManagerData['division']['field']['matches'], title: string) => {
+      clearSelection(dispatch);
+      dispatch({ type: 'SET_CURRENT_ROUND_MATCHES', payload: matches });
+      dispatch({ type: 'SET_CURRENT_ROUND_TITLE', payload: title });
+    },
+    [dispatch]
+  );
 
-  const handleMoveWrapper = async () => {
-    try {
-      await handleMove(selectedSlot, secondSlot);
-      dispatch({ type: 'SELECT_SLOT', payload: null });
-      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-    } catch {
-      // Error already set by hook
-    }
-  };
-
-  const handleReplaceWrapper = async () => {
-    try {
-      await handleReplace(selectedSlot, secondSlot);
-      dispatch({ type: 'SELECT_SLOT', payload: null });
-      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-    } catch {
-      // Error already set by hook
-    }
-  };
-
-  const handleClearWrapper = async () => {
-    try {
-      await clearTeam(selectedSlot);
-      dispatch({ type: 'SELECT_SLOT', payload: null });
-      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-    } catch {
-      // Error already set by hook
-    }
-  };
-
-  const handleSlotClick = async (slot: SlotInfo) => {
-    // First selection: block if in-progress/loaded
-    if (!selectedSlot) {
-      if (isSlotBlockedForSelection(slot, division) || isSlotCurrentlyLoaded(slot, division)) {
-        return;
+  // Memoized slot click handler
+  const handleSlotClick = useCallback(
+    (slot: SlotInfo) => {
+      if (!selectedSlot) {
+        if (!isSlotBlockedForSelection(slot, division) && !isSlotCurrentlyLoaded(slot, division)) {
+          if (slot.team) {
+            dispatch({ type: 'SELECT_SLOT', payload: slot });
+          }
+        }
+      } else if (
+        (slot.type === 'match' && selectedSlot.participantId !== slot.participantId) ||
+        (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
+      ) {
+        if (!isSlotBlockedAsDestination(slot, division) && !isSlotCurrentlyLoaded(slot, division)) {
+          dispatch({ type: 'SELECT_SECOND_SLOT', payload: slot });
+        }
       }
-      if (slot.team) {
-        dispatch({ type: 'SELECT_SLOT', payload: slot });
-      }
-    } else if (
-      // Second selection: different slot with team, block if destination is blocked
-      (slot.type === 'match' && selectedSlot.participantId !== slot.participantId) ||
-      (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
-    ) {
-      if (isSlotBlockedAsDestination(slot, division) || isSlotCurrentlyLoaded(slot, division)) {
-        return;
-      }
-      dispatch({ type: 'SELECT_SECOND_SLOT', payload: slot });
-    }
-  };
+    },
+    [selectedSlot, dispatch, division]
+  );
 
-  const handleCloseDrawer = () => {
-    dispatch({ type: 'SELECT_SLOT', payload: null });
-    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-  };
+  // Memoized operation wrapper for consistent error handling
+  const handleOperationWrapper = useCallback(
+    async (operation: () => Promise<void>) => {
+      try {
+        await operation();
+        clearSelection(dispatch);
+      } catch {
+        // Error already set by hook
+      }
+    },
+    [dispatch]
+  );
 
-  const tables = division.tables || [];
-  const rooms = division.rooms || [];
+  // Memoized handlers for each operation
+  const handleMoveClick = useCallback(
+    () => handleOperationWrapper(() => handleMove(selectedSlot, secondSlot)),
+    [handleOperationWrapper, handleMove, selectedSlot, secondSlot]
+  );
+
+  const handleReplaceClick = useCallback(
+    () => handleOperationWrapper(() => handleReplace(selectedSlot, secondSlot)),
+    [handleOperationWrapper, handleReplace, selectedSlot, secondSlot]
+  );
+
+  const handleClearClick = useCallback(
+    () => handleOperationWrapper(() => clearTeam(selectedSlot)),
+    [handleOperationWrapper, clearTeam, selectedSlot]
+  );
+
+  const handleDrawerClose = useCallback(() => {
+    clearSelection(dispatch);
+  }, [dispatch]);
+
+  // Memoized tab change handler
+  const handleTabChange = useCallback(
+    (_: React.SyntheticEvent, newValue: number) => {
+      dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue });
+    },
+    [dispatch]
+  );
+
+  // Memoized round selector renderer
+  const handleRoundSelector = useCallback(
+    (selector: React.ReactNode) => {
+      dispatch({ type: 'SET_ROUND_SELECTOR', payload: selector });
+    },
+    [dispatch]
+  );
+
+  // Memoized team click handler in missing teams alert
+  const handleTeamClick = useCallback(
+    (team: TournamentManagerData['division']['teams'][0]) => {
+      const slot = createMissingTeamSlot(team, activeTab);
+      dispatch({ type: 'SELECT_SLOT', payload: slot });
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+    },
+    [activeTab, dispatch]
+  );
+
+  const tables = useMemo(() => division.tables ?? [], [division.tables]);
+  const rooms = useMemo(() => division.rooms ?? [], [division.rooms]);
 
   return (
     <Paper
@@ -169,11 +199,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               missingTeams={missingTeams}
               currentRoundTitle={currentRoundTitle}
               selectedSlotTeamId={selectedSlot?.team?.id}
-              onTeamClick={team => {
-                const slot = createMissingTeamSlot(team, activeTab);
-                dispatch({ type: 'SELECT_SLOT', payload: slot });
-                dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-              }}
+              onTeamClick={handleTeamClick}
               t={t}
             />
             {roundSelector && (
@@ -185,7 +211,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
         )}
         <Tabs
           value={activeTab}
-          onChange={(_, newValue) => dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue })}
+          onChange={handleTabChange}
           variant="fullWidth"
           sx={{
             borderBottom: 1,
@@ -213,9 +239,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               isMobile={isMobile}
               onSlotClick={handleSlotClick}
               onRoundChange={handleRoundChange}
-              renderRoundSelector={selector =>
-                dispatch({ type: 'SET_ROUND_SELECTOR', payload: selector })
-              }
+              renderRoundSelector={handleRoundSelector}
               getStage={getStage}
             />
           )}
@@ -242,10 +266,10 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
         error={error}
         isMobile={isMobile}
         division={division}
-        onClose={handleCloseDrawer}
-        onMove={handleMoveWrapper}
-        onReplace={handleReplaceWrapper}
-        onClear={handleClearWrapper}
+        onClose={handleDrawerClose}
+        onMove={handleMoveClick}
+        onReplace={handleReplaceClick}
+        onClear={handleClearClick}
         onClearError={() => setError(null)}
         getStage={getStage}
       />

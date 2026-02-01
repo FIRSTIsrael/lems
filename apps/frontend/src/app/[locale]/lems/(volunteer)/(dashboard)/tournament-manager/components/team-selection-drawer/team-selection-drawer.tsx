@@ -45,10 +45,6 @@ export function TeamSelectionDrawerWrapper({
 }: TeamSelectionDrawerProps) {
   const t = useTranslations('pages.tournament-manager');
 
-  /**
-   * Determines if the source is from a completed or in-progress match/session
-   * If so, we're in "rematch/copy" mode and should only show Insert button
-   */
   const isSourceCompletedOrInProgress =
     selectedSlot &&
     (isSlotCompleted(selectedSlot, division) || isSlotInProgress(selectedSlot, division));
@@ -112,8 +108,6 @@ export function TeamSelectionDrawerWrapper({
                 secondSlot={secondSlot}
                 division={division}
                 isSourceCompletedOrInProgress={isSourceCompletedOrInProgress}
-                error={error}
-                onClearError={onClearError}
                 onMove={onMove}
                 onReplace={onReplace}
                 onClear={onClear}

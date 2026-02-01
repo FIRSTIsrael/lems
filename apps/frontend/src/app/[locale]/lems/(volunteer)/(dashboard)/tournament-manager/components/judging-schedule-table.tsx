@@ -8,6 +8,7 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import { useMemo, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../graphql';
@@ -26,7 +27,22 @@ interface JudgingScheduleTableProps {
   onSlotClick: (slot: SlotInfo) => void;
 }
 
-export function JudgingScheduleTable({
+const groupSessionsByTime = (
+  sessions: TournamentManagerData['division']['judging']['sessions']
+) => {
+  const grouped: Record<string, { time: string; sessions: typeof sessions }> = {};
+  sessions.forEach(session => {
+    const timeKey = dayjs(session.scheduledTime).format('HH:mm');
+    if (!grouped[timeKey]) {
+      grouped[timeKey] = { time: session.scheduledTime, sessions: [] };
+    }
+    grouped[timeKey].sessions.push(session);
+  });
+
+  return Object.values(grouped).sort((a, b) => dayjs(a.time).diff(dayjs(b.time)));
+};
+
+function JudgingScheduleTableComponent({
   sessions,
   sessionLength,
   rooms,
@@ -37,21 +53,7 @@ export function JudgingScheduleTable({
   onSlotClick
 }: JudgingScheduleTableProps) {
   const t = useTranslations('pages.tournament-manager');
-  const groupedSessions = sessions.reduce(
-    (acc, session) => {
-      const timeKey = dayjs(session.scheduledTime).format('HH:mm');
-      if (!acc[timeKey]) {
-        acc[timeKey] = { time: session.scheduledTime, sessions: [] };
-      }
-      acc[timeKey].sessions.push(session);
-      return acc;
-    },
-    {} as Record<string, { time: string; sessions: typeof sessions }>
-  );
-
-  const sessionRows = Object.values(groupedSessions).sort((a, b) =>
-    dayjs(a.time).diff(dayjs(b.time))
-  );
+  const sessionRows = useMemo(() => groupSessionsByTime(sessions), [sessions]);
 
   return (
     <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', m: 2 }}>
@@ -88,7 +90,6 @@ export function JudgingScheduleTable({
           {sessionRows.map((row, index) => {
             const sessionTime = dayjs(row.time);
             const sessionEndTime = sessionTime.add(sessionLength, 'seconds');
-
             const roomSessions = new Map(row.sessions.map(s => [s.room.id, s]));
 
             return (
@@ -114,17 +115,15 @@ export function JudgingScheduleTable({
                 {rooms.map(room => {
                   const session = roomSessions.get(room.id);
                   const team = session?.team;
-
                   const slot: SlotInfo = {
-                    type: 'session' as const,
+                    type: 'session',
                     sessionId: session?.id,
-                    team: team || null,
+                    team: team ?? null,
                     roomName: room.name,
                     time: sessionTime.format('HH:mm')
                   };
 
-                  // Determine if this slot should be disabled
-                  const isDisabled: boolean =
+                  const isDisabled =
                     team !== null && division
                       ? isSlotBlockedForSelection(slot, division) ||
                         (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
@@ -133,14 +132,12 @@ export function JudgingScheduleTable({
                   return (
                     <TableCell key={room.id} align="center">
                       <TeamSlot
-                        team={team || null}
+                        team={team ?? null}
                         isSelected={selectedSlot?.sessionId === session?.id}
                         isSecondSelected={secondSlot?.sessionId === session?.id}
                         isMobile={isMobile}
                         isDisabled={isDisabled}
-                        onClick={() => {
-                          onSlotClick(slot);
-                        }}
+                        onClick={() => onSlotClick(slot)}
                       />
                     </TableCell>
                   );
@@ -153,3 +150,5 @@ export function JudgingScheduleTable({
     </TableContainer>
   );
 }
+
+export const JudgingScheduleTable = memo(JudgingScheduleTableComponent);

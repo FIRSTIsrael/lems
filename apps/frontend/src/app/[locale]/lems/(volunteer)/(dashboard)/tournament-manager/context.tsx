@@ -58,6 +58,8 @@ type TournamentManagerAction =
   | SetMissingTeamsAction
   | SetRoundSelectorAction;
 
+export type { TournamentManagerAction };
+
 interface TournamentManagerContextType extends TournamentManagerState {
   dispatch: React.Dispatch<TournamentManagerAction>;
 }
@@ -74,7 +76,7 @@ const initialState: TournamentManagerState = {
   roundSelector: null
 };
 
-function tournamantManagerReducer(
+function tournamentManagerReducer(
   state: TournamentManagerState,
   action: TournamentManagerAction
 ): TournamentManagerState {
@@ -98,13 +100,8 @@ function tournamantManagerReducer(
   }
 }
 
-export function TournamentManagerProvider({
-  children
-}: {
-  children: ReactNode;
-  division: TournamentManagerData['division'];
-}) {
-  const [state, dispatch] = useReducer(tournamantManagerReducer, initialState);
+export function TournamentManagerProvider({ children }: { children: ReactNode }) {
+  const [state, dispatch] = useReducer(tournamentManagerReducer, initialState);
 
   const value = useMemo<TournamentManagerContextType>(
     () => ({
