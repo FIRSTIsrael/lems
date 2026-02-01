@@ -8,10 +8,12 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../graphql';
 import { TeamSlot } from './team-slot';
 import type { SlotInfo } from './types';
+import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from './types';
 
 interface JudgingScheduleTableProps {
   sessions: TournamentManagerData['division']['judging']['sessions'];
@@ -20,8 +22,8 @@ interface JudgingScheduleTableProps {
   selectedSlot: SlotInfo | null;
   secondSlot: SlotInfo | null;
   isMobile: boolean;
+  division?: TournamentManagerData['division'];
   onSlotClick: (slot: SlotInfo) => void;
-  t: (key: string) => string;
 }
 
 export function JudgingScheduleTable({
@@ -31,9 +33,10 @@ export function JudgingScheduleTable({
   selectedSlot,
   secondSlot,
   isMobile,
-  onSlotClick,
-  t
+  division,
+  onSlotClick
 }: JudgingScheduleTableProps) {
+  const t = useTranslations('pages.tournament-manager');
   const groupedSessions = sessions.reduce(
     (acc, session) => {
       const timeKey = dayjs(session.scheduledTime).format('HH:mm');
@@ -112,6 +115,21 @@ export function JudgingScheduleTable({
                   const session = roomSessions.get(room.id);
                   const team = session?.team;
 
+                  const slot: SlotInfo = {
+                    type: 'session' as const,
+                    sessionId: session?.id,
+                    team: team || null,
+                    roomName: room.name,
+                    time: sessionTime.format('HH:mm')
+                  };
+
+                  // Determine if this slot should be disabled
+                  const isDisabled: boolean =
+                    team !== null && division
+                      ? isSlotBlockedForSelection(slot, division) ||
+                        (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
+                      : false;
+
                   return (
                     <TableCell key={room.id} align="center">
                       <TeamSlot
@@ -119,14 +137,8 @@ export function JudgingScheduleTable({
                         isSelected={selectedSlot?.sessionId === session?.id}
                         isSecondSelected={secondSlot?.sessionId === session?.id}
                         isMobile={isMobile}
+                        isDisabled={isDisabled}
                         onClick={() => {
-                          const slot = {
-                            type: 'session' as const,
-                            sessionId: session?.id,
-                            team: team || null,
-                            roomName: room.name,
-                            time: sessionTime.format('HH:mm')
-                          };
                           onSlotClick(slot);
                         }}
                       />

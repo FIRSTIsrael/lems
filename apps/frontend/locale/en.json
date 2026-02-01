@@ -845,7 +845,37 @@
         "not-started": "Not Started",
         "in-progress": "In Progress",
         "completed": "Completed"
-      }
+      },
+      "validation": {
+        "both-source-and-destination-required": "Both source and destination are required",
+        "types-must-match": "Can only move between same types (match to match or session to session)",
+        "select-destination": "Select a destination",
+        "cannot-move-from-loaded": "Cannot move from currently loaded match",
+        "cannot-move-to-loaded": "Cannot move to currently loaded match",
+        "cannot-move-to-blocked": "Cannot move to in-progress or completed matches/sessions",
+        "can-only-move-from-not-started": "Can only move from not-started matches/sessions",
+        "cannot-replace-from-loaded": "Cannot replace from currently loaded match",
+        "cannot-replace-to-loaded": "Cannot replace with currently loaded match",
+        "cannot-replace-with-empty": "Cannot replace with empty slot",
+        "cannot-insert-from-loaded": "Cannot insert from currently loaded match",
+        "cannot-insert-to-loaded": "Cannot insert to currently loaded match",
+        "can-only-replace-from-not-started": "Can only replace from not-started matches/sessions",
+        "no-team-selected": "No team selected",
+        "cannot-modify-in-progress": "Cannot modify in-progress matches/sessions"
+      },
+      "errors": {
+        "load-data-failed": "Failed to load tournament manager data",
+        "move-team-failed": "Failed to move team",
+        "replace-teams-failed": "Failed to replace teams",
+        "assign-team-failed": "Failed to assign team",
+        "clear-team-failed": "Failed to clear team",
+        "cannot-modify-in-progress": "Cannot modify in-progress matches/sessions",
+        "cannot-modify-loaded": "Cannot modify loaded matches",
+        "cannot-modify-completed": "Cannot modify completed matches/sessions"
+      },
+      "insert-rematch": "Insert Rematch",
+      "insert-rematch-tooltip": "Insert rematch for completed match",
+      "clear": "Clear"
     },
     "head-referee": {
       "page-title": "Head Referee Dashboard",

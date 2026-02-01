@@ -1,17 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import type { TournamentManagerData } from '../graphql';
 import { useTeamOperations } from '../hooks/useTeamOperations';
-import { useDragAndDrop } from '../hooks/useDragAndDrop';
+import { useTournamentManager } from '../context';
+import { calculateMissingTeams, createMissingTeamSlot } from '../utils';
 import { FieldScheduleTable } from './field-schedule-table';
 import { JudgingScheduleTable } from './judging-schedule-table';
 import { TeamSelectionDrawer } from './team-selection-drawer';
 import { MissingTeamsAlert } from './missing-teams-alert';
 import type { SlotInfo } from './types';
+import {
+  isSlotBlockedForSelection,
+  isSlotBlockedAsDestination,
+  isSlotCurrentlyLoaded
+} from './types';
+import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from './constants';
 
 interface ScheduleReferenceProps {
   division: TournamentManagerData['division'];
@@ -20,28 +27,57 @@ interface ScheduleReferenceProps {
 export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const t = useTranslations('pages.tournament-manager');
   const { getStage } = useMatchTranslations();
-  const [activeTab, setActiveTab] = useState(0);
-  const [selectedSlot, setSelectedSlot] = useState<SlotInfo | null>(null);
-  const [secondSlot, setSecondSlot] = useState<SlotInfo | null>(null);
-  const [currentRoundMatches, setCurrentRoundMatches] = useState<
-    TournamentManagerData['division']['field']['matches']
-  >([]);
-  const [currentRoundTitle, setCurrentRoundTitle] = useState<string>('');
-  const [selectedMissingTeamId, setSelectedMissingTeamId] = useState<string | null>(null);
-  const [roundSelector, setRoundSelector] = useState<React.ReactNode>(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
-  const { handleMove, handleReplace, assignTeamToSlot, error, setError } = useTeamOperations(
-    division.id
+  const {
+    activeTab,
+    selectedSlot,
+    secondSlot,
+    currentRoundMatches,
+    currentRoundTitle,
+    missingTeams,
+    roundSelector,
+    dispatch
+  } = useTournamentManager();
+
+  const { handleMove, handleReplace, clearTeam, error, setError } = useTeamOperations(
+    division.id,
+    division
   );
-  const { draggedTeamId, handleDragStart, handleDragEnd } = useDragAndDrop();
+
+  useEffect(() => {
+    const teams = calculateMissingTeams(
+      division.teams || [],
+      activeTab,
+      currentRoundMatches,
+      division.judging.sessions
+    );
+    dispatch({ type: 'SET_MISSING_TEAMS', payload: teams });
+  }, [activeTab, currentRoundMatches, division, dispatch]);
+
+  // Clear selected teams when switching tabs
+  useEffect(() => {
+    dispatch({ type: 'SELECT_SLOT', payload: null });
+    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+  }, [activeTab, dispatch]);
+
+  // Clear selected teams when switching rounds
+  const handleRoundChange = (
+    matches: TournamentManagerData['division']['field']['matches'],
+    title: string
+  ) => {
+    dispatch({ type: 'SELECT_SLOT', payload: null });
+    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+    dispatch({ type: 'SET_CURRENT_ROUND_MATCHES', payload: matches });
+    dispatch({ type: 'SET_CURRENT_ROUND_TITLE', payload: title });
+  };
 
   const handleMoveWrapper = async () => {
     try {
       await handleMove(selectedSlot, secondSlot);
-      setSelectedSlot(null);
-      setSecondSlot(null);
+      dispatch({ type: 'SELECT_SLOT', payload: null });
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
     } catch {
       // Error already set by hook
     }
@@ -50,92 +86,51 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const handleReplaceWrapper = async () => {
     try {
       await handleReplace(selectedSlot, secondSlot);
-      setSelectedSlot(null);
-      setSecondSlot(null);
+      dispatch({ type: 'SELECT_SLOT', payload: null });
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
     } catch {
       // Error already set by hook
     }
   };
 
-  const tables = division.tables || [];
-  const rooms = division.rooms || [];
-
-  // Calculate missing teams for current round
-  const getMissingTeams = () => {
-    const allTeams = division.teams || [];
-    const assignedTeamIds = new Set<string>();
-
-    if (activeTab === 0) {
-      // Field schedule - get teams from current round only
-      currentRoundMatches.forEach(match => {
-        match.participants.forEach(p => {
-          if (p.team) assignedTeamIds.add(p.team.id);
-        });
-      });
-    } else {
-      // Judging schedule - get teams from all sessions
-      division.judging.sessions.forEach(session => {
-        if (session.team) assignedTeamIds.add(session.team.id);
-      });
+  const handleClearWrapper = async () => {
+    try {
+      await clearTeam(selectedSlot);
+      dispatch({ type: 'SELECT_SLOT', payload: null });
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+    } catch {
+      // Error already set by hook
     }
-
-    return allTeams.filter(team => !assignedTeamIds.has(team.id));
   };
 
-  const missingTeams = getMissingTeams();
-
   const handleSlotClick = async (slot: SlotInfo) => {
-    if (selectedMissingTeamId && !slot.team) {
-      try {
-        await assignTeamToSlot(selectedMissingTeamId, slot);
-        setSelectedMissingTeamId(null);
-      } catch {
-        // Error already set by hook
-      }
-      return;
-    }
-
+    // First selection: block if in-progress/loaded
     if (!selectedSlot) {
+      if (isSlotBlockedForSelection(slot, division) || isSlotCurrentlyLoaded(slot, division)) {
+        return;
+      }
       if (slot.team) {
-        setSelectedSlot(slot);
+        dispatch({ type: 'SELECT_SLOT', payload: slot });
       }
     } else if (
+      // Second selection: different slot with team, block if destination is blocked
       (slot.type === 'match' && selectedSlot.participantId !== slot.participantId) ||
       (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
     ) {
-      setSecondSlot(slot);
-    }
-  };
-
-  const handleMissingTeamClick = (team: TournamentManagerData['division']['teams'][0]) => {
-    const slot: SlotInfo = {
-      type: activeTab === 0 ? 'match' : 'session',
-      team: team,
-      matchId: undefined,
-      participantId: undefined,
-      sessionId: undefined,
-      tableName: undefined,
-      roomName: undefined,
-      time: undefined
-    };
-    setSelectedSlot(slot);
-    setSecondSlot(null);
-  };
-
-  const handleDrop = async (slot: SlotInfo) => {
-    if (draggedTeamId && !slot.team) {
-      try {
-        await assignTeamToSlot(draggedTeamId, slot);
-      } catch {
-        // Error already set by hook
+      if (isSlotBlockedAsDestination(slot, division) || isSlotCurrentlyLoaded(slot, division)) {
+        return;
       }
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: slot });
     }
   };
 
   const handleCloseDrawer = () => {
-    setSelectedSlot(null);
-    setSecondSlot(null);
+    dispatch({ type: 'SELECT_SLOT', payload: null });
+    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
   };
+
+  const tables = division.tables || [];
+  const rooms = division.rooms || [];
 
   return (
     <Paper
@@ -154,8 +149,8 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           flexDirection: 'column',
           height: '100%',
           transition: isMobile ? 'margin-bottom 0.3s' : 'margin-right 0.3s',
-          marginRight: selectedSlot && !isMobile ? '400px' : 0,
-          marginBottom: selectedSlot && isMobile ? '60vh' : 0
+          marginRight: selectedSlot && !isMobile ? `${DRAWER_WIDTH_PX}px` : 0,
+          marginBottom: selectedSlot && isMobile ? `${MOBILE_DRAWER_HEIGHT_VH}vh` : 0
         }}
       >
         {activeTab === 0 && (missingTeams.length > 0 || roundSelector) && (
@@ -174,11 +169,11 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               missingTeams={missingTeams}
               currentRoundTitle={currentRoundTitle}
               selectedSlotTeamId={selectedSlot?.team?.id}
-              draggedTeamId={draggedTeamId}
-              onTeamClick={handleMissingTeamClick}
-              onDragStart={handleDragStart}
-              onDragEnd={handleDragEnd}
-              onClose={() => setSelectedMissingTeamId(null)}
+              onTeamClick={team => {
+                const slot = createMissingTeamSlot(team, activeTab);
+                dispatch({ type: 'SELECT_SLOT', payload: slot });
+                dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+              }}
               t={t}
             />
             {roundSelector && (
@@ -190,7 +185,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
         )}
         <Tabs
           value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
+          onChange={(_, newValue) => dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue })}
           variant="fullWidth"
           sx={{
             borderBottom: 1,
@@ -214,16 +209,14 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               tables={tables}
               selectedSlot={selectedSlot}
               secondSlot={secondSlot}
+              division={division}
               isMobile={isMobile}
               onSlotClick={handleSlotClick}
-              onSlotDrop={handleDrop}
-              onRoundChange={(matches, title) => {
-                setCurrentRoundMatches(matches);
-                setCurrentRoundTitle(title);
-              }}
-              renderRoundSelector={setRoundSelector}
+              onRoundChange={handleRoundChange}
+              renderRoundSelector={selector =>
+                dispatch({ type: 'SET_ROUND_SELECTOR', payload: selector })
+              }
               getStage={getStage}
-              t={t}
             />
           )}
 
@@ -234,9 +227,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               rooms={rooms}
               selectedSlot={selectedSlot}
               secondSlot={secondSlot}
+              division={division}
               isMobile={isMobile}
               onSlotClick={handleSlotClick}
-              t={t}
             />
           )}
         </Box>
@@ -252,9 +245,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
         onClose={handleCloseDrawer}
         onMove={handleMoveWrapper}
         onReplace={handleReplaceWrapper}
+        onClear={handleClearWrapper}
         onClearError={() => setError(null)}
         getStage={getStage}
-        t={t}
       />
     </Paper>
   );

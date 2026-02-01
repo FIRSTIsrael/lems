@@ -17,17 +17,34 @@ export const SWAP_MATCH_TEAMS: TypedDocumentNode<{ swapMatchTeams: Match }, Swap
         participantId2: $participantId2
       ) {
         id
+        participants {
+          id
+          team {
+            id
+            number
+            name
+          }
+          table {
+            id
+            name
+          }
+        }
       }
     }
   `;
 
 export const SWAP_SESSION_TEAMS: TypedDocumentNode<
-  { swapSessionTeams: { id: string }[] },
+  { swapSessionTeams: { id: string; team: { id: string; number: number; name: string } | null }[] },
   SwapSessionTeamsVars
 > = gql`
   mutation SwapSessionTeams($divisionId: String!, $sessionId1: String!, $sessionId2: String!) {
     swapSessionTeams(divisionId: $divisionId, sessionId1: $sessionId1, sessionId2: $sessionId2) {
       id
+      team {
+        id
+        number
+        name
+      }
     }
   }
 `;
@@ -40,7 +57,7 @@ export interface SetMatchParticipantTeamVars {
 }
 
 export const SET_MATCH_PARTICIPANT_TEAM: TypedDocumentNode<
-  { setMatchParticipantTeam: { id: string } },
+  { setMatchParticipantTeam: Match },
   SetMatchParticipantTeamVars
 > = gql`
   mutation SetMatchParticipantTeam(
@@ -56,6 +73,18 @@ export const SET_MATCH_PARTICIPANT_TEAM: TypedDocumentNode<
       teamId: $teamId
     ) {
       id
+      participants {
+        id
+        team {
+          id
+          number
+          name
+        }
+        table {
+          id
+          name
+        }
+      }
     }
   }
 `;
@@ -67,20 +96,22 @@ export interface SetJudgingSessionTeamVars {
 }
 
 export const SET_JUDGING_SESSION_TEAM: TypedDocumentNode<
-  { setJudgingSessionTeam: { id: string } },
+  {
+    setJudgingSessionTeam: {
+      id: string;
+      team: { id: string; number: number; name: string } | null;
+    };
+  },
   SetJudgingSessionTeamVars
 > = gql`
-  mutation SetJudgingSessionTeam(
-    $divisionId: String!
-    $sessionId: String!
-    $teamId: String
-  ) {
-    setJudgingSessionTeam(
-      divisionId: $divisionId
-      sessionId: $sessionId
-      teamId: $teamId
-    ) {
+  mutation SetJudgingSessionTeam($divisionId: String!, $sessionId: String!, $teamId: String) {
+    setJudgingSessionTeam(divisionId: $divisionId, sessionId: $sessionId, teamId: $teamId) {
       id
+      team {
+        id
+        number
+        name
+      }
     }
   }
 `;

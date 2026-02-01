@@ -6,8 +6,7 @@ interface TeamSlotProps {
   isSecondSelected: boolean;
   isMobile: boolean;
   onClick: () => void;
-  onDrop?: () => void;
-  isDragOver?: boolean;
+  isDisabled?: boolean;
 }
 
 export function TeamSlot({
@@ -16,34 +15,24 @@ export function TeamSlot({
   isSecondSelected,
   isMobile,
   onClick,
-  onDrop,
-  isDragOver
+  isDisabled
 }: TeamSlotProps) {
-  const handleDragOver = (e: React.DragEvent) => {
-    if (!team && onDrop) {
-      e.preventDefault();
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (!team && onDrop) {
-      onDrop();
+  const handleClick = () => {
+    if (!isDisabled) {
+      onClick();
     }
   };
 
   return (
     <Box
-      onClick={onClick}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      onClick={handleClick}
       sx={{
         display: 'inline-flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.25,
-        cursor: 'pointer',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
         p: 1.5,
         m: 0.5,
         borderRadius: 1,
@@ -51,23 +40,24 @@ export function TeamSlot({
         minHeight: isMobile ? '70px' : '85px',
         width: isMobile ? '80px' : '100px',
         height: isMobile ? '70px' : '85px',
-        bgcolor: isSelected
-          ? 'primary.main'
-          : isSecondSelected
-            ? 'rgba(25, 118, 210, 0.3)'
-            : isDragOver
-              ? 'success.light'
-              : 'transparent',
-        '&:hover': {
-          bgcolor: isSelected
+        bgcolor: isDisabled
+          ? 'action.disabledBackground'
+          : isSelected
             ? 'primary.main'
             : isSecondSelected
               ? 'rgba(25, 118, 210, 0.3)'
-              : 'action.hover'
+              : 'transparent',
+        opacity: isDisabled ? 0.5 : 1,
+        '&:hover': {
+          bgcolor: isDisabled
+            ? 'action.disabledBackground'
+            : isSelected
+              ? 'primary.main'
+              : isSecondSelected
+                ? 'rgba(25, 118, 210, 0.3)'
+                : 'action.hover'
         },
-        transition: 'background-color 0.2s',
-        border: isDragOver && !team ? '2px dashed' : 'none',
-        borderColor: isDragOver && !team ? 'success.main' : 'transparent'
+        transition: 'background-color 0.2s, opacity 0.2s'
       }}
     >
       {team ? (

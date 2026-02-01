@@ -12,10 +12,12 @@ import {
   ToggleButton
 } from '@mui/material';
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../graphql';
 import { TeamSlot } from './team-slot';
 import type { SlotInfo } from './types';
+import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from './types';
 
 interface FieldScheduleTableProps {
   matches: TournamentManagerData['division']['field']['matches'];
@@ -23,15 +25,14 @@ interface FieldScheduleTableProps {
   selectedSlot: SlotInfo | null;
   secondSlot: SlotInfo | null;
   isMobile: boolean;
+  division?: TournamentManagerData['division'];
   onSlotClick: (slot: SlotInfo) => void;
-  onSlotDrop?: (slot: SlotInfo) => void;
   onRoundChange?: (
     matches: TournamentManagerData['division']['field']['matches'],
     roundTitle: string
   ) => void;
   renderRoundSelector?: (selector: React.ReactNode) => void;
   getStage: (stage: string) => string;
-  t: (key: string) => string;
 }
 
 export function FieldScheduleTable({
@@ -40,13 +41,13 @@ export function FieldScheduleTable({
   selectedSlot,
   secondSlot,
   isMobile,
+  division,
   onSlotClick,
-  onSlotDrop,
   onRoundChange,
   renderRoundSelector,
-  getStage,
-  t
+  getStage
 }: FieldScheduleTableProps) {
+  const t = useTranslations('pages.tournament-manager');
   // Group matches by stage and round, filtering out TEST matches
   const groupedMatches = useMemo(() => {
     const grouped: Record<string, Record<number, typeof matches>> = {};
@@ -221,6 +222,22 @@ export function FieldScheduleTable({
                         const participant = tableParticipants.get(table.id);
                         const team = participant?.team;
 
+                        const slot: SlotInfo = {
+                          type: 'match' as const,
+                          matchId: match.id,
+                          participantId: participant?.id,
+                          team: team || null,
+                          tableName: table.name,
+                          time: matchTime.format('HH:mm')
+                        };
+
+                        // Determine if this slot should be disabled
+                        const isDisabled: boolean =
+                          team !== null && division
+                            ? isSlotBlockedForSelection(slot, division) ||
+                              (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
+                            : false;
+
                         return (
                           <TableCell key={table.id} align="center">
                             <TeamSlot
@@ -228,32 +245,10 @@ export function FieldScheduleTable({
                               isSelected={selectedSlot?.participantId === participant?.id}
                               isSecondSelected={secondSlot?.participantId === participant?.id}
                               isMobile={isMobile}
+                              isDisabled={isDisabled}
                               onClick={() => {
-                                const slot = {
-                                  type: 'match' as const,
-                                  matchId: match.id,
-                                  participantId: participant?.id,
-                                  team: team || null,
-                                  tableName: table.name,
-                                  time: matchTime.format('HH:mm')
-                                };
                                 onSlotClick(slot);
                               }}
-                              onDrop={
-                                onSlotDrop
-                                  ? () => {
-                                      const slot = {
-                                        type: 'match' as const,
-                                        matchId: match.id,
-                                        participantId: participant?.id,
-                                        team: team || null,
-                                        tableName: table.name,
-                                        time: matchTime.format('HH:mm')
-                                      };
-                                      onSlotDrop(slot);
-                                    }
-                                  : undefined
-                              }
                             />
                           </TableCell>
                         );
