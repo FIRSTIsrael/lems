@@ -101,7 +101,7 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           isLoading ||
           (!hasSignature && !isSigned) ||
           (hasSignature && !shouldSwitchToGP) ||
-          !forceEdit
+          (isSubmitted && !forceEdit)
         }
         onClick={submitButtonHandler}
         sx={{
