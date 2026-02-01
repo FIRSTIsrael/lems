@@ -56,6 +56,7 @@ export const ParticipantNotPresentModal = ({
           present: true
         }
       });
+      setIsMarking(false);
       onClose?.();
     } catch (error) {
       console.error('Error marking participant as present:', error);
