@@ -54,7 +54,8 @@ export const ParticipantNotPresentModal = ({
           matchId,
           participantId,
           present: true
-        }
+        },
+        refetchQueries: ['GetTeamMatch']
       });
       setIsMarking(false);
       onClose?.();
