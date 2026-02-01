@@ -1283,7 +1283,8 @@
     "no-live-events": "אין אירועים חיים כרגע",
     "view-all": "צפה בכל האירועים",
     "view-event": "צפה באירוע",
-    "view-details": "צפה בפרטים"
+    "view-details": "צפה בפרטים",
+    "unofficial-event": "אירוע לא רשמי"
   },
   "browse-events": {
     "page-title": "עיון באירועים",
