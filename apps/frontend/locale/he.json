@@ -858,7 +858,8 @@
         "match": "מקצה",
         "scheduled-time": "שעה",
         "participant-ready": "מוכן",
-        "participant-not-ready": "לא מוכן"
+        "participant-not-ready": "לא מוכן",
+        "participant-no-show": "לא הגיע"
       }
     },
     "audience-display": {

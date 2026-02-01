@@ -112,6 +112,8 @@ export function MatchRow({
 
         // Show participant readiness state for non-completed matches
         const isReady = participant.ready;
+        const isPresent = participant.present;
+        const isNoShow = isLoaded && !isPresent && isReady;
 
         // Show icons only for the loaded match
         const showIcon = isLoaded;
@@ -129,11 +131,13 @@ export function MatchRow({
           >
             <Tooltip
               title={
-                isLoaded && isReady
-                  ? t('table.participant-ready')
-                  : isLoaded && !isReady
-                    ? t('table.participant-not-ready')
-                    : ''
+                isNoShow
+                  ? t('table.participant-no-show')
+                  : isLoaded && isReady
+                    ? t('table.participant-ready')
+                    : isLoaded && !isReady
+                      ? t('table.participant-not-ready')
+                      : ''
               }
             >
               <Stack
@@ -144,7 +148,16 @@ export function MatchRow({
                 sx={{ width: '100%' }}
               >
                 {showIcon &&
-                  (isReady ? (
+                  (isNoShow ? (
+                    <CancelIcon
+                      sx={{
+                        color: 'warning.main',
+                        fontSize: '1.25rem',
+                        opacity: isTeamFiltered ? 1 : 0.35,
+                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
+                      }}
+                    />
+                  ) : isReady ? (
                     <CheckCircleIcon
                       sx={{
                         color: 'success.main',
@@ -177,11 +190,11 @@ export function MatchRow({
                   </Typography>
                   <Typography
                     variant="caption"
-                    color="text.secondary"
+                    color={isNoShow ? 'warning.main' : 'text.secondary'}
                     noWrap
-                    sx={{ fontSize: '1rem' }}
+                    sx={{ fontSize: '1rem', fontWeight: isNoShow ? 600 : 400 }}
                   >
-                    {participant.team.name}
+                    {isNoShow ? t('table.participant-no-show') : participant.team.name}
                   </Typography>
                 </Stack>
               </Stack>

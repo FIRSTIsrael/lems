@@ -202,6 +202,8 @@ function MatchCard({
 
               // Show participant readiness state for non-completed matches
               const isReady = participant.ready;
+              const isPresent = participant.present;
+              const isNoShow = isLoaded && !isPresent && isReady;
 
               // Show icons only for the loaded match
               const showIcon = isLoaded;
@@ -210,11 +212,13 @@ function MatchCard({
                 <Tooltip
                   key={participant.id}
                   title={
-                    isLoaded && isReady
-                      ? t('table.participant-ready')
-                      : isLoaded && !isReady
-                        ? t('table.participant-not-ready')
-                        : ''
+                    isNoShow
+                      ? t('table.participant-no-show')
+                      : isLoaded && isReady
+                        ? t('table.participant-ready')
+                        : isLoaded && !isReady
+                          ? t('table.participant-not-ready')
+                          : ''
                   }
                 >
                   <Box
@@ -226,13 +230,13 @@ function MatchCard({
                       backgroundColor: 'background.default',
                       borderRadius: 1.5,
                       border: '1px solid',
-                      borderColor: 'divider',
+                      borderColor: isNoShow ? 'warning.main' : 'divider',
                       transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
                       opacity: isTeamFiltered ? 1 : 0.35,
                       filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
                       '&:hover': {
                         backgroundColor: 'action.hover',
-                        borderColor: 'action.hover'
+                        borderColor: isNoShow ? 'warning.main' : 'action.hover'
                       }
                     }}
                   >
@@ -247,14 +251,21 @@ function MatchCard({
                       </Typography>
                       <Typography
                         variant="caption"
-                        color="text.secondary"
-                        sx={{ fontSize: '1rem' }}
+                        color={isNoShow ? 'warning.main' : 'text.secondary'}
+                        sx={{ fontSize: '1rem', fontWeight: isNoShow ? 600 : 400 }}
                       >
-                        {participant.team!.name}
+                        {isNoShow ? t('table.participant-no-show') : participant.team!.name}
                       </Typography>
                     </Box>
                     {showIcon &&
-                      (isReady ? (
+                      (isNoShow ? (
+                        <Cancel
+                          sx={{
+                            color: 'warning.main',
+                            fontSize: '1.5rem'
+                          }}
+                        />
+                      ) : isReady ? (
                         <CheckCircleSharp
                           color="success"
                           sx={{

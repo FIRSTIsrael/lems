@@ -859,7 +859,8 @@
         "match": "Match",
         "scheduled-time": "Time",
         "participant-ready": "Ready",
-        "participant-not-ready": "Not Ready"
+        "participant-not-ready": "Not Ready",
+        "participant-no-show": "No Show"
       }
     },
     "audience-display": {
