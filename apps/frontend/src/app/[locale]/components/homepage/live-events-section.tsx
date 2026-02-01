@@ -42,6 +42,7 @@ export const LiveEventsSection: React.FC = () => {
       location: '', // Not fetched anymore
       region: event.region,
       coordinates: null,
+      official: event.official,
       seasonId: '' // Placeholder - not available from current query
     })) || [];
 
