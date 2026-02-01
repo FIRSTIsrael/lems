@@ -24,12 +24,12 @@ router.post(
   fileUpload({ limits: { fileSize: 200 * 1024, files: 1 } }),
   teamLogoFileValidator,
   async (req: FirstIsraelDashboardRequest, res: Response) => {
-    if (!req.files || !req.files.logo) {
+    if (!req.files || !req.files.file) {
       res.status(400).json({ error: 'NO_FILE_UPLOADED' });
       return;
     }
 
-    const logoFile = req.files.logo as UploadedFile;
+    const logoFile = req.files.file as UploadedFile;
 
     const metadata = await sharp(logoFile.data).metadata();
     if (metadata.width !== 256 || metadata.height !== 256) {
@@ -51,7 +51,7 @@ router.post(
 
 router.use('/team/event', firstIsraelDashboardEventMiddleware);
 
-router.get(
+router.post(
   '/team/event/team-info',
   fileUpload({ limits: { fileSize: 15 * 1024 * 1024, files: 1 } }),
   teamDocumentFileValidator,
@@ -75,7 +75,7 @@ router.get(
         return;
       }
 
-      const documentFile = req.files.document as UploadedFile;
+      const documentFile = req.files.file as UploadedFile;
       if (!documentFile) {
         res.status(400).json({ error: 'NO_FILE_UPLOADED' });
         return;

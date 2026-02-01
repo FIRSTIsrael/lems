@@ -6,8 +6,8 @@ import {
   UpdateableEventIntegration
 } from '../schema/tables/event-integrations';
 
-function jsonbContains<T>(value: T): RawBuilder<boolean> {
-  return sql`settings @> ${JSON.stringify(value)}::jsonb`;
+function json<T>(value: T): RawBuilder<T> {
+  return sql`CAST(${JSON.stringify(value)} AS JSONB)`;
 }
 
 class EventIntegrationSelector {
@@ -65,7 +65,7 @@ class EventIntegrationsSettingsSelector {
     const result = await this.db
       .selectFrom('event_integrations')
       .selectAll()
-      .where(jsonbContains(this.settings))
+      .where('settings', '@>', json(this.settings))
       .executeTakeFirst();
     return result || null;
   }
@@ -74,7 +74,7 @@ class EventIntegrationsSettingsSelector {
     return this.db
       .selectFrom('event_integrations')
       .selectAll()
-      .where(jsonbContains(this.settings))
+      .where('settings', '@>', json(this.settings))
       .execute();
   }
 }

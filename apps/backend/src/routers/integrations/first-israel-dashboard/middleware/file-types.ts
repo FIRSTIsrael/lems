@@ -1,8 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
-const ALLOWED_IMAGE_FILE_TYPES = ['image/png', 'image/jpeg'];
+const ALLOWED_IMAGE_FILE_TYPES = ['image/png', 'image/jpeg', 'image/svg+xml'];
 const ALLOWED_DOCUMENT_FILE_TYPES = ['application/pdf'];
-const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf'];
+const ALLOWED_EXTENSIONS = ['png', 'jpg', 'jpeg', 'pdf', 'svg'];
 
 export const validateFileTypes = (allowedTypes: string[]) => {
   return (req: Request, res: Response, next: NextFunction) => {
