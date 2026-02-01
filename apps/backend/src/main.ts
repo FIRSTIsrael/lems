@@ -116,7 +116,7 @@ logger.info({ component: 'graphql' }, 'Apollo Server initialized');
 
 app.use(
   '/lems/graphql',
-  express.json({ limit: '50mb' }), // Increased limit for scoresheet signatures
+  express.json({ limit: '10mb' }), // Increased limit for scoresheet signatures
   expressMiddleware(apolloServer, {
     context: async ({ req }): Promise<GraphQLContext> => {
       const user = await authenticateHttp(req);
