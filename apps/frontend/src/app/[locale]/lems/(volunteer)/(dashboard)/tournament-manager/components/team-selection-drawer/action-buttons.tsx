@@ -4,7 +4,6 @@ import { Stack, Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 import type { SlotInfo } from '../types';
-import type { TournamentManagerData } from '../../graphql';
 import { SourceType } from '../types';
 import { getAllowedActions, ActionType } from '../validation';
 

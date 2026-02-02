@@ -18,7 +18,8 @@ import { SourceType } from '../types';
 import {
   isSlotBlockedForSelection,
   isSlotBlockedAsDestination,
-  isValidDestination
+  isValidDestination,
+  isSlotInProgress
 } from '../validation';
 
 interface JudgingScheduleTableProps {
@@ -143,6 +144,9 @@ function JudgingScheduleTableComponent({
                       (team !== null && division
                         ? isSlotBlockedForSelection(slot, division) ||
                           (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
+                        : false) ||
+                      (division
+                        ? isSlotInProgress({ ...slot, type: 'session' }, division)
                         : false));
 
                   return (

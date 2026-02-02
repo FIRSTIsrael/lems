@@ -92,31 +92,32 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
           marginBottom: selectedSlot && isMobile ? `${MOBILE_DRAWER_HEIGHT_VH}vh` : 0
         }}
       >
-        {activeTab === 0 && (missingTeams.length > 0 || roundSelector) && (
-          <Box
-            sx={{
-              m: 2,
-              mb: 0,
-              display: 'flex',
-              gap: 2,
-              alignItems: 'flex-start',
-              flexWrap: 'wrap',
-              justifyContent: 'space-between'
-            }}
-          >
-            {roundSelector && (
-              <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.5, order: 2 }}>
-                {roundSelector}
-              </Box>
-            )}
-            <MissingTeamsAlert
-              missingTeams={missingTeams}
-              currentRoundTitle={currentRoundTitle}
-              selectedSlotTeamId={selectedSlot?.team?.id}
-              onTeamClick={handleTeamClick}
-            />
-          </Box>
-        )}
+        {(activeTab === 0 || activeTab === 1) &&
+          (missingTeams.length > 0 || (activeTab === 0 && roundSelector)) && (
+            <Box
+              sx={{
+                m: 2,
+                mb: 0,
+                display: 'flex',
+                gap: 2,
+                alignItems: 'flex-start',
+                flexWrap: 'wrap',
+                justifyContent: 'space-between'
+              }}
+            >
+              {activeTab === 0 && roundSelector && (
+                <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.5, order: 2 }}>
+                  {roundSelector}
+                </Box>
+              )}
+              <MissingTeamsAlert
+                missingTeams={missingTeams}
+                currentRoundTitle={currentRoundTitle}
+                selectedSlotTeamId={selectedSlot?.team?.id}
+                onTeamClick={handleTeamClick}
+              />
+            </Box>
+          )}
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
