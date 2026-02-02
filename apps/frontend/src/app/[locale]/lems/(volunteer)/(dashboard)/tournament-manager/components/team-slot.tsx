@@ -1,102 +1,137 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
+import { memo } from 'react';
+
+const getSlotColors = (isSelected: boolean, isSecondSelected: boolean, isDisabled: boolean) => {
+  if (isDisabled) {
+    return {
+      bg: 'action.disabledBackground',
+      primary: 'text.secondary',
+      secondary: 'text.secondary',
+      tertiary: 'text.secondary'
+    };
+  }
+  if (isSelected) {
+    return {
+      bg: 'primary.main',
+      primary: 'white',
+      secondary: 'rgba(255,255,255,0.9)',
+      tertiary: 'rgba(255,255,255,0.7)'
+    };
+  }
+  if (isSecondSelected) {
+    return {
+      bg: 'rgba(25, 118, 210, 0.3)',
+      primary: 'primary.main',
+      secondary: 'primary.dark',
+      tertiary: 'text.secondary'
+    };
+  }
+  return {
+    bg: 'transparent',
+    primary: 'text.primary',
+    secondary: 'text.secondary',
+    tertiary: 'text.disabled'
+  };
+};
 
 interface TeamSlotProps {
-  team: { id: string; number: number; name: string; affiliation?: string; city?: string } | null;
+  team: {
+    id: string;
+    number: number;
+    name: string;
+    affiliation?: string;
+    city?: string;
+    arrived?: boolean;
+  } | null;
   isSelected: boolean;
   isSecondSelected: boolean;
   isMobile: boolean;
   onClick: () => void;
-  onDrop?: () => void;
-  isDragOver?: boolean;
+  isDisabled?: boolean;
 }
 
-export function TeamSlot({
+function TeamSlotComponent({
   team,
   isSelected,
   isSecondSelected,
   isMobile,
   onClick,
-  onDrop,
-  isDragOver
+  isDisabled = false
 }: TeamSlotProps) {
-  const handleDragOver = (e: React.DragEvent) => {
-    if (!team && onDrop) {
-      e.preventDefault();
-    }
+  const colors = getSlotColors(isSelected, isSecondSelected, isDisabled);
+  const fontSizes = {
+    primary: isMobile ? '0.7rem' : '0.9rem',
+    secondary: isMobile ? '0.65rem' : '0.75rem',
+    tertiary: isMobile ? '0.6rem' : '0.7rem'
   };
+  const size = isMobile ? '80px' : '100px';
+  const height = isMobile ? '70px' : '85px';
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (!team && onDrop) {
-      onDrop();
-    }
+  const textStyle = {
+    textAlign: 'center' as const,
+    maxWidth: size,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap' as const
   };
 
   return (
-    <Box
+    <Button
       onClick={onClick}
-      onDragOver={handleDragOver}
-      onDrop={handleDrop}
+      disabled={isDisabled}
       sx={{
         display: 'inline-flex',
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
         gap: 0.25,
-        cursor: 'pointer',
         p: 1.5,
         m: 0.5,
         borderRadius: 1,
-        minWidth: isMobile ? '80px' : '100px',
-        minHeight: isMobile ? '70px' : '85px',
-        width: isMobile ? '80px' : '100px',
-        height: isMobile ? '70px' : '85px',
-        bgcolor: isSelected
-          ? 'primary.main'
-          : isSecondSelected
-            ? 'rgba(25, 118, 210, 0.3)'
-            : isDragOver
-              ? 'success.light'
-              : 'transparent',
-        '&:hover': {
-          bgcolor: isSelected
-            ? 'primary.main'
-            : isSecondSelected
-              ? 'rgba(25, 118, 210, 0.3)'
-              : 'action.hover'
-        },
-        transition: 'background-color 0.2s',
-        border: isDragOver && !team ? '2px dashed' : 'none',
-        borderColor: isDragOver && !team ? 'success.main' : 'transparent'
+        minWidth: size,
+        minHeight: height,
+        width: size,
+        height,
+        bgcolor: colors.bg,
+        '&:hover': { bgcolor: colors.bg },
+        transition: 'background-color 0.2s, opacity 0.2s',
+        '&:disabled': {
+          opacity: 0.5,
+          bgcolor: colors.bg
+        }
       }}
     >
       {team ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.25 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+            <Typography
+              component="span"
+              sx={{
+                fontSize: fontSizes.primary,
+                fontWeight: 600,
+                color: colors.primary
+              }}
+            >
+              #{team.number}
+            </Typography>
+            {team.arrived === false && (
+              <BlockIcon
+                sx={{
+                  fontSize: fontSizes.primary,
+                  color: 'error.main',
+                  flexShrink: 0
+                }}
+              />
+            )}
+          </Box>
           <Typography
             component="span"
             sx={{
-              fontSize: isMobile ? '0.7rem' : '0.9rem',
-              fontWeight: 600,
-              color: isSelected ? 'white' : isSecondSelected ? 'primary.main' : 'text.primary'
-            }}
-          >
-            #{team.number}
-          </Typography>
-          <Typography
-            component="span"
-            sx={{
-              fontSize: isMobile ? '0.65rem' : '0.75rem',
-              color: isSelected
-                ? 'rgba(255,255,255,0.9)'
-                : isSecondSelected
-                  ? 'primary.dark'
-                  : 'text.secondary',
-              textAlign: 'center',
-              lineHeight: 1.2,
-              maxWidth: '100px',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              whiteSpace: 'nowrap'
+              fontSize: fontSizes.secondary,
+              color: colors.secondary,
+              ...textStyle,
+              lineHeight: 1.2
             }}
           >
             {team.name}
@@ -105,18 +140,10 @@ export function TeamSlot({
             <Typography
               component="span"
               sx={{
-                fontSize: isMobile ? '0.6rem' : '0.7rem',
-                color: isSelected
-                  ? 'rgba(255,255,255,0.8)'
-                  : isSecondSelected
-                    ? 'primary.dark'
-                    : 'text.secondary',
-                textAlign: 'center',
-                lineHeight: 1.1,
-                maxWidth: '100px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                fontSize: fontSizes.tertiary,
+                color: colors.secondary,
+                ...textStyle,
+                lineHeight: 1.1
               }}
             >
               {team.affiliation}
@@ -126,18 +153,10 @@ export function TeamSlot({
             <Typography
               component="span"
               sx={{
-                fontSize: isMobile ? '0.6rem' : '0.7rem',
-                color: isSelected
-                  ? 'rgba(255,255,255,0.7)'
-                  : isSecondSelected
-                    ? 'text.secondary'
-                    : 'text.disabled',
-                textAlign: 'center',
-                lineHeight: 1.1,
-                maxWidth: '100px',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
+                fontSize: fontSizes.tertiary,
+                color: colors.tertiary,
+                ...textStyle,
+                lineHeight: 1.1
               }}
             >
               {team.city}
@@ -149,6 +168,8 @@ export function TeamSlot({
           -
         </Typography>
       )}
-    </Box>
+    </Button>
   );
 }
+
+export const TeamSlot = memo(TeamSlotComponent);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Box, CircularProgress, Alert } from '@mui/material';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
@@ -12,11 +13,14 @@ import {
   createMatchCompletedSubscription,
   createSessionStartedSubscription,
   createSessionAbortedSubscription,
-  createSessionCompletedSubscription
+  createSessionCompletedSubscription,
+  createTeamArrivedSubscription
 } from './graphql';
-import { ScheduleReference } from './components/schedule-reference';
+import { TournamentManagerProvider } from './context';
+import { ScheduleReference } from './components/schedule/schedule-reference';
 
 export default function TournamentManagerPage() {
+  const t = useTranslations('pages.tournament-manager');
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
@@ -27,7 +31,8 @@ export default function TournamentManagerPage() {
       createMatchCompletedSubscription(currentDivision.id),
       createSessionStartedSubscription(currentDivision.id),
       createSessionAbortedSubscription(currentDivision.id),
-      createSessionCompletedSubscription(currentDivision.id)
+      createSessionCompletedSubscription(currentDivision.id),
+      createTeamArrivedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -50,19 +55,16 @@ export default function TournamentManagerPage() {
   if (error || !data?.division) {
     return (
       <Box sx={{ p: 2 }}>
-        <Alert severity="error">Failed to load tournament manager data</Alert>
+        <Alert severity="error">{t('errors.load-data-failed')}</Alert>
       </Box>
     );
   }
 
   return (
-    <Box
-      sx={{
-        height: '100%',
-        overflow: 'auto'
-      }}
-    >
-      <ScheduleReference division={data.division} />
-    </Box>
+    <TournamentManagerProvider division={data.division}>
+      <Box sx={{ height: '100%', overflow: 'auto' }}>
+        <ScheduleReference />
+      </Box>
+    </TournamentManagerProvider>
   );
 }

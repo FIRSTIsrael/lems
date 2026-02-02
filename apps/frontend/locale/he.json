@@ -794,56 +794,89 @@
     },
     "tournament-manager": {
       "title": "מנהל/ת תחרות",
-      "match-swaps": "החלפות מקצים",
-      "judging-swaps": "החלפות שיפוט",
-      "select-match": "בחרו מקצה",
-      "select-participant-1": "בחרו משתתף ראשון",
-      "select-participant-2": "בחרו משתתף שני",
-      "select-session-1": "בחרו מפגש ראשון",
-      "select-session-2": "בחרו מפגש שני",
-      "swap-preview": "תצוגה מקדימה של החלפה",
-      "swap-teams": "החליפו קבוצות",
-      "cancel": "ביטול",
-      "confirm": "אישור",
-      "confirm-swap": "אישור החלפת קבוצות",
-      "confirm-swap-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בשולחן {table1} עם {team2} בשולחן {table2}?",
-      "confirm-session-swap-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בחדר {room1} עם {team2} בחדר {room2}?",
-      "swap-success": "הקבוצות הוחלפו בהצלחה",
-      "swap-error": "נכשל בהחלפת הקבוצות",
-      "no-eligible-matches": "אין מקצים זמינים להחלפה. מקצים חייבים להיות בסטטוס 'טרם התחיל' ולא טעונים כרגע.",
-      "no-eligible-sessions": "אין מפגשים זמינים להחלפה. מפגשים חייבים להיות בסטטוס 'טרם התחיל' ולא נקראו.",
       "schedule-reference": "לוח זמנים לעיון",
-      "match-schedule": "לוח זמנים - משחקים",
-      "judging-schedule": "לוח זמנים - שיפוט",
-      "match-number": "משחק מס'",
-      "match": "מקצה",
-      "time": "זמן",
-      "start-time": "שעת התחלה",
-      "end-time": "שעת סיום",
-      "status-column": "סטטוס",
-      "participants": "משתתפים",
-      "room": "חדר",
-      "team": "קבוצה",
-      "called": "נקרא",
-      "no-team": "אין קבוצה",
-      "session": "מפגש",
+      "match-schedule": {
+        "title": "לוח זמנים - משחקים",
+        "columns": {
+          "match-number": "מקצה",
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "status": "סטטוס"
+        }
+      },
+      "judging-schedule": {
+        "title": "לוח זמנים - שיפוט",
+        "columns": {
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "status": "סטטוס"
+        }
+      },
       "field-matches": "מקצי שדה",
       "judging-sessions": "מפגשי שיפוט",
-      "second-team-selected": "קבוצה שנייה נבחרה",
-      "select-second-team-instruction": "בחרו משבצת קבוצה נוספת להעברה או החלפה",
-      "move": "העברה",
-      "replace": "החלפה",
-      "move-tooltip": "העבר קבוצה ראשונה למשבצת שנייה (מסיר מהמקור)",
-      "replace-tooltip": "החלף בין שתי הקבוצות במשבצות שלהן",
-      "team-schedule": "לוח זמנים של הקבוצה",
-      "missing-teams-title": "קבוצות חסרות בלוח הזמנים",
-      "missing-teams-from-round": "קבוצות חסרות מהסבב",
-      "missing-teams-description": "{count} קבוצות לא משובצות",
-      "click-empty-slot-to-assign": "לחצו על משבצת ריקה כדי לשבץ קבוצה זו",
+      "labels": {
+        "match": "מקצה",
+        "session": "מפגש",
+        "team": "קבוצה",
+        "room": "חדר",
+        "no-team": "אין קבוצה",
+        "called": "נקרא"
+      },
+      "slots": {
+        "second-team-selected": "קבוצה שנייה נבחרה",
+        "select-second-team-instruction": "בחרו משבצת קבוצה נוספת להעברה או החלפה",
+        "team-schedule": "לוח זמנים של הקבוצה",
+        "missing-teams": {
+          "title": "קבוצות חסרות בלוח הזמנים",
+          "from-round": "קבוצות חסרות מהסבב",
+          "description": "{count} קבוצות לא משובצות",
+          "click-empty-slot-to-assign": "לחצו על משבצת ריקה כדי לשבץ קבוצה זו"
+        }
+      },
+      "actions": {
+        "move": "העברה",
+        "replace": "החלפה",
+        "insert-rematch": "הכנס משחק חוזר",
+        "clear": "נקה",
+        "cancel": "ביטול",
+        "confirm": "אישור"
+      },
+      "swap": {
+        "title": "תצוגה מקדימה של החלפה",
+        "confirm-title": "אישור החלפת קבוצות",
+        "teams": "החליפו קבוצות",
+        "message": "האם אתם בטוחים שברצונכם להחליף את {team1} בשולחן {table1} עם {team2} בשולחן {table2}?",
+        "session-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בחדר {room1} עם {team2} בחדר {room2}?",
+        "success": "הקבוצות הוחלפו בהצלחה",
+        "error": "נכשל בהחלפת הקבוצות",
+        "match-swaps": "החלפות מקצים",
+        "judging-swaps": "החלפות שיפוט",
+        "select-match": "בחרו מקצה",
+        "select-participant-1": "בחרו משתתף ראשון",
+        "select-participant-2": "בחרו משתתף שני",
+        "select-session-1": "בחרו מפגש ראשון",
+        "select-session-2": "בחרו מפגש שני",
+        "no-eligible-matches": "אין מקצים זמינים להחלפה. מקצים חייבים להיות בסטטוס 'טרם התחיל' ולא טעונים כרגע.",
+        "no-eligible-sessions": "אין מפגשים זמינים להחלפה. מפגשים חייבים להיות בסטטוס 'טרם התחיל' ולא נקראו."
+      },
       "status": {
         "not-started": "טרם התחיל",
         "in-progress": "מתרחש",
         "completed": "הסתיים"
+      },
+      "validation": {
+        "both-source-and-destination-required": "מקור ויעד נדרשים",
+        "types-must-match": "ניתן להעביר רק בין אותם סוגים (מקצה למקצה או מפגש למפגש)"
+      },
+      "errors": {
+        "load-data-failed": "נכשל בטעינת נתוני מנהל התחרויות",
+        "move-team-failed": "נכשל בהעברת הקבוצה",
+        "replace-teams-failed": "נכשל בהחלפת הקבוצות",
+        "assign-team-failed": "נכשל בשיבוץ הקבוצה",
+        "clear-team-failed": "נכשל בהסרת הקבוצה",
+        "cannot-modify-in-progress": "לא ניתן לשנות מקצים או מפגשים בסטטוס מתרחש",
+        "cannot-modify-loaded": "לא ניתן לשנות מקצים טעונים",
+        "cannot-modify-completed": "לא ניתן לשנות מקצים או מפגשים בסטטוס הסתיים"
       }
     },
     "head-referee": {

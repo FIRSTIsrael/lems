@@ -133,14 +133,23 @@ export const swapMatchTeamsResolver: GraphQLFieldResolver<
     }
 
     // Perform the swap by exchanging team_id values
+    // Use three-step approach to avoid unique constraint violation on intermediate state
     await db.raw.sql.transaction().execute(async trx => {
-      // Swap team IDs
+      // Step 1: Clear both participants' team_id to avoid constraint conflict
+      await trx
+        .updateTable('robot_game_match_participants')
+        .set({ team_id: null })
+        .where('id', 'in', [participantId1, participantId2])
+        .execute();
+
+      // Step 2: Assign participant1 the target team
       await trx
         .updateTable('robot_game_match_participants')
         .set({ team_id: participant2.team_id })
         .where('id', '=', participantId1)
         .execute();
 
+      // Step 3: Assign participant2 the target team
       await trx
         .updateTable('robot_game_match_participants')
         .set({ team_id: participant1.team_id })
@@ -154,6 +163,9 @@ export const swapMatchTeamsResolver: GraphQLFieldResolver<
       throw error;
     }
     console.error('Error swapping match teams:', error);
-    throw new MutationError(MutationErrorCode.INTERNAL_ERROR, 'Failed to swap match teams');
+    throw new MutationError(
+      MutationErrorCode.INTERNAL_ERROR,
+      `Failed to swap match teams: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   }
 };
