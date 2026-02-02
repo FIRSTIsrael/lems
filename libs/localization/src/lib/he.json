@@ -11,6 +11,13 @@
       "completed": "הושלם"
     }
   },
+  "judging-sessions": {
+    "status": {
+      "not-started": "לא התחיל",
+      "in-progress": "בתהליך",
+      "completed": "הושלם"
+    }
+  },
   "judging-deliberations": {
     "status": {
       "not-started": "לא התחיל",
