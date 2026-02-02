@@ -795,7 +795,6 @@
     },
     "tournament-manager": {
       "title": "Tournament Manager",
-      "schedule-reference": "Schedule Reference",
       "match-schedule": {
         "title": "Match Schedule",
         "columns": {
@@ -813,7 +812,7 @@
           "status": "Status"
         }
       },
-      "field-matches": "Field Matches",
+      "field-matches": "Matches",
       "judging-sessions": "Judging Sessions",
       "labels": {
         "match": "Match",
@@ -821,7 +820,6 @@
         "team": "Team",
         "room": "Room",
         "no-team": "No Team",
-        "called": "Called",
         "not-assigned": "Not Assigned"
       },
       "slots": {

@@ -793,10 +793,9 @@
       }
     },
     "tournament-manager": {
-      "title": "מנהל/ת תחרות",
-      "schedule-reference": "לוח זמנים לעיון",
+      "title": "מנהל/ת אירוע",
       "match-schedule": {
-        "title": "לוח זמנים - משחקים",
+        "title": "לוח זמנים - זירה",
         "columns": {
           "match-number": "מקצה",
           "start-time": "שעת התחלה",
@@ -812,7 +811,7 @@
           "status": "סטטוס"
         }
       },
-      "field-matches": "מקצי שדה",
+      "field-matches": "מקצים",
       "judging-sessions": "מפגשי שיפוט",
       "labels": {
         "match": "מקצה",
@@ -820,7 +819,6 @@
         "team": "קבוצה",
         "room": "חדר",
         "no-team": "אין קבוצה",
-        "called": "נקרא",
         "not-assigned": "לא הוקצה"
       },
       "slots": {
