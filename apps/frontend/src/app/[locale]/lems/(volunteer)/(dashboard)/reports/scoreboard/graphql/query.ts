@@ -32,14 +32,15 @@ export function parseScoreboard(data: QueryData): ScoreboardTeam[] {
   if (!data.division) return [];
 
   const teams = data.division.teams;
-  const currentStage = data.division.field?.currentStage || 'PRACTICE';
+  // Always show RANKING stage scoreboard (robot game)
+  const scoreboardStage = 'RANKING';
 
   // Get all submitted rounds
   const rounds = [
     ...new Set(
       teams.flatMap(t =>
         t.scoresheets
-          .filter(s => s.status === 'submitted' && s.stage === currentStage)
+          .filter(s => s.status === 'submitted' && s.stage === scoreboardStage)
           .map(s => s.round)
       )
     )
@@ -48,7 +49,7 @@ export function parseScoreboard(data: QueryData): ScoreboardTeam[] {
   // Build team rows
   const rows: ScoreboardTeam[] = teams.map(team => {
     const submitted = team.scoresheets.filter(
-      s => s.status === 'submitted' && s.stage === currentStage
+      s => s.status === 'submitted' && s.stage === scoreboardStage
     );
     const scores = rounds.map(r => submitted.find(s => s.round === r)?.data?.score ?? null);
     const validScores = scores.filter((s): s is number => s !== null);
