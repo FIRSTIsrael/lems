@@ -23,6 +23,7 @@ import {
   Skeleton
 } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
+import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 import {
   UPDATE_MATCH_MUTATION,
   UPDATE_MATCH_PARTICIPANT_MUTATION,
@@ -47,6 +48,7 @@ export function FieldSchedule({
   loading
 }: FieldScheduleProps) {
   const t = useTranslations('pages.field-head-queuer.field-schedule');
+  const currentTime = useTime({ interval: 1000 });
 
   const [updateMatchMutation] = useMutation(UPDATE_MATCH_MUTATION, {
     onError: () => toast.error(t('error.update-match-failed')),
@@ -79,17 +81,16 @@ export function FieldSchedule({
   );
 
   const availableMatches = useMemo(() => {
-    const now = dayjs();
     return matches
       .filter(
         match =>
           match.status === 'not-started' &&
           match.stage !== 'test' &&
           match.id !== loadedMatchId &&
-          dayjs(match.scheduledTime).subtract(15, 'minutes').isBefore(now)
+          currentTime.diff(dayjs(match.scheduledTime), 'minute') >= -20
       )
-      .slice(0, 5);
-  }, [matches, loadedMatchId]);
+      .slice(1, 4);
+  }, [matches, loadedMatchId, currentTime]);
 
   const isTeamBusy = useCallback(() => false, []);
 
