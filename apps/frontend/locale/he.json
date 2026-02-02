@@ -181,6 +181,20 @@
         "no-loaded-match": "אין מקצה טעון"
       }
     },
+    "field-queuer": {
+      "page-title": "קיואר זירה",
+      "instructions": {
+        "title": "הוראות",
+        "description": "הקבוצות המוצגות למטה נקראו למקצים שלהן אך עדיין לא הגיעו. אנא הדרך אותן לשולחנות שהוקצו להן."
+      },
+      "no-teams": "אין קבוצות ממתינות",
+      "no-teams-description": "כל הקבוצות שנקראו הגיעו לשולחנות שלהן",
+      "team-card": {
+        "in-judging-tooltip": "הקבוצה נמצאת כרגע בשיפוט",
+        "time-ago": "לפני {minutes} דק'",
+        "time-until": "בעוד {minutes} דק'"
+      }
+    },
     "judge": {
       "page-title": "שיפוט",
       "schedule": {
