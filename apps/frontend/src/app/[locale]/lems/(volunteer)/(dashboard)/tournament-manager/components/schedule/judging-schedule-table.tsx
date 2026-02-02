@@ -1,4 +1,5 @@
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -79,11 +80,6 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                 {t('judging-schedule.columns.end-time')}
               </Typography>
             </TableCell>
-            <TableCell width={120} align="center">
-              <Typography fontWeight={600} fontSize={headerFontSize}>
-                {t('judging-schedule.columns.status')}
-              </Typography>
-            </TableCell>
             {rooms.map(room => (
               <TableCell key={room.id} align="center">
                 <Typography fontWeight={600} fontSize={headerFontSize}>
@@ -98,8 +94,6 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
             const sessionTime = dayjs(row.time);
             const sessionEndTime = sessionTime.add(sessionLength, 'seconds');
             const roomSessions = new Map(row.sessions.map(s => [s.room.id, s]));
-            const firstSession = row.sessions[0];
-            const firstSessionStatus = firstSession?.status ?? 'not-started';
 
             return (
               <TableRow key={index}>
@@ -113,16 +107,10 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                     {sessionEndTime.format('HH:mm')}
                   </Typography>
                 </TableCell>
-                <TableCell align="center">
-                  <StatusChip
-                    type="session"
-                    status={firstSessionStatus as SessionStatus}
-                    size="small"
-                  />
-                </TableCell>
                 {rooms.map(room => {
                   const session = roomSessions.get(room.id);
                   const team = session?.team;
+                  const sessionStatus = session?.status ?? 'not-started';
                   const slot: SlotInfo = {
                     type: 'session',
                     sessionId: session?.id,
@@ -142,14 +130,28 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
 
                   return (
                     <TableCell key={room.id} align="center">
-                      <TeamSlot
-                        team={team ?? null}
-                        isSelected={isCurrentSlot}
-                        isSecondSelected={secondSlot?.sessionId === session?.id}
-                        isMobile={isMobile}
-                        isDisabled={disabled}
-                        onClick={() => handleSlotClick(slot)}
-                      />
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          gap: 0.5
+                        }}
+                      >
+                        <TeamSlot
+                          team={team ?? null}
+                          isSelected={isCurrentSlot}
+                          isSecondSelected={secondSlot?.sessionId === session?.id}
+                          isMobile={isMobile}
+                          isDisabled={disabled}
+                          onClick={() => handleSlotClick(slot)}
+                        />
+                        <StatusChip
+                          type="session"
+                          status={sessionStatus as SessionStatus}
+                          size="small"
+                        />
+                      </Box>
                     </TableCell>
                   );
                 })}
