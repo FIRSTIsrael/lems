@@ -147,13 +147,16 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
 
   return (
     <Box sx={{ p: 2 }}>
-      <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', boxShadow: 'none' }}>
+      <TableContainer
+        component={Paper}
+        sx={{ p: 0, bgcolor: 'white', boxShadow: 'none', overflowX: 'auto', overflowY: 'hidden' }}
+      >
         <Table
           size="small"
           sx={{
             tableLayout: 'fixed',
             width: '100%',
-            minWidth: Math.max(400, 100 + tables.length * 100)
+            minWidth: Math.max(600, 400 + tables.length * 120)
           }}
         >
           <TableHead>

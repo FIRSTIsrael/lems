@@ -55,13 +55,16 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
   const cellFontSize = isMobile ? '0.75rem' : '1rem';
 
   return (
-    <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', m: 2 }}>
+    <TableContainer
+      component={Paper}
+      sx={{ p: 0, bgcolor: 'white', m: 2, overflowX: 'auto', overflowY: 'hidden' }}
+    >
       <Table
         size="small"
         sx={{
           tableLayout: 'fixed',
           width: '100%',
-          minWidth: Math.max(400, 100 + rooms.length * 100)
+          minWidth: Math.max(600, 400 + rooms.length * 120)
         }}
       >
         <TableHead>
