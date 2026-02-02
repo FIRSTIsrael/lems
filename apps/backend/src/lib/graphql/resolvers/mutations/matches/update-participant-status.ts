@@ -46,7 +46,10 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
 
     // Check 2: User must have referee or head-referee role
     if (context.user.role !== 'referee' && context.user.role !== 'head-referee') {
-      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have referee or head-referee role');
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have referee or head-referee role'
+      );
     }
 
     // Check 3: User must be assigned to the division
@@ -93,6 +96,13 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       throw new MutationError(
         MutationErrorCode.INTERNAL_ERROR,
         `Match state not found for ${matchId}`
+      );
+    }
+
+    if (!present && matchState.status !== 'not-started') {
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        'Cannot update participant status to NOT PRESENT for match that is not in not-started status'
       );
     }
 
