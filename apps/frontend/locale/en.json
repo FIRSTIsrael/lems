@@ -145,13 +145,12 @@
         },
         "status": {
           "not_signed_in": "Not signed in",
-          "not_at_match": "Not at match",
+          "not_at_match": "Not queued",
           "at_match": "At match",
           "empty_table": "No team",
           "unknown_team": "TBD",
           "not-signed-in": "Not signed in",
-          "not-at-match": "Not at match",
-          "at-match": "At match",
+          "at-match": "Queued",
           "unknown-team": "TBD"
         }
       },
@@ -162,20 +161,22 @@
         "teams": "Teams",
         "status": {
           "not_signed_in": "Not signed in",
-          "not_at_match": "Not at match",
-          "at_match": "At match",
+          "not_at_match": "Not queued",
+          "at_match": "Queued",
           "empty_table": "No team",
           "unknown_team": "TBD",
           "not-signed-in": "Not signed in",
-          "not-at-match": "Not at match",
-          "at-match": "At match",
+          "at-match": "Queued",
           "unknown-team": "TBD"
         },
         "mark-arrived-to-match": "Mark arrived to match",
         "unmark-arrived-to-match": "Unmark arrived to match",
         "mark-disabled-not-signed-in": "Team is not signed in",
+        "call-teams": "Call Teams",
+        "cancel-call": "Cancel Call",
         "error": {
-          "update-participant-failed": "Failed to update match arrival"
+          "update-participant-failed": "Failed to update match arrival",
+          "update-match-failed": "Failed to update match"
         },
         "started-at": "Started at {time}",
         "scheduled-at": "Scheduled at {time}",

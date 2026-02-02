@@ -62,6 +62,7 @@ export default function FieldHeadQueuerPage() {
           divisionId={currentDivision.id}
           matches={safeData.matches}
           tables={safeData.tables}
+          loadedMatchId={safeData.loadedMatch?.id}
           loading={loading}
         />
       </Stack>

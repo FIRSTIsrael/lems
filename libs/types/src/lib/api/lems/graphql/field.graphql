@@ -260,6 +260,17 @@ type MatchParticipantUpdatedEvent {
   queued: String
 }
 
+"""
+Represents an event when a match's called status is updated
+"""
+type MatchUpdatedEvent {
+  "Match identifier"
+  id: String!
+
+  "Whether the match is called"
+  called: Boolean!
+}
+
 extend type Mutation {
   """
   Load a match to make it the currently loaded match.
@@ -360,6 +371,19 @@ extend type Mutation {
     "Whether the team is queued/arrived to match (true/false to set/clear)"
     queued: Boolean!
   ): MatchParticipantUpdatedEvent!
+
+  """
+  Update a match's called status.
+  Called by field head queuer to call teams to the match.
+  """
+  updateMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "Whether the match is called (true/false to set/clear)"
+    called: Boolean!
+  ): MatchUpdatedEvent!
 }
 
 extend type Subscription {

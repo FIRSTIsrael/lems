@@ -7,7 +7,8 @@ import {
   startMatchResolver,
   abortMatchResolver,
   updateParticipantStatusResolver,
-  updateMatchParticipantResolver
+  updateMatchParticipantResolver,
+  updateMatchResolver
 } from './matches/index';
 import {
   updateRubricValueResolver,
@@ -51,6 +52,7 @@ export const mutationResolvers = {
   abortMatch: abortMatchResolver,
   updateParticipantStatus: updateParticipantStatusResolver,
   updateMatchParticipant: updateMatchParticipantResolver,
+  updateMatch: updateMatchResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
   updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updatePresentation: updatePresentationResolver,

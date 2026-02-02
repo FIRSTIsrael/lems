@@ -35,14 +35,23 @@ interface FieldScheduleProps {
   divisionId: string;
   matches: RobotGameMatch[];
   tables: RobotGameTable[];
+  loadedMatchId?: string | null;
   loading?: boolean;
 }
 
-export function FieldSchedule({ divisionId, matches, tables, loading }: FieldScheduleProps) {
+export function FieldSchedule({
+  divisionId,
+  matches,
+  tables,
+  loadedMatchId,
+  loading
+}: FieldScheduleProps) {
   const t = useTranslations('pages.field-head-queuer.field-schedule');
 
   const [updateMatchMutation] = useMutation(UPDATE_MATCH_MUTATION, {
-    onError: () => toast.error(t('error.update-match-failed'))
+    onError: () => toast.error(t('error.update-match-failed')),
+    refetchQueries: [{ query: GET_HEAD_QUEUER_DATA, variables: { divisionId } }],
+    awaitRefetchQueries: true
   });
 
   const [updateParticipantMutation] = useMutation(UPDATE_MATCH_PARTICIPANT_MUTATION, {
@@ -76,10 +85,11 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
         match =>
           match.status === 'not-started' &&
           match.stage !== 'test' &&
+          match.id !== loadedMatchId &&
           dayjs(match.scheduledTime).subtract(15, 'minutes').isBefore(now)
       )
       .slice(0, 5);
-  }, [matches]);
+  }, [matches, loadedMatchId]);
 
   const isTeamBusy = useCallback(() => false, []);
 
@@ -115,16 +125,56 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell align="center" sx={{ fontWeight: 600 }}>
+            <TableCell
+              align="center"
+              sx={{
+                fontWeight: 600,
+                position: 'sticky',
+                left: 0,
+                top: 0,
+                bgcolor: 'background.paper',
+                zIndex: 20
+              }}
+            >
               {t('match-number')}
             </TableCell>
-            <TableCell sx={{ fontWeight: 600 }}>{t('time')}</TableCell>
+            <TableCell
+              sx={{
+                fontWeight: 600,
+                position: 'sticky',
+                top: 0,
+                bgcolor: 'background.paper',
+                zIndex: 10
+              }}
+            >
+              {t('time')}
+            </TableCell>
             {tables.map(table => (
-              <TableCell key={table.id} align="center" sx={{ fontWeight: 600 }}>
+              <TableCell
+                key={table.id}
+                align="center"
+                sx={{
+                  fontWeight: 600,
+                  position: 'sticky',
+                  top: 0,
+                  bgcolor: 'background.paper',
+                  zIndex: 10
+                }}
+              >
                 {table.name}
               </TableCell>
             ))}
-            <TableCell sx={{ fontWeight: 600 }}>{t('actions')}</TableCell>
+            <TableCell
+              sx={{
+                fontWeight: 600,
+                position: 'sticky',
+                top: 0,
+                bgcolor: 'background.paper',
+                zIndex: 10
+              }}
+            >
+              {t('actions')}
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -136,7 +186,17 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
                 bgcolor: match.called ? 'action.hover' : 'inherit'
               }}
             >
-              <TableCell component="th" scope="row" align="center">
+              <TableCell
+                component="th"
+                scope="row"
+                align="center"
+                sx={{
+                  position: 'sticky',
+                  left: 0,
+                  bgcolor: match.called ? 'action.hover' : 'background.paper',
+                  zIndex: 5
+                }}
+              >
                 <Chip label={match.number} size="small" color="primary" />
               </TableCell>
               <TableCell>

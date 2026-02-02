@@ -15,7 +15,7 @@ export interface UpdateMatchData {
 
 export const UPDATE_MATCH_MUTATION: TypedDocumentNode<UpdateMatchData, UpdateMatchVars> = gql`
   mutation UpdateMatch($divisionId: String!, $matchId: String!, $called: Boolean!) {
-    updateMatch(divisionId: $divisionId, matchId: $matchId, data: { called: $called }) {
+    updateMatch(divisionId: $divisionId, matchId: $matchId, called: $called) {
       id
       called
     }

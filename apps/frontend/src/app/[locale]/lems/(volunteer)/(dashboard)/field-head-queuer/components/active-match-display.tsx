@@ -5,10 +5,24 @@ import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
-import { Paper, Stack, Typography, Chip, Box, Skeleton, Checkbox, Tooltip } from '@mui/material';
+import {
+  Paper,
+  Stack,
+  Typography,
+  Chip,
+  Box,
+  Skeleton,
+  Checkbox,
+  Tooltip,
+  Button
+} from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import { UPDATE_MATCH_PARTICIPANT_MUTATION, type RobotGameMatch } from '../graphql';
+import {
+  UPDATE_MATCH_PARTICIPANT_MUTATION,
+  UPDATE_MATCH_MUTATION,
+  type RobotGameMatch
+} from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 
 interface ActiveMatchDisplayProps {
@@ -32,6 +46,12 @@ export function ActiveMatchDisplay({
     awaitRefetchQueries: true
   });
 
+  const [updateMatchMutation] = useMutation(UPDATE_MATCH_MUTATION, {
+    onError: () => toast.error(t('error.update-match-failed')),
+    refetchQueries: [{ query: GET_HEAD_QUEUER_DATA, variables: { divisionId } }],
+    awaitRefetchQueries: true
+  });
+
   const handleToggleArrivedToMatch = useCallback(
     async (matchId: string, teamId: string, queued: boolean) => {
       await updateParticipantMutation({
@@ -39,6 +59,15 @@ export function ActiveMatchDisplay({
       });
     },
     [divisionId, updateParticipantMutation]
+  );
+
+  const handleCallMatch = useCallback(
+    async (matchId: string, called: boolean) => {
+      await updateMatchMutation({
+        variables: { divisionId, matchId, called }
+      });
+    },
+    [divisionId, updateMatchMutation]
   );
 
   if (loading) {
@@ -112,23 +141,41 @@ export function ActiveMatchDisplay({
           </Stack>
           {loadedMatch ? (
             <>
-              <Box>
-                <Chip
-                  label={`${t('match')} ${loadedMatch.number}`}
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={1}
+                flexWrap="wrap"
+                sx={{ justifyContent: 'space-between' }}
+              >
+                <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
+                  <Chip
+                    label={`${t('match')} ${loadedMatch.number}`}
+                    size="medium"
+                    sx={{
+                      bgcolor: 'primary.dark',
+                      color: 'primary.contrastText',
+                      fontWeight: 600,
+                      fontSize: '1rem'
+                    }}
+                  />
+                  <Typography variant="body2">
+                    {t('scheduled-at', {
+                      time: dayjs(loadedMatch.scheduledTime).format('HH:mm')
+                    })}
+                  </Typography>
+                </Stack>
+
+                <Button
+                  variant="contained"
                   size="medium"
-                  sx={{
-                    bgcolor: 'primary.dark',
-                    color: 'primary.contrastText',
-                    fontWeight: 600,
-                    fontSize: '1rem'
-                  }}
-                />
-              </Box>
-              <Typography variant="body2">
-                {t('scheduled-at', {
-                  time: dayjs(loadedMatch.scheduledTime).format('HH:mm')
-                })}
-              </Typography>
+                  color={loadedMatch.called ? 'error' : 'success'}
+                  onClick={() => handleCallMatch(loadedMatch.id, !loadedMatch.called)}
+                  sx={{ minWidth: 120 }}
+                >
+                  {loadedMatch.called ? t('cancel-call') : t('call-teams')}
+                </Button>
+              </Stack>
 
               <Stack spacing={1}>
                 <Typography variant="caption" sx={{ opacity: 0.9 }}>

@@ -144,13 +144,11 @@
         },
         "status": {
           "not_signed_in": "לא נרשמו",
-          "not_at_match": "לא הגיעו לזירה",
-          "at_match": "הגיעו לזירה",
+          "not_at_match": "לא בקיו",
+          "at_match": "בקיו",
           "empty_table": "אין קבוצה",
           "unknown_team": "טרם נקבע",
           "not-signed-in": "לא נרשמו",
-          "not-at-match": "לא הגיעו לזירה",
-          "at-match": "הגיעו לזירה",
           "unknown-team": "טרם נקבע"
         }
       },
@@ -161,20 +159,21 @@
         "teams": "קבוצות",
         "status": {
           "not_signed_in": "לא נרשמו",
-          "not_at_match": "לא הגיעו לזירה",
-          "at_match": "הגיעו לזירה",
+          "not_at_match": "לא בקיו",
+          "at_match": "בקיו",
           "empty_table": "אין קבוצה",
           "unknown_team": "טרם נקבע",
           "not-signed-in": "לא נרשמו",
-          "not-at-match": "לא הגיעו לזירה",
-          "at-match": "הגיעו לזירה",
           "unknown-team": "טרם נקבע"
         },
         "mark-arrived-to-match": "סימון הגעה לזירה",
         "unmark-arrived-to-match": "ביטול סימון הגעה לזירה",
         "mark-disabled-not-signed-in": "הקבוצה לא נרשמה באירוע",
+        "call-teams": "קריאה לקבוצות",
+        "cancel-call": "ביטול קריאה",
         "error": {
-          "update-participant-failed": "נכשל בעדכון הגעה לזירה"
+          "update-participant-failed": "נכשל בעדכון הגעה לזירה",
+          "update-match-failed": "נכשל בעדכון המקצה"
         },
         "started-at": "התחיל ב-{time}",
         "scheduled-at": "מתוזמן ל-{time}",
