@@ -1,7 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Paper, Stack, Typography, LinearProgress } from '@mui/material';
+import { Paper, Stack, Typography, LinearProgress, IconButton, Tooltip, Box } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useCountdown } from '../../../../../../../../lib/time/hooks/use-countdown';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 
@@ -10,6 +11,7 @@ interface MatchCountdownProps {
   tablesReady?: number;
   totalTables?: number;
   matchLength: number;
+  onLegendClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 /**
@@ -20,7 +22,8 @@ export function MatchCountdown({
   scheduledTime,
   tablesReady = 0,
   totalTables = 0,
-  matchLength
+  matchLength,
+  onLegendClick
 }: MatchCountdownProps) {
   const t = useTranslations('pages.reports.field-status');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -35,9 +38,27 @@ export function MatchCountdown({
           py: 4,
           px: 2,
           textAlign: 'center',
-          mt: 4
+          mt: 4,
+          position: 'relative'
         }}
       >
+        {onLegendClick && (
+          <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+            <Tooltip title={t('legend.title')}>
+              <IconButton
+                size="small"
+                onClick={onLegendClick}
+                sx={{
+                  bgcolor: 'background.default',
+                  boxShadow: 1,
+                  '&:hover': { boxShadow: 2 }
+                }}
+              >
+                <InfoOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
         <Typography
           variant="h4"
           color="text.secondary"
@@ -70,9 +91,27 @@ export function MatchCountdown({
           py: 4,
           px: 2,
           textAlign: 'center',
-          mt: 4
+          mt: 4,
+          position: 'relative'
         }}
       >
+        {onLegendClick && (
+          <Box sx={{ position: 'absolute', top: 16, right: 16 }}>
+            <Tooltip title={t('legend.title')}>
+              <IconButton
+                size="small"
+                onClick={onLegendClick}
+                sx={{
+                  bgcolor: 'background.default',
+                  boxShadow: 1,
+                  '&:hover': { boxShadow: 2 }
+                }}
+              >
+                <InfoOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
         <Stack spacing={2}>
           <Countdown
             targetDate={targetDate}

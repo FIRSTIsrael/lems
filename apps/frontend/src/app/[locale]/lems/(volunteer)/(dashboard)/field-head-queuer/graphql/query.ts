@@ -50,6 +50,8 @@ export const GET_HEAD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gql
               name
             }
             queued
+            present
+            ready
           }
         }
       }

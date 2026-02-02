@@ -16,6 +16,9 @@ interface TeamQueueCardProps {
   scheduledTime: string;
   isInJudging: boolean;
   isUrgent: boolean;
+  isQueued: boolean;
+  isPresent: boolean;
+  isReady: boolean;
 }
 
 export function TeamQueueCard({
@@ -25,7 +28,10 @@ export function TeamQueueCard({
   matchNumber,
   scheduledTime,
   isInJudging,
-  isUrgent
+  isUrgent,
+  isQueued,
+  isPresent,
+  isReady
 }: TeamQueueCardProps) {
   const t = useTranslations('pages.field-queuer.team-card');
   const tCommon = useTranslations('pages.field-head-queuer.active-match');
@@ -78,7 +84,13 @@ export function TeamQueueCard({
         </Stack>
 
         <Stack spacing={0.5} alignItems="flex-end">
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="center"
+            flexWrap="wrap"
+            justifyContent="flex-end"
+          >
             <Chip
               label={`${tCommon('match')} ${matchNumber}`}
               size="small"
@@ -91,6 +103,26 @@ export function TeamQueueCard({
               size="medium"
               color="primary"
               sx={{ fontWeight: 600, fontSize: '0.95rem' }}
+            />
+          </Stack>
+          <Stack direction="row" spacing={0.5} alignItems="center">
+            <Chip
+              label={t('status.queued')}
+              size="small"
+              color={isQueued ? 'success' : 'default'}
+              variant={isQueued ? 'filled' : 'outlined'}
+            />
+            <Chip
+              label={t('status.present')}
+              size="small"
+              color={isPresent ? 'success' : 'default'}
+              variant={isPresent ? 'filled' : 'outlined'}
+            />
+            <Chip
+              label={t('status.ready')}
+              size="small"
+              color={isReady ? 'success' : 'default'}
+              variant={isReady ? 'filled' : 'outlined'}
             />
           </Stack>
           <Typography variant="body2" color="text.secondary">

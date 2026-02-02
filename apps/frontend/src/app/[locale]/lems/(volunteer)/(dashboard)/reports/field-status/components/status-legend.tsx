@@ -2,26 +2,36 @@
 
 import { useTranslations } from 'next-intl';
 import { Typography, Stack, Popover, Box, useTheme, Divider } from '@mui/material';
-import { getStatusIcon, type TeamReadinessStatus } from './utils';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import CancelIcon from '@mui/icons-material/Cancel';
 
-const ALL_STATUSES: TeamReadinessStatus[] = [
-  'ready',
-  'present',
-  'queued',
-  'no-show',
-  'conflict',
-  'missing',
-  'empty'
-];
+type ParticipantStatus = 'ready' | 'present' | 'queued' | 'not-present';
 
-interface TeamStatusLegendProps {
+const ALL_STATUSES: ParticipantStatus[] = ['ready', 'present', 'queued', 'not-present'];
+
+const getStatusIcon = (status: ParticipantStatus) => {
+  switch (status) {
+    case 'ready':
+      return <CheckCircleIcon fontSize="small" color="success" />;
+    case 'present':
+      return <PersonPinIcon fontSize="small" color="warning" />;
+    case 'queued':
+      return <HourglassEmptyIcon fontSize="small" color="info" />;
+    case 'not-present':
+      return <CancelIcon fontSize="small" color="error" />;
+  }
+};
+
+interface StatusLegendProps {
   open: boolean;
   anchorEl: HTMLElement | null;
   onClose: () => void;
 }
 
-export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchorEl, onClose }) => {
-  const t = useTranslations('pages.scorekeeper.next-match');
+export const StatusLegend: React.FC<StatusLegendProps> = ({ open, anchorEl, onClose }) => {
+  const t = useTranslations('pages.reports.field-status');
   const theme = useTheme();
   const direction = theme.direction;
 
@@ -57,7 +67,8 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
         sx={{
           position: 'absolute',
           bottom: '100%',
-          right: 9,
+          right: direction === 'rtl' ? 'auto' : 9,
+          left: direction === 'rtl' ? 9 : 'auto',
           width: 0,
           height: 0,
           borderLeft: '8px solid transparent',
@@ -69,7 +80,8 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
         sx={{
           position: 'absolute',
           bottom: 'calc(100% - 1px)',
-          right: 9,
+          right: direction === 'rtl' ? 'auto' : 9,
+          left: direction === 'rtl' ? 9 : 'auto',
           width: 0,
           height: 0,
           borderLeft: '8px solid transparent',
@@ -107,7 +119,7 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
                   pt: 0.25
                 }}
               >
-                {getStatusIcon(status as TeamReadinessStatus)}
+                {getStatusIcon(status)}
               </Box>
               <Box>
                 <Typography
@@ -118,7 +130,7 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
                     mb: 0.25
                   }}
                 >
-                  {t(`statuses.${status}`)}
+                  {t(`legend.statuses.${status}`)}
                 </Typography>
                 <Typography
                   variant="caption"
@@ -127,7 +139,7 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
                     lineHeight: 1.4
                   }}
                 >
-                  {t(`legend.${status}`)}
+                  {t(`legend.descriptions.${status}`)}
                 </Typography>
               </Box>
             </Stack>

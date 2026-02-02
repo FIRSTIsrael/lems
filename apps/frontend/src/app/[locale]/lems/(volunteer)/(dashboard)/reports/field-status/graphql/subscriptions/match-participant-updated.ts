@@ -1,0 +1,69 @@
+import { gql, TypedDocumentNode } from '@apollo/client';
+import { merge } from '@lems/shared/utils';
+import type { SubscriptionConfig } from '../../../../../hooks/use-page-data';
+import type { FieldStatusData } from '../types';
+
+export interface MatchParticipantUpdatedEvent {
+  matchId: string;
+  teamId: string;
+  queued: string | null;
+}
+
+export interface MatchParticipantUpdatedSubscriptionData {
+  matchParticipantUpdated: MatchParticipantUpdatedEvent;
+}
+
+interface SubscriptionVars {
+  divisionId: string;
+}
+
+export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  MatchParticipantUpdatedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription MatchParticipantUpdated($divisionId: String!) {
+    matchParticipantUpdated(divisionId: $divisionId) {
+      matchId
+      teamId
+      queued
+    }
+  }
+`;
+
+/**
+ * Creates a subscription configuration for match participant queued status updates in field status view.
+ * When a participant's queued status is updated, updates the corresponding match participants.
+ *
+ * @param divisionId - The division ID to subscribe to
+ * @returns Subscription configuration for use with usePageData hook
+ */
+export function createMatchParticipantUpdatedSubscription(divisionId: string) {
+  return {
+    subscription: MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: FieldStatusData, { data }: { data?: unknown }) => {
+      if (!prev.division?.field || !data) return prev;
+      const event = (data as MatchParticipantUpdatedSubscriptionData).matchParticipantUpdated;
+      return merge(prev, {
+        division: {
+          field: {
+            matches: prev.division.field.matches.map(match => {
+              if (match.id !== event.matchId) return match;
+              return {
+                ...match,
+                participants: match.participants.map(p =>
+                  p.team?.id === event.teamId
+                    ? {
+                        ...p,
+                        queued: !!event.queued
+                      }
+                    : p
+                )
+              };
+            })
+          }
+        }
+      });
+    }
+  } as SubscriptionConfig<unknown, FieldStatusData, SubscriptionVars>;
+}

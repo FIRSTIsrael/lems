@@ -30,7 +30,8 @@ import {
 } from './graphql/index';
 import {
   createMatchCallUpdatedSubscription,
-  createMatchParticipantUpdatedSubscription
+  createMatchParticipantUpdatedSubscription,
+  createParticipantStatusUpdatedSubscription
 } from './graphql/subscriptions';
 import { TeamQueueCard, FieldQueuerBottomNav, FieldScheduleView, PitMapView } from './components';
 
@@ -63,7 +64,8 @@ export default function FieldQueuerPage() {
   const subscriptions = useMemo(
     () => [
       createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id)
+      createMatchParticipantUpdatedSubscription(currentDivision.id),
+      createParticipantStatusUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -100,6 +102,9 @@ export default function FieldQueuerPage() {
       scheduledTime: string;
       isInJudging: boolean;
       isUrgent: boolean;
+      isQueued: boolean;
+      isPresent: boolean;
+      isReady: boolean;
       teamId: string;
       tableId: string;
     }> = [];
@@ -128,6 +133,9 @@ export default function FieldQueuerPage() {
             scheduledTime: match.scheduledTime,
             isInJudging,
             isUrgent,
+            isQueued: participant.queued,
+            isPresent: participant.present,
+            isReady: participant.ready,
             teamId: participant.team.id,
             tableId: participant.table.id
           });
@@ -240,6 +248,9 @@ export default function FieldQueuerPage() {
                 scheduledTime={team.scheduledTime}
                 isInJudging={team.isInJudging}
                 isUrgent={team.isUrgent}
+                isQueued={team.isQueued}
+                isPresent={team.isPresent}
+                isReady={team.isReady}
               />
             ))}
           </Stack>

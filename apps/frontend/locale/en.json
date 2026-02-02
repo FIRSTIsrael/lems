@@ -210,7 +210,12 @@
       "team-card": {
         "in-judging-tooltip": "Team is currently in judging",
         "time-ago": "{minutes} min ago",
-        "time-until": "in {minutes} min"
+        "time-until": "in {minutes} min",
+        "status": {
+          "queued": "Queued",
+          "present": "Present",
+          "ready": "Ready"
+        }
       }
     },
     "judge": {
@@ -347,6 +352,21 @@
             "queued": "Queued",
             "not-present": "Not Present",
             "not-arrived": "Didn't Arrive to Event"
+          }
+        },
+        "legend": {
+          "title": "Status Legend",
+          "statuses": {
+            "ready": "Ready",
+            "present": "Present",
+            "queued": "Queued",
+            "not-present": "Not Present"
+          },
+          "descriptions": {
+            "ready": "Team is at the table and ready to compete",
+            "present": "Team has arrived at the table but not yet ready",
+            "queued": "Team has been called and is on the way to the table",
+            "not-present": "Team has not arrived at the table"
           }
         },
         "judging-integration": {
@@ -782,17 +802,19 @@
         "round": "Round",
         "statuses": {
           "ready": "Ready",
-          "no-show": "No Show",
+          "present": "Present",
           "queued": "Queued",
+          "no-show": "No Show",
           "conflict": "Conflict",
           "missing": "Missing",
           "empty": "Empty"
         },
         "legend": {
           "title": "Team Status Legend",
-          "ready": "Table is ready and participant is present",
-          "no-show": "Team did not arrive at the event or is not present at the table",
-          "queued": "Team arrived at event and is in queue, but not yet at the table",
+          "ready": "Team is at the table and ready to compete",
+          "present": "Team has arrived at the table but not yet ready",
+          "queued": "Team has been called and is on the way to the table",
+          "no-show": "Team did not arrive at the event",
           "conflict": "Team is present but not queued (should be resolved)",
           "missing": "Team arrived at event but has not queued yet",
           "empty": "No team assigned to this participant slot"

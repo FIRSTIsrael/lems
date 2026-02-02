@@ -15,6 +15,8 @@ export interface MatchParticipant {
   team: Team | null;
   table: RobotGameTable | null;
   queued: boolean;
+  present: boolean;
+  ready: boolean;
 }
 
 export interface RobotGameMatch {

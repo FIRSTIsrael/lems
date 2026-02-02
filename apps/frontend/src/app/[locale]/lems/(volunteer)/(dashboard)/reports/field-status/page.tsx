@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Box, Container, Stack, CircularProgress, Grid } from '@mui/material';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
@@ -11,6 +11,7 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
+  createMatchParticipantUpdatedSubscription,
   createParticipantStatusUpdatedSubscription,
   createMatchStageAdvancedSubscription
 } from './graphql';
@@ -18,10 +19,13 @@ import { MatchCountdown } from './components/match-countdown';
 import { ActiveMatchPanel } from './components/active-match-panel';
 import { NextMatchPanel } from './components/next-match-panel';
 import { UpcomingMatches } from './components/upcoming-matches';
+import { StatusLegend } from './components/status-legend';
 import { FieldStatusProvider, useFieldStatusData } from './components/field-status-context';
 
 function FieldStatusContent() {
   const { activeMatch, loadedMatch, upcomingMatches, matchLength } = useFieldStatusData();
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const openLegend = Boolean(anchorEl);
 
   const tablesReady = loadedMatch?.participants.filter(p => p.ready && p.team).length || 0;
   const totalTables = loadedMatch?.participants.filter(p => p.team).length || 0;
@@ -34,6 +38,7 @@ function FieldStatusContent() {
           tablesReady={tablesReady}
           totalTables={totalTables}
           matchLength={matchLength}
+          onLegendClick={event => setAnchorEl(event.currentTarget)}
         />
 
         <Grid container spacing={2}>
@@ -47,6 +52,8 @@ function FieldStatusContent() {
 
         <UpcomingMatches matches={upcomingMatches} loadedMatchId={loadedMatch?.id} />
       </Stack>
+
+      <StatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </Container>
   );
 }
@@ -60,6 +67,7 @@ export default function FieldStatusPage() {
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchAbortedSubscription(currentDivision.id),
+      createMatchParticipantUpdatedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id)
     ],

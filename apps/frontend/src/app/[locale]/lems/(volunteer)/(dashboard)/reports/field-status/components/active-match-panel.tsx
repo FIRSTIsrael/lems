@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
 import { useMatchTranslations } from '@lems/localization';
 
@@ -159,7 +161,13 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                     px: 2,
                     borderRadius: 1,
                     border: '2px solid',
-                    borderColor: participant.ready ? 'success.main' : 'grey.400'
+                    borderColor: participant.ready
+                      ? 'success.main'
+                      : participant.present
+                        ? 'warning.main'
+                        : participant.queued
+                          ? 'info.main'
+                          : 'grey.400'
                   }}
                 >
                   <Typography
@@ -176,7 +184,24 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                     {t('active-match.team-label')} {participant.team?.number} -{' '}
                     {participant.team?.name}
                   </Typography>
-                  {participant.ready && <CheckCircleIcon fontSize="small" color="success" />}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minWidth: 32,
+                      width: 32,
+                      height: 32
+                    }}
+                  >
+                    {participant.ready ? (
+                      <CheckCircleIcon sx={{ fontSize: '1.5rem' }} color="success" />
+                    ) : participant.present ? (
+                      <PersonPinIcon sx={{ fontSize: '1.5rem' }} color="warning" />
+                    ) : participant.queued ? (
+                      <HourglassEmptyIcon sx={{ fontSize: '1.5rem' }} color="info" />
+                    ) : null}
+                  </Box>
                 </Stack>
               ))}
           </Box>
