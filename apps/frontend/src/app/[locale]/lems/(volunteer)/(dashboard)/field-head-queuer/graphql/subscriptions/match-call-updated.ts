@@ -6,17 +6,17 @@ interface SubscriptionVars {
   divisionId: string;
 }
 
-export interface MatchUpdatedEvent {
+export interface MatchCallUpdatedEvent {
   id: string;
   called: boolean;
 }
 
-export interface MatchUpdatedSubscriptionData {
-  matchUpdated: MatchUpdatedEvent;
+export interface MatchCallUpdatedSubscriptionData {
+  matchUpdated: MatchCallUpdatedEvent;
 }
 
-export const MATCH_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  MatchUpdatedSubscriptionData,
+export const MATCH_CALL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
+  MatchCallUpdatedSubscriptionData,
   SubscriptionVars
 > = gql`
   subscription MatchUpdated($divisionId: String!) {
@@ -27,9 +27,9 @@ export const MATCH_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-export function createMatchUpdatedSubscription(divisionId: string) {
+export function createMatchCallUpdatedSubscription(divisionId: string) {
   return {
-    subscription: MATCH_UPDATED_SUBSCRIPTION,
+    subscription: MATCH_CALL_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
     updateQuery: (prev: QueryData) => {
       // Trigger refetch by returning a new object reference

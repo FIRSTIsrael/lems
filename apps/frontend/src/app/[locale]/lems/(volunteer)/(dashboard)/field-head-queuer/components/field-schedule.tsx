@@ -22,7 +22,6 @@ import {
   Typography,
   Skeleton
 } from '@mui/material';
-import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 import {
   UPDATE_MATCH_MUTATION,
@@ -91,8 +90,6 @@ export function FieldSchedule({
       )
       .slice(1, 4);
   }, [matches, loadedMatchId, currentTime]);
-
-  const isTeamBusy = useCallback(() => false, []);
 
   if (loading) {
     return (
@@ -208,7 +205,6 @@ export function FieldSchedule({
               {tables.map(table => {
                 const participant = match.participants.find(p => p.table?.id === table.id);
                 const team = participant?.team ?? null;
-                const teamInJudging = isTeamBusy();
                 const isSignedIn = team?.arrived ?? false;
                 const statusKey = !team
                   ? 'unknown_team'
@@ -237,38 +233,30 @@ export function FieldSchedule({
                       )}
 
                       {match.called && team && participant && (
-                        <>
-                          {teamInJudging ? (
-                            <Tooltip title={t('team-in-judging')} arrow>
-                              <WarningAmberRoundedIcon color="warning" fontSize="small" />
-                            </Tooltip>
-                          ) : (
-                            <Stack direction="row" spacing={1} alignItems="center">
-                              <Chip
-                                label={t(`status.${statusKey}`)}
-                                size="small"
-                                color={
-                                  statusKey === 'at_match'
-                                    ? 'success'
-                                    : statusKey === 'not_signed_in'
-                                      ? 'error'
-                                      : statusKey === 'not_at_match'
-                                        ? 'warning'
-                                        : 'default'
-                                }
-                                variant={statusKey === 'unknown_team' ? 'outlined' : 'filled'}
-                              />
-                              <Checkbox
-                                checked={participant.queued}
-                                disabled={!isSignedIn}
-                                size="small"
-                                onChange={() =>
-                                  handleToggleParticipant(match.id, team.id, !participant.queued)
-                                }
-                              />
-                            </Stack>
-                          )}
-                        </>
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Chip
+                            label={t(`status.${statusKey}`)}
+                            size="small"
+                            color={
+                              statusKey === 'at_match'
+                                ? 'success'
+                                : statusKey === 'not_signed_in'
+                                  ? 'error'
+                                  : statusKey === 'not_at_match'
+                                    ? 'warning'
+                                    : 'default'
+                            }
+                            variant={statusKey === 'unknown_team' ? 'outlined' : 'filled'}
+                          />
+                          <Checkbox
+                            checked={participant.queued}
+                            disabled={!isSignedIn}
+                            size="small"
+                            onChange={() =>
+                              handleToggleParticipant(match.id, team.id, !participant.queued)
+                            }
+                          />
+                        </Stack>
                       )}
                     </Stack>
                   </TableCell>

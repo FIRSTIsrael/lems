@@ -128,6 +128,7 @@
     },
     "field-head-queuer": {
       "page-title": "Head field queuer",
+      "no-data": "No data loaded yet. check in a minute.",
       "field-schedule": {
         "title": "Field Schedule",
         "subtitle": "Upcoming matches - call teams and check them off as they arrive",
