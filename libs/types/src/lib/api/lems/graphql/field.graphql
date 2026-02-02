@@ -246,6 +246,20 @@ type ParticipantStatusUpdatedEvent {
   ready: String
 }
 
+"""
+Represents an event when a match participant's queued status is updated
+"""
+type MatchParticipantUpdatedEvent {
+  "Match identifier"
+  matchId: String!
+
+  "Team identifier"
+  teamId: String!
+
+  "Timestamp when the team was marked as queued/arrived to match (null if not queued)"
+  queued: String
+}
+
 extend type Mutation {
   """
   Load a match to make it the currently loaded match.
@@ -331,6 +345,21 @@ extend type Mutation {
     "Whether the participant is ready (true/false to set/clear)"
     ready: Boolean
   ): ParticipantStatusUpdatedEvent!
+
+  """
+  Update a match participant's queued status.
+  Called by field head queuer to mark teams as arrived to the match (queued).
+  """
+  updateMatchParticipant(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "The ID of the team"
+    teamId: String!
+    "Whether the team is queued/arrived to match (true/false to set/clear)"
+    queued: Boolean!
+  ): MatchParticipantUpdatedEvent!
 }
 
 extend type Subscription {

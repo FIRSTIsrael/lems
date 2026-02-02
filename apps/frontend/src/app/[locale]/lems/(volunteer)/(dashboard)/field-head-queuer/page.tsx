@@ -52,6 +52,7 @@ export default function FieldHeadQueuerPage() {
         )}
 
         <ActiveMatchDisplay
+          divisionId={currentDivision.id}
           activeMatch={safeData.activeMatch}
           loadedMatch={safeData.loadedMatch}
           loading={loading}

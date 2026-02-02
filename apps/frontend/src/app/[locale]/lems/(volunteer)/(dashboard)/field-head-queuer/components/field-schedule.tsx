@@ -29,6 +29,7 @@ import {
   type RobotGameMatch,
   type RobotGameTable
 } from '../graphql';
+import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 
 interface FieldScheduleProps {
   divisionId: string;
@@ -45,7 +46,9 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
   });
 
   const [updateParticipantMutation] = useMutation(UPDATE_MATCH_PARTICIPANT_MUTATION, {
-    onError: () => toast.error(t('error.update-participant-failed'))
+    onError: () => toast.error(t('error.update-participant-failed')),
+    refetchQueries: [{ query: GET_HEAD_QUEUER_DATA, variables: { divisionId } }],
+    awaitRefetchQueries: true
   });
 
   const handleCallMatch = useCallback(
@@ -141,14 +144,23 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>
               </TableCell>
-              {match.participants.map(participant => {
-                const team = participant.team;
+              {tables.map(table => {
+                const participant = match.participants.find(p => p.table?.id === table.id);
+                const team = participant?.team ?? null;
                 const teamInJudging = isTeamBusy();
+                const isSignedIn = team?.arrived ?? false;
+                const statusKey = !team
+                  ? 'unknown_team'
+                  : !isSignedIn
+                    ? 'not_signed_in'
+                    : participant?.queued
+                      ? 'at_match'
+                      : 'not_at_match';
 
                 return (
-                  <TableCell key={participant.id} align="center">
+                  <TableCell key={table.id} align="center">
                     <Stack spacing={1} alignItems="center" justifyContent="center">
-                      {team && (
+                      {team ? (
                         <Tooltip title={`${team.number} - ${team.name}`} arrow>
                           <Chip
                             label={team.number}
@@ -157,22 +169,43 @@ export function FieldSchedule({ divisionId, matches, tables, loading }: FieldSch
                             sx={{ fontWeight: 600 }}
                           />
                         </Tooltip>
+                      ) : (
+                        <Typography variant="body2" color="text.secondary">
+                          —
+                        </Typography>
                       )}
-                      {team && match.called && (
+
+                      {match.called && team && participant && (
                         <>
                           {teamInJudging ? (
                             <Tooltip title={t('team-in-judging')} arrow>
                               <WarningAmberRoundedIcon color="warning" fontSize="small" />
                             </Tooltip>
                           ) : (
-                            <Checkbox
-                              checked={participant.queued}
-                              disabled={!team.arrived}
-                              size="small"
-                              onChange={() =>
-                                handleToggleParticipant(match.id, team.id, !participant.queued)
-                              }
-                            />
+                            <Stack direction="row" spacing={1} alignItems="center">
+                              <Chip
+                                label={t(`status.${statusKey}`)}
+                                size="small"
+                                color={
+                                  statusKey === 'at_match'
+                                    ? 'success'
+                                    : statusKey === 'not_signed_in'
+                                      ? 'error'
+                                      : statusKey === 'not_at_match'
+                                        ? 'warning'
+                                        : 'default'
+                                }
+                                variant={statusKey === 'unknown_team' ? 'outlined' : 'filled'}
+                              />
+                              <Checkbox
+                                checked={participant.queued}
+                                disabled={!isSignedIn}
+                                size="small"
+                                onChange={() =>
+                                  handleToggleParticipant(match.id, team.id, !participant.queued)
+                                }
+                              />
+                            </Stack>
                           )}
                         </>
                       )}

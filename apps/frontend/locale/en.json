@@ -142,12 +142,41 @@
         "error": {
           "update-match-failed": "Failed to update match",
           "update-participant-failed": "Failed to update participant"
+        },
+        "status": {
+          "not_signed_in": "Not signed in",
+          "not_at_match": "Not at match",
+          "at_match": "At match",
+          "empty_table": "No team",
+          "unknown_team": "TBD",
+          "not-signed-in": "Not signed in",
+          "not-at-match": "Not at match",
+          "at-match": "At match",
+          "unknown-team": "TBD"
         }
       },
       "active-match": {
         "running-match": "Running Match",
         "next-match": "Next Match",
         "match": "Match",
+        "teams": "Teams",
+        "status": {
+          "not_signed_in": "Not signed in",
+          "not_at_match": "Not at match",
+          "at_match": "At match",
+          "empty_table": "No team",
+          "unknown_team": "TBD",
+          "not-signed-in": "Not signed in",
+          "not-at-match": "Not at match",
+          "at-match": "At match",
+          "unknown-team": "TBD"
+        },
+        "mark-arrived-to-match": "Mark arrived to match",
+        "unmark-arrived-to-match": "Unmark arrived to match",
+        "mark-disabled-not-signed-in": "Team is not signed in",
+        "error": {
+          "update-participant-failed": "Failed to update match arrival"
+        },
         "started-at": "Started at {time}",
         "scheduled-at": "Scheduled at {time}",
         "no-active-match": "No match currently running",

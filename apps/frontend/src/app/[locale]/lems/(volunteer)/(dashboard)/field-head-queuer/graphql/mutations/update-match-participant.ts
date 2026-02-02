@@ -9,11 +9,9 @@ export interface UpdateMatchParticipantVars {
 
 export interface UpdateMatchParticipantData {
   updateMatchParticipant: {
-    id: string;
-    participants: Array<{
-      teamId: string;
-      queued: boolean;
-    }>;
+    matchId: string;
+    teamId: string;
+    queued: string | null;
   };
 }
 
@@ -31,13 +29,11 @@ export const UPDATE_MATCH_PARTICIPANT_MUTATION: TypedDocumentNode<
       divisionId: $divisionId
       matchId: $matchId
       teamId: $teamId
-      data: { queued: $queued }
+      queued: $queued
     ) {
-      id
-      participants {
-        teamId
-        queued
-      }
+      matchId
+      teamId
+      queued
     }
   }
 `;
