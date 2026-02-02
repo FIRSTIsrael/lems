@@ -87,9 +87,13 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
     (_: React.MouseEvent<HTMLElement>, newValue: string | null) => {
       if (newValue !== null) {
         setSelectedRound(newValue);
+        // Clear selection when switching rounds
+        dispatch({ type: 'SELECT_SLOT', payload: null });
+        dispatch({ type: 'SET_SOURCE_TYPE', payload: null });
+        dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
       }
     },
-    []
+    [dispatch]
   );
 
   const handleSlotClick = useCallback(

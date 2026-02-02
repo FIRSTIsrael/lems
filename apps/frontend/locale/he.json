@@ -820,7 +820,8 @@
         "team": "קבוצה",
         "room": "חדר",
         "no-team": "אין קבוצה",
-        "called": "נקרא"
+        "called": "נקרא",
+        "not-assigned": "לא הוקצה"
       },
       "slots": {
         "second-team-selected": "קבוצה שנייה נבחרה",

@@ -10,15 +10,23 @@ interface SelectedSlotHeaderProps {
 
 export function SelectedSlotHeader({ selectedSlot, onClose }: SelectedSlotHeaderProps) {
   const t = useTranslations('pages.tournament-manager');
+  const isMissingTeam = !selectedSlot?.matchId && !selectedSlot?.sessionId;
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="caption" color="text.secondary" display="block">
-          {selectedSlot?.type === 'match'
-            ? `${t('labels.match')} - ${selectedSlot.tableName}`
-            : `${t('labels.session')} - ${selectedSlot?.roomName}`}
-        </Typography>
+        {!isMissingTeam && (
+          <Typography variant="caption" color="text.secondary" display="block">
+            {selectedSlot?.type === 'match'
+              ? `${t('labels.match')} - ${selectedSlot.tableName}`
+              : `${t('labels.session')} - ${selectedSlot?.roomName}`}
+          </Typography>
+        )}
+        {isMissingTeam && (
+          <Typography variant="caption" color="warning.main" display="block">
+            {t('labels.not-assigned')}
+          </Typography>
+        )}
         <Typography variant="h6" fontWeight={700} color="primary" noWrap>
           #{selectedSlot?.team?.number} {selectedSlot?.team?.name}
         </Typography>

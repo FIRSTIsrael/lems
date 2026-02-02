@@ -821,7 +821,8 @@
         "team": "Team",
         "room": "Room",
         "no-team": "No Team",
-        "called": "Called"
+        "called": "Called",
+        "not-assigned": "Not Assigned"
       },
       "slots": {
         "second-team-selected": "Second Team Selected",
