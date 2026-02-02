@@ -102,6 +102,12 @@ export function useTeamOperations(
     if (!selectedSlot || !secondSlot || !division) return;
     setError(null);
 
+    // Prevent swapping a team with itself
+    if (selectedSlot.team && secondSlot.team && selectedSlot.team.id === secondSlot.team.id) {
+      setError('Cannot swap a team with itself');
+      return;
+    }
+
     if (isSlotBlockedAsDestination(secondSlot, division)) {
       setError('Cannot move to in-progress or completed matches/sessions');
       return;

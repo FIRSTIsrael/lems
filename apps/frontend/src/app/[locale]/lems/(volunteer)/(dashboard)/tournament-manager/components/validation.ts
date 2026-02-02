@@ -134,6 +134,11 @@ export function isSlotBlockedForSelection(
   );
 }
 
+export function hasSameTeamId(selectedSlot: SlotInfo | null, slot: SlotInfo): boolean {
+  if (!selectedSlot || !selectedSlot.team || !slot.team) return false;
+  return selectedSlot.team.id === slot.team.id;
+}
+
 export function canSelectAsDestination(
   slot: SlotInfo,
   sourceType: SourceType | null,
@@ -157,6 +162,9 @@ export function isSlotDisabled(
 
   // Disable empty slots when looking for a source
   if (!selectedSlot && !slot.team) return true;
+
+  // Disable destinations that have the same team ID as the source
+  if (selectedSlot && hasSameTeamId(selectedSlot, slot)) return true;
 
   // Disable invalid destinations when source is selected
   if (selectedSlot && !canSelectAsDestination(slot, sourceType, division)) return true;

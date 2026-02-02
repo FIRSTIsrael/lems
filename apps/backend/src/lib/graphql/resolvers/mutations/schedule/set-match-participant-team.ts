@@ -111,10 +111,7 @@ export const setMatchParticipantTeamResolver: GraphQLFieldResolver<
       .executeTakeFirst();
 
     if (!participant) {
-      throw new MutationError(
-        MutationErrorCode.NOT_FOUND,
-        'Participant not found in the match'
-      );
+      throw new MutationError(MutationErrorCode.NOT_FOUND, 'Participant not found in the match');
     }
 
     // Check 5: If teamId is provided, team must exist in the division
@@ -131,11 +128,49 @@ export const setMatchParticipantTeamResolver: GraphQLFieldResolver<
     }
 
     // Update the participant's team_id
-    await db.raw.sql
-      .updateTable('robot_game_match_participants')
-      .set({ team_id: teamId })
-      .where('id', '=', participantId)
-      .execute();
+    // If assigning a team that's already in the match, clear it from the other participant first
+    if (teamId) {
+      const otherParticipant = await db.raw.sql
+        .selectFrom('robot_game_match_participants')
+        .selectAll()
+        .where('match_id', '=', matchId)
+        .where('team_id', '=', teamId)
+        .where('id', '<>', participantId)
+        .executeTakeFirst();
+
+      if (otherParticipant) {
+        // Use transaction to ensure atomicity
+        await db.raw.sql.transaction().execute(async trx => {
+          // Clear the team from the other participant
+          await trx
+            .updateTable('robot_game_match_participants')
+            .set({ team_id: null })
+            .where('id', '=', otherParticipant.id)
+            .execute();
+
+          // Assign the team to the target participant
+          await trx
+            .updateTable('robot_game_match_participants')
+            .set({ team_id: teamId })
+            .where('id', '=', participantId)
+            .execute();
+        });
+      } else {
+        // No conflict, just update directly
+        await db.raw.sql
+          .updateTable('robot_game_match_participants')
+          .set({ team_id: teamId })
+          .where('id', '=', participantId)
+          .execute();
+      }
+    } else {
+      // Clearing a team, no constraint concerns
+      await db.raw.sql
+        .updateTable('robot_game_match_participants')
+        .set({ team_id: null })
+        .where('id', '=', participantId)
+        .execute();
+    }
 
     return { id: matchId };
   } catch (error) {
@@ -143,6 +178,9 @@ export const setMatchParticipantTeamResolver: GraphQLFieldResolver<
       throw error;
     }
     console.error('Error setting match participant team:', error);
-    throw new MutationError(MutationErrorCode.INTERNAL_ERROR, 'Failed to set match participant team');
+    throw new MutationError(
+      MutationErrorCode.INTERNAL_ERROR,
+      'Failed to set match participant team'
+    );
   }
 };
