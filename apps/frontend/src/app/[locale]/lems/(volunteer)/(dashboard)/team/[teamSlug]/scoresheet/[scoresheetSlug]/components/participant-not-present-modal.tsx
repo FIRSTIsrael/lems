@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useMutation as useApolloMutation } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import {
   Dialog,
   DialogTitle,
@@ -38,7 +38,7 @@ export const ParticipantNotPresentModal = ({
   const router = useRouter();
   const [isMarking, setIsMarking] = useState(false);
 
-  const [updateParticipantStatus] = useApolloMutation(UPDATE_PARTICIPANT_STATUS);
+  const [updateParticipantStatus] = useMutation(UPDATE_PARTICIPANT_STATUS);
 
   const handleGoBack = () => {
     router.back();
