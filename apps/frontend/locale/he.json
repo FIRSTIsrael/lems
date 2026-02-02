@@ -125,6 +125,34 @@
         "team": "קבוצה"
       }
     },
+    "field-head-queuer": {
+      "page-title": "ניהול תור זירה",
+      "field-schedule": {
+        "title": "לוח זמנים זירה",
+        "subtitle": "מקצים קרובים - קרא לקבוצות וסמן אותן כשהן מגיעות",
+        "match-number": "מקצה",
+        "time": "שעה",
+        "actions": "פעולות",
+        "call": "קריאה",
+        "cancel": "ביטול",
+        "team-in-judging": "הקבוצה נמצאת כרגע בשיפוט",
+        "no-matches": "אין מקצים קרובים",
+        "no-matches-description": "כל המקצים הושלמו או שאף אחד לא מתוזמן ב-15 הדקות הקרובות",
+        "error": {
+          "update-match-failed": "נכשל בעדכון המקצה",
+          "update-participant-failed": "נכשל בעדכון המשתתף"
+        }
+      },
+      "active-match": {
+        "running-match": "מקצה רץ",
+        "next-match": "המקצה הבא",
+        "match": "מקצה",
+        "started-at": "התחיל ב-{time}",
+        "scheduled-at": "מתוזמן ל-{time}",
+        "no-active-match": "אין מקצה רץ כרגע",
+        "no-loaded-match": "אין מקצה טעון"
+      }
+    },
     "judge": {
       "page-title": "שיפוט",
       "schedule": {
