@@ -1,3 +1,5 @@
+'use client';
+
 import { Stack, Button, Tooltip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
@@ -9,7 +11,7 @@ import {
   getSlotStatus,
   isSlotCurrentlyLoaded,
   isSlotBlockedAsDestination
-} from '../types';
+} from '../validation';
 
 interface ActionButtonsProps {
   selectedSlot: SlotInfo | null;

@@ -1,23 +1,11 @@
-// Re-export all validation functions from validation.ts
-export {
-  getSlotStatus,
-  isSlotBlockedForSelection,
-  isSlotBlockedAsDestination,
-  isSlotCompleted,
-  isSlotInProgress,
-  isMissingTeamSlot,
-  isSlotCurrentlyLoaded,
-  isSourceCompleted,
-  canPerformSwap,
-  validateSlotPair
-} from './validation';
+import { Team } from '../graphql';
 
 export interface SlotInfo {
   type: 'match' | 'session';
   matchId?: string;
   participantId?: string;
   sessionId?: string;
-  team: { id: string; number: number; name: string } | null;
+  team: Team | null;
   tableName?: string;
   roomName?: string;
   time?: string;

@@ -1,6 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import type { Match } from './types-base';
-import type { SwapMatchTeamsVars, SwapSessionTeamsVars } from './types';
+import type { Match, SwapMatchTeamsVars, SwapSessionTeamsVars } from './types';
 
 export const SWAP_MATCH_TEAMS: TypedDocumentNode<{ swapMatchTeams: Match }, SwapMatchTeamsVars> =
   gql`

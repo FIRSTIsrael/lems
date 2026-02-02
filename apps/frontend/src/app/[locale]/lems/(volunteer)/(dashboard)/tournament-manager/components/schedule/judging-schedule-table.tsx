@@ -11,10 +11,10 @@ import {
 import { useMemo, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import type { TournamentManagerData } from '../graphql';
-import { TeamSlot } from './team-slot';
-import type { SlotInfo } from './types';
-import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from './types';
+import type { TournamentManagerData } from '../../graphql';
+import { TeamSlot } from '../team-slot';
+import type { SlotInfo } from '../types';
+import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from '../validation';
 
 interface JudgingScheduleTableProps {
   sessions: TournamentManagerData['division']['judging']['sessions'];

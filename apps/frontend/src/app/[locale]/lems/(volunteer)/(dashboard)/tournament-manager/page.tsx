@@ -16,7 +16,7 @@ import {
   createSessionCompletedSubscription
 } from './graphql';
 import { TournamentManagerProvider } from './context';
-import { ScheduleReference } from './components/schedule-reference';
+import { ScheduleReference } from './components/schedule/schedule-reference';
 
 export default function TournamentManagerPage() {
   const t = useTranslations('pages.tournament-manager');
@@ -59,7 +59,7 @@ export default function TournamentManagerPage() {
   }
 
   return (
-    <TournamentManagerProvider division={data.division}>
+    <TournamentManagerProvider>
       <Box sx={{ height: '100%', overflow: 'auto' }}>
         <ScheduleReference division={data.division} />
       </Box>

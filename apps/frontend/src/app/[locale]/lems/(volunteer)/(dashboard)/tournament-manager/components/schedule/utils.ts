@@ -1,5 +1,5 @@
-import type { TournamentManagerData } from './graphql';
-import type { SlotInfo } from './components/types';
+import type { TournamentManagerData } from '../../graphql';
+import type { SlotInfo } from '../types';
 
 export function calculateMissingTeams(
   teams: TournamentManagerData['division']['teams'],
@@ -38,27 +38,4 @@ export function createMissingTeamSlot(
     roomName: undefined,
     time: undefined
   };
-}
-
-export function isSlotSelectable(slot: SlotInfo, isBlockedForSelection: boolean): boolean {
-  return !isBlockedForSelection || slot.team !== null;
-}
-
-export function isValidSlotPair(
-  source: SlotInfo | null,
-  destination: SlotInfo,
-  isDestinationBlocked: boolean
-): boolean {
-  if (!source) return false;
-  if (isDestinationBlocked) return false;
-  if (source.type !== destination.type) return false;
-  if (
-    (source.type === 'match' &&
-      source.matchId === destination.matchId &&
-      source.participantId === destination.participantId) ||
-    (source.type === 'session' && source.sessionId === destination.sessionId)
-  ) {
-    return false;
-  }
-  return true;
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Typography, Paper, Stack, Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';

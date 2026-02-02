@@ -1,7 +1,9 @@
+'use client';
+
+import dayjs from 'dayjs';
 import { Box, Typography, Paper, Stack, Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
-import dayjs from 'dayjs';
 import type { JudgingSession } from '../../graphql';
 import type { SessionsListProps } from './types';
 

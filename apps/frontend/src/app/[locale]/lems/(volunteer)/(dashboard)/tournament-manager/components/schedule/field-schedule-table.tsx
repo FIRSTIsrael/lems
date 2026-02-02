@@ -14,11 +14,11 @@ import {
 import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import type { TournamentManagerData } from '../graphql';
-import { TeamSlot } from './team-slot';
-import type { SlotInfo } from './types';
-import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from './types';
-import { MATCH_DURATION_SECONDS } from './constants';
+import type { TournamentManagerData } from '../../graphql';
+import { TeamSlot } from '../team-slot';
+import type { SlotInfo } from '../types';
+import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from '../validation';
+import { MATCH_DURATION_SECONDS } from '../constants';
 
 interface FieldScheduleTableProps {
   matches: TournamentManagerData['division']['field']['matches'];

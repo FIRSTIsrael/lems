@@ -1,35 +1,22 @@
 'use client';
 
-import { useEffect, useCallback, useMemo } from 'react';
-import type { Dispatch } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
-import type { TournamentManagerData } from '../graphql';
-import type { TournamentManagerAction } from '../context';
-import { useTeamOperations } from '../hooks/useTeamOperations';
-import { useTournamentManager } from '../context';
-import { calculateMissingTeams, createMissingTeamSlot } from '../utils';
+import type { TournamentManagerData } from '../../graphql';
+import { useTournamentManager } from '../../context';
+import { useScheduleOperations } from '../../hooks/useScheduleOperations';
+import { TeamSelectionDrawer } from '../team-selection-drawer';
+import { MissingTeamsAlert } from '../missing-teams-alert';
+import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from '../constants';
 import { FieldScheduleTable } from './field-schedule-table';
 import { JudgingScheduleTable } from './judging-schedule-table';
-import { TeamSelectionDrawer } from './team-selection-drawer';
-import { MissingTeamsAlert } from './missing-teams-alert';
-import type { SlotInfo } from './types';
-import {
-  isSlotBlockedForSelection,
-  isSlotBlockedAsDestination,
-  isSlotCurrentlyLoaded
-} from './types';
-import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from './constants';
+import { calculateMissingTeams } from './utils';
 
 interface ScheduleReferenceProps {
   division: TournamentManagerData['division'];
 }
-
-const clearSelection = (dispatch: Dispatch<TournamentManagerAction>): void => {
-  dispatch({ type: 'SELECT_SLOT', payload: null });
-  dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-};
 
 export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const t = useTranslations('pages.tournament-manager');
@@ -48,10 +35,19 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
     dispatch
   } = useTournamentManager();
 
-  const { handleMove, handleReplace, clearTeam, error, setError } = useTeamOperations(
-    division.id,
-    division
-  );
+  const {
+    handleRoundChange,
+    handleSlotClick,
+    handleMoveClick,
+    handleReplaceClick,
+    handleClearClick,
+    handleDrawerClose,
+    handleTabChange,
+    handleRoundSelector,
+    handleTeamClick,
+    error,
+    setError
+  } = useScheduleOperations(division);
 
   // Update missing teams when tab or round changes
   useEffect(() => {
@@ -66,98 +62,9 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
 
   // Clear selection when switching tabs
   useEffect(() => {
-    clearSelection(dispatch);
+    dispatch({ type: 'SELECT_SLOT', payload: null });
+    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
   }, [activeTab, dispatch]);
-
-  // Memoized round change handler
-  const handleRoundChange = useCallback(
-    (matches: TournamentManagerData['division']['field']['matches'], title: string) => {
-      clearSelection(dispatch);
-      dispatch({ type: 'SET_CURRENT_ROUND_MATCHES', payload: matches });
-      dispatch({ type: 'SET_CURRENT_ROUND_TITLE', payload: title });
-    },
-    [dispatch]
-  );
-
-  // Memoized slot click handler
-  const handleSlotClick = useCallback(
-    (slot: SlotInfo) => {
-      if (!selectedSlot) {
-        if (!isSlotBlockedForSelection(slot, division) && !isSlotCurrentlyLoaded(slot, division)) {
-          if (slot.team) {
-            dispatch({ type: 'SELECT_SLOT', payload: slot });
-          }
-        }
-      } else if (
-        (slot.type === 'match' && selectedSlot.participantId !== slot.participantId) ||
-        (slot.type === 'session' && selectedSlot.sessionId !== slot.sessionId)
-      ) {
-        if (!isSlotBlockedAsDestination(slot, division) && !isSlotCurrentlyLoaded(slot, division)) {
-          dispatch({ type: 'SELECT_SECOND_SLOT', payload: slot });
-        }
-      }
-    },
-    [selectedSlot, dispatch, division]
-  );
-
-  // Memoized operation wrapper for consistent error handling
-  const handleOperationWrapper = useCallback(
-    async (operation: () => Promise<void>) => {
-      try {
-        await operation();
-        clearSelection(dispatch);
-      } catch {
-        // Error already set by hook
-      }
-    },
-    [dispatch]
-  );
-
-  // Memoized handlers for each operation
-  const handleMoveClick = useCallback(
-    () => handleOperationWrapper(() => handleMove(selectedSlot, secondSlot)),
-    [handleOperationWrapper, handleMove, selectedSlot, secondSlot]
-  );
-
-  const handleReplaceClick = useCallback(
-    () => handleOperationWrapper(() => handleReplace(selectedSlot, secondSlot)),
-    [handleOperationWrapper, handleReplace, selectedSlot, secondSlot]
-  );
-
-  const handleClearClick = useCallback(
-    () => handleOperationWrapper(() => clearTeam(selectedSlot)),
-    [handleOperationWrapper, clearTeam, selectedSlot]
-  );
-
-  const handleDrawerClose = useCallback(() => {
-    clearSelection(dispatch);
-  }, [dispatch]);
-
-  // Memoized tab change handler
-  const handleTabChange = useCallback(
-    (_: React.SyntheticEvent, newValue: number) => {
-      dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue });
-    },
-    [dispatch]
-  );
-
-  // Memoized round selector renderer
-  const handleRoundSelector = useCallback(
-    (selector: React.ReactNode) => {
-      dispatch({ type: 'SET_ROUND_SELECTOR', payload: selector });
-    },
-    [dispatch]
-  );
-
-  // Memoized team click handler in missing teams alert
-  const handleTeamClick = useCallback(
-    (team: TournamentManagerData['division']['teams'][0]) => {
-      const slot = createMissingTeamSlot(team, activeTab);
-      dispatch({ type: 'SELECT_SLOT', payload: slot });
-      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-    },
-    [activeTab, dispatch]
-  );
 
   const tables = useMemo(() => division.tables ?? [], [division.tables]);
   const rooms = useMemo(() => division.rooms ?? [], [division.rooms]);

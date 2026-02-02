@@ -1,3 +1,5 @@
+'use client';
+
 import { Box, Typography, Paper, Divider } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import type { SlotInfo } from '../types';
