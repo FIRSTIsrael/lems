@@ -133,6 +133,7 @@ export interface MatchParticipant {
   table: {
     id: string;
   };
+  present: boolean;
 }
 
 export interface MatchData {

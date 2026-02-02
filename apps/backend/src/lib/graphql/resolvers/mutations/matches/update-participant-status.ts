@@ -23,14 +23,14 @@ interface ParticipantStatusEvent {
 /**
  * Resolver for Mutation.updateParticipantStatus
  * Updates participant status (present/ready) in a match.
- * Called by referees to mark teams as present or ready.
+ * Called by referees or head referees to mark teams as present or ready.
+ * Can be used to mark teams as present even after match completion.
  *
  * Validation checks:
- * 1. User is authenticated and has 'referee' role
+ * 1. User is authenticated and has 'referee' or 'head-referee' role
  * 2. User is assigned to the division
  * 3. Match exists and is in the division
  * 4. Participant exists in the match
- * 5. Match is not-started
  */
 export const updateParticipantStatusResolver: GraphQLFieldResolver<
   unknown,
@@ -44,9 +44,12 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
-    // Check 2: User must have referee role
-    if (context.user.role !== 'referee') {
-      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have referee role');
+    // Check 2: User must have referee or head-referee role
+    if (context.user.role !== 'referee' && context.user.role !== 'head-referee') {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have referee or head-referee role'
+      );
     }
 
     // Check 3: User must be assigned to the division
@@ -84,7 +87,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    // Check 6: Get current match state and validate match is not-started
+    // Check 6: Get current match state
     const matchState = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOne({ matchId });
@@ -96,10 +99,10 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    if (matchState.status !== 'not-started') {
+    if (!present && matchState.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
-        'Cannot update participant status for match that is not in not-started status'
+        'Cannot update participant status to NOT PRESENT for match that is not in not-started status'
       );
     }
 
