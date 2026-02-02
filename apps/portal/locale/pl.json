@@ -1,0 +1,282 @@
+{
+  "pages": {
+    "index": {
+      "hero": {
+        "title": "Witamy w Portalu Wydarzeń",
+        "subtitle": "Poznaj nadchodzące wydarzenia dla <i>FIRST</i> LEGO League Challenge"
+      },
+      "events": {
+        "active-events": "Aktywne wydarzenia",
+        "no-active-events": "Brak aktywnych wydarzeń w tej chwili",
+        "no-events": "Nie znaleziono wydarzeń",
+        "upcoming-events": "Nadchodzące wydarzenia",
+        "past-events": "Minione wydarzenia",
+        "view-all-events": "Zobacz wszystkie wydarzenia",
+        "event-date": "Data wydarzenia",
+        "location": "Lokalizacja",
+        "teams-registered": "{count} zarejestrowanych drużyn",
+        "registration-open": "Rejestracja otwarta",
+        "registration-closed": "Rejestracja zamknięta",
+        "view-event": "Zobacz wydarzenie",
+        "view-results": "Zobacz wyniki",
+        "view-details": "Zobacz szczegóły",
+        "status-completed": "Zakończone",
+        "status-upcoming": "Nadchodzące",
+        "unofficial-event": "Nieoficjalne wydarzenie"
+      },
+      "search": {
+        "title": "Wyszukaj drużyny i wydarzenia",
+        "placeholder": "Wyszukaj drużyny lub wydarzenia...",
+        "start-typing": "Zacznij wpisywać, aby wyszukać",
+        "search-hint": "Szukaj po nazwie drużyny, numerze, mieście, nazwie wydarzenia lub lokalizacji",
+        "searching": "Wyszukiwanie...",
+        "no-results": "Brak wyników",
+        "no-results-hint": "Brak wyników dla \"{query}\". Spróbuj innych słów kluczowych.",
+        "results-count": "{count} wyników",
+        "more-results": "+{count} więcej wyników",
+        "type-team": "Drużyna",
+        "type-event": "Wydarzenie",
+        "error": "Błąd wyszukiwania: {error}"
+      },
+      "quick-actions": {
+        "title": "Szybkie akcje",
+        "robot-scorer": "Punktator Robot Game",
+        "robot-scorer-description": "Punktuj mecze Robot Game",
+        "browse-events": "Przeglądaj wydarzenia",
+        "browse-events-description": "Znajdź i eksploruj wydarzenia"
+      },
+      "resources": {
+        "title": "Zasoby i linki",
+        "fll-website": "Mapa zasobów",
+        "fll-website-description": "Znajdź pomocne zasoby i przewodniki",
+        "fll-website-link": "https://www.firstlegoleague.org/challenge",
+        "github": "Repozytorium GitHub",
+        "github-description": "Zobacz kod źródłowy i wnieś wkład",
+        "resource-map": "Mapa zasobów",
+        "resource-map-description": "Znajdź pomocne zasoby i przewodniki"
+      }
+    },
+    "events": {
+      "title": "Wydarzenia <i>FIRST</i> LEGO League Challenge",
+      "select-season": "Wybierz sezon",
+      "stats": {
+        "active": "Aktywne",
+        "upcoming": "Nadchodzące"
+      },
+      "search": {
+        "title": "Wyszukiwanie i filtrowanie wydarzeń",
+        "placeholder": "Wyszukaj wydarzenia po nazwie lub lokalizacji...",
+        "results-count": "Znaleziono {count} wydarzeń"
+      },
+      "filters": {
+        "all": "Wszystkie wydarzenia ({count})",
+        "active": "Aktywne ({count})",
+        "upcoming": "Nadchodzące ({count})",
+        "past": "Minione ({count})"
+      },
+      "region": {
+        "label": "Region",
+        "all": "Wszystkie regiony",
+        "current-all": "Wyświetlane wydarzenia ze wszystkich regionów",
+        "current": "Wyświetlane wydarzenia z regionu {region}"
+      },
+      "no-events": {
+        "title": "Nie znaleziono wydarzeń",
+        "search-message": "Brak wydarzeń spełniających kryteria wyszukiwania. Spróbuj zmienić frazy.",
+        "filter-message": "Brak wydarzeń dla wybranego filtra.",
+        "clear-search": "Wyczyść wyszukiwanie"
+      }
+    },
+    "team": {
+      "not-found": {
+        "title": "Nie znaleziono drużyny",
+        "description": "Drużyna, której szukasz, nie istnieje w naszej bazie danych.",
+        "back-to-teams": "Wróć do drużyn"
+      },
+      "info": {
+        "from": "Z {city}",
+        "last-competed": "Ostatni start w sezonie {season}"
+      },
+      "navigation": {
+        "team-info": "Informacje o drużynie",
+        "event-results": "Wyniki wydarzeń"
+      },
+      "results": {
+        "title": "Wyniki wydarzeń",
+        "awards-title": "Nagrody i osiągnięcia",
+        "winner": "ZWYCIĘZCA"
+      },
+      "title": "{name} #{number}",
+      "team-logo-alt": "Logo drużyny {number}",
+      "events": {
+        "event-summary": "Podsumowanie wydarzenia",
+        "highest-score": "Najwyższy wynik",
+        "match-results": "Wyniki meczów",
+        "match-number": "Mecz {number}",
+        "robot-game-rank": "Ranking Robot Game",
+        "event-performance": "Wyniki wydarzenia",
+        "view-details": "Zobacz szczegóły",
+        "event-in-progress": "Wydarzenie w toku",
+        "view-live-data": "Zobacz dane na żywo"
+      }
+    },
+    "teams": {
+      "title": "Drużyny <i>FIRST</i> LEGO League Challenge",
+      "region": {
+        "label": "Region",
+        "all": "Wszystkie regiony",
+        "current-all": "Wyświetlane drużyny ze wszystkich regionów",
+        "current": "Wyświetlane drużyny z regionu {region}"
+      },
+      "no-teams": {
+        "title": "Brak drużyn do wyświetlenia",
+        "message": "Proszę sprawdzić później"
+      }
+    },
+    "event": {
+      "general-info": "Informacje ogólne",
+      "event-date": "Data wydarzenia",
+      "location": "Lokalizacja",
+      "teams": "Drużyny",
+      "team": "Drużyna",
+      "division": "Dywizja",
+      "not-found": {
+        "title": "Nie znaleziono wydarzenia",
+        "description": "Wydarzenie, którego szukasz, nie istnieje w naszej bazie danych.",
+        "back-to-events": "Wróć do wydarzeń"
+      },
+      "server-error": {
+        "title": "Coś poszło nie tak",
+        "description": "Wystąpił nieoczekiwany błąd podczas wczytywania wydarzenia. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał.",
+        "back-to-events": "Wróć do wydarzeń",
+        "retry": "Spróbuj ponownie"
+      },
+      "quick-links": {
+        "title": "Szybkie linki",
+        "scoreboard": "Tablica wyników",
+        "awards": "Nagrody",
+        "field-schedule": "Harmonogram pola",
+        "judging-schedule": "Harmonogram sędziowania",
+        "agenda": "Agenda",
+        "general-schedule": "Ogólny harmonogram"
+      },
+      "scoreboard": {
+        "rank": "Pozycja",
+        "best-score": "Najlepszy wynik",
+        "match": "Mecz",
+        "match-scores": "Wyniki meczów",
+        "no-data": "Brak danych na tablicy wyników"
+      },
+      "field-schedule": {
+        "round": "{stage} Runda {number}",
+        "match": "Mecz",
+        "time": "Czas",
+        "table": "Stół",
+        "no-data": "Brak harmonogramu pola"
+      },
+      "judging-schedule": {
+        "start-time": "Start",
+        "no-data": "Brak harmonogramu sędziowania"
+      },
+      "awards": {
+        "team-awards": "Nagrody drużynowe",
+        "personal-awards": "Nagrody osobiste",
+        "advancement": "Uprawnione do awansu",
+        "place": "{place}. miejsce",
+        "no-data": "Brak ogłoszonych nagród"
+      },
+      "agenda": {
+        "no-data": "Brak wydarzeń w agendzie",
+        "visibility": {
+          "public": "Publiczne",
+          "teams": "Drużyny"
+        }
+      },
+      "division-teams": "Drużyny {divisionName}",
+      "region": "Region"
+    },
+    "team-in-event": {
+      "not-found": {
+        "title": "Nie znaleziono drużyny #{number}",
+        "description": "Drużyna, której szukasz, nie istnieje w tym wydarzeniu.",
+        "back-to-event": "Wróć do wydarzenia"
+      },
+      "server-error": {
+        "title": "Coś poszło nie tak",
+        "description": "Wystąpił nieoczekiwany błąd podczas wczytywania drużyny. Spróbuj ponownie później lub skontaktuj się z pomocą techniczną, jeśli problem będzie się powtarzał.",
+        "back-to-event": "Wróć do wydarzenia",
+        "retry": "Spróbuj ponownie"
+      },
+      "header": {
+        "back-to-event": "Wróć do wydarzenia",
+        "rank": "Miejsce #{rank}",
+        "best-score": "Najlepszy wynik: {score}"
+      },
+      "performance": {
+        "title": "Występ robota",
+        "event-summary": "Podsumowanie wydarzenia",
+        "match-scores": "Wyniki meczów",
+        "match-number": "Mecz {number}",
+        "match-results": "Wyniki meczów",
+        "points": "{score} punktów",
+        "best-score": "Najlepszy wynik",
+        "highest-score": "Najwyższy wynik",
+        "robot-rank": "Ranking Robot Game",
+        "robot-game-rank": "Ranking Robot Game",
+        "no-scores": "Brak dostępnych wyników",
+        "no-data": "Brak dostępnych danych o wydajności"
+      },
+      "awards": {
+        "title": "Nagrody",
+        "place-suffix": {
+          "1": ". miejsce",
+          "2": ". miejsce",
+          "3": ". miejsce",
+          "other": ". miejsce"
+        },
+        "no-awards": "Brak nagród"
+      },
+      "schedule": {
+        "title": "Harmonogram",
+        "field-matches": "Mecze na polu",
+        "judging-sessions": "Sesje sędziowskie",
+        "match-type": "{stage} Mecz #{number} - Stół {table}",
+        "judging-session": "Sesja sędziowska #{number} - {room}",
+        "no-matches": "Brak zaplanowanych meczów",
+        "no-judging": "Brak zaplanowanych sesji sędziowskich",
+        "no-schedule": "Brak harmonogramu"
+      }
+    },
+    "tools": {
+      "scorer": {
+        "title": "Punktator Robot Game",
+        "no-equipment-constraint-title": "Brak ograniczenia sprzętu:",
+        "no-equipment-constraint": "Gdy ten symbol pojawia się w prawym górnym rogu misji, obowiązuje następujące ograniczenie: \u201eNa końcu meczu żaden sprzęt nie może dotykać żadnej części modelu misji, aby zaliczyć tę misję.\u201d",
+        "score": "{points} pkt"
+      },
+      "rubrics": {
+        "title": "Rubryki",
+        "navigation": {
+          "title": "Kategorie rubryk"
+        },
+        "actions": {
+          "reset": "Resetuj"
+        },
+        "field-notes-label": "Notatki",
+        "field-notes-placeholder": "Jak drużyna się wyróżniła?",
+        "mobile-placeholder": "Wybierz wartość...",
+        "mobile-feedback": "Informacja zwrotna"
+      }
+    }
+  },
+  "layouts": {
+    "main": {
+      "app-bar": {
+        "teams": "Drużyny",
+        "events": "Wydarzenia",
+        "scorer": "Punktator",
+        "rubrics": "Rubryki"
+      }
+    }
+  }
+}
