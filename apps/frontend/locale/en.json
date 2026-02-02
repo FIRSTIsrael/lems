@@ -835,11 +835,8 @@
       },
       "actions": {
         "move": "Move",
-        "move-tooltip": "Move first team to second slot (removes from original)",
         "replace": "Replace",
-        "replace-tooltip": "Swap both teams between their slots",
         "insert-rematch": "Insert Rematch",
-        "insert-rematch-tooltip": "Insert rematch for completed match",
         "clear": "Clear",
         "cancel": "Cancel",
         "confirm": "Confirm"
@@ -869,20 +866,7 @@
       },
       "validation": {
         "both-source-and-destination-required": "Both source and destination are required",
-        "types-must-match": "Can only move between same types (match to match or session to session)",
-        "select-destination": "Select a destination",
-        "cannot-move-from-loaded": "Cannot move from currently loaded match",
-        "cannot-move-to-loaded": "Cannot move to currently loaded match",
-        "cannot-move-to-blocked": "Cannot move to in-progress or completed matches/sessions",
-        "can-only-move-from-not-started": "Can only move from not-started matches/sessions",
-        "cannot-replace-from-loaded": "Cannot replace from currently loaded match",
-        "cannot-replace-to-loaded": "Cannot replace with currently loaded match",
-        "cannot-replace-with-empty": "Cannot replace with empty slot",
-        "cannot-insert-from-loaded": "Cannot insert from currently loaded match",
-        "cannot-insert-to-loaded": "Cannot insert to currently loaded match",
-        "can-only-replace-from-not-started": "Can only replace from not-started matches/sessions",
-        "no-team-selected": "No team selected",
-        "cannot-modify-in-progress": "Cannot modify in-progress matches/sessions"
+        "types-must-match": "Can only move between same types (match to match or session to session)"
       },
       "errors": {
         "load-data-failed": "Failed to load tournament manager data",

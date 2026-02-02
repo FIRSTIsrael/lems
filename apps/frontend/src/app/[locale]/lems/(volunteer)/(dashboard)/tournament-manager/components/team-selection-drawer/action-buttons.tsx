@@ -1,6 +1,6 @@
 'use client';
 
-import { Stack, Button, Tooltip } from '@mui/material';
+import { Stack, Button } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 import type { SlotInfo } from '../types';
@@ -25,17 +25,12 @@ interface ActionButtonsProps {
 
 type ActionType = 'move' | 'replace' | 'insert' | 'clear';
 
-interface ButtonState {
-  disabled: boolean;
-  reasonKey: string | null;
-}
-
-const getButtonState = (
+const isActionDisabled = (
   actionType: ActionType,
   selectedSlot: SlotInfo | null,
   secondSlot: SlotInfo | null,
   division: TournamentManagerData['division']
-): ButtonState => {
+): boolean => {
   const sourceStatus = selectedSlot ? getSlotStatus(selectedSlot, division) : null;
   const isSourceLoaded = selectedSlot ? isSlotCurrentlyLoaded(selectedSlot, division) : false;
   const isDestinationLoaded = secondSlot ? isSlotCurrentlyLoaded(secondSlot, division) : false;
@@ -44,57 +39,38 @@ const getButtonState = (
     : false;
 
   if (actionType === 'clear') {
-    const disabled =
+    return (
       !selectedSlot?.team ||
       isSlotCompleted(selectedSlot, division) ||
-      isSlotInProgress(selectedSlot, division);
-    return {
-      disabled,
-      reasonKey: disabled ? 'validation.no-team-selected' : null
-    };
+      isSlotInProgress(selectedSlot, division)
+    );
   }
 
   if (!secondSlot) {
-    return { disabled: true, reasonKey: 'validation.select-destination' };
+    return true;
   }
 
   if (isSourceLoaded || isDestinationLoaded) {
-    const reasonKey =
-      actionType === 'move'
-        ? isSourceLoaded
-          ? 'validation.cannot-move-from-loaded'
-          : 'validation.cannot-move-to-loaded'
-        : actionType === 'replace'
-          ? isSourceLoaded
-            ? 'validation.cannot-replace-from-loaded'
-            : 'validation.cannot-replace-to-loaded'
-          : isSourceLoaded
-            ? 'validation.cannot-insert-from-loaded'
-            : 'validation.cannot-insert-to-loaded';
-    return { disabled: true, reasonKey };
+    return true;
   }
 
   if (isDestinationBlocked) {
-    return { disabled: true, reasonKey: 'validation.cannot-move-to-blocked' };
+    return true;
   }
 
   if (actionType === 'insert') {
-    return { disabled: false, reasonKey: null };
+    return false;
   }
 
   if (sourceStatus !== 'not-started') {
-    const reasonKey =
-      actionType === 'move'
-        ? 'validation.can-only-move-from-not-started'
-        : 'validation.can-only-replace-from-not-started';
-    return { disabled: true, reasonKey };
+    return true;
   }
 
   if (actionType === 'replace' && !secondSlot.team) {
-    return { disabled: true, reasonKey: 'validation.cannot-replace-with-empty' };
+    return true;
   }
 
-  return { disabled: false, reasonKey: null };
+  return false;
 };
 
 export function ActionButtonsComponent({
@@ -108,24 +84,16 @@ export function ActionButtonsComponent({
 }: ActionButtonsProps) {
   const t = useTranslations('pages.tournament-manager');
 
-  const moveState = getButtonState('move', selectedSlot, secondSlot, division);
-  const replaceState = getButtonState('replace', selectedSlot, secondSlot, division);
-  const insertState = getButtonState('insert', selectedSlot, secondSlot, division);
-  const clearState = getButtonState('clear', selectedSlot, secondSlot, division);
+  const isMoveDisabled = isActionDisabled('move', selectedSlot, secondSlot, division);
+  const isReplaceDisabled = isActionDisabled('replace', selectedSlot, secondSlot, division);
+  const isInsertDisabled = isActionDisabled('insert', selectedSlot, secondSlot, division);
+  const isClearDisabled = isActionDisabled('clear', selectedSlot, secondSlot, division);
 
   const isSourceCompletedOrInProgress =
     selectedSlot &&
     (isSlotCompleted(selectedSlot, division) || isSlotInProgress(selectedSlot, division));
 
   const isJudgingSession = selectedSlot?.type === 'session';
-
-  const moveTitle = moveState.reasonKey ? t(moveState.reasonKey) : t('actions.move-tooltip');
-  const replaceTitle = replaceState.reasonKey
-    ? t(replaceState.reasonKey)
-    : t('actions.replace-tooltip');
-  const insertTitle = insertState.reasonKey
-    ? t(insertState.reasonKey)
-    : t('actions.insert-rematch-tooltip');
 
   const handleMoveClick = useCallback(() => {
     onMove();
@@ -150,19 +118,15 @@ export function ActionButtonsComponent({
           {isJudgingSession ? (
             // For judging sessions: only show replace button (swap sessions)
             <>
-              <Tooltip title={replaceTitle} arrow>
-                <span style={{ display: 'block' }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleReplaceClick}
-                    disabled={replaceState.disabled}
-                    fullWidth
-                  >
-                    {t('actions.replace')}
-                  </Button>
-                </span>
-              </Tooltip>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleReplaceClick}
+                disabled={isReplaceDisabled}
+                fullWidth
+              >
+                {t('actions.replace')}
+              </Button>
               <Button variant="outlined" fullWidth onClick={handleCloseClick}>
                 {t('actions.cancel')}
               </Button>
@@ -172,47 +136,35 @@ export function ActionButtonsComponent({
             <>
               <Stack direction="row" spacing={1}>
                 {isSourceCompletedOrInProgress ? (
-                  <Tooltip title={insertTitle} arrow>
-                    <span style={{ flex: 1 }}>
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleMoveClick}
-                        disabled={insertState.disabled}
-                        fullWidth
-                      >
-                        {t('actions.insert-rematch')}
-                      </Button>
-                    </span>
-                  </Tooltip>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleMoveClick}
+                    disabled={isInsertDisabled}
+                    fullWidth
+                  >
+                    {t('actions.insert-rematch')}
+                  </Button>
                 ) : (
                   <>
-                    <Tooltip title={moveTitle} arrow>
-                      <span style={{ flex: 1 }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={handleMoveClick}
-                          disabled={moveState.disabled}
-                          fullWidth
-                        >
-                          {t('actions.move')}
-                        </Button>
-                      </span>
-                    </Tooltip>
-                    <Tooltip title={replaceTitle} arrow>
-                      <span style={{ flex: 1 }}>
-                        <Button
-                          variant="contained"
-                          color="secondary"
-                          onClick={handleReplaceClick}
-                          disabled={replaceState.disabled}
-                          fullWidth
-                        >
-                          {t('actions.replace')}
-                        </Button>
-                      </span>
-                    </Tooltip>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={handleMoveClick}
+                      disabled={isMoveDisabled}
+                      fullWidth
+                    >
+                      {t('actions.move')}
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleReplaceClick}
+                      disabled={isReplaceDisabled}
+                      fullWidth
+                    >
+                      {t('actions.replace')}
+                    </Button>
                   </>
                 )}
               </Stack>
@@ -225,26 +177,15 @@ export function ActionButtonsComponent({
       )}
 
       {!secondSlot && (
-        <Tooltip
-          title={
-            clearState.reasonKey
-              ? t(clearState.reasonKey)
-              : t('validation.cannot-modify-in-progress')
-          }
-          arrow
+        <Button
+          variant="outlined"
+          color="error"
+          fullWidth
+          onClick={handleClearClick}
+          disabled={isClearDisabled}
         >
-          <span style={{ display: 'block' }}>
-            <Button
-              variant="outlined"
-              color="error"
-              fullWidth
-              onClick={handleClearClick}
-              disabled={clearState.disabled}
-            >
-              {t('actions.clear')}
-            </Button>
-          </span>
-        </Tooltip>
+          {t('actions.clear')}
+        </Button>
       )}
     </Stack>
   );

@@ -834,11 +834,8 @@
       },
       "actions": {
         "move": "העברה",
-        "move-tooltip": "העבר קבוצה ראשונה למשבצת שנייה (מסיר מהמקור)",
         "replace": "החלפה",
-        "replace-tooltip": "החלף בין שתי הקבוצות במשבצות שלהן",
         "insert-rematch": "הכנס משחק חוזר",
-        "insert-rematch-tooltip": "הכנס משחק חוזר עבור משחק שהסתיים",
         "clear": "נקה",
         "cancel": "ביטול",
         "confirm": "אישור"
@@ -868,20 +865,7 @@
       },
       "validation": {
         "both-source-and-destination-required": "מקור ויעד נדרשים",
-        "types-must-match": "ניתן להעביר רק בין אותם סוגים (מקצה למקצה או מפגש למפגש)",
-        "select-destination": "בחרו יעד",
-        "cannot-move-from-loaded": "לא ניתן להעביר ממקצה טעון כרגע",
-        "cannot-move-to-loaded": "לא ניתן להעביר למקצה טעון כרגע",
-        "cannot-move-to-blocked": "לא ניתן להעביר למקצים או מפגשים בסטטוס מתרחש או הסתיים",
-        "can-only-move-from-not-started": "ניתן להעביר רק ממקצים או מפגשים בסטטוס טרם התחיל",
-        "cannot-replace-from-loaded": "לא ניתן להחליף ממקצה טעון כרגע",
-        "cannot-replace-to-loaded": "לא ניתן להחליף למקצה טעון כרגע",
-        "cannot-replace-with-empty": "לא ניתן להחליף עם משבצת ריקה",
-        "cannot-insert-from-loaded": "לא ניתן להכניס ממקצה טעון כרגע",
-        "cannot-insert-to-loaded": "לא ניתן להכניס למקצה טעון כרגע",
-        "can-only-replace-from-not-started": "ניתן להחליף רק ממקצים או מפגשים בסטטוס טרם התחיל",
-        "no-team-selected": "אין קבוצה נבחרת",
-        "cannot-modify-in-progress": "לא ניתן לשנות מקצים או מפגשים בסטטוס מתרחש"
+        "types-must-match": "ניתן להעביר רק בין אותם סוגים (מקצה למקצה או מפגש למפגש)"
       },
       "errors": {
         "load-data-failed": "נכשל בטעינת נתוני מנהל התחרויות",
