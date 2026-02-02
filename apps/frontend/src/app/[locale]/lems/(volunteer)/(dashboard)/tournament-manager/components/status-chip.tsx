@@ -1,5 +1,5 @@
 import { Chip, ChipProps } from '@mui/material';
-import { useMatchTranslations } from '@lems/localization';
+import { useMatchTranslations, useJudgingSessionTranslations } from '@lems/localization';
 import type { MatchStatus, SessionStatus } from '../graphql';
 
 interface StatusChipProps extends Omit<ChipProps, 'color'> {
@@ -7,10 +7,9 @@ interface StatusChipProps extends Omit<ChipProps, 'color'> {
   status: MatchStatus | SessionStatus;
 }
 
-// TODO: Add session stage translation hook
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function StatusChip({ type, status, ...props }: StatusChipProps) {
-  const { getStatus } = useMatchTranslations();
+  const matchTranslations = useMatchTranslations();
+  const sessionTranslations = useJudgingSessionTranslations();
 
   const colorMap: Record<string, ChipProps['color']> = {
     'not-started': 'default',
@@ -18,12 +17,14 @@ export function StatusChip({ type, status, ...props }: StatusChipProps) {
     completed: 'success'
   };
 
+  const getLabel = () => {
+    if (type === 'match') {
+      return matchTranslations.getStatus(status as MatchStatus);
+    }
+    return sessionTranslations.getStatus(status as SessionStatus);
+  };
+
   return (
-    <Chip
-      {...props}
-      label={getStatus(status as MatchStatus)}
-      color={colorMap[status] ?? 'default'}
-      variant="filled"
-    />
+    <Chip {...props} label={getLabel()} color={colorMap[status] ?? 'default'} variant="filled" />
   );
 }
