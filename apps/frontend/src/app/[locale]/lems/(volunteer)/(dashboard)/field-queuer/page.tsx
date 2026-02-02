@@ -2,17 +2,21 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import {
   Stack,
   Alert,
   Typography,
   Paper,
   Fab,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel
+  Button,
+  Popover,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  Badge
 } from '@mui/material';
+import FilterListIcon from '@mui/icons-material/FilterList';
 import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import dayjs from 'dayjs';
@@ -36,8 +40,16 @@ import { TeamQueueCard } from './components';
 export default function FieldQueuerPage() {
   const t = useTranslations('pages.field-queuer');
   const { currentDivision } = useEvent();
-  const [selectedTable, setSelectedTable] = useState<string>('all');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const currentTime = useTime({ interval: 1000 });
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const selectedTables = useMemo(
+    () => searchParams.get('tables')?.split(',').filter(Boolean) || [],
+    [searchParams]
+  );
 
   const subscriptions = useMemo(
     () => [
@@ -123,29 +135,68 @@ export default function FieldQueuerPage() {
   }, [safeData.matches, safeData.sessions, currentTime]);
 
   const filteredTeams = useMemo(() => {
-    if (selectedTable === 'all') return calledTeams;
-    return calledTeams.filter(team => team.tableName === selectedTable);
-  }, [calledTeams, selectedTable]);
+    if (selectedTables.length === 0) return calledTeams;
+    return calledTeams.filter(team => selectedTables.includes(team.tableName));
+  }, [calledTeams, selectedTables]);
+
+  const handleToggle = (table: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    const current = params.get('tables')?.split(',').filter(Boolean) || [];
+    const updated = current.includes(table)
+      ? current.filter(t => t !== table)
+      : [...current, table];
+
+    if (updated.length > 0) {
+      params.set('tables', updated.join(','));
+    } else {
+      params.delete('tables');
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <>
       <PageHeader title={t('page-title')}>
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-          <InputLabel>{t('filter-by-table')}</InputLabel>
-          <Select
-            value={selectedTable}
-            label={t('filter-by-table')}
-            onChange={e => setSelectedTable(e.target.value)}
+        <Badge badgeContent={selectedTables.length} color="primary">
+          <Button
+            variant="outlined"
+            startIcon={<FilterListIcon />}
+            onClick={e => setAnchorEl(e.currentTarget)}
+            size="small"
           >
-            <MenuItem value="all">{t('all-tables')}</MenuItem>
-            {tables.map(table => (
-              <MenuItem key={table} value={table}>
-                {table}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+            {t('filter-by-table')}
+          </Button>
+        </Badge>
       </PageHeader>
+
+      <Popover
+        open={Boolean(anchorEl)}
+        anchorEl={anchorEl}
+        onClose={() => setAnchorEl(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      >
+        <Paper sx={{ p: 2, minWidth: 200 }}>
+          <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+            {t('filter-by-table')}
+          </Typography>
+          <FormGroup>
+            {tables.map(table => (
+              <FormControlLabel
+                key={table}
+                control={
+                  <Checkbox
+                    checked={selectedTables.includes(table)}
+                    onChange={() => handleToggle(table)}
+                    size="small"
+                  />
+                }
+                label={table}
+              />
+            ))}
+          </FormGroup>
+        </Paper>
+      </Popover>
 
       <Stack spacing={3} sx={{ pt: 3 }}>
         {error && <Alert severity="error">{error.message}</Alert>}
