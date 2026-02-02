@@ -127,7 +127,7 @@
       }
     },
     "field-head-queuer": {
-      "page-title": "Field Queue Management",
+      "page-title": "Head field queuer",
       "field-schedule": {
         "title": "Field Schedule",
         "subtitle": "Upcoming matches - call teams and check them off as they arrive",
