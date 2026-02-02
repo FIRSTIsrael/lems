@@ -13,5 +13,6 @@ export {
   createMatchCompletedSubscription,
   createSessionStartedSubscription,
   createSessionAbortedSubscription,
-  createSessionCompletedSubscription
+  createSessionCompletedSubscription,
+  createTeamArrivedSubscription
 } from './subscriptions';

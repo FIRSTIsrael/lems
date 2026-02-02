@@ -1,4 +1,5 @@
 import { Alert, AlertTitle, Chip, Stack } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
 import { useTranslations } from 'next-intl';
 import type { TournamentManagerData } from '../graphql';
 
@@ -34,6 +35,17 @@ export function MissingTeamsAlert({
             size="small"
             color={selectedSlotTeamId === team.id ? 'primary' : 'default'}
             onClick={() => onTeamClick(team)}
+            icon={
+              team.arrived === false ? (
+                <BlockIcon
+                  sx={{
+                    fontSize: '0.75rem !important',
+                    color: 'error.main !important',
+                    ml: -0.5
+                  }}
+                />
+              ) : undefined
+            }
             sx={{
               cursor: 'pointer',
               '&:hover': { bgcolor: 'action.hover' }

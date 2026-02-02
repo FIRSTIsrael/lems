@@ -16,6 +16,7 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
         slug
         affiliation
         city
+        arrived
       }
       tables {
         id
@@ -44,6 +45,7 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
               slug
               affiliation
               city
+              arrived
             }
             table {
               id
@@ -74,6 +76,7 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
             slug
             affiliation
             city
+            arrived
           }
         }
       }

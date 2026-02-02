@@ -1,4 +1,5 @@
 import { Box, Button, Typography } from '@mui/material';
+import BlockIcon from '@mui/icons-material/Block';
 import { memo } from 'react';
 
 const getSlotColors = (isSelected: boolean, isSecondSelected: boolean, isDisabled: boolean) => {
@@ -35,7 +36,14 @@ const getSlotColors = (isSelected: boolean, isSecondSelected: boolean, isDisable
 };
 
 interface TeamSlotProps {
-  team: { id: string; number: number; name: string; affiliation?: string; city?: string } | null;
+  team: {
+    id: string;
+    number: number;
+    name: string;
+    affiliation?: string;
+    city?: string;
+    arrived?: boolean;
+  } | null;
   isSelected: boolean;
   isSecondSelected: boolean;
   isMobile: boolean;
@@ -96,16 +104,27 @@ function TeamSlotComponent({
     >
       {team ? (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 0.25 }}>
-          <Typography
-            component="span"
-            sx={{
-              fontSize: fontSizes.primary,
-              fontWeight: 600,
-              color: colors.primary
-            }}
-          >
-            #{team.number}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+            <Typography
+              component="span"
+              sx={{
+                fontSize: fontSizes.primary,
+                fontWeight: 600,
+                color: colors.primary
+              }}
+            >
+              #{team.number}
+            </Typography>
+            {team.arrived === false && (
+              <BlockIcon
+                sx={{
+                  fontSize: fontSizes.primary,
+                  color: 'error.main',
+                  flexShrink: 0
+                }}
+              />
+            )}
+          </Box>
           <Typography
             component="span"
             sx={{

@@ -5,6 +5,7 @@ export interface Team {
   slug: string;
   affiliation?: string;
   city?: string;
+  arrived: boolean;
 }
 
 export interface Table {
