@@ -186,10 +186,8 @@
     },
     "field-queuer": {
       "page-title": "Field Queuer",
-      "instructions": {
-        "title": "Instructions",
-        "description": "Teams shown below have been called for their matches but haven't arrived yet. Please guide them to their assigned tables."
-      },
+      "filter-by-table": "Filter by Table",
+      "all-tables": "All Tables",
       "no-teams": "No Teams Waiting",
       "no-teams-description": "All called teams have arrived at their tables",
       "team-card": {

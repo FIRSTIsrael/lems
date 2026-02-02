@@ -1,11 +1,24 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Stack, Alert, Typography, Paper, Box } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import {
+  Stack,
+  Alert,
+  Typography,
+  Paper,
+  Fab,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel
+} from '@mui/material';
+import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import dayjs from 'dayjs';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
+import { useTime } from '../../../../../../lib/time/hooks/use-time';
 import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_FIELD_QUEUER_DATA,
@@ -23,6 +36,8 @@ import { TeamQueueCard } from './components';
 export default function FieldQueuerPage() {
   const t = useTranslations('pages.field-queuer');
   const { currentDivision } = useEvent();
+  const [selectedTable, setSelectedTable] = useState<string>('all');
+  const currentTime = useTime({ interval: 1000 });
 
   const subscriptions = useMemo(
     () => [
@@ -45,6 +60,16 @@ export default function FieldQueuerPage() {
     loadedMatch: null
   };
 
+  const tables = useMemo(() => {
+    const tableSet = new Set<string>();
+    safeData.matches.forEach(match => {
+      match.participants.forEach(p => {
+        if (p.table) tableSet.add(p.table.name);
+      });
+    });
+    return Array.from(tableSet).sort();
+  }, [safeData.matches]);
+
   const calledTeams = useMemo(() => {
     const teams: Array<{
       teamNumber: number;
@@ -55,6 +80,7 @@ export default function FieldQueuerPage() {
       isInJudging: boolean;
       isUrgent: boolean;
       teamId: string;
+      tableId: string;
     }> = [];
 
     const calledMatches = safeData.matches.filter(m => m.called && m.status === 'not-started');
@@ -70,7 +96,8 @@ export default function FieldQueuerPage() {
           if (!participant.team || !participant.table) return;
 
           const isInJudging = activeSessions.some(s => s.team?.id === participant.team?.id);
-          const isUrgent = safeData.loadedMatch?.id === match.id;
+          const minutesUntilMatch = currentTime.diff(dayjs(match.scheduledTime), 'minute');
+          const isUrgent = minutesUntilMatch >= -10;
 
           teams.push({
             teamNumber: participant.team.number,
@@ -80,7 +107,8 @@ export default function FieldQueuerPage() {
             scheduledTime: match.scheduledTime,
             isInJudging,
             isUrgent,
-            teamId: participant.team.id
+            teamId: participant.team.id,
+            tableId: participant.table.id
           });
         });
     });
@@ -92,11 +120,32 @@ export default function FieldQueuerPage() {
     });
 
     return teams;
-  }, [safeData.matches, safeData.sessions, safeData.loadedMatch]);
+  }, [safeData.matches, safeData.sessions, currentTime]);
+
+  const filteredTeams = useMemo(() => {
+    if (selectedTable === 'all') return calledTeams;
+    return calledTeams.filter(team => team.tableName === selectedTable);
+  }, [calledTeams, selectedTable]);
 
   return (
     <>
-      <PageHeader title={t('page-title')} />
+      <PageHeader title={t('page-title')}>
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel>{t('filter-by-table')}</InputLabel>
+          <Select
+            value={selectedTable}
+            label={t('filter-by-table')}
+            onChange={e => setSelectedTable(e.target.value)}
+          >
+            <MenuItem value="all">{t('all-tables')}</MenuItem>
+            {tables.map(table => (
+              <MenuItem key={table} value={table}>
+                {table}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </PageHeader>
 
       <Stack spacing={3} sx={{ pt: 3 }}>
         {error && <Alert severity="error">{error.message}</Alert>}
@@ -106,21 +155,7 @@ export default function FieldQueuerPage() {
           </Alert>
         )}
 
-        <Paper sx={{ p: 3, bgcolor: 'info.main', color: 'info.contrastText' }}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <InfoOutlinedIcon />
-            <Box>
-              <Typography variant="h6" fontWeight={600}>
-                {t('instructions.title')}
-              </Typography>
-              <Typography variant="body2" sx={{ mt: 1 }}>
-                {t('instructions.description')}
-              </Typography>
-            </Box>
-          </Stack>
-        </Paper>
-
-        {!loading && calledTeams.length === 0 && (
+        {!loading && filteredTeams.length === 0 && (
           <Paper sx={{ p: 4, textAlign: 'center' }}>
             <Typography variant="h6" color="text.secondary">
               {t('no-teams')}
@@ -131,7 +166,7 @@ export default function FieldQueuerPage() {
           </Paper>
         )}
 
-        {calledTeams.map(team => (
+        {filteredTeams.map(team => (
           <TeamQueueCard
             key={team.teamId}
             teamNumber={team.teamNumber}
@@ -144,6 +179,34 @@ export default function FieldQueuerPage() {
           />
         ))}
       </Stack>
+
+      <Fab
+        color="primary"
+        component="a"
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16
+        }}
+        href={`/lems/reports/field-schedule`}
+        target="_blank"
+      >
+        <CalendarMonthOutlinedIcon />
+      </Fab>
+
+      <Fab
+        color="secondary"
+        component="a"
+        sx={{
+          position: 'fixed',
+          bottom: 88,
+          right: 16
+        }}
+        href={`/lems/reports/pit-map`}
+        target="_blank"
+      >
+        <MapOutlinedIcon />
+      </Fab>
     </>
   );
 }
