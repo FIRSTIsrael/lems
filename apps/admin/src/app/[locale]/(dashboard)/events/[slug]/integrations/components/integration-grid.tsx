@@ -8,6 +8,7 @@ import { apiFetch, getAllIntegrations } from '@lems/shared';
 import { AdminIntegrationResponseSchema, type Integration } from '@lems/types/api/admin';
 import { useEvent } from '../../components/event-context';
 import { useDialog } from '../../../../components/dialog-provider';
+import { getAsset } from '../../../../../../../lib/assets';
 import { IntegrationCard } from './integration-card';
 import { AddIntegrationCard } from './add-integration-card';
 import { AddIntegrationDialog, type DialogComponentProps } from './add-integration-dialog';
@@ -166,16 +167,20 @@ export const IntegrationGrid: React.FC = () => {
               <AddIntegrationCard onClick={handleAddIntegration} />
             </Grid>
 
-            {integrations.map(integration => (
-              <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={integration.id}>
-                <IntegrationCard
-                  id={integration.id}
-                  name={getIntegrationName(integration.type)}
-                  isSelected={selectedIntegration?.id === integration.id}
-                  onClick={() => setSelectedIntegration(integration)}
-                />
-              </Grid>
-            ))}
+            {integrations.map(integration => {
+              const config = getAllIntegrations().find(i => i.type === integration.type);
+              return (
+                <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={integration.id}>
+                  <IntegrationCard
+                    id={integration.id}
+                    name={getIntegrationName(integration.type)}
+                    logo={config ? getAsset(config.logoAsset) : undefined}
+                    isSelected={selectedIntegration?.id === integration.id}
+                    onClick={() => setSelectedIntegration(integration)}
+                  />
+                </Grid>
+              );
+            })}
           </Grid>
         </Grid>
         <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex' }}>

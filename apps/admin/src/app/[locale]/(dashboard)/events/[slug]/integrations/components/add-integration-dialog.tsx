@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useCallback, useState } from 'react';
+import Image from 'next/image';
 import {
   Dialog,
   DialogTitle,
@@ -12,12 +13,12 @@ import {
   Typography,
   CircularProgress,
   Alert,
-  Box,
-  Avatar
+  Box
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Search as SearchIcon } from '@mui/icons-material';
 import { IntegrationConfig } from '@lems/shared';
+import { getAsset } from '../../../../../../../lib/assets';
 
 export interface DialogComponentProps {
   close: () => void;
@@ -162,17 +163,31 @@ export const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
                   }
                 }}
               >
-                <Avatar
+                <Box
                   sx={{
-                    bgcolor: 'action.hover',
-                    color: 'primary.main',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     width: 40,
                     height: 40,
-                    flexShrink: 0
+                    borderRadius: 1,
+                    bgcolor: 'action.hover',
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                    position: 'relative'
                   }}
                 >
-                  {integration.type === 'first-israel-dashboard' ? '🎯' : '🔌'}
-                </Avatar>
+                  <Image
+                    src={getAsset(integration.logoAsset)}
+                    alt={getIntegrationName(integration.type)}
+                    fill
+                    sizes="40px"
+                    style={{
+                      objectFit: 'contain',
+                      padding: '4px'
+                    }}
+                  />
+                </Box>
 
                 <Stack spacing={0.25} flex={1}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
