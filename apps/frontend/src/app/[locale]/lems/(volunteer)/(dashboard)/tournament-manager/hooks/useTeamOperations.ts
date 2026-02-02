@@ -8,7 +8,11 @@ import {
   GET_TOURNAMENT_MANAGER_DATA
 } from '../graphql';
 import type { SlotInfo } from '../components/types';
-import { isSlotCompleted, isSlotInProgress, isSlotBlockedAsDestination } from '../components/types';
+import {
+  isSlotCompleted,
+  isSlotInProgress,
+  isSlotBlockedAsDestination
+} from '../components/validation';
 import type { TournamentManagerData } from '../graphql';
 
 const createMutationOptions = (divisionId: string) => ({

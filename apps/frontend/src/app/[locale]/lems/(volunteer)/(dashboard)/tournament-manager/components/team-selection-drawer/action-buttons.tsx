@@ -119,11 +119,13 @@ export function ActionButtonsComponent({
 
   const isJudgingSession = selectedSlot?.type === 'session';
 
-  const moveTitle = moveState.reasonKey ? t(moveState.reasonKey) : t('move-tooltip');
-  const replaceTitle = replaceState.reasonKey ? t(replaceState.reasonKey) : t('replace-tooltip');
+  const moveTitle = moveState.reasonKey ? t(moveState.reasonKey) : t('actions.move-tooltip');
+  const replaceTitle = replaceState.reasonKey
+    ? t(replaceState.reasonKey)
+    : t('actions.replace-tooltip');
   const insertTitle = insertState.reasonKey
     ? t(insertState.reasonKey)
-    : t('insert-rematch-tooltip');
+    : t('actions.insert-rematch-tooltip');
 
   const handleMoveClick = useCallback(() => {
     onMove();
@@ -157,12 +159,12 @@ export function ActionButtonsComponent({
                     disabled={replaceState.disabled}
                     fullWidth
                   >
-                    {t('replace')}
+                    {t('actions.replace')}
                   </Button>
                 </span>
               </Tooltip>
               <Button variant="outlined" fullWidth onClick={handleCloseClick}>
-                {t('cancel')}
+                {t('actions.cancel')}
               </Button>
             </>
           ) : (
@@ -179,7 +181,7 @@ export function ActionButtonsComponent({
                         disabled={insertState.disabled}
                         fullWidth
                       >
-                        {t('insert-rematch')}
+                        {t('actions.insert-rematch')}
                       </Button>
                     </span>
                   </Tooltip>
@@ -194,7 +196,7 @@ export function ActionButtonsComponent({
                           disabled={moveState.disabled}
                           fullWidth
                         >
-                          {t('move')}
+                          {t('actions.move')}
                         </Button>
                       </span>
                     </Tooltip>
@@ -207,7 +209,7 @@ export function ActionButtonsComponent({
                           disabled={replaceState.disabled}
                           fullWidth
                         >
-                          {t('replace')}
+                          {t('actions.replace')}
                         </Button>
                       </span>
                     </Tooltip>
@@ -215,31 +217,35 @@ export function ActionButtonsComponent({
                 )}
               </Stack>
               <Button variant="outlined" fullWidth onClick={handleCloseClick}>
-                {t('cancel')}
+                {t('actions.cancel')}
               </Button>
             </>
           )}
         </>
       )}
 
-      <Tooltip
-        title={
-          clearState.reasonKey ? t(clearState.reasonKey) : t('validation.cannot-modify-in-progress')
-        }
-        arrow
-      >
-        <span style={{ display: 'block' }}>
-          <Button
-            variant="outlined"
-            color="error"
-            fullWidth
-            onClick={handleClearClick}
-            disabled={clearState.disabled}
-          >
-            {t('clear')}
-          </Button>
-        </span>
-      </Tooltip>
+      {!secondSlot && (
+        <Tooltip
+          title={
+            clearState.reasonKey
+              ? t(clearState.reasonKey)
+              : t('validation.cannot-modify-in-progress')
+          }
+          arrow
+        >
+          <span style={{ display: 'block' }}>
+            <Button
+              variant="outlined"
+              color="error"
+              fullWidth
+              onClick={handleClearClick}
+              disabled={clearState.disabled}
+            >
+              {t('actions.clear')}
+            </Button>
+          </span>
+        </Tooltip>
+      )}
     </Stack>
   );
 }

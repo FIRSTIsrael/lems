@@ -5,13 +5,11 @@ import { useTranslations } from 'next-intl';
 import type { TournamentManagerData } from '../../graphql';
 import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from '../constants';
 import type { SlotInfo } from '../types';
-import {
-  SelectedSlotHeader,
-  FieldMatchesList,
-  JudgingSessionsList,
-  SecondSlotInfo,
-  ActionButtons
-} from './index';
+import { SelectedSlotHeader } from './selected-slot-header';
+import { FieldMatchesList } from './field-matches-list';
+import { JudgingSessionsList } from './judging-sessions-list';
+import { SecondSlotInfo } from './second-slot-info';
+import { ActionButtons } from './action-buttons';
 
 interface TeamSelectionDrawerProps {
   open: boolean;
@@ -74,6 +72,7 @@ export function TeamSelectionDrawerWrapper({
           <Divider />
 
           <FieldMatchesList
+            division={division}
             slot={selectedSlot}
             isMobile={isMobile}
             getStage={getStage}
@@ -81,6 +80,7 @@ export function TeamSelectionDrawerWrapper({
           />
 
           <JudgingSessionsList
+            division={division}
             slot={selectedSlot}
             isMobile={isMobile}
             sessions={division.judging.sessions}
@@ -97,23 +97,23 @@ export function TeamSelectionDrawerWrapper({
                 matches={division.field.matches}
                 sessions={division.judging.sessions}
               />
-
-              <ActionButtons
-                selectedSlot={selectedSlot}
-                secondSlot={secondSlot}
-                division={division}
-                onMove={onMove}
-                onReplace={onReplace}
-                onClear={onClear}
-                onClose={onClose}
-              />
             </>
           )}
+
+          <ActionButtons
+            selectedSlot={selectedSlot}
+            secondSlot={secondSlot}
+            division={division}
+            onMove={onMove}
+            onReplace={onReplace}
+            onClear={onClear}
+            onClose={onClose}
+          />
 
           {!secondSlot && (
             <Box>
               <Typography variant="body2" color="text.secondary" textAlign="center">
-                {t('select-second-team-instruction')}
+                {t('slots.select-second-team-instruction')}
               </Typography>
             </Box>
           )}

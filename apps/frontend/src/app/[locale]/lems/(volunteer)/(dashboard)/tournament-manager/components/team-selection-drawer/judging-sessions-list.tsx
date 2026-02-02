@@ -33,7 +33,7 @@ export function JudgingSessionsList({
           <Paper key={session.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
             <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
               <Typography variant="body2" fontWeight={600} noWrap sx={{ flex: 1, minWidth: 0 }}>
-                {t('session')} #{session.number} • {session.room.name} •{' '}
+                {t('labels.session')} #{session.number} • {session.room.name} •{' '}
                 {dayjs(session.scheduledTime).format('HH:mm')}
               </Typography>
               <Chip

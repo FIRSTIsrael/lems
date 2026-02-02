@@ -16,8 +16,8 @@ export function SelectedSlotHeader({ selectedSlot, onClose }: SelectedSlotHeader
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography variant="caption" color="text.secondary" display="block">
           {selectedSlot?.type === 'match'
-            ? `${t('match')} - ${selectedSlot.tableName}`
-            : `${t('session')} - ${selectedSlot?.roomName}`}
+            ? `${t('labels.match')} - ${selectedSlot.tableName}`
+            : `${t('labels.session')} - ${selectedSlot?.roomName}`}
         </Typography>
         <Typography variant="h6" fontWeight={700} color="primary" noWrap>
           #{selectedSlot?.team?.number} {selectedSlot?.team?.name}

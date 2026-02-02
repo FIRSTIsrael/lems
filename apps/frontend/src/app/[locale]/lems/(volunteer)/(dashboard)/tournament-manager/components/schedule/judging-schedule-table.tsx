@@ -69,12 +69,12 @@ function JudgingScheduleTableComponent({
           <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell width={80} align="center">
               <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                {t('start-time')}
+                {t('judging-schedule.columns.start-time')}
               </Typography>
             </TableCell>
             <TableCell width={80} align="center">
               <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                {t('end-time')}
+                {t('judging-schedule.columns.end-time')}
               </Typography>
             </TableCell>
             {rooms.map(room => (

@@ -102,18 +102,17 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               justifyContent: 'space-between'
             }}
           >
-            <MissingTeamsAlert
-              missingTeams={missingTeams}
-              currentRoundTitle={currentRoundTitle}
-              selectedSlotTeamId={selectedSlot?.team?.id}
-              onTeamClick={handleTeamClick}
-              t={t}
-            />
             {roundSelector && (
               <Box sx={{ display: 'flex', alignItems: 'center', pt: 0.5, order: 2 }}>
                 {roundSelector}
               </Box>
             )}
+            <MissingTeamsAlert
+              missingTeams={missingTeams}
+              currentRoundTitle={currentRoundTitle}
+              selectedSlotTeamId={selectedSlot?.team?.id}
+              onTeamClick={handleTeamClick}
+            />
           </Box>
         )}
         <Tabs
@@ -131,8 +130,8 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
             }
           }}
         >
-          <Tab label={t('match-schedule')} />
-          <Tab label={t('judging-schedule')} />
+          <Tab label={t('match-schedule.title')} />
+          <Tab label={t('judging-schedule.title')} />
         </Tabs>
 
         <Box sx={{ flex: 1, overflow: 'auto', bgcolor: 'background.paper' }}>

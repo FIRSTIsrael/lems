@@ -9,15 +9,21 @@ import {
   TableRow,
   Typography,
   ToggleButtonGroup,
-  ToggleButton
+  ToggleButton,
+  Chip
 } from '@mui/material';
 import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import type { TournamentManagerData } from '../../graphql';
+import { useMatchTranslations } from '@lems/localization';
+import type { MatchStatus, TournamentManagerData } from '../../graphql';
 import { TeamSlot } from '../team-slot';
 import type { SlotInfo } from '../types';
-import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from '../validation';
+import {
+  isSlotBlockedForSelection,
+  isSlotBlockedAsDestination,
+  isSlotInProgress
+} from '../validation';
 import { MATCH_DURATION_SECONDS } from '../constants';
 
 interface FieldScheduleTableProps {
@@ -81,6 +87,7 @@ function FieldScheduleTableComponent({
   getStage
 }: FieldScheduleTableProps) {
   const t = useTranslations('pages.tournament-manager');
+  const { getStatus } = useMatchTranslations();
 
   const roundOptions = useMemo(
     () => groupMatchesByStageAndRound(matches, getStage),
@@ -165,17 +172,22 @@ function FieldScheduleTableComponent({
             <TableRow sx={{ bgcolor: 'grey.200' }}>
               <TableCell width={80} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                  {t('match-number')}
+                  {t('match-schedule.columns.match-number')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                  {t('start-time')}
+                  {t('match-schedule.columns.start-time')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
-                  {t('end-time')}
+                  {t('match-schedule.columns.end-time')}
+                </Typography>
+              </TableCell>
+              <TableCell width={100} align="center">
+                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  {t('match-schedule.columns.status')}
                 </Typography>
               </TableCell>
               {tables.map(table => (
@@ -222,6 +234,20 @@ function FieldScheduleTableComponent({
                       {endTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      label={getStatus(match.status as MatchStatus)}
+                      size="small"
+                      color={
+                        match.status === 'not-started'
+                          ? 'default'
+                          : match.status === 'in-progress'
+                            ? 'primary'
+                            : 'success'
+                      }
+                      variant="filled"
+                    />
+                  </TableCell>
                   {tables.map(table => {
                     const participant = tableParticipants.get(table.id);
                     const team = participant?.team;
@@ -234,10 +260,11 @@ function FieldScheduleTableComponent({
                       time: matchTime.format('HH:mm')
                     };
                     const isDisabled =
-                      team !== null && division
+                      (team !== null && division
                         ? isSlotBlockedForSelection(slot, division) ||
                           (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
-                        : false;
+                        : false) ||
+                      (division ? isSlotInProgress({ ...slot, type: 'match' }, division) : false);
 
                     return (
                       <TableCell key={table.id} align="center">

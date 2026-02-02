@@ -795,52 +795,73 @@
     },
     "tournament-manager": {
       "title": "Tournament Manager",
-      "match-swaps": "Match Swaps",
-      "judging-swaps": "Judging Swaps",
-      "select-match": "Select Match",
-      "select-participant-1": "Select First Participant",
-      "select-participant-2": "Select Second Participant",
-      "select-session-1": "Select First Session",
-      "select-session-2": "Select Second Session",
-      "swap-preview": "Swap Preview",
-      "swap-teams": "Swap Teams",
-      "cancel": "Cancel",
-      "confirm": "Confirm",
-      "confirm-swap": "Confirm Team Swap",
-      "confirm-swap-message": "Are you sure you want to swap {team1} at {table1} with {team2} at {table2}?",
-      "confirm-session-swap-message": "Are you sure you want to swap {team1} in {room1} with {team2} in {room2}?",
-      "swap-success": "Teams swapped successfully",
-      "swap-error": "Failed to swap teams",
-      "no-eligible-matches": "No eligible matches for swapping. Matches must be in not-started status and not currently loaded.",
-      "no-eligible-sessions": "No eligible sessions for swapping. Sessions must be in not-started status and not called.",
       "schedule-reference": "Schedule Reference",
-      "match-schedule": "Match Schedule",
-      "judging-schedule": "Judging Schedule",
-      "match-number": "Match #",
-      "match": "Match",
-      "time": "Time",
-      "start-time": "Start Time",
-      "end-time": "End Time",
-      "status-column": "Status",
-      "participants": "Participants",
-      "room": "Room",
-      "team": "Team",
-      "called": "Called",
-      "no-team": "No Team",
-      "session": "Session",
+      "match-schedule": {
+        "title": "Match Schedule",
+        "columns": {
+          "match-number": "Match #",
+          "start-time": "Start Time",
+          "end-time": "End Time",
+          "status": "Status"
+        }
+      },
+      "judging-schedule": {
+        "title": "Judging Schedule",
+        "columns": {
+          "start-time": "Start Time",
+          "end-time": "End Time"
+        }
+      },
       "field-matches": "Field Matches",
       "judging-sessions": "Judging Sessions",
-      "second-team-selected": "Second Team Selected",
-      "select-second-team-instruction": "Select another team slot to move or replace",
-      "move": "Move",
-      "replace": "Replace",
-      "move-tooltip": "Move first team to second slot (removes from original)",
-      "replace-tooltip": "Swap both teams between their slots",
-      "team-schedule": "Team Schedule",
-      "missing-teams-title": "Teams Missing from Schedule",
-      "missing-teams-from-round": "Teams Missing from Round",
-      "missing-teams-description": "{count} team(s) not assigned",
-      "click-empty-slot-to-assign": "Click an empty slot to assign this team",
+      "labels": {
+        "match": "Match",
+        "session": "Session",
+        "team": "Team",
+        "room": "Room",
+        "no-team": "No Team",
+        "called": "Called"
+      },
+      "slots": {
+        "second-team-selected": "Second Team Selected",
+        "select-second-team-instruction": "Select another team slot to move or replace",
+        "team-schedule": "Team Schedule",
+        "missing-teams": {
+          "title": "Teams Missing from Schedule",
+          "from-round": "Teams Missing from Round",
+          "description": "{count} team(s) not assigned",
+          "click-empty-slot-to-assign": "Click an empty slot to assign this team"
+        }
+      },
+      "actions": {
+        "move": "Move",
+        "move-tooltip": "Move first team to second slot (removes from original)",
+        "replace": "Replace",
+        "replace-tooltip": "Swap both teams between their slots",
+        "insert-rematch": "Insert Rematch",
+        "insert-rematch-tooltip": "Insert rematch for completed match",
+        "clear": "Clear",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "swap": {
+        "title": "Swap Preview",
+        "confirm-title": "Confirm Team Swap",
+        "teams": "Swap Teams",
+        "message": "Are you sure you want to swap {team1} at {table1} with {team2} at {table2}?",
+        "session-message": "Are you sure you want to swap {team1} in {room1} with {team2} in {room2}?",
+        "success": "Teams swapped successfully",
+        "error": "Failed to swap teams",
+        "match-swaps": "Match Swaps",
+        "judging-swaps": "Judging Swaps",
+        "select-match": "Select Match",
+        "select-participant-1": "Select First Participant",
+        "select-participant-2": "Select Second Participant",
+        "select-session-1": "Select First Session",
+        "select-session-2": "Select Second Session",
+        "no-eligible-matches": "No eligible matches for swapping. Matches must be in not-started status and not currently loaded.",
+        "no-eligible-sessions": "No eligible sessions for swapping. Sessions must be in not-started status and not called."
+      },
       "status": {
         "not-started": "Not Started",
         "in-progress": "In Progress",
@@ -872,10 +893,7 @@
         "cannot-modify-in-progress": "Cannot modify in-progress matches/sessions",
         "cannot-modify-loaded": "Cannot modify loaded matches",
         "cannot-modify-completed": "Cannot modify completed matches/sessions"
-      },
-      "insert-rematch": "Insert Rematch",
-      "insert-rematch-tooltip": "Insert rematch for completed match",
-      "clear": "Clear"
+      }
     },
     "head-referee": {
       "page-title": "Head Referee Dashboard",

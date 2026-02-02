@@ -1,4 +1,5 @@
 import { Alert, AlertTitle, Chip, Stack } from '@mui/material';
+import { useTranslations } from 'next-intl';
 import type { TournamentManagerData } from '../graphql';
 
 interface MissingTeamsAlertProps {
@@ -6,24 +7,24 @@ interface MissingTeamsAlertProps {
   currentRoundTitle: string;
   selectedSlotTeamId?: string;
   onTeamClick: (team: TournamentManagerData['division']['teams'][0]) => void;
-  t: (key: string) => string;
 }
 
 export function MissingTeamsAlert({
   missingTeams,
   currentRoundTitle,
   selectedSlotTeamId,
-  onTeamClick,
-  t
+  onTeamClick
 }: MissingTeamsAlertProps) {
+  const t = useTranslations('pages.tournament-manager');
+
   if (missingTeams.length === 0) return null;
 
   return (
     <Alert severity="warning" sx={{ flex: 1, minWidth: 300, order: 1 }}>
       <AlertTitle sx={{ mb: 0.5 }}>
         {currentRoundTitle
-          ? `${t('missing-teams-from-round')}: ${currentRoundTitle}`
-          : t('missing-teams-title')}
+          ? `${t('slots.missing-teams.from-round')}: ${currentRoundTitle}`
+          : t('slots.missing-teams.title')}
       </AlertTitle>
       <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
         {missingTeams.map(team => (
