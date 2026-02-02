@@ -13,7 +13,11 @@ import {
   type QueryData,
   type QueryVars
 } from './graphql/index';
-import { createMatchLoadedSubscription } from './graphql/subscriptions';
+import {
+  createMatchLoadedSubscription,
+  createMatchUpdatedSubscription,
+  createMatchParticipantUpdatedSubscription
+} from './graphql/subscriptions';
 import { FieldSchedule, ActiveMatchDisplay } from './components';
 
 export default function FieldHeadQueuerPage() {
@@ -21,7 +25,11 @@ export default function FieldHeadQueuerPage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [createMatchLoadedSubscription(currentDivision.id)],
+    () => [
+      createMatchLoadedSubscription(currentDivision.id),
+      createMatchUpdatedSubscription(currentDivision.id),
+      createMatchParticipantUpdatedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

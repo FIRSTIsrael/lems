@@ -5,17 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import dayjs from 'dayjs';
-import {
-  Paper,
-  Stack,
-  Typography,
-  Chip,
-  Box,
-  Skeleton,
-  Checkbox,
-  Tooltip,
-  Button
-} from '@mui/material';
+import { Paper, Stack, Typography, Chip, Skeleton, Checkbox, Tooltip, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import {
@@ -89,39 +79,40 @@ export function ActiveMatchDisplay({
           color: activeMatch ? 'success.contrastText' : 'text.secondary'
         }}
       >
-        <Stack spacing={2}>
-          <Stack direction="row" alignItems="center" spacing={1}>
+        {activeMatch ? (
+          <Stack direction="row" alignItems="center" spacing={1} flexWrap="wrap">
             <PlayArrowIcon />
             <Typography variant="h6" fontWeight={600}>
               {t('running-match')}
             </Typography>
+            <Chip
+              label={`${t('match')} ${activeMatch.number}`}
+              size="small"
+              sx={{
+                bgcolor: 'success.dark',
+                color: 'success.contrastText',
+                fontWeight: 600
+              }}
+            />
+            {activeMatch.startTime && (
+              <Typography variant="body2">
+                {t('started-at', {
+                  time: dayjs(activeMatch.startTime).format('HH:mm:ss')
+                })}
+              </Typography>
+            )}
           </Stack>
-          {activeMatch ? (
-            <>
-              <Box>
-                <Chip
-                  label={`${t('match')} ${activeMatch.number}`}
-                  size="medium"
-                  sx={{
-                    bgcolor: 'success.dark',
-                    color: 'success.contrastText',
-                    fontWeight: 600,
-                    fontSize: '1rem'
-                  }}
-                />
-              </Box>
-              {activeMatch.startTime && (
-                <Typography variant="body2">
-                  {t('started-at', {
-                    time: dayjs(activeMatch.startTime).format('HH:mm:ss')
-                  })}
-                </Typography>
-              )}
-            </>
-          ) : (
+        ) : (
+          <Stack spacing={2}>
+            <Stack direction="row" alignItems="center" spacing={1}>
+              <PlayArrowIcon />
+              <Typography variant="h6" fontWeight={600}>
+                {t('running-match')}
+              </Typography>
+            </Stack>
             <Typography variant="body2">{t('no-active-match')}</Typography>
-          )}
-        </Stack>
+          </Stack>
+        )}
       </Paper>
 
       <Paper

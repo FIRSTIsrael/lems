@@ -427,6 +427,19 @@ extend type Subscription {
   matchAborted("The division ID to listen for updates in" divisionId: String!): MatchAbortedEvent!
 
   """
+  Subscribe to events when a match's called status is updated in a division.
+  """
+  matchUpdated("The division ID to listen for updates in" divisionId: String!): MatchUpdatedEvent!
+
+  """
+  Subscribe to events when a match participant's queued status is updated in a division.
+  """
+  matchParticipantUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): MatchParticipantUpdatedEvent!
+
+  """
   Subscribe to events when the audience display is switched in a division.
   """
   audienceDisplaySwitched(

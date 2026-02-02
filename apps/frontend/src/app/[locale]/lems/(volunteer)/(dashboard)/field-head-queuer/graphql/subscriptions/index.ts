@@ -5,4 +5,7 @@ export {
   type MatchLoadedSubscriptionData
 } from './match-updated';
 
+export { createMatchUpdatedSubscription } from './match-call-updated';
+export { createMatchParticipantUpdatedSubscription } from './match-participant-updated';
+
 export * from './session-updated';

@@ -12,7 +12,9 @@ import {
   matchEndgameTriggeredResolver,
   matchCompletedResolver,
   matchAbortedResolver,
-  participantStatusUpdatedResolver
+  participantStatusUpdatedResolver,
+  matchUpdatedResolver,
+  matchParticipantUpdatedResolver
 } from './matches';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
 import { scoresheetUpdatedResolver } from './scoresheet/scoresheet-updated';
@@ -46,6 +48,8 @@ export const subscriptionResolvers = {
   matchCompleted: matchCompletedResolver,
   matchAborted: matchAbortedResolver,
   participantStatusUpdated: participantStatusUpdatedResolver,
+  matchUpdated: matchUpdatedResolver,
+  matchParticipantUpdated: matchParticipantUpdatedResolver,
   audienceDisplaySwitched: audienceDisplaySwitchedResolver,
   audienceDisplaySettingUpdated: audienceDisplaySettingUpdatedResolver,
   presentationUpdated: presentationUpdatedResolver,
