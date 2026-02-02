@@ -141,23 +141,25 @@ export function useTeamOperations(
           const team1 = selectedSlot.team;
           const team2 = secondSlot.team;
 
-          await setMatchParticipantTeam({
-            variables: {
-              divisionId,
-              matchId: secondSlot.matchId,
-              participantId: secondSlot.participantId,
-              teamId: team1?.id || null
-            }
-          });
-
-          await setMatchParticipantTeam({
-            variables: {
-              divisionId,
-              matchId: selectedSlot.matchId,
-              participantId: selectedSlot.participantId,
-              teamId: team2?.id || null
-            }
-          });
+          // Perform both mutations in parallel to avoid race conditions
+          await Promise.all([
+            setMatchParticipantTeam({
+              variables: {
+                divisionId,
+                matchId: secondSlot.matchId,
+                participantId: secondSlot.participantId,
+                teamId: team1?.id || null
+              }
+            }),
+            setMatchParticipantTeam({
+              variables: {
+                divisionId,
+                matchId: selectedSlot.matchId,
+                participantId: selectedSlot.participantId,
+                teamId: team2?.id || null
+              }
+            })
+          ]);
         }
       } else if (selectedSlot.type === 'session' && secondSlot.type === 'session') {
         if (!secondSlot.sessionId) return;

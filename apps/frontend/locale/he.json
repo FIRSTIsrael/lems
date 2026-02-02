@@ -808,7 +808,8 @@
         "title": "לוח זמנים - שיפוט",
         "columns": {
           "start-time": "שעת התחלה",
-          "end-time": "שעת סיום"
+          "end-time": "שעת סיום",
+          "status": "סטטוס"
         }
       },
       "field-matches": "מקצי שדה",

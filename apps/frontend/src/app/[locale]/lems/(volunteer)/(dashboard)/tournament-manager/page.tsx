@@ -59,9 +59,9 @@ export default function TournamentManagerPage() {
   }
 
   return (
-    <TournamentManagerProvider>
+    <TournamentManagerProvider division={data.division}>
       <Box sx={{ height: '100%', overflow: 'auto' }}>
-        <ScheduleReference division={data.division} />
+        <ScheduleReference />
       </Box>
     </TournamentManagerProvider>
   );

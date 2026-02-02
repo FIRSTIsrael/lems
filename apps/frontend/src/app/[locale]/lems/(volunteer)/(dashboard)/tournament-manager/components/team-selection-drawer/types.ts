@@ -5,7 +5,6 @@ export interface BaseSlotSectionProps {
   slot: SlotInfo | null;
   division: TournamentManagerData['division'];
   isMobile: boolean;
-  getStage?: (stage: string) => string;
 }
 
 export interface MatchesListProps extends BaseSlotSectionProps {

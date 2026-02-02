@@ -133,3 +133,42 @@ export function isSlotBlockedForSelection(
     sourceType === SourceType.MISSING_TEAM
   );
 }
+
+export function canSelectAsDestination(
+  slot: SlotInfo,
+  sourceType: SourceType | null,
+  division: TournamentManagerData['division']
+): boolean {
+  return isValidDestination(slot, sourceType, division);
+}
+
+export function isSlotDisabled(
+  slot: SlotInfo,
+  selectedSlot: SlotInfo | null,
+  sourceType: SourceType | null,
+  secondSlot: SlotInfo | null,
+  division: TournamentManagerData['division']
+): boolean {
+  const isCurrentSlot =
+    (slot.type === 'match' && selectedSlot?.participantId === slot.participantId) ||
+    (slot.type === 'session' && selectedSlot?.sessionId === slot.sessionId);
+
+  if (isCurrentSlot) return false;
+
+  // Disable empty slots when looking for a source
+  if (!selectedSlot && !slot.team) return true;
+
+  // Disable invalid destinations when source is selected
+  if (selectedSlot && !canSelectAsDestination(slot, sourceType, division)) return true;
+
+  // Disable blocked slots based on selection state
+  if (slot.team !== null && division) {
+    if (isSlotBlockedForSelection(slot, division)) return true;
+    if (secondSlot && isSlotBlockedAsDestination(slot, division)) return true;
+  }
+
+  // Disable in-progress slots
+  if (isSlotInProgress(slot, division)) return true;
+
+  return false;
+}

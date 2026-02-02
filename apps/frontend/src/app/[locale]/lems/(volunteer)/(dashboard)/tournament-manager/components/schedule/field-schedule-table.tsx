@@ -9,8 +9,7 @@ import {
   TableRow,
   Typography,
   ToggleButtonGroup,
-  ToggleButton,
-  Chip
+  ToggleButton
 } from '@mui/material';
 import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useTranslations } from 'next-intl';
@@ -18,31 +17,15 @@ import dayjs from 'dayjs';
 import { useMatchTranslations } from '@lems/localization';
 import type { MatchStatus, TournamentManagerData } from '../../graphql';
 import { TeamSlot } from '../team-slot';
+import { StatusChip } from '../status-chip';
 import type { SlotInfo } from '../types';
-import { SourceType } from '../types';
-import {
-  isSlotBlockedForSelection,
-  isSlotBlockedAsDestination,
-  isSlotInProgress,
-  isValidDestination
-} from '../validation';
 import { MATCH_DURATION_SECONDS } from '../constants';
+import { useTournamentManager } from '../../context';
+import { useSlotOperations } from '../../hooks/useSlotOperations';
+import { isSlotDisabled } from '../validation';
 
 interface FieldScheduleTableProps {
-  matches: TournamentManagerData['division']['field']['matches'];
-  tables: { id: string; name: string }[];
-  selectedSlot: SlotInfo | null;
-  sourceType: SourceType | null;
-  secondSlot: SlotInfo | null;
   isMobile: boolean;
-  division?: TournamentManagerData['division'];
-  onSlotClick: (slot: SlotInfo) => void;
-  onRoundChange?: (
-    matches: TournamentManagerData['division']['field']['matches'],
-    roundTitle: string
-  ) => void;
-  renderRoundSelector?: (selector: React.ReactNode) => void;
-  getStage: (stage: string) => string;
 }
 
 interface RoundOption {
@@ -51,52 +34,40 @@ interface RoundOption {
   matches: TournamentManagerData['division']['field']['matches'];
 }
 
-const groupMatchesByStageAndRound = (
-  matches: TournamentManagerData['division']['field']['matches'],
-  getStage: (stage: string) => string
-): RoundOption[] => {
-  const grouped: Record<string, Record<number, typeof matches>> = {};
-  matches.forEach(match => {
-    if (match.stage === 'TEST') return;
-    if (!grouped[match.stage]) grouped[match.stage] = {};
-    if (!grouped[match.stage][match.round]) grouped[match.stage][match.round] = [];
-    grouped[match.stage][match.round].push(match);
-  });
+function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
+  const t = useTranslations('pages.tournament-manager');
+  const { getStage } = useMatchTranslations();
+  const { division, activeTab, selectedSlot, sourceType, secondSlot, dispatch } =
+    useTournamentManager();
+  const { handleSlotClick: handleSlotClickOperation } = useSlotOperations(division, dispatch);
 
-  const options: RoundOption[] = [];
-  Object.entries(grouped).forEach(([stage, rounds]) => {
-    Object.entries(rounds).forEach(([round, matchGroup]) => {
-      const firstMatch = matchGroup[0];
-      options.push({
-        key: `${stage}-${round}`,
-        title: `${getStage(firstMatch.stage)} ${firstMatch.round}`,
-        matches: matchGroup
+  const matches = division.field.matches;
+  const tables = division.tables ?? [];
+
+  // Group matches by stage and round
+  const roundOptions = useMemo(() => {
+    const grouped: Record<string, Record<number, typeof matches>> = {};
+    matches.forEach(match => {
+      if (match.stage === 'TEST') return;
+      if (!grouped[match.stage]) grouped[match.stage] = {};
+      if (!grouped[match.stage][match.round]) grouped[match.stage][match.round] = [];
+      grouped[match.stage][match.round].push(match);
+    });
+
+    const options: RoundOption[] = [];
+    Object.entries(grouped).forEach(([stage, rounds]) => {
+      Object.entries(rounds).forEach(([round, matchGroup]) => {
+        const firstMatch = matchGroup[0];
+        options.push({
+          key: `${stage}-${round}`,
+          title: `${getStage(firstMatch.stage)} ${firstMatch.round}`,
+          matches: matchGroup
+        });
       });
     });
-  });
-  return options;
-};
+    return options;
+  }, [matches, getStage]);
 
-function FieldScheduleTableComponent({
-  matches,
-  tables,
-  selectedSlot,
-  sourceType,
-  secondSlot,
-  isMobile,
-  division,
-  onSlotClick,
-  onRoundChange,
-  renderRoundSelector,
-  getStage
-}: FieldScheduleTableProps) {
-  const t = useTranslations('pages.tournament-manager');
-  const { getStatus } = useMatchTranslations();
-
-  const roundOptions = useMemo(
-    () => groupMatchesByStageAndRound(matches, getStage),
-    [matches, getStage]
-  );
   const firstRoundKey = roundOptions[0]?.key ?? '';
   const [selectedRound, setSelectedRound] = useState<string>(firstRoundKey);
   const currentRound = useMemo(
@@ -105,10 +76,12 @@ function FieldScheduleTableComponent({
   );
 
   useEffect(() => {
-    if (currentRound && onRoundChange) {
-      onRoundChange(currentRound.matches, currentRound.title);
+    if (currentRound) {
+      const matchesInRound = matches.filter(m => currentRound.matches.some(cm => cm.id === m.id));
+      dispatch({ type: 'SET_CURRENT_ROUND_MATCHES', payload: matchesInRound });
+      dispatch({ type: 'SET_CURRENT_ROUND_TITLE', payload: currentRound.title });
     }
-  }, [currentRound, onRoundChange]);
+  }, [currentRound, matches, dispatch]);
 
   const handleRoundToggleChange = useCallback(
     (_: React.MouseEvent<HTMLElement>, newValue: string | null) => {
@@ -119,45 +92,56 @@ function FieldScheduleTableComponent({
     []
   );
 
+  const handleSlotClick = useCallback(
+    (slot: SlotInfo) => {
+      handleSlotClickOperation(slot, selectedSlot, sourceType);
+    },
+    [handleSlotClickOperation, selectedSlot, sourceType]
+  );
+
   useEffect(() => {
-    if (renderRoundSelector && roundOptions.length > 0) {
-      renderRoundSelector(
-        <ToggleButtonGroup
-          value={selectedRound}
-          exclusive
-          onChange={handleRoundToggleChange}
-          size="small"
-          sx={{
-            flexWrap: 'wrap',
-            gap: 0.5,
-            '& .MuiToggleButton-root': {
-              px: 2,
-              py: 0.75,
-              fontWeight: 600,
-              fontSize: '0.875rem',
-              border: '1px solid',
-              borderColor: 'divider',
-              borderRadius: 1,
-              textTransform: 'none',
-              '&:hover': { bgcolor: 'action.hover' },
-              '&.Mui-selected': {
-                bgcolor: 'primary.main',
-                color: 'primary.contrastText',
-                borderColor: 'primary.main',
-                '&:hover': { bgcolor: 'primary.dark' }
-              }
-            }
-          }}
-        >
-          {roundOptions.map(option => (
-            <ToggleButton key={option.key} value={option.key}>
-              {option.title}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      );
+    if (activeTab === 0) {
+      dispatch({
+        type: 'SET_ROUND_SELECTOR',
+        payload:
+          roundOptions.length > 0 ? (
+            <ToggleButtonGroup
+              value={selectedRound}
+              exclusive
+              onChange={handleRoundToggleChange}
+              size="small"
+              sx={{
+                flexWrap: 'wrap',
+                gap: 0.5,
+                '& .MuiToggleButton-root': {
+                  px: 2,
+                  py: 0.75,
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  borderRadius: 1,
+                  textTransform: 'none',
+                  '&:hover': { bgcolor: 'action.hover' },
+                  '&.Mui-selected': {
+                    bgcolor: 'primary.main',
+                    color: 'primary.contrastText',
+                    borderColor: 'primary.main',
+                    '&:hover': { bgcolor: 'primary.dark' }
+                  }
+                }
+              }}
+            >
+              {roundOptions.map(option => (
+                <ToggleButton key={option.key} value={option.key}>
+                  {option.title}
+                </ToggleButton>
+              ))}
+            </ToggleButtonGroup>
+          ) : null
+      });
     }
-  }, [renderRoundSelector, roundOptions, selectedRound, handleRoundToggleChange]);
+  }, [activeTab, roundOptions, selectedRound, handleRoundToggleChange, dispatch]);
 
   if (!roundOptions.length || !currentRound) return null;
 
@@ -239,18 +223,7 @@ function FieldScheduleTableComponent({
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
-                    <Chip
-                      label={getStatus(match.status as MatchStatus)}
-                      size="small"
-                      color={
-                        match.status === 'not-started'
-                          ? 'default'
-                          : match.status === 'in-progress'
-                            ? 'primary'
-                            : 'success'
-                      }
-                      variant="filled"
-                    />
+                    <StatusChip type="match" status={match.status as MatchStatus} size="small" />
                   </TableCell>
                   {tables.map(table => {
                     const participant = tableParticipants.get(table.id);
@@ -263,23 +236,15 @@ function FieldScheduleTableComponent({
                       tableName: table.name,
                       time: matchTime.format('HH:mm')
                     };
+
                     const isCurrentSlot = selectedSlot?.participantId === participant?.id;
-                    const isDisabled =
-                      // Never disable the selected source slot
-                      !isCurrentSlot && // Disable empty slots when looking for a source
-                      ((!selectedSlot && !team) ||
-                        // Disable invalid destinations when source is selected
-                        (selectedSlot &&
-                          division &&
-                          !isValidDestination(slot, sourceType, division)) ||
-                        // Disable blocked slots based on selection state
-                        (team !== null && division
-                          ? isSlotBlockedForSelection(slot, division) ||
-                            (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
-                          : false) ||
-                        (division
-                          ? isSlotInProgress({ ...slot, type: 'match' }, division)
-                          : false));
+                    const disabled = isSlotDisabled(
+                      slot,
+                      selectedSlot,
+                      sourceType,
+                      secondSlot,
+                      division
+                    );
 
                     return (
                       <TableCell key={table.id} align="center">
@@ -288,8 +253,8 @@ function FieldScheduleTableComponent({
                           isSelected={isCurrentSlot}
                           isSecondSelected={secondSlot?.participantId === participant?.id}
                           isMobile={isMobile}
-                          isDisabled={isDisabled}
-                          onClick={() => onSlotClick(slot)}
+                          isDisabled={disabled}
+                          onClick={() => handleSlotClick(slot)}
                         />
                       </TableCell>
                     );

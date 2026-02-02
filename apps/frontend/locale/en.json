@@ -809,7 +809,8 @@
         "title": "Judging Schedule",
         "columns": {
           "start-time": "Start Time",
-          "end-time": "End Time"
+          "end-time": "End Time",
+          "status": "Status"
         }
       },
       "field-matches": "Field Matches",

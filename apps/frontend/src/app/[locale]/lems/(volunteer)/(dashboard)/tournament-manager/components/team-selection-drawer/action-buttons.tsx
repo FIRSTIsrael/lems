@@ -5,39 +5,36 @@ import { useTranslations } from 'next-intl';
 import { memo, useCallback } from 'react';
 import type { SlotInfo } from '../types';
 import { SourceType } from '../types';
-import { getAllowedActions, ActionType } from '../validation';
+import { useTournamentManager } from '../../context';
+import { getAllowedActions } from '../validation';
 
 interface ActionButtonsProps {
-  selectedSlot: SlotInfo | null;
-  sourceType: SourceType | null;
-  secondSlot: SlotInfo | null;
-  onMove: () => void;
-  onReplace: () => void;
-  onClear: () => void;
+  onMove: () => Promise<void>;
+  onReplace: () => Promise<void>;
+  onClear: () => Promise<void>;
   onClose: () => void;
 }
 
-const isActionDisabled = (
-  actionType: ActionType,
+function getIsActionDisabled(
+  actionType: 'move' | 'replace' | 'clear',
   sourceType: SourceType | null,
   selectedSlot: SlotInfo | null,
   secondSlot: SlotInfo | null
-): boolean => {
+): boolean {
   if (!secondSlot && actionType !== 'clear') return true;
   if (actionType === 'clear') return !selectedSlot?.team || sourceType !== SourceType.RESCHEDULE;
+  if (actionType === 'replace' && secondSlot && !secondSlot.team) return true;
   return false;
-};
+}
 
 export function ActionButtonsComponent({
-  selectedSlot,
-  sourceType,
-  secondSlot,
   onMove,
   onReplace,
   onClear,
   onClose
 }: ActionButtonsProps) {
   const t = useTranslations('pages.tournament-manager');
+  const { selectedSlot, sourceType, secondSlot } = useTournamentManager();
   const allowedActions = getAllowedActions(sourceType);
   const isJudgingSession = selectedSlot?.type === 'session';
 
@@ -63,15 +60,27 @@ export function ActionButtonsComponent({
         <>
           {isJudgingSession ? (
             <>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleReplaceClick}
-                disabled={isActionDisabled('replace', sourceType, selectedSlot, secondSlot)}
-                fullWidth
-              >
-                {t('actions.replace')}
-              </Button>
+              {allowedActions.includes('move') && (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleMoveClick}
+                  disabled={getIsActionDisabled('move', sourceType, selectedSlot, secondSlot)}
+                  fullWidth
+                >
+                  {t('actions.move')}
+                </Button>
+              )}
+              {allowedActions.includes('replace') && (
+                <Button
+                  variant="outlined"
+                  onClick={handleReplaceClick}
+                  disabled={getIsActionDisabled('replace', sourceType, selectedSlot, secondSlot)}
+                  fullWidth
+                >
+                  {t('actions.replace')}
+                </Button>
+              )}
               <Button variant="outlined" fullWidth onClick={handleCloseClick}>
                 {t('actions.cancel')}
               </Button>
@@ -79,39 +88,26 @@ export function ActionButtonsComponent({
           ) : (
             <>
               <Stack direction="row" spacing={1}>
-                {sourceType === SourceType.REMATCH ? (
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleMoveClick}
+                  disabled={getIsActionDisabled('move', sourceType, selectedSlot, secondSlot)}
+                  fullWidth
+                >
+                  {sourceType === SourceType.REMATCH
+                    ? t('actions.insert-rematch')
+                    : t('actions.move')}
+                </Button>
+                {allowedActions.includes('replace') && (
                   <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleMoveClick}
-                    disabled={isActionDisabled('move', sourceType, selectedSlot, secondSlot)}
+                    variant="outlined"
+                    onClick={handleReplaceClick}
+                    disabled={getIsActionDisabled('replace', sourceType, selectedSlot, secondSlot)}
                     fullWidth
                   >
-                    {t('actions.insert-rematch')}
+                    {t('actions.replace')}
                   </Button>
-                ) : (
-                  <>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={handleMoveClick}
-                      disabled={isActionDisabled('move', sourceType, selectedSlot, secondSlot)}
-                      fullWidth
-                    >
-                      {t('actions.move')}
-                    </Button>
-                    {allowedActions.includes('replace') && (
-                      <Button
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleReplaceClick}
-                        disabled={isActionDisabled('replace', sourceType, selectedSlot, secondSlot)}
-                        fullWidth
-                      >
-                        {t('actions.replace')}
-                      </Button>
-                    )}
-                  </>
                 )}
               </Stack>
               <Button variant="outlined" fullWidth onClick={handleCloseClick}>
@@ -126,9 +122,9 @@ export function ActionButtonsComponent({
         <Button
           variant="outlined"
           color="error"
-          fullWidth
           onClick={handleClearClick}
-          disabled={isActionDisabled('clear', sourceType, selectedSlot, secondSlot)}
+          disabled={getIsActionDisabled('clear', sourceType, selectedSlot, secondSlot)}
+          fullWidth
         >
           {t('actions.clear')}
         </Button>

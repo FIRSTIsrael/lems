@@ -1,54 +1,39 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Tabs, Tab, Box, useMediaQuery, useTheme } from '@mui/material';
-import { useMatchTranslations } from '@lems/localization';
+import { SourceType } from '../types';
 import type { TournamentManagerData } from '../../graphql';
 import { useTournamentManager } from '../../context';
-import { useScheduleOperations } from '../../hooks/useScheduleOperations';
+import { useSlotOperations } from '../../hooks/useSlotOperations';
 import { TeamSelectionDrawer } from '../team-selection-drawer';
 import { MissingTeamsAlert } from '../missing-teams-alert';
 import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from '../constants';
 import { FieldScheduleTable } from './field-schedule-table';
 import { JudgingScheduleTable } from './judging-schedule-table';
-import { calculateMissingTeams } from './utils';
+import { calculateMissingTeams, createMissingTeamSlot } from './utils';
 
-interface ScheduleReferenceProps {
-  division: TournamentManagerData['division'];
-}
-
-export function ScheduleReference({ division }: ScheduleReferenceProps) {
+export function ScheduleReference() {
   const t = useTranslations('pages.tournament-manager');
-  const { getStage } = useMatchTranslations();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
   const {
+    division,
     activeTab,
     selectedSlot,
-    sourceType,
     secondSlot,
     currentRoundMatches,
     currentRoundTitle,
     missingTeams,
     roundSelector,
-    dispatch
+    dispatch,
+    operations,
+    setError
   } = useTournamentManager();
 
-  const {
-    handleRoundChange,
-    handleSlotClick,
-    handleMoveClick,
-    handleReplaceClick,
-    handleClearClick,
-    handleDrawerClose,
-    handleTabChange,
-    handleRoundSelector,
-    handleTeamClick,
-    error,
-    setError
-  } = useScheduleOperations(division);
+  const { clearSelection } = useSlotOperations(division, dispatch);
 
   // Update missing teams when tab or round changes
   useEffect(() => {
@@ -63,13 +48,52 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
 
   // Clear selection when switching tabs
   useEffect(() => {
-    dispatch({ type: 'SELECT_SLOT', payload: null });
-    dispatch({ type: 'SET_SOURCE_TYPE', payload: null });
-    dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
-  }, [activeTab, dispatch]);
+    clearSelection();
+  }, [activeTab, clearSelection]);
 
-  const tables = useMemo(() => division.tables ?? [], [division.tables]);
-  const rooms = useMemo(() => division.rooms ?? [], [division.rooms]);
+  const handleTabChange = useCallback(
+    (_: React.SyntheticEvent, newValue: number) => {
+      dispatch({ type: 'SET_ACTIVE_TAB', payload: newValue });
+    },
+    [dispatch]
+  );
+
+  const handleTeamClick = useCallback(
+    (team: TournamentManagerData['division']['teams'][0]) => {
+      const slot = createMissingTeamSlot(team, activeTab);
+      dispatch({ type: 'SELECT_SLOT', payload: slot });
+      dispatch({ type: 'SET_SOURCE_TYPE', payload: SourceType.MISSING_TEAM });
+      dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
+    },
+    [activeTab, dispatch]
+  );
+
+  const handleMoveClick = useCallback(async () => {
+    try {
+      await operations.handleMove(selectedSlot, secondSlot);
+      clearSelection();
+    } catch {
+      // Error already set by operations
+    }
+  }, [operations, selectedSlot, secondSlot, clearSelection]);
+
+  const handleReplaceClick = useCallback(async () => {
+    try {
+      await operations.handleReplace(selectedSlot, secondSlot);
+      clearSelection();
+    } catch {
+      // Error already set by operations
+    }
+  }, [operations, selectedSlot, secondSlot, clearSelection]);
+
+  const handleClearClick = useCallback(async () => {
+    try {
+      await operations.clearTeam(selectedSlot);
+      clearSelection();
+    } catch {
+      // Error already set by operations
+    }
+  }, [operations, selectedSlot, clearSelection]);
 
   return (
     <Paper
@@ -138,52 +162,19 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
         </Tabs>
 
         <Box sx={{ flex: 1, overflow: 'auto', bgcolor: 'background.paper' }}>
-          {activeTab === 0 && (
-            <FieldScheduleTable
-              matches={division.field.matches}
-              tables={tables}
-              selectedSlot={selectedSlot}
-              sourceType={sourceType}
-              secondSlot={secondSlot}
-              division={division}
-              isMobile={isMobile}
-              onSlotClick={handleSlotClick}
-              onRoundChange={handleRoundChange}
-              renderRoundSelector={handleRoundSelector}
-              getStage={getStage}
-            />
-          )}
-
-          {activeTab === 1 && (
-            <JudgingScheduleTable
-              sessions={division.judging.sessions}
-              sessionLength={division.judging.sessionLength}
-              rooms={rooms}
-              selectedSlot={selectedSlot}
-              sourceType={sourceType}
-              secondSlot={secondSlot}
-              division={division}
-              isMobile={isMobile}
-              onSlotClick={handleSlotClick}
-            />
-          )}
+          {activeTab === 0 && <FieldScheduleTable isMobile={isMobile} />}
+          {activeTab === 1 && <JudgingScheduleTable isMobile={isMobile} />}
         </Box>
       </Box>
 
       <TeamSelectionDrawer
         open={!!selectedSlot}
-        selectedSlot={selectedSlot}
-        sourceType={sourceType}
-        secondSlot={secondSlot}
-        error={error}
         isMobile={isMobile}
-        division={division}
-        onClose={handleDrawerClose}
+        onClose={clearSelection}
         onMove={handleMoveClick}
         onReplace={handleReplaceClick}
         onClear={handleClearClick}
         onClearError={() => setError(null)}
-        getStage={getStage}
       />
     </Paper>
   );

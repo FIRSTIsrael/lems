@@ -1,1 +1,1 @@
-export { TeamSelectionDrawerWrapper as TeamSelectionDrawer } from './team-selection-drawer';
+export { TeamSelectionDrawer } from './team-selection-drawer';

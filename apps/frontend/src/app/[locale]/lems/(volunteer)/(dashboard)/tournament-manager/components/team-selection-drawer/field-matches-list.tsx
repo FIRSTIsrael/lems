@@ -10,11 +10,10 @@ import type { MatchesListProps } from './types';
 export function FieldMatchesList({
   slot,
   matches,
-  isMobile,
-  getStage
+  isMobile
 }: MatchesListProps & { matches: Match[] }) {
   const t = useTranslations('pages.tournament-manager');
-  const { getStatus } = useMatchTranslations();
+  const { getStatus, getStage } = useMatchTranslations();
 
   const teamMatches = matches.filter(match =>
     match.participants.some(p => p.team?.id === slot?.team?.id)

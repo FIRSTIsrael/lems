@@ -8,60 +8,51 @@ import {
   TableRow,
   Typography
 } from '@mui/material';
-import { useMemo, memo } from 'react';
+import { useMemo, memo, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import type { TournamentManagerData } from '../../graphql';
+import type { SessionStatus } from '../../graphql';
 import { TeamSlot } from '../team-slot';
+import { StatusChip } from '../status-chip';
 import type { SlotInfo } from '../types';
-import { SourceType } from '../types';
-import {
-  isSlotBlockedForSelection,
-  isSlotBlockedAsDestination,
-  isValidDestination,
-  isSlotInProgress
-} from '../validation';
+import { useTournamentManager } from '../../context';
+import { useSlotOperations } from '../../hooks/useSlotOperations';
+import { isSlotDisabled } from '../validation';
 
 interface JudgingScheduleTableProps {
-  sessions: TournamentManagerData['division']['judging']['sessions'];
-  sessionLength: number;
-  rooms: { id: string; name: string }[];
-  selectedSlot: SlotInfo | null;
-  sourceType: SourceType | null;
-  secondSlot: SlotInfo | null;
   isMobile: boolean;
-  division?: TournamentManagerData['division'];
-  onSlotClick: (slot: SlotInfo) => void;
 }
 
-const groupSessionsByTime = (
-  sessions: TournamentManagerData['division']['judging']['sessions']
-) => {
-  const grouped: Record<string, { time: string; sessions: typeof sessions }> = {};
-  sessions.forEach(session => {
-    const timeKey = dayjs(session.scheduledTime).format('HH:mm');
-    if (!grouped[timeKey]) {
-      grouped[timeKey] = { time: session.scheduledTime, sessions: [] };
-    }
-    grouped[timeKey].sessions.push(session);
-  });
-
-  return Object.values(grouped).sort((a, b) => dayjs(a.time).diff(dayjs(b.time)));
-};
-
-function JudgingScheduleTableComponent({
-  sessions,
-  sessionLength,
-  rooms,
-  selectedSlot,
-  sourceType,
-  secondSlot,
-  isMobile,
-  division,
-  onSlotClick
-}: JudgingScheduleTableProps) {
+function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) {
   const t = useTranslations('pages.tournament-manager');
-  const sessionRows = useMemo(() => groupSessionsByTime(sessions), [sessions]);
+  const { division, selectedSlot, sourceType, secondSlot, dispatch } = useTournamentManager();
+  const { handleSlotClick: handleSlotClickOperation } = useSlotOperations(division, dispatch);
+
+  const sessions = division.judging.sessions;
+  const rooms = division.rooms ?? [];
+  const sessionLength = division.judging.sessionLength;
+
+  const sessionRows = useMemo(() => {
+    const grouped: Record<string, { time: string; sessions: typeof sessions }> = {};
+    sessions.forEach(session => {
+      const timeKey = dayjs(session.scheduledTime).format('HH:mm');
+      if (!grouped[timeKey]) {
+        grouped[timeKey] = { time: session.scheduledTime, sessions: [] };
+      }
+      grouped[timeKey].sessions.push(session);
+    });
+    return Object.values(grouped).sort((a, b) => dayjs(a.time).diff(dayjs(b.time)));
+  }, [sessions]);
+
+  const handleSlotClick = useCallback(
+    (slot: SlotInfo) => {
+      handleSlotClickOperation(slot, selectedSlot, sourceType);
+    },
+    [handleSlotClickOperation, selectedSlot, sourceType]
+  );
+
+  const headerFontSize = isMobile ? '0.75rem' : '1rem';
+  const cellFontSize = isMobile ? '0.75rem' : '1rem';
 
   return (
     <TableContainer component={Paper} sx={{ p: 0, bgcolor: 'white', m: 2 }}>
@@ -76,18 +67,23 @@ function JudgingScheduleTableComponent({
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell width={80} align="center">
-              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+              <Typography fontWeight={600} fontSize={headerFontSize}>
                 {t('judging-schedule.columns.start-time')}
               </Typography>
             </TableCell>
             <TableCell width={80} align="center">
-              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+              <Typography fontWeight={600} fontSize={headerFontSize}>
                 {t('judging-schedule.columns.end-time')}
+              </Typography>
+            </TableCell>
+            <TableCell width={120} align="center">
+              <Typography fontWeight={600} fontSize={headerFontSize}>
+                {t('judging-schedule.columns.status')}
               </Typography>
             </TableCell>
             {rooms.map(room => (
               <TableCell key={room.id} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography fontWeight={600} fontSize={headerFontSize}>
                   {room.name}
                 </Typography>
               </TableCell>
@@ -99,26 +95,27 @@ function JudgingScheduleTableComponent({
             const sessionTime = dayjs(row.time);
             const sessionEndTime = sessionTime.add(sessionLength, 'seconds');
             const roomSessions = new Map(row.sessions.map(s => [s.room.id, s]));
+            const firstSession = row.sessions[0];
+            const firstSessionStatus = firstSession?.status ?? 'not-started';
 
             return (
               <TableRow key={index}>
                 <TableCell align="center">
-                  <Typography
-                    fontFamily="monospace"
-                    fontWeight={500}
-                    fontSize={isMobile ? '0.75rem' : '1rem'}
-                  >
+                  <Typography fontFamily="monospace" fontWeight={500} fontSize={cellFontSize}>
                     {sessionTime.format('HH:mm')}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Typography
-                    fontFamily="monospace"
-                    fontWeight={500}
-                    fontSize={isMobile ? '0.75rem' : '1rem'}
-                  >
+                  <Typography fontFamily="monospace" fontWeight={500} fontSize={cellFontSize}>
                     {sessionEndTime.format('HH:mm')}
                   </Typography>
+                </TableCell>
+                <TableCell align="center">
+                  <StatusChip
+                    type="session"
+                    status={firstSessionStatus as SessionStatus}
+                    size="small"
+                  />
                 </TableCell>
                 {rooms.map(room => {
                   const session = roomSessions.get(room.id);
@@ -132,22 +129,13 @@ function JudgingScheduleTableComponent({
                   };
 
                   const isCurrentSlot = selectedSlot?.sessionId === session?.id;
-                  const isDisabled =
-                    // Never disable the selected source slot
-                    !isCurrentSlot && // Disable empty slots when looking for a source
-                    ((!selectedSlot && !team) ||
-                      // Disable invalid destinations when source is selected
-                      (selectedSlot &&
-                        division &&
-                        !isValidDestination(slot, sourceType, division)) ||
-                      // Disable blocked slots based on selection state
-                      (team !== null && division
-                        ? isSlotBlockedForSelection(slot, division) ||
-                          (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
-                        : false) ||
-                      (division
-                        ? isSlotInProgress({ ...slot, type: 'session' }, division)
-                        : false));
+                  const disabled = isSlotDisabled(
+                    slot,
+                    selectedSlot,
+                    sourceType,
+                    secondSlot,
+                    division
+                  );
 
                   return (
                     <TableCell key={room.id} align="center">
@@ -156,8 +144,8 @@ function JudgingScheduleTableComponent({
                         isSelected={isCurrentSlot}
                         isSecondSelected={secondSlot?.sessionId === session?.id}
                         isMobile={isMobile}
-                        isDisabled={isDisabled}
-                        onClick={() => onSlotClick(slot)}
+                        isDisabled={disabled}
+                        onClick={() => handleSlotClick(slot)}
                       />
                     </TableCell>
                   );

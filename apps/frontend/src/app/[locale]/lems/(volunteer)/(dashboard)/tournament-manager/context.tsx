@@ -1,9 +1,10 @@
 'use client';
 
-import { createContext, useContext, useMemo, useReducer, ReactNode } from 'react';
+import { createContext, useContext, useMemo, useReducer, ReactNode, useState } from 'react';
 import type { TournamentManagerData } from './graphql';
 import type { SlotInfo } from './components/types';
 import { SourceType } from './components/types';
+import { useTeamOperations } from './hooks/useTeamOperations';
 
 interface TournamentManagerState {
   activeTab: number;
@@ -68,8 +69,19 @@ type TournamentManagerAction =
 
 export type { TournamentManagerAction };
 
+interface TournamentManagerOperations {
+  handleMove: (selectedSlot: SlotInfo | null, secondSlot: SlotInfo | null) => Promise<void>;
+  handleReplace: (selectedSlot: SlotInfo | null, secondSlot: SlotInfo | null) => Promise<void>;
+  assignTeamToSlot: (teamId: string, slot: SlotInfo) => Promise<void>;
+  clearTeam: (selectedSlot: SlotInfo | null) => Promise<void>;
+}
+
 interface TournamentManagerContextType extends TournamentManagerState {
+  division: TournamentManagerData['division'];
   dispatch: React.Dispatch<TournamentManagerAction>;
+  operations: TournamentManagerOperations;
+  error: string | null;
+  setError: (error: string | null) => void;
 }
 
 const TournamentManagerContext = createContext<TournamentManagerContextType | undefined>(undefined);
@@ -111,15 +123,39 @@ function tournamentManagerReducer(
   }
 }
 
-export function TournamentManagerProvider({ children }: { children: ReactNode }) {
+interface TournamentManagerProviderProps {
+  children: ReactNode;
+  division: TournamentManagerData['division'];
+}
+
+export function TournamentManagerProvider({ children, division }: TournamentManagerProviderProps) {
   const [state, dispatch] = useReducer(tournamentManagerReducer, initialState);
+  const [error, setError] = useState<string | null>(null);
+  const { handleMove, handleReplace, assignTeamToSlot, clearTeam } = useTeamOperations(
+    division.id,
+    division
+  );
+
+  const operations: TournamentManagerOperations = useMemo(
+    () => ({
+      handleMove,
+      handleReplace,
+      assignTeamToSlot,
+      clearTeam
+    }),
+    [handleMove, handleReplace, assignTeamToSlot, clearTeam]
+  );
 
   const value = useMemo<TournamentManagerContextType>(
     () => ({
       ...state,
-      dispatch
+      division,
+      dispatch,
+      operations,
+      error,
+      setError
     }),
-    [state]
+    [state, division, operations, error]
   );
 
   return (

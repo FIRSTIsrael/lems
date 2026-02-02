@@ -11,7 +11,6 @@ interface SecondSlotInfoProps {
   slot: SlotInfo | null;
   division: TournamentManagerData['division'];
   isMobile: boolean;
-  getStage: (stage: string) => string;
   matches: TournamentManagerData['division']['field']['matches'];
   sessions: TournamentManagerData['division']['judging']['sessions'];
 }
@@ -20,7 +19,6 @@ export function SecondSlotInfo({
   slot: secondSlot,
   division,
   isMobile,
-  getStage,
   matches,
   sessions
 }: SecondSlotInfoProps) {
@@ -62,7 +60,6 @@ export function SecondSlotInfo({
             division={division}
             matches={matches}
             isMobile={isMobile}
-            getStage={getStage}
           />
 
           <JudgingSessionsList
@@ -70,7 +67,6 @@ export function SecondSlotInfo({
             division={division}
             sessions={sessions}
             isMobile={isMobile}
-            getStage={getStage}
           />
         </>
       )}
