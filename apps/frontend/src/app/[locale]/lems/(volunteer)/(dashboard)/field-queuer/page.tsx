@@ -8,7 +8,6 @@ import {
   Alert,
   Typography,
   Paper,
-  Fab,
   Button,
   Popover,
   FormGroup,
@@ -17,8 +16,6 @@ import {
   Badge
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import MapOutlinedIcon from '@mui/icons-material/MapOutlined';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import dayjs from 'dayjs';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
@@ -35,7 +32,7 @@ import {
   createMatchCallUpdatedSubscription,
   createMatchParticipantUpdatedSubscription
 } from './graphql/subscriptions';
-import { TeamQueueCard } from './components';
+import { TeamQueueCard, FieldQueuerBottomNav, FieldScheduleView, PitMapView } from './components';
 
 export default function FieldQueuerPage() {
   const t = useTranslations('pages.field-queuer');
@@ -45,6 +42,18 @@ export default function FieldQueuerPage() {
   const pathname = usePathname();
   const currentTime = useTime({ interval: 1000 });
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const activeTab = searchParams.get('tab') || 'home';
+
+  const handleTabChange = (newTab: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (newTab === 'home') {
+      params.delete('tab');
+    } else {
+      params.set('tab', newTab);
+    }
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   const selectedTables = useMemo(
     () => searchParams.get('tables')?.split(',').filter(Boolean) || [],
@@ -156,108 +165,100 @@ export default function FieldQueuerPage() {
 
   return (
     <>
-      <PageHeader title={t('page-title')}>
-        <Badge badgeContent={selectedTables.length} color="primary">
-          <Button
-            variant="outlined"
-            startIcon={<FilterListIcon />}
-            onClick={e => setAnchorEl(e.currentTarget)}
-            size="small"
-          >
-            {t('filter-by-table')}
-          </Button>
-        </Badge>
-      </PageHeader>
+      {activeTab === 'home' && (
+        <PageHeader title={t('page-title')}>
+          <Badge badgeContent={selectedTables.length} color="primary">
+            <Button
+              variant="outlined"
+              startIcon={<FilterListIcon />}
+              onClick={e => setAnchorEl(e.currentTarget)}
+              size="small"
+            >
+              {t('filter-by-table')}
+            </Button>
+          </Badge>
+        </PageHeader>
+      )}
 
-      <Popover
-        open={Boolean(anchorEl)}
-        anchorEl={anchorEl}
-        onClose={() => setAnchorEl(null)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-      >
-        <Paper sx={{ p: 2, minWidth: 200 }}>
-          <Typography variant="subtitle2" fontWeight={600} gutterBottom>
-            {t('filter-by-table')}
-          </Typography>
-          <FormGroup>
-            {tables.map(table => (
-              <FormControlLabel
-                key={table}
-                control={
-                  <Checkbox
-                    checked={selectedTables.includes(table)}
-                    onChange={() => handleToggle(table)}
-                    size="small"
+      {activeTab === 'home' && (
+        <>
+          <Popover
+            open={Boolean(anchorEl)}
+            anchorEl={anchorEl}
+            onClose={() => setAnchorEl(null)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+          >
+            <Paper sx={{ p: 2, minWidth: 200 }}>
+              <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+                {t('filter-by-table')}
+              </Typography>
+              <FormGroup>
+                {tables.map(table => (
+                  <FormControlLabel
+                    key={table}
+                    control={
+                      <Checkbox
+                        checked={selectedTables.includes(table)}
+                        onChange={() => handleToggle(table)}
+                        size="small"
+                      />
+                    }
+                    label={table}
                   />
-                }
-                label={table}
+                ))}
+              </FormGroup>
+            </Paper>
+          </Popover>
+
+          <Stack spacing={3} sx={{ pt: 3, pb: 10 }}>
+            {error && <Alert severity="error">{error.message}</Alert>}
+            {!loading && !data && (
+              <Alert severity="info">
+                No data loaded yet. Check that the backend GraphQL server is running.
+              </Alert>
+            )}
+
+            {!loading && filteredTeams.length === 0 && (
+              <Paper sx={{ p: 4, textAlign: 'center' }}>
+                <Typography variant="h6" color="text.secondary">
+                  {t('no-teams')}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                  {t('no-teams-description')}
+                </Typography>
+              </Paper>
+            )}
+
+            {filteredTeams.map(team => (
+              <TeamQueueCard
+                key={team.teamId}
+                teamNumber={team.teamNumber}
+                teamName={team.teamName}
+                tableName={team.tableName}
+                matchNumber={team.matchNumber}
+                scheduledTime={team.scheduledTime}
+                isInJudging={team.isInJudging}
+                isUrgent={team.isUrgent}
               />
             ))}
-          </FormGroup>
-        </Paper>
-      </Popover>
+          </Stack>
+        </>
+      )}
 
-      <Stack spacing={3} sx={{ pt: 3 }}>
-        {error && <Alert severity="error">{error.message}</Alert>}
-        {!loading && !data && (
-          <Alert severity="info">
-            No data loaded yet. Check that the backend GraphQL server is running.
-          </Alert>
-        )}
+      {activeTab === 'schedule' && (
+        <Stack sx={{ pt: 3, pb: 10 }}>
+          <FieldScheduleView data={safeData} loading={loading} />
+        </Stack>
+      )}
 
-        {!loading && filteredTeams.length === 0 && (
-          <Paper sx={{ p: 4, textAlign: 'center' }}>
-            <Typography variant="h6" color="text.secondary">
-              {t('no-teams')}
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-              {t('no-teams-description')}
-            </Typography>
-          </Paper>
-        )}
+      {activeTab === 'pit-map' && (
+        <Stack sx={{ pt: 3, pb: 10 }}>
+          <PitMapView />
+        </Stack>
+      )}
 
-        {filteredTeams.map(team => (
-          <TeamQueueCard
-            key={team.teamId}
-            teamNumber={team.teamNumber}
-            teamName={team.teamName}
-            tableName={team.tableName}
-            matchNumber={team.matchNumber}
-            scheduledTime={team.scheduledTime}
-            isInJudging={team.isInJudging}
-            isUrgent={team.isUrgent}
-          />
-        ))}
-      </Stack>
-
-      <Fab
-        color="primary"
-        component="a"
-        sx={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16
-        }}
-        href={`/lems/reports/field-schedule`}
-        target="_blank"
-      >
-        <CalendarMonthOutlinedIcon />
-      </Fab>
-
-      <Fab
-        color="secondary"
-        component="a"
-        sx={{
-          position: 'fixed',
-          bottom: 88,
-          right: 16
-        }}
-        href={`/lems/reports/pit-map`}
-        target="_blank"
-      >
-        <MapOutlinedIcon />
-      </Fab>
+      <FieldQueuerBottomNav value={activeTab} onChange={handleTabChange} />
     </>
   );
 }

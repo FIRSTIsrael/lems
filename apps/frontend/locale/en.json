@@ -189,8 +189,24 @@
       "page-title": "Field Queuer",
       "filter-by-table": "Filter by Table",
       "all-tables": "All Tables",
+      "home": "Home",
       "no-teams": "No Teams Waiting",
       "no-teams-description": "All called teams have arrived at their tables",
+      "field-schedule": {
+        "title": "Field Schedule",
+        "subtitle": "Upcoming matches",
+        "match": "Match",
+        "time": "Time",
+        "no-matches": "No upcoming matches",
+        "tab-label": "Schedule"
+      },
+      "pit-map": {
+        "title": "Pit Map",
+        "subtitle": "Team locations in the pit area",
+        "no-map": "No pit map available",
+        "error": "Error loading pit map",
+        "tab-label": "Pit Map"
+      },
       "team-card": {
         "in-judging-tooltip": "Team is currently in judging",
         "time-ago": "{minutes} min ago",

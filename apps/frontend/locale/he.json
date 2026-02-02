@@ -186,8 +186,24 @@
       "page-title": "קיואר זירה",
       "filter-by-table": "סינון לפי שולחן",
       "all-tables": "כל השולחנות",
+      "home": "בית",
       "no-teams": "אין קבוצות ממתינות",
       "no-teams-description": "כל הקבוצות שנקראו הגיעו לשולחנות שלהן",
+      "field-schedule": {
+        "title": "לוח זמנים זירה",
+        "subtitle": "מקצים קרובים",
+        "match": "מקצה",
+        "time": "שעה",
+        "no-matches": "אין מקצים קרובים",
+        "tab-label": "לו״ז"
+      },
+      "pit-map": {
+        "title": "מפת פיטים",
+        "subtitle": "מיקום הקבוצות באזור הפיטים",
+        "no-map": "אין מפת פיטים זמינה",
+        "error": "שגיאה בטעינת מפת הפיטים",
+        "tab-label": "מפת פיטים"
+      },
       "team-card": {
         "in-judging-tooltip": "הקבוצה נמצאת כרגע בשיפוט",
         "time-ago": "לפני {minutes} דק'",
