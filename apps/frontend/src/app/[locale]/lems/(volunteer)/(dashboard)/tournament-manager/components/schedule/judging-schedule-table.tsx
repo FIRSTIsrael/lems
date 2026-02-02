@@ -14,13 +14,19 @@ import dayjs from 'dayjs';
 import type { TournamentManagerData } from '../../graphql';
 import { TeamSlot } from '../team-slot';
 import type { SlotInfo } from '../types';
-import { isSlotBlockedForSelection, isSlotBlockedAsDestination } from '../validation';
+import { SourceType } from '../types';
+import {
+  isSlotBlockedForSelection,
+  isSlotBlockedAsDestination,
+  isValidDestination
+} from '../validation';
 
 interface JudgingScheduleTableProps {
   sessions: TournamentManagerData['division']['judging']['sessions'];
   sessionLength: number;
   rooms: { id: string; name: string }[];
   selectedSlot: SlotInfo | null;
+  sourceType: SourceType | null;
   secondSlot: SlotInfo | null;
   isMobile: boolean;
   division?: TournamentManagerData['division'];
@@ -47,6 +53,7 @@ function JudgingScheduleTableComponent({
   sessionLength,
   rooms,
   selectedSlot,
+  sourceType,
   secondSlot,
   isMobile,
   division,
@@ -123,17 +130,26 @@ function JudgingScheduleTableComponent({
                     time: sessionTime.format('HH:mm')
                   };
 
+                  const isCurrentSlot = selectedSlot?.sessionId === session?.id;
                   const isDisabled =
-                    team !== null && division
-                      ? isSlotBlockedForSelection(slot, division) ||
-                        (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
-                      : false;
+                    // Never disable the selected source slot
+                    !isCurrentSlot && // Disable empty slots when looking for a source
+                    ((!selectedSlot && !team) ||
+                      // Disable invalid destinations when source is selected
+                      (selectedSlot &&
+                        division &&
+                        !isValidDestination(slot, sourceType, division)) ||
+                      // Disable blocked slots based on selection state
+                      (team !== null && division
+                        ? isSlotBlockedForSelection(slot, division) ||
+                          (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
+                        : false));
 
                   return (
                     <TableCell key={room.id} align="center">
                       <TeamSlot
                         team={team ?? null}
-                        isSelected={selectedSlot?.sessionId === session?.id}
+                        isSelected={isCurrentSlot}
                         isSecondSelected={secondSlot?.sessionId === session?.id}
                         isMobile={isMobile}
                         isDisabled={isDisabled}

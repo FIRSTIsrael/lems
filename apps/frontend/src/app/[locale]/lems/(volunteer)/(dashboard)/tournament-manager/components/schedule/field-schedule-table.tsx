@@ -19,10 +19,12 @@ import { useMatchTranslations } from '@lems/localization';
 import type { MatchStatus, TournamentManagerData } from '../../graphql';
 import { TeamSlot } from '../team-slot';
 import type { SlotInfo } from '../types';
+import { SourceType } from '../types';
 import {
   isSlotBlockedForSelection,
   isSlotBlockedAsDestination,
-  isSlotInProgress
+  isSlotInProgress,
+  isValidDestination
 } from '../validation';
 import { MATCH_DURATION_SECONDS } from '../constants';
 
@@ -30,6 +32,7 @@ interface FieldScheduleTableProps {
   matches: TournamentManagerData['division']['field']['matches'];
   tables: { id: string; name: string }[];
   selectedSlot: SlotInfo | null;
+  sourceType: SourceType | null;
   secondSlot: SlotInfo | null;
   isMobile: boolean;
   division?: TournamentManagerData['division'];
@@ -78,6 +81,7 @@ function FieldScheduleTableComponent({
   matches,
   tables,
   selectedSlot,
+  sourceType,
   secondSlot,
   isMobile,
   division,
@@ -170,7 +174,7 @@ function FieldScheduleTableComponent({
         >
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.200' }}>
-              <TableCell width={80} align="center">
+              <TableCell width={70} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
                   {t('match-schedule.columns.match-number')}
                 </Typography>
@@ -185,7 +189,7 @@ function FieldScheduleTableComponent({
                   {t('match-schedule.columns.end-time')}
                 </Typography>
               </TableCell>
-              <TableCell width={100} align="center">
+              <TableCell width={120} align="center">
                 <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
                   {t('match-schedule.columns.status')}
                 </Typography>
@@ -259,18 +263,29 @@ function FieldScheduleTableComponent({
                       tableName: table.name,
                       time: matchTime.format('HH:mm')
                     };
+                    const isCurrentSlot = selectedSlot?.participantId === participant?.id;
                     const isDisabled =
-                      (team !== null && division
-                        ? isSlotBlockedForSelection(slot, division) ||
-                          (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
-                        : false) ||
-                      (division ? isSlotInProgress({ ...slot, type: 'match' }, division) : false);
+                      // Never disable the selected source slot
+                      !isCurrentSlot && // Disable empty slots when looking for a source
+                      ((!selectedSlot && !team) ||
+                        // Disable invalid destinations when source is selected
+                        (selectedSlot &&
+                          division &&
+                          !isValidDestination(slot, sourceType, division)) ||
+                        // Disable blocked slots based on selection state
+                        (team !== null && division
+                          ? isSlotBlockedForSelection(slot, division) ||
+                            (secondSlot ? isSlotBlockedAsDestination(slot, division) : false)
+                          : false) ||
+                        (division
+                          ? isSlotInProgress({ ...slot, type: 'match' }, division)
+                          : false));
 
                     return (
                       <TableCell key={table.id} align="center">
                         <TeamSlot
                           team={team ?? null}
-                          isSelected={selectedSlot?.participantId === participant?.id}
+                          isSelected={isCurrentSlot}
                           isSecondSelected={secondSlot?.participantId === participant?.id}
                           isMobile={isMobile}
                           isDisabled={isDisabled}

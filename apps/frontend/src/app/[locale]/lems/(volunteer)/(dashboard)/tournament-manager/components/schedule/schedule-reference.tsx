@@ -27,6 +27,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   const {
     activeTab,
     selectedSlot,
+    sourceType,
     secondSlot,
     currentRoundMatches,
     currentRoundTitle,
@@ -63,6 +64,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
   // Clear selection when switching tabs
   useEffect(() => {
     dispatch({ type: 'SELECT_SLOT', payload: null });
+    dispatch({ type: 'SET_SOURCE_TYPE', payload: null });
     dispatch({ type: 'SELECT_SECOND_SLOT', payload: null });
   }, [activeTab, dispatch]);
 
@@ -140,6 +142,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               matches={division.field.matches}
               tables={tables}
               selectedSlot={selectedSlot}
+              sourceType={sourceType}
               secondSlot={secondSlot}
               division={division}
               isMobile={isMobile}
@@ -156,6 +159,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
               sessionLength={division.judging.sessionLength}
               rooms={rooms}
               selectedSlot={selectedSlot}
+              sourceType={sourceType}
               secondSlot={secondSlot}
               division={division}
               isMobile={isMobile}
@@ -168,6 +172,7 @@ export function ScheduleReference({ division }: ScheduleReferenceProps) {
       <TeamSelectionDrawer
         open={!!selectedSlot}
         selectedSlot={selectedSlot}
+        sourceType={sourceType}
         secondSlot={secondSlot}
         error={error}
         isMobile={isMobile}

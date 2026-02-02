@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import type { TournamentManagerData } from '../../graphql';
 import { DRAWER_WIDTH_PX, MOBILE_DRAWER_HEIGHT_VH } from '../constants';
 import type { SlotInfo } from '../types';
+import { SourceType } from '../types';
 import { SelectedSlotHeader } from './selected-slot-header';
 import { FieldMatchesList } from './field-matches-list';
 import { JudgingSessionsList } from './judging-sessions-list';
@@ -14,6 +15,7 @@ import { ActionButtons } from './action-buttons';
 interface TeamSelectionDrawerProps {
   open: boolean;
   selectedSlot: SlotInfo | null;
+  sourceType: SourceType | null;
   secondSlot: SlotInfo | null;
   error: string | null;
   isMobile: boolean;
@@ -29,6 +31,7 @@ interface TeamSelectionDrawerProps {
 export function TeamSelectionDrawerWrapper({
   open,
   selectedSlot,
+  sourceType,
   secondSlot,
   error,
   isMobile,
@@ -102,8 +105,8 @@ export function TeamSelectionDrawerWrapper({
 
           <ActionButtons
             selectedSlot={selectedSlot}
+            sourceType={sourceType}
             secondSlot={secondSlot}
-            division={division}
             onMove={onMove}
             onReplace={onReplace}
             onClear={onClear}

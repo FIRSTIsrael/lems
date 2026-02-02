@@ -1,6 +1,6 @@
 import type { TournamentManagerData, MatchStatus, SessionStatus } from '../graphql';
 import type { SlotInfo } from './types';
-import { BLOCKED_STATUSES, DESTINATION_BLOCKED_STATUSES } from './constants';
+import { SourceType } from './types';
 
 export function getSlotStatus(
   slot: SlotInfo,
@@ -18,25 +18,88 @@ export function getSlotStatus(
   return null;
 }
 
-const matchesStatus = (
-  status: MatchStatus | SessionStatus | null,
-  statuses: readonly string[]
-): boolean => (status ? statuses.includes(status) : false);
-
-export function isSlotBlockedForSelection(
-  slot: SlotInfo,
-  division: TournamentManagerData['division']
-): boolean {
-  return matchesStatus(getSlotStatus(slot, division), BLOCKED_STATUSES);
+export function isMissingTeamSlot(slot: SlotInfo): boolean {
+  return !slot.matchId && !slot.sessionId;
 }
 
-export function isSlotBlockedAsDestination(
+export function classifySource(
   slot: SlotInfo,
   division: TournamentManagerData['division']
-): boolean {
-  return matchesStatus(getSlotStatus(slot, division), DESTINATION_BLOCKED_STATUSES);
+): SourceType | null {
+  // Missing team slots cannot be sources
+  if (isMissingTeamSlot(slot)) return SourceType.MISSING_TEAM;
+
+  // Check if slot is currently loaded
+  if (slot.type === 'match' && slot.matchId === division.field.loadedMatch) {
+    return SourceType.DISABLED_LOADED;
+  }
+
+  const status = getSlotStatus(slot, division);
+
+  if (status === 'in-progress') {
+    return SourceType.DISABLED_IN_PROGRESS;
+  }
+
+  if (status === 'completed') {
+    return SourceType.REMATCH;
+  }
+
+  if (status === 'not-started') {
+    return SourceType.RESCHEDULE;
+  }
+
+  return null;
 }
 
+export function getValidDestinationStatuses(
+  sourceType: SourceType | null
+): (MatchStatus | SessionStatus)[] {
+  switch (sourceType) {
+    case SourceType.MISSING_TEAM:
+      return ['not-started'];
+    case SourceType.REMATCH:
+      return ['not-started'];
+    case SourceType.RESCHEDULE:
+      return ['not-started'];
+    default:
+      return [];
+  }
+}
+
+export function isValidDestination(
+  slot: SlotInfo,
+  sourceType: SourceType | null,
+  division: TournamentManagerData['division']
+): boolean {
+  if (!sourceType) return false;
+
+  // Destination cannot be loaded
+  if (slot.type === 'match' && slot.matchId === division.field.loadedMatch) {
+    return false;
+  }
+
+  const status = getSlotStatus(slot, division);
+  const validStatuses = getValidDestinationStatuses(sourceType);
+
+  return validStatuses.includes(status as MatchStatus | SessionStatus);
+}
+
+export type ActionType = 'move' | 'replace' | 'clear';
+
+export function getAllowedActions(sourceType: SourceType | null): ActionType[] {
+  switch (sourceType) {
+    case SourceType.MISSING_TEAM:
+      return ['move'];
+    case SourceType.REMATCH:
+      return ['move'];
+    case SourceType.RESCHEDULE:
+      return ['move', 'replace', 'clear'];
+    default:
+      return [];
+  }
+}
+
+// Backward compatibility functions for useTeamOperations
 export function isSlotCompleted(
   slot: SlotInfo,
   division: TournamentManagerData['division']
@@ -51,50 +114,22 @@ export function isSlotInProgress(
   return getSlotStatus(slot, division) === 'in-progress';
 }
 
-export function isMissingTeamSlot(slot: SlotInfo): boolean {
-  return !slot.matchId && !slot.sessionId;
-}
-
-export function isSlotCurrentlyLoaded(
+export function isSlotBlockedAsDestination(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  return slot.type === 'match' && slot.matchId === division.field.loadedMatch;
+  const sourceType = classifySource(slot, division);
+  return !isValidDestination(slot, sourceType, division);
 }
 
-export function isSourceCompleted(
+export function isSlotBlockedForSelection(
   slot: SlotInfo,
   division: TournamentManagerData['division']
 ): boolean {
-  return isSlotCompleted(slot, division);
-}
-
-export function canPerformSwap(
-  source: SlotInfo,
-  destination: SlotInfo,
-  division: TournamentManagerData['division']
-): boolean {
-  const sourceStatus = getSlotStatus(source, division);
-  const destStatus = getSlotStatus(destination, division);
-  return sourceStatus === 'not-started' && destStatus === 'not-started';
-}
-
-export function validateSlotPair(
-  source: SlotInfo | null,
-  destination: SlotInfo | null,
-  division: TournamentManagerData['division']
-): { isValid: boolean; reasonKey?: string } {
-  if (!source || !destination) {
-    return { isValid: false, reasonKey: 'both-source-and-destination-required' };
-  }
-
-  if (source.type !== destination.type) {
-    return { isValid: false, reasonKey: 'types-must-match' };
-  }
-
-  if (isSlotBlockedAsDestination(destination, division)) {
-    return { isValid: false, reasonKey: 'cannot-move-to-blocked' };
-  }
-
-  return { isValid: true };
+  const sourceType = classifySource(slot, division);
+  return (
+    sourceType === SourceType.DISABLED_IN_PROGRESS ||
+    sourceType === SourceType.DISABLED_LOADED ||
+    sourceType === SourceType.MISSING_TEAM
+  );
 }

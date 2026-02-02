@@ -3,10 +3,12 @@
 import { createContext, useContext, useMemo, useReducer, ReactNode } from 'react';
 import type { TournamentManagerData } from './graphql';
 import type { SlotInfo } from './components/types';
+import { SourceType } from './components/types';
 
 interface TournamentManagerState {
   activeTab: number;
   selectedSlot: SlotInfo | null;
+  sourceType: SourceType | null;
   secondSlot: SlotInfo | null;
   currentRoundMatches: TournamentManagerData['division']['field']['matches'];
   currentRoundTitle: string;
@@ -22,6 +24,11 @@ interface SetActiveTabAction {
 interface SelectSlotAction {
   type: 'SELECT_SLOT';
   payload: SlotInfo | null;
+}
+
+interface SetSourceTypeAction {
+  type: 'SET_SOURCE_TYPE';
+  payload: SourceType | null;
 }
 
 interface SelectSecondSlotAction {
@@ -52,6 +59,7 @@ interface SetRoundSelectorAction {
 type TournamentManagerAction =
   | SetActiveTabAction
   | SelectSlotAction
+  | SetSourceTypeAction
   | SelectSecondSlotAction
   | SetCurrentRoundMatchesAction
   | SetCurrentRoundTitleAction
@@ -69,6 +77,7 @@ const TournamentManagerContext = createContext<TournamentManagerContextType | un
 const initialState: TournamentManagerState = {
   activeTab: 0,
   selectedSlot: null,
+  sourceType: null,
   secondSlot: null,
   currentRoundMatches: [],
   currentRoundTitle: '',
@@ -85,6 +94,8 @@ function tournamentManagerReducer(
       return { ...state, activeTab: action.payload };
     case 'SELECT_SLOT':
       return { ...state, selectedSlot: action.payload };
+    case 'SET_SOURCE_TYPE':
+      return { ...state, sourceType: action.payload };
     case 'SELECT_SECOND_SLOT':
       return { ...state, secondSlot: action.payload };
     case 'SET_CURRENT_ROUND_MATCHES':
