@@ -105,12 +105,12 @@ export function JudgingSchedule({
 
   const isTeamOnField = useCallback(
     (teamId: string) => {
-      if (activeMatch?.participants.some(p => p.teamId === teamId)) return true;
-      if (loadedMatch?.participants.some(p => p.teamId === teamId)) return true;
+      if (activeMatch?.participants.some(p => p.team?.id === teamId)) return true;
+      if (loadedMatch?.participants.some(p => p.team?.id === teamId)) return true;
 
       return matches
         .filter(m => m.called && m.status === 'not-started')
-        .some(m => m.participants.some(p => p.teamId === teamId && p.queued));
+        .some(m => m.participants.some(p => p.team?.id === teamId && p.queued));
     },
     [matches, activeMatch, loadedMatch]
   );
@@ -205,7 +205,7 @@ export function JudgingSchedule({
                             ) : (
                               <Checkbox
                                 checked={session.queued}
-                                disabled={!team.registered}
+                                disabled={!team.arrived}
                                 size="small"
                                 onChange={() => handleToggleSession(session.id, !session.queued)}
                               />

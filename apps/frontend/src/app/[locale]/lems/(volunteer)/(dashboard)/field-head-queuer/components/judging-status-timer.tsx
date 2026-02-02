@@ -4,10 +4,9 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Stack, Typography, Chip, Box, LinearProgress, Skeleton } from '@mui/material';
 import GroupsIcon from '@mui/icons-material/Groups';
-import { type Team, type JudgingSession } from '../graphql';
+import { type JudgingSession } from '../graphql';
 
 interface JudgingStatusTimerProps {
-  teams: Team[];
   sessions: JudgingSession[];
   currentSessionNumber: number;
   loading?: boolean;

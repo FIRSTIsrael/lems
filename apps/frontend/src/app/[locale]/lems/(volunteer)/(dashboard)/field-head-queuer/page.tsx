@@ -15,7 +15,7 @@ import {
 } from './graphql/index';
 import {
   createMatchLoadedSubscription,
-  createMatchUpdatedSubscription,
+  createMatchCallUpdatedSubscription,
   createMatchParticipantUpdatedSubscription
 } from './graphql/subscriptions';
 import { FieldSchedule, ActiveMatchDisplay } from './components';
@@ -27,7 +27,7 @@ export default function FieldHeadQueuerPage() {
   const subscriptions = useMemo(
     () => [
       createMatchLoadedSubscription(currentDivision.id),
-      createMatchUpdatedSubscription(currentDivision.id),
+      createMatchCallUpdatedSubscription(currentDivision.id),
       createMatchParticipantUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
@@ -53,11 +53,7 @@ export default function FieldHeadQueuerPage() {
 
       <Stack spacing={3} sx={{ pt: 3 }}>
         {error && <Alert severity="error">{error.message}</Alert>}
-        {!loading && !data && (
-          <Alert severity="info">
-            No data loaded yet. Check that the backend GraphQL server is running.
-          </Alert>
-        )}
+        {!loading && !data && <Alert severity="info">{t('no-data')}</Alert>}
 
         <ActiveMatchDisplay
           divisionId={currentDivision.id}

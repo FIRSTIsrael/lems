@@ -12,8 +12,8 @@ export interface RobotGameTable {
 
 export interface MatchParticipant {
   id: string;
-  team: Team;
-  table: RobotGameTable;
+  team: Team | null;
+  table: RobotGameTable | null;
   queued: boolean;
 }
 
@@ -26,6 +26,22 @@ export interface RobotGameMatch {
   startTime?: string;
   called: boolean;
   participants: MatchParticipant[];
+}
+
+export interface JudgingRoom {
+  id: string;
+  name: string;
+}
+
+export interface JudgingSession {
+  id: string;
+  number: number;
+  teamId: string;
+  roomId: string;
+  scheduledTime: string;
+  status: string;
+  called: boolean;
+  queued: boolean;
 }
 
 export interface HeadQueuerData {
