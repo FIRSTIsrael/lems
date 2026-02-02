@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Tooltip } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { red, orange } from '@mui/material/colors';
+import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 
 interface TeamQueueCardProps {
   teamNumber: number;
@@ -28,12 +29,12 @@ export function TeamQueueCard({
 }: TeamQueueCardProps) {
   const t = useTranslations('pages.field-queuer.team-card');
   const tCommon = useTranslations('pages.field-head-queuer.active-match');
+  const currentTime = useTime({ interval: 1000 });
 
   const timeInfo = useMemo(() => {
     const scheduled = dayjs(scheduledTime);
-    const now = dayjs();
-    const diffMinutes = scheduled.diff(now, 'minute');
-    const isPast = diffMinutes < 0;
+    const diffMinutes = currentTime.diff(scheduled, 'minute');
+    const isPast = diffMinutes > 0;
     const absMinutes = Math.abs(diffMinutes);
 
     return {
@@ -41,7 +42,7 @@ export function TeamQueueCard({
       diffMinutes: absMinutes,
       isPast
     };
-  }, [scheduledTime]);
+  }, [scheduledTime, currentTime]);
 
   return (
     <Paper
