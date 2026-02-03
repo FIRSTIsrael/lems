@@ -1,0 +1,1393 @@
+{
+  "pages": {
+    "exports": {
+      "rubrics": {
+        "metadata": "Wygenerowano z systemu wydarzeń FIRST Israel | {eventName} | Sezon {seasonName}",
+        "title": "Rubryka {category} dla drużyny #{teamNumber} {teamName}",
+        "no-rubrics-found": "Nie znaleziono rubryk",
+        "team-not-found": "Nie znaleziono drużyny {teamSlug} w wydarzeniu {eventSlug}",
+        "no-rubric-data": "Brak danych rubryki",
+        "feedback": {
+          "title": "Informacja zwrotna z sesji sędziowskiej",
+          "page-title": "Informacja zwrotna dla drużyny #{teamNumber} - {teamName}",
+          "great-job": "Świetna robota",
+          "think-about": "Zastanówcie się nad",
+          "great-job-placeholder": "Zanotuj, co drużyna zrobiła doskonale...",
+          "think-about-placeholder": "Rzeczy do przemyślenia lub poprawy przez drużynę...",
+          "categories": {
+            "core-values": "Wartości Podstawowe",
+            "innovation-project": "Projekt Innowacyjny",
+            "robot-design": "Robot Design"
+          },
+          "category-descriptions": {
+            "core-values": "Jak drużyna okazywała pracę zespołową, odkrywanie, inkluzywność, innowacyjność, wpływ i zabawę?",
+            "innovation-project": "Jak drużyna zidentyfikowała problem związany z tematem sezonu i podeszła do jego rozwiązania?",
+            "robot-design": "Jakie było podejście drużyny do rozwiązywania misji robota w sposób uporządkowany i zaplanowany?"
+          },
+          "awards": {
+            "title": "Nominacja do nagrody",
+            "description": "Jeśli drużyna jest nominowana do jednej z tych nagród, wpisz w odpowiednim polu. Sprawdź też u organizatora, które nagrody opcjonalne są dostępne w Twojej dywizji.",
+            "placeholder": "Czy drużyna jest nominowana do tej nagrody? Powody...",
+            "no-awards": "Brak dostępnych nagród opcjonalnych."
+          }
+        }
+      },
+      "scores": {
+        "metadata": "Wygenerowano z systemu wydarzeń FIRST Israel | {eventName}| Sezon {seasonName}",
+        "title": "Karta wyników {round} dla drużyny #{teamNumber} - {teamName}",
+        "total-points": "{points} punktów",
+        "no-scores-found": "Nie znaleziono wyników"
+      }
+    },
+    "login": {
+      "subtitle": "Logowanie wolontariusza",
+      "continue": "Kontynuuj",
+      "submitting": "Ładowanie...",
+      "sign-in": "Zaloguj się",
+      "loading": "Ładowanie...",
+      "loading-role": "Ładowanie informacji o roli...",
+      "steps": {
+        "role": "Wybierz rolę",
+        "division": "Wybierz dywizję",
+        "association": "Wybierz przydział",
+        "user": "Wybierz użytkownika",
+        "password": "Wprowadź hasło"
+      },
+      "instructions": {
+        "role": "Proszę wybrać swoją rolę:",
+        "division": "Proszę wybrać przypisaną dywizję:",
+        "association": "Proszę wybrać swój przydział:",
+        "role-info-table": "Proszę wybrać stół, do którego jesteś przypisany:",
+        "role-info-room": "Proszę wybrać salę, do której jesteś przypisany:",
+        "role-info-category": "Proszę wybrać kategorię, do której jesteś przypisany:",
+        "user": "Wiele kont pasuje do Twojego wyboru. Proszę wybrać swoje konto:",
+        "password": "Proszę wprowadzić hasło:"
+      },
+      "fields": {
+        "role": "Rola",
+        "division": "Dywizja",
+        "association": "Przydział",
+        "table": "Stół",
+        "room": "Sala",
+        "category": "Kategoria",
+        "user": "Użytkownik",
+        "password": "Hasło",
+        "password-helper": "Hasło 4‑znakowe"
+      },
+      "errors": {
+        "required": "To pole jest wymagane",
+        "invalid-length": "Hasło musi mieć dokładnie 4 znaki",
+        "too-many-requests": "Zbyt wiele prób logowania. Spróbuj ponownie później.",
+        "invalid-password": "Nieprawidłowe hasło. Spróbuj ponownie.",
+        "server-error": "Wystąpił błąd. Spróbuj ponownie.",
+        "not-found": "Nie znaleziono pasujących użytkowników. Sprawdź swoje wybory.",
+        "no-users-with-role": "Nie znaleziono użytkowników z tą rolą.",
+        "no-users-in-division": "Nie znaleziono użytkowników w tej dywizji.",
+        "no-users-with-association": "Nie znaleziono użytkowników z tym przydziałem.",
+        "user-not-found": "Nie znaleziono użytkownika.",
+        "missing-event-slug": "Brak informacji o wydarzeniu.",
+        "event-not-found": "Nie znaleziono wydarzenia.",
+        "no-users-for-event": "Brak skonfigurowanych użytkowników dla tego wydarzenia.",
+        "title": "Coś poszło nie tak",
+        "description": "Napotkaliśmy nieoczekiwany błąd podczas ładowania strony logowania.",
+        "unknown": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+        "support-text": "Jeśli problem się powtarza, skontaktuj się z pomocą techniczną.",
+        "back-home": "Powrót do strony głównej",
+        "try-again": "Spróbuj ponownie"
+      }
+    },
+    "error": {
+      "title": "Coś poszło nie tak",
+      "description": "Napotkaliśmy nieoczekiwany błąd. Spróbuj ponownie.",
+      "technical-details": "Szczegóły techniczne",
+      "support-text": "Jeśli problem się powtarza, skontaktuj się z pomocą techniczną.",
+      "back-home": "Powrót do strony głównej",
+      "try-again": "Spróbuj ponownie"
+    },
+    "pit-admin": {
+      "page-title": "Rejestracja drużyn",
+      "error": "Nie udało się oznaczyć drużyny jako przybyłej",
+      "stats": {
+        "total-teams": "Łącznie drużyn",
+        "arrived": "Przybyli",
+        "all-arrived": "Wszystkie drużyny przybyły! Świetna robota 🎉",
+        "waiting-for": "Oczekiwanie na {count, plural, one {# drużynę} other {# drużyny}}",
+        "teams-pending": "{count, plural, one {# drużyna w oczekiwaniu} other {# drużyny w oczekiwaniu}}"
+      },
+      "team-input": {
+        "title": "Zarejestruj przybycie drużyny",
+        "subtitle": "Wybierz drużynę z listy, aby oznaczyć jej przybycie na wydarzenie",
+        "search-label": "Wyszukaj drużyny",
+        "search-placeholder": "Wpisz, aby wyszukać...",
+        "button": "Oznacz jako przybyła",
+        "submitting": "Przetwarzanie...",
+        "no-options": "Wszystkie drużyny przybyły",
+        "all-arrived-message": "Wszystkie drużyny przybyły",
+        "team": "Drużyna"
+      }
+    },
+    "judge": {
+      "page-title": "Sędziowanie",
+      "schedule": {
+        "session": "Sesja",
+        "start-time": "Godzina rozpoczęcia",
+        "team": "Informacje o drużynie",
+        "actions": "Akcje",
+        "rubrics": "Rubryki",
+        "no-sessions": "Brak zaplanowanych sesji sędziowskich",
+        "not-arrived": "Nie przybyła",
+        "start-session": "Start",
+        "session-completed": "Zakończono",
+        "rubric-labels": {
+          "core-values": "Wartości Podstawowe",
+          "innovation-project": "Projekt Innowacyjny",
+          "robot-design": "Robot Design"
+        },
+        "status-glossary": {
+          "title": "Przewodnik statusów rubryki",
+          "aria-label": "Pokaż przewodnik statusów rubryki",
+          "statuses": {
+            "empty": {
+              "label": "Nie rozpoczęto",
+              "description": "Rubryka nie została jeszcze wypełniona"
+            },
+            "draft": {
+              "label": "W toku",
+              "description": "Rubryka jest aktualnie wypełniana"
+            },
+            "approved": {
+              "label": "Zatwierdzona",
+              "description": "Rubryka została ukończona i przesłana"
+            },
+            "locked": {
+              "label": "Zablokowana",
+              "description": "Rubryka jest zablokowana i nie można jej edytować"
+            },
+            "completed": {
+              "label": "Zakończona",
+              "description": "Rubryka została przejrzana i zatwierdzona"
+            }
+          }
+        }
+      },
+      "error": {
+        "start": "Nie udało się rozpocząć sesji sędziowskiej",
+        "abort": "Nie udało się przerwać sesji sędziowskiej"
+      },
+      "timer": {
+        "abort-session": "Przerwij sesję",
+        "minutes": "{count} minut",
+        "current-stage": "Aktualny etap",
+        "team": "Drużyna",
+        "session-ends-in-label": "Koniec sesji za",
+        "up-next": "Następnie",
+        "abort-dialog": {
+          "title": "Przerwij sesję sędziowską",
+          "message": "Czy na pewno chcesz przerwać tę sesję sędziowską? Tej operacji nie można cofnąć i zakończy ona sesję natychmiast.",
+          "cancel": "Anuluj",
+          "confirm": "Przerwij sesję"
+        }
+      },
+      "sound-test": {
+        "button-label": "Test dźwięku",
+        "dialog": {
+          "title": "Kontrola dźwięku",
+          "description": "Podczas sesji sędziowskiej odtwarzane będą sygnały informujące o zmianie etapów prezentacji. Proszę sprawdzić, czy dźwięk działa przed wejściem zespołów.",
+          "close": "Zamknij",
+          "sounds": {
+            "start": "Początek sesji",
+            "end": "Koniec sesji",
+            "change": "Zmiana etapu"
+          }
+        }
+      }
+    },
+    "reports": {
+      "page-title": "Raporty",
+      "menu": {
+        "field-status": "Status pola",
+        "team-list": "Lista drużyn",
+        "pit-map": "Mapa pitów",
+        "awards-list": "Lista nagród",
+        "event-agenda": "Agenda wydarzenia",
+        "field-timer": "Timer pola",
+        "field-schedule": "Harmonogram pola",
+        "judging-schedule": "Harmonogram sędziowania",
+        "judging-status": "Status sędziowania",
+        "scoreboard": "Tabela wyników"
+      },
+      "field-status": {
+        "countdown": {
+          "no-match": "Nie załadowano meczu",
+          "late": "Opóźnienie!",
+          "tables-ready": "{ready} z {total} stołów gotowych"
+        },
+        "upcoming-matches": {
+          "title": "Nadchodzące mecze",
+          "no-matches": "Brak nadchodzących meczów",
+          "time": "Czas",
+          "next": "Następny",
+          "in-time": "za {time}",
+          "team-number": "Drużyna {number}",
+          "match-number": "Mecz",
+          "scheduled-time": "Zaplanowany czas",
+          "teams": "Drużyny"
+        },
+        "active-match": {
+          "title": "Aktywny mecz",
+          "no-match": "Brak aktywnego meczu",
+          "match-title": "Mecz {slug}",
+          "started-at": "Start",
+          "scheduled-at": "Zaplanowano",
+          "deviation": "Odchylenie",
+          "participants": "Uczestnicy",
+          "team-label": "Drużyna",
+          "status": {
+            "in-progress": "W toku",
+            "completed": "Zakończono"
+          }
+        },
+        "next-match": {
+          "title": "Następny mecz",
+          "no-match": "Nie załadowano meczu",
+          "match-title": "Następny mecz: {slug}",
+          "tables-ready": "Stoły gotowe",
+          "team-number": "Drużyna {number}",
+          "judging-conflict": "Sędziowanie: {room}",
+          "status": {
+            "ready": "Gotowy",
+            "present": "Przygotowanie",
+            "queued": "W kolejce",
+            "not-present": "Nieobecna",
+            "not-arrived": "Nie przybyła na wydarzenie"
+          }
+        },
+        "judging-integration": {
+          "title": "Integracja sędziowania",
+          "active-sessions": "Aktywne sesje sędziowania",
+          "team-info": "Drużyna {number} - {name}",
+          "conflicts": "Konflikty czasowe",
+          "team-number": "Drużyna {number}",
+          "conflict-details": "W sędziowaniu: {room} | Wezwana do meczu {match}",
+          "no-conflicts": "Brak konfliktów czasowych"
+        },
+        "queue-overview": {
+          "title": "Status kolejki",
+          "no-matches": "Brak meczów w kolejce",
+          "match-label": "Mecz",
+          "in-queue": "W kolejce:",
+          "team-label": "Drużyna"
+        }
+      },
+      "awards-list": {
+        "page-title": "Lista nagród",
+        "description": "Lista wszystkich nagród w tej dywizji, wraz z kolejnością ich przyznawania i ustawieniami.",
+        "error-loading": "Wystąpił błąd podczas ładowania nagród.",
+        "no-awards": "Nie skonfigurowano żadnych nagród.",
+        "loading": "Ładowanie nagród…",
+        "places-count": "{count, plural, one {1 nagroda} other {# nagród}}",
+        "place-label": "Miejsce #{place}"
+      },
+      "scoreboard": {
+        "page-title": "Tabela wyników",
+        "loading": "Ładowanie tabeli wyników...",
+        "error-loading": "Nie udało się załadować tabeli wyników",
+        "rank": "Miejsce",
+        "team": "Drużyna",
+        "best-score": "Najlepszy wynik",
+        "match": "Mecz",
+        "match-scores": "Wyniki meczów",
+        "no-data": "Brak dostępnych danych tabeli wyników"
+      },
+      "team-list": {
+        "page-title": "Lista drużyn",
+        "total-teams": "Łącznie drużyn",
+        "arrived-teams": "Przybyli",
+        "pending-teams": "Oczekujący",
+        "arrived": "Przybyli",
+        "not-arrived": "Oczekujący",
+        "arrived-count": "{count}/{total} przybyło",
+        "no-teams": "Brak dostępnych drużyn",
+        "loading": "Ładowanie drużyn...",
+        "error-loading": "Nie udało się załadować drużyn. Spróbuj ponownie.",
+        "columns": {
+          "number": "Drużyna #",
+          "name": "Nazwa drużyny",
+          "affiliation": "Instytucja",
+          "city": "Miasto",
+          "arrived": "Status",
+          "region": "Region"
+        },
+        "sort-ascending": "rosnąco",
+        "sort-descending": "malejąco"
+      },
+      "pit-map": {
+        "page-title": "Mapa pitów",
+        "loading": "Ładowanie mapy pitów...",
+        "error-loading": "Nie udało się załadować mapy pitów. Spróbuj ponownie.",
+        "no-map": "Mapa pitów niedostępna."
+      },
+      "event-agenda": {
+        "page-title": "Agenda wydarzenia",
+        "error-loading": "Wystąpił błąd podczas ładowania agendy.",
+        "no-events": "Nie zaplanowano jeszcze wydarzeń w agendzie.",
+        "loading": "Ładowanie agendy...",
+        "duration-minutes": "{count, plural, one {1 minuta} other {# minut}}",
+        "location": "Lokalizacja",
+        "visibility": {
+          "public": "Ogólne",
+          "judging": "Sędziowanie",
+          "field": "Pole",
+          "teams": "Drużyny"
+        }
+      },
+      "field-timer": {
+        "page-title": "Timer pola",
+        "no-active-match": "Brak aktywnego meczu",
+        "loading": "Ładowanie danych meczu...",
+        "error-loading": "Nie udało się załadować danych pola. Spróbuj ponownie.",
+        "test-match": "Mecz testowy",
+        "match-info": "{stage} Runda #{round} Mecz #{number}",
+        "next-match": "Następny mecz"
+      },
+      "field-schedule": {
+        "page-title": "Harmonogram pola",
+        "error-loading": "Wystąpił błąd podczas ładowania harmonogramu.",
+        "empty-state": "Nie zaplanowano jeszcze meczów.",
+        "columns": {
+          "match": "Mecz",
+          "start-time": "Start",
+          "end-time": "Koniec"
+        },
+        "stages": {
+          "practice": "Runda treningowa",
+          "ranking": "Runda rankingowa",
+          "test": "Runda testowa"
+        },
+        "not-arrived": "Nie przybyła",
+        "loading": "Ładowanie meczów...",
+        "visibility": {
+          "public": "Ogólne",
+          "judging": "Sędziowanie",
+          "field": "Pole",
+          "teams": "Drużyny"
+        }
+      },
+      "judging-schedule": {
+        "page-title": "Harmonogram sędziowania",
+        "error-loading": "Wystąpił błąd podczas ładowania harmonogramu.",
+        "no-sessions": "Nie zaplanowano jeszcze sesji sędziowskich.",
+        "loading": "Ładowanie harmonogramu...",
+        "arrived": "Przybyła",
+        "not-arrived": "Nie przybyła",
+        "table": {
+          "time": "Czas",
+          "start-time": "Start",
+          "end-time": "Koniec"
+        },
+        "visibility": {
+          "public": "Ogólne",
+          "judging": "Sędziowanie"
+        }
+      }
+    },
+    "rubric": {
+      "page-title": "Rubryka {category}, Drużyna {teamName} #{teamNumber}",
+      "field-notes-label": "Notatki",
+      "field-notes-placeholder": "W jaki sposób drużyna przekroczyła oczekiwania?",
+      "navigation": {
+        "title": "Kategorie rubryki"
+      },
+      "award-nominations": {
+        "title": "Nominacja do nagrody",
+        "description": "Jeśli drużyna jest kandydatem do jednej z tych nagród, zaznacz odpowiednie pole. Sprawdź u organizatora wydarzenia, które nagrody opcjonalne są używane.",
+        "no-awards": "Brak dostępnych nagród opcjonalnych."
+      },
+      "actions": {
+        "save-draft": "Zapisz jako szkic",
+        "reset": "Resetuj",
+        "submit-rubric": "Prześlij i zablokuj",
+        "unlock-rubric": "Odblokuj",
+        "approve-rubric": "Zatwierdź"
+      },
+      "submit-dialog": {
+        "title": "Prześlij i zablokuj rubrykę",
+        "warning": "Tej operacji nie można cofnąć!",
+        "description": "Po przesłaniu i zablokowaniu tej rubryki nie będzie można wprowadzać żadnych zmian. Upewnij się, że wszystkie informacje są poprawne przed kontynuacją.",
+        "cancel": "Anuluj",
+        "confirm": "Prześlij i zablokuj"
+      },
+      "reset-dialog": {
+        "title": "Resetuj rubrykę",
+        "warning": "Tej operacji nie można cofnąć!",
+        "description": "Czy na pewno chcesz zresetować tę rubrykę? Wszystkie dane zostaną wyczyszczone i zaczniesz od nowa.",
+        "cancel": "Anuluj",
+        "confirm": "Resetuj rubrykę"
+      },
+      "approve-dialog": {
+        "title": "Zatwierdź rubrykę",
+        "warning": "Ta operacja jest ostateczna i nie można jej cofnąć!",
+        "description": "Po zatwierdzeniu rubryka zostanie zablokowana i dalsze zmiany nie będą możliwe. Upewnij się, że rubryka jest kompletna i poprawna.",
+        "cancel": "Anuluj",
+        "confirm": "Zatwierdź rubrykę"
+      },
+      "toasts": {
+        "rating-update-error": "Nie udało się zaktualizować oceny. Spróbuj ponownie.",
+        "notes-update-error": "Nie udało się zapisać notatek. Spróbuj ponownie.",
+        "feedback-update-error": "Nie udało się zapisać informacji zwrotnej. Spróbuj ponownie.",
+        "reset-error": "Nie udało się zresetować rubryki. Spróbuj ponownie.",
+        "reset-success": "Rubryka została pomyślnie zresetowana.",
+        "unlock-success": "Rubryka została odblokowana.",
+        "unlock-error": "Nie udało się odblokować rubryki. Spróbuj ponownie.",
+        "submit-success": "Rubryka została przesłana i zablokowana.",
+        "submit-error": "Nie udało się przesłać rubryki. Spróbuj ponownie.",
+        "approve-success": "Rubryka została zatwierdzona.",
+        "approve-error": "Nie udało się zatwierdzić rubryki. Spróbuj ponownie."
+      },
+      "validation": {
+        "title": "Rubryka niekompletna",
+        "missing-field-value": "Oceń wszystkie pola przed przesłaniem.",
+        "missing-notes-for-level-4": "Pola ocenione jako 'EXCEEDS' wymagają notatek.",
+        "missing-feedback": "Proszę wypełnić oba pola informacji zwrotnej.",
+        "show": "Pokaż problem"
+      },
+      "errors": {
+        "submit": "Nie udało się przesłać rubryki."
+      }
+    },
+    "judge-advisor": {
+      "page-title": "Judge Advisor",
+      "mode": {
+        "judging": "Sędziowanie",
+        "awards": "Nagrody"
+      },
+      "summary": {
+        "status": {
+          "empty": "Puste",
+          "draft": "Szkic",
+          "completed": "Zakończone",
+          "approved": "Zatwierdzone"
+        }
+      },
+      "grid": {
+        "empty-state": "Nie znaleziono sesji sędziowskich",
+        "column": {
+          "session": "Sesja sędziowska",
+          "room": "Sala",
+          "team": "Drużyna",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Nie rozpoczęto",
+          "draft": "W toku",
+          "approved": "Zatwierdzona",
+          "locked": "Zablokowana",
+          "completed": "Zakończona"
+        },
+        "session-status": {
+          "not-started": "Nie rozpoczęto",
+          "in-progress": "W toku",
+          "completed": "Zakończono"
+        },
+        "filter": {
+          "team": "Drużyna",
+          "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
+          "status": "Status",
+          "all-statuses": "Wszystkie statusy",
+          "results": "Wyniki"
+        },
+        "sort": {
+          "room": "Sortuj wg sali",
+          "session": "Sortuj wg sesji"
+        },
+        "status-glossary": {
+          "title": "Przewodnik statusów rubryki",
+          "aria-label": "Pokaż przewodnik statusów rubryki",
+          "statuses": {
+            "empty": {
+              "label": "Nie rozpoczęto",
+              "description": "Rubryka nie została jeszcze wypełniona"
+            },
+            "draft": {
+              "label": "W toku",
+              "description": "Rubryka jest aktualnie wypełniana"
+            },
+            "approved": {
+              "label": "Zatwierdzona",
+              "description": "Rubryka została ukończona i przesłana"
+            },
+            "locked": {
+              "label": "Zablokowana",
+              "description": "Rubryka jest zablokowana i nie można jej edytować"
+            },
+            "completed": {
+              "label": "Zakończona",
+              "description": "Rubryka została przejrzana i zatwierdzona"
+            }
+          }
+        }
+      },
+      "team-info-cell": {
+        "not-arrived": "Nie przybyła",
+        "disqualified": "Zdyskwalifikowana"
+      },
+      "awards": {
+        "disqualification": {
+          "search-title": "Dyskwalifikuj drużyny",
+          "search-placeholder": "Wyszukaj po numerze, nazwie, afiliacji lub mieście...",
+          "search-label": "Wyszukaj drużyny",
+          "disqualify": "Dyskwalifikuj",
+          "disqualified": "Zdyskwalifikowana",
+          "no-teams-found": "Nie znaleziono drużyn",
+          "disqualified-teams-title": "Zdyskwalifikowane drużyny",
+          "disqualified-teams-count": "{count, plural, one {# drużyna} other {# drużyny}}",
+          "confirm-title": "Potwierdź dyskwalifikację",
+          "confirm-message": "Czy na pewno chcesz zdyskwalifikować",
+          "confirm-disqualify": "Dyskwalifikuj",
+          "cancel": "Anuluj",
+          "team-option-label": "Drużyna #{number} - {name} ({affiliation}, {city})",
+          "error-disqualifying-team": "Błąd podczas dyskwalifikacji drużyny"
+        },
+        "deliberation": {
+          "final-deliberation": "Ostateczna deliberacja",
+          "status": "Status",
+          "picklist": "Lista wyboru",
+          "start-time": "Godzina rozpoczęcia",
+          "stage": "Etap",
+          "action": "Akcja",
+          "open": "Otwórz",
+          "open-final": "Otwórz ostateczną deliberację",
+          "no-deliberations": "Brak dostępnych deliberacji"
+        },
+        "personal-awards": {
+          "title": "Nagrody personalne",
+          "no-awards": "Brak skonfigurowanych nagród personalnych",
+          "optional": "Opcjonalne",
+          "team-placeholder": "Wpisz nazwę lub numer drużyny",
+          "submit": "Prześlij nagrody",
+          "placeholder-message": "Nagrody przesłane",
+          "winner-name-placeholder": "Wpisz imię zwycięzcy",
+          "assign-button": "Przypisz",
+          "cancel": "Anuluj",
+          "confirm": "Potwierdź",
+          "assigning": "Przypisywanie...",
+          "confirm-assignment-title": "Potwierdź przypisanie nagrody",
+          "confirm-assignment-message": "Potwierdź, że chcesz przypisać tę nagrodę. Tej operacji nie można cofnąć.",
+          "confirm-assignment-warning": "Po przypisaniu nagrody nie można jej ponownie przypisać ani zmienić.",
+          "award-label": "Nagroda",
+          "winner-label": "Zwycięzca",
+          "error-empty-winner-name": "Wpisz imię zwycięzcy",
+          "error-assigning-award": "Błąd podczas przypisywania nagrody",
+          "award-assigned-success": "Nagroda została pomyślnie przypisana"
+        },
+        "deliberations": "Deliberacje"
+      }
+    },
+    "mc": {
+      "page-title": "Panel MC",
+      "mode": {
+        "matches": "Mecze",
+        "awards": "Nagrody"
+      },
+      "current-match": {
+        "no-match": "Brak załadowanego meczu",
+        "round": "Runda",
+        "no-team": "Brak przypisanej drużyny",
+        "not-arrived": "Nie przybyła",
+        "status": {
+          "loaded": "Załadowano",
+          "in-progress": "W toku"
+        },
+        "match-title": "{stage} runda {round}, mecz #{number}",
+        "table": "Stół"
+      },
+      "schedule": {
+        "title": "Nadchodzące mecze",
+        "match-number": "Mecz",
+        "scheduled-time": "Czas",
+        "teams": "Drużyny",
+        "status": "Status",
+        "round": "Runda",
+        "no-matches": "Brak nadchodzących meczów",
+        "no-team": "Brak drużyny",
+        "not-arrived": "Nie przybyła"
+      },
+      "awards": {
+        "title": "Prezentacja nagród",
+        "description": "Funkcjonalność prezentacji nagród będzie wkrótce dostępna.",
+        "blocked": {
+          "title": "Nagrody nie zostały jeszcze przyznane",
+          "description": "Nagrody nie zostały jeszcze zatwierdzone. Sprawdź ponownie później."
+        },
+        "award": "Nagroda {awardName}"
+      }
+    },
+    "referee": {
+      "page-title": "Panel sędziego | Stół {table}",
+      "match-running": "Mecz trwa",
+      "match-slug": "Mecz",
+      "prestart-title": "Przygotowanie do meczu",
+      "inspection-timer": "Kontrola sprzętu",
+      "start-inspection": "Rozpocznij kontrolę",
+      "present": "Obecna",
+      "absent": "Nieobecna",
+      "ready-confirmed": "Gotowy",
+      "mark-ready": "Oznacz jako gotowy",
+      "no-match-title": "Brak przypisanego meczu",
+      "no-match-description": "Oczekiwanie na przypisanie kolejnego meczu do Twojego stołu.",
+      "no-match-instructions": "Sprawdź poniższy harmonogram, aby zobaczyć nadchodzące mecze.",
+      "no-upcoming-matches": "Brak zaplanowanych nadchodzących meczów.",
+      "match": "Mecz",
+      "scheduled-time": "Zaplanowany czas",
+      "teams": "Drużyny",
+      "round": "Runda",
+      "team-not-available": "Informacje o drużynie niedostępne",
+      "break-message": "To dobry moment, by napić się wody i odświeżyć",
+      "no-show-title": "Drużyna nie przybyła",
+      "no-show-description": "Ta drużyna nie przybyła na wydarzenie i nie weźmie udziału w tym meczu.",
+      "loading": "Ładowanie danych sędziego..."
+    },
+    "judging-status": {
+      "page-title": "Status sędziowania",
+      "table": {
+        "time": "Czas",
+        "room": "Sala {name}",
+        "current-round": "Aktualna runda",
+        "next-round": "Następna runda",
+        "started-at": "Rozpoczęto o {time}",
+        "ends-at": "Kończy się o {time}"
+      },
+      "status": {
+        "not-started": "Nie rozpoczęto",
+        "in-progress": "W toku",
+        "completed": "Zakończono",
+        "queued": "W kolejce"
+      },
+      "warnings": {
+        "on-field": "Drużyna jest na polu!"
+      },
+      "not-arrived": "Nie przybyła",
+      "empty-state": {
+        "message": "Brak zaplanowanych sesji sędziowskich",
+        "no-team": "Brak przypisanej drużyny"
+      }
+    },
+    "scorekeeper": {
+      "page-title": "Scorekeeper",
+      "common": {
+        "loading": "Ładowanie...",
+        "error": "Błąd"
+      },
+      "current-match": {
+        "section-title": "Aktualny mecz",
+        "no-match": "Brak aktywnego meczu",
+        "time-remaining": "Pozostały czas",
+        "scheduled-time": "Zaplanowany czas",
+        "delay": "Opóźnienie",
+        "teams": "Drużyny",
+        "round": "Runda"
+      },
+      "next-match": {
+        "section-title": "Następny mecz",
+        "no-match": "Nie załadowano meczu",
+        "scheduled-time": "Zaplanowany czas",
+        "delay": "Aktualne opóźnienie",
+        "teams": "Drużyny",
+        "round": "Runda",
+        "statuses": {
+          "ready": "Gotowy",
+          "no-show": "Nieobecna",
+          "queued": "W kolejce",
+          "conflict": "Konflikt",
+          "missing": "Brak",
+          "empty": "Puste"
+        },
+        "legend": {
+          "title": "Legenda statusów drużyn",
+          "ready": "Stół gotowy, uczestnik obecny",
+          "no-show": "Drużyna nie przybyła na wydarzenie lub nie jest obecna przy stole",
+          "queued": "Drużyna przybyła na wydarzenie i jest w kolejce, ale jeszcze nie przy stole",
+          "conflict": "Drużyna jest obecna, ale nie w kolejce (należy rozwiązać)",
+          "missing": "Drużyna przybyła na wydarzenie, ale nie ustawiła się w kolejce",
+          "empty": "Brak drużyny przypisanej do tego slotu"
+        },
+        "not-ready-warning": "Nie wszystkie drużyny są gotowe."
+      },
+      "controls": {
+        "section-title": "Sterowanie meczem",
+        "start-match": "Rozpocznij mecz",
+        "abort-match": "Przerwij mecz",
+        "load-next": "Załaduj następny",
+        "test-match": "Mecz testowy",
+        "abort-confirm-title": "Przerwać mecz?",
+        "abort-confirm-message": "Czy na pewno chcesz przerwać trwający mecz? Tej operacji nie można cofnąć.",
+        "confirm-abort": "Przerwij",
+        "cancel": "Anuluj",
+        "load-error": "Nie udało się załadować meczu.",
+        "start-error": "Nie udało się rozpocząć meczu.",
+        "abort-error": "Nie udało się przerwać meczu."
+      },
+      "audience-display": {
+        "section-title": "Ekran dla publiczności",
+        "description": "Wybierz, który widok wyświetlić na ekranie dla publiczności",
+        "modes": {
+          "scoreboard": "Tabela wyników",
+          "match-preview": "Podgląd meczu",
+          "sponsors": "Sponsorzy",
+          "logo": "Logo sezonu",
+          "message": "Wiadomość",
+          "awards": "Nagrody"
+        },
+        "status-label": "Aktualny tryb",
+        "settings-button-title": "Ustawienia ekranu dla publiczności",
+        "errors": {
+          "audience-display-switch": "Nie udało się przełączyć ekranu dla publiczności."
+        },
+        "settings-modal": {
+          "title": "Ustawienia ekranu dla publiczności",
+          "close": "Zamknij",
+          "sections": {
+            "message": "Ustawienia wiadomości",
+            "scoreboard": "Ustawienia tabeli wyników",
+            "awards": "Ustawienia nagród"
+          },
+          "fields": {
+            "message-placeholder": "Wpisz treść wiadomości",
+            "show-active-match": "Pokaż aktualny mecz",
+            "show-previous-match": "Pokaż poprzedni mecz",
+            "show-sponsors-row": "Pokaż pasek sponsorów",
+            "award-winner-slide-style": "Styl slajdu zwycięzcy",
+            "award-slide-style-chroma": "Chroma key (zielone tło)",
+            "award-slide-style-full": "Pełny ekran",
+            "award-slide-style-both": "Oba style"
+          },
+          "errors": {
+            "update-failed": "Nie udało się zaktualizować ustawień ekranu dla publiczności."
+          }
+        }
+      },
+      "schedule": {
+        "title": "Harmonogram meczów",
+        "hide-completed": "Ukryj ukończone mecze",
+        "match-number": "Mecz",
+        "scheduled-time": "Czas",
+        "teams": "Drużyny",
+        "status": "Status",
+        "actions": "Akcje",
+        "load": "Załaduj",
+        "loaded": "Załadowano",
+        "no-matches": "Brak dostępnych meczów",
+        "load-error": "Nie udało się załadować meczu."
+      },
+      "active-match": {
+        "teams": "Drużyny"
+      },
+      "awards-presentation": {
+        "title": "Prezentacja nagród",
+        "current-slide": "Aktualny slajd",
+        "next-slide": "Następny slajd",
+        "slide-info": "Slajd:",
+        "first-slide": "Pierwszy slajd",
+        "previous-slide": "Poprzedni slajd",
+        "last-slide": "Ostatni slajd",
+        "previous-step": "Poprzedni krok",
+        "next-step": "Następny krok"
+      }
+    },
+    "tournament-manager": {
+      "title": "Menedżer turnieju",
+      "match-schedule": {
+        "title": "Harmonogram meczów",
+        "columns": {
+          "match-number": "Mecz",
+          "start-time": "Godzina rozpoczęcia",
+          "end-time": "Godzina zakończenia",
+          "status": "Status"
+        }
+      },
+      "judging-schedule": {
+        "title": "Harmonogram sędziowania",
+        "columns": {
+          "start-time": "Godzina rozpoczęcia",
+          "end-time": "Godzina zakończenia",
+          "status": "Status"
+        }
+      },
+      "field-matches": "Mecze",
+      "judging-sessions": "Sesje sędziowskie",
+      "labels": {
+        "match": "Mecz",
+        "session": "Sesja",
+        "team": "Drużyna",
+        "room": "Sala",
+        "no-team": "Brak drużyny",
+        "not-assigned": "Nieprzypisane"
+      },
+      "slots": {
+        "second-team-selected": "Wybrano drugą drużynę",
+        "select-second-team-instruction": "Wybierz inny slot drużyny, aby przenieść lub zastąpić",
+        "team-schedule": "Harmonogram drużyny",
+        "missing-teams": {
+          "title": "Drużyny brakujące w harmonogramie",
+          "from-round": "Drużyny brakujące w rundzie",
+          "description": "{count} drużyn(y) nieprzypisane",
+          "click-empty-slot-to-assign": "Kliknij pusty slot, aby przypisać tę drużynę"
+        }
+      },
+      "actions": {
+        "move": "Przenieś",
+        "replace": "Zastąp",
+        "insert-rematch": "Wstaw rewanż",
+        "clear": "Wyczyść",
+        "cancel": "Anuluj",
+        "confirm": "Potwierdź"
+      },
+      "swap": {
+        "title": "Podgląd zamiany",
+        "confirm-title": "Potwierdź zamianę drużyn",
+        "teams": "Zamień drużyny",
+        "message": "Czy na pewno chcesz zamienić {team1} przy {table1} z {team2} przy {table2}?",
+        "session-message": "Czy na pewno chcesz zamienić {team1} w {room1} z {team2} w {room2}?",
+        "success": "Pomyślnie zamieniono drużyny",
+        "error": "Nie udało się zamienić drużyn",
+        "match-swaps": "Zamiany meczowe",
+        "judging-swaps": "Zamiany sędziowania",
+        "select-match": "Wybierz mecz",
+        "select-participant-1": "Wybierz pierwszego uczestnika",
+        "select-participant-2": "Wybierz drugiego uczestnika",
+        "select-session-1": "Wybierz pierwszą sesję",
+        "select-session-2": "Wybierz drugą sesję",
+        "no-eligible-matches": "Brak kwalifikujących się meczów do zamiany. Mecze muszą mieć status 'nie rozpoczęto' i nie być aktualnie załadowane.",
+        "no-eligible-sessions": "Brak kwalifikujących się sesji do zamiany. Sesje muszą mieć status 'nie rozpoczęto' i nie być wywołane."
+      },
+      "status": {
+        "not-started": "Nie rozpoczęto",
+        "in-progress": "W toku",
+        "completed": "Zakończono"
+      },
+      "validation": {
+        "both-source-and-destination-required": "Wymagane są zarówno źródło, jak i miejsce docelowe",
+        "types-must-match": "Można przenosić tylko w obrębie tego samego typu (mecz do meczu lub sesja do sesji)"
+      },
+      "errors": {
+        "load-data-failed": "Nie udało się załadować danych menedżera turnieju",
+        "move-team-failed": "Nie udało się przenieść drużyny",
+        "replace-teams-failed": "Nie udało się zastąpić drużyn",
+        "assign-team-failed": "Nie udało się przypisać drużyny",
+        "clear-team-failed": "Nie udało się wyczyścić drużyny",
+        "cannot-modify-in-progress": "Nie można modyfikować meczów/sesji w trakcie",
+        "cannot-modify-loaded": "Nie można modyfikować załadowanych meczów",
+        "cannot-modify-completed": "Nie można modyfikować ukończonych meczów/sesji"
+      }
+    },
+    "head-referee": {
+      "page-title": "Panel głównego sędziego",
+      "escalation-alert": "Karta wyników została przekazana do Twojej weryfikacji",
+      "points": "punkty",
+      "round": "Runda",
+      "stage": {
+        "practice": "Trening",
+        "ranking": "Ranking"
+      },
+      "escalated-count": "{count} przekazanych",
+      "escalated-panel": {
+        "title": "{count, plural, one {# przekazana karta wyników} other {# przekazanych kart wyników}}",
+        "view-scoresheet": "Zobacz kartę wyników"
+      },
+      "filters": {
+        "search-label": "Wyszukaj drużyny",
+        "search-placeholder": "Numer lub nazwa drużyny",
+        "all-statuses": "Wszystkie statusy",
+        "statuses-selected": "Wybrano {count} statusów",
+        "escalated-only": "Tylko przekazane",
+        "status-label": "Status"
+      },
+      "scoresheet-round": "{stage} #{round}",
+      "scoresheet-status": {
+        "empty": "Puste",
+        "draft": "Szkic",
+        "completed": "Zakończono",
+        "gp": "Oczekiwanie na GP",
+        "submitted": "Przesłana"
+      },
+      "scoresheet-button": {
+        "team-not-registered": "",
+        "escalated-tooltip": ""
+      },
+      "legend": {
+        "title": "Legenda statusów karty wyników",
+        "aria-label": "Pokaż legendę statusów karty wyników",
+        "empty": {
+          "label": "Puste",
+          "description": "Nie wprowadzono danych do karty wyników"
+        },
+        "draft": {
+          "label": "Szkic",
+          "description": "Karta wyników jest wypełniana"
+        },
+        "completed": {
+          "label": "Zakończono",
+          "description": "Ocena misji zakończona"
+        },
+        "gp": {
+          "label": "Oczekiwanie na GP",
+          "description": "Oczekiwanie na ocenę Gracious Professionalism"
+        },
+        "submitted": {
+          "label": "Przesłana",
+          "description": "Karta wyników została sfinalizowana i przesłana"
+        },
+        "escalated": {
+          "label": "Przekazana",
+          "description": "Wymaga przeglądu przez głównego sędziego — nadpisuje inne statusy"
+        }
+      },
+      "table": {
+        "match": "Mecz",
+        "scheduled-time": "Czas",
+        "participant-ready": "Gotowy",
+        "participant-not-ready": "Niegotowy"
+      }
+    },
+    "audience-display": {
+      "match-preview": {
+        "round": "Runda",
+        "match": "Mecz",
+        "table": "Stół"
+      },
+      "scoreboard": {
+        "current-match": "Aktualny mecz",
+        "test-match": "Mecz testowy",
+        "no-match": "-",
+        "previous-match": {
+          "title": "Poprzedni mecz",
+          "match": "Mecz",
+          "disclaimer": "Wyniki nie są ostateczne i mogą ulec zmianie",
+          "under-review": "W trakcie weryfikacji"
+        },
+        "scores-table": {
+          "rank": "Miejsce",
+          "team": "Drużyna",
+          "highest-score": "Najwyższy wynik"
+        }
+      }
+    },
+    "lead-judge": {
+      "page-title": "Lead Judge",
+      "summary": {
+        "status": {
+          "empty": "Puste",
+          "draft": "Szkic",
+          "completed": "Zakończone",
+          "approved": "Zatwierdzone"
+        },
+        "status-glossary": {
+          "title": "Przewodnik statusów rubryki",
+          "aria-label": "Pokaż przewodnik statusów rubryki",
+          "statuses": {
+            "empty": {
+              "label": "Nie rozpoczęto",
+              "description": "Rubryka nie została jeszcze wypełniona"
+            },
+            "draft": {
+              "label": "W toku",
+              "description": "Rubryka jest aktualnie wypełniana"
+            },
+            "approved": {
+              "label": "Zatwierdzona",
+              "description": "Rubryka została ukończona i przesłana"
+            },
+            "locked": {
+              "label": "Zablokowana",
+              "description": "Rubryka jest zablokowana i nie można jej edytować"
+            },
+            "completed": {
+              "label": "Zakończona",
+              "description": "Rubryka została przejrzana i zatwierdzona"
+            }
+          }
+        }
+      },
+      "deliberation": {
+        "status": "Status",
+        "start-time": "Godzina rozpoczęcia",
+        "picklist": "Lista wyboru",
+        "deliberation": "Deliberacja",
+        "open": "Otwórz"
+      },
+      "list": {
+        "empty-state": "Nie znaleziono sesji sędziowskich",
+        "column": {
+          "session": "Sesja sędziowska",
+          "room": "Sala",
+          "team": "Drużyna",
+          "status": "Status"
+        },
+        "rubric-status": {
+          "empty": "Puste",
+          "draft": "Szkic",
+          "approved": "Zatwierdzona",
+          "locked": "Zablokowana",
+          "completed": "Zakończona"
+        },
+        "session-status": {
+          "not-started": "Nie rozpoczęto",
+          "in-progress": "W toku",
+          "completed": "Zakończono"
+        },
+        "filter": {
+          "team": "Drużyna",
+          "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
+          "status": "Status",
+          "all-statuses": "Wszystkie statusy",
+          "results": "Wyniki"
+        },
+        "sort": {
+          "room": "Sortuj wg sali",
+          "session": "Sortuj wg sesji"
+        },
+        "session": "Sesja",
+        "room": "Sala"
+      },
+      "team-info-cell": {
+        "not-arrived": "Nie przybyła"
+      }
+    },
+    "scoresheet": {
+      "title": "Drużyna #{teamNumber}, {stage} runda {round}",
+      "table": "Stół {table}",
+      "clear-signature": "Wyczyść podpis",
+      "signature-alt": "Podpis",
+      "form-complete": "Formularz kompletny",
+      "form-incomplete": "Formularz niekompletny",
+      "complete-form-to-sign": "Uzupełnij formularz i popraw błędy, aby podpisać tę kartę wyników",
+      "complete-form-to-proceed": "Uzupełnij wszystkie misje i rozwiąż błędy, zanim będzie można podpisać i przesłać kartę wyników",
+      "submit-scoresheet": "Prześlij kartę wyników",
+      "gp-next": "Wypełnij GP",
+      "submitting": "Przesyłanie...",
+      "error-signature-required": "Do przesłania karty wyników wymagany jest podpis",
+      "error-failed-to-submit": "Nie udało się przesłać karty wyników",
+      "escalate": "Przekaż",
+      "de-escalate": "Cofnij przekazanie",
+      "reset": "Resetuj kartę wyników",
+      "processing": "Przetwarzanie...",
+      "error-failed-to-escalate": "Nie udało się zaktualizować statusu przekazania",
+      "error-failed-to-reset": "Nie udało się zresetować karty wyników",
+      "enable-edit-mode": "Włącz tryb edycji, aby modyfikować kartę wyników",
+      "disable-edit-mode": "Wyłącz tryb edycji",
+      "selectScoresheet": {
+        "round": "runda"
+      },
+      "reset-dialog": {
+        "title": "Resetuj kartę wyników",
+        "warning": "Tej operacji nie można cofnąć!",
+        "description": "Czy na pewno chcesz zresetować tę kartę wyników? Wszystkie dane zostaną wyczyszczone i zaczniesz od nowa.",
+        "cancel": "Anuluj",
+        "confirm": "Resetuj kartę wyników"
+      },
+      "gp-selector": {
+        "title": "Oceń Gracious Professionalism okazywane przez drużynę podczas meczu",
+        "level-2": "DEVELOPING",
+        "level-3": "ACCOMPLISHED",
+        "level-4": "EXCEEDS",
+        "notes-placeholder-2": "Wyjaśnij, dlaczego przyznałeś drużynie ocenę DEVELOPING",
+        "notes-placeholder-4": "Wyjaśnij, dlaczego przyznałeś drużynie ocenę EXCEEDS",
+        "submit-button": "Prześlij",
+        "back-to-scores": "Wróć do wyników"
+      },
+      "view": {
+        "score": "Wynik",
+        "gp": "GP"
+      }
+    },
+    "deliberations": {
+      "scores-chart": {
+        "room-scores-distribution": "Rozkład wyników w salach",
+        "no-data-available": "Brak danych",
+        "innovation-project": "Projekt Innowacyjny",
+        "robot-design": "Robot Design",
+        "core-values": "Wartości Podstawowe",
+        "aggregate-average": "Średnia zbiorcza"
+      },
+      "compare": {
+        "title": "Porównaj drużyny",
+        "team-1": "Drużyna 1",
+        "team-2": "Drużyna 2",
+        "compare": "Porównaj",
+        "no-data-available": "Brak dostępnych drużyn"
+      },
+      "compare-dialog": {
+        "title": "Porównanie drużyn",
+        "open-full-compare": "Otwórz pełną stronę porównania",
+        "error-loading-teams": "Błąd podczas ładowania danych drużyny"
+      },
+      "small-screen-block": {
+        "title": "Zbyt mały ekran",
+        "message": "Widok deliberacji wymaga większego ekranu, aby poprawnie wyświetlić wszystkie komponenty.",
+        "minimum-width": "Użyj komputera lub obróć urządzenie do trybu poziomego."
+      },
+      "category": {
+        "title": "Deliberacja: {category}",
+        "controls": {
+          "status": "Status",
+          "in-progress": "W toku",
+          "not-started": "Nie rozpoczęto",
+          "completed": "Zakończono",
+          "start": "Rozpocznij",
+          "complete-deliberation": "Zakończ deliberację",
+          "deliberation-finalized": "Ta deliberacja została sfinalizowana i nie jest już edytowalna.",
+          "time-remaining": "Pozostały czas",
+          "complete-modal": {
+            "title": "Zakończ deliberację",
+            "description": "Czy na pewno chcesz zakończyć tę deliberację? Po potwierdzeniu nastąpi przekierowanie na stronę główną.",
+            "warning-text": "Tej operacji nie można cofnąć. Upewnij się, że lista wyboru jest ostateczna przed kontynuacją.",
+            "confirm": "Zakończ",
+            "cancel": "Anuluj",
+            "submitting": "Przesyłanie...",
+            "success-message": "Deliberacja zakończona pomyślnie",
+            "error-message": "Nie udało się zakończyć deliberacji"
+          }
+        },
+        "picklist": {
+          "title": "Lista wyboru",
+          "add-to-picklist": "Dodaj do listy wyboru",
+          "remove": "Usuń",
+          "empty-state": "Dodaj drużyny",
+          "error-limit-exceeded": "Osiągnięto limit listy wyboru. Nie można dodać więcej drużyn."
+        },
+        "table": {
+          "rank": "Miejsce",
+          "team": "Drużyna",
+          "room": "Sala",
+          "total": "Suma",
+          "normalized": "Znormalizowane",
+          "actions": "Akcje",
+          "view-rubric": "Zobacz rubrykę",
+          "add-to-picklist": "Dodaj do listy wyboru",
+          "compare-teams": "Porównaj drużyny"
+        }
+      },
+      "final": {
+        "title": "Ostateczna deliberacja",
+        "stepper": {
+          "champions": "Nagroda Champion",
+          "core-awards": "Nagrody podstawowe",
+          "optional-awards": "Nagrody opcjonalne",
+          "review": "Przegląd"
+        },
+        "errors": {
+          "award-limit-exceeded": "Nie można dodać więcej zwycięzców dla tej nagrody."
+        },
+        "manual-eligibility-control": {
+          "title": "Ręczna kwalifikacja",
+          "description": "Dodaj drużyny bez nominacji",
+          "add-team": "Dodaj drużynę",
+          "select-team": "Wybierz drużynę...",
+          "add-to-award": "Dodaj do nagrody",
+          "no-data-available": "Brak dostępnych drużyn"
+        },
+        "champions": {
+          "title": "Nagroda Champion",
+          "description": "Wybierz drużyny do przyznania nagrody Champion.",
+          "podium-title": "Podium Champion",
+          "place-label": "Miejsce #{place}",
+          "select-team": "Wybierz drużynę...",
+          "table-rank": "Łączne miejsce",
+          "table-team": "Drużyna",
+          "table-room": "Sala",
+          "table-score": "Łączny wynik",
+          "table-innovation-project-rank": "Miejsce w Projekcie Innowacyjnym",
+          "table-robot-design-rank": "Miejsce w Robot Design",
+          "table-core-values-rank": "Miejsce w Wartościach Podstawowych",
+          "table-robot-game-rank": "Miejsce w Robot Game",
+          "save": "Zapisz zwycięzców",
+          "advance": "Przejdź do nagród podstawowych",
+          "saving": "Zapisywanie...",
+          "start": "Rozpocznij deliberację",
+          "time-remaining": "Pozostały czas",
+          "not-started": "Oczekiwanie na rozpoczęcie deliberacji",
+          "completed": "Deliberacja zakończona",
+          "deliberation-finalized": "Wybrano zwycięzców Champion. Gotowe do przejścia dalej."
+        },
+        "core-awards": {
+          "title": "Nagrody podstawowe",
+          "description": "Wybierz zwycięzców nagród z list wyboru",
+          "select-team": "Wybierz drużynę...",
+          "table-rank": "Miejsce",
+          "table-team": "Drużyna",
+          "table-room": "Sala",
+          "table-actions": "Akcje",
+          "table-robot-design": "Robot Design",
+          "table-innovation-project": "Innowacja",
+          "table-core-values": "Wartości Podstawowe",
+          "robot-design": "Robot Design",
+          "innovation-project": "Projekt Innowacyjny",
+          "core-values": "Wartości Podstawowe",
+          "save": "Zapisz nagrody",
+          "advance": "Przejdź do nagród opcjonalnych",
+          "saving": "Zapisywanie...",
+          "start": "Rozpocznij deliberację",
+          "time-remaining": "Pozostały czas",
+          "not-started": "Oczekiwanie na rozpoczęcie deliberacji",
+          "completed": "Deliberacja zakończona",
+          "deliberation-finalized": "Wybrano nagrody podstawowe. Gotowe do przejścia dalej.",
+          "manual-team-indicator": "Dodano ręcznie",
+          "team-not-eligible-for-category": "Drużyna nie kwalifikuje się do {category}",
+          "team-already-added-to-category": "Drużyna już dodana do {category}",
+          "add-team-to-category": "Dodaj drużynę do {category}"
+        },
+        "optional-awards": {
+          "table-team": "Drużyna",
+          "table-room": "Sala",
+          "table-core-values": "Wartości Podstawowe",
+          "table-nominations": "Nominacje",
+          "table-actions": "Akcje",
+          "start": "Rozpocznij deliberację",
+          "advance": "Przejdź do przeglądu",
+          "saving": "Zapisywanie...",
+          "time-remaining": "Pozostały czas",
+          "not-started": "Oczekiwanie na rozpoczęcie deliberacji",
+          "completed": "Deliberacja zakończona",
+          "deliberation-finalized": "Wybrano nagrody opcjonalne. Gotowe do przejścia dalej.",
+          "manual-team-indicator": "Dodano ręcznie",
+          "team-already-added": "Drużyna już wybrana do nagrody",
+          "no-data-available": "Brak dostępnych drużyn",
+          "select-award": "Wybierz nagrodę"
+        },
+        "review": {
+          "title": "Przegląd nagród",
+          "place": "Miejsce #{place}",
+          "approve-button": "Zatwierdź i zablokuj nagrody",
+          "approval-modal": {
+            "title": "Potwierdź nagrody",
+            "description": "Czy na pewno chcesz zatwierdzić i zablokować te nagrody?",
+            "warning-text": "Zablokowanie natychmiast powiadomi Scorekeepera i MC oraz odblokuje prezentację nagród. Tej operacji nie można cofnąć.",
+            "confirm": "Zatwierdź i zablokuj",
+            "cancel": "Anuluj",
+            "submitting": "Blokowanie...",
+            "success-message": "Nagrody zostały zablokowane",
+            "error-message": "Nie udało się zablokować nagród"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "connection-indicator": {
+      "connected": "Połączono",
+      "reconnecting": "Ponowne łączenie...",
+      "disconnected": "Rozłączono",
+      "error": "Błąd",
+      "idle": "Bezczynny"
+    },
+    "navigation-list": {
+      "dashboard": "Pulpit",
+      "reports": "Raporty",
+      "insights": "Statystyki"
+    },
+    "logout": "Wyloguj"
+  },
+  "layouts": {
+    "team": {
+      "error-not-found": "Nie znaleziono drużyny",
+      "error-not-arrived": "Drużyna jeszcze nie przybyła"
+    },
+    "rubric": {
+      "error-not-authorized": "Brak uprawnień do dostępu do rubryki",
+      "error-team-not-judged": "Ta drużyna nie zakończyła jeszcze sędziowania"
+    },
+    "scoresheet": {
+      "error-match-not-found": "Nie znaleziono meczu",
+      "error-match-not-completed": "Mecz nie został zakończony",
+      "error-not-assigned-to-table": "Brak uprawnień do dostępu do tej karty wyników",
+      "error-participant-not-present": "Drużyna nie była obecna na ten mecz. Skontaktuj się z głównym sędzią.",
+      "error-failed-to-update": "Nie udało się zaktualizować karty wyników",
+      "incomplete-title": "Karta wyników jest niekompletna",
+      "incomplete-message": "Proszę uzupełnić wszystkie misje przed przesłaniem karty wyników.",
+      "incomplete-with-errors": "W karcie wyników znajdują się błędy, które należy poprawić.",
+      "incomplete-action": "Przejdź do problemu",
+      "points-unit": "pkt.",
+      "participant-not-present-title": "Drużyna nieobecna",
+      "participant-not-present-message": "Drużyna #{teamNumber} nie została oznaczona jako obecna na ten mecz. Możesz oznaczyć ją jako obecną, aby kontynuować, lub wrócić.",
+      "go-back": "Wróć",
+      "mark-as-present": "Oznacz jako obecną"
+    },
+    "deliberation": {
+      "error-not-authorized": "Brak uprawnień do dostępu do deliberacji",
+      "compare": {
+        "title": "Porównaj drużyny",
+        "no-teams-selected": "Nie wybrano drużyn",
+        "no-teams-description": "Wybierz drużyny do porównania.",
+        "back-to-deliberation": "Wróć do deliberacji",
+        "error-loading-teams": "Nie udało się załadować danych drużyn. Spróbuj ponownie.",
+        "teams-not-found": "Nie znaleziono wybranych drużyn.",
+        "field-comparison": "Porównanie pola",
+        "wins": "Wygrane",
+        "ties": "Remisy",
+        "losses": "Przegrane",
+        "rubric-scores": "Wyniki rubryki",
+        "no-rubric-data": "Brak danych rubryki",
+        "exceeding-notes": "W jaki sposób drużyna przekroczyła oczekiwania? ",
+        "nominations": "Nominacje do nagród",
+        "gp-scores": "Gracious Professionalism",
+        "round": "Runda",
+        "feedback": "Informacja zwrotna",
+        "average": "Śr.",
+        "filter-by-category": "Filtruj wg kategorii",
+        "all-categories": "Wszystkie kategorie",
+        "judging-room": "Sala sędziowania",
+        "manage-teams": "Zarządzaj drużynami",
+        "add-team": "Dodaj drużynę",
+        "search-teams": "Wyszukaj drużyny...",
+        "select-teams-to-compare": "Wybierz drużyny do porównania",
+        "current-teams": "Aktualne drużyny",
+        "done": "Gotowe"
+      }
+    }
+  },
+  "shared": {
+    "rubrics": {
+      "feedback": {
+        "feedback": "Informacja zwrotna",
+        "great-job": "Świetna robota...",
+        "think-about": "Zastanówcie się nad..."
+      }
+    }
+  },
+  "awards-presentation": {
+    "title-slide": "Ceremonia wręczenia nagród",
+    "place": "Miejsce {place}",
+    "awarded-to-team": "Przyznano drużynie",
+    "awarded-to": "Przyznano",
+    "advancing-teams": "Drużyny awansujące",
+    "prize": "Nagroda {name}"
+  },
+  "homepage": {
+    "hero": {
+      "badge": "Platforma zarządzania wydarzeniami",
+      "title": "LEMS",
+      "subtitle": "Usprawnione zarządzanie wydarzeniami <i>FIRST</i> LEGO League Challenge",
+      "description": "Uzyskaj dostęp do wydarzeń na żywo, przeglądaj nadchodzące zawody i łatwo zarządzaj każdym aspektem turnieju."
+    },
+    "live-events-title": "Wydarzenia na żywo",
+    "live-events-subtitle": "Wydarzenia dziejące się teraz",
+    "upcoming-events-title": "Nadchodzące wydarzenia",
+    "upcoming-events-subtitle": "Wydarzenia odbywające się do końca tego tygodnia",
+    "no-upcoming-events": "Brak nadchodzących wydarzeń w tym tygodniu",
+    "no-live-events": "Brak wydarzeń na żywo",
+    "view-all": "Zobacz wszystkie wydarzenia",
+    "view-event": "Zobacz wydarzenie",
+    "view-details": "Zobacz szczegóły",
+    "unofficial-event": "Nieoficjalne wydarzenie"
+  },
+  "browse-events": {
+    "page-title": "Przeglądaj wydarzenia",
+    "title": "Wszystkie wydarzenia",
+    "description": "Odkryj wszystkie dostępne wydarzenia FIRST LEGO League",
+    "loading": "Ładowanie wydarzeń...",
+    "no-events": "Nie znaleziono wydarzeń",
+    "no-events-description": "Spróbuj ponownie później lub skontaktuj się z pomocą techniczną po więcej informacji",
+    "go-home": "Powrót do strony głównej",
+    "back": "Wróć"
+  }
+}

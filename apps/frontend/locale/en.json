@@ -727,7 +727,8 @@
         "blocked": {
           "title": "Awards Not Yet Assigned",
           "description": "The awards have not yet been approved. Please check back later."
-        }
+        },
+        "award": "{awardName} Award"
       }
     },
     "referee": {
@@ -902,6 +903,92 @@
         "last-slide": "Last Slide",
         "previous-step": "Previous Step",
         "next-step": "Next Step"
+      }
+    },
+    "tournament-manager": {
+      "title": "Tournament Manager",
+      "match-schedule": {
+        "title": "Match Schedule",
+        "columns": {
+          "match-number": "Match",
+          "start-time": "Start Time",
+          "end-time": "End Time",
+          "status": "Status"
+        }
+      },
+      "judging-schedule": {
+        "title": "Judging Schedule",
+        "columns": {
+          "start-time": "Start Time",
+          "end-time": "End Time",
+          "status": "Status"
+        }
+      },
+      "field-matches": "Matches",
+      "judging-sessions": "Judging Sessions",
+      "labels": {
+        "match": "Match",
+        "session": "Session",
+        "team": "Team",
+        "room": "Room",
+        "no-team": "No Team",
+        "not-assigned": "Not Assigned"
+      },
+      "slots": {
+        "second-team-selected": "Second Team Selected",
+        "select-second-team-instruction": "Select another team slot to move or replace",
+        "team-schedule": "Team Schedule",
+        "missing-teams": {
+          "title": "Teams Missing from Schedule",
+          "from-round": "Teams Missing from Round",
+          "description": "{count} team(s) not assigned",
+          "click-empty-slot-to-assign": "Click an empty slot to assign this team"
+        }
+      },
+      "actions": {
+        "move": "Move",
+        "replace": "Replace",
+        "insert-rematch": "Insert Rematch",
+        "clear": "Clear",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      },
+      "swap": {
+        "title": "Swap Preview",
+        "confirm-title": "Confirm Team Swap",
+        "teams": "Swap Teams",
+        "message": "Are you sure you want to swap {team1} at {table1} with {team2} at {table2}?",
+        "session-message": "Are you sure you want to swap {team1} in {room1} with {team2} in {room2}?",
+        "success": "Teams swapped successfully",
+        "error": "Failed to swap teams",
+        "match-swaps": "Match Swaps",
+        "judging-swaps": "Judging Swaps",
+        "select-match": "Select Match",
+        "select-participant-1": "Select First Participant",
+        "select-participant-2": "Select Second Participant",
+        "select-session-1": "Select First Session",
+        "select-session-2": "Select Second Session",
+        "no-eligible-matches": "No eligible matches for swapping. Matches must be in not-started status and not currently loaded.",
+        "no-eligible-sessions": "No eligible sessions for swapping. Sessions must be in not-started status and not called."
+      },
+      "status": {
+        "not-started": "Not Started",
+        "in-progress": "In Progress",
+        "completed": "Completed"
+      },
+      "validation": {
+        "both-source-and-destination-required": "Both source and destination are required",
+        "types-must-match": "Can only move between same types (match to match or session to session)"
+      },
+      "errors": {
+        "load-data-failed": "Failed to load tournament manager data",
+        "move-team-failed": "Failed to move team",
+        "replace-teams-failed": "Failed to replace teams",
+        "assign-team-failed": "Failed to assign team",
+        "clear-team-failed": "Failed to clear team",
+        "cannot-modify-in-progress": "Cannot modify in-progress matches/sessions",
+        "cannot-modify-loaded": "Cannot modify loaded matches",
+        "cannot-modify-completed": "Cannot modify completed matches/sessions"
       }
     },
     "head-referee": {
@@ -1324,12 +1411,17 @@
       "error-match-not-found": "Match not found",
       "error-match-not-completed": "Match not completed",
       "error-not-assigned-to-table": "No permission to access this scoresheet",
+      "error-participant-not-present": "Team was not present for this match. Please contact the head referee.",
       "error-failed-to-update": "Failed to update scoresheet",
       "incomplete-title": "Scoresheet is incomplete",
       "incomplete-message": "Please fill out all missions before submitting the scoresheet.",
       "incomplete-with-errors": "There are errors in the scoresheet that need to be corrected.",
       "incomplete-action": "Go to the issue",
-      "points-unit": "pts."
+      "points-unit": "pts.",
+      "participant-not-present-title": "Team Not Present",
+      "participant-not-present-message": "Team #{teamNumber} was not marked as present for this match. You can mark them as present to continue, or go back.",
+      "go-back": "Go Back",
+      "mark-as-present": "Mark as Present"
     },
     "deliberation": {
       "error-not-authorized": "Unauthorized to access deliberation",

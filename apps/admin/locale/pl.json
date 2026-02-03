@@ -1,0 +1,1135 @@
+{
+  "pages": {
+    "404": {
+      "title": "Strona, której szukasz, nie istnieje",
+      "subtitle": "Błąd 404"
+    },
+    "login": {
+      "title": "Logowanie",
+      "username": "Nazwa użytkownika",
+      "no-username": "Wprowadź nazwę użytkownika.",
+      "no-password": "Wprowadź hasło.",
+      "password": "Hasło",
+      "logging-in": "Logowanie...",
+      "login": "Zaloguj się",
+      "form-status": {
+        "server-error": "Błąd serwera, spróbuj ponownie.",
+        "invalid-credentials": "Nieprawidłowa nazwa użytkownika lub hasło.",
+        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później."
+      }
+    },
+    "seasons": {
+      "title": "Sezony",
+      "create-new-season": "Utwórz nowy sezon",
+      "creation-dialog": {
+        "title": "Utwórz sezon",
+        "actions": {
+          "cancel": "Anuluj"
+        },
+        "form": {
+          "fields": {
+            "slug": {
+              "label": "Slug",
+              "placeholder": "np. submerged"
+            },
+            "name": {
+              "label": "Nazwa sezonu",
+              "placeholder": "np. SUBMERGED 2024–2025"
+            },
+            "start-date": {
+              "label": "Data rozpoczęcia"
+            },
+            "end-date": {
+              "label": "Data zakończenia"
+            },
+            "logo": {
+              "label": "Logo",
+              "description": "Prześlij logo w formacie SVG",
+              "placeholder": "Akceptowane pliki w formacie SVG"
+            }
+          },
+          "errors": {
+            "slug-required": "Slug jest wymagany.",
+            "slug-invalid": "Slug może zawierać tylko małe litery, cyfry i myślniki.",
+            "name-required": "Nazwa sezonu jest wymagana.",
+            "start-date-required": "Data rozpoczęcia jest wymagana.",
+            "end-date-required": "Data zakończenia jest wymagana.",
+            "end-date-invalid": "Data zakończenia musi być późniejsza niż data rozpoczęcia.",
+            "error": "Wystąpił błąd podczas tworzenia sezonu."
+          },
+          "submit": "Utwórz sezon",
+          "submitting": "Tworzenie sezonu..."
+        }
+      }
+    },
+    "insights": {
+      "coming-soon": "Wkrótce dostępne..."
+    },
+    "teams": {
+      "title": "Drużyny",
+      "create-new-team": "Utwórz nową drużynę",
+      "import-teams": "Importuj z pliku CSV",
+      "search": {
+        "placeholder": "Wyszukaj drużyny po numerze, nazwie lub afiliacji..."
+      },
+      "list": {
+        "columns": {
+          "number": "Nr drużyny",
+          "name": "Nazwa drużyny",
+          "affiliation": "Afiliacja",
+          "actions": "Akcje",
+          "city": "Miasto",
+          "status": "Status",
+          "region": "Region"
+        },
+        "status": {
+          "active": "Aktywna",
+          "inactive": "Nieaktywna"
+        }
+      },
+      "creation-dialog": {
+        "title": "Utwórz drużynę",
+        "actions": {
+          "cancel": "Anuluj"
+        }
+      },
+      "team-form": {
+        "fields": {
+          "name": {
+            "label": "Nazwa drużyny",
+            "placeholder": "np. Iron Patriots"
+          },
+          "number": {
+            "label": "Numer drużyny",
+            "placeholder": "np. 1234"
+          },
+          "affiliation": {
+            "label": "Szkoła/organizacja",
+            "placeholder": "np. Lincoln Elementary"
+          },
+          "city": {
+            "label": "Miasto",
+            "placeholder": "np. New York"
+          },
+          "region": {
+            "label": "Region",
+            "placeholder": "region",
+            "helper-text": "Dwuliterowy kod kraju ISO-3166"
+          },
+          "logo": {
+            "label": "Logo drużyny",
+            "description": "Prześlij logo drużyny (JPG, PNG lub SVG)",
+            "placeholder": "Akceptowane pliki graficzne"
+          }
+        },
+        "errors": {
+          "name-required": "Nazwa drużyny jest wymagana.",
+          "number-required": "Numer drużyny jest wymagany.",
+          "number-invalid": "Numer drużyny musi być liczbą.",
+          "number-exists": "Ten numer drużyny już istnieje.",
+          "affiliation-required": "Nazwa szkoły/organizacji jest wymagana.",
+          "city-required": "Miasto jest wymagane.",
+          "region-required": "Region jest wymagany.",
+          "error": "Wystąpił błąd podczas tworzenia drużyny."
+        },
+        "submit": "Utwórz drużynę",
+        "submitting": "Tworzenie drużyny...",
+        "update": "Zaktualizuj drużynę",
+        "updating": "Aktualizowanie drużyny..."
+      },
+      "import-dialog": {
+        "title": "Import drużyn z pliku CSV",
+        "actions": {
+          "cancel": "Anuluj"
+        },
+        "form": {
+          "instructions": {
+            "title": "Wymagania dotyczące pliku CSV",
+            "description": "Prześlij plik CSV zawierający informacje o drużynach. Plik zostanie przetworzony, a drużyny utworzone lub zaktualizowane.",
+            "csv-format": "Wymagany format CSV:",
+            "requirements": {
+              "header": "Plik nie powinien zawierać wiersza nagłówkowego",
+              "columns": "Wszystkie pięć kolumn (numer, nazwa, afiliacja, miasto, region) musi wystąpić w tej kolejności",
+              "encoding": "Plik musi być zapisany w kodowaniu UTF-8"
+            },
+            "example": "Przykładowa zawartość CSV:"
+          },
+          "fields": {
+            "file": {
+              "label": "Plik CSV",
+              "description": "Wybierz plik CSV z danymi drużyn",
+              "placeholder": "Wybierz plik CSV"
+            }
+          },
+          "errors": {
+            "invalid-file": "Nieprawidłowy format pliku. Prześlij poprawny plik CSV.",
+            "upload-error": "Wystąpił błąd podczas przesyłania pliku. Spróbuj ponownie."
+          },
+          "upload": "Importuj drużyny",
+          "uploading": "Importowanie drużyn..."
+        },
+        "success": {
+          "title": "Pomyślnie zaimportowano drużyny!",
+          "created": "{count, plural, =1 {utworzono 1 drużynę:} other {utworzono # drużyn:}}",
+          "updated": "{count, plural, =1 {zaktualizowano 1 drużynę:} other {zaktualizowano # drużyn:}}",
+          "and-more": "...i jeszcze {count}",
+          "close": "Zamknij"
+        }
+      },
+      "delete-dialog": {
+        "title": "Usuń drużynę",
+        "message": "Czy na pewno chcesz usunąć drużynę #{number}? Tej operacji nie można cofnąć.",
+        "cancel": "Anuluj",
+        "deleting": "Usuwanie...",
+        "confirm": "Usuń drużynę",
+        "error": "Nie udało się usunąć drużyny. Upewnij się, że nie jest zarejestrowana w żadnym wydarzeniu."
+      },
+      "update-dialog": {
+        "title": "Aktualizuj drużynę",
+        "cancel": "Anuluj"
+      },
+      "logo-upload-dialog": {
+        "title": "Aktualizuj logo drużyny",
+        "fields": {
+          "logo": {
+            "label": "Logo drużyny",
+            "description": "Prześlij nowe logo drużyny (JPG, PNG lub SVG)",
+            "placeholder": "Akceptowane pliki graficzne"
+          }
+        },
+        "cancel": "Anuluj",
+        "upload": "Prześlij",
+        "uploading": "Przesyłanie...",
+        "errors": {
+          "upload-failed": "Nie udało się przesłać logo. Spróbuj ponownie."
+        }
+      }
+    },
+    "index": {
+      "title": "Panel administracyjny",
+      "alerts": {
+        "no-permissions": "Nie masz przypisanych żadnych uprawnień. Skontaktuj się z administratorem, aby uzyskać dostęp."
+      },
+      "widgets": {
+        "current-season": {
+          "current-season": "Aktualny sezon",
+          "days-left": "{count, plural, =1 {Pozostał 1 dzień} other {Pozostało # dni}}",
+          "ends-today": "Kończy się dziś",
+          "ended": "{count, plural, =1 {Zakończył się 1 dzień temu} other {Zakończył się # dni temu}}",
+          "error": "Nie można wczytać sezonu",
+          "error-description": "Nie udało się pobrać informacji o aktualnym sezonie"
+        },
+        "registered-teams": {
+          "description": "Zarejestrowane drużyny"
+        },
+        "total-events": {
+          "description": "Liczba wydarzeń"
+        },
+        "total-admins": {
+          "description": "Użytkownicy administracyjni"
+        },
+        "event-participation": {
+          "description": "Rejestracje na wydarzenia"
+        },
+        "upcoming-events": {
+          "title": "Nadchodzące wydarzenia",
+          "no-events": "Brak nadchodzących wydarzeń"
+        }
+      },
+      "events": {
+        "no-events": "Brak wydarzeń"
+      }
+    },
+    "events": {
+      "title": "Wydarzenia",
+      "layout": {
+        "event-page-title": {
+          "back-to-event": "Wróć do wydarzenia"
+        },
+        "division-selector": {
+          "label": "Dywizja"
+        }
+      },
+      "create-button": "Utwórz",
+      "grid": {
+        "empty-state": {
+          "no-events": "Nie znaleziono wydarzeń",
+          "no-events-description": "Utwórz swoje pierwsze wydarzenie, aby rozpocząć",
+          "create-new-event": "Utwórz nowe wydarzenie"
+        }
+      },
+      "card": {
+        "teams": "Drużyny",
+        "divisions": "Dywizje",
+        "more-divisions": "...i jeszcze {count}",
+        "fully-set-up": "W pełni skonfigurowane",
+        "missing-details": "Brakuje niektórych informacji",
+        "edit": "Edytuj",
+        "delete": "Usuń",
+        "copy": "Kopiuj"
+      },
+      "missing-info": {
+        "missing-details-count": "{count, plural, =1 {Brakuje 1 pozycji} other {Brakuje # pozycji}}",
+        "show-details": "Pokaż szczegóły",
+        "missing-awards": "Nie skonfigurowano nagród",
+        "missing-users": "Nie przypisano użytkowników",
+        "missing-schedule": "Nie skonfigurowano harmonogramu",
+        "dialog-title": "Brakujące informacje",
+        "division-fully-configured": "Ta dywizja jest w pełni skonfigurowana",
+        "close": "Zamknij"
+      },
+      "create": {
+        "title": "Utwórz wydarzenie",
+        "form": {
+          "sections": {
+            "event-details": "Szczegóły wydarzenia",
+            "divisions": "Dywizje"
+          },
+          "fields": {
+            "name": {
+              "label": "Nazwa wydarzenia",
+              "placeholder": "Wprowadź nazwę wydarzenia..."
+            },
+            "slug": {
+              "label": "Slug wydarzenia",
+              "placeholder": "np. regional-championship-2025",
+              "helper-text": "Tylko małe litery, cyfry i myślniki. Musi być unikalny."
+            },
+            "date": {
+              "label": "Data wydarzenia"
+            },
+            "location": {
+              "label": "Lokalizacja",
+              "placeholder": "Wprowadź lokalizację wydarzenia..."
+            },
+            "division": {
+              "title": "Dywizja {number}",
+              "name": {
+                "label": "Nazwa dywizji",
+                "placeholder": "Wprowadź nazwę dywizji..."
+              }
+            },
+            "region": {
+              "label": "Region",
+              "placeholder": "region",
+              "helper-text": "Dwuliterowy kod kraju ISO-3166"
+            }
+          },
+          "actions": {
+            "add-division": "Dodaj dywizję",
+            "creating": "Tworzenie...",
+            "create-event": "Utwórz wydarzenie"
+          },
+          "messages": {
+            "success": "Wydarzenie zostało pomyślnie utworzone!"
+          },
+          "validation": {
+            "name": {
+              "required": "Nazwa wydarzenia jest wymagana",
+              "min": "Nazwa wydarzenia musi mieć co najmniej {min} znaków"
+            },
+            "slug": {
+              "required": "Slug wydarzenia jest wymagany",
+              "format": "Slug może zawierać tylko małe litery, cyfry i myślniki"
+            },
+            "date": {
+              "required": "Data wydarzenia jest wymagana"
+            },
+            "location": {
+              "required": "Lokalizacja jest wymagana",
+              "min": "Lokalizacja musi mieć co najmniej {min} znaków"
+            },
+            "division": {
+              "name": {
+                "required": "Nazwa dywizji jest wymagana",
+                "min": "Nazwa dywizji musi mieć co najmniej {min} znaków"
+              }
+            },
+            "region": {
+              "required": "Region jest wymagany",
+              "length": "Region musi mieć długość 2 znaków",
+              "format": "Nieprawidłowy region"
+            }
+          }
+        }
+      },
+      "alerts": {
+        "no-current-season": "Brak aktywnego sezonu. Wydarzenia można tworzyć tylko w trakcie trwania sezonu."
+      },
+      "edit": {
+        "location": "Lokalizacja",
+        "date": "Data",
+        "cards": {
+          "awards": "Nagrody",
+          "schedule": "Harmonogram",
+          "teams": "Drużyny",
+          "venue": "Miejsce",
+          "integrations": "Integracje",
+          "settings": "Ustawienia",
+          "users": "Użytkownicy",
+          "divisions": "Dywizje"
+        },
+        "color": "Kolor"
+      },
+      "teams": {
+        "title": "{eventName}: Drużyny",
+        "view-toggle": {
+          "unified": "Widok scalony",
+          "split": "Widok podzielony"
+        },
+        "schedule-exists": {
+          "division-message": "Dla dywizji {divisionName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
+          "event-message": "Dla wydarzenia {eventName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
+          "view-schedule": "Zobacz harmonogram",
+          "delete-schedule": "Usuń harmonogram",
+          "delete-schedule-dialog": {
+            "title": "Usuń harmonogram",
+            "message": "Czy na pewno chcesz usunąć harmonogram? Tej operacji nie można cofnąć i spowoduje ona usunięcie wszystkich zaplanowanych meczów i sesji sędziowskich.",
+            "cancel": "Anuluj",
+            "confirm": "Usuń harmonogram",
+            "deleting": "Usuwanie..."
+          }
+        },
+        "registration-button": {
+          "title": "Zarejestruj drużyny",
+          "csv-title": "Zarejestruj drużyny z pliku CSV",
+          "alert": "To wydarzenie ma już ustawiony harmonogram. Rejestracja drużyn nie może być modyfikowana."
+        },
+        "registration-dialog": {
+          "title": "Rejestracja drużyn {divisions, plural, =1 {} other {do dywizji}}",
+          "division": "Dywizja",
+          "random": "Losowo",
+          "available-teams": "Dostępne drużyny",
+          "no-available-teams": "Brak dostępnych drużyn",
+          "registered-teams": "Drużyny do rejestracji ({count})",
+          "actions": {
+            "register": "Zarejestruj {count} {count, plural, =1 {drużynę} other {drużyny}}",
+            "cancel": "Anuluj"
+          },
+          "no-teams-selected": "Nie wybrano żadnych drużyn"
+        },
+        "register-from-csv-dialog": {
+          "title": "Zarejestruj drużyny z pliku CSV",
+          "actions": {
+            "cancel": "Anuluj"
+          },
+          "form": {
+            "instructions": {
+              "title": "Wymagania dotyczące pliku CSV",
+              "description": "Prześlij plik CSV zawierający numery drużyn do rejestracji. Plik zostanie przetworzony, a drużyny zostaną zarejestrowane.",
+              "csv-format": "Wymagany format CSV:",
+              "requirements": {
+                "header": "Plik nie powinien zawierać wiersza nagłówkowego",
+                "columns": "Wymagana jest tylko jedna kolumna: numer drużyny",
+                "encoding": "Plik musi być zapisany w kodowaniu UTF-8"
+              },
+              "example": "Przykładowa zawartość CSV:"
+            },
+            "fields": {
+              "file": {
+                "label": "Plik CSV",
+                "description": "Wybierz plik CSV z numerami drużyn",
+                "placeholder": "Wybierz plik CSV"
+              }
+            },
+            "errors": {
+              "invalid-file": "Nieprawidłowy format pliku. Prześlij poprawny plik CSV.",
+              "upload-error": "Wystąpił błąd podczas przesyłania pliku. Spróbuj ponownie."
+            },
+            "upload": "Zarejestruj drużyny",
+            "uploading": "Rejestrowanie drużyn..."
+          },
+          "success": {
+            "title": "Pomyślnie zarejestrowano drużyny!",
+            "registered": "{count, plural, =1 {zarejestrowano 1 drużynę:} other {zarejestrowano # drużyn:}}",
+            "skipped": "{count, plural, =1 {pominięto 1 drużynę:} other {pominięto # drużyn:}}",
+            "and-more": "...i jeszcze {count}",
+            "close": "Zamknij",
+            "skip-reasons": {
+              "team-not-found": "Nie znaleziono drużyny",
+              "already-registered": "Już zarejestrowana na to wydarzenie",
+              "registration-failed": "Rejestracja nie powiodła się"
+            }
+          }
+        },
+        "remove-dialog": {
+          "title": "Usuń drużynę",
+          "message": "Czy na pewno chcesz usunąć drużynę #{number} z tego wydarzenia? Tej operacji nie można cofnąć.",
+          "cancel": "Anuluj",
+          "removing": "Usuwanie...",
+          "confirm": "Usuń drużynę",
+          "error": "Nie udało się usunąć drużyny."
+        },
+        "unified": {
+          "columns": {
+            "division": "Dywizja",
+            "number": "Numer",
+            "name": "Nazwa",
+            "affiliation": "Afiliacja",
+            "city": "Miasto",
+            "actions": "Akcje"
+          },
+          "search": {
+            "placeholder": "Wyszukaj drużyny po numerze, nazwie, afiliacji, mieście lub dywizji..."
+          },
+          "menu": {
+            "selectDivision": "Wybierz dywizję"
+          }
+        },
+        "split": {
+          "placeholder": "Widok podzielony wkrótce dostępny"
+        }
+      },
+      "divisions": {
+        "title": "{eventName}: Dywizje",
+        "create-new-division": "Utwórz nową dywizję",
+        "list": {
+          "columns": {
+            "name": "Nazwa dywizji",
+            "color": "Kolor",
+            "actions": "Akcje"
+          },
+          "validation": {
+            "name-required": "Nazwa dywizji jest wymagana."
+          },
+          "delete": {
+            "title": "Usuń dywizję",
+            "message": "Czy na pewno chcesz usunąć dywizję {name}?",
+            "warning": "Ta operacja spowoduje trwałe usunięcie dywizji, wszystkich drużyn, harmonogramów i powiązanych danych. Tej operacji nie można cofnąć.",
+            "cancel": "Anuluj",
+            "confirm": "Usuń dywizję",
+            "deleting": "Usuwanie..."
+          },
+          "alerts": {
+            "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
+          }
+        },
+        "creation-dialog": {
+          "title": "Utwórz dywizję",
+          "actions": {
+            "cancel": "Anuluj",
+            "save": "Zapisz"
+          },
+          "form": {
+            "fields": {
+              "name": {
+                "label": "Nazwa dywizji",
+                "placeholder": "np. House A"
+              },
+              "color": {
+                "label": "Kolor dywizji"
+              }
+            },
+            "errors": {
+              "name-required": "Nazwa dywizji jest wymagana.",
+              "color-required": "Kolor dywizji jest wymagany.",
+              "error": "Wystąpił błąd podczas tworzenia dywizji."
+            },
+            "submitting": "Tworzenie dywizji..."
+          }
+        }
+      },
+      "venue": {
+        "title": "{eventName}: Miejsce",
+        "schedule-exists": {
+          "message": "Harmonogram został ustawiony. Aby edytować informacje o miejscu wydarzenia, musisz najpierw usunąć harmonogram.",
+          "view-schedule": "Zobacz harmonogram",
+          "delete-schedule": "Usuń harmonogram",
+          "delete-schedule-dialog": {
+            "title": "Usuń harmonogram",
+            "message": "Czy na pewno chcesz usunąć harmonogram? Tej operacji nie można cofnąć i spowoduje ona usunięcie wszystkich zaplanowanych meczów i sesji sędziowskich.",
+            "cancel": "Anuluj",
+            "confirm": "Usuń harmonogram",
+            "deleting": "Usuwanie..."
+          }
+        },
+        "rooms": {
+          "title": "Sale sędziowskie",
+          "add-button": "Dodaj salę",
+          "name-placeholder": "Nazwa sali",
+          "save-button": "Zapisz",
+          "delete-button": "Usuń",
+          "empty-state": "Nie dodano jeszcze żadnych sal",
+          "validation": {
+            "name-required": "Nazwa sali jest wymagana"
+          }
+        },
+        "tables": {
+          "title": "Stoły do Robot Game",
+          "add-button": "Dodaj stół",
+          "name-placeholder": "Nazwa stołu",
+          "save-button": "Zapisz",
+          "delete-button": "Usuń",
+          "empty-state": "Nie dodano jeszcze żadnych stołów",
+          "validation": {
+            "name-required": "Nazwa stołu jest wymagana"
+          }
+        },
+        "pit-map": {
+          "title": "Mapa Pit",
+          "upload-button": "Prześlij mapę Pit",
+          "view-button": "Zobacz obecną mapę",
+          "delete-button": "Usuń mapę",
+          "no-map": "Nie przesłano mapy Pit",
+          "view-dialog": {
+            "close": "Zamknij",
+            "current-map": "Aktualna mapa Pit"
+          },
+          "upload-dialog": {
+            "upload-button": "Prześlij mapę Pit",
+            "upload-confirmation": "Czy na pewno chcesz przesłać tę mapę Pit? Zastąpi ona obecną wersję.",
+            "upload-success": "Mapa Pit została pomyślnie przesłana",
+            "upload-error": "Nie udało się przesłać mapy Pit",
+            "file-label": "Plik",
+            "cancel": "Anuluj",
+            "upload": "Prześlij",
+            "uploading": "Przesyłanie..."
+          },
+          "delete-dialog": {
+            "title": "Usuń mapę Pit",
+            "confirmation": "Czy na pewno chcesz usunąć mapę Pit? Tej operacji nie można cofnąć.",
+            "delete-success": "Mapę Pit usunięto pomyślnie",
+            "delete-error": "Nie udało się usunąć mapy Pit",
+            "cancel": "Anuluj",
+            "delete": "Usuń",
+            "deleting": "Usuwanie..."
+          },
+          "upload-placeholder": "Wybierz plik"
+        },
+        "messages": {
+          "save-success": "Zmiany zapisano pomyślnie",
+          "save-error": "Nie udało się zapisać zmian",
+          "delete-success": "Pomyślnie usunięto element",
+          "delete-error": "Nie udało się usunąć elementu",
+          "load-error": "Nie udało się wczytać danych wydarzenia",
+          "validation": {
+            "name-required": "Nazwa jest wymagana"
+          }
+        }
+      },
+      "settings": {
+        "title": "{eventName}: Ustawienia",
+        "event-settings": {
+          "title": "Ustawienia wydarzenia",
+          "advancement-percent": "Procent awansu",
+          "advancement-percent-description": "Procent drużyn awansujących z rund rankingowych",
+          "save-button": "Zapisz ustawienia",
+          "saving": "Zapisywanie...",
+          "advancing-teams": "({advancingTeams}/{totalTeams} drużyn)",
+          "visible": "Widoczne",
+          "visible-description": "Czy wydarzenie jest widoczne publicznie",
+          "official": "Wydarzenie oficjalne",
+          "official-description": "Czy wydarzenie ma status oficjalny"
+        },
+        "event-actions": {
+          "title": "Akcje wydarzenia",
+          "complete-event": "Zakończ wydarzenie",
+          "complete-event-description": "Oznacz wydarzenie jako zakończone. Wyników nie będzie można już modyfikować.",
+          "publish-event": "Opublikuj wydarzenie",
+          "publish-event-description": "Udostępnij wyniki publicznie.",
+          "already-completed": "Wydarzenie jest już zakończone",
+          "already-published": "Wydarzenie jest już opublikowane"
+        },
+        "danger-zone": {
+          "title": "Strefa ryzyka",
+          "delete-event": "Usuń wydarzenie",
+          "delete-event-description": "Trwale usuń wszystkie dane wydarzenia. Tej operacji nie można cofnąć.",
+          "delete-disabled": "Usuwanie wydarzenia nie jest jeszcze dostępne"
+        },
+        "dialogs": {
+          "complete-event": {
+            "title": "Zakończ wydarzenie",
+            "message": "Czy na pewno chcesz zakończyć to wydarzenie? Po zakończeniu wyniki nie będą mogły być modyfikowane.",
+            "event-name": "Wydarzenie: {eventName}",
+            "confirm": "Zakończ wydarzenie",
+            "cancel": "Anuluj",
+            "completing": "Kończenie..."
+          },
+          "publish-event": {
+            "title": "Opublikuj wydarzenie",
+            "message": "Czy na pewno chcesz opublikować to wydarzenie? Wyniki będą widoczne dla wszystkich.",
+            "event-name": "Wydarzenie: {eventName}",
+            "confirm": "Opublikuj wydarzenie",
+            "cancel": "Anuluj",
+            "publishing": "Publikowanie..."
+          }
+        },
+        "messages": {
+          "save-success": "Ustawienia zapisano pomyślnie",
+          "save-error": "Nie udało się zapisać ustawień",
+          "complete-success": "Wydarzenie zakończono pomyślnie",
+          "complete-error": "Nie udało się zakończyć wydarzenia",
+          "publish-success": "Wydarzenie opublikowano pomyślnie",
+          "publish-error": "Nie udało się opublikować wydarzenia",
+          "load-error": "Nie udało się wczytać ustawień wydarzenia"
+        }
+      },
+      "schedule": {
+        "title": "{eventName}: Harmonogram",
+        "delete-schedule": "Usuń harmonogram",
+        "delete-schedule-dialog": {
+          "title": "Usuń harmonogram",
+          "message": "Czy na pewno chcesz usunąć harmonogram? Tej operacji nie można cofnąć i spowoduje ona usunięcie wszystkich zaplanowanych meczów oraz sesji sędziowskich.",
+          "cancel": "Anuluj",
+          "confirm": "Usuń harmonogram",
+          "deleting": "Usuwanie..."
+        },
+        "alerts": {
+          "schedule-set-up": "To wydarzenie ma już ustawiony harmonogram. Możesz modyfikować harmonogram drużyn lub usunąć go całkowicie.",
+          "missing-details": "Brakuje niektórych danych. Do wygenerowania harmonogramu wymagane są drużyny, sale i stoły."
+        },
+        "links": {
+          "teams": {
+            "title": "Zarządzaj drużynami",
+            "description": "Rejestruj i zarządzaj drużynami"
+          },
+          "venue": {
+            "title": "Zarządzaj miejscem",
+            "description": "Skonfiguruj sale i stoły"
+          }
+        },
+        "settings": {
+          "title": "Ustawienia harmonogramu",
+          "information": {
+            "title": "Informacje",
+            "teams": "Drużyny",
+            "rooms": "Sale",
+            "tables": "Stoły",
+            "total-matches": "Łączna liczba meczów",
+            "total-sessions": "Łączna liczba sesji sędziowskich",
+            "practice-rounds": "Rundy treningowe",
+            "ranking-rounds": "Rundy rankingowe",
+            "judging-start": "Czas rozpoczęcia sesji sędziowskich",
+            "field-start": "Czas rozpoczęcia meczów na polu",
+            "matches-per-round": "Liczba meczów na rundę"
+          },
+          "settings": {
+            "title": "Ustawienia",
+            "stagger-matches": "Przesunięcia meczów",
+            "timezone": "Strefa czasowa"
+          },
+          "timing": {
+            "practice-cycle-time": "Czas cyklu rund treningowych",
+            "ranking-cycle-time": "Czas cyklu rund rankingowych",
+            "judging-session-cycle-time": "Czas cyklu sesji sędziowskich",
+            "match-length": "Czas trwania meczu",
+            "judging-session-length": "Czas trwania sesji sędziowskiej"
+          }
+        },
+        "calendar": {
+          "blocks": {
+            "judging-session": "Sesja sędziowska #{number}",
+            "practice-round": "Runda treningowa #{number}",
+            "ranking-round": "Runda rankingowa #{number}"
+          },
+          "judging": {
+            "title": "Sędziowanie"
+          },
+          "field": {
+            "title": "Pole",
+            "add-practice-round": "Dodaj rundę treningową",
+            "add-ranking-round": "Dodaj rundę rankingową"
+          },
+          "agenda": {
+            "title": "Agenda",
+            "default-event-title": "Wydarzenie ogólne",
+            "edit-event": "Edytuj wydarzenie",
+            "cancel": "Anuluj",
+            "save": "Zapisz",
+            "delete": "Usuń",
+            "event-title": "Tytuł wydarzenia",
+            "event-location": "Lokalizacja",
+            "default-event-location": "Sala/Lokalizacja",
+            "visibility": "Widoczność",
+            "public": "Publiczne",
+            "description-public": "Widoczne dla wszystkich na portalu publicznym",
+            "judging": "Sędziowanie",
+            "description-judging": "Widoczne w wewnętrznym harmonogramie sesji sędziowskich",
+            "field": "Pole",
+            "description-field": "Widoczne w wewnętrznym harmonogramie pola",
+            "teams": "Drużyny",
+            "description-teams": "Widoczne w harmonogramach drużyn w portalu drużyn",
+            "generating": "Generowanie...",
+            "generate-button": "Generuj agendę",
+            "generate": {
+              "success": "Agendę utworzono",
+              "error": "Nie udało się wygenerować agendy: {error}"
+            }
+          },
+          "verify": {
+            "title": "Weryfikuj harmonogram",
+            "verifying": "Weryfikowanie harmonogramu...",
+            "success": "Harmonogram zweryfikowany!",
+            "error": "Weryfikacja nie powiodła się: {error}"
+          },
+          "generate": {
+            "generate-button": "Generuj harmonogram",
+            "success": "Harmonogram wygenerowano pomyślnie!",
+            "error": "Nie udało się wygenerować harmonogramu: {error}",
+            "generating": "Generowanie..."
+          }
+        },
+        "team-swap": {
+          "description": "Zamień drużyny między sesjami sędziowskimi i meczami. Wybierz drużynę, aby zobaczyć jej harmonogram, a następnie wybierz przedział czasowy do zamiany.",
+          "select-team": "Wybierz drużynę",
+          "no-teams": "Brak drużyn w tej dywizji",
+          "schedule": "Aktualny harmonogram",
+          "judging-session": "Sesja sędziowska",
+          "matches": "Mecze",
+          "select-team-to-continue": "Wybierz drużynę, aby zobaczyć dostępne przedziały czasowe",
+          "select-judging-time": "Wybierz docelowy przedział czasowy",
+          "empty": "Puste",
+          "current-team": "Aktualna drużyna",
+          "confirm-dialog": {
+            "title": "Potwierdź zamianę drużyn",
+            "message": "Zamienić drużynę {team1Number} z sali {room1Name} o {time1} z drużyną {team2Number} w sali {room2Name} o {time2}?",
+            "cancel": "Anuluj",
+            "confirm": "Potwierdź zamianę",
+            "swapping": "Zamienianie..."
+          },
+          "team-label": "Drużyna {number}",
+          "round": "Runda",
+          "match": "{stage} Runda {round} – mecz #{number}",
+          "no-teams-found": "Nie znaleziono drużyn",
+          "placeholder": "Wyszukaj drużyny...",
+          "unknown-team": "Drużyna {number}"
+        }
+      },
+      "awards": {
+        "title": "{eventName}: Nagrody",
+        "editor": {
+          "title": "Zarządzanie nagrodami",
+          "subtitle": "Edytuj liczbę nagród, dodawaj nagrody opcjonalne i zmieniaj kolejność nagród",
+          "add-award": "Dodaj nagrodę opcjonalną",
+          "save-changes": "Zapisz zmiany",
+          "cancel-changes": "Odrzuć zmiany",
+          "saving": "Zapisywanie...",
+          "unsaved-changes": "Masz niezapisane zmiany",
+          "unsaved-warning": "Pamiętaj, aby zapisać zmiany przed opuszczeniem tej strony",
+          "awards-list": "Lista nagród ({count})",
+          "no-awards": "Brak skonfigurowanych nagród",
+          "no-awards-help": "Użyj przycisku „Dodaj nagrodę opcjonalną”, aby dodać nagrody",
+          "add-dialog": {
+            "title": "Dodaj nagrodę opcjonalną",
+            "select-award": "Wybierz nagrodę",
+            "cancel": "Anuluj",
+            "add": "Dodaj nagrodę"
+          },
+          "award-types": {
+            "mandatory": "Obowiązkowa",
+            "optional": "Opcjonalna"
+          },
+          "limits": {
+            "unlimited": "Bez limitu",
+            "maximum": "Maksymalnie {count}"
+          },
+          "status": {
+            "existing-awards": "Skonfigurowano nagrody",
+            "existing-awards-tooltip": "To wydarzenie ma już skonfigurowane nagrody",
+            "new-awards": "Nowa konfiguracja",
+            "new-awards-tooltip": "To jest nowa konfiguracja nagród"
+          }
+        },
+        "validation": {
+          "title": "Walidacja nagród",
+          "awards": "nagrody",
+          "status": {
+            "valid": "Poprawna",
+            "invalid": "Niepoprawna"
+          },
+          "team-info": {
+            "title": "Informacje o drużynach",
+            "description": "W wydarzeniu zarejestrowano {count} drużyn"
+          },
+          "minimum": {
+            "title": "Minimalna liczba nagród",
+            "description": "Nagrody nieosobiste, bez nagród za robot performance i awans"
+          },
+          "maximum": {
+            "title": "Maksymalna liczba nagród",
+            "description": "Minimalna liczba nagród plus nagrody za robot performance"
+          },
+          "rules": {
+            "title": "Zasady walidacji",
+            "teams-count": "Liczba drużyn musi być większa niż 0",
+            "minimum-requirement": "Minimalna liczba nagród musi wynosić co najmniej 30% liczby drużyn",
+            "maximum-requirement": "Maksymalna liczba nagród nie może przekroczyć 50% liczby drużyn"
+          },
+          "errors": {
+            "title": "Problemy z konfiguracją",
+            "no-teams": "Brak zarejestrowanych drużyn",
+            "not-enough-awards": "Skonfigurowano zbyt mało nagród ({count}%)",
+            "too-many-awards": "Skonfigurowano zbyt wiele nagród ({count}%)"
+          },
+          "success": {
+            "title": "Konfiguracja nagród poprawna",
+            "description": "Obecna konfiguracja spełnia wszystkie wymagania."
+          }
+        }
+      },
+      "integrations": {
+        "title": "{eventName}: Integracje",
+        "add-tooltip": "Dodaj integrację",
+        "empty-state": "Nie dodano jeszcze żadnych integracji. Kliknij kartę +, aby rozpocząć.",
+        "add-dialog": {
+          "title": "Dodaj integrację",
+          "search-placeholder": "Wyszukaj integracje...",
+          "no-results": "Nie znaleziono integracji",
+          "no-available-integrations": "Brak dostępnych integracji do dodania",
+          "cancel": "Anuluj",
+          "add": "Dodaj",
+          "adding": "Dodawanie...",
+          "error": "Nie udało się dodać integracji"
+        },
+        "detail-panel": {
+          "no-selection": "Wybierz integrację, aby zobaczyć ustawienia",
+          "settings-placeholder": "Ustawienia integracji pojawią się tutaj",
+          "save": "Zapisz",
+          "delete": "Usuń",
+          "deleting": "Usuwanie...",
+          "delete-confirmation": "Czy na pewno chcesz usunąć tę integrację? Tej operacji nie można cofnąć.",
+          "delete-error": "Nie udało się usunąć integracji",
+          "save-error": "Nie udało się zapisać ustawień integracji",
+          "save-success": "Ustawienia integracji zapisano pomyślnie",
+          "settings": {
+            "first-israel-dashboard": {
+              "sfid-label": "ID wydarzenia w Salesforce",
+              "sfid-placeholder": "Wprowadź ID wydarzenia w Salesforce",
+              "sfid-help": "Unikalny identyfikator Twojego wydarzenia w Salesforce"
+            }
+          }
+        },
+        "integration-types": {
+          "first-israel-dashboard": {
+            "name": "FIRST Israel Dashboard",
+            "description": "Prześlij informacje o drużynach i eksportuj wyniki ze swojego konta FIRST Israel Dashboard"
+          }
+        }
+      },
+      "users": {
+        "title": "{eventName}: Użytkownicy",
+        "sections": {
+          "event-admins": {
+            "title": "Administratorzy wydarzenia",
+            "description": "Zarządzaj użytkownikami, którzy mogą administrować tym wydarzeniem. Użytkownicy ci mają dostęp do funkcji zarządzania wydarzeniem.",
+            "current-admins": "Aktualni administratorzy",
+            "assign-admins": "Przypisz administratorów",
+            "remove-admin": "Usuń administratora",
+            "no-admins": "Brak administratorów przypisanych do tego wydarzenia."
+          },
+          "volunteer-users": {
+            "title": "Wolontariusze",
+            "description": "Zarządzaj rolami wolontariuszy. Upewnij się, że w każdej dywizji obsadzone są wszystkie obowiązkowe role.",
+            "system-managed-roles": {
+              "title": "Role zarządzane przez system",
+              "description": "Te role są zarządzane automatycznie i nie można ich edytować ręcznie.",
+              "role-description": "Zarządzane automatycznie przez system",
+              "toggleable-role-description": "Tę rolę można włączyć lub wyłączyć dla wydarzenia",
+              "enabled": "Włączona",
+              "disabled": "Wyłączona"
+            },
+            "mandatory-roles": {
+              "title": "Role obowiązkowe",
+              "description": "Wymagane w każdej dywizji."
+            },
+            "optional-roles": {
+              "title": "Role opcjonalne",
+              "description": "Można przypisywać według potrzeb."
+            },
+            "add-slot": "Dodaj stanowisko",
+            "slot": "stanowisko",
+            "slots": "stanowiska",
+            "remove-slot": "Usuń stanowisko",
+            "no-slots-assigned": "Brak stanowisk przypisanych do tej roli.",
+            "divisions": "Dywizje",
+            "select-all": "Zaznacz wszystko",
+            "identifier": "Identyfikator",
+            "identifier-help": "Dodaj identyfikator odróżniający stanowiska tej samej roli (maks. 12 znaków).",
+            "save-slots": "Zapisz stanowiska",
+            "saving": "Zapisywanie...",
+            "save-success": "Zapisano stanowiska!",
+            "save-error": "Nie udało się zapisać stanowisk. Spróbuj ponownie.",
+            "validation": {
+              "title": "Popraw poniższe elementy:",
+              "missing-mandatory-role": "{role} jest wymagana w dywizji {division}",
+              "missing-mandatory-role-single": "{role} jest wymagana dla tego wydarzenia"
+            },
+            "loading": "Ładowanie...",
+            "download-passwords": "Pobierz hasła",
+            "status": {
+              "new-users-tooltip": "Nowa konfiguracja użytkowników",
+              "existing-users-tooltip": "Istniejąca konfiguracja użytkowników",
+              "new-users": "Nowa konfiguracja",
+              "existing-users": "Skonfigurowani użytkownicy"
+            }
+          }
+        },
+        "dialogs": {
+          "assign-admins": {
+            "title": "Przypisz administratorów wydarzenia",
+            "search-placeholder": "Wyszukaj użytkowników administracyjnych...",
+            "no-search-results": "Nie znaleziono użytkowników pasujących do wyszukiwania.",
+            "no-available-admins": "Brak dodatkowych administratorów do przypisania.",
+            "selected-count": "{count} {count, plural, =1 {użytkownik wybrany} other {użytkowników wybranych}}",
+            "cancel": "Anuluj",
+            "save": "Przypisz wybranych"
+          },
+          "add-volunteer": {
+            "title": "Dodaj wolontariusza: {role}",
+            "select-user": "Wybierz użytkownika",
+            "change-user": "Zmień użytkownika",
+            "search-placeholder": "Wyszukaj wolontariuszy...",
+            "no-search-results": "Nie znaleziono wolontariuszy pasujących do wyszukiwania.",
+            "no-available-volunteers": "Brak dostępnych wolontariuszy dla tej roli.",
+            "select-divisions": "Wybierz dywizje",
+            "select-all": "Zaznacz wszystko",
+            "identifier": "Identyfikator (opcjonalny)",
+            "identifier-help": "Dodaj identyfikator wyróżniający tego wolontariusza (maks. 12 znaków)",
+            "cancel": "Anuluj",
+            "add": "Dodaj wolontariusza"
+          }
+        }
+      }
+    },
+    "users": {
+      "title": "Użytkownicy",
+      "create-new-user": "Utwórz nowego użytkownika",
+      "search": {
+        "placeholder": "Wyszukaj użytkowników po nazwie, imieniu lub nazwisku..."
+      },
+      "list": {
+        "columns": {
+          "username": "Nazwa użytkownika",
+          "name": "Imię i nazwisko",
+          "created-at": "Utworzono",
+          "actions": "Akcje"
+        }
+      },
+      "creation-dialog": {
+        "title": "Utwórz użytkownika",
+        "actions": {
+          "cancel": "Anuluj"
+        },
+        "form": {
+          "fields": {
+            "username": {
+              "label": "Nazwa użytkownika",
+              "placeholder": "np. john_doe"
+            },
+            "password": {
+              "label": "Hasło",
+              "placeholder": "Wprowadź bezpieczne hasło"
+            },
+            "first-name": {
+              "label": "Imię",
+              "placeholder": "np. Jan"
+            },
+            "last-name": {
+              "label": "Nazwisko",
+              "placeholder": "np. Kowalski"
+            }
+          },
+          "password-validation": {
+            "title": "Wymagania dotyczące hasła:",
+            "min-length": "Co najmniej 8 znaków",
+            "has-uppercase": "Co najmniej jedna wielka litera (A–Z)",
+            "has-lowercase": "Co najmniej jedna mała litera (a–z)",
+            "has-number": "Co najmniej jedna cyfra (0–9)",
+            "has-special-char": "Co najmniej jeden znak specjalny (!@#$%^&*)"
+          },
+          "errors": {
+            "username-required": "Nazwa użytkownika jest wymagana.",
+            "username-too-short": "Nazwa użytkownika musi mieć co najmniej 3 znaki.",
+            "username-invalid": "Nazwa użytkownika może zawierać jedynie litery, cyfry i podkreślenia.",
+            "username-exists": "Taka nazwa użytkownika już istnieje.",
+            "password-required": "Hasło jest wymagane.",
+            "password-invalid": "Hasło nie spełnia wymagań.",
+            "first-name-required": "Imię jest wymagane.",
+            "last-name-required": "Nazwisko jest wymagane.",
+            "error": "Wystąpił błąd podczas tworzenia użytkownika."
+          },
+          "submit": "Utwórz użytkownika",
+          "submitting": "Tworzenie użytkownika..."
+        }
+      },
+      "permissions-dialog": {
+        "title": "Edytuj uprawnienia użytkownika {userName}",
+        "description": "Wybierz uprawnienia, które chcesz przyznać temu użytkownikowi.",
+        "actions": {
+          "save": "Zapisz",
+          "saving": "Zapisywanie...",
+          "cancel": "Anuluj"
+        },
+        "errors": {
+          "fetch-error": "Nie udało się wczytać uprawnień użytkownika.",
+          "cannot-remove-own-manage-users": "Nie możesz odebrać sobie uprawnienia do zarządzania użytkownikami."
+        }
+      },
+      "delete": {
+        "title": "Usuń użytkownika",
+        "message": "Czy na pewno chcesz usunąć {userName}?",
+        "warning": "Ta operacja trwale usunie użytkownika wraz z jego powiązaniami z wydarzeniami oraz wszystkimi nadanymi uprawnieniami. Tego nie można cofnąć.",
+        "cancel": "Anuluj",
+        "confirm": "Usuń użytkownika",
+        "deleting": "Usuwanie..."
+      },
+      "edit": {
+        "title": "Edytuj użytkownika: {userName}",
+        "cancel": "Anuluj",
+        "profile": {
+          "title": "Informacje profilowe",
+          "fields": {
+            "first-name": {
+              "label": "Imię"
+            },
+            "last-name": {
+              "label": "Nazwisko"
+            }
+          },
+          "errors": {
+            "first-name-required": "Imię jest wymagane.",
+            "last-name-required": "Nazwisko jest wymagane."
+          },
+          "submit": "Zaktualizuj profil",
+          "submitting": "Aktualizowanie..."
+        },
+        "password": {
+          "title": "Resetuj hasło",
+          "fields": {
+            "password": {
+              "label": "Nowe hasło",
+              "placeholder": "Wprowadź nowe bezpieczne hasło"
+            }
+          },
+          "submit": "Resetuj hasło",
+          "submitting": "Resetowanie..."
+        }
+      }
+    }
+  },
+  "general": {
+    "permissions": {
+      "manage-seasons": "Zarządzanie sezonami",
+      "manage-users": "Zarządzanie użytkownikami",
+      "manage-events": "Zarządzanie wydarzeniami",
+      "manage-event-details": "Zarządzanie szczegółami wydarzenia",
+      "manage-teams": "Zarządzanie drużynami",
+      "view-insights": "Przeglądanie statystyk"
+    }
+  },
+  "layouts": {
+    "dashboard": {
+      "sidebar": {
+        "seasons": "Sezony",
+        "users": "Użytkownicy",
+        "events": "Wydarzenia",
+        "teams": "Drużyny",
+        "insights": "Statystyki",
+        "graphql": "GraphQL"
+      },
+      "user-menu": {
+        "logout": "Wyloguj"
+      }
+    }
+  }
+}

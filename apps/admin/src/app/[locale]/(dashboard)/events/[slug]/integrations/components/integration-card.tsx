@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { Card, CardActionArea, Stack, Typography, Box, Avatar } from '@mui/material';
 
 interface IntegrationCardProps {
@@ -63,19 +64,19 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
               width: 64,
               height: 64,
               borderRadius: 2,
-              backgroundColor: 'action.hover'
+              backgroundColor: 'action.hover',
+              position: 'relative'
             }}
           >
             {logo ? (
-              <Box
-                component="img"
+              <Image
                 src={logo}
                 alt={name}
-                sx={{
-                  width: '100%',
-                  height: '100%',
+                fill
+                sizes="64px"
+                style={{
                   objectFit: 'contain',
-                  p: 1
+                  padding: '8px'
                 }}
               />
             ) : icon ? (
