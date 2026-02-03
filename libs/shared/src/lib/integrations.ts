@@ -16,15 +16,21 @@ export const IntegrationSettingsSchema = z.union([FirstIsraelDashboardSettingsSc
 
 export type IntegrationSettings = z.infer<typeof IntegrationSettingsSchema>;
 
+const INTEGRATION_LOGOS: Record<IntegrationType, string> = {
+  [IntegrationTypes.FIRST_ISRAEL_DASHBOARD]: 'integration-icons/first-israel-dashboard.svg'
+} as const;
+
 export interface IntegrationConfig {
   type: IntegrationType;
   settingsSchema: z.ZodSchema;
+  logoAsset: string;
 }
 
 const INTEGRATIONS_REGISTRY: Record<IntegrationType, IntegrationConfig> = {
   [IntegrationTypes.FIRST_ISRAEL_DASHBOARD]: {
     type: IntegrationTypes.FIRST_ISRAEL_DASHBOARD,
-    settingsSchema: FirstIsraelDashboardSettingsSchema
+    settingsSchema: FirstIsraelDashboardSettingsSchema,
+    logoAsset: INTEGRATION_LOGOS[IntegrationTypes.FIRST_ISRAEL_DASHBOARD]
   }
 };
 
@@ -34,6 +40,10 @@ export function getIntegrationConfig(type: IntegrationType): IntegrationConfig {
     throw new Error(`Unknown integration type: ${type}`);
   }
   return config;
+}
+
+export function getIntegrationLogo(type: IntegrationType): string {
+  return INTEGRATION_LOGOS[type];
 }
 
 export function getAllIntegrations(): IntegrationConfig[] {
