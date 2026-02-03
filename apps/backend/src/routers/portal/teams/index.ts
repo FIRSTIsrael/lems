@@ -19,6 +19,7 @@ router.get('/', async (req: Request, res: Response) => {
   if (!page) {
     const teams = await db.teams.getAll();
     res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+    return;
   }
 
   const pageNumber = parseInt(page, 10);
