@@ -10,6 +10,8 @@ export interface MatchParticipantUpdatedEvent {
   matchId: string;
   teamId: string;
   queued: string | null;
+  present: string | null;
+  ready: string | null;
 }
 
 export interface MatchParticipantUpdatedSubscriptionData {
@@ -25,6 +27,8 @@ export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       matchId
       teamId
       queued
+      present
+      ready
     }
   }
 `;

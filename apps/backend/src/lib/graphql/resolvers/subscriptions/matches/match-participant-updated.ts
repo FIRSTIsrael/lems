@@ -9,6 +9,8 @@ interface MatchParticipantUpdatedEvent {
   matchId: string;
   teamId: string;
   queued: string | null;
+  present: Date | null;
+  ready: Date | null;
 }
 
 const processMatchParticipantUpdatedEvent = async (
@@ -18,6 +20,8 @@ const processMatchParticipantUpdatedEvent = async (
   const matchId = (eventData.matchId as string) || '';
   const teamId = (eventData.teamId as string) || '';
   const queued = eventData.queued;
+  const present = (eventData.present as string | null) || null;
+  const ready = (eventData.ready as string | null) || null;
 
   if (!matchId || !teamId) {
     return null;
@@ -36,7 +40,9 @@ const processMatchParticipantUpdatedEvent = async (
   const result: MatchParticipantUpdatedEvent = {
     matchId,
     teamId,
-    queued: queuedString
+    queued: queuedString,
+    present: present ? new Date(present) : null,
+    ready: ready ? new Date(ready) : null
   };
 
   return result;
@@ -53,7 +59,8 @@ const matchParticipantUpdatedSubscribe = (
 
 /**
  * Subscription resolver object for matchParticipantUpdated
- * GraphQL subscriptions require a subscribe function
+ * Emitted when any participant field is updated (queued, present, ready)
+ * Consolidates both match participant updates and status updates
  */
 export const matchParticipantUpdatedResolver = {
   subscribe: matchParticipantUpdatedSubscribe,

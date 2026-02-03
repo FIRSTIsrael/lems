@@ -30,8 +30,7 @@ import {
 } from './graphql/index';
 import {
   createMatchCallUpdatedSubscription,
-  createMatchParticipantUpdatedSubscription,
-  createParticipantStatusUpdatedSubscription
+  createMatchParticipantUpdatedSubscription
 } from './graphql/subscriptions';
 import { TeamQueueCard, FieldQueuerBottomNav, FieldScheduleView, PitMapView } from './components';
 
@@ -64,8 +63,7 @@ export default function FieldQueuerPage() {
   const subscriptions = useMemo(
     () => [
       createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id),
-      createParticipantStatusUpdatedSubscription(currentDivision.id)
+      createMatchParticipantUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );
@@ -248,9 +246,6 @@ export default function FieldQueuerPage() {
                 scheduledTime={team.scheduledTime}
                 isInJudging={team.isInJudging}
                 isUrgent={team.isUrgent}
-                isQueued={team.isQueued}
-                isPresent={team.isPresent}
-                isReady={team.isReady}
               />
             ))}
           </Stack>

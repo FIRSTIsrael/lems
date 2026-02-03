@@ -17,7 +17,6 @@ import {
   createMatchLoadedSubscription,
   createMatchCompletedSubscription,
   createMatchParticipantUpdatedSubscription,
-  createParticipantStatusUpdatedSubscription,
   createScoresheetUpdatedSubscription
 } from './graphql';
 
@@ -31,7 +30,6 @@ export default function HeadRefereePage() {
       createMatchLoadedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchParticipantUpdatedSubscription(currentDivision.id),
-      createParticipantStatusUpdatedSubscription(currentDivision.id),
       createScoresheetUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]

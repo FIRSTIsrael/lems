@@ -247,7 +247,7 @@ type ParticipantStatusUpdatedEvent {
 }
 
 """
-Represents an event when a match participant's queued status is updated
+Represents an event when a match participant is updated (queued, present, or ready status)
 """
 type MatchParticipantUpdatedEvent {
   "Match identifier"
@@ -258,6 +258,12 @@ type MatchParticipantUpdatedEvent {
 
   "Timestamp when the team was marked as queued/arrived to match (null if not queued)"
   queued: String
+
+  "Timestamp when the participant was marked as present (null if not present)"
+  present: String
+
+  "Timestamp when the participant was marked as ready (null if not ready)"
+  ready: String
 }
 
 """

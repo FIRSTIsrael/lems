@@ -19,11 +19,4 @@ export {
   type MatchParticipantUpdatedSubscriptionData
 } from './match-participant-updated';
 
-export {
-  PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
-  createParticipantStatusUpdatedSubscription,
-  type ParticipantStatusUpdatedEvent,
-  type ParticipantStatusUpdatedSubscriptionData
-} from './participant-status-updated';
-
 export * from './session-updated';

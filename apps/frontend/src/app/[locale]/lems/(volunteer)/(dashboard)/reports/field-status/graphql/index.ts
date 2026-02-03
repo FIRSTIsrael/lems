@@ -8,5 +8,4 @@ export { createMatchStartedSubscription } from './subscriptions/match-started';
 export { createMatchCompletedSubscription } from './subscriptions/match-completed';
 export { createMatchAbortedSubscription } from './subscriptions/match-aborted';
 export { createMatchParticipantUpdatedSubscription } from './subscriptions/match-participant-updated';
-export { createParticipantStatusUpdatedSubscription } from './subscriptions/participant-status-updated';
 export { createMatchStageAdvancedSubscription } from './subscriptions/match-stage-advanced';
