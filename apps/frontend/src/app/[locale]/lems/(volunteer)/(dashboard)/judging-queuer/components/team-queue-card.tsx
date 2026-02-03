@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Tooltip } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { red, orange } from '@mui/material/colors';
@@ -32,13 +31,15 @@ export function TeamQueueCard({
   const currentTime = useTime({ interval: 1000 });
 
   const timeInfo = useMemo(() => {
-    const scheduled = dayjs(scheduledTime);
-    const diffMinutes = currentTime.diff(scheduled, 'minute');
+    const diffMinutes = currentTime.diff(scheduledTime, 'minute');
     const isPast = diffMinutes > 0;
     const absMinutes = Math.abs(diffMinutes);
 
     return {
-      formattedTime: scheduled.format('HH:mm'),
+      formattedTime: currentTime
+        .set('hour', new Date(scheduledTime).getHours())
+        .set('minute', new Date(scheduledTime).getMinutes())
+        .format('HH:mm'),
       diffMinutes: absMinutes,
       isPast
     };

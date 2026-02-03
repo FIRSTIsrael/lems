@@ -300,7 +300,7 @@
         "no-sessions-description": "There are no judging sessions scheduled in the next 20 minutes",
         "status": {
           "called": "Called",
-          "not-called": "Not Called",
+          "not-queued": "Not Queued",
           "not-signed-in": "Not Signed In"
         }
       },
@@ -860,7 +860,7 @@
         "ends-at": "Ends at {time}"
       },
       "status": {
-        "not-started": "Not Started",
+        "not-started": "Not Queued",
         "in-progress": "In Progress",
         "completed": "Completed",
         "queued": "Queued"
@@ -872,6 +872,21 @@
       "empty-state": {
         "message": "No judging sessions scheduled",
         "no-team": "No team assigned"
+      },
+      "legend": {
+        "title": "Status Legend",
+        "statuses": {
+          "not-queued": "Not Queued",
+          "queued": "Queued",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "descriptions": {
+          "not-queued": "Team has not been called yet",
+          "queued": "Team has been called and is on the way to the judging room",
+          "in-progress": "Session is currently in progress",
+          "completed": "Session has been completed"
+        }
       }
     },
     "scorekeeper": {

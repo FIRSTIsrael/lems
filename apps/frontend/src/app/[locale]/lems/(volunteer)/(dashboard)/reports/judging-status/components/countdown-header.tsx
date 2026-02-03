@@ -1,11 +1,18 @@
 'use client';
 
-import { Box, Paper, Stack, LinearProgress } from '@mui/material';
+import { Box, Paper, Stack, LinearProgress, IconButton, Tooltip } from '@mui/material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { useTranslations } from 'next-intl';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useJudgingStatus } from '../judging-status-context';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
-export const CountdownHeader: React.FC = () => {
+interface CountdownHeaderProps {
+  onLegendClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export const CountdownHeader: React.FC<CountdownHeaderProps> = ({ onLegendClick }) => {
+  const t = useTranslations('pages.judging-status');
   const { countdownTargetTime, sessionLength } = useJudgingStatus();
   const currentTime = useTime({ interval: 1000 });
 
@@ -16,9 +23,25 @@ export const CountdownHeader: React.FC = () => {
       sx={{
         my: 3,
         p: { xs: 3, sm: 4, md: 5 },
-        borderRadius: 2
+        borderRadius: 2,
+        position: 'relative'
       }}
     >
+      {onLegendClick && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 16,
+            right: 16
+          }}
+        >
+          <Tooltip title={t('legend.title')} arrow>
+            <IconButton onClick={onLegendClick} size="large" color="primary">
+              <InfoOutlinedIcon />
+            </IconButton>
+          </Tooltip>
+        </Box>
+      )}
       <Stack spacing={2} alignItems="center" justifyContent="center">
         <Box
           sx={{

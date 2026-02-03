@@ -2,7 +2,6 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import dayjs from 'dayjs';
 import {
   Paper,
   Table,
@@ -37,7 +36,7 @@ export function JudgingScheduleView({ data, loading }: JudgingScheduleViewProps)
       .filter(
         session =>
           session.status === 'not-started' &&
-          currentTime.diff(dayjs(session.scheduledTime), 'minute') >= -20
+          currentTime.diff(session.scheduledTime, 'minute') >= -20
       )
       .forEach(session => {
         const timeKey = session.scheduledTime;
@@ -111,7 +110,10 @@ export function JudgingScheduleView({ data, loading }: JudgingScheduleViewProps)
               <TableRow key={time}>
                 <TableCell align="center">
                   <Typography fontFamily="monospace" fontWeight={500}>
-                    {dayjs(time).format('HH:mm')}
+                    {currentTime
+                      .set('hour', new Date(time).getHours())
+                      .set('minute', new Date(time).getMinutes())
+                      .format('HH:mm')}
                   </Typography>
                 </TableCell>
                 {rooms.map(room => {
@@ -156,11 +158,18 @@ export function JudgingScheduleView({ data, loading }: JudgingScheduleViewProps)
                             sx={{ height: 20, fontSize: '0.65rem' }}
                           />
                         )}
-                        {session.called && (
+                        {session.called ? (
                           <Chip
                             label={t('status.called')}
                             size="small"
                             color="warning"
+                            sx={{ height: 20, fontSize: '0.65rem' }}
+                          />
+                        ) : (
+                          <Chip
+                            label={t('status.not-queued')}
+                            size="small"
+                            color="default"
                             sx={{ height: 20, fontSize: '0.65rem' }}
                           />
                         )}

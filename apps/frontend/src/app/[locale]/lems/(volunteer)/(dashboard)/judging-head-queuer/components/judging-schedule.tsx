@@ -4,7 +4,6 @@ import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
-import dayjs from 'dayjs';
 import {
   Paper,
   Table,
@@ -80,7 +79,7 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
       .filter(
         session =>
           session.status === 'not-started' &&
-          currentTime.diff(dayjs(session.scheduledTime), 'minute') >= -20
+          currentTime.diff(session.scheduledTime, 'minute') >= -20
       )
       .forEach(session => {
         const timeKey = session.scheduledTime;
@@ -160,7 +159,10 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
                 <TableRow key={time}>
                   <TableCell align="center">
                     <Typography fontFamily="monospace" fontWeight={500}>
-                      {dayjs(time).format('HH:mm')}
+                      {currentTime
+                        .set('hour', new Date(time).getHours())
+                        .set('minute', new Date(time).getMinutes())
+                        .format('HH:mm')}
                     </Typography>
                   </TableCell>
                   {rooms.map(room => {

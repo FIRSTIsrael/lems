@@ -297,7 +297,7 @@
         "no-sessions-description": "אין מפגשי שיפוט מתוכננים ב-20 הדקות הקרובות",
         "status": {
           "called": "נקראה",
-          "not-called": "לא נקראה",
+          "not-queued": "לא בקיו",
           "not-signed-in": "לא נרשמו"
         }
       },
@@ -857,7 +857,7 @@
         "ends-at": "מסתיים בשעה {time}"
       },
       "status": {
-        "not-started": "לא התחיל",
+        "not-queued": "לא בקיו",
         "in-progress": "בתהליך",
         "completed": "הושלם",
         "queued": "בקיו"
@@ -869,6 +869,21 @@
       "empty-state": {
         "message": "אין סבבי שיפוט מתוכננים כרגע",
         "no-team": "אין קבוצה משובצת"
+      },
+      "legend": {
+        "title": "מקראה",
+        "statuses": {
+          "not-queued": "לא בקיו",
+          "queued": "בקיו",
+          "in-progress": "בתהליך",
+          "completed": "הושלם"
+        },
+        "descriptions": {
+          "not-queued": "הקבוצה עדיין לא נקראה",
+          "queued": "הקבוצה נקראה ובדרך לחדר השיפוט",
+          "in-progress": "המפגש מתקיים כעת",
+          "completed": "המפגש הושלם"
+        }
       }
     },
     "scorekeeper": {
