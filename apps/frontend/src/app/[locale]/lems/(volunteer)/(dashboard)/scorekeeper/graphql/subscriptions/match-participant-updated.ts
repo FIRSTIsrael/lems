@@ -35,8 +35,8 @@ export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 `;
 
 /**
- * Creates a subscription configuration for match participant queued status updates.
- * Updates participant queued status in real-time.
+ * Creates a subscription configuration for match participant status updates.
+ * Updates participant queued, present, and ready status in real-time.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook
@@ -59,7 +59,9 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
                   p.team?.id === event.teamId
                     ? {
                         ...p,
-                        queued: !!event.queued
+                        queued: event.queued !== null,
+                        present: event.present !== null,
+                        ready: event.ready !== null
                       }
                     : p
                 )

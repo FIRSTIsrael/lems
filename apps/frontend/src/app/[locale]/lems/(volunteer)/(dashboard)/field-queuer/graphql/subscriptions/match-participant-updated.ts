@@ -37,11 +37,11 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
   return {
     subscription: MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: (prev: QueryData, subscriptionData: { data?: unknown }) => {
-      const data = subscriptionData.data as MatchParticipantUpdatedData | undefined;
-      if (!data || !prev.division) return prev;
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
+      const subscriptionData = data as MatchParticipantUpdatedData | undefined;
+      if (!subscriptionData || !prev.division) return prev;
 
-      const { matchId, teamId, queued } = data.matchParticipantUpdated;
+      const { matchId, teamId, queued, present, ready } = subscriptionData.matchParticipantUpdated;
 
       return {
         ...prev,
@@ -59,7 +59,9 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
 
                   return {
                     ...participant,
-                    queued: queued !== null
+                    queued: queued !== null,
+                    present: present !== null,
+                    ready: ready !== null
                   };
                 })
               };

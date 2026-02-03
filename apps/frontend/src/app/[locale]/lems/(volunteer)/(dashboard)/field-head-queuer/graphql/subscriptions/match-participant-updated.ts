@@ -37,21 +37,14 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
   return {
     subscription: MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: (
-      prev: QueryData,
-      { subscriptionData }: { subscriptionData?: { data?: unknown } }
-    ) => {
-      if (!subscriptionData) {
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
+      const subscriptionData = data as MatchParticipantUpdatedSubscriptionData | undefined;
+
+      if (!subscriptionData || !prev.division) {
         return prev;
       }
 
-      const data = subscriptionData.data as MatchParticipantUpdatedSubscriptionData | undefined;
-
-      if (!data || !prev.division) {
-        return prev;
-      }
-
-      const { matchParticipantUpdated } = data;
+      const { matchParticipantUpdated } = subscriptionData;
 
       return {
         ...prev,

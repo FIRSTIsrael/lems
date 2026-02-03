@@ -53,7 +53,9 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
             p.team?.id === participantData.teamId
               ? {
                   ...p,
-                  queued: participantData.queued !== null
+                  queued: participantData.queued !== null,
+                  present: participantData.present !== null,
+                  ready: participantData.ready !== null
                 }
               : p
           )

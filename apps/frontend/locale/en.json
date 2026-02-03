@@ -360,13 +360,15 @@
             "ready": "Ready",
             "present": "Present",
             "queued": "Queued",
-            "not-present": "Not Present"
+            "missing": "Missing",
+            "no-show": "No Show"
           },
           "descriptions": {
             "ready": "Team is at the table and ready to compete",
             "present": "Team has arrived at the table but not yet ready",
             "queued": "Team has been called and is on the way to the table",
-            "not-present": "Team has not arrived at the table"
+            "missing": "Team has not been called yet",
+            "no-show": "Team did not arrive at the event"
           }
         },
         "judging-integration": {

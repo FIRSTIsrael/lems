@@ -5,11 +5,12 @@ import { Typography, Stack, Popover, Box, useTheme, Divider } from '@mui/materia
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
-import CancelIcon from '@mui/icons-material/Cancel';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import BlockIcon from '@mui/icons-material/Block';
 
-type ParticipantStatus = 'ready' | 'present' | 'queued' | 'not-present';
+type ParticipantStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
-const ALL_STATUSES: ParticipantStatus[] = ['ready', 'present', 'queued', 'not-present'];
+const ALL_STATUSES: ParticipantStatus[] = ['ready', 'present', 'queued', 'missing', 'no-show'];
 
 const getStatusIcon = (status: ParticipantStatus) => {
   switch (status) {
@@ -19,8 +20,10 @@ const getStatusIcon = (status: ParticipantStatus) => {
       return <PersonPinIcon fontSize="small" color="warning" />;
     case 'queued':
       return <HourglassEmptyIcon fontSize="small" color="info" />;
-    case 'not-present':
-      return <CancelIcon fontSize="small" color="error" />;
+    case 'missing':
+      return <HelpOutlineIcon fontSize="small" color="disabled" />;
+    case 'no-show':
+      return <BlockIcon fontSize="small" color="error" />;
   }
 };
 
