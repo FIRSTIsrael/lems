@@ -4,7 +4,6 @@ import type { FieldStatusData } from '../types';
 
 export interface MatchCompletedEvent {
   matchId: string;
-  autoLoadedMatchId: string | null;
 }
 
 export interface MatchCompletedSubscriptionData {
@@ -22,7 +21,6 @@ export const MATCH_COMPLETED_SUBSCRIPTION: TypedDocumentNode<
   subscription MatchCompleted($divisionId: String!) {
     matchCompleted(divisionId: $divisionId) {
       matchId
-      autoLoadedMatchId
     }
   }
 `;
@@ -45,7 +43,6 @@ export function createMatchCompletedSubscription(divisionId: string) {
         division: {
           field: {
             activeMatch: null,
-            loadedMatch: event.autoLoadedMatchId,
             matches: prev.division.field.matches.map(match =>
               match.id === event.matchId
                 ? {

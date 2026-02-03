@@ -184,9 +184,6 @@ Represents an event when a match has been completed
 type MatchCompletedEvent {
   "Match identifier"
   matchId: String!
-
-  "ID of the match that was automatically loaded after completion, null if none"
-  autoLoadedMatchId: String
 }
 
 """

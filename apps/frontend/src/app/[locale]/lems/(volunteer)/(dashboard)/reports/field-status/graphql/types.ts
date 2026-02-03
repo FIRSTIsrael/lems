@@ -68,7 +68,6 @@ export interface MatchEvent {
   matchId: string;
   startTime?: string;
   startDelta?: number;
-  autoLoadedMatchId?: string;
 }
 
 export interface ParticipantStatusEvent {
