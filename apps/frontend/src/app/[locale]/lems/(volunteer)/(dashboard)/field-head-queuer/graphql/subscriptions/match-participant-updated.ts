@@ -37,9 +37,48 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
   return {
     subscription: MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: (prev: QueryData) => {
-      // Trigger refetch by returning a new object reference
-      return { ...prev };
+    updateQuery: (
+      prev: QueryData,
+      { subscriptionData }: { subscriptionData?: { data?: unknown } }
+    ) => {
+      if (!subscriptionData) {
+        return prev;
+      }
+
+      const data = subscriptionData.data as MatchParticipantUpdatedSubscriptionData | undefined;
+
+      if (!data || !prev.division) {
+        return prev;
+      }
+
+      const { matchParticipantUpdated } = data;
+
+      return {
+        ...prev,
+        division: {
+          ...prev.division,
+          field: {
+            ...prev.division.field,
+            matches: prev.division.field.matches.map(match =>
+              match.id === matchParticipantUpdated.matchId
+                ? {
+                    ...match,
+                    participants: match.participants.map(participant =>
+                      participant.team?.id === matchParticipantUpdated.teamId
+                        ? {
+                            ...participant,
+                            queued: matchParticipantUpdated.queued !== null,
+                            present: matchParticipantUpdated.present !== null,
+                            ready: matchParticipantUpdated.ready !== null
+                          }
+                        : participant
+                    )
+                  }
+                : match
+            )
+          }
+        }
+      };
     }
   } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
 }

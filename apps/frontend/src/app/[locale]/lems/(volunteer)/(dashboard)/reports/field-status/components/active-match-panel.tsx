@@ -43,6 +43,13 @@ interface ActiveMatchPanelProps {
   matchLength?: number;
 }
 
+function getParticipantBorderColor(ready: boolean, present: boolean, queued: boolean): string {
+  if (ready) return 'success.main';
+  if (present) return 'warning.main';
+  if (queued) return 'info.main';
+  return 'grey.400';
+}
+
 /**
  * Display panel for currently active match
  * Shows match info, participants, and progress
@@ -161,13 +168,11 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                     px: 2,
                     borderRadius: 1,
                     border: '2px solid',
-                    borderColor: participant.ready
-                      ? 'success.main'
-                      : participant.present
-                        ? 'warning.main'
-                        : participant.queued
-                          ? 'info.main'
-                          : 'grey.400'
+                    borderColor: getParticipantBorderColor(
+                      participant.ready,
+                      participant.present,
+                      participant.queued
+                    )
                   }}
                 >
                   <Typography
@@ -194,13 +199,15 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                       height: 32
                     }}
                   >
-                    {participant.ready ? (
+                    {participant.ready && (
                       <CheckCircleIcon sx={{ fontSize: '1.5rem' }} color="success" />
-                    ) : participant.present ? (
+                    )}
+                    {!participant.ready && participant.present && (
                       <PersonPinIcon sx={{ fontSize: '1.5rem' }} color="warning" />
-                    ) : participant.queued ? (
+                    )}
+                    {!participant.ready && !participant.present && participant.queued && (
                       <HourglassEmptyIcon sx={{ fontSize: '1.5rem' }} color="info" />
-                    ) : null}
+                    )}
                   </Box>
                 </Stack>
               ))}

@@ -92,11 +92,13 @@ export function JudgingSchedule({
       groups[session.number].push(session);
     });
 
-    return Object.values(groups)
-      .filter(group => group.length > 0)
-      .filter(group => !group.some(s => s.status === 'completed'))
-      .filter(group => group.some(s => s.status === 'not-started'))
-      .filter(group => dayjs(group[0].scheduledTime).subtract(20, 'minutes').isBefore(now));
+    return Object.values(groups).filter(
+      group =>
+        group.length > 0 &&
+        !group.some(s => s.status === 'completed') &&
+        group.some(s => s.status === 'not-started') &&
+        dayjs(group[0].scheduledTime).subtract(20, 'minutes').isBefore(now)
+    );
   }, [sessions]);
 
   const getTeamById = useCallback((teamId: string) => teams.find(t => t.id === teamId), [teams]);

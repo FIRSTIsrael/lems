@@ -26,10 +26,11 @@ interface MatchParticipantEvent {
  *
  * Validation checks:
  * 1. User is authenticated
- * 2. User is assigned to the division
- * 3. Match exists and is in the division
- * 4. Team exists in the match participants
- * 5. Match is not-started
+ * 2. User has referee, head-referee, or field-head-queuer role
+ * 3. User is assigned to the division
+ * 4. Match exists and is in the division
+ * 5. Team exists in the match participants
+ * 6. Match is not-started
  */
 export const updateMatchParticipantResolver: GraphQLFieldResolver<
   unknown,
@@ -43,7 +44,16 @@ export const updateMatchParticipantResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
-    // Check 2: User must be assigned to the division
+    // Check 2: User must have referee, head-referee, or field-head-queuer role
+    const allowedRoles = ['referee', 'head-referee', 'field-head-queuer'];
+    if (!allowedRoles.includes(context.user.role)) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have referee, head-referee, or field-head-queuer role'
+      );
+    }
+
+    // Check 3: User must be assigned to the division
     if (!context.user.divisions.includes(divisionId)) {
       throw new MutationError(MutationErrorCode.FORBIDDEN, 'User is not assigned to the division');
     }
@@ -107,10 +117,7 @@ export const updateMatchParticipantResolver: GraphQLFieldResolver<
     }
 
     if (Object.keys(updateData).length === 0) {
-      throw new MutationError(
-        MutationErrorCode.INVALID_INPUT,
-        'queued field must be provided'
-      );
+      throw new MutationError(MutationErrorCode.INVALID_INPUT, 'queued field must be provided');
     }
 
     const result = await db.raw.mongo

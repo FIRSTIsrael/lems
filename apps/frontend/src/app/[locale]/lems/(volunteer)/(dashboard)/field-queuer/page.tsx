@@ -16,7 +16,6 @@ import {
   Badge
 } from '@mui/material';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import dayjs from 'dayjs';
 import { useEvent } from '../../components/event-context';
 import { PageHeader } from '../components/page-header';
 import { useTime } from '../../../../../../lib/time/hooks/use-time';
@@ -32,15 +31,21 @@ import {
   createMatchCallUpdatedSubscription,
   createMatchParticipantUpdatedSubscription
 } from './graphql/subscriptions';
-import { TeamQueueCard, FieldQueuerBottomNav, FieldScheduleView, PitMapView } from './components';
+import {
+  TeamQueueCard,
+  FieldQueuerBottomNav,
+  FieldScheduleView,
+  PitMapView,
+  FieldQueuerProvider,
+  useFieldQueuer
+} from './components';
 
-export default function FieldQueuerPage() {
+function FieldQueuerContent() {
   const t = useTranslations('pages.field-queuer');
-  const { currentDivision } = useEvent();
+  const { tables, calledTeams, data, loading } = useFieldQueuer();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
-  const currentTime = useTime({ interval: 1000 });
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
 
   const activeTab = searchParams.get('tab') || 'home';
@@ -59,95 +64,6 @@ export default function FieldQueuerPage() {
     () => searchParams.get('tables')?.split(',').filter(Boolean) || [],
     [searchParams]
   );
-
-  const subscriptions = useMemo(
-    () => [
-      createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id)
-    ],
-    [currentDivision.id]
-  );
-
-  const { data, loading, error } = usePageData<
-    QueryData,
-    QueryVars,
-    FieldQueuerData,
-    { divisionId: string }
-  >(GET_FIELD_QUEUER_DATA, { divisionId: currentDivision.id }, parseFieldQueuerData, subscriptions);
-
-  const safeData = data ?? {
-    matches: [],
-    sessions: [],
-    loadedMatch: null
-  };
-
-  const tables = useMemo(() => {
-    const tableSet = new Set<string>();
-    safeData.matches.forEach(match => {
-      match.participants.forEach(p => {
-        if (p.table) tableSet.add(p.table.name);
-      });
-    });
-    return Array.from(tableSet).sort();
-  }, [safeData.matches]);
-
-  const calledTeams = useMemo(() => {
-    const teams: Array<{
-      teamNumber: number;
-      teamName: string;
-      tableName: string;
-      matchNumber: number;
-      scheduledTime: string;
-      isInJudging: boolean;
-      isUrgent: boolean;
-      isQueued: boolean;
-      isPresent: boolean;
-      isReady: boolean;
-      teamId: string;
-      tableId: string;
-    }> = [];
-
-    const calledMatches = safeData.matches.filter(m => m.called && m.status === 'not-started');
-
-    const activeSessions = safeData.sessions.filter(
-      s => s.status === 'in-progress' || (s.status === 'not-started' && s.called)
-    );
-
-    calledMatches.forEach(match => {
-      match.participants
-        .filter(p => p.team && !p.queued && p.team.arrived)
-        .forEach(participant => {
-          if (!participant.team || !participant.table) return;
-
-          const isInJudging = activeSessions.some(s => s.team?.id === participant.team?.id);
-          const minutesUntilMatch = currentTime.diff(dayjs(match.scheduledTime), 'minute');
-          const isUrgent = minutesUntilMatch >= -10;
-
-          teams.push({
-            teamNumber: participant.team.number,
-            teamName: participant.team.name,
-            tableName: participant.table.name,
-            matchNumber: match.number,
-            scheduledTime: match.scheduledTime,
-            isInJudging,
-            isUrgent,
-            isQueued: participant.queued,
-            isPresent: participant.present,
-            isReady: participant.ready,
-            teamId: participant.team.id,
-            tableId: participant.table.id
-          });
-        });
-    });
-
-    teams.sort((a, b) => {
-      if (a.isUrgent !== b.isUrgent) return a.isUrgent ? -1 : 1;
-      if (a.isInJudging !== b.isInJudging) return a.isInJudging ? 1 : -1;
-      return a.scheduledTime.localeCompare(b.scheduledTime);
-    });
-
-    return teams;
-  }, [safeData.matches, safeData.sessions, currentTime]);
 
   const filteredTeams = useMemo(() => {
     if (selectedTables.length === 0) return calledTeams;
@@ -218,7 +134,6 @@ export default function FieldQueuerPage() {
           </Popover>
 
           <Stack spacing={3} sx={{ pt: 3, pb: 10 }}>
-            {error && <Alert severity="error">{error.message}</Alert>}
             {!loading && !data && (
               <Alert severity="info">
                 No data loaded yet. Check that the backend GraphQL server is running.
@@ -254,7 +169,7 @@ export default function FieldQueuerPage() {
 
       {activeTab === 'schedule' && (
         <Stack sx={{ pt: 3, pb: 10 }}>
-          <FieldScheduleView data={safeData} loading={loading} />
+          <FieldScheduleView data={data} loading={loading} />
         </Stack>
       )}
 
@@ -266,5 +181,50 @@ export default function FieldQueuerPage() {
 
       <FieldQueuerBottomNav value={activeTab} onChange={handleTabChange} />
     </>
+  );
+}
+
+export default function FieldQueuerPage() {
+  const { currentDivision } = useEvent();
+  const currentTime = useTime({ interval: 1000 });
+
+  const subscriptions = useMemo(
+    () => [
+      createMatchCallUpdatedSubscription(currentDivision.id),
+      createMatchParticipantUpdatedSubscription(currentDivision.id)
+    ],
+    [currentDivision.id]
+  );
+
+  const { data, loading, error } = usePageData<
+    QueryData,
+    QueryVars,
+    FieldQueuerData,
+    { divisionId: string }
+  >(GET_FIELD_QUEUER_DATA, { divisionId: currentDivision.id }, parseFieldQueuerData, subscriptions);
+
+  const safeData = data ?? {
+    matches: [],
+    sessions: [],
+    loadedMatch: null
+  };
+
+  if (error) {
+    return (
+      <Stack spacing={3} sx={{ pt: 3 }}>
+        <Alert severity="error">{error.message}</Alert>
+      </Stack>
+    );
+  }
+
+  return (
+    <FieldQueuerProvider
+      divisionId={currentDivision.id}
+      data={safeData}
+      loading={loading}
+      currentTime={currentTime}
+    >
+      <FieldQueuerContent />
+    </FieldQueuerProvider>
   );
 }

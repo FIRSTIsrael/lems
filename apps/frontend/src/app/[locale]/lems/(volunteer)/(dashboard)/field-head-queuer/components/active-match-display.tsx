@@ -8,27 +8,33 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Skeleton, Checkbox, Tooltip, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import {
-  UPDATE_MATCH_PARTICIPANT_MUTATION,
-  UPDATE_MATCH_MUTATION,
-  type RobotGameMatch
-} from '../graphql';
+import { UPDATE_MATCH_PARTICIPANT_MUTATION, UPDATE_MATCH_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
+import { useFieldHeadQueuer } from './field-head-queuer-context';
 
-interface ActiveMatchDisplayProps {
-  divisionId: string;
-  activeMatch: RobotGameMatch | null;
-  loadedMatch: RobotGameMatch | null;
-  loading?: boolean;
+function getStatusKey(
+  hasTeam: boolean,
+  isSignedIn: boolean,
+  isMarkedPresent: boolean
+): 'empty_table' | 'not_signed_in' | 'at_match' | 'not_at_match' {
+  if (!hasTeam) return 'empty_table';
+  if (!isSignedIn) return 'not_signed_in';
+  if (isMarkedPresent) return 'at_match';
+  return 'not_at_match';
 }
 
-export function ActiveMatchDisplay({
-  divisionId,
-  activeMatch,
-  loadedMatch,
-  loading
-}: ActiveMatchDisplayProps) {
+function getStatusChipProps(
+  statusKey: 'empty_table' | 'not_signed_in' | 'at_match' | 'not_at_match'
+): { color: 'success' | 'error' | 'warning' | 'default'; variant: 'filled' | 'outlined' } {
+  if (statusKey === 'at_match') return { color: 'success', variant: 'filled' };
+  if (statusKey === 'not_signed_in') return { color: 'error', variant: 'filled' };
+  if (statusKey === 'not_at_match') return { color: 'warning', variant: 'filled' };
+  return { color: 'default', variant: 'outlined' };
+}
+
+export function ActiveMatchDisplay() {
   const t = useTranslations('pages.field-head-queuer.active-match');
+  const { divisionId, activeMatch, loadedMatch, loading } = useFieldHeadQueuer();
 
   const [updateParticipantMutation] = useMutation(UPDATE_MATCH_PARTICIPANT_MUTATION, {
     onError: () => toast.error(t('error.update-participant-failed')),
@@ -183,22 +189,13 @@ export function ActiveMatchDisplay({
                       const tableName = participant.table?.name ?? '—';
                       const teamId = participant.team?.id ?? null;
 
-                      const statusKey = !participant.team
-                        ? 'empty_table'
-                        : !isSignedIn
-                          ? 'not_signed_in'
-                          : isMarkedPresent
-                            ? 'at_match'
-                            : 'not_at_match';
+                      const statusKey = getStatusKey(
+                        !!participant.team,
+                        isSignedIn,
+                        isMarkedPresent
+                      );
 
-                      const statusChip =
-                        statusKey === 'at_match'
-                          ? { color: 'success' as const, variant: 'filled' as const }
-                          : statusKey === 'not_signed_in'
-                            ? { color: 'error' as const, variant: 'filled' as const }
-                            : statusKey === 'not_at_match'
-                              ? { color: 'warning' as const, variant: 'filled' as const }
-                              : { color: 'default' as const, variant: 'outlined' as const };
+                      const statusChip = getStatusChipProps(statusKey);
 
                       return (
                         <Stack

@@ -23,8 +23,9 @@ interface MatchUpdatedEvent {
  *
  * Validation checks:
  * 1. User is authenticated
- * 2. User is assigned to the division
- * 3. Match exists and is in the division
+ * 2. User has field-head-queuer role
+ * 3. User is assigned to the division
+ * 4. Match exists and is in the division
  */
 export const updateMatchResolver: GraphQLFieldResolver<
   unknown,
@@ -38,7 +39,12 @@ export const updateMatchResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
-    // Check 2: User must be assigned to the division
+    // Check 2: User must have field-head-queuer role
+    if (context.user.role !== 'field-head-queuer') {
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have field-head-queuer role');
+    }
+
+    // Check 3: User must be assigned to the division
     if (!context.user.divisions.includes(divisionId)) {
       throw new MutationError(MutationErrorCode.FORBIDDEN, 'User is not assigned to the division');
     }
@@ -71,11 +77,7 @@ export const updateMatchResolver: GraphQLFieldResolver<
     // Update match state in MongoDB
     const result = await db.raw.mongo
       .collection('robot_game_match_states')
-      .findOneAndUpdate(
-        { matchId },
-        { $set: updateData },
-        { returnDocument: 'after' }
-      );
+      .findOneAndUpdate({ matchId }, { $set: updateData }, { returnDocument: 'after' });
 
     if (!result) {
       throw new MutationError(
