@@ -618,7 +618,8 @@
         "blocked": {
           "title": "Nagrody nie zostały jeszcze przyznane",
           "description": "Nagrody nie zostały jeszcze zatwierdzone. Sprawdź ponownie później."
-        }
+        },
+        "award": "Nagroda {awardName}"
       }
     },
     "referee": {

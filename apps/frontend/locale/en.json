@@ -618,7 +618,8 @@
         "blocked": {
           "title": "Awards Not Yet Assigned",
           "description": "The awards have not yet been approved. Please check back later."
-        }
+        },
+        "award": "{awardName} Award"
       }
     },
     "referee": {
