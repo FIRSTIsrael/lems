@@ -46,11 +46,15 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     if (!context.user) {
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
-    // Check 2: User must have referee or field-head-queuer role
-    if (context.user.role !== 'referee' && context.user.role !== 'field-head-queuer') {
+    // Check 2: User must have referee or head-referre field-head-queuer role
+    if (
+      context.user.role !== 'referee' &&
+      context.user.role !== 'field-head-queuer' &&
+      context.user.role !== 'head-referee'
+    ) {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,
-        'User must have referee or field-head-queuer role'
+        'User must have referee or head-referee or field-head-queuer role'
       );
     }
 
