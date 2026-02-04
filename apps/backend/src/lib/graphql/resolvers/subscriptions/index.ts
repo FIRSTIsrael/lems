@@ -12,7 +12,6 @@ import {
   matchEndgameTriggeredResolver,
   matchCompletedResolver,
   matchAbortedResolver,
-  matchUpdatedResolver,
   participantStatusUpdatedResolver
 } from './matches';
 import { rubricUpdatedResolver, rubricStatusChangedResolver } from './rubrics';
@@ -46,7 +45,6 @@ export const subscriptionResolvers = {
   matchEndgameTriggered: matchEndgameTriggeredResolver,
   matchCompleted: matchCompletedResolver,
   matchAborted: matchAbortedResolver,
-  matchUpdated: matchUpdatedResolver,
   participantStatusUpdated: participantStatusUpdatedResolver,
   audienceDisplaySwitched: audienceDisplaySwitchedResolver,
   audienceDisplaySettingUpdated: audienceDisplaySettingUpdatedResolver,
