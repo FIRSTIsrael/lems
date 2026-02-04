@@ -6,7 +6,6 @@ import {
   loadMatchResolver,
   startMatchResolver,
   abortMatchResolver,
-  setMatchParticipantTeamResolver,
   updateParticipantStatusResolver,
   updateMatchResolver
 } from './matches/index';
@@ -55,7 +54,6 @@ export const mutationResolvers = {
   loadMatch: loadMatchResolver,
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
-  setMatchParticipantTeam: setMatchParticipantTeamResolver,
   updateParticipantStatus: updateParticipantStatusResolver,
   updateMatch: updateMatchResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
