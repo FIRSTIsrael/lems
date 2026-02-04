@@ -20,6 +20,7 @@
         "view-event": "צפייה באירוע",
         "view-results": "צפייה בתוצאות",
         "view-details": "פרטים נוספים",
+        "more-events": "ועוד {count} אירועים {variant}...",
         "status-completed": "הושלם",
         "status-upcoming": "קרוב",
         "unofficial-event": "אירוע לא רשמי"

@@ -20,6 +20,7 @@
         "view-event": "Zobacz wydarzenie",
         "view-results": "Zobacz wyniki",
         "view-details": "Zobacz szczegóły",
+        "more-events": "I {count} więcej {variant} wydarzeń...",
         "status-completed": "Zakończone",
         "status-upcoming": "Nadchodzące",
         "unofficial-event": "Nieoficjalne wydarzenie"
