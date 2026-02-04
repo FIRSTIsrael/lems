@@ -331,6 +331,21 @@ extend type Mutation {
     "Whether the participant is ready (true/false to set/clear)"
     ready: Boolean
   ): ParticipantStatusUpdatedEvent!
+
+  """
+  Set a match participant's team (or unassign by passing null).
+  Used by tournament managers to assign or remove teams from match slots.
+  """
+  setMatchParticipantTeam(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "The ID of the participant"
+    participantId: String!
+    "The ID of the team to assign (null to unassign)"
+    teamId: String
+  ): Match!
 }
 
 extend type Subscription {

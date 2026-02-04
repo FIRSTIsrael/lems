@@ -564,7 +564,20 @@
           "optional": "אופציונלי",
           "team-placeholder": "הכנס שם קבוצה או מספר",
           "submit": "שלח פרסים",
-          "placeholder-message": "פרסים נשלחו"
+          "placeholder-message": "פרסים נשלחו",
+          "winner-name-placeholder": "הכנס שם הזוכה",
+          "assign-button": "הקצה",
+          "cancel": "ביטול",
+          "confirm": "אישור",
+          "assigning": "מקצה...",
+          "confirm-assignment-title": "אישור הקצאת פרס",
+          "confirm-assignment-message": "אנא אשר כי ברצונך להקצות את הפרס הזה. לא ניתן לבטל פעולה זו.",
+          "confirm-assignment-warning": "לאחר הקצאה, לא ניתן להקצות או לשנות פרס זה מחדש.",
+          "award-label": "פרס",
+          "winner-label": "זוכה",
+          "error-empty-winner-name": "אנא הכנס שם זוכה",
+          "error-assigning-award": "שגיאה בהקצאת פרס",
+          "award-assigned-success": "הפרס הוקצה בהצלחה"
         },
         "deliberations": "דיוני שופטים"
       }
@@ -604,7 +617,8 @@
         "blocked": {
           "title": "הפרסים טרם אושרו",
           "description": "הפרסים עדיין לא אושרו ופורסמו. אנא חזרו מאוחר יותר."
-        }
+        },
+        "award": "פרס {awardName}"
       }
     },
     "referee": {
@@ -777,6 +791,92 @@
         "last-slide": "שקף אחרון",
         "previous-step": "שלב קודם",
         "next-step": "שלב הבא"
+      }
+    },
+    "tournament-manager": {
+      "title": "מנהל/ת אירוע",
+      "match-schedule": {
+        "title": "לוח זמנים - זירה",
+        "columns": {
+          "match-number": "מקצה",
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "status": "סטטוס"
+        }
+      },
+      "judging-schedule": {
+        "title": "לוח זמנים - שיפוט",
+        "columns": {
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "status": "סטטוס"
+        }
+      },
+      "field-matches": "מקצים",
+      "judging-sessions": "מפגשי שיפוט",
+      "labels": {
+        "match": "מקצה",
+        "session": "מפגש",
+        "team": "קבוצה",
+        "room": "חדר",
+        "no-team": "אין קבוצה",
+        "not-assigned": "לא הוקצה"
+      },
+      "slots": {
+        "second-team-selected": "קבוצה שנייה נבחרה",
+        "select-second-team-instruction": "בחרו משבצת קבוצה נוספת להעברה או החלפה",
+        "team-schedule": "לוח זמנים של הקבוצה",
+        "missing-teams": {
+          "title": "קבוצות חסרות בלוח הזמנים",
+          "from-round": "קבוצות חסרות מהסבב",
+          "description": "{count} קבוצות לא משובצות",
+          "click-empty-slot-to-assign": "לחצו על משבצת ריקה כדי לשבץ קבוצה זו"
+        }
+      },
+      "actions": {
+        "move": "העברה",
+        "replace": "החלפה",
+        "insert-rematch": "הכנס משחק חוזר",
+        "clear": "נקה",
+        "cancel": "ביטול",
+        "confirm": "אישור"
+      },
+      "swap": {
+        "title": "תצוגה מקדימה של החלפה",
+        "confirm-title": "אישור החלפת קבוצות",
+        "teams": "החליפו קבוצות",
+        "message": "האם אתם בטוחים שברצונכם להחליף את {team1} בשולחן {table1} עם {team2} בשולחן {table2}?",
+        "session-message": "האם אתם בטוחים שברצונכם להחליף את {team1} בחדר {room1} עם {team2} בחדר {room2}?",
+        "success": "הקבוצות הוחלפו בהצלחה",
+        "error": "נכשל בהחלפת הקבוצות",
+        "match-swaps": "החלפות מקצים",
+        "judging-swaps": "החלפות שיפוט",
+        "select-match": "בחרו מקצה",
+        "select-participant-1": "בחרו משתתף ראשון",
+        "select-participant-2": "בחרו משתתף שני",
+        "select-session-1": "בחרו מפגש ראשון",
+        "select-session-2": "בחרו מפגש שני",
+        "no-eligible-matches": "אין מקצים זמינים להחלפה. מקצים חייבים להיות בסטטוס 'טרם התחיל' ולא טעונים כרגע.",
+        "no-eligible-sessions": "אין מפגשים זמינים להחלפה. מפגשים חייבים להיות בסטטוס 'טרם התחיל' ולא נקראו."
+      },
+      "status": {
+        "not-started": "טרם התחיל",
+        "in-progress": "מתרחש",
+        "completed": "הסתיים"
+      },
+      "validation": {
+        "both-source-and-destination-required": "מקור ויעד נדרשים",
+        "types-must-match": "ניתן להעביר רק בין אותם סוגים (מקצה למקצה או מפגש למפגש)"
+      },
+      "errors": {
+        "load-data-failed": "נכשל בטעינת נתוני מנהל התחרויות",
+        "move-team-failed": "נכשל בהעברת הקבוצה",
+        "replace-teams-failed": "נכשל בהחלפת הקבוצות",
+        "assign-team-failed": "נכשל בשיבוץ הקבוצה",
+        "clear-team-failed": "נכשל בהסרת הקבוצה",
+        "cannot-modify-in-progress": "לא ניתן לשנות מקצים או מפגשים בסטטוס מתרחש",
+        "cannot-modify-loaded": "לא ניתן לשנות מקצים טעונים",
+        "cannot-modify-completed": "לא ניתן לשנות מקצים או מפגשים בסטטוס הסתיים"
       }
     },
     "head-referee": {
@@ -1198,12 +1298,17 @@
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
       "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
+      "error-participant-not-present": "הקבוצה לא סומנה כנוכחת במקצה זה. אנא פנו לשופט הראשי.",
       "error-failed-to-update": "עדכון דף הניקוד נכשל",
       "incomplete-title": "דף הניקוד אינו מלא",
       "incomplete-message": "אנא נקדו את כל המשימות.",
       "incomplete-with-errors": "יש שגיאות בדף הניקוד.",
       "incomplete-action": "מעבר למשימה",
-      "points-unit": "נק'"
+      "points-unit": "נק'",
+      "participant-not-present-title": "הקבוצה לא נוכחת",
+      "participant-not-present-message": "קבוצה #{teamNumber} לא סומנה כנוכחת במקצה זה. ניתן לסמן אותה כנוכחת כדי להמשיך, או לחזור אחורה.",
+      "go-back": "חזרה",
+      "mark-as-present": "סמן כנוכח"
     },
     "deliberation": {
       "error-not-authorized": "אין לך הרשאות לגשת לדיון זה",
@@ -1270,7 +1375,8 @@
     "no-live-events": "אין אירועים חיים כרגע",
     "view-all": "צפה בכל האירועים",
     "view-event": "צפה באירוע",
-    "view-details": "צפה בפרטים"
+    "view-details": "צפה בפרטים",
+    "unofficial-event": "אירוע לא רשמי"
   },
   "browse-events": {
     "page-title": "עיון באירועים",

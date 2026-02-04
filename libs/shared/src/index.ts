@@ -5,3 +5,4 @@ export * from './lib/swr-provider';
 export * from './lib/awards';
 export * from './lib/deliberation';
 export * from './lib/consts';
+export * from './lib/integrations';

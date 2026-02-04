@@ -17,7 +17,7 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { OPTIONAL_AWARDS } from '@lems/shared';
 import { ArrowBack } from '@mui/icons-material';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useFinalDeliberation } from '../final-deliberation-context';
 import { ChampionsStage } from './champions/champions-stage';
 import { CoreAwardsStage } from './core-awards/core-awards-stage';
@@ -29,6 +29,7 @@ const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-
 export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
+  const router = useRouter();
   const { awardCounts, deliberation } = useFinalDeliberation();
 
   // Determine visible stages based on whether optional awards exist
@@ -65,7 +66,12 @@ export const FinalDeliberationGrid: React.FC = () => {
         }}
       >
         <Toolbar sx={{ minHeight: 56, gap: 1 }}>
-          <IconButton edge="start" color="inherit" onClick={() => router.back()} sx={{ mr: 1 }}>
+          <IconButton
+            edge="start"
+            color="primary"
+            onClick={() => router.push('/lems')}
+            sx={{ mr: 1 }}
+          >
             <ArrowBack />
           </IconButton>
           <Typography variant="h6" sx={{ flex: 1, color: 'text.primary' }}>

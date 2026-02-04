@@ -48,6 +48,17 @@ export interface Award {
   isOptional: boolean;
   allowNominations: boolean;
   automaticAssignment: boolean;
+  winner?: AwardWinner | null;
+}
+
+export type AwardWinner = PersonalWinner | TeamWinner;
+
+export interface PersonalWinner {
+  name: string;
+}
+
+export interface TeamWinner {
+  team: Team;
 }
 
 export interface JudgingDeliberation {

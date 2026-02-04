@@ -12,6 +12,7 @@ export interface EventGraphQL {
   endDate: string;
   region: string;
   isFullySetUp?: boolean;
+  official: boolean;
 }
 
 interface EventArgs {
@@ -65,13 +66,15 @@ function buildEventQuery(args: EventsArgs) {
   let query = db.raw.sql
     .selectFrom('events')
     .leftJoin('divisions', 'divisions.event_id', 'events.id')
+    .leftJoin('event_settings', 'event_settings.event_id', 'events.id')
     .select(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region'])
     .select(
       sql<boolean>`COALESCE(BOOL_AND(divisions.has_awards AND divisions.has_users AND divisions.has_schedule), false)`.as(
         'is_fully_set_up'
       )
     )
-    .groupBy(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region']);
+    .select('event_settings.official')
+    .groupBy(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region', 'event_settings.official']);
 
   // Apply date filters
   if (args.startAfter) {
@@ -103,7 +106,7 @@ function buildEventQuery(args: EventsArgs) {
  * Converts database date format to ISO strings for GraphQL.
  * Optionally includes isFullySetUp if provided (e.g., from aggregated queries).
  */
-function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean }): EventGraphQL {
+function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean; official?: boolean }): EventGraphQL {
   return {
     id: event.id,
     slug: event.slug,
@@ -112,5 +115,6 @@ function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean }): Eve
     endDate: event.end_date.toISOString(),
     region: event.region,
     isFullySetUp: event.is_fully_set_up,
+    official: event.official ?? true
   };
 }

@@ -1,0 +1,597 @@
+{
+  "robot-game-matches": {
+    "stages": {
+      "practice": "Runda treningowa",
+      "ranking": "Runda rankingowa",
+      "test": "Mecz testowy"
+    },
+    "status": {
+      "not-started": "Nie rozpoczęto",
+      "in-progress": "W toku",
+      "completed": "Zakończono"
+    }
+  },
+  "judging-sessions": {
+    "status": {
+      "not-started": "Nie rozpoczęto",
+      "in-progress": "W toku",
+      "completed": "Zakończono"
+    }
+  },
+  "judging-deliberations": {
+    "status": {
+      "not-started": "Nie rozpoczęto",
+      "in-progress": "W toku",
+      "completed": "Zakończono"
+    },
+    "stage": {
+      "champions": "Nagroda Champion",
+      "core-awards": "Nagrody podstawowe",
+      "optional-awards": "Nagrody opcjonalne",
+      "review": "Przegląd"
+    }
+  },
+  "judging-categories": {
+    "core-values": "Wartości Podstawowe",
+    "innovation-project": "Projekt Innowacyjny",
+    "robot-design": "Robot Design"
+  },
+  "judging-session-stages": {
+    "setup": "Przygotowanie",
+    "innovation-presentation": "Prezentacja – Projekt Innowacyjny",
+    "innovation-questions": "Pytania – Projekt Innowacyjny",
+    "robot-presentation": "Prezentacja – Robot Design",
+    "robot-questions": "Pytania – Robot Design",
+    "final-thoughts": "Podsumowanie"
+  },
+  "awards": {
+    "core-values": {
+      "name": "Wartości Podstawowe",
+      "description": "Ta drużyna wykazuje wyjątkowy entuzjazm i ducha współpracy, wie, że razem może osiągnąć więcej niż każdy z osobna, oraz okazuje szacunek sobie nawzajem i innym drużynom w każdej sytuacji."
+    },
+    "innovation-project": {
+      "name": "Projekt Innowacyjny",
+      "description": "Ta drużyna wykorzystuje różnorodne źródła, aby dobrze zrozumieć problem w swoim Projekcie Innowacyjnym; opracowała kreatywne, dobrze zbadane rozwiązanie i skutecznie komunikuje swoje wnioski sędziom oraz społeczności."
+    },
+    "robot-design": {
+      "name": "Robot Design",
+      "description": "Ta drużyna stosuje doskonałe zasady programowania oraz solidne praktyki inżynierskie, aby stworzyć robota, który jest wytrzymały, stabilny, efektywny i świetnie radzi sobie z misjami sezonu."
+    },
+    "robot-performance": {
+      "name": "Występ Robota",
+      "description": "Ta nagroda wyróżnia drużynę, która zdobyła najwyższy wynik w Robot Game. Drużyny rozgrywają co najmniej trzy mecze po 2,5 minuty, a do klasyfikacji liczy się najwyższy wynik."
+    },
+    "champions": {
+      "name": "Nagroda Champion",
+      "description": "Ta nagroda wyróżnia drużynę, która najlepiej uosabia doświadczenie <i>FIRST</i> LEGO® League Challenge, w pełni realizując Wartości Podstawowe i osiągając doskonałość oraz innowacyjność w Występie Robota, Robot Design oraz Projekcie Innowacyjnym."
+    },
+    "impact": {
+      "name": "Wpływ",
+      "description": "Ta nagroda wyróżnia drużynę, która wywarła trwały, pozytywny wpływ na swoją społeczność — rozumie znaczenie dzielenia się wiedzą i inspirowania innych."
+    },
+    "lead-mentor": {
+      "name": "Trener/Mentor",
+      "description": "Trenerzy i mentorzy inspirują drużyny do działania na najwyższym poziomie, indywidualnie i jako grupa. Bez nich nie byłoby FIRST LEGO League Challenge. Nagroda trafia do mentora, którego przywództwo i wsparcie najlepiej odzwierciedlają Wartości Podstawowe FIRST."
+    },
+    "volunteer-of-the-year": {
+      "name": "Wolontariusz Roku",
+      "description": "Ta nagroda wyróżnia wolontariusza, który wywarł szczególny wpływ na <i>FIRST</i> LEGO League w danym roku."
+    },
+    "breakthrough": {
+      "name": "Przełom",
+      "description": "Ta nagroda wyróżnia drużynę, która dokonała znaczącego postępu w pewności siebie i umiejętnościach zarówno w Robot Game, jak i Projekcie Innowacyjnym. Jest przykładem znakomitego rozumienia Wartości Podstawowych i tego, że ważniejsze jest to, czego się uczą, niż to, co wygrywają."
+    },
+    "rising-all-star": {
+      "name": "Wschodząca Gwiazda",
+      "description": "Ta nagroda wyróżnia drużynę, którą sędziowie dostrzegają i od której oczekują w przyszłości wielkich osiągnięć."
+    },
+    "motivate": {
+      "name": "Motywacja",
+      "description": "Ta nagroda wyróżnia drużynę, która buduje kulturę <i>FIRST</i> LEGO League dzięki współpracy, duchowi zespołowemu i widocznemu entuzjazmowi."
+    },
+    "judges-award": {
+      "name": "Nagroda Sędziów",
+      "description": "Ta nagroda wyróżnia drużynę docenioną przez sędziów za wyjątkową pracę i zaangażowanie."
+    },
+    "excellence-in-engineering": {
+      "name": "Doskonałość Inżynierska",
+      "description": "Ta nagroda wyróżnia drużynę, która zaprezentowała efektywnie zaprojektowanego robota, innowacyjne rozwiązanie projektowe odpowiadające wyzwaniu sezonu oraz konsekwentnie wykazuje Wartości Podstawowe we wszystkich swoich działaniach."
+    },
+    "advancement": {
+      "name": "Awans",
+      "description": "Drużyny awansujące do kolejnego etapu rywalizacji"
+    }
+  },
+  "scoresheet": {
+    "missions": {
+      "eib": {
+        "title": "KONTROLA SPRZĘTU",
+        "clauses": {
+          "0": {
+            "description": "(Przed meczem) Robot i cały sprzęt mieszczą się całkowicie w jednej strefie startowej i pod limitem wysokości:"
+          }
+        }
+      },
+      "m01": {
+        "title": "SZCZOTKOWANIE POWIERZCHNI",
+        "clauses": {
+          "0": {
+            "description": "Osady ziemi całkowicie usunięte, dotykające maty:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2"
+            }
+          },
+          "1": {
+            "description": "Pędzel archeologa nie dotyka stanowiska pracy:"
+          }
+        }
+      },
+      "m02": {
+        "title": "ODSŁONIĘCIE MAPY",
+        "clauses": {
+          "0": {
+            "description": "Warstwy gleby całkowicie usunięte:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m03": {
+        "title": "EKSPEDYCJA DO SZYBU",
+        "clauses": {
+          "0": {
+            "description": "Wózek wydobywczy Waszej drużyny znajduje się na polu drużyny przeciwnej:"
+          },
+          "1": {
+            "description": "<b>Premia</b>: I wózek drużyny przeciwnej znajduje się na polu Waszej drużyny:"
+          }
+        },
+        "errors": {
+          "m03-e1": {
+            "description": "Premia jest możliwa tylko wtedy, gdy wózek Waszej drużyny znajduje się na polu drużyny przeciwnej."
+          }
+        },
+        "remarks": {
+          "0": "Wózek Waszej drużyny musi całkowicie przejechać przez wejście do szybu, aby zdobyć punkty za tę misję.",
+          "1": "Nie można zdobyć premii, jeśli nie ma drużyny przeciwnej lub w zawodach zdalnych."
+        }
+      },
+      "m04": {
+        "title": "OSTROŻNE WYDOBYCIE",
+        "clauses": {
+          "0": {
+            "description": "Cenny artefakt nie dotyka ścian szybu:"
+          },
+          "1": {
+            "description": "Obie konstrukcje wspierające stoją:"
+          }
+        }
+      },
+      "m05": {
+        "title": "KTO TU MIESZKAŁ?",
+        "clauses": {
+          "0": {
+            "description": "Podłoga konstrukcji jest całkowicie ustawiona pionowo:"
+          }
+        }
+      },
+      "m06": {
+        "title": "KUŹNIA",
+        "clauses": {
+          "0": {
+            "description": "Bloki rudy nie dotykają kuźni:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m07": {
+        "title": "CIĘŻKIE PODNOSZENIE",
+        "clauses": {
+          "0": {
+            "description": "Kamień młyński nie dotyka już swojej podstawy:"
+          }
+        }
+      },
+      "m08": {
+        "title": "SILOS",
+        "clauses": {
+          "0": {
+            "description": "Zachowane elementy znajdują się poza silosem:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "m09": {
+        "title": "CO JEST NA SPRZEDAŻ?",
+        "clauses": {
+          "0": {
+            "description": "Dach jest całkowicie podniesiony:"
+          },
+          "1": {
+            "description": "Towary na rynku są podniesione:"
+          }
+        }
+      },
+      "m10": {
+        "title": "PRZECHYŁ WAGI",
+        "clauses": {
+          "0": {
+            "description": "Waga jest przechylona i dotyka maty:"
+          },
+          "1": {
+            "description": "Talerz wagi został całkowicie usunięty:"
+          }
+        }
+      },
+
+      "m11": {
+        "title": "ARTEFAKTY Z WĘDKI",
+        "clauses": {
+          "0": {
+            "description": "Artefakty są uniesione ponad warstwę gruntu:"
+          },
+          "1": {
+            "description": "<b>Premia</b>: I flaga żurawia jest co najmniej częściowo opuszczona:"
+          }
+        },
+        "errors": {
+          "m11-e1": {
+            "description": "Premia jest możliwa tylko wtedy, gdy artefakty są uniesione ponad warstwę gruntu."
+          }
+        }
+      },
+      "m12": {
+        "title": "OPERACJA RATUNKOWA",
+        "clauses": {
+          "0": {
+            "description": "Piasek całkowicie usunięty:"
+          },
+          "1": {
+            "description": "Statek całkowicie podniesiony:"
+          }
+        },
+        "remarks": {
+          "0": "Piasek uznaje się za całkowicie usunięty, gdy aktywator pociągowy znajduje się za linią na macie."
+        }
+      },
+      "m13": {
+        "title": "ODTWORZENIE POSĄGU",
+        "clauses": {
+          "0": {
+            "description": "Posąg jest całkowicie podniesiony:"
+          }
+        }
+      },
+      "m14": {
+        "title": "FORUM",
+        "clauses": {
+          "0": {
+            "description": "Zaznacz wszystkie artefakty dotykające maty i przynajmniej częściowo znajdujące się w forum:",
+            "labels": {
+              "none": "Brak",
+              "brush": "Pędzel",
+              "minecart": "Wózek drużyny przeciwnej",
+              "scale-pan": "Talerz wagi",
+              "topsoil": "Warstwa gleby",
+              "ore-with-fossilized-artifact": "Ruda z utrwalonym artefaktem",
+              "precious-artifact": "Cenny artefakt",
+              "millstone": "Kamień młyński"
+            }
+          }
+        },
+        "errors": {
+          "m14-e1": {
+            "description": "Nie można wybrać „Brak”, jeśli zaznaczono więcej niż jedną opcję."
+          }
+        }
+      },
+      "m15": {
+        "title": "OZNACZENIE STANOWISKA",
+        "clauses": {
+          "0": {
+            "description": "Stanowiska z flagą co najmniej częściowo wewnątrz i dotykającą maty:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "ŻETONY PRECYZJI",
+        "clauses": {
+          "0": {
+            "description": "Liczba pozostałych żetonów precyzji:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6"
+            }
+          }
+        }
+      }
+    }
+    ,
+    "errors": {
+      "e1": {
+        "description": "Pędzel nie może znajdować się jednocześnie w forum (M14) i dotykać stanowiska wykopalisk (M01)."
+      },
+      "e3": {
+        "description": "Talerz wagi nie może znaleźć się w forum (M14), jeśli nie został całkowicie usunięty (M10)."
+      },
+      "e4": {
+        "description": "Ruda z utrwalonym artefaktem nie może znaleźć się w forum (M14), jeśli żadna ruda nie została usunięta ze stanowiska wykopalisk (M06)."
+      },
+      "e5": {
+        "description": "Kamień młyński nie może znajdować się w forum (M14), jeśli nadal dotyka swojej podstawy (M07)."
+      },
+      "e6": {
+        "description": "Cenny artefakt nie może znajdować się w forum (M14), jeśli dotyka szybu (M04)."
+      }
+    },
+    "general": {
+      "yes": "Tak",
+      "no": "Nie"
+    }
+  },
+  "roles": {
+    "pit-admin": {
+      "name": "Pit Admin"
+    },
+    "judge": {
+      "name": "Judge"
+    },
+    "lead-judge": {
+      "name": "Lead Judge"
+    },
+    "judge-advisor": {
+      "name": "Judge Advisor"
+    },
+    "referee": {
+      "name": "Referee"
+    },
+    "head-referee": {
+      "name": "Head Referee"
+    },
+    "scorekeeper": {
+      "name": "Scorekeeper"
+    },
+    "field-head-queuer": {
+      "name": "Field Head Queuer"
+    },
+    "field-queuer": {
+      "name": "Field Queuer"
+    },
+    "judging-head-queuer": {
+      "name": "Judging Head Queuer"
+    },
+    "judging-queuer": {
+      "name": "Judging Queuer"
+    },
+    "mc": {
+      "name": "MC"
+    },
+    "field-manager": {
+      "name": "Field Manager"
+    },
+    "audience-display": {
+      "name": "Audience Display"
+    },
+    "reports": {
+      "name": "Reports"
+    },
+    "tournament-manager": {
+      "name": "Tournament Manager"
+    }
+  },
+  "rubrics": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACCOMPLISHED",
+      "exceeds": "EXCEEDS"
+    },
+    "categories": {
+      "core-values": {
+        "title": "Wartości Podstawowe"
+      },
+      "innovation-project": {
+        "title": "Projekt Innowacyjny",
+        "sections": {
+          "identify": {
+            "title": "IDENTYFIKACJA",
+            "description": "Drużyna miała jasno zdefiniowany problem, który został solidnie zbadany.",
+            "fields": {
+              "problem": {
+                "beginning": "Niejasno zdefiniowany problem",
+                "developing": "Częściowo jasno zdefiniowany problem",
+                "accomplished": "Jasno i jednoznacznie zdefiniowany problem"
+              },
+              "research": {
+                "beginning": "Minimalne dowody przeprowadzenia badań",
+                "developing": "Częściowe dowody badań z jednego lub więcej źródeł",
+                "accomplished": "Jasne, szczegółowe badania z wielu różnorodnych źródeł"
+              }
+            }
+          },
+          "design": {
+            "title": "PROJEKTOWANIE",
+            "description": "Drużyna współpracowała przy tworzeniu planu projektu i rozwijaniu swoich pomysłów.",
+            "fields": {
+              "plan": {
+                "beginning": "Minimalne dowody istnienia skutecznego planu projektu",
+                "developing": "Częściowe dowody istnienia skutecznego planu projektu",
+                "accomplished": "Wyraźne dowody istnienia skutecznego planu projektu"
+              },
+              "participation": {
+                "beginning": "Minimalne dowody na to, że wszyscy członkowie brali udział w procesie rozwijania projektu",
+                "developing": "Częściowe dowody na to, że wszyscy członkowie brali udział w procesie rozwijania projektu",
+                "accomplished": "Wyraźne dowody, że wszyscy członkowie brali udział w procesie rozwijania projektu"
+              }
+            }
+          },
+          "create": {
+            "title": "TWORZENIE",
+            "description": "Drużyna opracowała oryginalny pomysł lub rozwinęła istniejący, przedstawiając rozwiązanie za pomocą prototypu/modelu lub rysunku.",
+            "fields": {
+              "innovation": {
+                "beginning": "Minimalne wyjaśnienie elementów innowacyjnych w rozwiązaniu",
+                "developing": "Proste wyjaśnienie elementów innowacyjnych w rozwiązaniu",
+                "accomplished": "Szczegółowe wyjaśnienie elementów innowacyjnych w rozwiązaniu"
+              },
+              "model": {
+                "beginning": "Niejasny model/rysunek przedstawiający rozwiązanie",
+                "developing": "Prosty model/rysunek przedstawiający rozwiązanie",
+                "accomplished": "Szczegółowy model/rysunek przedstawiający rozwiązanie"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERACJE",
+            "description": "Drużyna dzieliła się swoimi pomysłami, zebrała opinie i włączyła ulepszenia do swojego rozwiązania.",
+            "fields": {
+              "share": {
+                "beginning": "Minimalne dzielenie się rozwiązaniem z innymi",
+                "developing": "Rozwiązanie zaprezentowane co najmniej jednej osobie/grupie",
+                "accomplished": "Rozwiązanie zaprezentowane wielu osobom/grupom"
+              },
+              "improve": {
+                "beginning": "Minimalne dowody ulepszeń opartych na opinii zwrotnej",
+                "developing": "Częściowe dowody ulepszeń opartych na opinii zwrotnej",
+                "accomplished": "Wyraźne dowody ulepszeń opartych na opinii zwrotnej"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "Drużyna przedstawiła skuteczną prezentację swojego rozwiązania, jego wpływu na innych oraz uczciwie świętowała swoje postępy.",
+            "fields": {
+              "explanation": {
+                "beginning": "Niejasne wyjaśnienie rozwiązania i jego potencjalnego wpływu",
+                "developing": "Częściowo jasne wyjaśnienie rozwiązania i jego potencjalnego wpływu",
+                "accomplished": "Jasne wyjaśnienie rozwiązania i jego potencjalnego wpływu"
+              },
+              "pride": {
+                "beginning": "Prezentacja wykazuje minimalną dumę lub entuzjazm z wykonanej pracy",
+                "developing": "Prezentacja wykazuje częściową dumę lub entuzjazm z wykonanej pracy",
+                "accomplished": "Prezentacja wyraźnie wykazuje dumę lub entuzjazm z wykonanej pracy"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "title": "Robot Design",
+        "sections": {
+          "identify": {
+            "title": "IDENTYFIKACJA",
+            "description": "Drużyna określiła, które misje będzie realizować, zapoznała się z zasobami dotyczącymi budowy i programowania oraz szukała wskazówek w razie potrzeby.",
+            "fields": {
+              "strategy": {
+                "beginning": "Minimalne dowody strategii misji",
+                "developing": "Częściowe dowody strategii misji",
+                "accomplished": "Wyraźne dowody strategii misji"
+              },
+              "resources": {
+                "beginning": "Minimalne wykorzystanie zasobów budowy lub programowania",
+                "developing": "Częściowe wykorzystanie zasobów budowy lub programowania",
+                "accomplished": "Wyraźne wykorzystanie zasobów budowy lub programowania wspierających strategię misji"
+              }
+            }
+          },
+          "design": {
+            "title": "PROJEKTOWANIE",
+            "description": "Członkowie drużyny wspólnie pracowali nad projektami oraz rozwijali umiejętności budowania i programowania.",
+            "fields": {
+              "contribution": {
+                "beginning": "Minimalne dowody, że wszyscy członkowie drużyny zgłaszali pomysły",
+                "developing": "Częściowe dowody, że wszyscy członkowie drużyny zgłaszali pomysły",
+                "accomplished": "Wyraźne dowody, że wszyscy członkowie drużyny zgłaszali pomysły"
+              },
+              "skills": {
+                "beginning": "Minimalne dowody umiejętności budowania i programowania u wszystkich członków drużyny",
+                "developing": "Częściowe dowody umiejętności budowania i programowania u wszystkich członków drużyny",
+                "accomplished": "Wyraźne dowody umiejętności budowania i programowania u wszystkich członków drużyny"
+              }
+            }
+          },
+          "create": {
+            "title": "TWORZENIE",
+            "description": "Drużyna opracowała oryginalne projekty lub ulepszyła istniejące, zgodnie ze swoją strategią misji.",
+            "fields": {
+              "attachments": {
+                "beginning": "Niejasne wyjaśnienie osprzętu i jego zastosowania",
+                "developing": "Proste wyjaśnienie osprzętu i jego zastosowania",
+                "accomplished": "Jasne wyjaśnienie innowacyjnego osprzętu i jego zastosowania"
+              },
+              "code": {
+                "beginning": "Niejasne wyjaśnienie kodu lub użycia czujników",
+                "developing": "Proste wyjaśnienie kodu lub użycia czujników",
+                "accomplished": "Jasne wyjaśnienie kodu i/lub użycia czujników"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERACJE",
+            "description": "Drużyna wielokrotnie testowała robota i kod, aby zidentyfikować obszary wymagające ulepszeń i wdrożyła znalezione usprawnienia.",
+            "fields": {
+              "test": {
+                "beginning": "Minimalne dowody testowania robota i kodu",
+                "developing": "Częściowe dowody testowania robota i kodu",
+                "accomplished": "Wyraźne dowody wielokrotnego testowania robota i kodu"
+              },
+              "improve": {
+                "beginning": "Minimalne dowody ulepszeń opartych na testach",
+                "developing": "Częściowe dowody ulepszeń opartych na testach",
+                "accomplished": "Wyraźne dowody ulepszeń opartych na testach"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "Drużyna skutecznie wyjaśniła, czego nauczyła się w procesie tworzenia robota, i świętowała swoje postępy.",
+            "fields": {
+              "explanation": {
+                "beginning": "Niejasne wyjaśnienie procesu i zdobytej wiedzy",
+                "developing": "Proste wyjaśnienie procesu i zdobytej wiedzy",
+                "accomplished": "Szczegółowe wyjaśnienie procesu i zdobytej wiedzy"
+              },
+              "pride": {
+                "beginning": "Drużyna wykazuje minimalną dumę lub entuzjazm ze swojej pracy",
+                "developing": "Drużyna wykazuje częściową dumę lub entuzjazm ze swojej pracy",
+                "accomplished": "Drużyna wyraźnie wykazuje dumę lub entuzjazm ze swojej pracy"
+              }
+            }
+          }
+        }
+      }
+    },
+    "core-values-explanation": "Kryteria na tej stronie oznaczone tym stylem pola wyboru liczą się jednocześnie do klasyfikacji nagród Innovation Project i Wartości Podstawowych. Wartości Podstawowe stanowią 25% wyniku drużyny w Nagrodzie Champion i powinny być widoczne w całej pracy drużyny oraz podczas wydarzenia.",
+    "feedback": {
+      "great-job": "Świetna robota...",
+      "think-about": "Zastanówcie się nad..."
+    }
+  }
+}

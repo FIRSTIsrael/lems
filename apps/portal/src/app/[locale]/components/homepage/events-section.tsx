@@ -36,7 +36,17 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
 
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
-  const displayedEvents = maxDisplayed ? events.slice(0, maxDisplayed) : events;
+  const sortedEvents = React.useMemo(() => {
+    return [...events].sort((a, b) => {
+      if (variant === 'past') {
+        return b.startDate.getTime() - a.startDate.getTime();
+      } else {
+        return a.startDate.getTime() - b.startDate.getTime();
+      }
+    });
+  }, [events, variant]);
+
+  const displayedEvents = maxDisplayed ? sortedEvents.slice(0, maxDisplayed) : sortedEvents;
   const hasMoreEvents = maxDisplayed && events.length > maxDisplayed;
 
   return (
@@ -81,7 +91,7 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
 
         {hasMoreEvents && (
           <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: 'center' }}>
-            And {events.length - maxDisplayed!} more {variant} events...
+            {t('more-events', { count: events.length - maxDisplayed!, variant })}
           </Typography>
         )}
       </Collapse>

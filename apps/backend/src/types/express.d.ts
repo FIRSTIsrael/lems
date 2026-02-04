@@ -33,3 +33,11 @@ export interface PortalDivisionRequest extends Request {
 export interface SchedulerRequest extends Request {
   divisionId: string;
 }
+
+export interface FirstIsraelDashboardRequest extends Request {
+  teamSlug: string;
+}
+
+export interface FirstIsraelDashboardEventRequest extends FirstIsraelDashboardRequest {
+  divisionId: string;
+}

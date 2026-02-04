@@ -17,7 +17,7 @@ export const Hero: React.FC = () => {
         bgcolor: theme.palette.primary.main,
         color: 'white',
         py: { xs: 10, md: 14 },
-        background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 50%, ${theme.palette.primary.dark} 100%)`
+        background: `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
       }}
     >
       {/* Decorative circles */}

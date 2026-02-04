@@ -7,7 +7,6 @@ interface MatchCompletedSubscribeArgs {
 
 interface MatchCompletedEvent {
   matchId: string;
-  autoLoadedMatchId: string | null;
 }
 
 const processMatchCompletedEvent = async (
@@ -21,8 +20,7 @@ const processMatchCompletedEvent = async (
   }
 
   const result: MatchCompletedEvent = {
-    matchId,
-    autoLoadedMatchId: (eventData.autoLoadedMatchId as string | null) || null
+    matchId
   };
 
   return result;

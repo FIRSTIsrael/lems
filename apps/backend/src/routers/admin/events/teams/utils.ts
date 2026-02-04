@@ -53,7 +53,7 @@ export const parseTeamCSVRegistration = async (
       skipped.push({
         name: `Unknown`,
         number: teamNumber,
-        reason: 'Team not found'
+        reason: 'team-not-found'
       });
       continue;
     }
@@ -65,7 +65,7 @@ export const parseTeamCSVRegistration = async (
       skipped.push({
         name: team.name,
         number: team.number,
-        reason: 'Already registered to this event'
+        reason: 'already-registered'
       });
       continue;
     }
@@ -91,7 +91,7 @@ export const parseTeamCSVRegistration = async (
       skipped.push({
         name: team.name,
         number: team.number,
-        reason: 'Failed to register'
+        reason: 'registration-failed'
       });
     }
   }
