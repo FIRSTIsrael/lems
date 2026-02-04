@@ -126,6 +126,194 @@
         "team": "Drużyna"
       }
     },
+    "field-head-queuer": {
+      "page-title": "Główny queuer pola",
+      "no-data": "Brak załadowanych danych. Sprawdź za minutę.",
+      "field-schedule": {
+        "title": "Harmonogram pola",
+        "subtitle": "Nadchodzące mecze - wywoływaj drużyny i sprawdzaj je w miarę ich przybycia",
+        "match-number": "Mecz",
+        "time": "Czas",
+        "actions": "Akcje",
+        "call": "Wywoływaj",
+        "cancel": "Anuluj",
+        "team-in-judging": "Drużyna jest obecnie w sędziowaniu",
+        "no-matches": "Brak nadchodzących meczów",
+        "no-matches-description": "Wszystkie mecze zostały ukończone lub żaden nie jest zaplanowany w ciągu następnych 15 minut",
+        "error": {
+          "update-match-failed": "Nie udało się zaktualizować meczu",
+          "update-participant-failed": "Nie udało się zaktualizować uczestnika"
+        },
+        "status": {
+          "not_signed_in": "Niezalogowany",
+          "not_at_match": "Nie w kolejce",
+          "at_match": "W meczu",
+          "empty_table": "Brak drużyny",
+          "unknown_team": "TBD",
+          "not-signed-in": "Niezalogowany",
+          "at-match": "W kolejce",
+          "unknown-team": "TBD"
+        }
+      },
+      "active-match": {
+        "running-match": "Trwający mecz",
+        "next-match": "Następny mecz",
+        "match": "Mecz",
+        "teams": "Drużyny",
+        "status": {
+          "not_signed_in": "Niezalogowany",
+          "not_at_match": "Nie w kolejce",
+          "at_match": "W kolejce",
+          "empty_table": "Brak drużyny",
+          "unknown_team": "TBD",
+          "not-signed-in": "Niezalogowany",
+          "at-match": "W kolejce",
+          "unknown-team": "TBD"
+        },
+        "mark-arrived-to-match": "Oznacz jako przybyłą do meczu",
+        "unmark-arrived-to-match": "Usuń oznaczenie przybycia do meczu",
+        "mark-disabled-not-signed-in": "Drużyna nie jest zalogowana",
+        "call-teams": "Wywoływaj drużyny",
+        "cancel-call": "Anuluj wezwanie",
+        "error": {
+          "update-participant-failed": "Nie udało się zaktualizować przybycia do meczu",
+          "update-match-failed": "Nie udało się zaktualizować meczu"
+        },
+        "started-at": "Rozpoczęto o {time}",
+        "scheduled-at": "Zaplanowano na {time}",
+        "no-active-match": "Brak trwającego meczu",
+        "no-loaded-match": "Brak załadowanego meczu"
+      }
+    },
+    "field-queuer": {
+      "page-title": "Queuer pola",
+      "filter-by-table": "Filtruj wg stołu",
+      "all-tables": "Wszystkie stoły",
+      "home": "Strona główna",
+      "no-teams": "Brak drużyn w oczekiwaniu",
+      "no-teams-description": "Wszystkie wywoływane drużyny przybyły do swoich stołów",
+      "field-schedule": {
+        "title": "Harmonogram pola",
+        "subtitle": "Nadchodzące mecze",
+        "match": "Mecz",
+        "time": "Czas",
+        "no-matches": "Brak nadchodzących meczów",
+        "tab-label": "Harmonogram"
+      },
+      "pit-map": {
+        "title": "Mapa pitów",
+        "subtitle": "Lokalizacje drużyn w obszarze pitów",
+        "no-map": "Brak dostępnej mapy pitów",
+        "error": "Błąd przy ładowaniu mapy pitów",
+        "tab-label": "Mapa pitów"
+      },
+      "team-card": {
+        "in-judging-tooltip": "Drużyna jest obecnie w sędziowaniu",
+        "time-ago": "{minutes} min temu",
+        "time-until": "za {minutes} min",
+        "status": {
+          "queued": "W kolejce",
+          "present": "Obecna",
+          "ready": "Gotowa"
+        }
+      },
+      "bottom-nav": {
+        "home": "Strona główna",
+        "schedule": "Harmonogram",
+        "pit-map": "Mapa pitów"
+      }
+    },
+     "judging-head-queuer": {
+      "page-title": "Główny queuer sędziowania",
+      "no-data": "Brak załadowanych danych. Sprawdź za minutę.",
+      "current-sessions": {
+        "current-sessions": "Aktualne sesje",
+        "upcoming-sessions": "Nadchodzące sesje",
+        "session": "Sesja",
+        "sessions": "sesje",
+        "round": "Runda",
+        "teams": "Drużyny",
+        "no-current-sessions": "Brak trwających sesji",
+        "no-upcoming-sessions": "Brak nadchodzących sesji",
+        "started-at": "Rozpoczęto o {time}",
+        "cancel-call": "Anuluj wezwanie",
+        "call-teams": "Wywoływaj drużyny",
+        "mark-queued": "Oznacz drużynę jako w kolejce",
+        "unmark-queued": "Usuń oznaczenie drużyny z kolejki",
+        "mark-disabled-not-signed-in": "Drużyna musi być zalogowana",
+        "status": {
+          "not_signed_in": "Niezalogowana",
+          "signed_in": "Zalogowana",
+          "queued": "W kolejce",
+          "not-queued": "Nie w kolejce",
+          "empty_room": "Pusta sala"
+        },
+        "error": {
+          "update-session-failed": "Nie udało się zaktualizować sesji"
+        }
+      },
+      "judging-schedule": {
+        "title": "Harmonogram sędziowania",
+        "subtitle": "Nadchodzące sesje - wywoływaj drużyny do sal sędziowskich",
+        "session-number": "Sesja",
+        "time": "Czas",
+        "room": "Sala",
+        "team": "Drużyna",
+        "actions": "Akcje",
+        "call": "Wywoływaj",
+        "cancel": "Anuluj",
+        "queued": "Oznacz jako w kolejce",
+        "no-sessions": "Brak nadchodzących sesji",
+        "no-sessions-description": "Wszystkie sesje zostały ukończone lub żadna nie jest zaplanowana w ciągu następnych 20 minut",
+        "error": {
+          "update-session-failed": "Nie udało się zaktualizować sesji"
+        },
+        "status": {
+          "not_signed_in": "Niezalogowana",
+          "signed_in": "Zalogowana",
+          "unknown_team": "TBD"
+        }
+      }
+    },
+    "judging-queuer": {
+      "page-title": "Queuer sędziowania",
+      "filter-by-room": "Filtruj wg sali",
+      "no-teams": "Brak drużyn w oczekiwaniu",
+      "no-teams-description": "Wszystkie wywoływane drużyny przybyły do swoich sal sędziowskich",
+      "team-card": {
+        "in-match-tooltip": "Drużyna jest obecnie w meczu",
+        "time-ago": "{minutes} min temu",
+        "time-until": "za {minutes} min",
+        "status": {
+          "called": "Wezwana",
+          "queued": "W kolejce"
+        }
+      },
+      "schedule-view": {
+        "title": "Harmonogram sędziowania",
+        "subtitle": "Nadchodzące sesje sędziowskie",
+        "session": "Sesja",
+        "time": "Czas",
+        "room": "Sala",
+        "team": "Drużyna",
+        "no-sessions": "Brak nadchodzących sesji",
+        "no-sessions-description": "Brak zaplanowanych sesji sędziowskich w ciągu następnych 20 minut",
+        "status": {
+          "called": "Wezwana",
+          "not-queued": "Nie w kolejce",
+          "not-signed-in": "Niezalogowana"
+        }
+      },
+      "pit-map": {
+        "title": "Mapa pitów",
+        "description": "Lokalizacje drużyn w obszarze pitów"
+      },
+      "bottom-nav": {
+        "home": "Strona główna",
+        "schedule": "Harmonogram",
+        "pit-map": "Mapa pitów"
+      }
+    },
     "judge": {
       "page-title": "Sędziowanie",
       "schedule": {
@@ -262,6 +450,23 @@
             "queued": "W kolejce",
             "not-present": "Nieobecna",
             "not-arrived": "Nie przybyła na wydarzenie"
+          }
+        },
+        "legend": {
+          "title": "Legenda statusów",
+          "statuses": {
+            "ready": "Gotowy",
+            "present": "Obecny",
+            "queued": "W kolejce",
+            "missing": "Brakujący",
+            "no-show": "Nieobecny"
+          },
+          "descriptions": {
+            "ready": "Drużyna jest przy stole i gotowa do konkurencji",
+            "present": "Drużyna przybyła do stołu, ale nie jest gotowa",
+            "queued": "Drużyna została wezwana i jest w drodze do stołu",
+            "missing": "Drużyna nie została jeszcze wezwana",
+            "no-show": "Drużyna nie przybyła na wydarzenie"
           }
         },
         "judging-integration": {
@@ -672,6 +877,21 @@
       "empty-state": {
         "message": "Brak zaplanowanych sesji sędziowskich",
         "no-team": "Brak przypisanej drużyny"
+      },
+      "legend": {
+        "title": "Legenda statusów",
+        "statuses": {
+          "not-queued": "Nie w kolejce",
+          "queued": "W kolejce",
+          "in-progress": "W toku",
+          "completed": "Zakończono"
+        },
+        "descriptions": {
+          "not-queued": "Drużyna nie została jeszcze wezwana",
+          "queued": "Drużyna została wezwana i jest w drodze do sali sędziowskiej",
+          "in-progress": "Sesja jest aktualnie w toku",
+          "completed": "Sesja została ukończona"
+        }
       }
     },
     "scorekeeper": {
@@ -698,17 +918,19 @@
         "round": "Runda",
         "statuses": {
           "ready": "Gotowy",
-          "no-show": "Nieobecna",
+          "present": "Obecny",
           "queued": "W kolejce",
+          "no-show": "Nieobecna",
           "conflict": "Konflikt",
           "missing": "Brak",
           "empty": "Puste"
         },
         "legend": {
           "title": "Legenda statusów drużyn",
-          "ready": "Stół gotowy, uczestnik obecny",
-          "no-show": "Drużyna nie przybyła na wydarzenie lub nie jest obecna przy stole",
-          "queued": "Drużyna przybyła na wydarzenie i jest w kolejce, ale jeszcze nie przy stole",
+          "ready": "Drużyna jest przy stole i gotowa do konkurencji",
+          "present": "Drużyna przybyła do stołu, ale nie jest gotowa",
+          "queued": "Drużyna została wezwana i jest w drodze do stołu",
+          "no-show": "Drużyna nie przybyła na wydarzenie",
           "conflict": "Drużyna jest obecna, ale nie w kolejce (należy rozwiązać)",
           "missing": "Drużyna przybyła na wydarzenie, ale nie ustawiła się w kolejce",
           "empty": "Brak drużyny przypisanej do tego slotu"
