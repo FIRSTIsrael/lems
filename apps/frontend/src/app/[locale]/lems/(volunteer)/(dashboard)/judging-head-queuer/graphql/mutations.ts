@@ -13,7 +13,7 @@ export const UPDATE_JUDGING_SESSION_MUTATION = gql`
       called: $called
       queued: $queued
     ) {
-      id
+      sessionId
       called
       queued
     }

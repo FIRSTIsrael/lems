@@ -18,6 +18,34 @@ interface CurrentSessionsDisplayProps {
   loading?: boolean;
 }
 
+type SessionStatusKey = 'empty-room' | 'not_signed_in' | 'queued' | 'not-queued';
+
+function getStatusKey(session: JudgingSession): SessionStatusKey {
+  const isSignedIn = session.team?.arrived ?? false;
+  if (!session.team) return 'empty-room';
+  if (!isSignedIn) return 'not_signed_in';
+  if (session.queued) return 'queued';
+  return 'not-queued';
+}
+
+interface StatusChip {
+  color: 'success' | 'error' | 'warning' | 'default';
+  variant: 'filled' | 'outlined';
+}
+
+function getStatus(statusKey: SessionStatusKey): StatusChip {
+  switch (statusKey) {
+    case 'queued':
+      return { color: 'success', variant: 'filled' };
+    case 'not_signed_in':
+      return { color: 'error', variant: 'filled' };
+    case 'not-queued':
+      return { color: 'warning', variant: 'filled' };
+    default:
+      return { color: 'default', variant: 'outlined' };
+  }
+}
+
 export function CurrentSessionsDisplay({
   divisionId,
   currentSessions,
@@ -219,22 +247,8 @@ export function CurrentSessionsDisplay({
                       const roomName = session.room?.name ?? '—';
                       const teamId = session.team?.id ?? null;
 
-                      const statusKey = !session.team
-                        ? 'empty-room'
-                        : !isSignedIn
-                          ? 'not_signed_in'
-                          : isQueued
-                            ? 'queued'
-                            : 'not-queued';
-
-                      const statusChip =
-                        statusKey === 'queued'
-                          ? { color: 'success' as const, variant: 'filled' as const }
-                          : statusKey === 'not_signed_in'
-                            ? { color: 'error' as const, variant: 'filled' as const }
-                            : statusKey === 'not-queued'
-                              ? { color: 'warning' as const, variant: 'filled' as const }
-                              : { color: 'default' as const, variant: 'outlined' as const };
+                      const statusKey = getStatusKey(session);
+                      const statusChip = getStatus(statusKey);
 
                       return (
                         <Stack

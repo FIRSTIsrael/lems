@@ -7,7 +7,7 @@ interface SubscriptionVars {
 }
 
 export interface SessionStatusUpdatedEvent {
-  id: string;
+  sessionId: string;
   called: boolean;
   queued: boolean;
 }
@@ -22,7 +22,7 @@ export const SESSION_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 > = gql`
   subscription JudgingSessionUpdated($divisionId: String!) {
     judgingSessionUpdated(divisionId: $divisionId) {
-      id
+      sessionId
       called
       queued
     }
@@ -37,7 +37,7 @@ export function createSessionStatusUpdatedSubscription(divisionId: string) {
       const data = subscriptionData.data as SessionStatusUpdatedSubscriptionData | undefined;
       if (!data || !prev.division) return prev;
 
-      const updatedSessionId = data.judgingSessionUpdated.id;
+      const updatedSessionId = data.judgingSessionUpdated.sessionId;
       const updatedCalled = data.judgingSessionUpdated.called;
       const updatedQueued = data.judgingSessionUpdated.queued;
 

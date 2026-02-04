@@ -122,7 +122,7 @@ Represents an event when a judging session's called or queued status has been up
 """
 type JudgingSessionUpdatedEvent {
   "Judging session identifier"
-  id: String!
+  sessionId: String!
 
   "Whether the session has been called"
   called: Boolean!

@@ -6,7 +6,7 @@ interface JudgingSessionUpdatedSubscribeArgs {
 }
 
 interface JudgingSessionUpdatedEvent {
-  id: string;
+  sessionId: string;
   called: boolean;
   queued: boolean;
 }
@@ -15,16 +15,16 @@ const processJudgingSessionUpdatedEvent = async (
   event: Record<string, unknown>
 ): Promise<JudgingSessionUpdatedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
-  const id = (eventData.id as string) || '';
+  const sessionId = (eventData.sessionId as string) || '';
   const called = (eventData.called as boolean) ?? false;
   const queued = (eventData.queued as boolean) ?? false;
 
-  if (!id) {
+  if (!sessionId) {
     return null;
   }
 
   const result: JudgingSessionUpdatedEvent = {
-    id,
+    sessionId,
     called,
     queued
   };

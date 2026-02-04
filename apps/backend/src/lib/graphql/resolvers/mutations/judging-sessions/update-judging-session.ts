@@ -14,7 +14,7 @@ interface UpdateJudgingSessionArgs {
 }
 
 interface JudgingSessionUpdatedEvent {
-  id: string;
+  sessionId: string;
   called: boolean;
   queued: boolean;
 }
@@ -26,8 +26,9 @@ interface JudgingSessionUpdatedEvent {
  *
  * Validation checks:
  * 1. User is authenticated
- * 2. User is assigned to the division
- * 3. Session exists and is in the division
+ * 2. User has judging-head-queuer, head-judge, or judge role
+ * 3. User is assigned to the division
+ * 4. Session exists and is in the division
  */
 export const updateJudgingSessionResolver: GraphQLFieldResolver<
   unknown,
@@ -41,7 +42,19 @@ export const updateJudgingSessionResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
-    // Check 2: User must be assigned to the division
+    // Check 2: User must have judging-head-queuer, head-judge, or judge role
+    if (
+      context.user.role !== 'judging-head-queuer' &&
+      context.user.role !== 'head-judge' &&
+      context.user.role !== 'judge'
+    ) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have judging-head-queuer, head-judge, or judge role'
+      );
+    }
+
+    // Check 3: User must be assigned to the division
     if (!context.user.divisions.includes(divisionId)) {
       throw new MutationError(MutationErrorCode.FORBIDDEN, 'User is not assigned to the division');
     }
@@ -92,13 +105,13 @@ export const updateJudgingSessionResolver: GraphQLFieldResolver<
     // Publish update event
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.JUDGING_SESSION_UPDATED, {
-      id: sessionId,
+      sessionId,
       called: result.called !== null,
       queued: result.queued !== null
     });
 
     return {
-      id: sessionId,
+      sessionId,
       called: result.called !== null,
       queued: result.queued !== null
     };

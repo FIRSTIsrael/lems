@@ -5,7 +5,7 @@ import type { SubscriptionVars, QueryData, JudgingSession } from '../types';
 
 interface SubscriptionData {
   judgingSessionUpdated: {
-    id: string;
+    sessionId: string;
     called: boolean;
     queued: boolean;
   };
@@ -17,7 +17,7 @@ export const JUDGING_SESSION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 > = gql`
   subscription JudgingSessionUpdated($divisionId: String!) {
     judgingSessionUpdated(divisionId: $divisionId) {
-      id
+      sessionId
       called
       queued
     }
@@ -53,12 +53,12 @@ export function createJudgingSessionUpdatedSubscription(
     updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
       if (!data) return prev;
 
-      const { id, called, queued } = (data as SubscriptionData).judgingSessionUpdated;
+      const { sessionId, called, queued } = (data as SubscriptionData).judgingSessionUpdated;
 
       return updateJudgingSessions(prev, sessions =>
         updateInArray(
           sessions,
-          session => session.id === id,
+          session => session.id === sessionId,
           session => merge(session, { called, queued })
         )
       );
