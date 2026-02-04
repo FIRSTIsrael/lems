@@ -7,6 +7,8 @@ export interface MatchParticipantUpdatedEvent {
   matchId: string;
   teamId: string;
   queued: string | null;
+  present: string | null;
+  ready: string | null;
 }
 
 export interface MatchParticipantUpdatedSubscriptionData {
@@ -26,6 +28,8 @@ export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       matchId
       teamId
       queued
+      present
+      ready
     }
   }
 `;
@@ -37,7 +41,8 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
     updateQuery: (prev: HeadRefereeData, { data }: { data?: unknown }) => {
       if (!prev.division?.field?.matches || !data) return prev;
 
-      const participantData = (data as MatchParticipantUpdatedSubscriptionData).matchParticipantUpdated;
+      const participantData = (data as MatchParticipantUpdatedSubscriptionData)
+        .matchParticipantUpdated;
 
       const matches = prev.division.field.matches.map(match => {
         if (match.id !== participantData.matchId) return match;
@@ -48,7 +53,9 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
             p.team?.id === participantData.teamId
               ? {
                   ...p,
-                  queued: participantData.queued !== null
+                  queued: participantData.queued !== null,
+                  present: participantData.present !== null,
+                  ready: participantData.ready !== null
                 }
               : p
           )

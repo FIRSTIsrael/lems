@@ -4,6 +4,7 @@ export { matchStageAdvancedResolver } from './match-stage-advanced';
 export { matchEndgameTriggeredResolver } from './match-endgame-triggered';
 export { matchCompletedResolver } from './match-completed';
 export { matchAbortedResolver } from './match-aborted';
+export { matchUpdatedResolver } from './match-updated';
 export { participantStatusUpdatedResolver } from './participant-status-updated';
 export { matchUpdatedResolver } from './match-updated';
 export { matchParticipantUpdatedResolver } from './match-participant-updated';

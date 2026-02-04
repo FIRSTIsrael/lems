@@ -23,30 +23,40 @@ import {
   Skeleton
 } from '@mui/material';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
-import {
-  UPDATE_MATCH_MUTATION,
-  UPDATE_MATCH_PARTICIPANT_MUTATION,
-  type RobotGameMatch,
-  type RobotGameTable
-} from '../graphql';
+import { UPDATE_MATCH_MUTATION, UPDATE_MATCH_PARTICIPANT_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
+import { useFieldHeadQueuer } from './field-head-queuer-context';
 
-interface FieldScheduleProps {
-  divisionId: string;
-  matches: RobotGameMatch[];
-  tables: RobotGameTable[];
-  loadedMatchId?: string | null;
-  loading?: boolean;
+function getStatusKey(
+  hasTeam: boolean,
+  isSignedIn: boolean,
+  isQueued: boolean
+): 'unknown_team' | 'not_signed_in' | 'at_match' | 'not_at_match' {
+  if (!hasTeam) return 'unknown_team';
+  if (!isSignedIn) return 'not_signed_in';
+  if (isQueued) return 'at_match';
+  return 'not_at_match';
 }
 
-export function FieldSchedule({
-  divisionId,
-  matches,
-  tables,
-  loadedMatchId,
-  loading
-}: FieldScheduleProps) {
+function getStatusChipColor(
+  statusKey: 'unknown_team' | 'not_signed_in' | 'at_match' | 'not_at_match'
+): 'success' | 'error' | 'warning' | 'default' {
+  if (statusKey === 'at_match') return 'success';
+  if (statusKey === 'not_signed_in') return 'error';
+  if (statusKey === 'not_at_match') return 'warning';
+  return 'default';
+}
+
+function getStatusChipVariant(
+  statusKey: 'unknown_team' | 'not_signed_in' | 'at_match' | 'not_at_match'
+): 'outlined' | 'filled' {
+  return statusKey === 'unknown_team' ? 'outlined' : 'filled';
+}
+
+export function FieldSchedule() {
   const t = useTranslations('pages.field-head-queuer.field-schedule');
+  const { divisionId, matches, tables, loadedMatch, loading } = useFieldHeadQueuer();
+  const loadedMatchId = loadedMatch?.id;
   const currentTime = useTime({ interval: 1000 });
 
   const [updateMatchMutation] = useMutation(UPDATE_MATCH_MUTATION, {
@@ -71,9 +81,9 @@ export function FieldSchedule({
   );
 
   const handleToggleParticipant = useCallback(
-    async (matchId: string, teamId: string, queued: boolean) => {
+    async (matchId: string, participantId: string, queued: boolean) => {
       await updateParticipantMutation({
-        variables: { divisionId, matchId, teamId, queued }
+        variables: { divisionId, matchId, participantId, queued }
       });
     },
     [divisionId, updateParticipantMutation]
@@ -206,13 +216,7 @@ export function FieldSchedule({
                 const participant = match.participants.find(p => p.table?.id === table.id);
                 const team = participant?.team ?? null;
                 const isSignedIn = team?.arrived ?? false;
-                const statusKey = !team
-                  ? 'unknown_team'
-                  : !isSignedIn
-                    ? 'not_signed_in'
-                    : participant?.queued
-                      ? 'at_match'
-                      : 'not_at_match';
+                const statusKey = getStatusKey(!!team, isSignedIn, participant?.queued ?? false);
 
                 return (
                   <TableCell key={table.id} align="center">
@@ -237,23 +241,15 @@ export function FieldSchedule({
                           <Chip
                             label={t(`status.${statusKey}`)}
                             size="small"
-                            color={
-                              statusKey === 'at_match'
-                                ? 'success'
-                                : statusKey === 'not_signed_in'
-                                  ? 'error'
-                                  : statusKey === 'not_at_match'
-                                    ? 'warning'
-                                    : 'default'
-                            }
-                            variant={statusKey === 'unknown_team' ? 'outlined' : 'filled'}
+                            color={getStatusChipColor(statusKey)}
+                            variant={getStatusChipVariant(statusKey)}
                           />
                           <Checkbox
                             checked={participant.queued}
                             disabled={!isSignedIn}
                             size="small"
                             onChange={() =>
-                              handleToggleParticipant(match.id, team.id, !participant.queued)
+                              handleToggleParticipant(match.id, participant.id, !participant.queued)
                             }
                           />
                         </Stack>

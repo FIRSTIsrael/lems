@@ -2,15 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import {
-  Paper,
-  Box,
-  Stack,
-  Typography,
-  Card,
-  CardContent,
-  Chip
-} from '@mui/material';
+import { Paper, Box, Stack, Typography, Card, CardContent, Chip } from '@mui/material';
 import { AgendaEvent } from '@lems/types/api/portal';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { useDivision } from '../division-data-context';
@@ -46,9 +38,9 @@ export const AgendaTab: React.FC = () => {
       </Typography>
 
       <Stack spacing={2} mt={2}>
-        {agendaEvents.map((event) => {
+        {agendaEvents.map(event => {
           const startTime = dayjs(event.startTime);
-          const endTime = startTime.add(event.duration, 'minute');
+          const endTime = startTime.add(event.duration, 'seconds');
 
           return (
             <Card key={event.id} variant="outlined">

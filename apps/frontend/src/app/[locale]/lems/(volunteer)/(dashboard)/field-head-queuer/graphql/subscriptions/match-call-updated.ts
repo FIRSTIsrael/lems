@@ -31,9 +31,34 @@ export function createMatchCallUpdatedSubscription(divisionId: string) {
   return {
     subscription: MATCH_CALL_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: (prev: QueryData) => {
-      // Trigger refetch by returning a new object reference
-      return { ...prev };
+    updateQuery: (
+      prev: QueryData,
+      { subscriptionData }: { subscriptionData?: { data?: unknown } }
+    ) => {
+      if (!subscriptionData) {
+        return prev;
+      }
+
+      const data = subscriptionData.data as MatchCallUpdatedSubscriptionData | undefined;
+
+      if (!data || !prev.division) {
+        return prev;
+      }
+
+      const { matchUpdated } = data;
+
+      return {
+        ...prev,
+        division: {
+          ...prev.division,
+          field: {
+            ...prev.division.field,
+            matches: prev.division.field.matches.map(match =>
+              match.id === matchUpdated.id ? { ...match, called: matchUpdated.called } : match
+            )
+          }
+        }
+      };
     }
   } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
 }

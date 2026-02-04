@@ -16,10 +16,9 @@ import {
 import {
   createMatchLoadedSubscription,
   createMatchCallUpdatedSubscription,
-  createMatchParticipantUpdatedSubscription,
   createParticipantStatusUpdatedSubscription
 } from './graphql/subscriptions';
-import { FieldSchedule, ActiveMatchDisplay } from './components';
+import { FieldSchedule, ActiveMatchDisplay, FieldHeadQueuerProvider } from './components';
 
 export default function FieldHeadQueuerPage() {
   const t = useTranslations('pages.field-head-queuer');
@@ -29,7 +28,6 @@ export default function FieldHeadQueuerPage() {
     () => [
       createMatchLoadedSubscription(currentDivision.id),
       createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
@@ -57,20 +55,10 @@ export default function FieldHeadQueuerPage() {
         {error && <Alert severity="error">{error.message}</Alert>}
         {!loading && !data && <Alert severity="info">{t('no-data')}</Alert>}
 
-        <ActiveMatchDisplay
-          divisionId={currentDivision.id}
-          activeMatch={safeData.activeMatch}
-          loadedMatch={safeData.loadedMatch}
-          loading={loading}
-        />
-
-        <FieldSchedule
-          divisionId={currentDivision.id}
-          matches={safeData.matches}
-          tables={safeData.tables}
-          loadedMatchId={safeData.loadedMatch?.id}
-          loading={loading}
-        />
+        <FieldHeadQueuerProvider divisionId={currentDivision.id} data={safeData} loading={loading}>
+          <ActiveMatchDisplay />
+          <FieldSchedule />
+        </FieldHeadQueuerProvider>
       </Stack>
     </>
   );

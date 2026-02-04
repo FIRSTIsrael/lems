@@ -10,6 +10,8 @@ export interface MatchParticipantUpdatedEvent {
   matchId: string;
   teamId: string;
   queued: string | null;
+  present: string | null;
+  ready: string | null;
 }
 
 export interface MatchParticipantUpdatedData {
@@ -25,6 +27,8 @@ export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       matchId
       teamId
       queued
+      present
+      ready
     }
   }
 `;
@@ -33,11 +37,11 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
   return {
     subscription: MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: (prev: QueryData, subscriptionData: { data?: unknown }) => {
-      const data = subscriptionData.data as MatchParticipantUpdatedData | undefined;
-      if (!data || !prev.division) return prev;
-      
-      const { matchId, teamId, queued } = data.matchParticipantUpdated;
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
+      const subscriptionData = data as MatchParticipantUpdatedData | undefined;
+      if (!subscriptionData || !prev.division) return prev;
+
+      const { matchId, teamId, queued, present, ready } = subscriptionData.matchParticipantUpdated;
 
       return {
         ...prev,
@@ -47,15 +51,17 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
             ...prev.division.field,
             matches: prev.division.field.matches.map(match => {
               if (match.id !== matchId) return match;
-              
+
               return {
                 ...match,
                 participants: match.participants.map(participant => {
                   if (participant.team?.id !== teamId) return participant;
-                  
+
                   return {
                     ...participant,
-                    queued: queued !== null
+                    queued: queued !== null,
+                    present: present !== null,
+                    ready: ready !== null
                   };
                 })
               };

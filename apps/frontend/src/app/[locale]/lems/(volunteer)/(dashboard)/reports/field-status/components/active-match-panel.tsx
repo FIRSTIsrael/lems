@@ -7,7 +7,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
+
+type TeamReadinessStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
 interface Participant {
   id: string;
@@ -15,6 +19,7 @@ interface Participant {
     id: string;
     number: number;
     name: string;
+    arrived: boolean;
   } | null;
   table: {
     id: string;
@@ -41,6 +46,51 @@ interface Match {
 interface ActiveMatchPanelProps {
   match: Match | null;
   matchLength?: number;
+}
+
+function getParticipantStatus(participant: Participant): TeamReadinessStatus {
+  if (!participant.team) return 'missing';
+  if (!participant.team.arrived) return 'no-show';
+  if (participant.ready) return 'ready';
+  if (participant.present) return 'present';
+  if (participant.queued) return 'queued';
+  return 'missing';
+}
+
+function getStatusBorderColor(status: TeamReadinessStatus): string {
+  switch (status) {
+    case 'ready':
+      return 'success.main';
+    case 'present':
+      return 'warning.main';
+    case 'queued':
+      return 'info.main';
+    case 'no-show':
+      return 'error.main';
+    case 'missing':
+      return 'grey.400';
+    default:
+      return 'grey.400';
+  }
+}
+
+function getStatusIcon(status: TeamReadinessStatus) {
+  const iconProps = { sx: { fontSize: '1.5rem' } };
+
+  switch (status) {
+    case 'ready':
+      return <CheckCircleIcon {...iconProps} color="success" />;
+    case 'present':
+      return <PersonPinIcon {...iconProps} color="warning" />;
+    case 'queued':
+      return <HourglassEmptyIcon {...iconProps} color="info" />;
+    case 'no-show':
+      return <BlockIcon {...iconProps} color="error" />;
+    case 'missing':
+      return <HelpOutlineIcon {...iconProps} color="disabled" />;
+    default:
+      return null;
+  }
 }
 
 /**
@@ -150,60 +200,51 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
           >
             {match.participants
               .filter(p => p.team)
-              .map(participant => (
-                <Stack
-                  key={participant.id}
-                  direction="row"
-                  spacing={0.5}
-                  alignItems="center"
-                  sx={{
-                    py: 1,
-                    px: 2,
-                    borderRadius: 1,
-                    border: '2px solid',
-                    borderColor: participant.ready
-                      ? 'success.main'
-                      : participant.present
-                        ? 'warning.main'
-                        : participant.queued
-                          ? 'info.main'
-                          : 'grey.400'
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    fontWeight={700}
-                    sx={{ minWidth: 80, fontSize: '1.05rem' }}
-                  >
-                    {participant.table.name}:
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
-                  >
-                    {t('active-match.team-label')} {participant.team?.number} -{' '}
-                    {participant.team?.name}
-                  </Typography>
-                  <Box
+              .map(participant => {
+                const status = getParticipantStatus(participant);
+                return (
+                  <Stack
+                    key={participant.id}
+                    direction="row"
+                    spacing={0.5}
+                    alignItems="center"
                     sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      minWidth: 32,
-                      width: 32,
-                      height: 32
+                      py: 1,
+                      px: 2,
+                      borderRadius: 1,
+                      border: '2px solid',
+                      borderColor: getStatusBorderColor(status)
                     }}
                   >
-                    {participant.ready ? (
-                      <CheckCircleIcon sx={{ fontSize: '1.5rem' }} color="success" />
-                    ) : participant.present ? (
-                      <PersonPinIcon sx={{ fontSize: '1.5rem' }} color="warning" />
-                    ) : participant.queued ? (
-                      <HourglassEmptyIcon sx={{ fontSize: '1.5rem' }} color="info" />
-                    ) : null}
-                  </Box>
-                </Stack>
-              ))}
+                    <Typography
+                      variant="body2"
+                      fontWeight={700}
+                      sx={{ minWidth: 80, fontSize: '1.05rem' }}
+                    >
+                      {participant.table.name}:
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
+                    >
+                      {t('active-match.team-label')} {participant.team?.number} -{' '}
+                      {participant.team?.name}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: 32,
+                        width: 32,
+                        height: 32
+                      }}
+                    >
+                      {getStatusIcon(status)}
+                    </Box>
+                  </Stack>
+                );
+              })}
           </Box>
         </Box>
       </Stack>

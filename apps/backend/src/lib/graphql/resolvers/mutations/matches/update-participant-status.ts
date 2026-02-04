@@ -10,23 +10,26 @@ interface UpdateParticipantStatusArgs {
   divisionId: string;
   matchId: string;
   participantId: string;
+  queued?: boolean | null;
   present?: boolean | null;
   ready?: boolean | null;
 }
 
 interface ParticipantStatusEvent {
   participantId: string;
+  queued: Date | null;
   present: Date | null;
   ready: Date | null;
 }
 
 /**
  * Resolver for Mutation.updateParticipantStatus
- * Updates participant status (present/ready) in a match.
+ * Updates participant status (queued/present/ready) in a match.
+ * Called by field head queuer to mark teams as queued/arrived.
  * Called by referees to mark teams as present or ready.
  *
  * Validation checks:
- * 1. User is authenticated and has 'referee' role
+ * 1. User is authenticated and has 'referee' or 'field-head-queuer' role
  * 2. User is assigned to the division
  * 3. Match exists and is in the division
  * 4. Participant exists in the match
@@ -37,16 +40,22 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
   GraphQLContext,
   UpdateParticipantStatusArgs,
   Promise<ParticipantStatusEvent>
-> = async (_root, { divisionId, matchId, participantId, present, ready }, context) => {
+> = async (_root, { divisionId, matchId, participantId, queued, present, ready }, context) => {
   try {
     // Check 1: User must be authenticated
     if (!context.user) {
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
-
-    // Check 2: User must have referee role
-    if (context.user.role !== 'referee') {
-      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have referee role');
+    // Check 2: User must have referee or head-referre field-head-queuer role
+    if (
+      context.user.role !== 'referee' &&
+      context.user.role !== 'field-head-queuer' &&
+      context.user.role !== 'head-referee'
+    ) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have referee or head-referee or field-head-queuer role'
+      );
     }
 
     // Check 3: User must be assigned to the division
@@ -84,7 +93,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    // Check 6: Get current match state and validate match is not-started
+    // Check 6: Get current match state
     const matchState = await db.raw.mongo
       .collection<RobotGameMatchState>('robot_game_match_states')
       .findOne({ matchId });
@@ -96,10 +105,10 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    if (matchState.status !== 'not-started') {
+    if (!present && matchState.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
-        'Cannot update participant status for match that is not in not-started status'
+        'Cannot update participant status to NOT PRESENT for match that is not in not-started status'
       );
     }
 
@@ -107,6 +116,10 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     // Tech debt: Participants in mongo are keyed by table ID
     const now = new Date();
     const updateData: Partial<Record<string, Date | null>> = {};
+
+    if (queued !== undefined && queued !== null) {
+      updateData[`participants.${participant.table_id}.queued`] = queued ? now : null;
+    }
 
     if (present !== undefined && present !== null) {
       updateData[`participants.${participant.table_id}.present`] = present ? now : null;
@@ -119,7 +132,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     if (Object.keys(updateData).length === 0) {
       throw new MutationError(
         MutationErrorCode.INVALID_INPUT,
-        'Either present or ready must be provided'
+        'At least one of queued, present, or ready must be provided'
       );
     }
 
@@ -142,19 +155,24 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
 
     // Publish event to notify subscribers
     const participantState = result.participants?.[participant.table_id] || {
+      queued: null,
       present: null,
       ready: null
     };
 
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED, {
+      matchId,
+      teamId: participant.team_id,
       participantId,
+      queued: participantState.queued,
       present: participantState.present,
       ready: participantState.ready
     });
 
     return {
       participantId,
+      queued: participantState.queued || null,
       present: participantState.present || null,
       ready: participantState.ready || null
     };

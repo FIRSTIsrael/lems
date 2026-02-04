@@ -1,9 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import db from '../../../database';
 import { toGraphQLId } from '../../utils/object-id-transformer';
 import { buildTeamGraphQL, TeamGraphQL } from '../../utils/team-builder';
 import { RubricGraphQL } from '../../utils/rubric-builder';
+import type { GraphQLContext } from '../../apollo-server';
 
 /**
  * Resolver for Rubric.team field.
@@ -25,14 +27,69 @@ export const rubricTeamResolver: GraphQLFieldResolver<
 /**
  * Resolver for Rubric.data field.
  * Returns the rubric data if it exists.
+ * Only lead judges, judge advisors, and judges assigned to the team's judging room can access rubric data.
  */
 export const rubricDataResolver: GraphQLFieldResolver<
   RubricGraphQL,
+  GraphQLContext,
   unknown,
-  unknown,
-  RubricGraphQL['data'] | null
-> = (rubric: RubricGraphQL) => {
-  return rubric.data || null;
+  Promise<RubricGraphQL['data'] | null>
+> = async (
+  rubric: RubricGraphQL,
+  args,
+  context: GraphQLContext
+): Promise<RubricGraphQL['data'] | null> => {
+  try {
+    // Check authentication
+    if (!context.user) {
+      throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+    }
+
+    // Lead judges and judge advisors can always access rubric data
+    if (context.user.role === 'lead-judge' || context.user.role === 'judge-advisor') {
+      return rubric.data || null;
+    }
+
+    // Only judges can access beyond this point
+    if (context.user.role !== 'judge') {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User does not have permission to access rubric data'
+      );
+    }
+
+    // For judges, verify they are assigned to the room where the team is being judged
+    const roomId = context.user.roleInfo?.['roomId'];
+    if (!roomId) {
+      throw new MutationError(MutationErrorCode.FORBIDDEN, 'Judge is not assigned to any room');
+    }
+
+    // Fetch the team's judging session to verify the judge's room matches
+    const session = await db.judgingSessions.byDivision(rubric.divisionId).getByTeam(rubric.teamId);
+
+    if (!session) {
+      throw new MutationError(
+        MutationErrorCode.NOT_FOUND,
+        'Team has no judging session in this division'
+      );
+    }
+
+    // Verify the session's room matches the judge's assigned room
+    if (session.room_id !== roomId) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        "Judge is not assigned to this team's room"
+      );
+    }
+
+    return rubric.data || null;
+  } catch (error) {
+    if (error instanceof MutationError) {
+      throw error;
+    }
+    console.error('[rubricDataResolver] Error accessing rubric data:', error);
+    throw error;
+  }
 };
 
 /**

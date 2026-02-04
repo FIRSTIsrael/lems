@@ -11,6 +11,13 @@
       "completed": "Completed"
     }
   },
+  "judging-sessions": {
+    "status": {
+      "not-started": "Not Started",
+      "in-progress": "In Progress",
+      "completed": "Completed"
+    }
+  },
   "judging-deliberations": {
     "status": {
       "not-started": "Not Started",

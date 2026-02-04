@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import useSWR, { KeyedMutator, mutate } from 'swr';
 import { useTranslations } from 'next-intl';
 import {
@@ -15,7 +15,7 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material';
-import { EventSettings } from '@lems/types/api/admin';
+import { EventSettings, TeamWithDivision } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
@@ -33,7 +33,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   const t = useTranslations('pages.events.settings');
   const event = useEvent();
 
-  const { data: teams = [] } = useSWR(`/admin/events/${event.id}/teams`, {
+  const { data: allTeams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`, {
     suspense: false,
     fallbackData: []
   });
@@ -47,8 +47,22 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   const [visible, setVisible] = useState<boolean>(settings.visible || false);
   const [official, setOfficial] = useState<boolean>(settings.official || true);
 
-  const totalTeams = teams.length;
-  const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
+  const { advancingTeams, totalTeams } = useMemo(() => {
+    const total = allTeams.length;
+    let advancing = 0;
+
+    const teamsByDivision: Record<string, number> = {};
+    allTeams.forEach(team => {
+      teamsByDivision[team.division.id] ??= 0;
+      teamsByDivision[team.division.id] += 1;
+    });
+
+    Object.values(teamsByDivision).forEach(divisionTeamCount => {
+      advancing += Math.round((divisionTeamCount * advancementPercent) / 100);
+    });
+
+    return { advancingTeams: advancing, totalTeams: total };
+  }, [allTeams, advancementPercent]);
 
   useEffect(() => {
     if (settings) {

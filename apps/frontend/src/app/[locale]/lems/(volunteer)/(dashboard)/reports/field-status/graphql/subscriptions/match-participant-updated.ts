@@ -7,6 +7,8 @@ export interface MatchParticipantUpdatedEvent {
   matchId: string;
   teamId: string;
   queued: string | null;
+  present: string | null;
+  ready: string | null;
 }
 
 export interface MatchParticipantUpdatedSubscriptionData {
@@ -26,13 +28,15 @@ export const MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION: TypedDocumentNode<
       matchId
       teamId
       queued
+      present
+      ready
     }
   }
 `;
 
 /**
- * Creates a subscription configuration for match participant queued status updates in field status view.
- * When a participant's queued status is updated, updates the corresponding match participants.
+ * Creates a subscription configuration for match participant status updates in field status view.
+ * When a participant's queued, present, or ready status is updated, updates the corresponding match participants.
  *
  * @param divisionId - The division ID to subscribe to
  * @returns Subscription configuration for use with usePageData hook
@@ -55,7 +59,9 @@ export function createMatchParticipantUpdatedSubscription(divisionId: string) {
                   p.team?.id === event.teamId
                     ? {
                         ...p,
-                        queued: !!event.queued
+                        queued: event.queued !== null,
+                        present: event.present !== null,
+                        ready: event.ready !== null
                       }
                     : p
                 )

@@ -13,13 +13,6 @@ export {
 } from './match-call-updated';
 
 export {
-  MATCH_PARTICIPANT_UPDATED_SUBSCRIPTION,
-  createMatchParticipantUpdatedSubscription,
-  type MatchParticipantUpdatedEvent,
-  type MatchParticipantUpdatedSubscriptionData
-} from './match-participant-updated';
-
-export {
   PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
   createParticipantStatusUpdatedSubscription,
   type ParticipantStatusUpdatedEvent,
