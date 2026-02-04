@@ -58,7 +58,12 @@ export const ActiveEventsSection = () => {
       />
 
       <Box sx={{ textAlign: 'center', mt: 4 }}>
-        <Button variant="outlined" size="large" href="/events" endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}>
+        <Button
+          variant="outlined"
+          size="large"
+          href="/events"
+          endIcon={<DirectionalIcon ltr={ArrowForward} rtl={ArrowBack} />}
+        >
           {t('view-all-events')}
         </Button>
       </Box>
