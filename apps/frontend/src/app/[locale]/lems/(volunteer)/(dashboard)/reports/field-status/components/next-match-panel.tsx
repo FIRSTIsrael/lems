@@ -5,7 +5,8 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
 import { WarningAmberRounded } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../../lib/time/hooks';
@@ -76,15 +77,17 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
   };
 
   const getStatusIcon = (status: string) => {
+    const iconProps = { sx: { fontSize: '1.5rem' } };
+
     switch (status) {
       case 'ready':
-        return <CheckCircleIcon fontSize="small" color="success" />;
+        return <CheckCircleIcon {...iconProps} color="success" />;
       case 'present':
-        return <AccessTimeIcon fontSize="small" color="warning" />;
+        return <PersonPinIcon {...iconProps} color="warning" />;
       case 'queued':
-        return <AccessTimeIcon fontSize="small" color="info" />;
+        return <HourglassEmptyIcon {...iconProps} color="info" />;
       default:
-        return <CancelIcon fontSize="small" color="error" />;
+        return <CancelIcon {...iconProps} color="error" />;
     }
   };
 
@@ -169,7 +172,19 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
                     ? t('next-match.team-number', { number: participant.team.number })
                     : '—'}
                 </Typography>
-                <Box sx={{ ml: 0.5 }}>{getStatusIcon(status)}</Box>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minWidth: 32,
+                    width: 32,
+                    height: 32,
+                    ml: 0.5
+                  }}
+                >
+                  {getStatusIcon(status)}
+                </Box>
                 {participant.team?.arrived === false && (
                   <Chip
                     icon={<WarningAmberRounded />}

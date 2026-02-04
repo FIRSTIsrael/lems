@@ -6,7 +6,8 @@ import {
   loadMatchResolver,
   startMatchResolver,
   abortMatchResolver,
-  updateParticipantStatusResolver
+  updateParticipantStatusResolver,
+  updateMatchResolver
 } from './matches/index';
 import {
   updateRubricValueResolver,
@@ -38,7 +39,11 @@ import {
   completeDeliberationResolver
 } from './deliberations';
 import { updatePresentationResolver } from './audience-display/update-presentation';
-import { swapMatchTeamsResolver, swapSessionTeamsResolver, setMatchParticipantTeamResolver, setJudgingSessionTeamResolver } from './schedule';
+import {
+  swapMatchTeamsResolver,
+  swapSessionTeamsResolver,
+  setJudgingSessionTeamResolver
+} from './schedule';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -50,6 +55,7 @@ export const mutationResolvers = {
   startMatch: startMatchResolver,
   abortMatch: abortMatchResolver,
   updateParticipantStatus: updateParticipantStatusResolver,
+  updateMatch: updateMatchResolver,
   switchActiveDisplay: switchActiveDisplayResolver,
   updateAudienceDisplaySetting: updateAudienceDisplaySettingResolver,
   updatePresentation: updatePresentationResolver,
@@ -74,6 +80,5 @@ export const mutationResolvers = {
   completeFinalDeliberation: completeFinalDeliberationResolver,
   swapMatchTeams: swapMatchTeamsResolver,
   swapSessionTeams: swapSessionTeamsResolver,
-  setMatchParticipantTeam: setMatchParticipantTeamResolver,
   setJudgingSessionTeam: setJudgingSessionTeamResolver
 };

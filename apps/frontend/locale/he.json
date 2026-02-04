@@ -76,6 +76,7 @@
       "errors": {
         "required": "שדה זה נדרש",
         "invalid-length": "הסיסמה חייבת להיות בת 4 תווים בדיוק",
+        "grecaptcha": "אימות reCAPTCHA נכשל. אנא נסו שנית.",
         "too-many-requests": "יותר מדי ניסיונות התחברות. אנא נסו שנית מאוחר יותר.",
         "invalid-password": "סיסמה שגויה. אנא נסו שנית.",
         "server-error": "אירעה שגיאה. אנא נסו שנית.",
@@ -123,6 +124,96 @@
         "no-options": "כל הקבוצות הגיעו!",
         "all-arrived-message": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
         "team": "קבוצה"
+      }
+    },
+    "field-head-queuer": {
+      "page-title": "קיואר זירה ראשי",
+      "no-data": "עדיין לא נטענו נתונים. נסה שוב בעוד כמה רגעים.",
+      "field-schedule": {
+        "title": "לוח זמנים זירה",
+        "subtitle": "מקצים קרובים - קרא לקבוצות וסמן אותן כשהן מגיעות",
+        "match-number": "מקצה",
+        "time": "שעה",
+        "actions": "פעולות",
+        "call": "קריאה",
+        "cancel": "ביטול",
+        "team-in-judging": "הקבוצה נמצאת כרגע בשיפוט",
+        "no-matches": "אין מקצים קרובים",
+        "no-matches-description": "כל המקצים הושלמו או שאף אחד לא מתוזמן ב-15 הדקות הקרובות",
+        "error": {
+          "update-match-failed": "נכשל בעדכון המקצה",
+          "update-participant-failed": "נכשל בעדכון המשתתף"
+        },
+        "status": {
+          "not_signed_in": "לא נרשמו",
+          "not_at_match": "לא בקיו",
+          "at_match": "בקיו",
+          "empty_table": "אין קבוצה",
+          "unknown_team": "טרם נקבע",
+          "not-signed-in": "לא נרשמו",
+          "unknown-team": "טרם נקבע"
+        }
+      },
+      "active-match": {
+        "running-match": "מקצה רץ",
+        "next-match": "המקצה הבא",
+        "match": "מקצה",
+        "teams": "קבוצות",
+        "status": {
+          "not_signed_in": "לא נרשמו",
+          "not_at_match": "לא בקיו",
+          "at_match": "בקיו",
+          "empty_table": "אין קבוצה",
+          "unknown_team": "טרם נקבע",
+          "not-signed-in": "לא נרשמו",
+          "unknown-team": "טרם נקבע"
+        },
+        "mark-arrived-to-match": "סימון הגעה לזירה",
+        "unmark-arrived-to-match": "ביטול סימון הגעה לזירה",
+        "mark-disabled-not-signed-in": "הקבוצה לא נרשמה באירוע",
+        "call-teams": "קריאה לקבוצות",
+        "cancel-call": "ביטול קריאה",
+        "error": {
+          "update-participant-failed": "נכשל בעדכון הגעה לזירה",
+          "update-match-failed": "נכשל בעדכון המקצה"
+        },
+        "started-at": "התחיל ב-{time}",
+        "scheduled-at": "מתוזמן ל-{time}",
+        "no-active-match": "אין מקצה רץ כרגע",
+        "no-loaded-match": "אין מקצה טעון"
+      }
+    },
+    "field-queuer": {
+      "page-title": "קיואר זירה",
+      "filter-by-table": "סינון לפי שולחן",
+      "all-tables": "כל השולחנות",
+      "home": "בית",
+      "no-teams": "אין קבוצות ממתינות",
+      "no-teams-description": "כל הקבוצות שנקראו הגיעו לשולחנות שלהן",
+      "field-schedule": {
+        "title": "לוח זמנים זירה",
+        "subtitle": "מקצים קרובים",
+        "match": "מקצה",
+        "time": "שעה",
+        "no-matches": "אין מקצים קרובים",
+        "tab-label": "לו״ז"
+      },
+      "pit-map": {
+        "title": "מפת פיטים",
+        "subtitle": "מיקום הקבוצות באזור הפיטים",
+        "no-map": "אין מפת פיטים זמינה",
+        "error": "שגיאה בטעינת מפת הפיטים",
+        "tab-label": "מפת פיטים"
+      },
+      "team-card": {
+        "in-judging-tooltip": "הקבוצה נמצאת כרגע בשיפוט",
+        "time-ago": "לפני {minutes} דק'",
+        "time-until": "בעוד {minutes} דק'",
+        "status": {
+          "queued": "בקיו",
+          "present": "נוכחת",
+          "ready": "מוכנה"
+        }
       }
     },
     "judge": {
@@ -259,6 +350,23 @@
             "queued": "בקיו",
             "not-present": "לא נוכח",
             "not-arrived": "לא הגיעה לאירוע"
+          }
+        },
+        "legend": {
+          "title": "מקראה",
+          "statuses": {
+            "ready": "מוכן",
+            "present": "נוכחת",
+            "queued": "בקיו",
+            "missing": "חסרה",
+            "no-show": "לא הגיעה"
+          },
+          "descriptions": {
+            "ready": "הקבוצה בשולחן ומוכנה להתחרות",
+            "present": "הקבוצה הגיעה לשולחן אך עדיין לא מוכנה",
+            "queued": "הקבוצה נקראה ובדרך לשולחן",
+            "missing": "הקבוצה עדיין לא נקראה",
+            "no-show": "הקבוצה לא הגיעה לאירוע"
           }
         },
         "judging-integration": {
@@ -660,7 +768,7 @@
         "not-started": "לא התחיל",
         "in-progress": "בתהליך",
         "completed": "הושלם",
-        "queued": "בתור"
+        "queued": "בקיו"
       },
       "warnings": {
         "on-field": "הקבוצה נמצאת בזירה!"
@@ -695,19 +803,21 @@
         "round": "סבב",
         "statuses": {
           "ready": "מוכן",
+          "present": "נוכחת",
+          "queued": "בקיו",
           "no-show": "לא הגיע",
-          "queued": "בתור",
           "conflict": "ניגוד",
           "missing": "חסר",
           "empty": "ריק"
         },
         "legend": {
           "title": "מפתח סטטוס הקבוצות",
-          "ready": "השולחן מוכן והמשתתף נוכח",
-          "no-show": "הקבוצה לא הגיעה לאירוע או לא נוכחת בשולחן",
-          "queued": "הקבוצה הגיעה לאירוע והיא בתור, אך עדיין לא בשולחן",
-          "conflict": "הקבוצה נוכחת אך לא בתור (צריך לפתור)",
-          "missing": "הקבוצה הגיעה לאירוע אך עדיין לא הצטרפה לתור",
+          "ready": "הקבוצה בשולחן ומוכנה להתחרות",
+          "present": "הקבוצה הגיעה לשולחן אך עדיין לא מוכנה",
+          "queued": "הקבוצה נקראה ובדרך לשולחן",
+          "no-show": "הקבוצה לא הגיעה לאירוע",
+          "conflict": "הקבוצה נוכחת אך לא בקיו (צריך לפתור)",
+          "missing": "הקבוצה הגיעה לאירוע אך עדיין לא בקיו",
           "empty": "לא הוקצתה קבוצה לחריץ משתתף זה"
         },
         "not-ready-warning": "לא כל הקבוצות מוכנות."

@@ -233,17 +233,31 @@ type PresentationUpdatedEvent {
 }
 
 """
-Represents an event when a participant's status (present/ready) is updated
+Represents an event when a participant's status (queued/present/ready) is updated
 """
 type ParticipantStatusUpdatedEvent {
   "Participant identifier"
   participantId: String!
+
+  "Timestamp when the participant was marked as queued/arrived to match (null if not queued)"
+  queued: String
 
   "Timestamp when the participant was marked as present (null if not present)"
   present: String
 
   "Timestamp when the participant was marked as ready (null if not ready)"
   ready: String
+}
+
+"""
+Represents an event when a match's called status is updated
+"""
+type MatchUpdatedEvent {
+  "Match identifier"
+  id: String!
+
+  "Whether the match is called"
+  called: Boolean!
 }
 
 extend type Mutation {
@@ -316,23 +330,6 @@ extend type Mutation {
   ): PresentationUpdatedEvent!
 
   """
-  Update a participant's status (present/ready) in a match.
-  Called by referees to mark teams as present or ready before the match starts.
-  """
-  updateParticipantStatus(
-    "The ID of the division containing the match"
-    divisionId: String!
-    "The ID of the match"
-    matchId: String!
-    "The ID of the participant"
-    participantId: String!
-    "Whether the participant is present (true/false to set/clear)"
-    present: Boolean
-    "Whether the participant is ready (true/false to set/clear)"
-    ready: Boolean
-  ): ParticipantStatusUpdatedEvent!
-
-  """
   Set a match participant's team (or unassign by passing null).
   Used by tournament managers to assign or remove teams from match slots.
   """
@@ -346,6 +343,39 @@ extend type Mutation {
     "The ID of the team to assign (null to unassign)"
     teamId: String
   ): Match!
+
+  """
+  Update a participant's status (queued/present/ready) in a match.
+  Called by field head queuer to mark teams as arrived to the match (queued).
+  Called by referees to mark teams as present or ready before the match starts.
+  """
+  updateParticipantStatus(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "The ID of the participant"
+    participantId: String!
+    "Whether the participant is queued/arrived to match (true/false to set/clear)"
+    queued: Boolean
+    "Whether the participant is present (true/false to set/clear)"
+    present: Boolean
+    "Whether the participant is ready (true/false to set/clear)"
+    ready: Boolean
+  ): ParticipantStatusUpdatedEvent!
+
+  """
+  Update a match's called status.
+  Called by field head queuer to call teams to the match.
+  """
+  updateMatch(
+    "The ID of the division containing the match"
+    divisionId: String!
+    "The ID of the match"
+    matchId: String!
+    "Whether the match is called (true/false to set/clear)"
+    called: Boolean!
+  ): MatchUpdatedEvent!
 }
 
 extend type Subscription {
@@ -389,6 +419,11 @@ extend type Subscription {
   matchAborted("The division ID to listen for updates in" divisionId: String!): MatchAbortedEvent!
 
   """
+  Subscribe to events when a match's called status is updated in a division.
+  """
+  matchUpdated("The division ID to listen for updates in" divisionId: String!): MatchUpdatedEvent!
+
+  """
   Subscribe to events when the audience display is switched in a division.
   """
   audienceDisplaySwitched(
@@ -414,7 +449,7 @@ extend type Subscription {
 
   """
   Subscribe to events when a participant's status is updated in a match.
-  Emitted when a referee marks a team as present or ready.
+  Emitted when a field head queuer marks a team as queued/arrived, or when a referee marks a team as present or ready.
   """
   participantStatusUpdated(
     "The division ID to listen for updates in"

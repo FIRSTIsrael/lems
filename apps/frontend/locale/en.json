@@ -126,6 +126,98 @@
         "team": "Team"
       }
     },
+    "field-head-queuer": {
+      "page-title": "Head field queuer",
+      "no-data": "No data loaded yet. check in a minute.",
+      "field-schedule": {
+        "title": "Field Schedule",
+        "subtitle": "Upcoming matches - call teams and check them off as they arrive",
+        "match-number": "Match",
+        "time": "Time",
+        "actions": "Actions",
+        "call": "Call",
+        "cancel": "Cancel",
+        "team-in-judging": "Team is currently in judging",
+        "no-matches": "No Upcoming Matches",
+        "no-matches-description": "All matches have been completed or none are scheduled within the next 15 minutes",
+        "error": {
+          "update-match-failed": "Failed to update match",
+          "update-participant-failed": "Failed to update participant"
+        },
+        "status": {
+          "not_signed_in": "Not signed in",
+          "not_at_match": "Not queued",
+          "at_match": "At match",
+          "empty_table": "No team",
+          "unknown_team": "TBD",
+          "not-signed-in": "Not signed in",
+          "at-match": "Queued",
+          "unknown-team": "TBD"
+        }
+      },
+      "active-match": {
+        "running-match": "Running Match",
+        "next-match": "Next Match",
+        "match": "Match",
+        "teams": "Teams",
+        "status": {
+          "not_signed_in": "Not signed in",
+          "not_at_match": "Not queued",
+          "at_match": "Queued",
+          "empty_table": "No team",
+          "unknown_team": "TBD",
+          "not-signed-in": "Not signed in",
+          "at-match": "Queued",
+          "unknown-team": "TBD"
+        },
+        "mark-arrived-to-match": "Mark arrived to match",
+        "unmark-arrived-to-match": "Unmark arrived to match",
+        "mark-disabled-not-signed-in": "Team is not signed in",
+        "call-teams": "Call Teams",
+        "cancel-call": "Cancel Call",
+        "error": {
+          "update-participant-failed": "Failed to update match arrival",
+          "update-match-failed": "Failed to update match"
+        },
+        "started-at": "Started at {time}",
+        "scheduled-at": "Scheduled at {time}",
+        "no-active-match": "No match currently running",
+        "no-loaded-match": "No match loaded"
+      }
+    },
+    "field-queuer": {
+      "page-title": "Field Queuer",
+      "filter-by-table": "Filter by Table",
+      "all-tables": "All Tables",
+      "home": "Home",
+      "no-teams": "No Teams Waiting",
+      "no-teams-description": "All called teams have arrived at their tables",
+      "field-schedule": {
+        "title": "Field Schedule",
+        "subtitle": "Upcoming matches",
+        "match": "Match",
+        "time": "Time",
+        "no-matches": "No upcoming matches",
+        "tab-label": "Schedule"
+      },
+      "pit-map": {
+        "title": "Pit Map",
+        "subtitle": "Team locations in the pit area",
+        "no-map": "No pit map available",
+        "error": "Error loading pit map",
+        "tab-label": "Pit Map"
+      },
+      "team-card": {
+        "in-judging-tooltip": "Team is currently in judging",
+        "time-ago": "{minutes} min ago",
+        "time-until": "in {minutes} min",
+        "status": {
+          "queued": "Queued",
+          "present": "Present",
+          "ready": "Ready"
+        }
+      }
+    },
     "judge": {
       "page-title": "Judging",
       "schedule": {
@@ -260,6 +352,23 @@
             "queued": "Queued",
             "not-present": "Not Present",
             "not-arrived": "Didn't Arrive to Event"
+          }
+        },
+        "legend": {
+          "title": "Status Legend",
+          "statuses": {
+            "ready": "Ready",
+            "present": "Present",
+            "queued": "Queued",
+            "missing": "Missing",
+            "no-show": "No Show"
+          },
+          "descriptions": {
+            "ready": "Team is at the table and ready to compete",
+            "present": "Team has arrived at the table but not yet ready",
+            "queued": "Team has been called and is on the way to the table",
+            "missing": "Team has not been called yet",
+            "no-show": "Team did not arrive at the event"
           }
         },
         "judging-integration": {
@@ -696,17 +805,19 @@
         "round": "Round",
         "statuses": {
           "ready": "Ready",
-          "no-show": "No Show",
+          "present": "Present",
           "queued": "Queued",
+          "no-show": "No Show",
           "conflict": "Conflict",
           "missing": "Missing",
           "empty": "Empty"
         },
         "legend": {
           "title": "Team Status Legend",
-          "ready": "Table is ready and participant is present",
-          "no-show": "Team did not arrive at the event or is not present at the table",
-          "queued": "Team arrived at event and is in queue, but not yet at the table",
+          "ready": "Team is at the table and ready to compete",
+          "present": "Team has arrived at the table but not yet ready",
+          "queued": "Team has been called and is on the way to the table",
+          "no-show": "Team did not arrive at the event",
           "conflict": "Team is present but not queued (should be resolved)",
           "missing": "Team arrived at event but has not queued yet",
           "empty": "No team assigned to this participant slot"

@@ -85,12 +85,6 @@ export interface MatchCompletedEvent {
   completedAt: string;
 }
 
-export interface ParticipantStatusUpdatedEvent {
-  participantId: string;
-  present: string | null;
-  ready: string | null;
-}
-
 export interface MatchLoadedEvent {
   matchId: string;
   loadedAt: string;
