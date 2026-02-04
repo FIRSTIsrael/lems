@@ -19,7 +19,7 @@
     "@apollo/client-integration-nextjs": "^0.14.4",
     "@apollo/server": "^5.4.0",
     "@as-integrations/express5": "^1.1.2",
-    "@aws-sdk/client-s3": "^3.964.0",
+    "@aws-sdk/client-s3": "^3.982.0",
     "@aws-sdk/s3-request-presigner": "^3.971.0",
     "@emotion/cache": "^11.14.0",
     "@emotion/react": "11.14.0",
