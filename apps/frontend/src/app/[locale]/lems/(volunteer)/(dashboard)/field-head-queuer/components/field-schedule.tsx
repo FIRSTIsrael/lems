@@ -23,7 +23,7 @@ import {
   Skeleton
 } from '@mui/material';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
-import { UPDATE_MATCH_MUTATION, UPDATE_MATCH_PARTICIPANT_MUTATION } from '../graphql';
+import { UPDATE_MATCH_MUTATION, UPDATE_PARTICIPANT_STATUS_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 import { useFieldHeadQueuer } from './field-head-queuer-context';
 
@@ -65,7 +65,7 @@ export function FieldSchedule() {
     awaitRefetchQueries: true
   });
 
-  const [updateParticipantMutation] = useMutation(UPDATE_MATCH_PARTICIPANT_MUTATION, {
+  const [updateParticipantMutation] = useMutation(UPDATE_PARTICIPANT_STATUS_MUTATION, {
     onError: () => toast.error(t('error.update-participant-failed')),
     refetchQueries: [{ query: GET_HEAD_QUEUER_DATA, variables: { divisionId } }],
     awaitRefetchQueries: true

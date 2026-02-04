@@ -11,7 +11,6 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
-  createMatchParticipantUpdatedSubscription,
   createParticipantStatusUpdatedSubscription,
   createMatchStageAdvancedSubscription
 } from './graphql';
@@ -67,7 +66,6 @@ export default function FieldStatusPage() {
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchAbortedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id)
     ],

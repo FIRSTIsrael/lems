@@ -1,7 +1,6 @@
 export * from './match-started';
 export * from './match-completed';
 export * from './team-arrival-updated';
-export * from './match-participant-updated';
 export * from './participant-status-updated';
 export * from './match-loaded';
 export * from './match-aborted';
