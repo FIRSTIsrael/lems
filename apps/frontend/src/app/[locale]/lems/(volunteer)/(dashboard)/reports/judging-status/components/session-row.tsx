@@ -25,7 +25,12 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
           </Box>
 
           <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-            <SessionStatusChip status={session.status} arrived={team.arrived} />
+            <SessionStatusChip
+              status={session.status}
+              called={session.called}
+              arrived={team.arrived}
+              isQueued={session.queued}
+            />
           </Stack>
 
           {session.startTime && session.startDelta !== undefined && (

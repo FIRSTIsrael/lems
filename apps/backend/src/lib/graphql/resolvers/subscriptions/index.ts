@@ -3,7 +3,8 @@ import { teamDisqualifiedResolver } from './team-disqualified';
 import {
   judgingSessionAbortedResolver,
   judgingSessionStartedResolver,
-  judgingSessionCompletedResolver
+  judgingSessionCompletedResolver,
+  judgingSessionUpdatedResolver
 } from './judging-sessions';
 import {
   matchLoadedResolver,
@@ -40,6 +41,7 @@ export const subscriptionResolvers = {
   judgingSessionStarted: judgingSessionStartedResolver,
   judgingSessionAborted: judgingSessionAbortedResolver,
   judgingSessionCompleted: judgingSessionCompletedResolver,
+  judgingSessionUpdated: judgingSessionUpdatedResolver,
   matchLoaded: matchLoadedResolver,
   matchStarted: matchStartedResolver,
   matchStageAdvanced: matchStageAdvancedResolver,

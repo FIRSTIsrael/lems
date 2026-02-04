@@ -17,6 +17,9 @@ type JudgingSession {
   "Whether the team for this session has been called to the judging room"
   called: Boolean!
 
+  "Whether the team has arrived and is queued for this session"
+  queued: Boolean!
+
   "Room where this session is taking place"
   room: Room!
 
@@ -114,6 +117,20 @@ type JudgingSessionEvent {
   sessionId: String!
 }
 
+"""
+Represents an event when a judging session's called or queued status has been updated
+"""
+type JudgingSessionUpdatedEvent {
+  "Judging session identifier"
+  sessionId: String!
+
+  "Whether the session has been called"
+  called: Boolean!
+
+  "Whether the team is queued for this session"
+  queued: Boolean!
+}
+
 extend type Mutation {
   """
   Start a judging session.
@@ -134,6 +151,20 @@ extend type Mutation {
     "The ID of the session to abort"
     sessionId: String!
   ): JudgingSessionEvent!
+
+  """
+  Update a judging session's called and queued status.
+  """
+  updateJudgingSession(
+    "The ID of the division containing the session"
+    divisionId: String!
+    "The ID of the session to update"
+    sessionId: String!
+    "Whether the session should be called"
+    called: Boolean
+    "Whether the team is queued for this session"
+    queued: Boolean
+  ): JudgingSessionUpdatedEvent!
 }
 
 extend type Subscription {
@@ -160,4 +191,12 @@ extend type Subscription {
     "The division ID to listen for updates in"
     divisionId: String!
   ): JudgingSessionEvent!
+
+  """
+  Subscribe to events when judging sessions are updated (called status changes).
+  """
+  judgingSessionUpdated(
+    "The division ID to listen for updates in"
+    divisionId: String!
+  ): JudgingSessionUpdatedEvent!
 }

@@ -216,6 +216,102 @@
           "present": "Present",
           "ready": "Ready"
         }
+      },
+      "bottom-nav": {
+        "home": "Home",
+        "schedule": "Schedule",
+        "pit-map": "Pit Map"
+      }
+    },
+     "judging-head-queuer": {
+      "page-title": "Head Judging Queuer",
+      "no-data": "No data loaded yet. Check in a minute.",
+      "current-sessions": {
+        "current-sessions": "Current Sessions",
+        "upcoming-sessions": "Upcoming Sessions",
+        "session": "Session",
+        "sessions": "sessions",
+        "round": "Round",
+        "teams": "Teams",
+        "no-current-sessions": "No sessions currently running",
+        "no-upcoming-sessions": "No upcoming sessions",
+        "started-at": "Started at {time}",
+        "cancel-call": "Cancel Call",
+        "call-teams": "Call Teams",
+        "mark-queued": "Mark team as queued",
+        "unmark-queued": "Unmark team as queued",
+        "mark-disabled-not-signed-in": "Team must be signed in first",
+        "status": {
+          "not_signed_in": "Not signed in",
+          "signed_in": "Signed in",
+          "queued": "Queued",
+          "not-queued": "Not queued",
+          "empty_room": "Empty room"
+        },
+        "error": {
+          "update-session-failed": "Failed to update session"
+        }
+      },
+      "judging-schedule": {
+        "title": "Judging Schedule",
+        "subtitle": "Upcoming sessions - call teams to judging rooms",
+        "session-number": "Session",
+        "time": "Time",
+        "room": "Room",
+        "team": "Team",
+        "actions": "Actions",
+        "call": "Call",
+        "cancel": "Cancel",
+        "queued": "Mark as queued",
+        "no-sessions": "No Upcoming Sessions",
+        "no-sessions-description": "All sessions have been completed or none are scheduled within the next 20 minutes",
+        "error": {
+          "update-session-failed": "Failed to update session"
+        },
+        "status": {
+          "not_signed_in": "Not signed in",
+          "signed_in": "Signed in",
+          "unknown_team": "TBD"
+        }
+      }
+    },
+    "judging-queuer": {
+      "page-title": "Judging Queuer",
+      "filter-by-room": "Filter by Room",
+      "no-teams": "No Teams Waiting",
+      "no-teams-description": "All called teams have arrived at their judging rooms",
+      "team-card": {
+        "in-match-tooltip": "Team is currently in a match",
+        "time-ago": "{minutes} min ago",
+        "time-until": "in {minutes} min",
+        "status": {
+          "called": "Called",
+          "queued": "Queued"
+        }
+      },
+      "schedule-view": {
+        "title": "Judging Schedule",
+        "subtitle": "Upcoming judging sessions",
+        "session": "Session",
+        "time": "Time",
+        "room": "Room",
+        "team": "Team",
+        "no-sessions": "No Upcoming Sessions",
+        "no-sessions-description": "There are no judging sessions scheduled in the next 20 minutes",
+        "status": {
+          "called": "Called",
+          "not-queued": "Not Queued",
+          "not-signed-in": "Not Signed In"
+        }
+      },
+      "pit-map": {
+        "title": "Pit Map",
+        "description": "Team locations in the pit area"
+      },
+      "bottom-nav": {
+        "home": "Home",
+        "schedule": "Schedule",
+        "pit-map": "Pit Map"
       }
     },
     "judge": {
@@ -769,7 +865,7 @@
         "ends-at": "Ends at {time}"
       },
       "status": {
-        "not-started": "Not Started",
+        "not-started": "Not Queued",
         "in-progress": "In Progress",
         "completed": "Completed",
         "queued": "Queued"
@@ -781,6 +877,21 @@
       "empty-state": {
         "message": "No judging sessions scheduled",
         "no-team": "No team assigned"
+      },
+      "legend": {
+        "title": "Status Legend",
+        "statuses": {
+          "not-queued": "Not Queued",
+          "queued": "Queued",
+          "in-progress": "In Progress",
+          "completed": "Completed"
+        },
+        "descriptions": {
+          "not-queued": "Team has not been called yet",
+          "queued": "Team has been called and is on the way to the judging room",
+          "in-progress": "Session is currently in progress",
+          "completed": "Session has been completed"
+        }
       }
     },
     "scorekeeper": {

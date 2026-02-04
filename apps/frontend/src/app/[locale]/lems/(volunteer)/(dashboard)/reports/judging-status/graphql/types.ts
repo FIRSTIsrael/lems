@@ -21,6 +21,7 @@ export interface JudgingSession {
   scheduledTime: string;
   status: string;
   called: boolean;
+  queued: boolean;
   room: Room;
   team: Team | null;
   startTime?: string;

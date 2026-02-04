@@ -214,6 +214,102 @@
           "present": "נוכחת",
           "ready": "מוכנה"
         }
+      },
+      "bottom-nav": {
+        "home": "בית",
+        "schedule": "לו״ז",
+        "pit-map": "מפת פיטים"
+      }
+    },
+    "judging-head-queuer": {
+      "page-title": "קיואר שיפוט ראשי",
+      "no-data": "עדיין לא נטענו נתונים. נסה שוב בעוד כמה רגעים.",
+      "current-sessions": {
+        "current-sessions": "מפגשים נוכחיים",
+        "upcoming-sessions": "מפגשים קרובים",
+        "session": "מפגש",
+        "sessions": "מפגשים",
+        "round": "סבב",
+        "teams": "קבוצות",
+        "no-current-sessions": "אין מפגשים פעילים כרגע",
+        "no-upcoming-sessions": "אין מפגשים קרובים",
+        "started-at": "התחיל ב-{time}",
+        "cancel-call": "ביטול קריאה",
+        "call-teams": "קריאה לקבוצות",
+        "mark-queued": "סמן קבוצה בקיו",
+        "unmark-queued": "בטל סימון בקיו",
+        "mark-disabled-not-signed-in": "הקבוצה חייבת להירשם תחילה",
+        "status": {
+          "not_signed_in": "לא נרשמו",
+          "signed_in": "נרשמו",
+          "queued": "בקיו",
+          "not-queued": "לא בקיו",
+          "empty-room": "חדר ריק"
+        },
+        "error": {
+          "update-session-failed": "נכשל בעדכון המפגש"
+        }
+      },
+      "judging-schedule": {
+        "title": "לוח זמנים שיפוט",
+        "subtitle": "מפגשים קרובים - קרא לקבוצות לחדרי שיפוט",
+        "session-number": "מפגש",
+        "time": "שעה",
+        "room": "חדר",
+        "team": "קבוצה",
+        "actions": "פעולות",
+        "call": "קריאה",
+        "cancel": "ביטול",
+        "queued": "סמן כממתין בתור",
+        "no-sessions": "אין מפגשים קרובים",
+        "no-sessions-description": "כל המפגשים הושלמו או שאף אחד לא מתוזמן ב-20 הדקות הקרובות",
+        "error": {
+          "update-session-failed": "עדכון המפגש נכשל"
+        },
+        "status": {
+          "not_signed_in": "לא נרשמו",
+          "signed_in": "נרשמו",
+          "unknown_team": "טרם נקבע"
+        }
+      }
+    },
+    "judging-queuer": {
+      "page-title": "קיואר שיפוט",
+      "filter-by-room": "סינון לפי חדר",
+      "no-teams": "אין קבוצות ממתינות",
+      "no-teams-description": "כל הקבוצות שנקראו הגיעו לחדרי השיפוט שלהן",
+      "team-card": {
+        "in-match-tooltip": "הקבוצה נמצאת כרגע במקצה",
+        "time-ago": "לפני {minutes} דק'",
+        "time-until": "בעוד {minutes} דק'",
+        "status": {
+          "called": "נקראה",
+          "queued": "בתור"
+        }
+      },
+      "schedule-view": {
+        "title": "לוח זמנים שיפוט",
+        "subtitle": "מפגשי שיפוט קרובים",
+        "session": "מפגש",
+        "time": "שעה",
+        "room": "חדר",
+        "team": "קבוצה",
+        "no-sessions": "אין מפגשים קרובים",
+        "no-sessions-description": "אין מפגשי שיפוט מתוכננים ב-20 הדקות הקרובות",
+        "status": {
+          "called": "נקראה",
+          "not-queued": "לא בקיו",
+          "not-signed-in": "לא נרשמו"
+        }
+      },
+      "pit-map": {
+        "title": "מפת פיטים",
+        "description": "מיקום הקבוצות באזור הפיטים"
+      },
+      "bottom-nav": {
+        "home": "בית",
+        "schedule": "לו״ז",
+        "pit-map": "מפת פיטים"
       }
     },
     "judge": {
@@ -767,7 +863,7 @@
         "ends-at": "מסתיים בשעה {time}"
       },
       "status": {
-        "not-started": "לא התחיל",
+        "not-queued": "לא בקיו",
         "in-progress": "בתהליך",
         "completed": "הושלם",
         "queued": "בקיו"
@@ -779,6 +875,21 @@
       "empty-state": {
         "message": "אין סבבי שיפוט מתוכננים כרגע",
         "no-team": "אין קבוצה משובצת"
+      },
+      "legend": {
+        "title": "מקראה",
+        "statuses": {
+          "not-queued": "לא בקיו",
+          "queued": "בקיו",
+          "in-progress": "בתהליך",
+          "completed": "הושלם"
+        },
+        "descriptions": {
+          "not-queued": "הקבוצה עדיין לא נקראה",
+          "queued": "הקבוצה נקראה ובדרך לחדר השיפוט",
+          "in-progress": "המפגש מתקיים כעת",
+          "completed": "המפגש הושלם"
+        }
       }
     },
     "scorekeeper": {

@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Skeleton, Checkbox, Tooltip, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
-import { UPDATE_MATCH_PARTICIPANT_MUTATION, UPDATE_MATCH_MUTATION } from '../graphql';
+import { UPDATE_PARTICIPANT_STATUS_MUTATION, UPDATE_MATCH_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 import { useFieldHeadQueuer } from './field-head-queuer-context';
 
@@ -36,7 +36,7 @@ export function ActiveMatchDisplay() {
   const t = useTranslations('pages.field-head-queuer.active-match');
   const { divisionId, activeMatch, loadedMatch, loading } = useFieldHeadQueuer();
 
-  const [updateParticipantMutation] = useMutation(UPDATE_MATCH_PARTICIPANT_MUTATION, {
+  const [updateParticipantMutation] = useMutation(UPDATE_PARTICIPANT_STATUS_MUTATION, {
     onError: () => toast.error(t('error.update-participant-failed')),
     refetchQueries: [{ query: GET_HEAD_QUEUER_DATA, variables: { divisionId } }],
     awaitRefetchQueries: true

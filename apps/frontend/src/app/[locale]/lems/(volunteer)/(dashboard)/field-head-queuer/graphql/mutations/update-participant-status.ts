@@ -4,6 +4,7 @@ export interface UpdateParticipantStatusVars {
   divisionId: string;
   matchId: string;
   participantId: string;
+  queued?: boolean;
   present?: boolean;
   ready?: boolean;
 }
@@ -11,6 +12,7 @@ export interface UpdateParticipantStatusVars {
 export interface UpdateParticipantStatusData {
   updateParticipantStatus: {
     participantId: string;
+    queued: string | null;
     present: string | null;
     ready: string | null;
   };
@@ -24,6 +26,7 @@ export const UPDATE_PARTICIPANT_STATUS_MUTATION: TypedDocumentNode<
     $divisionId: String!
     $matchId: String!
     $participantId: String!
+    $queued: Boolean
     $present: Boolean
     $ready: Boolean
   ) {
@@ -31,10 +34,12 @@ export const UPDATE_PARTICIPANT_STATUS_MUTATION: TypedDocumentNode<
       divisionId: $divisionId
       matchId: $matchId
       participantId: $participantId
+      queued: $queued
       present: $present
       ready: $ready
     ) {
       participantId
+      queued
       present
       ready
     }

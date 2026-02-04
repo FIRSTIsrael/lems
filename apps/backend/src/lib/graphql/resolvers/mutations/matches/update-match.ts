@@ -19,11 +19,11 @@ interface MatchUpdatedEvent {
 /**
  * Resolver for Mutation.updateMatch
  * Updates match called status.
- * Called by field head queuer to call teams to the match.
+ * Called by field head queuer, head referee, or referee to call teams to the match.
  *
  * Validation checks:
  * 1. User is authenticated
- * 2. User has field-head-queuer role
+ * 2. User has field-head-queuer, head-referee, or referee role
  * 3. User is assigned to the division
  * 4. Match exists and is in the division
  */
@@ -39,9 +39,16 @@ export const updateMatchResolver: GraphQLFieldResolver<
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
 
-    // Check 2: User must have field-head-queuer role
-    if (context.user.role !== 'field-head-queuer') {
-      throw new MutationError(MutationErrorCode.FORBIDDEN, 'User must have field-head-queuer role');
+    // Check 2: User must have field-head-queuer, head-referee, or referee role
+    if (
+      context.user.role !== 'field-head-queuer' &&
+      context.user.role !== 'head-referee' &&
+      context.user.role !== 'referee'
+    ) {
+      throw new MutationError(
+        MutationErrorCode.FORBIDDEN,
+        'User must have field-head-queuer, head-referee, or referee role'
+      );
     }
 
     // Check 3: User must be assigned to the division
