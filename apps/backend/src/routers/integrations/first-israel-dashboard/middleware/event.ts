@@ -25,10 +25,14 @@ export const firstIsraelDashboardEventMiddleware = async (
     const divisions = await db.divisions.byEventId(eventIntegration.event_id).getAll();
     if (divisions.length === 0) throw new Error('No divisions found for event');
 
+    const event = await db.events.byId(eventIntegration.event_id).get();
+    if (!event) throw new Error('Event not found');
+
     for (const division of divisions) {
       if (await db.teams.bySlug(tokenData.teamSlug).isInDivision(division.id)) {
         (req as FirstIsraelDashboardEventRequest).divisionId = division.id;
         (req as FirstIsraelDashboardEventRequest).teamSlug = tokenData.teamSlug;
+        (req as FirstIsraelDashboardEventRequest).eventSlug = event.slug;
         return next();
       }
     }
