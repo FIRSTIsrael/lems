@@ -10,45 +10,47 @@ interface UpdateParticipantStatusArgs {
   divisionId: string;
   matchId: string;
   participantId: string;
+  queued?: boolean | null;
   present?: boolean | null;
   ready?: boolean | null;
 }
 
 interface ParticipantStatusEvent {
   participantId: string;
+  queued: Date | null;
   present: Date | null;
   ready: Date | null;
 }
 
 /**
  * Resolver for Mutation.updateParticipantStatus
- * Updates participant status (present/ready) in a match.
- * Called by referees or head referees to mark teams as present or ready.
- * Can be used to mark teams as present even after match completion.
+ * Updates participant status (queued/present/ready) in a match.
+ * Called by field head queuer to mark teams as queued/arrived.
+ * Called by referees to mark teams as present or ready.
  *
  * Validation checks:
- * 1. User is authenticated and has 'referee' or 'head-referee' role
+ * 1. User is authenticated and has 'referee' or 'field-head-queuer' role
  * 2. User is assigned to the division
  * 3. Match exists and is in the division
  * 4. Participant exists in the match
+ * 5. Match is not-started
  */
 export const updateParticipantStatusResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
   UpdateParticipantStatusArgs,
   Promise<ParticipantStatusEvent>
-> = async (_root, { divisionId, matchId, participantId, present, ready }, context) => {
+> = async (_root, { divisionId, matchId, participantId, queued, present, ready }, context) => {
   try {
     // Check 1: User must be authenticated
     if (!context.user) {
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
     }
-
-    // Check 2: User must have referee or head-referee role
-    if (context.user.role !== 'referee' && context.user.role !== 'head-referee') {
+    // Check 2: User must have referee or field-head-queuer role
+    if (context.user.role !== 'referee' && context.user.role !== 'field-head-queuer') {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,
-        'User must have referee or head-referee role'
+        'User must have referee or field-head-queuer role'
       );
     }
 
@@ -111,6 +113,10 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     const now = new Date();
     const updateData: Partial<Record<string, Date | null>> = {};
 
+    if (queued !== undefined && queued !== null) {
+      updateData[`participants.${participant.table_id}.queued`] = queued ? now : null;
+    }
+
     if (present !== undefined && present !== null) {
       updateData[`participants.${participant.table_id}.present`] = present ? now : null;
     }
@@ -122,7 +128,7 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     if (Object.keys(updateData).length === 0) {
       throw new MutationError(
         MutationErrorCode.INVALID_INPUT,
-        'Either present or ready must be provided'
+        'At least one of queued, present, or ready must be provided'
       );
     }
 
@@ -145,22 +151,24 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
 
     // Publish event to notify subscribers
     const participantState = result.participants?.[participant.table_id] || {
+      queued: null,
       present: null,
       ready: null
     };
 
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.MATCH_PARTICIPANT_UPDATED, {
+    await pubSub.publish(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED, {
       matchId,
       teamId: participant.team_id,
       participantId,
+      queued: participantState.queued,
       present: participantState.present,
-      ready: participantState.ready,
-      queued: null
+      ready: participantState.ready
     });
 
     return {
       participantId,
+      queued: participantState.queued || null,
       present: participantState.present || null,
       ready: participantState.ready || null
     };

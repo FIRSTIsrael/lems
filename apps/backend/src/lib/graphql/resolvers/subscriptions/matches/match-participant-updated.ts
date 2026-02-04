@@ -54,7 +54,7 @@ const matchParticipantUpdatedSubscribe = (
 ) => {
   if (!divisionId) throw new Error('divisionId is required');
   const pubSub = getRedisPubSub();
-  return pubSub.asyncIterator(divisionId, RedisEventTypes.MATCH_PARTICIPANT_UPDATED);
+  return pubSub.asyncIterator(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED);
 };
 
 /**
