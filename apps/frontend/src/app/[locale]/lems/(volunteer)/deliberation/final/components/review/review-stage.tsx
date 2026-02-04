@@ -48,14 +48,16 @@ export const ReviewStage: React.FC = () => {
   }, [router]);
 
   return (
-    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2.5, gap: 2.5 }}>
+    <Box
+      sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2.5, gap: 2.5, overflow: 'auto' }}
+    >
       <Paper sx={{ p: 2.5, borderRadius: 1.5 }}>
         <Typography variant="h2" textAlign="center" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
           {t('title')}
         </Typography>
       </Paper>
 
-      <Box sx={{ flex: 1, minHeight: 0, overflow: 'auto' }}>
+      <Box sx={{ flex: 1 }}>
         <Grid container spacing={2.5}>
           {Object.entries(mappedWinners).map(([awardName, winners]) => (
             <Grid key={awardName} size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: 'flex' }}>
