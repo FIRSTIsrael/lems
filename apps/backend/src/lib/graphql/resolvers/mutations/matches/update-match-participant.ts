@@ -143,10 +143,13 @@ export const updateMatchParticipantResolver: GraphQLFieldResolver<
     };
 
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.MATCH_PARTICIPANT_UPDATED, {
+    await pubSub.publish(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED, {
       matchId,
       teamId,
-      queued: participantState.queued
+      participantId: participant.id,
+      queued: participantState.queued,
+      present: null,
+      ready: null
     });
 
     return {

@@ -3,14 +3,13 @@ import { gql, TypedDocumentNode } from '@apollo/client';
 export interface UpdateMatchParticipantVars {
   divisionId: string;
   matchId: string;
-  teamId: string;
+  participantId: string;
   queued: boolean;
 }
 
 export interface UpdateMatchParticipantData {
-  updateMatchParticipant: {
-    matchId: string;
-    teamId: string;
+  updateParticipantStatus: {
+    participantId: string;
     queued: string | null;
   };
 }
@@ -22,17 +21,16 @@ export const UPDATE_MATCH_PARTICIPANT_MUTATION: TypedDocumentNode<
   mutation UpdateMatchParticipant(
     $divisionId: String!
     $matchId: String!
-    $teamId: String!
+    $participantId: String!
     $queued: Boolean!
   ) {
-    updateMatchParticipant(
+    updateParticipantStatus(
       divisionId: $divisionId
       matchId: $matchId
-      teamId: $teamId
+      participantId: $participantId
       queued: $queued
     ) {
-      matchId
-      teamId
+      participantId
       queued
     }
   }

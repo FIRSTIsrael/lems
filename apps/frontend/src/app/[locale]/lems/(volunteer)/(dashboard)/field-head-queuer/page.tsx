@@ -16,7 +16,7 @@ import {
 import {
   createMatchLoadedSubscription,
   createMatchCallUpdatedSubscription,
-  createMatchParticipantUpdatedSubscription
+  createParticipantStatusUpdatedSubscription
 } from './graphql/subscriptions';
 import { FieldSchedule, ActiveMatchDisplay, FieldHeadQueuerProvider } from './components';
 
@@ -28,7 +28,7 @@ export default function FieldHeadQueuerPage() {
     () => [
       createMatchLoadedSubscription(currentDivision.id),
       createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id)
+      createParticipantStatusUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

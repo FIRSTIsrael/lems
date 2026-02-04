@@ -11,7 +11,7 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
-  createMatchParticipantUpdatedSubscription,
+  createParticipantStatusUpdatedSubscription,
   createMatchStageAdvancedSubscription
 } from './graphql';
 import { MatchCountdown } from './components/match-countdown';
@@ -66,7 +66,7 @@ export default function FieldStatusPage() {
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createMatchAbortedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id),
+      createParticipantStatusUpdatedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id)
     ],
     [currentDivision.id]

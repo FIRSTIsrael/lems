@@ -5,4 +5,4 @@ export { matchEndgameTriggeredResolver } from './match-endgame-triggered';
 export { matchCompletedResolver } from './match-completed';
 export { matchAbortedResolver } from './match-aborted';
 export { matchUpdatedResolver } from './match-updated';
-export { matchParticipantUpdatedResolver } from './match-participant-updated';
+export { participantStatusUpdatedResolver } from './participant-status-updated';

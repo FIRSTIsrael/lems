@@ -29,7 +29,7 @@ import {
 } from './graphql/index';
 import {
   createMatchCallUpdatedSubscription,
-  createMatchParticipantUpdatedSubscription
+  createParticipantStatusUpdatedSubscription
 } from './graphql/subscriptions';
 import {
   TeamQueueCard,
@@ -191,7 +191,7 @@ export default function FieldQueuerPage() {
   const subscriptions = useMemo(
     () => [
       createMatchCallUpdatedSubscription(currentDivision.id),
-      createMatchParticipantUpdatedSubscription(currentDivision.id)
+      createParticipantStatusUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

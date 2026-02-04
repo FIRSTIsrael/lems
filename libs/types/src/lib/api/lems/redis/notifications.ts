@@ -17,7 +17,7 @@ export enum RedisEventTypes {
   AUDIENCE_DISPLAY_SWITCHED = 'audienceDisplaySwitched',
   AUDIENCE_DISPLAY_SETTING_UPDATED = 'audienceDisplaySettingUpdated',
   AWARDS_PRESENTATION_UPDATED = 'awardsPresentationUpdated',
-  MATCH_PARTICIPANT_UPDATED = 'matchParticipantUpdated',
+  PARTICIPANT_STATUS_UPDATED = 'participantStatusUpdated',
   MATCH_UPDATED = 'matchUpdated',
   RUBRIC_UPDATED = 'rubricUpdated',
   RUBRIC_STATUS_CHANGED = 'rubricStatusChanged',

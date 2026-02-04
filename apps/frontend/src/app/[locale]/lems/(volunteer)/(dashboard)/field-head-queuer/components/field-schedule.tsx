@@ -81,9 +81,9 @@ export function FieldSchedule() {
   );
 
   const handleToggleParticipant = useCallback(
-    async (matchId: string, teamId: string, queued: boolean) => {
+    async (matchId: string, participantId: string, queued: boolean) => {
       await updateParticipantMutation({
-        variables: { divisionId, matchId, teamId, queued }
+        variables: { divisionId, matchId, participantId, queued }
       });
     },
     [divisionId, updateParticipantMutation]
@@ -249,7 +249,7 @@ export function FieldSchedule() {
                             disabled={!isSignedIn}
                             size="small"
                             onChange={() =>
-                              handleToggleParticipant(match.id, team.id, !participant.queued)
+                              handleToggleParticipant(match.id, participant.id, !participant.queued)
                             }
                           />
                         </Stack>

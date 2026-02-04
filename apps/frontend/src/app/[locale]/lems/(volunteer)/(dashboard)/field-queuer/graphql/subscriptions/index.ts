@@ -1,2 +1,2 @@
 export { createMatchCallUpdatedSubscription } from './match-call-updated';
-export { createMatchParticipantUpdatedSubscription } from './match-participant-updated';
+export * from './participant-status-updated';

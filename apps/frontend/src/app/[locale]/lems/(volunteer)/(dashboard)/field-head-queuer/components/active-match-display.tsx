@@ -49,9 +49,9 @@ export function ActiveMatchDisplay() {
   });
 
   const handleToggleArrivedToMatch = useCallback(
-    async (matchId: string, teamId: string, queued: boolean) => {
+    async (matchId: string, participantId: string, queued: boolean) => {
       await updateParticipantMutation({
-        variables: { divisionId, matchId, teamId, queued }
+        variables: { divisionId, matchId, participantId, queued }
       });
     },
     [divisionId, updateParticipantMutation]
@@ -187,7 +187,7 @@ export function ActiveMatchDisplay() {
                       const isSignedIn = participant.team?.arrived ?? false;
                       const teamNumber = participant.team?.number ?? '—';
                       const tableName = participant.table?.name ?? '—';
-                      const teamId = participant.team?.id ?? null;
+                      const participantId = participant.id;
 
                       const statusKey = getStatusKey(
                         !!participant.team,
@@ -242,7 +242,7 @@ export function ActiveMatchDisplay() {
                             }
                           />
 
-                          {teamId && (
+                          {participant.team && (
                             <Tooltip
                               title={
                                 !isSignedIn
@@ -261,7 +261,7 @@ export function ActiveMatchDisplay() {
                                     if (!loadedMatch) return;
                                     handleToggleArrivedToMatch(
                                       loadedMatch.id,
-                                      teamId,
+                                      participantId,
                                       !isMarkedPresent
                                     );
                                   }}
