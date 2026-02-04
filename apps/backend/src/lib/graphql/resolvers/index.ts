@@ -35,6 +35,7 @@ import {
   scoresheetResolvers
 } from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
+import { teamProfileDocumentUrlResolver } from './divisions/team-profile-document-url';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { teamJudgingSessionResolver } from './divisions/team-judging-session';
 import { teamScoresheetsResolver } from './divisions/team-scoresheets';
@@ -151,6 +152,7 @@ export const resolvers = {
   },
   Team: {
     arrived: teamArrivalResolver,
+    profileDocumentUrl: teamProfileDocumentUrlResolver,
     rubrics: teamRubricsResolver,
     judgingSession: teamJudgingSessionResolver,
     scoresheets: teamScoresheetsResolver,

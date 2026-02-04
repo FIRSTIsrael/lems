@@ -28,6 +28,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
             logoUrl
             arrived
             location
+            profileDocumentUrl
           }
           rubrics {
             innovation_project {

@@ -228,6 +228,8 @@
         "not-arrived": "לא הגיעו",
         "start-session": "התחל",
         "session-completed": "הושלם",
+        "profile-document-tooltip": "צפה במסמך הקבוצה",
+        "profile-document-button-label": "פרופיל",
         "rubric-labels": {
           "core-values": "ערכי הליבה",
           "innovation-project": "פרויקט החדשות",

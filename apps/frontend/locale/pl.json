@@ -138,6 +138,8 @@
         "not-arrived": "Nie przybyła",
         "start-session": "Start",
         "session-completed": "Zakończono",
+        "profile-document-tooltip": "Wyświetl dokument profilu drużyny",
+        "profile-document-button-label": "Profil",
         "rubric-labels": {
           "core-values": "Wartości Podstawowe",
           "innovation-project": "Projekt Innowacyjny",

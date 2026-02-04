@@ -230,6 +230,8 @@
         "not-arrived": "Not Arrived",
         "start-session": "Start",
         "session-completed": "Completed",
+        "profile-document-tooltip": "View team profile document",
+        "profile-document-button-label": "Profile",
         "rubric-labels": {
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",

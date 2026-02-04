@@ -16,6 +16,7 @@ export interface Team {
   logoUrl?: string | null;
   arrived: boolean;
   location?: string;
+  profileDocumentUrl?: string | null;
 }
 
 export interface CategorizedRubrics extends Record<
