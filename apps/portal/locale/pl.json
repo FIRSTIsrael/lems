@@ -118,7 +118,9 @@
         "event-performance": "Wyniki wydarzenia",
         "view-details": "Zobacz szczegóły",
         "event-in-progress": "Wydarzenie w toku",
-        "view-live-data": "Zobacz dane na żywo"
+        "view-live-data": "Zobacz dane na żywo",
+        "view-event-details": "Zobacz szczegóły wydarzenia",
+        "view-event-results": "Zobacz wyniki wydarzenia"
       }
     },
     "teams": {

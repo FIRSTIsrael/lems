@@ -141,6 +141,7 @@ router.get(
       const eventResult: TeamEventResult = {
         eventName: event.name,
         eventSlug: event.slug,
+        eventDate: event.date,
         published: event.published,
         results: null
       };

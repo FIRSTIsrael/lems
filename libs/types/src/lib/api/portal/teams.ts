@@ -30,6 +30,7 @@ export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryRespon
 export const PortalTeamEventResultSchema = z.object({
   eventName: z.string(),
   eventSlug: z.string(),
+  eventDate: z.string(),
   published: z.boolean(),
   results: z
     .object({
