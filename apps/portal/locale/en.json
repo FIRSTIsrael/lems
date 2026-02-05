@@ -118,7 +118,9 @@
         "event-performance": "Event results",
         "view-details": "View Details",
         "event-in-progress": "Event in Progress",
-        "view-live-data": "View Live Data"
+        "view-live-data": "View Live Data",
+        "view-event-details": "View Event Details",
+        "view-event-results": "View Event Results"
       }
     },
     "teams": {

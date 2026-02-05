@@ -131,7 +131,9 @@
         "event-performance": "תוצאות אירוע",
         "view-details": "פרטים נוספים",
         "event-in-progress": "אירוע בעיצומו",
-        "view-live-data": "צפייה בנתונים חיים"
+        "view-live-data": "צפייה בנתונים חיים",
+        "view-event-details": "צפייה בפרטי האירוע",
+        "view-event-results": "לצפייה בתוצאות האירוע"
       }
     },
     "event": {
