@@ -25,6 +25,7 @@ import { InspectionTimer } from './inspection-timer';
 // Utility functions for team status display
 function getTeamBorderColor(participant: MatchParticipant): string {
   if (!participant.team?.arrived) return 'error.main';
+  if (participant.ready && !participant.present) return 'error.main';
   if (participant.ready) return 'success.main';
   if (participant.present) return 'primary.main';
   return 'warning.main';
@@ -54,6 +55,7 @@ function getTeamStatusChipColor(
   participant: MatchParticipant
 ): 'error' | 'success' | 'primary' | 'warning' {
   if (!participant.team?.arrived) return 'error';
+  if (participant.ready && !participant.present) return 'error';
   if (participant.ready) return 'success';
   if (participant.present) return 'primary';
   return 'warning';
@@ -149,6 +151,20 @@ export function RefereePrestart() {
                     sx={{ fontSize: '0.9rem', py: 2.5, px: 1.5, fontWeight: 600 }}
                   />
                 </Box>
+
+                {participant.ready && !participant.present && (
+                  <Alert
+                    severity="error"
+                    variant="filled"
+                    sx={{
+                      fontSize: '1.1rem',
+                      fontWeight: 700,
+                      py: 2
+                    }}
+                  >
+                    {t('no-show-ready-warning')}
+                  </Alert>
+                )}
 
                 {!participant.team!.arrived && (
                   <Alert severity="error" sx={{ fontSize: '1rem' }}>
