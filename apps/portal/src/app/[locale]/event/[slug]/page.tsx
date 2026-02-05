@@ -36,7 +36,7 @@ const EventPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <EventHeader eventData={eventData} />
+      <EventHeader eventData={eventData} divisionId={selectedDivision.id} />
 
       <DivisionSelector divisions={eventData.divisions} />
 

@@ -193,6 +193,17 @@
           "teams": "קבוצות"
         }
       },
+      "current-activity": {
+        "title": "פעילות נוכחית",
+        "active-match": "מקצה פעיל",
+        "next-match": "המקצה הבא",
+        "judging-sessions": "מפגשי שיפוט",
+        "live": "שידור חי",
+        "round": "סבב",
+        "match": "מקצה",
+        "scheduled-at": "מתוכנן ל",
+        "no-team": "אין קבוצה"
+      },
       "division-teams": "קבוצות {divisionName}",
       "region": "מדינה"
     },
