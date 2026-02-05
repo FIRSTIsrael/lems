@@ -852,6 +852,7 @@
       "break-message": "This is a good time to drink water and refresh",
       "no-show-title": "Team Did Not Arrive",
       "no-show-description": "This team has not arrived at the event and will not participate in this match.",
+      "ready-no-team": "Ready Without Team",
       "loading": "Loading referee data..."
     },
     "judging-status": {

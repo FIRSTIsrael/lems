@@ -25,6 +25,7 @@ import { InspectionTimer } from './inspection-timer';
 // Utility functions for team status display
 function getTeamBorderColor(participant: MatchParticipant): string {
   if (!participant.team?.arrived) return 'error.main';
+  if (participant.ready && !participant.present) return 'warning.main';
   if (participant.ready) return 'success.main';
   if (participant.present) return 'primary.main';
   return 'warning.main';
@@ -38,6 +39,7 @@ function getTeamBackgroundColor(participant: MatchParticipant): string {
 
 function getTeamStatusIcon(participant: MatchParticipant) {
   if (!participant.team?.arrived) return <Cancel />;
+  if (participant.ready && !participant.present) return <Warning />;
   if (participant.ready) return <CheckCircle />;
   if (participant.present) return <CheckCircle />;
   return <Warning />;
@@ -45,6 +47,7 @@ function getTeamStatusIcon(participant: MatchParticipant) {
 
 function getTeamStatusLabel(participant: MatchParticipant): string {
   if (!participant.team?.arrived) return 'no-show-title';
+  if (participant.ready && !participant.present) return 'ready-no-team';
   if (participant.ready) return 'ready-confirmed';
   if (participant.present) return 'present';
   return 'absent';
@@ -54,6 +57,7 @@ function getTeamStatusChipColor(
   participant: MatchParticipant
 ): 'error' | 'success' | 'primary' | 'warning' {
   if (!participant.team?.arrived) return 'error';
+  if (participant.ready && !participant.present) return 'warning';
   if (participant.ready) return 'success';
   if (participant.present) return 'primary';
   return 'warning';
@@ -157,50 +161,48 @@ export function RefereePrestart() {
                 )}
 
                 {participant.team!.arrived && (
-                  <>
-                    <ToggleButtonGroup
-                      value={participant.present ? 'present' : 'absent'}
-                      exclusive
-                      disabled={participant.ready}
-                      onChange={(_, value) => {
-                        if (value !== null) {
-                          handleParticipantStatusChange(
-                            participant.id,
-                            'present',
-                            value === 'present'
-                          );
-                        }
-                      }}
-                      fullWidth
-                      sx={{
-                        '& .MuiToggleButton-root': {
-                          py: 1.5,
-                          fontSize: '1rem',
-                          fontWeight: 500
-                        }
-                      }}
-                    >
-                      <ToggleButton value="present">{t('present')}</ToggleButton>
-                      <ToggleButton value="absent">{t('absent')}</ToggleButton>
-                    </ToggleButtonGroup>
-
-                    <Button
-                      variant={participant.ready ? 'contained' : 'outlined'}
-                      fullWidth
-                      size="large"
-                      onClick={() => {
-                        handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
-                      }}
-                      sx={{
+                  <ToggleButtonGroup
+                    value={participant.present ? 'present' : 'absent'}
+                    exclusive
+                    disabled={participant.ready}
+                    onChange={(_, value) => {
+                      if (value !== null) {
+                        handleParticipantStatusChange(
+                          participant.id,
+                          'present',
+                          value === 'present'
+                        );
+                      }
+                    }}
+                    fullWidth
+                    sx={{
+                      '& .MuiToggleButton-root': {
                         py: 1.5,
                         fontSize: '1rem',
-                        fontWeight: 600
-                      }}
-                    >
-                      {participant.ready ? t('ready-confirmed') : t('mark-ready')}
-                    </Button>
-                  </>
+                        fontWeight: 500
+                      }
+                    }}
+                  >
+                    <ToggleButton value="present">{t('present')}</ToggleButton>
+                    <ToggleButton value="absent">{t('absent')}</ToggleButton>
+                  </ToggleButtonGroup>
                 )}
+
+                <Button
+                  variant={participant.ready ? 'contained' : 'outlined'}
+                  fullWidth
+                  size="large"
+                  onClick={() => {
+                    handleParticipantStatusChange(participant.id, 'ready', !participant.ready);
+                  }}
+                  sx={{
+                    py: 1.5,
+                    fontSize: '1rem',
+                    fontWeight: 600
+                  }}
+                >
+                  {participant.ready ? t('ready-confirmed') : t('mark-ready')}
+                </Button>
               </Stack>
             </Paper>
           </Stack>
