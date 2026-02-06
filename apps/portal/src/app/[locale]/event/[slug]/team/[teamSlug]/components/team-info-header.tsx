@@ -39,7 +39,14 @@ export const TeamInfoHeader: React.FC = () => {
         </Typography>
       </Stack>
 
-      <Stack direction="row" alignItems="center" spacing={3}>
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={3}
+        component={Link}
+        href={`/teams/${team.slug}`}
+        sx={{ textDecoration: 'none', color: 'inherit' }}
+      >
         <Avatar
           variant="square"
           src={team.logoUrl ?? '/assets/default-avatar.svg'}
