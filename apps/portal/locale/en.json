@@ -195,6 +195,17 @@
           "teams": "Teams"
         }
       },
+      "current-activity": {
+        "title": "Current Activity",
+        "active-match": "Active Match",
+        "next-match": "Next Match",
+        "judging-sessions": "Judging Sessions",
+        "live": "LIVE",
+        "round": "Round",
+        "match": "Match",
+        "scheduled-at": "Scheduled at",
+        "no-team": "No Team"
+      },
       "division-teams": "{divisionName} teams",
       "region": "Region"
     },
