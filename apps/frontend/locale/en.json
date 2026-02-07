@@ -1497,10 +1497,8 @@
         "anomalies": {
           "alert-title": "Ranking Anomalies Detected",
           "alert-description": "Some teams have significant differences between their picklist position and calculated rank.",
-          "higher-single": "Team {teamNumber} was ranked {difference} place higher in the {category} category",
-          "higher-plural": "Team {teamNumber} was ranked {difference} places higher in the {category} category",
-          "lower-single": "Team {teamNumber} was ranked {difference} place lower in the {category} category",
-          "lower-plural": "Team {teamNumber} was ranked {difference} places lower in the {category} category",
+          "higher": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} higher in the {category} category",
+          "lower": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} lower in the {category} category",
           "core-values": "Core Values",
           "innovation-project": "Innovation Project",
           "robot-design": "Robot Design"

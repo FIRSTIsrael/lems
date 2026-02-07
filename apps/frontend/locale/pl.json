@@ -1496,10 +1496,8 @@
         "anomalies": {
           "alert-title": "Wykryto anomalie w rankingu",
           "alert-description": "Niektóre zespoły mają znaczące różnice między pozycją na liście a obliczonym rankingiem.",
-          "higher-single": "Zespół {teamNumber} został umieszczony o {difference} miejsce wyżej w kategorii {category}",
-          "higher-plural": "Zespół {teamNumber} został umieszczony o {difference} miejsca wyżej w kategorii {category}",
-          "lower-single": "Zespół {teamNumber} został umieszczony o {difference} miejsce niżej w kategorii {category}",
-          "lower-plural": "Zespół {teamNumber} został umieszczony o {difference} miejsca niżej w kategorii {category}",
+          "higher": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} wyżej w kategorii {category}",
+          "lower": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} niżej w kategorii {category}",
           "core-values": "Wartości Podstawowe",
           "innovation-project": "Projekt Innowacyjny",
           "robot-design": "Projekt Robota"

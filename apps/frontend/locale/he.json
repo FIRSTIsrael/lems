@@ -1494,10 +1494,8 @@
         "anomalies": {
           "alert-title": "אנומליות בדירוג זוהו",
           "alert-description": "לכמה קבוצות יש הבדלים משמעותיים בין מיקום הרשימה שלהן לדירוג המחושב.",
-          "higher-single": "קבוצה {teamNumber} דורגה מקום {difference} גבוה יותר בקטגוריית {category}",
-          "higher-plural": "קבוצה {teamNumber} דורגה {difference} מקומות גבוהים יותר בקטגוריית {category}",
-          "lower-single": "קבוצה {teamNumber} דורגה מקום {difference} נמוך יותר בקטגוריית {category}",
-          "lower-plural": "קבוצה {teamNumber} דורגה {difference} מקומות נמוכים יותר בקטגוריית {category}",
+          "higher": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר בתחום {category}",
+          "lower": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר בתחום {category}",
           "core-values": "ערכים ליבה",
           "innovation-project": "פרויקט חדשנות",
           "robot-design": "עיצוב רובוט"

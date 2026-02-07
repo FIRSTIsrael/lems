@@ -45,24 +45,13 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({ anomalies }) => {
   const getAnomalyMessage = (anomaly: Anomaly): string => {
     const categoryKey = anomaly.category as 'core-values' | 'innovation-project' | 'robot-design';
     const categoryLabel = t(categoryKey);
-    const isHigher = anomaly.isHigher;
-    const isSingular = anomaly.difference === 1;
+    const messageKey = anomaly.isHigher ? 'higher' : 'lower';
 
-    if (isHigher) {
-      const messageKey = isSingular ? 'higher-single' : 'higher-plural';
-      return t(messageKey, {
-        teamNumber: anomaly.teamNumber,
-        difference: anomaly.difference,
-        category: categoryLabel
-      });
-    } else {
-      const messageKey = isSingular ? 'lower-single' : 'lower-plural';
-      return t(messageKey, {
-        teamNumber: anomaly.teamNumber,
-        difference: anomaly.difference,
-        category: categoryLabel
-      });
-    }
+    return t(messageKey, {
+      teamNumber: anomaly.teamNumber,
+      difference: anomaly.difference,
+      category: categoryLabel
+    });
   };
 
   return (
