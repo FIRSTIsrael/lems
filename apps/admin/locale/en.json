@@ -896,6 +896,34 @@
               "sfid-label": "Salesforce Event ID",
               "sfid-placeholder": "Enter your Salesforce Event ID",
               "sfid-help": "The unique identifier of your event in Salesforce"
+            },
+            "sendgrid": {
+              "template-id-label": "SendGrid Template ID",
+              "template-id-placeholder": "d-xxxxxxxxxxxxxxxxxxxxxxxx",
+              "template-id-help": "Dynamic template ID from SendGrid",
+              "from-address-label": "From Email Address",
+              "from-address-placeholder": "noreply@example.com",
+              "from-address-help": "Verified sender email address",
+              "test-email-address-label": "Test Email Address",
+              "test-email-address-placeholder": "admin@example.com",
+              "test-email-address-help": "Where test emails will be sent",
+              "send-test-email-button": "Send Test Email",
+              "email-contacts-title": "Email Contacts",
+              "csv-description": "Upload a CSV file with columns: Team Number, Region, Recipient Name, Email Address",
+              "csv-requirements-title": "CSV File Requirements",
+              "csv-requirement-header": "File must include a header row",
+              "csv-requirement-columns": "Columns: Team Number, Region, Recipient Name, Recipient Email",
+              "csv-requirement-encoding": "Saved as UTF-8 encoded CSV",
+              "csv-example": "Example Format",
+              "upload-csv-button": "Upload CSV",
+              "validation-template-id-required": "Template ID is required",
+              "validation-from-address-required": "Valid email required",
+              "validation-test-email-required": "Valid email required",
+              "csv-error-invalid-format": "Please upload a CSV file",
+              "csv-error-upload-failed": "Failed to upload contacts",
+              "csv-error-send-test-failed": "Failed to send test email",
+              "csv-success-contacts-uploaded": "Successfully uploaded {count} email contacts",
+              "csv-success-test-email-sent": "Test email sent successfully to {email}"
             }
           }
         },
@@ -903,6 +931,10 @@
           "first-israel-dashboard": {
             "name": "FIRST Israel Dashboard",
             "description": "Upload team information and export results from your FIRST Israel Dashboard account"
+          },
+          "sendgrid": {
+            "name": "SendGrid",
+            "description": "Send event-related emails to teams using SendGrid email templates"
           }
         }
       },

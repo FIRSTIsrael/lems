@@ -42,6 +42,9 @@ services:
       - DIGITALOCEAN_KEY=${DIGITALOCEAN_KEY}
       - DIGITALOCEAN_SECRET=${DIGITALOCEAN_SECRET}
 
+      # Integrations
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+
   admin:
     image: ${REGISTRY}/lems:admin-${IMAGE_TAG}
     ports:

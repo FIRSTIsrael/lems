@@ -896,6 +896,34 @@
               "sfid-label": "מזהה אירוע של Salesforce",
               "sfid-placeholder": "הזן את מזהה ה-Salesforce Event ID שלך",
               "sfid-help": "המזהה הייחודי של האירוע שלך ב-Salesforce"
+            },
+            "sendgrid": {
+              "template-id-label": "SendGrid Template ID",
+              "template-id-placeholder": "d-xxxxxxxxxxxxxxxxxxxxxxxx",
+              "template-id-help": "מזהה תבנית דינמית מ-SendGrid",
+              "from-address-label": "כתובת דוא״ל מ",
+              "from-address-placeholder": "noreply@example.com",
+              "from-address-help": "כתובת דוא״ל של משלח מאומת",
+              "test-email-address-label": "כתובת דוא״ל לבדיקה",
+              "test-email-address-placeholder": "admin@example.com",
+              "test-email-address-help": "לאן ישלחו דוא״ל בדיקה",
+              "send-test-email-button": "שלח דוא״ל בדיקה",
+              "email-contacts-title": "אנשי קשר בדוא״ל",
+              "csv-description": "העלה קובץ CSV עם עמודות: Team Number, Region, Recipient Name, Email Address",
+              "csv-requirements-title": "דרישות קובץ CSV",
+              "csv-requirement-header": "הקובץ חייב לכלול שורת כותרת",
+              "csv-requirement-columns": "עמודות: Team Number, Region, Recipient Name, Recipient Email",
+              "csv-requirement-encoding": "שמור כקובץ CSV בקידוד UTF-8",
+              "csv-example": "פורמט דוגמה",
+              "upload-csv-button": "העלה CSV",
+              "validation-template-id-required": "מזהה תבנית נדרש",
+              "validation-from-address-required": "דוא״ל תקין נדרש",
+              "validation-test-email-required": "דוא״ל תקין נדרש",
+              "csv-error-invalid-format": "אנא העלה קובץ CSV",
+              "csv-error-upload-failed": "העלאת אנשי קשר נכשלה",
+              "csv-error-send-test-failed": "שליחת דוא״ל בדיקה נכשלה",
+              "csv-success-contacts-uploaded": "העלאת {count} אנשי קשר בדוא״ל בהצלחה",
+              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}"
             }
           }
         },
@@ -903,6 +931,10 @@
           "first-israel-dashboard": {
             "name": "לוח בקרה FIRST Israel",
             "description": "העלה מידע קבוצות וייצא תוצאות מחשבון לוח הבקרה של FIRST Israel שלך"
+          },
+          "sendgrid": {
+            "name": "SendGrid",
+            "description": "שלח דוא״ל הקשור לאירועים לקבוצות באמצעות תבניות דוא״ל של SendGrid"
           }
         }
       },

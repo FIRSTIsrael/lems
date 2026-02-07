@@ -2,6 +2,7 @@
 
 import { IntegrationType } from '@lems/shared/integrations';
 import { FirstIsraelDashboardSettings } from './first-israel-dashboard-settings';
+import { SendGridSettings } from './sendgrid-settings';
 
 /**
  * Props passed to integration settings components
@@ -26,7 +27,8 @@ export type IntegrationSettingsComponent = React.FC<IntegrationSettingsComponent
  * Registry mapping integration types to their settings components
  */
 const SETTINGS_COMPONENTS_REGISTRY: Record<IntegrationType, IntegrationSettingsComponent> = {
-  'first-israel-dashboard': FirstIsraelDashboardSettings
+  'first-israel-dashboard': FirstIsraelDashboardSettings,
+  'sendgrid': SendGridSettings
 };
 
 /**
