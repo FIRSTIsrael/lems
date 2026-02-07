@@ -223,7 +223,7 @@
         "pit-map": "Mapa pitów"
       }
     },
-     "judging-head-queuer": {
+    "judging-head-queuer": {
       "page-title": "Główny queuer sędziowania",
       "no-data": "Brak załadowanych danych. Sprawdź za minutę.",
       "current-sessions": {
@@ -1492,6 +1492,17 @@
             "success-message": "Nagrody zostały zablokowane",
             "error-message": "Nie udało się zablokować nagród"
           }
+        },
+        "anomalies": {
+          "alert-title": "Wykryto anomalie w rankingu",
+          "alert-description": "Niektóre zespoły mają znaczące różnice między pozycją na liście a obliczonym rankingiem.",
+          "higher-single": "Zespół {teamNumber} został umieszczony o {difference} miejsce wyżej w kategorii {category}",
+          "higher-plural": "Zespół {teamNumber} został umieszczony o {difference} miejsca wyżej w kategorii {category}",
+          "lower-single": "Zespół {teamNumber} został umieszczony o {difference} miejsce niżej w kategorii {category}",
+          "lower-plural": "Zespół {teamNumber} został umieszczony o {difference} miejsca niżej w kategorii {category}",
+          "core-values": "Wartości Podstawowe",
+          "innovation-project": "Projekt Innowacyjny",
+          "robot-design": "Projekt Robota"
         }
       }
     }

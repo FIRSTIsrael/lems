@@ -30,7 +30,8 @@ import {
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
-  extractOptionalAwards
+  extractOptionalAwards,
+  computeAnomalies
 } from './final-deliberation-computation';
 
 const FinalDeliberationContext = createContext<FinalDeliberationContextValue | null>(null);
@@ -237,6 +238,9 @@ export const FinalDeliberationProvider = ({
       .filter(t => (eligibleTeams[deliberation.stage as StagesWithNomination] ?? []).includes(t.id))
       .map(t => t.id);
 
+    // Compute anomalies based on picklist positions vs calculated ranks
+    const anomalies = computeAnomalies(enrichedTeams, categoryPicklists);
+
     return {
       division,
       deliberation,
@@ -247,6 +251,7 @@ export const FinalDeliberationProvider = ({
       awards,
       awardCounts,
       roomMetrics,
+      anomalies,
       startDeliberation: handleStartFinalDeliberation,
       updateAward: handleUpdateFinalDeliberationAwards,
       advanceStage: handleAdvanceStage,

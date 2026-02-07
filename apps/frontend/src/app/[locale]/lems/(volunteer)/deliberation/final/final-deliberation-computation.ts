@@ -4,6 +4,20 @@ import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { EnrichedTeam, OptionalAwardNominations, RanksPerCategory } from './types';
 
 /**
+ * Represents an anomaly where a team's picklist position differs significantly
+ * from their calculated rank based on rubric scores.
+ */
+export interface Anomaly {
+  teamId: string;
+  teamNumber: string;
+  category: JudgingCategory;
+  calculatedRank: number;
+  picklistPosition: number;
+  difference: number;
+  isHigher: boolean; // true if team ranked higher (more favorable) in picklist than calculated
+}
+
+/**
  * Extracts optional award nominations from a rubric
  */
 export function extractOptionalAwards(rubrics: CategorizedRubrics): OptionalAwardNominations {
@@ -152,3 +166,53 @@ export const computeOptionalAwardsEligibility = (
 
   return Object.keys(team.awardNominations).length > 0 || manualNominations.includes(team.id);
 };
+
+/**
+ * Computes anomalies for the final deliberation.
+ *
+ * An anomaly occurs when a team's picklist position differs by 3 or more places
+ * from their calculated rank based on rubric scores (excluding ties).
+ *
+ * @param enrichedTeams - Teams with computed scores and ranks
+ * @param categoryPicklists - Picklist rankings for each category
+ * @returns Array of detected anomalies
+ */
+export function computeAnomalies(
+  enrichedTeams: EnrichedTeam[],
+  categoryPicklists: Record<JudgingCategory, string[]>
+): Anomaly[] {
+  const anomalies: Anomaly[] = [];
+
+  const categories: JudgingCategory[] = ['core-values', 'innovation-project', 'robot-design'];
+
+  categories.forEach(category => {
+    const picklist = categoryPicklists[category];
+
+    enrichedTeams.forEach(team => {
+      const picklistPosition = picklist.indexOf(team.id) + 1;
+
+      // Only check teams that are in the picklist
+      if (picklistPosition > 0) {
+        const calculatedRank = team.ranks[category];
+        const difference = Math.abs(picklistPosition - calculatedRank);
+
+        // Anomaly threshold is 3 or more places difference
+        if (difference >= 3) {
+          const isHigher = picklistPosition < calculatedRank;
+
+          anomalies.push({
+            teamId: team.id,
+            teamNumber: team.number,
+            category,
+            calculatedRank,
+            picklistPosition,
+            difference,
+            isHigher
+          });
+        }
+      }
+    });
+  });
+
+  return anomalies;
+}
