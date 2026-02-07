@@ -30,6 +30,7 @@ import {
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
+  computeRawRank,
   extractOptionalAwards,
   computeAnomalies
 } from './final-deliberation-computation';
@@ -162,8 +163,10 @@ export const FinalDeliberationProvider = ({
         team.judgingSession?.room.id
       );
       const awardNominations = extractOptionalAwards(team.rubrics);
-      // Compute ranks
+      // Compute ranks (with picklist consideration)
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
+      // Compute raw ranks (score-based only, for anomaly detection)
+      const rawRanks = computeRawRank(teamsWithScores[index], teamsWithScores);
 
       const eligibilites: Partial<EligiblityPerStage> = {
         'core-awards': computeCoreAwardsEligibility(
@@ -199,6 +202,7 @@ export const FinalDeliberationProvider = ({
         scores,
         normalizedScores,
         ranks,
+        rawRanks,
         eligibility: eligibilites,
         robotGameScores,
         rubricsFields: {

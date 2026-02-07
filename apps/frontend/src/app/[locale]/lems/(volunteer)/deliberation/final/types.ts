@@ -28,6 +28,7 @@ export type EnrichedTeam = {
   scores: MetricPerCategory;
   normalizedScores: Omit<MetricPerCategory, 'core-values-no-gp'>;
   ranks: RanksPerCategory;
+  rawRanks: RanksPerCategory;
 
   eligibility: EligiblityPerStage;
 
