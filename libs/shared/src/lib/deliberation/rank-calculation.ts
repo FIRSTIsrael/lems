@@ -134,7 +134,8 @@ export function calculateTeamRanks(
 export function selectAdvancingTeams(
   teamsWithRanks: TeamWithRanks[],
   championsIds: string[],
-  advancementPercent: number
+  advancementPercent: number,
+  numberOfTeams: number
 ): string[] {
   if (advancementPercent <= 0) {
     return [];
@@ -155,7 +156,7 @@ export function selectAdvancingTeams(
 
   // Calculate how many teams advance
   const advancingCount =
-    Math.round((teamsWithRanks.length * advancementPercent) / 100) - championsIds.length;
+    Math.round((numberOfTeams * advancementPercent) / 100) - championsIds.length;
 
   // Return top N team IDs
   return sorted.slice(0, advancingCount).map(t => t.teamId);

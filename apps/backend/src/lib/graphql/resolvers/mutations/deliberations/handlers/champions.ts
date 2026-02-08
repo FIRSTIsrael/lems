@@ -94,7 +94,8 @@ export async function handleChampionsStageCompletion(
   const advancingTeamIds = selectAdvancingTeams(
     teamsWithRanks,
     Object.values(champions),
-    advancementConfig.advancement_percent
+    advancementConfig.advancement_percent,
+    teams.length
   );
 
   if (advancingTeamIds.length === 0) {
@@ -175,8 +176,8 @@ async function createAdvancementAwards(
   divisionId: string,
   advancingTeamIds: string[]
 ): Promise<void> {
-  const adavncementAwards = await db.awards.byDivisionId(divisionId).get('advancement');
-  if (adavncementAwards.length > 0) {
+  const _advancementAwards = await db.awards.byDivisionId(divisionId).get('advancement');
+  if (_advancementAwards.length > 0) {
     // Advancement awards already exist
     return;
   }
