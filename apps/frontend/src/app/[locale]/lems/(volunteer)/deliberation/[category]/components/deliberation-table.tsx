@@ -38,7 +38,7 @@ export function DeliberationTable() {
       {
         field: 'addToPicklist',
         headerName: '',
-        width: 40,
+        width: 50,
         sortable: false,
         filterable: false,
         renderCell: params => {
@@ -57,14 +57,28 @@ export function DeliberationTable() {
             </Box>
           ) : (
             <Tooltip title={t('add-to-picklist')}>
-              <IconButton
-                size="small"
-                disabled={deliberation?.status !== 'in-progress'}
-                onClick={() => addToPicklist(team.id)}
-                color="success"
-              >
-                <Add fontSize="small" />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  disabled={deliberation?.status !== 'in-progress'}
+                  onClick={() => addToPicklist(team.id)}
+                  sx={{
+                    bgcolor: theme.palette.success.light,
+                    color: 'white',
+                    width: 28,
+                    height: 28,
+                    '&:hover': {
+                      bgcolor: theme.palette.success.main
+                    },
+                    '&:disabled': {
+                      bgcolor: theme.palette.action.disabledBackground,
+                      color: theme.palette.action.disabled
+                    }
+                  }}
+                >
+                  <Add fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
           );
         }
@@ -187,6 +201,7 @@ export function DeliberationTable() {
     ],
     [
       t,
+      theme,
       fieldDisplayLabels,
       hypenatedCategory,
       teams,

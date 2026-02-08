@@ -226,6 +226,12 @@ export function CoreAwardsDataGrid() {
           ];
 
           const categoryColors: Record<JudgingCategory, string> = {
+            'robot-design': green[300],
+            'innovation-project': blue[300],
+            'core-values': red[300]
+          };
+
+          const categoryDarkColors: Record<JudgingCategory, string> = {
             'robot-design': green[400],
             'innovation-project': blue[400],
             'core-values': red[400]
@@ -257,16 +263,19 @@ export function CoreAwardsDataGrid() {
                           !canAdd || isAlreadyAdded || deliberation.status !== 'in-progress'
                         }
                         sx={{
-                          p: 0.5,
-                          color: isAlreadyAdded
-                            ? categoryColors[category]
-                            : categoryColors[category],
-                          opacity: isAlreadyAdded ? 1 : 0.6,
+                          bgcolor: categoryColors[category],
+                          color: 'white',
+                          width: 28,
+                          height: 28,
+                          opacity: isAlreadyAdded ? 0.5 : 1,
                           '&:hover:not(:disabled)': {
-                            opacity: 1
+                            bgcolor: categoryDarkColors[category],
+                            opacity: isAlreadyAdded ? 0.5 : 1
                           },
                           '&:disabled': {
-                            opacity: 0.3
+                            bgcolor: theme.palette.action.disabledBackground,
+                            color: theme.palette.action.disabled,
+                            opacity: 1
                           }
                         }}
                       >
@@ -283,6 +292,7 @@ export function CoreAwardsDataGrid() {
     ],
     [
       t,
+      theme,
       getCategory,
       deliberation.coreAwardsManualEligibility,
       deliberation.status,
