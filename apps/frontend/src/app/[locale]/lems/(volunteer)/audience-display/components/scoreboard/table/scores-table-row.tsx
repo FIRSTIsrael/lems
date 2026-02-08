@@ -19,7 +19,7 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
         transition: 'background-color 0.2s'
       }}
     >
-      <TableCell align="center" sx={{ fontWeight: 600, py: 1.25, fontSize: '0.95rem' }}>
+      <TableCell align="center" sx={{ fontWeight: 600, py: 1.25, fontSize: '1.5rem' }}>
         {team.rank}
       </TableCell>
       <TableCell sx={{ py: 1.25 }}>
@@ -27,18 +27,18 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
           <Avatar
             src={team.logoUrl ?? '/assets/default-avatar.svg'}
             sx={{
-              width: 36,
-              height: 36,
+              width: 48,
+              height: 48,
               color: 'white',
               objectFit: 'cover',
               flexShrink: 0
             }}
           />
           <Box sx={{ minWidth: 0, flex: 1 }}>
-            <Typography sx={{ fontWeight: 700, fontSize: '1.15rem' }}>
+            <Typography sx={{ fontWeight: 700, fontSize: '1.5rem' }}>
               #{team.number} | {team.name}
             </Typography>
-            <Typography sx={{ fontSize: '0.9rem', color: 'text.secondary' }}>
+            <Typography sx={{ fontSize: '1.1rem', color: 'text.secondary' }}>
               {team.affiliation}, {team.city}
             </Typography>
           </Box>
@@ -48,14 +48,14 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
         <TableCell
           key={`score-${team.teamId}-${scoreIndex}`}
           align="center"
-          sx={{ py: 1.25, fontSize: '1rem', fontWeight: 500 }}
+          sx={{ py: 1.25, fontSize: '1.25rem', fontWeight: 500 }}
         >
           <ScoreCell score={score} />
         </TableCell>
       ))}
       <TableCell
         align="center"
-        sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.1rem' }}
+        sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.35rem' }}
       >
         {team.maxScore}
       </TableCell>
