@@ -96,11 +96,11 @@ export function calculateTeamRanks(
   });
 
   // Calculate robot game rank
-  ranks['robot-game'] =
-    allTeams
-      .sort((a, b) => compareScoreArrays(a.robotGameScores, b.robotGameScores))
-      .map(t => t.teamId)
-      .indexOf(teamData.teamId) + 1;
+  const sortedTeams = [...allTeams].sort((a, b) =>
+    compareScoreArrays(a.robotGameScores, b.robotGameScores)
+  );
+  const teamIndex = sortedTeams.findIndex(t => t.teamId === teamData.teamId);
+  ranks['robot-game'] = teamIndex >= 0 ? teamIndex + 1 : allTeams.length;
 
   // Calculate average rank
   const averageRank =
@@ -134,7 +134,8 @@ export function calculateTeamRanks(
 export function selectAdvancingTeams(
   teamsWithRanks: TeamWithRanks[],
   championsIds: string[],
-  advancementPercent: number
+  advancementPercent: number,
+  numberOfTeams: number
 ): string[] {
   if (advancementPercent <= 0) {
     return [];
@@ -155,7 +156,7 @@ export function selectAdvancingTeams(
 
   // Calculate how many teams advance
   const advancingCount =
-    Math.round((teamsWithRanks.length * advancementPercent) / 100) - championsIds.length;
+    Math.round((numberOfTeams * advancementPercent) / 100) - championsIds.length;
 
   // Return top N team IDs
   return sorted.slice(0, advancingCount).map(t => t.teamId);

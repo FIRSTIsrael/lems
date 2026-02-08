@@ -81,11 +81,14 @@ export const updateFinalDeliberationAwardsResolver: GraphQLFieldResolver<
     }
   });
 
-  // Merge with existing awards
+  // Merge with existing awards - preserve both optional and mandatory awards and apply updates
   const updatedAwards = {
     ...deliberation.awards,
-    optionalAwards,
-    ...mandatoryAwards,
+    optionalAwards: {
+      ...deliberation.awards.optionalAwards, // Preserve existing optional awards
+      ...optionalAwards // Apply incoming updates
+    },
+    ...mandatoryAwards, // Mandatory awards already handle all fields in this update
     ...(Object.keys(championsAward).length > 0 && { champions: championsAward })
   };
 

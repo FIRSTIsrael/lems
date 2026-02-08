@@ -44,7 +44,7 @@ export const ReviewStage: React.FC = () => {
   }, []);
 
   const handleSuccess = useCallback(() => {
-    router.push('/');
+    router.push('/lems');
   }, [router]);
 
   return (
