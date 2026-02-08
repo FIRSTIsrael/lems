@@ -96,11 +96,11 @@ export function calculateTeamRanks(
   });
 
   // Calculate robot game rank
-  ranks['robot-game'] =
-    allTeams
-      .sort((a, b) => compareScoreArrays(a.robotGameScores, b.robotGameScores))
-      .map(t => t.teamId)
-      .indexOf(teamData.teamId) + 1;
+  const sortedTeams = [...allTeams].sort((a, b) =>
+    compareScoreArrays(a.robotGameScores, b.robotGameScores)
+  );
+  const teamIndex = sortedTeams.findIndex(t => t.teamId === teamData.teamId);
+  ranks['robot-game'] = teamIndex >= 0 ? teamIndex + 1 : allTeams.length;
 
   // Calculate average rank
   const averageRank =
