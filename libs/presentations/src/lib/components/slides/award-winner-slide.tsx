@@ -11,7 +11,7 @@ import { LogoStack } from '../logo-stack';
 export interface TeamWinner {
   id: string;
   name: string;
-  number: number;
+  number: string | number;
   city: string;
   affiliation: string;
 }

@@ -91,6 +91,8 @@ export const Stepper: React.FC<StepperProps> = ({
   render: renderFn,
   children: renderChildrenFn,
   alwaysVisible = false,
+  id,
+  priority,
   ...props
 }): JSX.Element => {
   if (renderFn !== undefined && renderChildrenFn !== undefined) {
@@ -99,9 +101,22 @@ export const Stepper: React.FC<StepperProps> = ({
     );
   }
 
+  const renderFnToUse = renderFn || renderChildrenFn!;
+
   return (
-    <SteppedComponent {...props} numSteps={values.length} alwaysAppearActive={alwaysVisible}>
-      {(step, isActive) => (renderFn || renderChildrenFn!)(values[step], step, isActive)}
-    </SteppedComponent>
+    <>
+      {values.map((value, index) => (
+        <SteppedComponent
+          key={index}
+          {...props}
+          id={id ? `${id}-${index}` : index}
+          priority={priority !== undefined ? priority + index : index}
+          numSteps={1}
+          alwaysAppearActive={alwaysVisible}
+        >
+          {(step, isActive) => renderFnToUse(value, index, isActive)}
+        </SteppedComponent>
+      ))}
+    </>
   );
 };
