@@ -43,50 +43,43 @@ function parseJudgingStatus(
   }
 
   let currentRoundNumber = sortedSessionNumbers[0];
+  const ADVANCEMENT_TIME_SECONDS = 15 * 60;
 
-  // Advance to the next round if sessionLength minutes have passed since first in-progress session
   for (let i = 0; i < sortedSessionNumbers.length; i++) {
     const sessionNumber = sortedSessionNumbers[i];
     const roundSessions = sessionsByNumber.get(sessionNumber)!;
-
     const arrivedSessions = roundSessions.filter(s => s.team?.arrived);
 
-    if (arrivedSessions.length > 0) {
-      // Find the earliest start time among in-progress
-      const startedSessions = arrivedSessions.filter(s => s.status === 'in-progress');
+    if (arrivedSessions.length === 0) continue;
 
-      if (startedSessions.length > 0) {
-        // Find the earliest start time in this round
-        const earliestStartTime = startedSessions.reduce(
-          (earliest, session) => {
-            if (!session.startTime) return earliest;
-            const startTime = dayjs(session.startTime);
-            return !earliest || startTime.isBefore(earliest) ? startTime : earliest;
-          },
-          null as dayjs.Dayjs | null
-        );
+    const startedSessions = arrivedSessions.filter(s => s.status === 'in-progress');
 
-        if (earliestStartTime) {
-          const secondsSinceStart = now.diff(earliestStartTime, 'second');
-          const ADVANCEMENT_TIME_SECONDS = 15 * 60; // 15 minutes
+    if (startedSessions.length > 0) {
+      const earliestStartTime = startedSessions.reduce(
+        (earliest, session) => {
+          if (!session.startTime) return earliest;
+          const startTime = dayjs(session.startTime);
+          return !earliest || startTime.isBefore(earliest) ? startTime : earliest;
+        },
+        null as dayjs.Dayjs | null
+      );
 
-          // If 15 minutes have passed since first session started, move to next round
-          if (secondsSinceStart >= ADVANCEMENT_TIME_SECONDS) {
-            currentRoundNumber = sessionNumber;
-            continue;
-          } else {
-            // Still within the 15-minute window, this is the current round
-            currentRoundNumber = sessionNumber;
-            break;
-          }
+      if (earliestStartTime) {
+        const secondsSinceStart = now.diff(earliestStartTime, 'second');
+
+        if (secondsSinceStart >= ADVANCEMENT_TIME_SECONDS) {
+          currentRoundNumber = sessionNumber;
+          continue;
         }
-      }
 
-      // If no sessions have started yet, check if all are completed
-      const allCompleted = arrivedSessions.every(s => s.status === 'completed');
-      if (allCompleted) {
         currentRoundNumber = sessionNumber;
+        break;
       }
+    }
+
+    const allCompleted = arrivedSessions.every(s => s.status === 'completed');
+    if (allCompleted) {
+      currentRoundNumber = sessionNumber;
     }
   }
 
