@@ -234,6 +234,12 @@ export function CoreAwardsDataGrid() {
           ];
 
           const categoryColors: Record<JudgingCategory, string> = {
+            'robot-design': green[300],
+            'innovation-project': blue[300],
+            'core-values': red[300]
+          };
+
+          const categoryDarkColors: Record<JudgingCategory, string> = {
             'robot-design': green[400],
             'innovation-project': blue[400],
             'core-values': red[400]
@@ -265,24 +271,20 @@ export function CoreAwardsDataGrid() {
                           !canAdd || isAlreadyAdded || deliberation.status !== 'in-progress'
                         }
                         sx={{
-                          p: 0.5,
-                          bgcolor: isAlreadyAdded
-                            ? alpha(categoryColors[category], 0.2)
-                            : alpha(categoryColors[category], 0.15),
-                          color: categoryColors[category],
-                          border: `2px solid ${categoryColors[category]}`,
+                          bgcolor: categoryColors[category],
+                          color: 'white',
+                          width: 28,
+                          height: 28,
+                          opacity: isAlreadyAdded ? 0.5 : 1,
                           '&:hover:not(:disabled)': {
-                            bgcolor: alpha(categoryColors[category], 0.25),
-                            transform: 'scale(1.1)',
-                            boxShadow: `0 0 8px ${alpha(categoryColors[category], 0.4)}`
+                            bgcolor: categoryDarkColors[category],
+                            opacity: isAlreadyAdded ? 0.5 : 1
                           },
                           '&:disabled': {
-                            bgcolor: 'transparent',
-                            border: `2px solid ${theme.palette.action.disabled}`,
+                            bgcolor: theme.palette.action.disabledBackground,
                             color: theme.palette.action.disabled,
-                            opacity: 0.5
-                          },
-                          transition: 'all 0.2s ease-in-out'
+                            opacity: 1
+                          }
                         }}
                       >
                         <Add fontSize="small" />

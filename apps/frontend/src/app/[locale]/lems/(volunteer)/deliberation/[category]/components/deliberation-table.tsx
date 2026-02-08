@@ -38,7 +38,7 @@ export function DeliberationTable() {
       {
         field: 'addToPicklist',
         headerName: '',
-        width: 40,
+        width: 50,
         sortable: false,
         filterable: false,
         renderCell: params => {
@@ -57,29 +57,28 @@ export function DeliberationTable() {
             </Box>
           ) : (
             <Tooltip title={t('add-to-picklist')}>
-              <IconButton
-                size="small"
-                disabled={deliberation?.status !== 'in-progress'}
-                onClick={() => addToPicklist(team.id)}
-                sx={{
-                  bgcolor: alpha(theme.palette.success.main, 0.15),
-                  color: theme.palette.success.main,
-                  border: `2px solid ${theme.palette.success.main}`,
-                  '&:hover': {
-                    bgcolor: alpha(theme.palette.success.main, 0.25),
-                    transform: 'scale(1.1)',
-                    boxShadow: `0 0 8px ${alpha(theme.palette.success.main, 0.4)}`
-                  },
-                  '&:disabled': {
-                    bgcolor: 'transparent',
-                    border: `2px solid ${theme.palette.action.disabled}`,
-                    color: theme.palette.action.disabled
-                  },
-                  transition: 'all 0.2s ease-in-out'
-                }}
-              >
-                <Add fontSize="small" />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  disabled={deliberation?.status !== 'in-progress'}
+                  onClick={() => addToPicklist(team.id)}
+                  sx={{
+                    bgcolor: theme.palette.success.light,
+                    color: 'white',
+                    width: 28,
+                    height: 28,
+                    '&:hover': {
+                      bgcolor: theme.palette.success.main
+                    },
+                    '&:disabled': {
+                      bgcolor: theme.palette.action.disabledBackground,
+                      color: theme.palette.action.disabled
+                    }
+                  }}
+                >
+                  <Add fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
           );
         }
