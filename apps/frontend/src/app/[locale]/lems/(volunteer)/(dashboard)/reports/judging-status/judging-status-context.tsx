@@ -40,20 +40,26 @@ function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType
 
   let currentRoundNumber = sortedSessionNumbers[0];
 
-  // Start at session 1, then increment if every session in the round
-  // with a team that arrived is completed
-  for (const sessionNumber of sortedSessionNumbers) {
+  // Advance to the next round if any room from that round is in progress
+  for (let i = 0; i < sortedSessionNumbers.length; i++) {
+    const sessionNumber = sortedSessionNumbers[i];
     const roundSessions = sessionsByNumber.get(sessionNumber)!;
 
     const arrivedSessions = roundSessions.filter(s => s.team?.arrived);
 
     if (arrivedSessions.length > 0) {
-      const allArrivedInProgressOrCompleted = arrivedSessions.every(s => s.status === 'completed');
+      // Check if any session in this round is in progress
+      const anyInProgress = arrivedSessions.some(s => s.status === 'in-progress');
 
-      if (allArrivedInProgressOrCompleted) {
+      if (anyInProgress) {
         currentRoundNumber = sessionNumber;
-      } else {
         break;
+      }
+
+      // If all arrived sessions are completed, continue to check the next round
+      const allCompleted = arrivedSessions.every(s => s.status === 'completed');
+      if (allCompleted) {
+        currentRoundNumber = sessionNumber;
       }
     }
   }
