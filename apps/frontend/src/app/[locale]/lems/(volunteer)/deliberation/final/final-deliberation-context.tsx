@@ -48,7 +48,7 @@ export const FinalDeliberationProvider = ({
 }: FinalDeliberationProviderProps) => {
   const t = useTranslations('pages.deliberations.final.errors');
   const deliberation = division.judging.finalDeliberation;
-  const deliberationAwards = division.judging.awards;
+  const deliberationAwards = division.judging.awards.filter(award => award.type === 'TEAM');
 
   // Mutations
   const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
