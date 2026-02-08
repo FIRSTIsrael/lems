@@ -16,8 +16,14 @@ export function AwardsPresentationWrapper() {
       .filter(award => award.type === 'TEAM' && award.winner && 'team' in award.winner)
       .map(award => {
         const winner = award.winner as TeamWinner;
+        const teamData = winner.team;
 
-        return {
+        // Ensure team data is valid before accessing properties
+        if (!teamData || !teamData.id || !teamData.name) {
+          return undefined;
+        }
+
+        const mappedAward: PresentationAward = {
           id: award.id,
           name: award.name,
           index: award.index,
@@ -25,14 +31,16 @@ export function AwardsPresentationWrapper() {
           type: award.type,
           isOptional: award.isOptional,
           winner: {
-            id: winner.team.id,
-            name: winner.team.name,
-            number: winner.team.number,
-            city: winner.team.city,
-            affiliation: winner.team.affiliation
+            id: teamData.id,
+            name: teamData.name,
+            number: teamData.number ? String(teamData.number) : '',
+            city: teamData.city || '',
+            affiliation: teamData.affiliation || ''
           }
         };
-      });
+        return mappedAward;
+      })
+      .filter((award): award is PresentationAward => award !== undefined);
   }, [data.judging?.awards]);
 
   return (
