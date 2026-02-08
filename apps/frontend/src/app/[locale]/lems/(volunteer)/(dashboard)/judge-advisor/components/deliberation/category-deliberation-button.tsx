@@ -2,6 +2,7 @@
 
 import dayjs from 'dayjs';
 import { useMemo } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Button } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useTranslations } from 'next-intl';
@@ -14,6 +15,7 @@ export interface CategoryDeliberationButtonProps {
 
 export function CategoryDeliberationButton({ category }: CategoryDeliberationButtonProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
+  const searchParams = useSearchParams();
   const currentTime = useTime({ interval: 1000 });
   const { sessions, sessionLength, loading } = useJudgeAdvisor();
 
@@ -29,6 +31,9 @@ export function CategoryDeliberationButton({ category }: CategoryDeliberationBut
   const isDisabled =
     !latestSessionTime || currentTime.isBefore(latestSessionTime.add(sessionLength, 'seconds'));
 
+  const queryString = searchParams.toString();
+  const href = `/lems/deliberation/${category}${queryString ? `?${queryString}` : ''}`;
+
   return (
     <Button
       fullWidth
@@ -36,7 +41,7 @@ export function CategoryDeliberationButton({ category }: CategoryDeliberationBut
       variant="outlined"
       endIcon={<OpenInNewIcon sx={{ fontSize: 16 }} />}
       target="_blank"
-      href={`/lems/deliberation/${category}`}
+      href={href}
       disabled={loading || isDisabled}
       sx={{
         fontWeight: 600,
