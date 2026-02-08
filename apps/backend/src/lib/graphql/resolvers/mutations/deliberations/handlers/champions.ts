@@ -18,6 +18,32 @@ export function validateChampionsStage(deliberation: { awards: FinalDeliberation
 }
 
 /**
+ * Fetches team eligibility status (arrived, disqualified) for a list of teams
+ */
+async function getTeamEligibility(
+  divisionId: string,
+  teamIds: string[]
+): Promise<Record<string, { arrived: boolean; disqualified: boolean }>> {
+  const eligibility = await db.raw.sql
+    .selectFrom('team_divisions')
+    .select(['team_id', 'arrived', 'disqualified'])
+    .where('division_id', '=', divisionId)
+    .where('team_id', 'in', teamIds)
+    .execute();
+
+  return eligibility.reduce(
+    (acc, row) => {
+      acc[row.team_id] = {
+        arrived: row.arrived,
+        disqualified: row.disqualified
+      };
+      return acc;
+    },
+    {} as Record<string, { arrived: boolean; disqualified: boolean }>
+  );
+}
+
+/**
  * Handles advancement award creation when leaving champions stage
  */
 export async function handleChampionsStageCompletion(
@@ -29,9 +55,26 @@ export async function handleChampionsStageCompletion(
     return;
   }
 
+  // Fetch team eligibility status (arrived, disqualified)
+  const teamEligibility = await getTeamEligibility(
+    divisionId,
+    teams.map(t => t.id)
+  );
+
   await assignChampionsToTeams(divisionId, champions);
 
-  const teamScores = await calculateAllTeamScores(divisionId, teams);
+  // Only eligible teams (arrived and not disqualified) can receive awards
+  const eligibleTeams = teams.filter(t => {
+    const status = teamEligibility[t.id];
+    return status && status.arrived && !status.disqualified;
+  });
+
+  if (eligibleTeams.length === 0) {
+    await updateFinalDeliberationAwards(divisionId);
+    return;
+  }
+
+  const teamScores = await calculateAllTeamScores(divisionId, eligibleTeams);
   const teamsWithRanks = await rankTeams(teamScores, divisionId);
 
   const robotPerformanceAwards = await db.awards.byDivisionId(divisionId).get('robot-performance');
