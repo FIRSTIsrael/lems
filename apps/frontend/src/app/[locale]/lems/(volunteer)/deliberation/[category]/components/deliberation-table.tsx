@@ -73,7 +73,6 @@ export function DeliberationTable() {
         field: 'rank',
         headerName: t('rank'),
         width: 100,
-        sortable: true,
         filterable: false,
 
         renderCell: params => params.row.rank || '-'
@@ -82,7 +81,6 @@ export function DeliberationTable() {
         field: 'room',
         headerName: t('room'),
         width: 60,
-        sortable: true,
         filterable: false,
         headerAlign: 'center',
         align: 'center',
@@ -92,7 +90,6 @@ export function DeliberationTable() {
         field: 'teamDisplay',
         headerName: t('team'),
         width: 100,
-        sortable: false,
         filterable: false,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
@@ -112,7 +109,6 @@ export function DeliberationTable() {
             field: label,
             headerName: label,
             width: FIELD_COLUMN_WIDTH,
-            sortable: false,
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
@@ -137,7 +133,6 @@ export function DeliberationTable() {
                   field: gpKey,
                   headerName: gpKey,
                   width: FIELD_COLUMN_WIDTH,
-                  sortable: false,
                   filterable: false,
                   headerAlign: 'center' as const,
                   align: 'center' as const,
@@ -152,7 +147,6 @@ export function DeliberationTable() {
         field: 'totalScore',
         headerName: t('total'),
         width: 100,
-        sortable: true,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
@@ -163,7 +157,6 @@ export function DeliberationTable() {
         field: 'normalizedScore',
         headerName: t('normalized'),
         width: 100,
-        sortable: true,
         filterable: false,
         align: 'center',
         headerAlign: 'center',

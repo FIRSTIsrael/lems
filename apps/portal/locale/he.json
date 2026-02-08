@@ -244,7 +244,7 @@
         "field-matches": "מקצי זירה",
         "judging-sessions": "מפגש שיפוט",
         "match-type": "מקצה {stage} #{number} - שולחן {table}",
-        "judging-session": "מפגש שיפוט #{number} - {room}",
+        "judging-session": "מפגש שיפוט - חדר {room}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"
