@@ -266,16 +266,23 @@ export function CoreAwardsDataGrid() {
                         }
                         sx={{
                           p: 0.5,
-                          color: isAlreadyAdded
-                            ? categoryColors[category]
-                            : categoryColors[category],
-                          opacity: isAlreadyAdded ? 1 : 0.6,
+                          bgcolor: isAlreadyAdded
+                            ? alpha(categoryColors[category], 0.2)
+                            : alpha(categoryColors[category], 0.15),
+                          color: categoryColors[category],
+                          border: `2px solid ${categoryColors[category]}`,
                           '&:hover:not(:disabled)': {
-                            opacity: 1
+                            bgcolor: alpha(categoryColors[category], 0.25),
+                            transform: 'scale(1.1)',
+                            boxShadow: `0 0 8px ${alpha(categoryColors[category], 0.4)}`
                           },
                           '&:disabled': {
-                            opacity: 0.3
-                          }
+                            bgcolor: 'transparent',
+                            border: `2px solid ${theme.palette.action.disabled}`,
+                            color: theme.palette.action.disabled,
+                            opacity: 0.5
+                          },
+                          transition: 'all 0.2s ease-in-out'
                         }}
                       >
                         <Add fontSize="small" />
@@ -291,6 +298,7 @@ export function CoreAwardsDataGrid() {
     ],
     [
       t,
+      theme,
       getCategory,
       deliberation.coreAwardsManualEligibility,
       deliberation.status,

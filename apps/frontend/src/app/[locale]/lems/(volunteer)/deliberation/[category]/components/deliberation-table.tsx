@@ -61,7 +61,22 @@ export function DeliberationTable() {
                 size="small"
                 disabled={deliberation?.status !== 'in-progress'}
                 onClick={() => addToPicklist(team.id)}
-                color="success"
+                sx={{
+                  bgcolor: alpha(theme.palette.success.main, 0.15),
+                  color: theme.palette.success.main,
+                  border: `2px solid ${theme.palette.success.main}`,
+                  '&:hover': {
+                    bgcolor: alpha(theme.palette.success.main, 0.25),
+                    transform: 'scale(1.1)',
+                    boxShadow: `0 0 8px ${alpha(theme.palette.success.main, 0.4)}`
+                  },
+                  '&:disabled': {
+                    bgcolor: 'transparent',
+                    border: `2px solid ${theme.palette.action.disabled}`,
+                    color: theme.palette.action.disabled
+                  },
+                  transition: 'all 0.2s ease-in-out'
+                }}
               >
                 <Add fontSize="small" />
               </IconButton>
@@ -194,6 +209,7 @@ export function DeliberationTable() {
     ],
     [
       t,
+      theme,
       fieldDisplayLabels,
       hypenatedCategory,
       teams,
