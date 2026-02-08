@@ -2,6 +2,7 @@ import { Award, OptionalAwards } from '@lems/shared';
 import { JudgingCategory } from '@lems/database';
 import { Room, MetricPerCategory, RoomMetricsMap } from '../types';
 import { Division, FinalJudgingDeliberation } from './graphql';
+import { Anomaly } from './final-deliberation-computation';
 
 export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
 export type StagesWithNomination = 'champions' | 'core-awards' | 'optional-awards';
@@ -27,6 +28,7 @@ export type EnrichedTeam = {
   scores: MetricPerCategory;
   normalizedScores: Omit<MetricPerCategory, 'core-values-no-gp'>;
   ranks: RanksPerCategory;
+  rawRanks: RanksPerCategory;
 
   eligibility: EligiblityPerStage;
 
@@ -59,6 +61,8 @@ export interface FinalDeliberationContextValue {
   awardCounts: Partial<Record<Award, number>>;
 
   roomMetrics: RoomMetricsMap;
+
+  anomalies: Anomaly[];
 
   startDeliberation(): Promise<void>;
   updateAward(awardName: Award, updatedAward: string[] | Record<number, string>): Promise<void>;

@@ -223,7 +223,7 @@
         "pit-map": "Pit Map"
       }
     },
-     "judging-head-queuer": {
+    "judging-head-queuer": {
       "page-title": "Head Judging Queuer",
       "no-data": "No data loaded yet. Check in a minute.",
       "current-sessions": {
@@ -1493,6 +1493,15 @@
             "success-message": "Awards locked successfully",
             "error-message": "Failed to lock awards"
           }
+        },
+        "anomalies": {
+          "alert-title": "Ranking Anomalies Detected",
+          "alert-description": "Some teams have significant differences between their picklist position and calculated rank.",
+          "higher": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} higher in the {category} category",
+          "lower": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} lower in the {category} category",
+          "core-values": "Core Values",
+          "innovation-project": "Innovation Project",
+          "robot-design": "Robot Design"
         }
       }
     }
