@@ -67,14 +67,15 @@ function parseJudgingStatus(
         );
 
         if (earliestStartTime) {
-          const minutesSinceStart = now.diff(earliestStartTime, 'minute');
+          const secondsSinceStart = now.diff(earliestStartTime, 'second');
+          const ADVANCEMENT_TIME_SECONDS = 15 * 60; // 15 minutes
 
-          // If sessionLength minutes have passed, move to next round
-          if (minutesSinceStart >= sessionLength) {
+          // If 15 minutes have passed since first session started, move to next round
+          if (secondsSinceStart >= ADVANCEMENT_TIME_SECONDS) {
             currentRoundNumber = sessionNumber;
             continue;
           } else {
-            // Still within the time window, this is the current round
+            // Still within the 15-minute window, this is the current round
             currentRoundNumber = sessionNumber;
             break;
           }
