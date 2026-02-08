@@ -14,7 +14,7 @@ export interface AdvancingTeamsAward {
   winner?: {
     id: string;
     name: string;
-    number: number;
+    number: string | number;
   };
 }
 
@@ -25,8 +25,8 @@ interface AdvancingTeamsSlideProps {
 export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards }) => {
   const t = useTranslations('awards-presentation');
   const teams = awards
-    .filter(award => award.winner && 'number' in award.winner)
-    .map(award => award.winner as { id: string; name: string; number: number });
+    .filter(award => award.winner && award.winner.id && award.winner.name && award.winner.number)
+    .map(award => award.winner as { id: string; name: string; number: string | number });
 
   const divisionColor = awards[0]?.divisionColor;
 
@@ -67,7 +67,7 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
           <Stepper
             values={teams as unknown[]}
             render={(team: unknown) => {
-              const teamData = team as { id: string; name: string; number: number };
+              const teamData = team as { id: string; name: string; number: string | number };
               return (
                 <Paper
                   key={teamData.id}
