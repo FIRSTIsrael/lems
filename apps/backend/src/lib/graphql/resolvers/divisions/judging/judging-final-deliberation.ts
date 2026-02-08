@@ -1,4 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -31,7 +32,10 @@ export const judgingFinalDeliberationResolver: GraphQLFieldResolver<
   GraphQLContext,
   unknown,
   Promise<FinalDeliberationGraphQL | null>
-> = async parent => {
+> = async (parent, _args, context) => {
+  if (!context.user) {
+    throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+  }
   const deliberation = await db.finalDeliberations.byDivision(parent.divisionId).get();
 
   if (!deliberation) {

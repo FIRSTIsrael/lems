@@ -1,7 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 import type { JudgingCategory, DeliberationStatus } from '@lems/database';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { underscoresToHyphens, hyphensToUnderscores } from '@lems/shared/utils';
 import db from '../../../../database';
+import type { GraphQLContext } from '../../../apollo-server';
 
 export interface JudgingDeliberationGraphQL {
   id: string;
@@ -22,13 +24,18 @@ interface DeliberationArgs {
 /**
  * Resolver for Judging.deliberation(category) field.
  * Fetches a specific category deliberation for a division.
+ * Requires authentication - deliberation data is sensitive.
  */
 export const judgingDeliberationResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
-  unknown,
+  GraphQLContext,
   DeliberationArgs,
   Promise<JudgingDeliberationGraphQL | null>
-> = async (judging: JudgingWithDivisionId, args: DeliberationArgs) => {
+> = async (judging: JudgingWithDivisionId, args: DeliberationArgs, context: GraphQLContext) => {
+  if (!context.user) {
+    throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+  }
+
   try {
     const category = underscoresToHyphens(args.category);
 

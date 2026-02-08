@@ -1,7 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { JudgingCategory } from '@lems/database';
+import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import db from '../../../../database';
 import { buildRubricResult, RubricGraphQL } from '../../../utils/rubric-builder';
+import type { GraphQLContext } from '../../../apollo-server';
 
 interface JudgingWithDivisionId {
   divisionId: string;
@@ -15,13 +17,17 @@ interface RubricsArgs {
 /**
  * Resolver for Judging.rubrics field.
  * Fetches rubrics for teams in a division, optionally filtered by team IDs or category.
+ * Requires authentication - only judges, lead judges, and judge advisors can access rubrics.
  */
 export const judgingRubricsResolver: GraphQLFieldResolver<
   JudgingWithDivisionId,
-  unknown,
+  GraphQLContext,
   RubricsArgs,
   Promise<RubricGraphQL[]>
-> = async (judging: JudgingWithDivisionId, args: RubricsArgs) => {
+> = async (judging: JudgingWithDivisionId, args: RubricsArgs, context: GraphQLContext) => {
+  if (!context.user) {
+    throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
+  }
   try {
     let rubricsSelector = db.rubrics.byDivision(judging.divisionId);
 
