@@ -1,6 +1,7 @@
 export interface Award {
   id: string;
   name: string;
+  index: number;
   placeCount: number;
 }
 
@@ -11,6 +12,7 @@ export type QueryData = {
       awards: Array<{
         id: string;
         name: string;
+        index: number;
         place: number;
       }>;
     };

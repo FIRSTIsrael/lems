@@ -10,6 +10,7 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<QueryData, QueryVars> = gql`
         awards {
           id
           name
+          index
           place
         }
       }
@@ -27,6 +28,7 @@ export function parseDivisionAwards(data: QueryData): Award[] {
         groups[award.name] = {
           id: award.id,
           name: award.name,
+          index: award.index,
           placeCount: 0
         };
       }
