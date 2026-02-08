@@ -7,7 +7,7 @@ import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-coun
 
 // Judging stages with durations in seconds
 export const JUDGING_STAGES = [
-  { id: 'setup', duration: 240 }, // 4 min - Welcome
+  { id: 'setup', duration: 120 }, // 2 min - Welcome
   { id: 'innovation-presentation', duration: 300 }, // 5 min
   { id: 'innovation-questions', duration: 300 }, // 5 min
   { id: 'robot-presentation', duration: 300 }, // 5 min
