@@ -23,57 +23,32 @@ export default function AwardsListPage() {
   } = usePageData(GET_DIVISION_AWARDS, { divisionId: currentDivision.id }, parseDivisionAwards);
 
   const groupedAwards = useMemo(() => {
-    const sortedAwards = [...awards].sort((a, b) => a.index - b.index);
-
+    // Group awards by name, sorted by index
     const groups: Record<string, Award[]> = {};
-    sortedAwards.forEach(award => {
-      if (!groups[award.name]) {
-        groups[award.name] = [];
-      }
-      groups[award.name].push(award);
-    });
-
-    // Convert to ordered array ensuring advancement comes before champions
-    const orderedGroups: Array<[string, Award[]]> = [];
-    const seenNames = new Set<string>();
-
-    for (const award of sortedAwards) {
-      if (!seenNames.has(award.name)) {
-        seenNames.add(award.name);
-        orderedGroups.push([award.name, groups[award.name]]);
-      }
-    }
-
-    // Find advancement group and ensure it's immediately before champions
-    let advancementGroupEntry: [string, Award[]] | null = null;
-    const nonAdvancementGroups: Array<[string, Award[]]> = [];
-
-    orderedGroups.forEach(([name, groupAwards]) => {
-      if (name === 'advancement') {
-        advancementGroupEntry = [name, groupAwards];
-      } else {
-        nonAdvancementGroups.push([name, groupAwards]);
-      }
-    });
-
-    // Place advancement before champions if both exist
-    const finalGroups: Array<[string, Award[]]> = [];
-    const championsGroup = nonAdvancementGroups.find(([name]) => name === 'champions');
-
-    if (advancementGroupEntry && championsGroup) {
-      nonAdvancementGroups.forEach(([name, groupAwards]) => {
-        if (name === 'champions' && advancementGroupEntry) {
-          finalGroups.push(advancementGroupEntry);
-          finalGroups.push([name, groupAwards]);
-        } else if (name !== 'champions') {
-          finalGroups.push([name, groupAwards]);
+    [...awards]
+      .sort((a, b) => a.index - b.index)
+      .forEach(award => {
+        if (!groups[award.name]) {
+          groups[award.name] = [];
         }
+        groups[award.name].push(award);
       });
-    } else {
-      finalGroups.push(...orderedGroups);
+
+    // Create ordered entries preserving sort order
+    const entries = Object.entries(groups);
+    const advancementEntry = entries.find(([name]) => name === 'advancement');
+
+    if (!advancementEntry) return groups;
+
+    // Remove advancement and insert before champions
+    const filtered = entries.filter(([name]) => name !== 'advancement');
+    const championsIdx = filtered.findIndex(([name]) => name === 'champions');
+
+    if (championsIdx !== -1) {
+      filtered.splice(championsIdx, 0, advancementEntry);
     }
 
-    return Object.fromEntries(finalGroups);
+    return Object.fromEntries(filtered);
   }, [awards]);
 
   return (
