@@ -101,6 +101,16 @@ export function buildAwardsSlides(
 
     const color = firstAward.divisionColor || divisionColor;
 
+    // Add advancing teams slide immediately before champions
+    if (advancingAwards.length > 0 && firstAward.name === 'champions') {
+      slides.push(
+        React.createElement(AdvancingTeamsSlide, {
+          key: 'advancing-teams',
+          awards: advancingAwards as AdvancingTeamsAward[]
+        })
+      );
+    }
+
     // Add title slide with name only
     slides.push(
       React.createElement(TitleSlide, {
@@ -155,23 +165,6 @@ export function buildAwardsSlides(
       }
     });
   });
-
-  // Add advancing teams slide before first champions award if advancing teams exist
-  if (advancingAwards.length > 0) {
-    const firstChampionsIndex = slides.findIndex(
-      slide =>
-        React.isValidElement(slide) && typeof slide.key === 'string' && slide.key.includes('title')
-    );
-    const advancingSlide = React.createElement(AdvancingTeamsSlide, {
-      key: 'advancing-teams',
-      awards: advancingAwards as AdvancingTeamsAward[]
-    });
-    if (firstChampionsIndex >= 0) {
-      slides.splice(firstChampionsIndex, 0, advancingSlide);
-    } else {
-      slides.push(advancingSlide);
-    }
-  }
 
   return slides;
 }
