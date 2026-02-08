@@ -2,6 +2,7 @@
 
 import dayjs, { Dayjs } from 'dayjs';
 import { createContext, useContext, useMemo, ReactNode } from 'react';
+import { useTime } from '../../../../../../../lib/time/hooks';
 import type { QueryData, JudgingSession, Room } from './graphql/types';
 
 export interface JudgingStatusContextType {
@@ -13,7 +14,10 @@ export interface JudgingStatusContextType {
   countdownTargetTime: Dayjs | null;
 }
 
-function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType, 'loading'> {
+function parseJudgingStatus(
+  queryData: QueryData,
+  now: Dayjs
+): Omit<JudgingStatusContextType, 'loading'> {
   const sessions = queryData?.division?.judging.sessions ?? [];
   const rooms = queryData?.division?.rooms ?? [];
   const sessionLength = queryData?.division?.judging.sessionLength ?? 0;
@@ -40,7 +44,7 @@ function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType
 
   let currentRoundNumber = sortedSessionNumbers[0];
 
-  // Advance to the next round if any room from that round is in progress
+  // Advance to the next round if sessionLength minutes have passed since first in-progress session
   for (let i = 0; i < sortedSessionNumbers.length; i++) {
     const sessionNumber = sortedSessionNumbers[i];
     const roundSessions = sessionsByNumber.get(sessionNumber)!;
@@ -48,15 +52,36 @@ function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType
     const arrivedSessions = roundSessions.filter(s => s.team?.arrived);
 
     if (arrivedSessions.length > 0) {
-      // Check if any session in this round is in progress
-      const anyInProgress = arrivedSessions.some(s => s.status === 'in-progress');
+      // Find the earliest start time among in-progress
+      const startedSessions = arrivedSessions.filter(s => s.status === 'in-progress');
 
-      if (anyInProgress) {
-        currentRoundNumber = sessionNumber;
-        break;
+      if (startedSessions.length > 0) {
+        // Find the earliest start time in this round
+        const earliestStartTime = startedSessions.reduce(
+          (earliest, session) => {
+            if (!session.startTime) return earliest;
+            const startTime = dayjs(session.startTime);
+            return !earliest || startTime.isBefore(earliest) ? startTime : earliest;
+          },
+          null as dayjs.Dayjs | null
+        );
+
+        if (earliestStartTime) {
+          const minutesSinceStart = now.diff(earliestStartTime, 'minute');
+
+          // If sessionLength minutes have passed, move to next round
+          if (minutesSinceStart >= sessionLength) {
+            currentRoundNumber = sessionNumber;
+            continue;
+          } else {
+            // Still within the time window, this is the current round
+            currentRoundNumber = sessionNumber;
+            break;
+          }
+        }
       }
 
-      // If all arrived sessions are completed, continue to check the next round
+      // If no sessions have started yet, check if all are completed
       const allCompleted = arrivedSessions.every(s => s.status === 'completed');
       if (allCompleted) {
         currentRoundNumber = sessionNumber;
@@ -106,13 +131,15 @@ export function JudgingStatusProvider({
   data,
   loading = false
 }: JudgingStatusProviderProps) {
+  const now = useTime({ interval: 1000 });
+
   const value = useMemo(() => {
-    const parsed = parseJudgingStatus(data);
+    const parsed = parseJudgingStatus(data, now);
     return {
       ...parsed,
       loading
     };
-  }, [data, loading]);
+  }, [data, loading, now]);
 
   return <JudgingStatusContext.Provider value={value}>{children}</JudgingStatusContext.Provider>;
 }
