@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Box, Typography, useTheme } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricStatus } from '@lems/database';
@@ -23,17 +24,20 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
 }) => {
   const t = useTranslations('pages.judge-advisor.grid.rubric-status');
   const theme = useTheme();
+  const searchParams = useSearchParams();
   const rubricColor = getRubricColor(category);
   const statusIcon = getRubricIcon(status, rubricColor);
 
   const isCompleted = status === 'completed';
   const isDraft = status === 'draft';
 
+  const queryString = searchParams.toString();
+  const href = teamSlug
+    ? `/lems/team/${teamSlug}/rubric/${category}${queryString ? `?${queryString}` : ''}`
+    : '#';
+
   return (
-    <Link
-      href={teamSlug ? `/lems/team/${teamSlug}/rubric/${category}` : '#'}
-      style={{ textDecoration: 'none' }}
-    >
+    <Link href={href} style={{ textDecoration: 'none' }}>
       <Box
         sx={{
           display: 'flex',

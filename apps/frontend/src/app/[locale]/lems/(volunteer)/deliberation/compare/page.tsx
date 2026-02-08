@@ -1,6 +1,6 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Container, Alert, Box, Grid, Card, Paper, CircularProgress } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
@@ -23,6 +23,7 @@ import {
 } from './components';
 
 export default function ComparePage() {
+  const router = useRouter();
   const t = useTranslations('layouts.deliberation.compare');
   const { currentDivision } = useEvent();
   const searchParams = useSearchParams();
@@ -41,7 +42,7 @@ export default function ComparePage() {
   if (loading) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader title={t('title')} onBack={() => router.back()} />
         <Container maxWidth="xl" sx={{ py: 4 }}>
           <Box
             sx={{
@@ -61,7 +62,7 @@ export default function ComparePage() {
   if (teamSlugs.length === 0) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader title={t('title')} onBack={() => router.back()} />
         <Container maxWidth="xl" sx={{ py: 4 }}>
           <EmptyState />
         </Container>
@@ -72,7 +73,7 @@ export default function ComparePage() {
   if (error) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader title={t('title')} onBack={() => router.back()} />
         <Container maxWidth="xl" sx={{ py: 4 }}>
           <Alert severity="error">{t('error-loading-teams')}</Alert>
         </Container>
@@ -83,7 +84,7 @@ export default function ComparePage() {
   if (!data?.division?.selectedTeams || data.division.selectedTeams.length === 0) {
     return (
       <>
-        <PageHeader title={t('title')} />
+        <PageHeader title={t('title')} onBack={() => router.back()} />
         <Container maxWidth="xl" sx={{ py: 4 }}>
           <Alert severity="warning">{t('teams-not-found')}</Alert>
         </Container>
@@ -102,7 +103,7 @@ export default function ComparePage() {
       allTeams={allTeams}
       category={categoryParam ?? undefined}
     >
-      <PageHeader title={t('title')}>
+      <PageHeader title={t('title')} onBack={() => router.back()}>
         <Box
           sx={{
             display: 'flex',

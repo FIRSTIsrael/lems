@@ -393,11 +393,12 @@ class EventsSelector {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published', 
+        'event_settings.published',
         'event_settings.completed',
         'event_settings.official'
       ])
-      .groupBy(sql`events.coordinates::text`);
+      .groupBy(sql`events.coordinates::text`)
+      .orderBy('events.start_date', 'asc');
 
     const result = await query.execute();
 
@@ -614,7 +615,8 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .groupBy(sql`events.coordinates::text`);
+      .groupBy(sql`events.coordinates::text`)
+      .orderBy('events.start_date', 'asc');
 
     const eventRows = await query.execute();
 

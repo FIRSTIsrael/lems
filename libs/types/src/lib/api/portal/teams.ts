@@ -83,7 +83,6 @@ export type AgendaEvent = z.infer<typeof AgendaEventSchema>;
 
 export const TeamJudgingSessionSchema = z.object({
   id: z.string(),
-  number: z.number(),
   scheduledTime: z.coerce.date(),
   room: z.object({
     id: z.string(),
