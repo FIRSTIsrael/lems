@@ -37,13 +37,10 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
   const sortedEvents = React.useMemo(() => {
-    return [...events].sort((a, b) => {
-      if (variant === 'past') {
-        return b.startDate.getTime() - a.startDate.getTime();
-      } else {
-        return a.startDate.getTime() - b.startDate.getTime();
-      }
-    });
+    if (variant === 'past') {
+      return [...events].sort((a, b) => b.startDate.getTime() - a.startDate.getTime());
+    }
+    return events;
   }, [events, variant]);
 
   const displayedEvents = maxDisplayed ? sortedEvents.slice(0, maxDisplayed) : sortedEvents;
