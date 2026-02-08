@@ -2,6 +2,7 @@
 
 import { Stack, IconButton, Typography, Box, useMediaQuery, useTheme } from '@mui/material';
 import { NavigateBefore, NavigateNext } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 
 interface NavButtonsProps {
   current: number;
@@ -37,7 +38,7 @@ export const NavButtons: React.FC<NavButtonsProps> = ({ current, total, onPrevio
           }
         }}
       >
-        <NavigateBefore />
+        <DirectionalIcon ltr={NavigateBefore} rtl={NavigateNext} />
       </IconButton>
 
       <Box sx={{ minWidth: isMobile ? 60 : 80, textAlign: 'center' }}>
@@ -58,7 +59,7 @@ export const NavButtons: React.FC<NavButtonsProps> = ({ current, total, onPrevio
           }
         }}
       >
-        <NavigateNext />
+        <DirectionalIcon ltr={NavigateNext} rtl={NavigateBefore} />
       </IconButton>
     </Stack>
   );
