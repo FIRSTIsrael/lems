@@ -22,7 +22,7 @@ export function UpcomingMatches({ matches, loadedMatchId, maxDisplay = 10 }: Upc
 
   const upcoming = useMemo(() => {
     return matches
-      .filter(m => m.status === 'not-started' && m.id !== loadedMatchId && m.stage !== 'PRACTICE')
+      .filter(m => m.status === 'not-started' && m.id !== loadedMatchId && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)))
       .slice(0, maxDisplay);
   }, [matches, loadedMatchId, maxDisplay]);
