@@ -51,6 +51,8 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
   const winner = award.winner as TeamWinner | PersonalWinner;
   const localizedAwardName = getName(award.name);
 
+  console.log('Rendering AwardWinnerSlide for award:', award);
+
   return (
     <Slide chromaKey={chromaKey}>
       <Stack
@@ -73,7 +75,7 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
             </Typography>
             {award.place !== undefined && (
               <Typography sx={{ fontSize: '3.5rem', color: 'grey.700', fontWeight: 600 }}>
-                {t('place', { place: award.place + 1 })}
+                {t('place', { place: award.place })}
               </Typography>
             )}
           </Stack>
@@ -158,7 +160,7 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
           </Appear>
         </Paper>
 
-        <LogoStack color={award.divisionColor} />
+        {/* <LogoStack color={award.divisionColor} /> */}
       </Stack>
     </Slide>
   );

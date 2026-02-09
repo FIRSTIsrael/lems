@@ -70,27 +70,38 @@ export function buildAwardsSlides(
     })
   );
 
-  const awardsByIndex = new Map<number, Award[]>();
+  const awardsByName = new Map<string, Award[]>();
   const advancingAwards: Award[] = [];
 
   awards.forEach(award => {
     if (award.name === 'advancement') {
       advancingAwards.push(award);
     } else if (award.index >= 0) {
-      if (!awardsByIndex.has(award.index)) {
-        awardsByIndex.set(award.index, []);
+      if (!awardsByName.has(award.name)) {
+        awardsByName.set(award.name, []);
       }
-      awardsByIndex.get(award.index)!.push(award);
+      awardsByName.get(award.name)!.push(award);
     }
   });
 
-  const sortedIndices = Array.from(awardsByIndex.keys()).sort((a, b) => a - b);
+  // Sort awards within each group by index, then sort groups by their minimum index
+  awardsByName.forEach(group => {
+    group.sort((a, b) => a.index - b.index);
+  });
+
+  const sortedNames = Array.from(awardsByName.entries())
+    .sort((a, b) => {
+      const minIndexA = a[1][0].index;
+      const minIndexB = b[1][0].index;
+      return minIndexA - minIndexB;
+    })
+    .map(entry => entry[0]);
 
   let advancingTeamsAdded = false;
 
-  // Build slides for each award
-  sortedIndices.forEach(index => {
-    const awardGroup = awardsByIndex.get(index)!;
+  // Build slides for each award group
+  sortedNames.forEach(awardName => {
+    const awardGroup = awardsByName.get(awardName)!;
     if (awardGroup.length === 0) return;
 
     const firstAward = awardGroup[0];
@@ -117,7 +128,7 @@ export function buildAwardsSlides(
     // Add title slide with name only
     slides.push(
       React.createElement(TitleSlide, {
-        key: `title-${index}`,
+        key: `title-${awardName}`,
         primary: awardTitle,
         awardId: firstAward.name,
         divisionColor: color
@@ -128,7 +139,7 @@ export function buildAwardsSlides(
     if (awardDescription) {
       slides.push(
         React.createElement(TitleSlide, {
-          key: `title-description-${index}`,
+          key: `title-description-${awardName}`,
           primary: awardTitle,
           secondary: awardDescription,
           awardId: firstAward.name,

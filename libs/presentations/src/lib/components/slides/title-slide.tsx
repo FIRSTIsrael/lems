@@ -72,7 +72,7 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
           </Stack>
         </Paper>
 
-        <LogoStack color={divisionColor} />
+        {/* <LogoStack color={divisionColor} /> */}
       </Stack>
     </Slide>
   );

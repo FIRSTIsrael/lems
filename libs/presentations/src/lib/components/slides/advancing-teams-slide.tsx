@@ -104,7 +104,7 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
             }}
           />
         </Box>
-        <LogoStack color={divisionColor} />
+        {/* <LogoStack color={divisionColor} /> */}
       </Stack>
     </Slide>
   );
