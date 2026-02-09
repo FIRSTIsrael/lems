@@ -149,35 +149,37 @@ export function buildAwardsSlides(
     }
 
     // Add winner slides based on style
-    awardGroup.forEach(award => {
-      const awardWithPlace: AwardWinnerSlideAward = {
-        id: award.id,
-        name: award.name,
-        place: showPlace ? award.place : 0,
-        divisionColor: color,
-        winner: award.winner as AwardWinnerSlideAward['winner']
-      };
+    awardGroup
+      .sort((a, b) => b.place - a.place)
+      .forEach(award => {
+        const awardWithPlace: AwardWinnerSlideAward = {
+          id: award.id,
+          name: award.name,
+          place: showPlace ? award.place : 0,
+          divisionColor: color,
+          winner: award.winner as AwardWinnerSlideAward['winner']
+        };
 
-      if (['chroma', 'both'].includes(style)) {
-        slides.push(
-          React.createElement(AwardWinnerSlide, {
-            key: `chroma-${award.id}`,
-            award: awardWithPlace,
-            chromaKey: true
-          })
-        );
-      }
+        if (['chroma', 'both'].includes(style)) {
+          slides.push(
+            React.createElement(AwardWinnerSlide, {
+              key: `chroma-${award.id}`,
+              award: awardWithPlace,
+              chromaKey: true
+            })
+          );
+        }
 
-      if (['full', 'both'].includes(style)) {
-        slides.push(
-          React.createElement(AwardWinnerSlide, {
-            key: `full-${award.id}`,
-            award: awardWithPlace,
-            chromaKey: false
-          })
-        );
-      }
-    });
+        if (['full', 'both'].includes(style)) {
+          slides.push(
+            React.createElement(AwardWinnerSlide, {
+              key: `full-${award.id}`,
+              award: awardWithPlace,
+              chromaKey: false
+            })
+          );
+        }
+      });
   });
 
   return slides;
