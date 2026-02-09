@@ -79,29 +79,27 @@ export const FinalDeliberationProvider = ({
     ]
   );
 
-  const optionalAwards = useMemo<Partial<DeliberationAwards>>(
-    () =>
-      Object.entries(deliberation.optionalAwards).reduce<Partial<Record<Award, string[]>>>(
-        (acc, [awardName, teamIds]) => {
-          acc[awardName as Award] = teamIds as string[];
-          return acc;
-        },
-        {}
-      ),
-    [deliberation.optionalAwards]
-  );
+  const awards = useMemo<DeliberationAwards>(() => {
+    const awardsByName: Record<string, Record<number, string>> = {};
 
-  const awards = useMemo<DeliberationAwards>(
-    () => ({
-      champions: deliberation.champions ?? ({} as Record<number, string>),
-      'core-values': deliberation.coreValues || [],
-      'innovation-project': deliberation.innovationProject || [],
-      'robot-design': deliberation.robotDesign || [],
-      'robot-performance': deliberation.robotPerformance || [],
-      ...optionalAwards
-    }),
-    [deliberation, optionalAwards]
-  );
+    // Read all team awards from backend
+    const teamAwards = division.judging.awards.filter(award => award.type === 'TEAM' && award.winner);
+
+    teamAwards.forEach(award => {
+      const awardName = award.name as Award;
+      const teamId = award.winner && 'team' in award.winner ? (award.winner as { team: { id: string } }).team.id : null;
+
+      if (teamId) {
+        if (!awardsByName[awardName]) {
+          awardsByName[awardName] = {};
+        }
+        // Store place → teamId mapping for all awards uniformly
+        awardsByName[awardName][award.place] = teamId;
+      }
+    });
+
+    return awardsByName as DeliberationAwards;
+  }, [division.judging.awards]);
 
   // Helper functions for mutations - use useCallback to ensure stable references
   const handleStartFinalDeliberation = useCallback(async () => {

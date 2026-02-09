@@ -18,22 +18,20 @@ export const ReviewStage: React.FC = () => {
   // Filter out personal awards and group by name
   const mappedWinners = useMemo(() => {
     const mapped: Record<string, EnrichedTeam[]> = {};
-    for (const [awardName, value] of Object.entries(awards)) {
-      let teamIds: string[] = [];
-      if (awardName === 'champions') {
-        teamIds = Object.values(deliberation.champions);
-      } else {
-        teamIds = value as string[];
-      }
+    for (const [awardName, placeToTeamId] of Object.entries(awards)) {
+      // Extract team IDs from place → teamId mapping (all awards now use same format)
+      const teamIds = Object.values(placeToTeamId as Record<number, string>);
       const winners = [];
       for (const teamId of teamIds) {
         const team = teams.find(t => t.id === teamId);
-        winners.push(team!);
+        if (team) {
+          winners.push(team);
+        }
       }
       mapped[awardName] = winners;
     }
     return mapped;
-  }, [awards, deliberation.champions, teams]);
+  }, [awards, teams]);
 
   const handleOpenConfirm = useCallback(() => {
     setOpenConfirmDialog(true);
