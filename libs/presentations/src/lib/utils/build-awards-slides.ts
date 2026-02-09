@@ -174,8 +174,7 @@ export function buildAwardsSlides(
           slides.push(
             React.createElement(AwardWinnerSlide, {
               key: `full-${award.id}`,
-              award: awardWithPlace,
-              chromaKey: false
+              award: awardWithPlace
             })
           );
         }
