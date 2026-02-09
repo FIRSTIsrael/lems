@@ -73,13 +73,13 @@ export default function RefereePage() {
     );
   }
 
-  const tableName = data.matches[0]?.participants[0]?.table?.name || '';
+  const tableName = data.tables.find(t => t.id === tableId)?.name || '';
 
   return (
     <>
       <PageHeader title={t('page-title', { table: tableName })} />
       <Container maxWidth="lg" sx={{ pt: 3, pb: 3 }}>
-        <RefereeProvider data={data}>
+        <RefereeProvider data={data.field}>
           <RefereeContent />
         </RefereeProvider>
       </Container>
