@@ -86,6 +86,8 @@ export function buildAwardsSlides(
 
   const sortedIndices = Array.from(awardsByIndex.keys()).sort((a, b) => a - b);
 
+  let advancingTeamsAdded = false;
+
   // Build slides for each award
   sortedIndices.forEach(index => {
     const awardGroup = awardsByIndex.get(index)!;
@@ -101,14 +103,15 @@ export function buildAwardsSlides(
 
     const color = firstAward.divisionColor || divisionColor;
 
-    // Add advancing teams slide immediately before champions
-    if (advancingAwards.length > 0 && firstAward.name === 'champions') {
+    // Add advancing teams slide immediately before champions (only once)
+    if (!advancingTeamsAdded && advancingAwards.length > 0 && firstAward.name === 'champions') {
       slides.push(
         React.createElement(AdvancingTeamsSlide, {
           key: 'advancing-teams',
           awards: advancingAwards as AdvancingTeamsAward[]
         })
       );
+      advancingTeamsAdded = true;
     }
 
     // Add title slide with name only
