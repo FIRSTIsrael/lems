@@ -3,7 +3,6 @@
 import React from 'react';
 import { Stack, Typography, Paper } from '@mui/material';
 import { Slide } from '../slide';
-import { LogoStack } from '../logo-stack';
 
 interface TitleSlideProps {
   primary: string;
@@ -71,8 +70,6 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
             )}
           </Stack>
         </Paper>
-
-        {/* <LogoStack color={divisionColor} /> */}
       </Stack>
     </Slide>
   );

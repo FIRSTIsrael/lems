@@ -11,6 +11,7 @@ import {
   AdvancingTeamsSlide,
   type AdvancingTeamsAward
 } from '../components/slides/advancing-teams-slide';
+import AwardWinnerChromaSlide from '../components/slides/award-winner-chroma-slide';
 
 export type AwardWinnerSlideStyle = 'chroma' | 'full' | 'both';
 
@@ -162,10 +163,9 @@ export function buildAwardsSlides(
 
         if (['chroma', 'both'].includes(style)) {
           slides.push(
-            React.createElement(AwardWinnerSlide, {
+            React.createElement(AwardWinnerChromaSlide, {
               key: `chroma-${award.id}`,
-              award: awardWithPlace,
-              chromaKey: true
+              award: awardWithPlace
             })
           );
         }
