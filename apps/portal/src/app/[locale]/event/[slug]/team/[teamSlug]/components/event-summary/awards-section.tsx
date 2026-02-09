@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
@@ -14,10 +15,6 @@ export const AwardsSection: React.FC = () => {
     { suspense: true, fallbackData: null }
   );
 
-  if (!awards || isLoading) {
-    return null;
-  }
-
   const getAwardIcon = (award: { name: string; place: number }) => {
     switch (award.place) {
       case 1:
@@ -31,13 +28,29 @@ export const AwardsSection: React.FC = () => {
     }
   };
 
-  if (!awards || awards.length === 0) {
+  const sortedAwards = useMemo(() => {
+    if (!awards) return [];
+
+    const advancement = awards.find(a => a.name === 'advancement');
+    if (!advancement) return awards;
+
+    const nonAdvancementAwards = awards.filter(a => a.name !== 'advancement');
+    const championsIndex = nonAdvancementAwards.findIndex(a => a.name === 'champions');
+
+    if (championsIndex !== -1) {
+      nonAdvancementAwards.splice(championsIndex, 0, advancement);
+    }
+
+    return nonAdvancementAwards;
+  }, [awards]);
+
+  if (!awards || isLoading || awards.length === 0) {
     return null;
   }
 
   return (
     <>
-      {awards.map((award, index) => {
+      {sortedAwards.map((award, index) => {
         const trophyColor = getAwardIcon(award);
         return (
           <Grid

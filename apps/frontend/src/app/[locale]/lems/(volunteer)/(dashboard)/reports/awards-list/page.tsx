@@ -23,11 +23,32 @@ export default function AwardsListPage() {
   } = usePageData(GET_DIVISION_AWARDS, { divisionId: currentDivision.id }, parseDivisionAwards);
 
   const groupedAwards = useMemo(() => {
+    // Group awards by name, sorted by index
     const groups: Record<string, Award[]> = {};
-    awards.forEach(award => {
-      groups[award.name] = [award];
-    });
-    return groups;
+    [...awards]
+      .sort((a, b) => a.index - b.index)
+      .forEach(award => {
+        if (!groups[award.name]) {
+          groups[award.name] = [];
+        }
+        groups[award.name].push(award);
+      });
+
+    // Create ordered entries preserving sort order
+    const entries = Object.entries(groups);
+    const advancementEntry = entries.find(([name]) => name === 'advancement');
+
+    if (!advancementEntry) return groups;
+
+    // Remove advancement and insert before champions
+    const filtered = entries.filter(([name]) => name !== 'advancement');
+    const championsIdx = filtered.findIndex(([name]) => name === 'champions');
+
+    if (championsIdx !== -1) {
+      filtered.splice(championsIdx, 0, advancementEntry);
+    }
+
+    return Object.fromEntries(filtered);
   }, [awards]);
 
   return (

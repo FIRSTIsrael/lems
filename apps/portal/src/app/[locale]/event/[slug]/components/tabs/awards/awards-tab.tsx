@@ -41,6 +41,26 @@ export const AwardsTab: React.FC = () => {
     return result;
   }, [awards]);
 
+  // Order awards so advancement comes right before champions
+  const awardOrderedKeys = useMemo(() => {
+    const keys = Object.keys(awardsByName);
+    const advancement = 'advancement';
+    const champions = 'champions';
+
+    const advancementIdx = keys.indexOf(advancement);
+    const championsIdx = keys.indexOf(champions);
+
+    // If both exist, ensure advancement is right before champions
+    if (advancementIdx !== -1 && championsIdx !== -1) {
+      const filtered = keys.filter(k => k !== advancement);
+      const newChampionsIdx = filtered.indexOf(champions);
+      filtered.splice(newChampionsIdx, 0, advancement);
+      return filtered;
+    }
+
+    return keys;
+  }, [awardsByName]);
+
   if (awards === null) {
     return (
       <Paper sx={{ p: 3 }}>
@@ -67,8 +87,13 @@ export const AwardsTab: React.FC = () => {
       </Typography>
 
       <Stack spacing={3} divider={<Divider />}>
-        {Object.entries(awardsByName).map(([awardName, awardList]) => (
-          <AwardRow key={awardName} awardName={awardName} awardList={awardList} teams={teams} />
+        {awardOrderedKeys.map(awardName => (
+          <AwardRow
+            key={awardName}
+            awardName={awardName}
+            awardList={awardsByName[awardName]}
+            teams={teams}
+          />
         ))}
       </Stack>
     </Paper>

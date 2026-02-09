@@ -43,17 +43,37 @@ export const AwardsView: React.FC = () => {
     // Sort awards by index to determine group order
     const sortedAwards = [...validAwards].sort((a, b) => a.index - b.index);
 
+    let advancementGroup: AwardGroup | null = null;
+
     sortedAwards.forEach(award => {
       if (!seenNames.has(award.name)) {
         seenNames.add(award.name);
-        awardGroups.push({
+        const group: AwardGroup = {
           name: award.name,
           index: award.index,
           awards: grouped.get(award.name) || [],
           showPlaces: award.showPlaces
-        });
+        };
+
+        // Hardcode advancement awards (index -1)
+        // Store them separately to place before champions
+        if (award.index === -1) {
+          advancementGroup = group;
+        } else {
+          awardGroups.push(group);
+        }
       }
     });
+
+    // Place advancement awards immediately before champions
+    if (advancementGroup) {
+      const championsIndex = awardGroups.findIndex(g => g.name === 'champions');
+      if (championsIndex !== -1) {
+        awardGroups.splice(championsIndex, 0, advancementGroup);
+      } else {
+        throw new Error('Champions award group not found while inserting advancement awards');
+      }
+    }
 
     return awardGroups;
   }, [awards]);
