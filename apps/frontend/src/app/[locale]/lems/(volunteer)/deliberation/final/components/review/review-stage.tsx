@@ -4,6 +4,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Grid, Button } from '@mui/material';
+import { HIDE_PLACES } from '@lems/shared';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import { EnrichedTeam } from '../../types';
 import { AwardSection } from './award-section';
@@ -33,6 +34,26 @@ export const ReviewStage: React.FC = () => {
     return mapped;
   }, [awards, teams]);
 
+  // Sort awards: advancement before champions, champions always last
+  const sortedAwardEntries = useMemo(() => {
+    const entries = Object.entries(mappedWinners);
+
+    entries.sort(([awardNameA], [awardNameB]) => {
+      // Champions always last
+      if (awardNameA === 'champions') return 1;
+      if (awardNameB === 'champions') return -1;
+
+      // Advancement before champions (so second to last)
+      if (awardNameA === 'advancement') return 1;
+      if (awardNameB === 'advancement') return -1;
+
+      // Keep other awards in their original order
+      return 0;
+    });
+
+    return entries;
+  }, [mappedWinners]);
+
   const handleOpenConfirm = useCallback(() => {
     setOpenConfirmDialog(true);
   }, []);
@@ -57,11 +78,14 @@ export const ReviewStage: React.FC = () => {
 
       <Box sx={{ flex: 1 }}>
         <Grid container spacing={2.5}>
-          {Object.entries(mappedWinners).map(([awardName, winners]) => (
-            <Grid key={awardName} size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: 'flex' }}>
-              <AwardSection awardName={awardName} winners={winners} />
-            </Grid>
-          ))}
+          {sortedAwardEntries.map(([awardName, winners]) => {
+            const showPlaces = !(HIDE_PLACES as string[]).includes(awardName);
+            return (
+              <Grid key={awardName} size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: 'flex' }}>
+                <AwardSection awardName={awardName} winners={winners} showPlaces={showPlaces} />
+              </Grid>
+            );
+          })}
         </Grid>
       </Box>
 

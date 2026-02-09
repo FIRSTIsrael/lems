@@ -9,9 +9,14 @@ import { AwardWinnerCard } from './award-winner-card';
 interface AwardSectionProps {
   awardName: string;
   winners: EnrichedTeam[];
+  showPlaces?: boolean;
 }
 
-export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }) => {
+export const AwardSection: React.FC<AwardSectionProps> = ({
+  awardName,
+  winners,
+  showPlaces = true
+}) => {
   const { getName } = useAwardTranslations();
   return (
     <Paper
@@ -42,7 +47,12 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }
 
       <Stack spacing={1}>
         {winners.map((winner, index) => (
-          <AwardWinnerCard key={winner.id} winner={winner} index={index} />
+          <AwardWinnerCard
+            key={winner.id}
+            winner={winner}
+            index={index}
+            showPlace={showPlaces && winners.length > 1}
+          />
         ))}
       </Stack>
     </Paper>
