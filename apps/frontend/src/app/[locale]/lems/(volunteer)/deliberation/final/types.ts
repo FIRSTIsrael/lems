@@ -42,9 +42,7 @@ export type EnrichedTeam = {
   awardNominations: OptionalAwardNominations;
 };
 
-export type DeliberationAwards = Partial<Omit<Record<Award, string[]>, 'champions'>> & {
-  champions: Record<number, string>;
-};
+export type DeliberationAwards = Record<Award, Record<number, string>>;
 
 export interface FinalDeliberationContextValue {
   division: Division;
