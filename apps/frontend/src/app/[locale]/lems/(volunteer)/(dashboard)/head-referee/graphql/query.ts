@@ -22,6 +22,9 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
               id
               number
               name
+              affiliation
+              city
+              region
               slug
               arrived
             }

@@ -6,6 +6,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
 import { Cancel, CheckCircleSharp } from '@mui/icons-material';
+import { Flag } from '@lems/shared';
 import type { Match, Scoresheet } from '../graphql/types';
 import { useTime } from '../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from './head-referee-context';
@@ -129,6 +130,7 @@ function MatchCard({
         <Stack spacing={1.5}>
           {match.participants
             .filter(p => p.team)
+            .sort((a, b) => a.table.name.localeCompare(b.table.name))
             .map(participant => {
               const scoresheet = findScoresheetForTeam(
                 participant.team!.id,
@@ -173,12 +175,47 @@ function MatchCard({
                       >
                         {participant.table.name}
                       </Typography>
+
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ fontSize: '1rem' }}
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'flex',
+                          gap: 0.5,
+                          fontSize: '1rem'
+                        }}
                       >
-                        {participant.team!.name}
+                        {participant.team!.name} #{participant.team!.number}
+                        {participant.team!.region && (
+                          <>
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center'
+                              }}
+                            >
+                              <Flag region={participant.team!.region} size={16} />
+                            </Box>
+                          </>
+                        )}
+                      </Typography>
+                      <Typography
+                        color="text.secondary"
+                        sx={{
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          display: 'flex',
+                          gap: 0.5,
+                          fontSize: '1rem'
+                        }}
+                      >
+                        {participant.team!.affiliation && ` ${participant.team!.affiliation},`}{' '}
+                        {participant.team!.city}
                       </Typography>
                     </Box>
 
