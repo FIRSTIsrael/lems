@@ -6,7 +6,6 @@ import { Stack, Typography, Paper } from '@mui/material';
 import { useAwardTranslations } from '@lems/localization';
 import { Slide } from '../slide';
 import { Appear } from '../appear';
-import { LogoStack } from '../logo-stack';
 
 export interface TeamWinner {
   id: string;
@@ -14,6 +13,7 @@ export interface TeamWinner {
   number: string | number;
   city: string;
   affiliation: string;
+  logoUrl?: string;
 }
 
 export interface PersonalWinner {
@@ -36,10 +36,9 @@ export interface AwardWinnerSlideAward {
 
 interface AwardWinnerSlideProps {
   award: AwardWinnerSlideAward;
-  chromaKey?: boolean;
 }
 
-export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chromaKey = false }) => {
+export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award }) => {
   const { getName } = useAwardTranslations();
   const t = useTranslations('awards-presentation');
 
@@ -51,8 +50,10 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
   const winner = award.winner as TeamWinner | PersonalWinner;
   const localizedAwardName = getName(award.name);
 
+  console.log('Rendering AwardWinnerSlide for award:', award);
+
   return (
-    <Slide chromaKey={chromaKey}>
+    <Slide>
       <Stack
         direction="column"
         alignItems="center"
@@ -66,18 +67,16 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
           position: 'relative'
         }}
       >
-        <Appear activeStyle={{ opacity: 1, y: 0 }} inactiveStyle={{ opacity: 0, y: 20 }}>
-          <Stack direction="column" spacing={1}>
-            <Typography variant="h2" sx={{ fontSize: '5rem', fontWeight: 700, color: 'black' }}>
-              {localizedAwardName}
+        <Stack direction="column" spacing={1}>
+          <Typography variant="h2" sx={{ fontSize: '5rem', fontWeight: 700, color: 'black' }}>
+            {localizedAwardName}
+          </Typography>
+          {award.place && (
+            <Typography sx={{ fontSize: '3.5rem', color: 'grey.700', fontWeight: 600 }}>
+              {t('place', { place: award.place })}
             </Typography>
-            {award.place !== undefined && (
-              <Typography sx={{ fontSize: '3.5rem', color: 'grey.700', fontWeight: 600 }}>
-                {t('place', { place: award.place + 1 })}
-              </Typography>
-            )}
-          </Stack>
-        </Appear>
+          )}
+        </Stack>
 
         <Paper
           elevation={8}
@@ -157,8 +156,6 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
             </Stack>
           </Appear>
         </Paper>
-
-        <LogoStack color={award.divisionColor} />
       </Stack>
     </Slide>
   );
