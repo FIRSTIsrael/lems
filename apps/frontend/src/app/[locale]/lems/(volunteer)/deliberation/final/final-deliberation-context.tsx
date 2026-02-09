@@ -26,7 +26,6 @@ import {
   UPDATE_MANUAL_ELIGIBILITY_MUTATION
 } from './graphql';
 import {
-  computeChampionsEligibility,
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
@@ -218,21 +217,16 @@ export const FinalDeliberationProvider = ({
       } as EnrichedTeam;
     });
 
-    const teamsSortedByTotalRank = [...enrichedTeams].sort((a, b) => a.ranks.total - b.ranks.total);
+    const teamsSortedByTotalRank = [...enrichedTeams]
+      .sort((a, b) => a.ranks.total - b.ranks.total)
+      .filter(team => team.arrived && !team.disqualified);
 
-    // Compute champions eligibility
-    enrichedTeams.forEach(team => {
-      team.eligibility.champions = computeChampionsEligibility(
-        team.id,
-        teamsSortedByTotalRank,
-        division.judging.advancementPercentage
-          ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
-          : (awardCounts.champions || 0) + 3
-      );
-    });
+    const championsCount = division.judging.advancementPercentage
+      ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
+      : (awardCounts.champions || 0) + 3;
 
     const eligibleTeams: Record<StagesWithNomination, string[]> = {
-      champions: enrichedTeams.filter(t => t.eligibility.champions).map(t => t.id),
+      champions: teamsSortedByTotalRank.slice(0, championsCount).map(t => t.id),
       'core-awards': enrichedTeams.filter(t => t.eligibility['core-awards']).map(t => t.id),
       'optional-awards': enrichedTeams.filter(t => t.eligibility['optional-awards']).map(t => t.id)
     };

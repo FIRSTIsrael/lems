@@ -149,22 +149,6 @@ export function computeRank(
   return ranks;
 }
 
-export const computeChampionsEligibility = (
-  teamId: string,
-  sortedTeams: EnrichedTeam[],
-  numOfEligibleTeams: number
-): boolean => {
-  const team = sortedTeams.find(t => t.id === teamId);
-  const teamRank = sortedTeams.findIndex(t => t.id === teamId) + 1;
-  if (!team) return false;
-
-  if (!team.arrived) return false;
-
-  if (team.disqualified) return false;
-
-  return teamRank <= numOfEligibleTeams;
-};
-
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
