@@ -198,8 +198,13 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               gap: 1
             }}
           >
-            {match.participants
+            {[...match.participants]
               .filter(p => p.team)
+              .sort((a, b) => {
+                const numA = parseInt(a.table.name.match(/\d+/)?.[0] || '0', 10);
+                const numB = parseInt(b.table.name.match(/\d+/)?.[0] || '0', 10);
+                return numA - numB;
+              })
               .map(participant => {
                 const status = getParticipantStatus(participant);
                 return (

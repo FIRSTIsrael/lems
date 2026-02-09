@@ -33,34 +33,40 @@ const TeamsCell = ({ participants }: TeamsCellProps) => {
         flexWrap: 'wrap'
       }}
     >
-      {participants.map((participant, idx) => {
-        const { team, table } = participant;
-        const teamNumber = team?.number ? `#${team.number}` : '—';
+      {[...participants]
+        .sort((a, b) => {
+          const numA = parseInt(a.table.name.match(/\d+/)?.[0] || '0', 10);
+          const numB = parseInt(b.table.name.match(/\d+/)?.[0] || '0', 10);
+          return numA - numB;
+        })
+        .map((participant, idx) => {
+          const { team, table } = participant;
+          const teamNumber = team?.number ? `#${team.number}` : '—';
 
-        return (
-          <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
-            <Typography
-              variant="body2"
-              sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
-            >
-              {table?.name || 'Unknown'}
-            </Typography>
-            <Tooltip title={team ? `${team.name}` : ''} arrow>
+          return (
+            <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
               <Typography
                 variant="body2"
-                sx={{
-                  fontWeight: 500,
-                  minWidth: '2.5rem',
-                  fontFamily: 'monospace',
-                  fontSize: '1.1rem'
-                }}
+                sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
               >
-                {teamNumber}
+                {table?.name || 'Unknown'}
               </Typography>
-            </Tooltip>
-          </Box>
-        );
-      })}
+              <Tooltip title={team ? `${team.name}` : ''} arrow>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 500,
+                    minWidth: '2.5rem',
+                    fontFamily: 'monospace',
+                    fontSize: '1.1rem'
+                  }}
+                >
+                  {teamNumber}
+                </Typography>
+              </Tooltip>
+            </Box>
+          );
+        })}
     </Box>
   );
 };
