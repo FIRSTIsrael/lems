@@ -174,6 +174,7 @@ export function DeliberationTable() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.normalizedScores[hypenatedCategory],
         renderCell: params => params.row.normalizedScores[hypenatedCategory].toFixed(2)
       },
       {
