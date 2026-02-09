@@ -155,7 +155,7 @@ export function buildAwardsSlides(
         const awardWithPlace: AwardWinnerSlideAward = {
           id: award.id,
           name: award.name,
-          place: showPlace ? award.place : 0,
+          place: showPlace ? award.place : undefined,
           divisionColor: color,
           winner: award.winner as AwardWinnerSlideAward['winner']
         };

@@ -73,7 +73,7 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, chrom
             <Typography variant="h2" sx={{ fontSize: '5rem', fontWeight: 700, color: 'black' }}>
               {localizedAwardName}
             </Typography>
-            {award.place !== undefined && (
+            {award.place && (
               <Typography sx={{ fontSize: '3.5rem', color: 'grey.700', fontWeight: 600 }}>
                 {t('place', { place: award.place })}
               </Typography>
