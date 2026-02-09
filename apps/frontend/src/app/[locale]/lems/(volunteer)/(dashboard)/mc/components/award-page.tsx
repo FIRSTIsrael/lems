@@ -100,7 +100,7 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
             >
               <Stack direction="row" spacing={3} alignItems="center" justifyContent="flex-start">
                 {/* Place Badge */}
-                {award.place > 0 && (
+                {award.place > 0 && awardGroup.showPlaces && (
                   <Box
                     sx={{
                       display: 'flex',
