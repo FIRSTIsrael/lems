@@ -172,18 +172,8 @@ export const setMatchParticipantTeamResolver: GraphQLFieldResolver<
         .execute();
     }
 
-    // Fetch and return the updated match
-    const updatedMatch = await db.raw.sql
-      .selectFrom('robot_game_matches')
-      .selectAll()
-      .where('id', '=', matchId)
-      .executeTakeFirst();
-
-    if (!updatedMatch) {
-      throw new MutationError(MutationErrorCode.NOT_FOUND, `Match ${matchId} not found`);
-    }
-
-    return updatedMatch;
+    // Return the match ID - GraphQL field resolvers will fetch nested data
+    return { id: matchId };
   } catch (error) {
     if (error instanceof MutationError) {
       throw error;
