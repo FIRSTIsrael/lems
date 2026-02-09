@@ -200,11 +200,9 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
           >
             {[...match.participants]
               .filter(p => p.team)
-              .sort((a, b) => {
-                const numA = parseInt(a.table.name.match(/\d+/)?.[0] || '0', 10);
-                const numB = parseInt(b.table.name.match(/\d+/)?.[0] || '0', 10);
-                return numA - numB;
-              })
+              .sort((a, b) =>
+                a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
+              )
               .map(participant => {
                 const status = getParticipantStatus(participant);
                 return (

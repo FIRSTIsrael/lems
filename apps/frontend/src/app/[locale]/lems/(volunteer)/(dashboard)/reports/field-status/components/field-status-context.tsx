@@ -63,11 +63,9 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
           : notStartedMatches
     ).slice(0, 10);
 
-    const sortedTables = [...tables].sort((a, b) => {
-      const numA = parseInt(a.name.match(/\d+/)?.[0] || '0', 10);
-      const numB = parseInt(b.name.match(/\d+/)?.[0] || '0', 10);
-      return numA - numB;
-    });
+    const sortedTables = [...tables].sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { numeric: true })
+    );
 
     return {
       division,
