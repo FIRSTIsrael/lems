@@ -26,7 +26,6 @@ import {
   UPDATE_MANUAL_ELIGIBILITY_MUTATION
 } from './graphql';
 import {
-  computeChampionsEligibility,
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
@@ -79,29 +78,27 @@ export const FinalDeliberationProvider = ({
     ]
   );
 
-  const optionalAwards = useMemo<Partial<DeliberationAwards>>(
-    () =>
-      Object.entries(deliberation.optionalAwards).reduce<Partial<Record<Award, string[]>>>(
-        (acc, [awardName, teamIds]) => {
-          acc[awardName as Award] = teamIds as string[];
-          return acc;
-        },
-        {}
-      ),
-    [deliberation.optionalAwards]
-  );
+  const awards = useMemo<DeliberationAwards>(() => {
+    const awardsByName: Record<string, Record<number, string>> = {};
 
-  const awards = useMemo<DeliberationAwards>(
-    () => ({
-      champions: deliberation.champions ?? ({} as Record<number, string>),
-      'core-values': deliberation.coreValues || [],
-      'innovation-project': deliberation.innovationProject || [],
-      'robot-design': deliberation.robotDesign || [],
-      'robot-performance': deliberation.robotPerformance || [],
-      ...optionalAwards
-    }),
-    [deliberation, optionalAwards]
-  );
+    // Read all team awards from backend
+    const teamAwards = division.judging.awards.filter(award => award.type === 'TEAM' && award.winner);
+
+    teamAwards.forEach(award => {
+      const awardName = award.name as Award;
+      const teamId = award.winner && 'team' in award.winner ? (award.winner as { team: { id: string } }).team.id : null;
+
+      if (teamId) {
+        if (!awardsByName[awardName]) {
+          awardsByName[awardName] = {};
+        }
+        // Store place → teamId mapping for all awards uniformly
+        awardsByName[awardName][award.place] = teamId;
+      }
+    });
+
+    return awardsByName as DeliberationAwards;
+  }, [division.judging.awards]);
 
   // Helper functions for mutations - use useCallback to ensure stable references
   const handleStartFinalDeliberation = useCallback(async () => {
@@ -220,21 +217,16 @@ export const FinalDeliberationProvider = ({
       } as EnrichedTeam;
     });
 
-    const teamsSortedByTotalRank = [...enrichedTeams].sort((a, b) => a.ranks.total - b.ranks.total);
+    const teamsSortedByTotalRank = [...enrichedTeams]
+      .sort((a, b) => a.ranks.total - b.ranks.total)
+      .filter(team => team.arrived && !team.disqualified);
 
-    // Compute champions eligibility
-    enrichedTeams.forEach(team => {
-      team.eligibility.champions = computeChampionsEligibility(
-        team.id,
-        teamsSortedByTotalRank,
-        division.judging.advancementPercentage
-          ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
-          : (awardCounts.champions || 0) + 3
-      );
-    });
+    const championsCount = division.judging.advancementPercentage
+      ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
+      : (awardCounts.champions || 0) + 3;
 
     const eligibleTeams: Record<StagesWithNomination, string[]> = {
-      champions: enrichedTeams.filter(t => t.eligibility.champions).map(t => t.id),
+      champions: teamsSortedByTotalRank.slice(0, championsCount).map(t => t.id),
       'core-awards': enrichedTeams.filter(t => t.eligibility['core-awards']).map(t => t.id),
       'optional-awards': enrichedTeams.filter(t => t.eligibility['optional-awards']).map(t => t.id)
     };
