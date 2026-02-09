@@ -1458,7 +1458,7 @@
           "deliberation-finalized": "Core awards have been selected. Ready to advance.",
           "manual-team-indicator": "Added manually",
           "team-not-eligible-for-category": "Team is not eligible for {category}",
-          "team-already-added-to-category": "Team already added to {category}",
+          "team-already-added-to-category": "Team already selected for an award",
           "add-team-to-category": "Add team to {category}"
         },
         "optional-awards": {

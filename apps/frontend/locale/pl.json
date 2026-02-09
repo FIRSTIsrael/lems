@@ -1457,7 +1457,7 @@
           "deliberation-finalized": "Wybrano nagrody podstawowe. Gotowe do przejścia dalej.",
           "manual-team-indicator": "Dodano ręcznie",
           "team-not-eligible-for-category": "Drużyna nie kwalifikuje się do {category}",
-          "team-already-added-to-category": "Drużyna już dodana do {category}",
+          "team-already-added-to-category": "Zespół już wybrany do nagrody",
           "add-team-to-category": "Dodaj drużynę do {category}"
         },
         "optional-awards": {
