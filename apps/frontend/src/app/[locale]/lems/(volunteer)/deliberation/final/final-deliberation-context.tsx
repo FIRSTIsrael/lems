@@ -30,7 +30,9 @@ import {
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
-  extractOptionalAwards
+  computeRawRank,
+  extractOptionalAwards,
+  computeAnomalies
 } from './final-deliberation-computation';
 
 const FinalDeliberationContext = createContext<FinalDeliberationContextValue | null>(null);
@@ -161,8 +163,10 @@ export const FinalDeliberationProvider = ({
         team.judgingSession?.room.id
       );
       const awardNominations = extractOptionalAwards(team.rubrics);
-      // Compute ranks
+      // Compute ranks (with picklist consideration)
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
+      // Compute raw ranks (score-based only, for anomaly detection)
+      const rawRanks = computeRawRank(teamsWithScores[index], teamsWithScores);
 
       const eligibilites: Partial<EligiblityPerStage> = {
         'core-awards': computeCoreAwardsEligibility(
@@ -198,6 +202,7 @@ export const FinalDeliberationProvider = ({
         scores,
         normalizedScores,
         ranks,
+        rawRanks,
         eligibility: eligibilites,
         robotGameScores,
         rubricsFields: {
@@ -237,6 +242,9 @@ export const FinalDeliberationProvider = ({
       .filter(t => (eligibleTeams[deliberation.stage as StagesWithNomination] ?? []).includes(t.id))
       .map(t => t.id);
 
+    // Compute anomalies based on picklist positions vs calculated ranks
+    const anomalies = computeAnomalies(enrichedTeams, categoryPicklists);
+
     return {
       division,
       deliberation,
@@ -247,6 +255,7 @@ export const FinalDeliberationProvider = ({
       awards,
       awardCounts,
       roomMetrics,
+      anomalies,
       startDeliberation: handleStartFinalDeliberation,
       updateAward: handleUpdateFinalDeliberationAwards,
       advanceStage: handleAdvanceStage,
