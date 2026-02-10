@@ -57,6 +57,7 @@ export interface RefereeFieldData {
 export interface RefereeData {
   division: {
     id: string;
+    tables: { id: string; name: string }[];
     field: RefereeFieldData;
   };
 }

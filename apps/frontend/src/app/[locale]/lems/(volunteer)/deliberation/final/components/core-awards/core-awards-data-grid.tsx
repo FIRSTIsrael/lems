@@ -242,7 +242,7 @@ export function CoreAwardsDataGrid() {
               {categories.map(category => {
                 const isInPicklist = categoryPicklists[category].includes(team.id);
                 const canAdd = isInPicklist || isManualTeam;
-                const isAlreadyAdded = (awards[category] || []).includes(team.id);
+                const isAlreadyAdded = Object.values(awards).flat().includes(team.id);
 
                 return (
                   <Tooltip
@@ -251,7 +251,7 @@ export function CoreAwardsDataGrid() {
                       !canAdd
                         ? t('team-not-eligible-for-category', { category: getCategory(category) })
                         : isAlreadyAdded
-                          ? t('team-already-added-to-category', { category: getCategory(category) })
+                          ? t('team-already-added-to-category')
                           : t('add-team-to-category', { category: getCategory(category) })
                     }
                   >

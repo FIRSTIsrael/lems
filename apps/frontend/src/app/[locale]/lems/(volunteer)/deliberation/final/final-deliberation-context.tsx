@@ -26,11 +26,12 @@ import {
   UPDATE_MANUAL_ELIGIBILITY_MUTATION
 } from './graphql';
 import {
-  computeChampionsEligibility,
   computeCoreAwardsEligibility,
   computeOptionalAwardsEligibility,
   computeRank,
-  extractOptionalAwards
+  computeRawRank,
+  extractOptionalAwards,
+  computeAnomalies
 } from './final-deliberation-computation';
 
 const FinalDeliberationContext = createContext<FinalDeliberationContextValue | null>(null);
@@ -161,8 +162,10 @@ export const FinalDeliberationProvider = ({
         team.judgingSession?.room.id
       );
       const awardNominations = extractOptionalAwards(team.rubrics);
-      // Compute ranks
+      // Compute ranks (with picklist consideration)
       const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
+      // Compute raw ranks (score-based only, for anomaly detection)
+      const rawRanks = computeRawRank(teamsWithScores[index], teamsWithScores);
 
       const eligibilites: Partial<EligiblityPerStage> = {
         'core-awards': computeCoreAwardsEligibility(
@@ -198,6 +201,7 @@ export const FinalDeliberationProvider = ({
         scores,
         normalizedScores,
         ranks,
+        rawRanks,
         eligibility: eligibilites,
         robotGameScores,
         rubricsFields: {
@@ -215,27 +219,25 @@ export const FinalDeliberationProvider = ({
       } as EnrichedTeam;
     });
 
-    const teamsSortedByTotalRank = [...enrichedTeams].sort((a, b) => a.ranks.total - b.ranks.total);
+    const teamsSortedByTotalRank = [...enrichedTeams]
+      .sort((a, b) => a.ranks.total - b.ranks.total)
+      .filter(team => team.arrived && !team.disqualified);
 
-    // Compute champions eligibility
-    enrichedTeams.forEach(team => {
-      team.eligibility.champions = computeChampionsEligibility(
-        team.id,
-        teamsSortedByTotalRank,
-        division.judging.advancementPercentage
-          ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
-          : (awardCounts.champions || 0) + 3
-      );
-    });
+    const championsCount = division.judging.advancementPercentage
+      ? Math.round((division.teams.length * division.judging.advancementPercentage) / 100)
+      : (awardCounts.champions || 0) + 3;
 
     const eligibleTeams: Record<StagesWithNomination, string[]> = {
-      champions: enrichedTeams.filter(t => t.eligibility.champions).map(t => t.id),
+      champions: teamsSortedByTotalRank.slice(0, championsCount).map(t => t.id),
       'core-awards': enrichedTeams.filter(t => t.eligibility['core-awards']).map(t => t.id),
       'optional-awards': enrichedTeams.filter(t => t.eligibility['optional-awards']).map(t => t.id)
     };
     const availableTeams = enrichedTeams
       .filter(t => (eligibleTeams[deliberation.stage as StagesWithNomination] ?? []).includes(t.id))
       .map(t => t.id);
+
+    // Compute anomalies based on picklist positions vs calculated ranks
+    const anomalies = computeAnomalies(enrichedTeams, categoryPicklists);
 
     return {
       division,
@@ -247,6 +249,7 @@ export const FinalDeliberationProvider = ({
       awards,
       awardCounts,
       roomMetrics,
+      anomalies,
       startDeliberation: handleStartFinalDeliberation,
       updateAward: handleUpdateFinalDeliberationAwards,
       advanceStage: handleAdvanceStage,
