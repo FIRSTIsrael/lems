@@ -801,7 +801,7 @@
         "not-arrived": "לא הגיעה",
         "status": {
           "loaded": "מקצה הבא",
-          "in-progress": "מקצה נוכחי"
+          "in-progress": "מקצה פעיל"
         },
         "match-title": "סבב {stage} {round}, מקצה #{number}",
         "table": "שולחן"
