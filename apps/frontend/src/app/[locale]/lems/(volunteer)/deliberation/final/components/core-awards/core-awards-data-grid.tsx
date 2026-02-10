@@ -8,6 +8,7 @@ import { useJudgingCategoryTranslations } from '@lems/localization';
 import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple, blue, green, red } from '@mui/material/colors';
 import { JudgingCategory } from '@lems/database';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
@@ -64,12 +65,7 @@ export function CoreAwardsDataGrid() {
 
   // Get teams that have been selected for any core award
   const selectedTeamIds = useMemo<Set<string>>(
-    () =>
-      new Set([
-        ...(awards['robot-design'] || []),
-        ...(awards['innovation-project'] || []),
-        ...(awards['core-values'] || [])
-      ]),
+    () => new Set(JUDGING_CATEGORIES.flatMap(category => awards[category] || [])),
     [awards]
   );
 
@@ -219,11 +215,6 @@ export function CoreAwardsDataGrid() {
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           const isManualTeam = deliberation.coreAwardsManualEligibility.includes(team.id);
-          const categories: JudgingCategory[] = [
-            'robot-design',
-            'innovation-project',
-            'core-values'
-          ];
 
           const categoryColors: Record<JudgingCategory, string> = {
             'robot-design': green[300],
@@ -239,10 +230,12 @@ export function CoreAwardsDataGrid() {
 
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', width: '100%' }}>
-              {categories.map(category => {
+              {JUDGING_CATEGORIES.map(category => {
                 const isInPicklist = categoryPicklists[category].includes(team.id);
                 const canAdd = isInPicklist || isManualTeam;
-                const isAlreadyAdded = Object.values(awards).flat().includes(team.id);
+                const isAlreadyAdded = JUDGING_CATEGORIES.flatMap(
+                  cat => awards[cat] || []
+                ).includes(team.id);
 
                 return (
                   <Tooltip
