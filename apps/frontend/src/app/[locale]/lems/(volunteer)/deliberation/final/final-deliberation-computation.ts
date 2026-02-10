@@ -1,13 +1,8 @@
-import { JudgingCategory } from '@lems/database';
+import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
 import { compareScoreArrays } from '@lems/shared/utils/arrays';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
-import {
-  EnrichedTeam,
-  OptionalAwardNominations,
-  RanksPerCategory,
-  DeliberationAwards
-} from './types';
+import { EnrichedTeam, OptionalAwardNominations, RanksPerCategory } from './types';
 
 /**
  * Represents an anomaly where a team's picklist position differs significantly
@@ -152,7 +147,7 @@ export function computeRank(
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
-  awards: DeliberationAwards,
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;
@@ -175,7 +170,7 @@ export const computeCoreAwardsEligibility = (
 
 export const computeOptionalAwardsEligibility = (
   team: Team & { awardNominations: OptionalAwardNominations },
-  awards: DeliberationAwards,
+  awards: FinalDeliberationAwards,
   manualNominations: string[]
 ): boolean => {
   if (!team.arrived) return false;

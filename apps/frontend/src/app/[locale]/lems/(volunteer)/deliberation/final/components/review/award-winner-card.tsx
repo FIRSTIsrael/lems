@@ -7,14 +7,9 @@ import { EnrichedTeam } from '../../types';
 interface AwardWinnerCardProps {
   winner: EnrichedTeam;
   index: number;
-  showPlace?: boolean;
 }
 
-export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({
-  winner,
-  index,
-  showPlace = true
-}) => {
+export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ winner, index }) => {
   const t = useTranslations('pages.deliberations.final.review');
   const winnerInfo = `${winner.number} | ${winner.name}`;
   return (
@@ -31,11 +26,9 @@ export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({
         gap: 1
       }}
     >
-      {showPlace && (
-        <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-          {t('place', { place: index + 1 })}
-        </Typography>
-      )}
+      <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
+        {t('place', { place: index + 1 })}
+      </Typography>
       <Typography
         variant="body2"
         sx={{

@@ -13,11 +13,14 @@ import { ManualEligibilityControl } from '../shared/manual-eligibility-control';
 
 const DELIBERATION_DURATION_SECONDS = 10 * 60; // 10 minutes
 
+function isStringArray(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(v => typeof v === 'string');
+}
+
 function getAwardArray(awards: Record<string, unknown>, award: Award): string[] {
-  const awardDict = awards as Record<string, Record<number, string>>;
-  const placeMap = awardDict[award];
-  // Extract team IDs from place → teamId mapping
-  return placeMap ? Object.values(placeMap) : [];
+  const awardDict = awards as Record<string, unknown>;
+  const value = awardDict[award];
+  return isStringArray(value) ? value : [];
 }
 
 const getProgressColor = (progressPercent: number) => {
