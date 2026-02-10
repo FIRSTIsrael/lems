@@ -11,6 +11,17 @@ interface SWRError extends Error {
 
 type FetcherArgs = string | [string, z.ZodSchema];
 
+// Type guard to check if result is an error
+function isErrorResult(result: Awaited<ReturnType<typeof apiFetch>>): result is {
+  ok: false;
+  response: Response;
+  status: number;
+  statusText: string;
+  error: unknown;
+} {
+  return !result.ok;
+}
+
 export const swrFetcher = async (args: FetcherArgs) => {
   let url: string;
   let schema: z.ZodSchema | undefined;
@@ -24,7 +35,7 @@ export const swrFetcher = async (args: FetcherArgs) => {
   try {
     const result = schema ? await apiFetch(url, {}, schema) : await apiFetch(url, {});
 
-    if (!result.ok) {
+    if (isErrorResult(result)) {
       console.error('API fetch failed:', {
         url,
         status: result.status,

@@ -19,6 +19,9 @@ import { RobotGameMatchParticipantsTable } from './tables/robot-game-match-parti
 import { AwardsTable } from './tables/awards';
 import { AgendaEventsTable } from './tables/agenda-events';
 import { JudgingDeliberationsTable } from './tables/judging-deliberation';
+import { PitMapsTable } from './tables/pit-maps';
+import { PitMapAreasTable } from './tables/pit-map-areas';
+import { PitMapAssignmentsTable } from './tables/pit-map-assignments';
 
 export interface KyselyDatabaseSchema {
   admins: AdminsTable;
@@ -42,4 +45,7 @@ export interface KyselyDatabaseSchema {
   awards: AwardsTable;
   agenda_events: AgendaEventsTable;
   judging_deliberations: JudgingDeliberationsTable;
+  pit_maps: PitMapsTable;
+  pit_map_areas: PitMapAreasTable;
+  pit_map_assignments: PitMapAssignmentsTable;
 }

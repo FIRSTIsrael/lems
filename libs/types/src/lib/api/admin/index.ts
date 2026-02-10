@@ -8,3 +8,4 @@ export * from './rooms';
 export * from './awards';
 export * from './schedule';
 export * from './integrations';
+export * from './pit-maps';

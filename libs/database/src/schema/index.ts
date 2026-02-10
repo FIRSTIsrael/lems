@@ -27,6 +27,11 @@ export * from './tables/teams';
 export * from './tables/team-divisions';
 export * from './tables/team-division-notifications';
 
+// Pit Maps
+export * from './tables/pit-maps';
+export * from './tables/pit-map-areas';
+export * from './tables/pit-map-assignments';
+
 // States
 export * from './documents/division-state';
 export * from './documents/judging-session-state';

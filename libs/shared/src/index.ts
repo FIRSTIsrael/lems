@@ -6,3 +6,4 @@ export * from './lib/awards';
 export * from './lib/deliberation';
 export * from './lib/consts';
 export * from './lib/integrations';
+export * from './lib/utils';

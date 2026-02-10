@@ -2,7 +2,15 @@
 
 import { useEffect } from 'react';
 
-const waitForRecaptcha = () => new Promise<void>(grecaptcha.ready);
+// Type definition for Google reCAPTCHA v3
+interface ReCaptchaV3 {
+  ready: (callback: () => void) => void;
+  execute: (siteKey: string, options: { action: string }) => Promise<string>;
+}
+
+declare const grecaptcha: ReCaptchaV3;
+
+const waitForRecaptcha = () => new Promise<void>(resolve => grecaptcha.ready(resolve));
 
 /**
  * Function to load the Google reCAPTCHA script by URL.
