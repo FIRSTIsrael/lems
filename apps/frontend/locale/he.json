@@ -613,7 +613,8 @@
         "reset": "איפוס",
         "submit-rubric": "הגשה ונעילה",
         "unlock-rubric": "שחרור",
-        "approve-rubric": "אישור"
+        "approve-rubric": "אישור",
+        "save-and-return": "שמור וחזור"
       },
       "submit-dialog": {
         "title": "הגשה ונעילה של המחוון",
@@ -647,7 +648,8 @@
         "submit-success": "המחוון הוגש ונעול.",
         "submit-error": "נכשל בהגשת המחוון. אנא נסו שנית.",
         "approve-success": "המחוון אושר.",
-        "approve-error": "נכשל בניסיון אישור המחוון. אנא נסו שנית."
+        "approve-error": "נכשל בניסיון אישור המחוון. אנא נסו שנית.",
+        "save-and-return-success": "המחוון נשמר בהצלחה."
       },
       "validation": {
         "title": "פורם הערכה לא שלם",

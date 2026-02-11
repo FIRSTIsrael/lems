@@ -615,7 +615,8 @@
         "reset": "Resetuj",
         "submit-rubric": "Prześlij i zablokuj",
         "unlock-rubric": "Odblokuj",
-        "approve-rubric": "Zatwierdź"
+        "approve-rubric": "Zatwierdź",
+        "save-and-return": "Zapisz i wróć"
       },
       "submit-dialog": {
         "title": "Prześlij i zablokuj rubrykę",
@@ -649,7 +650,8 @@
         "submit-success": "Rubryka została przesłana i zablokowana.",
         "submit-error": "Nie udało się przesłać rubryki. Spróbuj ponownie.",
         "approve-success": "Rubryka została zatwierdzona.",
-        "approve-error": "Nie udało się zatwierdzić rubryki. Spróbuj ponownie."
+        "approve-error": "Nie udało się zatwierdzić rubryki. Spróbuj ponownie.",
+        "save-and-return-success": "Rubryka została pomyślnie zapisana."
       },
       "validation": {
         "title": "Rubryka niekompletna",

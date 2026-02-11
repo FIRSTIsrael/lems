@@ -615,7 +615,8 @@
         "reset": "Reset",
         "submit-rubric": "Submit and lock",
         "unlock-rubric": "Unlock",
-        "approve-rubric": "Approve"
+        "approve-rubric": "Approve",
+        "save-and-return": "Save and Return"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
@@ -649,7 +650,8 @@
         "submit-success": "Rubric has been submitted and locked.",
         "submit-error": "Failed to submit rubric. Please try again.",
         "approve-success": "Rubric has been approved.",
-        "approve-error": "Failed to approve rubric. Please try again."
+        "approve-error": "Failed to approve rubric. Please try again.",
+        "save-and-return-success": "Rubric has been saved successfully."
       },
       "validation": {
         "title": "Rubric Incomplete",
