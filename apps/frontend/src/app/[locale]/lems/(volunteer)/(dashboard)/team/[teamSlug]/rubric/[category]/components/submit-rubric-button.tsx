@@ -63,7 +63,7 @@ export const SubmitRubricButton: React.FC<SubmitRubricButtonProps> = ({ disabled
   }, [currentDivision.id, rubric.id, submitRubricMutation]);
 
   return (
-    <RoleAuthorizer user={user} allowedRoles="judge">
+    <RoleAuthorizer user={user} allowedRoles={['judge-advisor', 'lead-judge']}>
       <>
         <Button
           variant="contained"
