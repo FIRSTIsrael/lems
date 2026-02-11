@@ -650,8 +650,7 @@
         "submit-success": "Rubric has been submitted and locked.",
         "submit-error": "Failed to submit rubric. Please try again.",
         "approve-success": "Rubric has been approved.",
-        "approve-error": "Failed to approve rubric. Please try again.",
-        "save-and-return-success": "Rubric has been saved successfully."
+        "approve-error": "Failed to approve rubric. Please try again."
       },
       "validation": {
         "title": "Rubric Incomplete",

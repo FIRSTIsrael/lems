@@ -650,8 +650,7 @@
         "submit-success": "Rubryka została przesłana i zablokowana.",
         "submit-error": "Nie udało się przesłać rubryki. Spróbuj ponownie.",
         "approve-success": "Rubryka została zatwierdzona.",
-        "approve-error": "Nie udało się zatwierdzić rubryki. Spróbuj ponownie.",
-        "save-and-return-success": "Rubryka została pomyślnie zapisana."
+        "approve-error": "Nie udało się zatwierdzić rubryki. Spróbuj ponownie."
       },
       "validation": {
         "title": "Rubryka niekompletna",
