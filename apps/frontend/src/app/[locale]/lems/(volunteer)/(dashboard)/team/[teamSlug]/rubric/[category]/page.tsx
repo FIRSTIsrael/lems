@@ -102,22 +102,10 @@ export default function RubricPage() {
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
             <ResetRubricButton disabled={!isEditable} />
-            {user.role === 'judge' ? (
-              <>
-                <SaveAndReturnButton disabled={!isEditable} />
-                {/* Original buttons 
-                <LockUnlockRubricButton disabled={!isEditable} />
-                <ApproveRubricButton disabled={!isEditable} />
-                <SubmitRubricButton disabled={!isEditable} />
-                */}
-              </>
-            ) : (
-              <>
-                <LockUnlockRubricButton disabled={!isEditable} />
-                <ApproveRubricButton disabled={!isEditable} />
-                <SubmitRubricButton disabled={!isEditable} />
-              </>
-            )}
+            <SaveAndReturnButton disabled={!isEditable} />
+            <LockUnlockRubricButton disabled={!isEditable} />
+            <ApproveRubricButton disabled={!isEditable} />
+            <SubmitRubricButton disabled={!isEditable} />
           </Stack>
         </RubricProvider>
       </Container>
