@@ -22,7 +22,6 @@ import { SaveAndReturnButton } from './components/save-and-return-button';
 import { ApproveRubricButton } from './components/approve-rubric-button';
 import { GET_RUBRIC_QUERY, parseRubricData, createRubricUpdatedSubscription } from './graphql';
 import { ValidationAlert } from './components/validation-alert';
-import { SubmitRubricButton } from './components/submit-rubric-button';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -105,7 +104,8 @@ export default function RubricPage() {
             <SaveAndReturnButton disabled={!isEditable} />
             <LockUnlockRubricButton disabled={!isEditable} />
             <ApproveRubricButton disabled={!isEditable} />
-            <SubmitRubricButton disabled={!isEditable} />
+            {/* Submit removed for now */}
+            {/* <SubmitRubricButton disabled={!isEditable} /> */}
           </Stack>
         </RubricProvider>
       </Container>
