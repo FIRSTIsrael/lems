@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import type { RefereeMatch, RefereeFieldData } from '../graphql/types';
-import { useUser } from '../../../../components/user-context';
+import { useUser } from '../../../components/user-context';
 import { hasTeamOnTable, sortMatchesByTime, getUnscoredScoresheets } from '../utils';
 
 export type RefereeDisplayState = 'scoresheet' | 'timer' | 'prestart' | 'none';

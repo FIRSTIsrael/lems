@@ -3,6 +3,7 @@ import { LemsUser } from '@lems/types/api/lems';
 import { getClient } from '../../../../lib/graphql/ssr-client';
 import { GET_VOLUNTEER_EVENT_DATA_QUERY } from './graphql';
 import { EventProvider } from './components/event-context';
+import { UserProvider } from './components/user-context';
 
 interface VolunteerLayoutProps {
   children: React.ReactNode;
@@ -41,13 +42,15 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
     }
 
     return (
-      <EventProvider
-        eventId={eventData.event.id}
-        eventName={eventData.event.name}
-        divisions={volunteerData.divisions}
-      >
-        {children}
-      </EventProvider>
+      <UserProvider value={user}>
+        <EventProvider
+          eventId={eventData.event.id}
+          eventName={eventData.event.name}
+          divisions={volunteerData.divisions}
+        >
+          {children}
+        </EventProvider>
+      </UserProvider>
     );
   } catch (error) {
     console.error('Error in volunteer layout:', error);

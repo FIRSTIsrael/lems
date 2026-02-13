@@ -1,155 +1,96 @@
 'use client';
 
-import { use } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics as rubricSchemas, type RubricCategorySchema } from '@lems/shared/rubrics';
+import { rubrics as rubricSchemas } from '@lems/shared/rubrics';
 import Image from 'next/image';
-import { Box, CircularProgress, Alert, Typography, Avatar } from '@mui/material';
-import { useQuery } from '@apollo/client/react';
+import { Box, Alert, Typography, Avatar } from '@mui/material';
+import useSWR from 'swr';
+import { useParams } from 'next/navigation';
 import { ExportRubricTable } from './components/export-rubric-table';
 import { CombinedFeedbackTable } from './components/combined-feedback-table';
-import { GET_TEAM_INFO_QUERY, GET_RUBRICS_QUERY } from './graphql/query';
 
-interface RubricsExportPageProps {
-  params: Promise<{
-    locale: string;
-    teamSlug: string;
-    eventSlug: string;
-  }>;
+interface RubricData {
+  id: string;
+  category: JudgingCategory;
+  data?: {
+    awards?: Record<string, boolean>;
+    fields: Record<string, { value: 1 | 2 | 3 | 4 | null; notes?: string }>;
+    feedback?: { greatJob: string; thinkAbout: string };
+  };
 }
 
-export default function RubricsExportPage({ params: paramsPromise }: RubricsExportPageProps) {
-  const params = use(paramsPromise);
+interface RubricsPageData {
+  teamNumber: number;
+  teamName: string;
+  teamLogoUrl: string | null;
+  eventName: string;
+  divisionName: string;
+  seasonName: string;
+  rubrics: RubricData[];
+}
+
+export default function RubricsExportPage() {
+  const params = useParams();
   const t = useTranslations('pages.exports.rubrics');
   const { getTerm } = useRubricsGeneralTranslations();
-  const eventSlugLower = params.eventSlug.toLowerCase();
-  const teamSlugUpper = params.teamSlug.toUpperCase();
 
-  const {
-    data: teamInfoData,
-    loading: teamInfoLoading,
-    error: teamInfoError
-  } = useQuery(GET_TEAM_INFO_QUERY, {
-    variables: {
-      eventSlug: eventSlugLower,
-      teamSlug: teamSlugUpper
-    },
-    fetchPolicy: 'no-cache'
-  });
+  const { data: rubricsData } = useSWR<RubricsPageData>(
+    `/lems/export/${params.teamSlug}/${params.eventSlug}/rubrics`
+  );
 
-  const event = teamInfoData?.event;
-  const divisions = teamInfoData?.event?.divisions || [];
-  const division = divisions.find(div => div.teams?.length > 0);
-  const team = division?.teams?.[0];
-  const divisionId = division?.id;
-  const teamId = team?.id;
+  if (!rubricsData) {
+    return null;
+  }
 
-  const teamNotFound = Boolean(teamInfoData?.event && divisions.length > 0 && !team);
+  const rubrics = rubricsData.rubrics.map(rubric => {
+    const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
+    const schema = rubricSchemas[categoryKey];
 
-  const {
-    data: rubricsData,
-    loading: rubricsLoading,
-    error: rubricsError
-  } = useQuery(GET_RUBRICS_QUERY, {
-    variables: { divisionId: divisionId!, teamId: teamId! },
-    skip: !divisionId || !teamId || teamNotFound,
-    fetchPolicy: 'no-cache'
-  });
+    const fields = rubric.data?.fields || {};
+    const scores: Record<string, number> = {};
+    const notes: Record<string, string> = {};
+    Object.entries(fields).forEach(([fieldId, fieldData]) => {
+      if (fieldData && typeof fieldData === 'object' && 'value' in fieldData) {
+        const fieldValue = (fieldData as { value: number | null }).value;
+        const fieldNotes = (fieldData as { notes?: string | null }).notes;
 
-  let rubrics: Array<{
-    divisionName: string;
-    teamNumber: number;
-    teamName: string;
-    rubricCategory: string;
-    seasonName: string;
-    eventName: string;
-    scores: Record<string, number>;
-    notes: Record<string, string>;
-    status: string;
-    feedback: { greatJob: string; thinkAbout: string };
-    schema: RubricCategorySchema;
-  }> = [];
-  if (rubricsData?.division && team && event) {
-    const divisionData = rubricsData.division;
-    rubrics = divisionData.judging.rubrics.map(rubric => {
-      const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
-      const schema = rubricSchemas[categoryKey];
-
-      const fields = rubric.data?.fields || {};
-      const scores: Record<string, number> = {};
-      const notes: Record<string, string> = {};
-      Object.entries(fields).forEach(([fieldId, fieldData]) => {
-        if (fieldData && typeof fieldData === 'object' && 'value' in fieldData) {
-          const fieldValue = (fieldData as { value: number | null }).value;
-          const fieldNotes = (fieldData as { notes?: string | null }).notes;
-
-          if (fieldValue !== null) {
-            scores[fieldId] = fieldValue;
-          }
-
-          if (fieldValue === 4 && fieldNotes) {
-            notes[fieldId] = fieldNotes;
-          }
+        if (fieldValue !== null) {
+          scores[fieldId] = fieldValue;
         }
-      });
 
-      return {
-        divisionName: divisionData.name,
-        teamNumber: team.number,
-        teamName: team.name,
-        rubricCategory: categoryKey,
-        seasonName: event.seasonName ?? '',
-        eventName: event.name,
-        scores: scores,
-        notes,
-        status: rubric.status,
-        feedback: rubric.data?.feedback || { greatJob: '', thinkAbout: '' },
-        schema: schema
-      };
+        if (fieldValue === 4 && fieldNotes) {
+          notes[fieldId] = fieldNotes;
+        }
+      }
     });
-  }
 
-  const optionalAwards = rubricsData?.division?.judging?.awards ?? [];
+    return {
+      scores: scores,
+      notes,
+      category: rubric.category,
+      feedback: rubric.data?.feedback || { greatJob: '', thinkAbout: '' },
+      awards: rubric.data?.awards || {},
+      schema: schema
+    };
+  });
 
-  const loading = teamInfoLoading || rubricsLoading;
-  const error = teamInfoError?.message || rubricsError?.message || '';
-
-  if (loading) {
-    return (
-      <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh' }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  if (teamNotFound || !team) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="error">
-          {t('team-not-found', { teamSlug: teamSlugUpper, eventSlug: eventSlugLower })}
-        </Alert>
-      </Box>
-    );
-  }
-
-  if (error) {
-    return (
-      <Box sx={{ p: 2 }}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
-  }
+  const optionalAwards = rubrics.find(r => r.category === 'core-values')?.awards || {};
 
   return (
     <Box sx={{ '@media print': { margin: 0, padding: 0 } }}>
+      <p>
+        {JSON.stringify(
+          rubrics.find(r => r.category === 'core-values'),
+          null,
+          2
+        )}
+      </p>
       {rubrics.length > 0 ? (
         <>
           {rubrics
-            .filter(rubric => rubric.rubricCategory !== 'core-values')
+            .filter(rubric => rubric.category !== 'core-values')
             .map((rubric, index) => (
               <Box
                 key={index}
@@ -182,24 +123,24 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                   <Box sx={{ flex: 1, textAlign: 'left' }}>
                     <Box sx={{ fontSize: '0.7rem', color: '#666', mb: 1, lineHeight: 1.3 }}>
                       {t('metadata', {
-                        eventName: rubric.eventName,
-                        divisionName: rubric.divisionName,
-                        seasonName: rubric.seasonName
+                        eventName: rubricsData.eventName,
+                        divisionName: rubricsData.divisionName,
+                        seasonName: rubricsData.seasonName
                       })}
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
                       <Avatar
                         variant="square"
-                        src={team.logoUrl ?? '/assets/default-avatar.svg'}
-                        alt={`Team ${rubric.teamNumber}`}
+                        src={rubricsData.teamLogoUrl ?? '/assets/default-avatar.svg'}
+                        alt={`Team ${rubricsData.teamNumber}`}
                         sx={{ width: 48, height: 48, objectFit: 'cover' }}
                       />
                       <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
                         {t('title', {
-                          category: getTerm(`categories.${rubric.rubricCategory}.title`),
-                          teamNumber: rubric.teamNumber,
-                          teamName: rubric.teamName
+                          category: getTerm(`categories.${rubric.category}.title`),
+                          teamNumber: rubricsData.teamNumber,
+                          teamName: rubricsData.teamName
                         })}
                       </Box>
                     </Box>
@@ -217,7 +158,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                 {rubric.schema && rubric.schema.sections && rubric.schema.sections.length > 0 ? (
                   <ExportRubricTable
                     sections={rubric.schema.sections}
-                    category={rubric.rubricCategory as JudgingCategory}
+                    category={rubric.category as JudgingCategory}
                     scores={rubric.scores}
                     notes={rubric.notes}
                     feedback={rubric.feedback}
@@ -256,25 +197,25 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                 <Box sx={{ fontSize: '0.7rem', color: '#666', mb: 1, lineHeight: 1.3 }}>
                   {rubrics[0] &&
                     t('metadata', {
-                      eventName: rubrics[0].eventName,
-                      divisionName: rubrics[0].divisionName,
-                      seasonName: rubrics[0].seasonName
+                      eventName: rubricsData.eventName,
+                      divisionName: rubricsData.divisionName,
+                      seasonName: rubricsData.seasonName
                     })}
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                  <Avatar
-                    variant="square"
-                    src={team.logoUrl ?? '/assets/default-avatar.svg'}
-                    alt={`Team ${rubrics[0]?.teamNumber}`}
-                    sx={{ width: 48, height: 48, objectFit: 'cover' }}
+                  <Image
+                    src={rubricsData.teamLogoUrl ?? '/assets/default-avatar.svg'}
+                    alt={`Team ${rubricsData.teamNumber}`}
+                    width={48}
+                    height={48}
+                    style={{ objectFit: 'cover' }}
                   />
                   <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
-                    {rubrics[0] &&
-                      t('feedback.page-title', {
-                        teamNumber: rubrics[0].teamNumber,
-                        teamName: rubrics[0].teamName
-                      })}
+                    {t('feedback.page-title', {
+                      teamNumber: rubricsData.teamNumber,
+                      teamName: rubricsData.teamName
+                    })}
                   </Box>
                 </Box>
               </Box>
@@ -312,7 +253,7 @@ export default function RubricsExportPage({ params: paramsPromise }: RubricsExpo
                 >
                   {t('feedback.awards.description')}
                 </Typography>
-                {optionalAwards.length === 0 && (
+                {Object.keys(optionalAwards).length === 0 && (
                   <Typography
                     sx={{
                       fontSize: '0.9em',

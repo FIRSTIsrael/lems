@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Box, Avatar } from '@mui/material';
+import { Box } from '@mui/material';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 
@@ -51,11 +51,12 @@ export const ExportScoresheetHeader: React.FC<ExportScoresheetHeaderProps> = ({
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-          <Avatar
-            variant="square"
+          <Image
             src={teamLogoUrl ?? '/assets/default-avatar.svg'}
             alt={`Team ${teamNumber}`}
-            sx={{ width: 48, height: 48, objectFit: 'cover' }}
+            width={48}
+            height={48}
+            style={{ objectFit: 'cover' }}
           />
           <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
             {t('title', {

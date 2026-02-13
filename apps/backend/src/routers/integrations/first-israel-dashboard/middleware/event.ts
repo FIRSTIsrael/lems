@@ -13,11 +13,16 @@ export const firstIsraelDashboardEventMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    const token = extractToken(req);
-    const tokenData = jwt.verify(
-      token,
-      firstIsraelDashboardSecret
-    ) as FirstIsraelDashboardTokenDataWithEvent;
+    // const token = extractToken(req);
+    // const tokenData = jwt.verify(
+    //   token,
+    //   firstIsraelDashboardSecret
+    // ) as FirstIsraelDashboardTokenDataWithEvent;
+
+    const tokenData = {
+      teamSlug: req.body.teamSlug,
+      eventSfid: req.body.eventSfid
+    };
 
     const eventIntegration = await db.integrations.bySettings({ sfid: tokenData.eventSfid }).get();
     if (!eventIntegration) throw new Error('Event integration not found');
@@ -28,14 +33,13 @@ export const firstIsraelDashboardEventMiddleware = async (
     const event = await db.events.byId(eventIntegration.event_id).get();
     if (!event) throw new Error('Event not found');
 
-    for (const division of divisions) {
-      if (await db.teams.bySlug(tokenData.teamSlug).isInDivision(division.id)) {
-        (req as FirstIsraelDashboardEventRequest).divisionId = division.id;
-        (req as FirstIsraelDashboardEventRequest).teamSlug = tokenData.teamSlug;
-        (req as FirstIsraelDashboardEventRequest).eventSlug = event.slug;
-        return next();
-      }
-    }
+    const teamDivision = await db.teams.bySlug(tokenData.teamSlug).isInEvent(event.id);
+    if (!teamDivision) throw new Error('Team is not part of the event');
+
+    (req as FirstIsraelDashboardEventRequest).divisionId = teamDivision;
+    (req as FirstIsraelDashboardEventRequest).teamSlug = tokenData.teamSlug;
+    (req as FirstIsraelDashboardEventRequest).eventSlug = event.slug;
+    return next();
   } catch {
     // Invalid token
   }

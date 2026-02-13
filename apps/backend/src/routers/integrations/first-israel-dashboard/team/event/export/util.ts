@@ -194,7 +194,7 @@ const setupPageAuthentication = async (page: Page, url: URL, token: string): Pro
   await context.setCookie({
     domain: url.hostname,
     path: '/',
-    name: 'auth-token',
+    name: 'lems-auth-token',
     value: token,
     secure: true,
     httpOnly: true
@@ -228,7 +228,7 @@ export async function getLemsWebpageAsPdf(
     await setupPageAuthentication(page, url, token);
 
     await page.goto(url.toString(), {
-      waitUntil: ['networkidle0', 'domcontentloaded'],
+      waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
       timeout: 30000
     });
 

@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Stack, Button, CircularProgress } from '@mui/material';
 import { useScoresheet } from '../scoresheet-context';
-import { useUser } from '../../../../../../../components/user-context';
+import { useUser } from '../../../../../../components/user-context';
 
 interface ScoresheetActionButtonsProps {
   isSigned: boolean;

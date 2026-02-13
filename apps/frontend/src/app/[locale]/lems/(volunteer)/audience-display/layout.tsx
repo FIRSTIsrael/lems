@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react';
 import { Box } from '@mui/material';
-import { useUser } from '../../components/user-context';
+import { useUser } from '../components/user-context';
 import { authorizeUserRole } from '../../lib/role-authorizer';
 import { useWindowSize } from '../hooks/use-window-size';
 

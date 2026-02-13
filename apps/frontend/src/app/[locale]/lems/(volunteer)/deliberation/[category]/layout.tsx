@@ -3,7 +3,7 @@
 import { redirect, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 
 interface RubricLayoutProps {
   children: React.ReactNode;

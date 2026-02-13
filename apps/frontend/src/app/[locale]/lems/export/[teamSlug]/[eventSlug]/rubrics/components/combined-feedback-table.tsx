@@ -4,6 +4,7 @@ import React from 'react';
 import { Typography, Table, TableBody, TableRow, TableCell, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { Rubric } from '../types';
 
 const categoryColors = {
@@ -21,7 +22,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
 
   const getFeedback = (category: string) => {
-    const rubric = rubrics.find(r => r.rubricCategory === category);
+    const rubric = rubrics.find(r => r.category === category);
     return {
       greatJob: rubric?.feedback?.greatJob || '',
       thinkAbout: rubric?.feedback?.thinkAbout || ''
@@ -123,7 +124,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
             </TableCell>
           </TableRow>
 
-          {(['core-values', 'innovation-project', 'robot-design'] as const).map(category => {
+          {JUDGING_CATEGORIES.map(category => {
             const feedback = getFeedback(category);
             return (
               <React.Fragment key={category}>

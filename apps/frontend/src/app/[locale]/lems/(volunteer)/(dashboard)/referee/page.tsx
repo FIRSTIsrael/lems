@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Container, Box } from '@mui/material';
 import { useEvent } from '../../components/event-context';
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
