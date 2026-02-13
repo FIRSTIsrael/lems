@@ -896,6 +896,34 @@
               "sfid-label": "ID wydarzenia w Salesforce",
               "sfid-placeholder": "Wprowadź ID wydarzenia w Salesforce",
               "sfid-help": "Unikalny identyfikator Twojego wydarzenia w Salesforce"
+            },
+            "sendgrid": {
+              "template-id-label": "SendGrid Template ID",
+              "template-id-placeholder": "d-xxxxxxxxxxxxxxxxxxxxxxxx",
+              "template-id-help": "Dynamiczny identyfikator szablonu z SendGrid",
+              "from-address-label": "Adres e-mail nadawcy",
+              "from-address-placeholder": "noreply@example.com",
+              "from-address-help": "Zweryfikowany adres e-mail nadawcy",
+              "test-email-address-label": "Testowy adres e-mail",
+              "test-email-address-placeholder": "admin@example.com",
+              "test-email-address-help": "Gdzie będą wysyłane testowe wiadomości e-mail",
+              "send-test-email-button": "Wyślij testową wiadomość e-mail",
+              "email-contacts-title": "Kontakty e-mail",
+              "csv-description": "Prześlij plik CSV z kolumnami: Team Number, Region, Recipient Name, Email Address",
+              "csv-requirements-title": "Wymagania dotyczące pliku CSV",
+              "csv-requirement-header": "Plik musi zawierać wiersz nagłówka",
+              "csv-requirement-columns": "Kolumny: Team Number, Region, Recipient Name, Recipient Email",
+              "csv-requirement-encoding": "Zapisane jako plik CSV w kodowaniu UTF-8",
+              "csv-example": "Format przykładowy",
+              "upload-csv-button": "Prześlij CSV",
+              "validation-template-id-required": "Wymagany identyfikator szablonu",
+              "validation-from-address-required": "Wymagany prawidłowy e-mail",
+              "validation-test-email-required": "Wymagany prawidłowy e-mail",
+              "csv-error-invalid-format": "Proszę przesłać plik CSV",
+              "csv-error-upload-failed": "Nie udało się przesłać kontaktów",
+              "csv-error-send-test-failed": "Nie udało się wysłać testową wiadomość e-mail",
+              "csv-success-contacts-uploaded": "Pomyślnie przesłano {count} kontaktów e-mail",
+              "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}"
             }
           }
         },
@@ -903,6 +931,10 @@
           "first-israel-dashboard": {
             "name": "FIRST Israel Dashboard",
             "description": "Prześlij informacje o drużynach i eksportuj wyniki ze swojego konta FIRST Israel Dashboard"
+          },
+          "sendgrid": {
+            "name": "SendGrid",
+            "description": "Wyślij e-maile związane z wydarzeniem do drużyn za pomocą szablonów e-mail SendGrid"
           }
         }
       },
