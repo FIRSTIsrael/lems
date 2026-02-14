@@ -1,8 +1,8 @@
 import express, { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
+import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
 import db from '../../../lib/database';
-import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 
 const router = express.Router({ mergeParams: true });
 
@@ -111,7 +111,19 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
 
   const season = await db.seasons.byId(event.season_id).get();
 
-  const rubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
+  const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
+  // const rubrics = allRubrics.filter(r => r.status === 'approved');
+
+  const optionalAwards = (await db.awards.byDivisionId(division.id).getAll()).filter(
+    a => a.allow_nominations
+  );
+  const coreValuesRubric = allRubrics.find(r => r.category === 'core-values');
+  const awards = optionalAwards.reduce((acc, award) => {
+    acc[award.name] = coreValuesRubric?.data.awards[award.name] ?? false;
+    return acc;
+  }, {});
+
+  console.log('AWARDS', awards);
 
   res.json({
     teamNumber: team.number,
@@ -120,11 +132,12 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     eventName: event.name,
     divisionName: division.name,
     seasonName: season.name,
-    rubrics: rubrics.map(r => ({
+    rubrics: allRubrics.map(r => ({
       id: r._id,
       category: r.category,
       data: r.data
-    }))
+    })),
+    awards: awards
   });
 });
 

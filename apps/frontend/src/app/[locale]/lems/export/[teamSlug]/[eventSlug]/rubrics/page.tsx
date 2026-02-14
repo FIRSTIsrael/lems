@@ -1,11 +1,11 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useRubricsGeneralTranslations } from '@lems/localization';
+import { useRubricsGeneralTranslations, useAwardTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
 import { rubrics as rubricSchemas } from '@lems/shared/rubrics';
 import Image from 'next/image';
-import { Box, Alert, Typography, Avatar } from '@mui/material';
+import { Box, Alert, Typography, Paper, Stack, Checkbox, FormControlLabel } from '@mui/material';
 import useSWR from 'swr';
 import { useParams } from 'next/navigation';
 import { ExportRubricTable } from './components/export-rubric-table';
@@ -29,12 +29,14 @@ interface RubricsPageData {
   divisionName: string;
   seasonName: string;
   rubrics: RubricData[];
+  awards: Record<string, boolean>;
 }
 
 export default function RubricsExportPage() {
   const params = useParams();
   const t = useTranslations('pages.exports.rubrics');
   const { getTerm } = useRubricsGeneralTranslations();
+  const { getName: getAwardName, getDescription: getAwardDescription } = useAwardTranslations();
 
   const { data: rubricsData } = useSWR<RubricsPageData>(
     `/lems/export/${params.teamSlug}/${params.eventSlug}/rubrics`
@@ -76,17 +78,8 @@ export default function RubricsExportPage() {
     };
   });
 
-  const optionalAwards = rubrics.find(r => r.category === 'core-values')?.awards || {};
-
   return (
     <Box sx={{ '@media print': { margin: 0, padding: 0 } }}>
-      <p>
-        {JSON.stringify(
-          rubrics.find(r => r.category === 'core-values'),
-          null,
-          2
-        )}
-      </p>
       {rubrics.length > 0 ? (
         <>
           {rubrics
@@ -130,11 +123,12 @@ export default function RubricsExportPage() {
                     </Box>
 
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-                      <Avatar
-                        variant="square"
+                      <Image
                         src={rubricsData.teamLogoUrl ?? '/assets/default-avatar.svg'}
                         alt={`Team ${rubricsData.teamNumber}`}
-                        sx={{ width: 48, height: 48, objectFit: 'cover' }}
+                        width={48}
+                        height={48}
+                        style={{ objectFit: 'cover' }}
                       />
                       <Box sx={{ fontSize: '1.3rem', fontWeight: 'bold' }}>
                         {t('title', {
@@ -232,43 +226,63 @@ export default function RubricsExportPage() {
             <Box sx={{ width: '90%', ml: 5 }}>
               <CombinedFeedbackTable rubrics={rubrics} />
 
-              <Box
+              <Paper
                 sx={{
-                  mt: 3,
-                  textAlign: 'left',
+                  p: 0.75,
+                  borderRadius: 0,
+                  boxShadow: 'none',
+                  mt: 2,
                   '@media print': {
-                    mt: 2
+                    boxShadow: 'none',
+                    p: 0.75,
+                    mt: 1.5,
+                    border: 'none'
                   }
                 }}
               >
-                <Typography
-                  sx={{
-                    fontSize: '0.95em',
-                    color: 'text.secondary',
-                    lineHeight: 1.6,
-                    '@media print': {
-                      fontSize: '0.85em'
-                    }
-                  }}
-                >
-                  {t('feedback.awards.description')}
-                </Typography>
-                {Object.keys(optionalAwards).length === 0 && (
-                  <Typography
-                    sx={{
-                      fontSize: '0.9em',
-                      color: 'text.secondary',
-                      fontStyle: 'italic',
-                      mt: 1,
-                      '@media print': {
-                        fontSize: '0.8em'
-                      }
-                    }}
-                  >
-                    {t('feedback.awards.no-awards')}
+                <Stack spacing={1}>
+                  <Typography variant="h4" fontSize="1rem" fontWeight={600}>
+                    {t('feedback.awards.title')}
                   </Typography>
-                )}
-              </Box>
+
+                  <Stack spacing={0.5}>
+                    {Object.entries(rubricsData.awards).length === 0 ? (
+                      <Typography
+                        variant="body2"
+                        color="textSecondary"
+                        sx={{ fontStyle: 'italic', fontSize: '0.875rem' }}
+                      >
+                        {t('feedback.awards.no-awards')}
+                      </Typography>
+                    ) : (
+                      Object.entries(rubricsData.awards).map(([awardName, nominated]) => (
+                        <Stack key={awardName} spacing={0.25}>
+                          <FormControlLabel
+                            control={<Checkbox size="small" checked={nominated} />}
+                            label={
+                              <Typography
+                                variant="body2"
+                                fontWeight={500}
+                                sx={{ fontSize: '0.875rem' }}
+                              >
+                                {getAwardName(awardName)}
+                              </Typography>
+                            }
+                            sx={{ m: 0 }}
+                          />
+                          <Typography
+                            variant="caption"
+                            color="textSecondary"
+                            sx={{ pl: 3, fontSize: '0.75rem' }}
+                          >
+                            {getAwardDescription(awardName)}
+                          </Typography>
+                        </Stack>
+                      ))
+                    )}
+                  </Stack>
+                </Stack>
+              </Paper>
             </Box>
           </Box>
         </>
