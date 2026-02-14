@@ -3,7 +3,6 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import type { Division, Field, Match, Table } from '../graphql';
-import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface FieldStatusContextType {
   division: Division;
@@ -31,7 +30,6 @@ interface FieldStatusProviderProps {
 export function FieldStatusProvider({ data, children }: FieldStatusProviderProps) {
   const { division, field, tables } = data;
   const matches = field.matches;
-  const now = useTime({ interval: 1000 });
 
   const value = useMemo<FieldStatusContextType>(() => {
     const activeMatch = field.activeMatch
@@ -44,24 +42,11 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
 
     const queuedMatches = matches.filter(m => m.called && m.status === 'not-started');
 
-    const currentStage = field.currentStage;
-
     const notStartedMatches = matches
-      .filter(m => m.status === 'not-started')
+      .filter(m => m.status === 'not-started' && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)));
 
-    const futureStageMatches = notStartedMatches.filter(
-      m => dayjs(m.scheduledTime).isAfter(now) && m.stage === currentStage
-    );
-    const stageMatches = notStartedMatches.filter(m => m.stage === currentStage);
-
-    const upcomingMatches = (
-      futureStageMatches.length > 0
-        ? futureStageMatches
-        : stageMatches.length > 0
-          ? stageMatches
-          : notStartedMatches
-    ).slice(0, 10);
+    const upcomingMatches = notStartedMatches.slice(0, 10);
 
     const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -76,7 +61,7 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       upcomingMatches,
       matchLength: field.matchLength
     };
-  }, [division, field, tables, matches, now]);
+  }, [division, field, tables, matches]);
 
   return <FieldStatusContext.Provider value={value}>{children}</FieldStatusContext.Provider>;
 }
