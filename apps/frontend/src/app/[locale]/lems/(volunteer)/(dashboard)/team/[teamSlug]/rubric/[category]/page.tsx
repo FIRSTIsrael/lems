@@ -18,10 +18,10 @@ import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
 import { ResetRubricButton } from './components/reset-rubric-button';
 import { LockUnlockRubricButton } from './components/lock-unlock-rubric-button';
+import { SaveAndReturnButton } from './components/save-and-return-button';
 import { ApproveRubricButton } from './components/approve-rubric-button';
 import { GET_RUBRIC_QUERY, parseRubricData, createRubricUpdatedSubscription } from './graphql';
 import { ValidationAlert } from './components/validation-alert';
-import { SubmitRubricButton } from './components/submit-rubric-button';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -101,9 +101,11 @@ export default function RubricPage() {
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
             <ResetRubricButton disabled={!isEditable} />
+            <SaveAndReturnButton disabled={!isEditable} />
             <LockUnlockRubricButton disabled={!isEditable} />
             <ApproveRubricButton disabled={!isEditable} />
-            <SubmitRubricButton disabled={!isEditable} />
+            {/* Submit removed for now */}
+            {/* <SubmitRubricButton disabled={!isEditable} /> */}
           </Stack>
         </RubricProvider>
       </Container>

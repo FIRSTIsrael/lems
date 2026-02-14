@@ -8,9 +8,9 @@
         "team-not-found": "קבוצה {teamSlug} לא נמצאה באירוע {eventSlug}",
         "no-rubric-data": "לא נמצאו נתוני מחוון",
         "feedback": {
-          "title": "פידבק ממפגשי השיפוט",
-          "page-title": "פידבק ממפגשי השיפוט של קבוצה #{teamNumber} - {teamName}",
-          "great-job": "עבודה מעולה",
+          "title": "משוב ממפגשי השיפוט",
+          "page-title": "משוב ממפגשי השיפוט של קבוצה #{teamNumber} - {teamName}",
+          "great-job": "עבודה מצוינת",
           "think-about": "חשבו על",
           "great-job-placeholder": "ציינו את הדברים שהקבוצה עשתה בצורה מצוינת...",
           "think-about-placeholder": "דברים שעל הקבוצה לחשוב עליהם או לשפר...",
@@ -22,7 +22,7 @@
           "category-descriptions": {
             "core-values": "כיצד הקבוצה הדגימה עבודת צוות, גילוי, הכלה, חדשנות, השפעה והנאה בעבודתה?",
             "innovation-project": "כיצד הקבוצה זיהתה בעיה הקשורה לנושא של עונה וניגשה לפתור אותה?",
-            "robot-design": "מה היתה גישת הקבוצה לפתרון משימות הרובוט בצורה בנויה ותכנית?"
+            "robot-design": "מה הייתה גישת הקבוצה לפתרון משימות משחק הרובוט בצורה מובנית ומתוכננת?"
           },
           "awards": {
             "title": "מועמדות לפרסי רשות",
@@ -54,13 +54,13 @@
       },
       "instructions": {
         "role": "אנא בחרו את התפקיד שלכם באירוע:",
-        "division": "אנא בחרו את הבית אליו אתם משוייכים:",
+        "division": "אנא בחרו את הבית אליו אתם משויכים:",
         "association": "אנא בחרו את השיוך שלכם:",
         "role-info-table": "אנא בחרו את השולחן שאתם משויכים אליו:",
         "role-info-room": "אנא בחרו את החדר שאתם משויכים אליו:",
         "role-info-category": "אנא בחרו את התחום שאתם משויכים אליו:",
         "user": "נמצאו מספר משתמשים תואמים. אנא בחרו את החשבון שלכם:",
-        "password": "אנא הזינו את הסיסמא שלכם:"
+        "password": "אנא הזינו את הסיסמה שלכם:"
       },
       "fields": {
         "role": "תפקיד",
@@ -88,10 +88,10 @@
         "missing-event-slug": "מידע האירוע חסר.",
         "event-not-found": "אירוע לא נמצא.",
         "no-users-for-event": "לא הוגדרו משתמשים עבור אירוע זה.",
-        "title": "משהו השתבש",
+        "title": "משהו השתבש.",
         "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת דף ההתחברות.",
         "unknown": "אירעה שגיאה בלתי צפויה. אנא נסו שנית.",
-        "support-text": "אם הבעיה הזו נמשכת, אנא צור קשר עם התמיכה.",
+        "support-text": "אם בעיה זו נמשכת, אנא צור קשר עם התמיכה.",
         "back-home": "חזרה לעמוד הבית",
         "try-again": "ניסיון נוסף"
       }
@@ -106,12 +106,12 @@
     },
     "pit-admin": {
       "page-title": "רישום קבוצות",
-      "error": "נכשל בסימון הקבוצה כהגעה",
+      "error": "כישלון בסימון הקבוצה כהגעה",
       "stats": {
         "total-teams": "מספר קבוצות",
         "arrived": "הגיעו",
         "all-arrived": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
-        "waiting-for": "מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
+        "waiting-for": "-מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
         "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}"
       },
       "team-input": {
@@ -128,7 +128,7 @@
     },
     "field-head-queuer": {
       "page-title": "קיואר זירה ראשי",
-      "no-data": "עדיין לא נטענו נתונים. נסה שוב בעוד כמה רגעים.",
+      "no-data": "עדיין לא נטענו נתונים. נסה שוב בעוד מספר רגעים.",
       "field-schedule": {
         "title": "לוח זמנים זירה",
         "subtitle": "מקצים קרובים - קרא לקבוצות וסמן אותן כשהן מגיעות",
@@ -141,8 +141,8 @@
         "no-matches": "אין מקצים קרובים",
         "no-matches-description": "כל המקצים הושלמו או שאף אחד לא מתוזמן ב-15 הדקות הקרובות",
         "error": {
-          "update-match-failed": "נכשל בעדכון המקצה",
-          "update-participant-failed": "נכשל בעדכון המשתתף"
+          "update-match-failed": "עדכון המקצה נכשל",
+          "update-participant-failed": "עדכון המשתתף נכשל"
         },
         "status": {
           "not_signed_in": "לא נרשמו",
@@ -174,8 +174,8 @@
         "call-teams": "קריאה לקבוצות",
         "cancel-call": "ביטול קריאה",
         "error": {
-          "update-participant-failed": "נכשל בעדכון הגעה לזירה",
-          "update-match-failed": "נכשל בעדכון המקצה"
+          "update-participant-failed": "עדכון הגעה לזירה נכשל",
+          "update-match-failed": "עדכון המקצה נכשל"
         },
         "started-at": "התחיל ב-{time}",
         "scheduled-at": "מתוזמן ל-{time}",
@@ -206,7 +206,7 @@
         "tab-label": "מפת פיטים"
       },
       "team-card": {
-        "in-judging-tooltip": "הקבוצה נמצאת כרגע בשיפוט",
+        "in-judging-tooltip": "הקבוצה נמצאת כרגע במפגש השיפוט",
         "time-ago": "לפני {minutes} דק'",
         "time-until": "בעוד {minutes} דק'",
         "status": {
@@ -223,7 +223,7 @@
     },
     "judging-head-queuer": {
       "page-title": "קיואר שיפוט ראשי",
-      "no-data": "עדיין לא נטענו נתונים. נסה שוב בעוד כמה רגעים.",
+      "no-data": "טרם נטענו נתונים. נסה שוב בעוד כמה רגעים.",
       "current-sessions": {
         "current-sessions": "מפגשים נוכחיים",
         "upcoming-sessions": "מפגשים קרובים",
@@ -247,12 +247,12 @@
           "empty-room": "חדר ריק"
         },
         "error": {
-          "update-session-failed": "נכשל בעדכון המפגש"
+          "update-session-failed": "עדכון המפגש נכשל"
         }
       },
       "judging-schedule": {
         "title": "לוח זמנים שיפוט",
-        "subtitle": "מפגשים קרובים - קרא לקבוצות לחדרי שיפוט",
+        "subtitle": "מפגשים קרובים - קרא לקבוצות לחדרי השיפוט",
         "session-number": "מפגש",
         "time": "שעה",
         "room": "חדר",
@@ -260,7 +260,7 @@
         "actions": "פעולות",
         "call": "קריאה",
         "cancel": "ביטול",
-        "queued": "סמן כממתין בתור",
+        "queued": "סמן כממתין בקיו",
         "no-sessions": "אין מפגשים קרובים",
         "no-sessions-description": "כל המפגשים הושלמו או שאף אחד לא מתוזמן ב-20 הדקות הקרובות",
         "error": {
@@ -328,7 +328,7 @@
         "profile-document-button-label": "פרופיל",
         "rubric-labels": {
           "core-values": "ערכי הליבה",
-          "innovation-project": "פרויקט החדשות",
+          "innovation-project": "פרויקט החדשנות",
           "robot-design": "תכנון הרובוט"
         },
         "status-glossary": {
@@ -400,7 +400,7 @@
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
-        "field-timer": "שעון זמן מגרש",
+        "field-timer": "שעון זמן זירה",
         "judging-status": "מצב השיפוט",
         "scoreboard": "טבלת ניקוד"
       },
@@ -443,17 +443,17 @@
           "team-number": "קבוצה {number}",
           "judging-conflict": "שיפוט: {room}",
           "status": {
-            "ready": "מוכן",
+            "ready": "מוכנה",
             "present": "מתכוננת",
             "queued": "בקיו",
-            "not-present": "לא נוכח",
+            "not-present": "לא נוכחת",
             "not-arrived": "לא הגיעה לאירוע"
           }
         },
         "legend": {
-          "title": "מקראה",
+          "title": "מקרא",
           "statuses": {
-            "ready": "מוכן",
+            "ready": "מוכנה",
             "present": "נוכחת",
             "queued": "בקיו",
             "missing": "חסרה",
@@ -488,7 +488,7 @@
         "page-title": "רשימת פרסים",
         "description": "רשימת כל הפרסים בחלוקה זו, כולל סדר ההענקה וההגדרות שלהם.",
         "error-loading": "אירעה שגיאה בטעינת הפרסים.",
-        "no-awards": "עדיין לא הוגדרו פרסים.",
+        "no-awards": "טרם הוגדרו פרסים.",
         "loading": "טוען פרסים…",
         "places-count": "{count, plural, one {פרס אחד} other {# פרסים}}",
         "place-label": "מקום #{place}"
@@ -550,7 +550,7 @@
         "page-title": "שעון זמן מגרש",
         "no-active-match": "אין מקצה פעיל",
         "loading": "טוען נתוני מקצה...",
-        "error-loading": "שגיאה בטעינת נתוני המגרש. אנא נסו שוב.",
+        "error-loading": "שגיאה בטעינת נתוני הזירה. אנא נסו שוב.",
         "test-match": "מקצה בדיקה",
         "match-info": "מקצה {stage} סבב #{round} מקצה #{number}",
         "next-match": "מקצה הבא"
@@ -558,9 +558,9 @@
       "field-schedule": {
         "page-title": "לו״ז זירה",
         "error-loading": "אירעה שגיאה בטעינת לו״ז הזירה.",
-        "empty-state": "לא נקבעו קרבות עדיין.",
+        "empty-state": "טרם נקבעו מקצים.",
         "columns": {
-          "match": "קרב",
+          "match": "מקצה",
           "start-time": "התחלה",
           "end-time": "סיום"
         },
@@ -605,7 +605,7 @@
       },
       "award-nominations": {
         "title": "מועמדות לפרס",
-        "description": "אם הקבוצה עמדת בתנאי לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגן האירוע אילו פרסי רשות מחולקים באירוע.",
+        "description": "אם הקבוצה עומדת בתנאים לאחד מהפרסים הללו, אנא סמנו בתיבה המתאימה. בדקו עם מארגני האירוע אילו פרסי רשות מחולקים באירוע.",
         "no-awards": "אין פרסי רשות זמינים."
       },
       "actions": {
@@ -613,7 +613,8 @@
         "reset": "איפוס",
         "submit-rubric": "הגשה ונעילה",
         "unlock-rubric": "שחרור",
-        "approve-rubric": "אישור"
+        "approve-rubric": "אישור",
+        "save-and-return": "שמור וחזור"
       },
       "submit-dialog": {
         "title": "הגשה ונעילה של המחוון",
@@ -632,7 +633,7 @@
       "approve-dialog": {
         "title": "אישור המחוון",
         "warning": "פעולה זו היא סופית ולא ניתן לבטלה!",
-        "description": "לאחר אישור המחוון, הוא יהיה נעול ולא ניתן יהיה לבצע שינויים נוספים. אנא וודאו שהמחוון מלא ודייק לפני המשך.",
+        "description": "לאחר אישור המחוון, הוא יהיה נעול ולא ניתן יהיה לבצע שינויים נוספים. אנא וודאו שהמחוון מלא ומדויק לפני שאתם ממשיכים.",
         "cancel": "ביטול",
         "confirm": "אישור המחוון"
       },
@@ -650,7 +651,7 @@
         "approve-error": "נכשל בניסיון אישור המחוון. אנא נסו שנית."
       },
       "validation": {
-        "title": "פורם הערכה לא שלם",
+        "title": "מחוון השיפוט אינו מלא",
         "missing-field-value": "אנא הערך את כל השדות לפני הגשה.",
         "missing-notes-for-level-4": "שדות המדורגים כ'מצטיינת' דורשים הערות.",
         "missing-feedback": "אנא מלאו את שני שדות המשוב.",
@@ -771,7 +772,7 @@
           "team-placeholder": "הכנס שם קבוצה או מספר",
           "submit": "שלח פרסים",
           "placeholder-message": "פרסים נשלחו",
-          "winner-name-placeholder": "הכנס שם הזוכה",
+          "winner-name-placeholder": "הכנס את שם הזוכה",
           "assign-button": "הקצה",
           "cancel": "ביטול",
           "confirm": "אישור",
@@ -801,7 +802,7 @@
         "not-arrived": "לא הגיעה",
         "status": {
           "loaded": "מקצה הבא",
-          "in-progress": "מקצה נוכחי"
+          "in-progress": "מקצה פעיל"
         },
         "match-title": "סבב {stage} {round}, מקצה #{number}",
         "table": "שולחן"
@@ -830,26 +831,26 @@
     "referee": {
       "page-title": "שופט זירה | שולחן {table}",
       "match-running": "מקצה פעיל",
-      "match-slug": "צקצה",
-      "prestart-title": "התכוננת למקצה",
-      "inspection-timer": "בדיקת ציוד",
+      "match-slug": "מקצה",
+      "prestart-title": "התכוננות למקצה",
+      "inspection-timer": "ביקורת ציוד",
       "start-inspection": "התחל בדיקה",
-      "present": "נוכח",
-      "absent": "לא נוכח",
-      "ready-confirmed": "מוכן",
-      "mark-ready": "סמנו כמוכן",
+      "present": "נוכחת",
+      "absent": "לא נוכחת",
+      "ready-confirmed": "מוכנה",
+      "mark-ready": "סמנו כמוכנה",
       "no-match-title": "אין מקצה בשולחן כעת",
-      "no-match-description": "מחכה להשמת המשחק הבא לשולחן שלך.",
+      "no-match-description": "מחכה לשיוך המקצה הבא לשולחן שלך.",
       "no-match-instructions": "המקצים הבאים מופיעים בלוח הזמנים מטה",
-      "no-upcoming-matches": "אין משחקים מתוכננים.",
-      "match": "משחק",
+      "no-upcoming-matches": "אין מקצים מתוכננים.",
+      "match": "מקצה",
       "scheduled-time": "שעה מתוכננת",
       "teams": "קבוצות",
       "round": "סבב",
-      "team-not-available": "מידע הקבוצה לא זמין",
+      "team-not-available": "מידע על הקבוצה לא זמין",
       "break-message": "זה זמן טוב לשתות מים ולהתרענן",
       "no-show-title": "הקבוצה לא הגיעה",
-      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במשחק זה.",
+      "no-show-description": "קבוצה זו לא הגיעה לאירוע ולא תשתתף במקצה זה.",
       "ready-no-team": "מוכן ללא קבוצה",
       "loading": "בטעינה..."
     },
@@ -878,7 +879,7 @@
         "no-team": "אין קבוצה משובצת"
       },
       "legend": {
-        "title": "מקראה",
+        "title": "מקרא",
         "statuses": {
           "not-queued": "לא בקיו",
           "queued": "בקיו",
@@ -925,14 +926,14 @@
           "empty": "ריק"
         },
         "legend": {
-          "title": "מפתח סטטוס הקבוצות",
+          "title": "מקרא סטטוס הקבוצות",
           "ready": "הקבוצה בשולחן ומוכנה להתחרות",
           "present": "הקבוצה הגיעה לשולחן אך עדיין לא מוכנה",
           "queued": "הקבוצה נקראה ובדרך לשולחן",
           "no-show": "הקבוצה לא הגיעה לאירוע",
           "conflict": "הקבוצה נוכחת אך לא בקיו (צריך לפתור)",
           "missing": "הקבוצה הגיעה לאירוע אך עדיין לא בקיו",
-          "empty": "לא הוקצתה קבוצה לחריץ משתתף זה"
+          "empty": "לא הוקצתה קבוצה למשבצת זו"
         },
         "not-ready-warning": "לא כל הקבוצות מוכנות."
       },
@@ -1060,7 +1061,7 @@
       "actions": {
         "move": "העברה",
         "replace": "החלפה",
-        "insert-rematch": "הכנס משחק חוזר",
+        "insert-rematch": "הכנס מקצה חוזר",
         "clear": "נקה",
         "cancel": "ביטול",
         "confirm": "אישור"
@@ -1093,18 +1094,18 @@
         "types-must-match": "ניתן להעביר רק בין אותם סוגים (מקצה למקצה או מפגש למפגש)"
       },
       "errors": {
-        "load-data-failed": "נכשל בטעינת נתוני מנהל התחרויות",
+        "load-data-failed": "נכשל בטעינת נתוני מנהל התחרות",
         "move-team-failed": "נכשל בהעברת הקבוצה",
         "replace-teams-failed": "נכשל בהחלפת הקבוצות",
         "assign-team-failed": "נכשל בשיבוץ הקבוצה",
         "clear-team-failed": "נכשל בהסרת הקבוצה",
-        "cannot-modify-in-progress": "לא ניתן לשנות מקצים או מפגשים בסטטוס מתרחש",
+        "cannot-modify-in-progress": "לא ניתן לשנות מקצים או מפגשים בסטטוס ״מתרחש״",
         "cannot-modify-loaded": "לא ניתן לשנות מקצים טעונים",
         "cannot-modify-completed": "לא ניתן לשנות מקצים או מפגשים בסטטוס הסתיים"
       }
     },
     "head-referee": {
-      "page-title": "לוח בקרה - שופט ראשי",
+      "page-title": "לוח בקרה - שופט זירה ראשי",
       "escalation-alert": "דף ניקוד הועבר לטיפולך!",
       "points": "נקודות",
       "round": "סבב",
@@ -1130,7 +1131,7 @@
         "empty": "ריק",
         "draft": "בתהליך",
         "completed": "הושלם",
-        "gp": "ממתין ל-GP",
+        "gp": "ממתין למקצועיות אדיבה",
         "submitted": "נשלח"
       },
       "scoresheet-button": {
@@ -1153,8 +1154,8 @@
           "description": "ניקוד המשימות הושלם"
         },
         "gp": {
-          "label": "ממתין ל-GP",
-          "description": "ממתין לדירוג Gracious Professionalism"
+          "label": "ממתין למקצועיות אדיבה",
+          "description": "ממתין לניקוד מקצועיות אדיבה"
         },
         "submitted": {
           "label": "נשלח",
@@ -1168,8 +1169,8 @@
       "table": {
         "match": "מקצה",
         "scheduled-time": "שעה",
-        "participant-ready": "מוכן",
-        "participant-not-ready": "לא מוכן"
+        "participant-ready": "מוכנה",
+        "participant-not-ready": "לא מוכנה"
       }
     },
     "audience-display": {
@@ -1286,11 +1287,11 @@
       "complete-form-to-sign": "השלם את הטופס ותקן כל שגיאות כדי לחתום על דף הניקוד",
       "complete-form-to-proceed": "השלם את כל המשימות ותקן את כל השגיאות לפני שתוכל לחתום ולהגיש את דף הניקוד",
       "submit-scoresheet": "הגש דף ניקוד",
-      "gp-next": "עבור לניקוד GP",
+      "gp-next": "עבור לניקוד מקצועיות אדיבה",
       "submitting": "מגיש...",
       "error-signature-required": "חתימה נדרשת כדי להגיש את דף הניקוד",
       "error-failed-to-submit": "הגשת דף הניקוד נכשלה",
-      "escalate": "העבר לשופט ראשי",
+      "escalate": "העבר לשופט זירה ראשי",
       "de-escalate": "החזר לשופט זירה",
       "reset": "אפס דף ניקוד",
       "processing": "מעבד...",
@@ -1320,7 +1321,7 @@
       },
       "view": {
         "score": "ניקוד",
-        "gp": "GP"
+        "gp": "מקצועיות אדיבה"
       }
     },
     "deliberations": {
@@ -1363,7 +1364,7 @@
           "complete-modal": {
             "title": "סיום הדיון",
             "description": "האם אתה בטוח שברצונך לסיים דיון זה? לאחר אישור, תופנה לדף הבית.",
-            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שהסדר הקבוצות שנבחרו סופי לפני המשך.",
+            "warning-text": "פעולה זו לא ניתן לשחזר. בדוק שסדר הקבוצות שנבחרו סופי לפני המשך.",
             "confirm": "סיום",
             "cancel": "ביטול",
             "submitting": "בתהליך...",
@@ -1395,7 +1396,7 @@
         "stepper": {
           "champions": "פרס האליפות",
           "core-awards": "פרסי ליבה",
-          "optional-awards": "פרסים רשות",
+          "optional-awards": "פרסי רשות",
           "review": "סיכום"
         },
         "errors": {
@@ -1531,7 +1532,7 @@
       "error-match-not-found": "מקצה לא נמצא",
       "error-match-not-completed": "מקצה לא הושלם",
       "error-not-assigned-to-table": "חסרות הרשאות לדף ניקוד זה",
-      "error-participant-not-present": "הקבוצה לא סומנה כנוכחת במקצה זה. אנא פנו לשופט הראשי.",
+      "error-participant-not-present": "הקבוצה סומנה כלא נוכחת במקצה זה. אנא פנו לשופט הזירה הראשי.",
       "error-failed-to-update": "עדכון דף הניקוד נכשל",
       "incomplete-title": "דף הניקוד אינו מלא",
       "incomplete-message": "אנא נקדו את כל המשימות.",
@@ -1539,9 +1540,9 @@
       "incomplete-action": "מעבר למשימה",
       "points-unit": "נק'",
       "participant-not-present-title": "הקבוצה לא נוכחת",
-      "participant-not-present-message": "קבוצה #{teamNumber} לא סומנה כנוכחת במקצה זה. ניתן לסמן אותה כנוכחת כדי להמשיך, או לחזור אחורה.",
+      "participant-not-present-message": "קבוצה #{teamNumber} סומנה כלא נוכחת במקצה זה. ניתן לסמן אותה כנוכחת כדי להמשיך, או לחזור אחורה.",
       "go-back": "חזרה",
-      "mark-as-present": "סמן כנוכח"
+      "mark-as-present": "סמן כנוכחת"
     },
     "deliberation": {
       "error-not-authorized": "אין לך הרשאות לגשת לדיון זה",
@@ -1580,7 +1581,7 @@
     "rubrics": {
       "feedback": {
         "feedback": "משוב",
-        "great-job": "עבודה מעולה...",
+        "great-job": "עבודה מצוינת...",
         "think-about": "חשבו על..."
       }
     }
@@ -1614,7 +1615,7 @@
   "browse-events": {
     "page-title": "עיון באירועים",
     "title": "כל האירועים",
-    "description": "גלו את כל אירועי FIRST LEGO League הזמינים",
+    "description": "גלו את כל אירועי <i>FIRST</i> LEGO League הזמינים",
     "loading": "טוען אירועים...",
     "no-events": "לא נמצאו אירועים",
     "no-events-description": "נסו שוב מאוחר יותר או צרו קשר עם התמיכה למידע נוסף",

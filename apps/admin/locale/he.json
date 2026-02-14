@@ -74,7 +74,7 @@
       },
       "list": {
         "columns": {
-          "number": "מספר קבוצה",
+          "number": "מספר הקבוצה",
           "name": "שם הקבוצה",
           "affiliation": "שיוך",
           "actions": "פעולות",
@@ -83,8 +83,8 @@
           "region": "מדינה"
         },
         "status": {
-          "active": "פעיל",
-          "inactive": "לא פעיל"
+          "active": "פעילה",
+          "inactive": "לא פעילה"
         }
       },
       "creation-dialog": {
@@ -114,7 +114,7 @@
           "region": {
             "label": "אזור",
             "placeholder": "מדינה",
-            "helper-text": "קוד מדינהISO-3166 בן 2 אותיות"
+            "helper-text": "קוד מדינה ISO-3166 בן 2 אותיות"
           },
           "logo": {
             "label": "לוגו הקבוצה",
@@ -149,7 +149,7 @@
             "csv-format": "פורמט CSV נדרש:",
             "requirements": {
               "header": "לא צריכה להיות שורת כותרת בקובץ",
-              "columns": "כל ארבעת העמודות (number, name, affiliation, city, region) נדרשות, לפי הסדר הזה",
+              "columns": "כל ארבע העמודות (number, name, affiliation, city, region) נדרשות, לפי הסדר הזה",
               "encoding": "הקובץ חייב להיות שמור בקידוד UTF-8"
             },
             "example": "דוגמה לתוכן CSV:"
@@ -347,7 +347,7 @@
             },
             "region": {
               "required": "מדינה נדרשת",
-              "length": "קוד המדינה חייב ליהות באורך 2 תווים",
+              "length": "קוד המדינה חייב להיות באורך 2 תווים",
               "format": "קוד מדינה לא תקין"
             }
           }
@@ -416,7 +416,7 @@
           "form": {
             "instructions": {
               "title": "דרישות קובץ CSV",
-              "description": "עלו קובץ CSV המכיל מספרי קבוצות לרישום. הקובץ יעובד וקבוצות יירשמו בהתאם.",
+              "description": "העלו קובץ CSV המכיל מספרי קבוצות לרישום. הקובץ יעובד וקבוצות יירשמו בהתאם.",
               "csv-format": "פורמט CSV נדרש:",
               "requirements": {
                 "header": "הקובץ לא צריך להכיל שורת כותרת",
@@ -433,7 +433,7 @@
               }
             },
             "errors": {
-              "invalid-file": "פורמט קובץ לא חוקי. אנא עלו קובץ CSV תקין.",
+              "invalid-file": "פורמט קובץ לא חוקי. אנא העלו קובץ CSV תקין.",
               "upload-error": "אירעה שגיאה בעת העלאת הקובץ. אנא נסו שוב."
             },
             "upload": "רישום קבוצות",
@@ -447,7 +447,7 @@
             "close": "סגור",
             "skip-reasons": {
               "team-not-found": "קבוצה לא נמצאה",
-              "already-registered": "כבר רשומה לאירוע זה",
+              "already-registered": "הקבוצה כבר רשומה לאירוע זה",
               "registration-failed": "הרישום נכשל"
             }
           }
@@ -532,7 +532,7 @@
       "venue": {
         "title": "{eventName}: היכל",
         "schedule-exists": {
-          "message": "נקבע לוח זמנים. כדי לערוך פרטי היכל, יש למחוק קודם את לוח הזמנים.",
+          "message": "נקבע לוח זמנים. כדי לערוך את פרטי ההיכל, יש למחוק קודם את לוח הזמנים.",
           "view-schedule": "צפייה בלוח זמנים",
           "delete-schedule": "מחיקת לוח זמנים",
           "delete-schedule-dialog": {
@@ -549,18 +549,18 @@
           "name-placeholder": "שם החדר",
           "save-button": "שמור",
           "delete-button": "מחק",
-          "empty-state": "לא נוספו חדרים עדיין",
+          "empty-state": "טרם נוספו חדרים",
           "validation": {
             "name-required": "שם החדר נדרש"
           }
         },
         "tables": {
-          "title": "שולחנות משחק רובוט",
+          "title": "שולחנות משחק הרובוט",
           "add-button": "הוסף שולחן",
           "name-placeholder": "שם השולחן",
           "save-button": "שמור",
           "delete-button": "מחק",
-          "empty-state": "לא נוספו שולחנות עדיין",
+          "empty-state": "טרם נוספו שולחנות",
           "validation": {
             "name-required": "שם השולחן נדרש"
           }
@@ -770,7 +770,7 @@
           }
         },
         "team-swap": {
-          "description": "החלף קבוצות בין מושבי שיפוט ולוח זמנים של משחקים. בחר קבוצה כדי לראות את לוח הזמנים שלה, ולאחר מכן בחר משבצת זמן להחלפה.",
+          "description": "החלף קבוצות בין מפגשי שיפוט ומקצי משחק הרובוט. בחר קבוצה כדי לראות את לוח הזמנים שלה, ולאחר מכן בחר משבצת זמן להחלפה.",
           "select-team": "בחירת קבוצה",
           "no-teams": "אין קבוצות בבית זה",
           "schedule": "לוח זמנים נוכחי",
@@ -882,7 +882,7 @@
           "error": "הוספת האינטגרציה נכשלה"
         },
         "detail-panel": {
-          "no-selection": "בחר אינטגרציה כדי להצג הגדרות",
+          "no-selection": "בחר אינטגרציה כדי להציג הגדרות",
           "settings-placeholder": "הגדרות האינטגרציה יופיעו כאן",
           "save": "שמור",
           "delete": "מחק",
@@ -901,8 +901,8 @@
         },
         "integration-types": {
           "first-israel-dashboard": {
-            "name": "לוח בקרה FIRST Israel",
-            "description": "העלה מידע קבוצות וייצא תוצאות מחשבון לוח הבקרה של FIRST Israel שלך"
+            "name": "לוח הבקרה של FIRST Israel",
+            "description": "העלה מידע על קבוצות וייצא תוצאות מהחשבון שלך בלוח הבקרה של FIRST Israel"
           }
         }
       },
@@ -919,7 +919,7 @@
           },
           "volunteer-users": {
             "title": "משתמשי מתנדבים",
-            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל התפקידים החובה מאוישים בכל בית.",
+            "description": "נהל הקצאות תפקידי מתנדבים לאירוע זה. וודא שכל תפקידי החובה מאוישים בכל בית.",
             "system-managed-roles": {
               "title": "תפקידים המנוהלים על ידי המערכת",
               "description": "תפקידים אלה מנוהלים אוטומטית על ידי המערכת ולא ניתן לערוך אותם באופן ידני.",
@@ -1018,14 +1018,14 @@
             },
             "password": {
               "label": "סיסמה",
-              "placeholder": "הזן סיסמה בטוחה"
+              "placeholder": "הזן סיסמה מאובטחת"
             },
             "first-name": {
               "label": "שם פרטי",
               "placeholder": "לדוגמה: יוחנן"
             },
             "last-name": {
-              "label": "שֵׁם מִשׁפָּחָה",
+              "label": "שֵׁם משפחה",
               "placeholder": "לדוגמה: כהן"
             }
           },
