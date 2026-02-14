@@ -123,8 +123,6 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     return acc;
   }, {});
 
-  console.log('AWARDS', awards);
-
   res.json({
     teamNumber: team.number,
     teamName: team.name,
