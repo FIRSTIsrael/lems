@@ -5,7 +5,7 @@ import { Box, Button, LinearProgress, Stack, Typography, alpha, useTheme } from 
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { Award, PERSONAL_AWARDS } from '@lems/shared';
+import { Award, OPTIONAL_AWARDS, PERSONAL_AWARDS } from '@lems/shared';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -59,13 +59,14 @@ export const OptionalAwardsControlsPanel: React.FC = () => {
   const isNotStarted = useMemo(() => !isInProgress && !isCompleted, [isInProgress, isCompleted]);
 
   // Check if all optional awards are filled (or have their max limit)
+  // Filter out personal awards and excellence-in-engineering
   const isOptionalAwardsComplete = useMemo(
     () =>
       deliberation
         ? deliberationAwards
             .filter(
               award =>
-                award.isOptional &&
+                (OPTIONAL_AWARDS as readonly string[]).includes(award.name) &&
                 award.name !== 'excellence-in-engineering' &&
                 !(PERSONAL_AWARDS as readonly string[]).includes(award.name)
             )
