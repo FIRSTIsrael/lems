@@ -874,7 +874,8 @@
         "not-started": "Nie rozpoczęto",
         "in-progress": "W toku",
         "completed": "Zakończono",
-        "queued": "W kolejce"
+        "queued": "W kolejce",
+        "not-queued": "Nie w kolejce"
       },
       "warnings": {
         "on-field": "Drużyna jest na polu!"
