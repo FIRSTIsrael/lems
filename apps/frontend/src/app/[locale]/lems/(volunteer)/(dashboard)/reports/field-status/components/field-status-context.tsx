@@ -49,11 +49,13 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)));
 
     // Show matches within 30 minutes from now
-    const upcomingMatches = notStartedMatches.filter(m => {
-      const scheduledTime = dayjs(m.scheduledTime);
-      const minutesFromNow = scheduledTime.diff(now, 'minute', true);
-      return minutesFromNow <= 30;
-    });
+    const upcomingMatches = notStartedMatches
+      .filter(m => {
+        const scheduledTime = dayjs(m.scheduledTime);
+        const minutesFromNow = scheduledTime.diff(now, 'minute', true);
+        return minutesFromNow <= 30;
+      })
+      .slice(0, 10);
 
     const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
 
