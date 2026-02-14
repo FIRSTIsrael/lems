@@ -420,7 +420,7 @@
               "csv-format": "Wymagany format CSV:",
               "requirements": {
                 "header": "Plik nie powinien zawierać wiersza nagłówkowego",
-                "columns": "Wymagana jest tylko jedna kolumna: numer drużyny",
+                "columns": "Wymagane są dwie kolumny: numer zespołu i region",
                 "encoding": "Plik musi być zapisany w kodowaniu UTF-8"
               },
               "example": "Przykładowa zawartość CSV:"

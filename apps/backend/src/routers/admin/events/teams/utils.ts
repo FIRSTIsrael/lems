@@ -21,38 +21,47 @@ export const parseTeamCSVRegistration = async (
   randomize: boolean
 ) => {
   const records = parse(csv.data, {
-    columns: false,
+    columns: ['number', 'region'],
     skip_empty_lines: true
-  }) as string[][];
+  }) as { number: string; region: string }[];
 
-  const teamNumbers = records
+  const teamSlugs = records
     .map(row => {
-      const number = parseInt(row[0]?.trim(), 10);
-      return isNaN(number) ? null : number;
+      const number = parseInt(row.number, 10);
+      console.warn('Parsed CSV row:', {
+        number,
+        region: row.region,
+        slug: `${row.region}-${number}`
+      });
+      return isNaN(number) ? null : `${row.region}-${number}`;
     })
-    .filter((num): num is number => num !== null);
+    .filter((slug): slug is string => slug !== null);
 
-  if (teamNumbers.length === 0) {
+  if (teamSlugs.length === 0) {
     throw new Error('No valid team numbers found in CSV');
   }
 
   const registered: Array<{
     name: string;
     number: number;
+    region: string;
     division: { name: string; color: string };
   }> = [];
-  const skipped: Array<{ name: string; number: number; reason: string }> = [];
+  const skipped: Array<{ name: string; number: number; region: string; reason: string }> = [];
   const allTeams = await db.teams.getAll();
-  const teamsByNumber = new Map(allTeams.map(t => [t.number, t]));
+  const teamsBySlug = new Map(allTeams.map(t => [`${t.region}-${t.number}`, t]));
 
-  for (let i = 0; i < teamNumbers.length; i++) {
-    const teamNumber = teamNumbers[i];
-    const team = teamsByNumber.get(teamNumber);
+  for (let i = 0; i < teamSlugs.length; i++) {
+    const teamSlug = teamSlugs[i];
+    const team = teamsBySlug.get(teamSlug);
 
     if (!team) {
+      const [region, numberStr] = teamSlug.split('-');
+      const number = parseInt(numberStr, 10);
       skipped.push({
         name: `Unknown`,
-        number: teamNumber,
+        number,
+        region,
         reason: 'team-not-found'
       });
       continue;
@@ -65,6 +74,7 @@ export const parseTeamCSVRegistration = async (
       skipped.push({
         name: team.name,
         number: team.number,
+        region: team.region,
         reason: 'already-registered'
       });
       continue;
@@ -81,6 +91,7 @@ export const parseTeamCSVRegistration = async (
       registered.push({
         name: team.name,
         number: team.number,
+        region: team.region,
         division: {
           name: assignedDivision.name,
           color: assignedDivision.color
@@ -91,6 +102,7 @@ export const parseTeamCSVRegistration = async (
       skipped.push({
         name: team.name,
         number: team.number,
+        region: team.region,
         reason: 'registration-failed'
       });
     }
