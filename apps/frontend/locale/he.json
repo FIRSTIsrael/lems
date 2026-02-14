@@ -865,6 +865,7 @@
         "ends-at": "מסתיים בשעה {time}"
       },
       "status": {
+        "not-started": "לא בקיו",
         "not-queued": "לא בקיו",
         "in-progress": "בתהליך",
         "completed": "הושלם",
