@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { lighten, Typography, Stack, Box, useTheme } from '@mui/material';
 import { buildNavigationItems } from '../../../../lib/navigation-items';
-import { useUser } from '../../../../components/user-context';
+import { useUser } from '../../../components/user-context';
 
 interface NavigationListProps {
   onItemClick?: () => void;

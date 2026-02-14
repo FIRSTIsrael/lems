@@ -4,6 +4,7 @@ import React from 'react';
 import { Typography, Table, TableBody, TableRow, TableCell, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations } from '@lems/localization';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { Rubric } from '../types';
 
 const categoryColors = {
@@ -21,7 +22,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
   const { getFeedbackTitle } = useRubricsGeneralTranslations();
 
   const getFeedback = (category: string) => {
-    const rubric = rubrics.find(r => r.rubricCategory === category);
+    const rubric = rubrics.find(r => r.category === category);
     return {
       greatJob: rubric?.feedback?.greatJob || '',
       thinkAbout: rubric?.feedback?.thinkAbout || ''
@@ -41,7 +42,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
           borderRadius: '15px',
           border: '0.5px solid #000'
         },
-        mt: 4
+        mt: 2
       }}
     >
       <Table
@@ -66,7 +67,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               sx={{
                 width: '50%',
                 backgroundColor: '#f8f9fa',
-                py: 1,
+                py: 0.5,
                 '@media print': {
                   backgroundColor: '#f8f9fa',
                   py: 0,
@@ -82,6 +83,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               <Typography
                 fontWeight={600}
                 sx={{
+                  fontSize: '0.75rem',
                   '@media print': {
                     lineHeight: '12px',
                     height: '12px'
@@ -96,7 +98,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               sx={{
                 width: '50%',
                 backgroundColor: '#f8f9fa',
-                py: 1,
+                py: 0.5,
                 '@media print': {
                   backgroundColor: '#f8f9fa',
                   py: 0,
@@ -112,6 +114,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               <Typography
                 fontWeight={600}
                 sx={{
+                  fontSize: '0.75rem',
                   '@media print': {
                     lineHeight: '12px',
                     height: '12px'
@@ -123,7 +126,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
             </TableCell>
           </TableRow>
 
-          {(['core-values', 'innovation-project', 'robot-design'] as const).map(category => {
+          {JUDGING_CATEGORIES.map(category => {
             const feedback = getFeedback(category);
             return (
               <React.Fragment key={category}>
@@ -135,9 +138,9 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                       backgroundColor: categoryColors[category],
                       border: '1px solid #000',
                       boxSizing: 'border-box',
-                      fontSize: '1.4em',
-                      py: '0.3em',
-                      px: '1em',
+                      fontSize: '0.95em',
+                      py: '0.25em',
+                      px: '0.75em',
                       '@media print': {
                         border: '0.1px solid black',
                         py: 0,
@@ -153,6 +156,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                   >
                     <Typography
                       sx={{
+                        fontSize: '0.8rem',
                         '@media print': {
                           lineHeight: '12px',
                           height: '12px'
@@ -174,7 +178,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                       <Box
                         component="span"
                         sx={{
-                          fontSize: '0.9em',
+                          fontSize: '0.75em',
                           '@media print': {
                             lineHeight: '12px',
                             height: '12px'
@@ -194,9 +198,9 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                       backgroundColor: '#fff',
                       border: '1px solid #000',
                       boxSizing: 'border-box',
-                      fontSize: '1.4em',
-                      py: '3em',
-                      px: '1em',
+                      fontSize: '0.9em',
+                      py: '1.5em',
+                      px: '0.75em',
                       '@media print': {
                         border: '0.1px solid grey',
                         py: 0,
@@ -207,16 +211,16 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                       }
                     }}
                   >
-                    <Typography>{feedback.thinkAbout}</Typography>
+                    <Typography sx={{ fontSize: '0.9em' }}>{feedback.thinkAbout}</Typography>
                   </TableCell>
                   <TableCell
                     sx={{
                       backgroundColor: '#fff',
                       border: '1px solid #000',
                       boxSizing: 'border-box',
-                      fontSize: '1.4em',
-                      py: '3em',
-                      px: '1em',
+                      fontSize: '0.9em',
+                      py: '1.5em',
+                      px: '0.75em',
                       '@media print': {
                         border: '0.1px solid grey',
                         py: 0,
@@ -227,7 +231,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                       }
                     }}
                   >
-                    <Typography>{feedback.greatJob}</Typography>
+                    <Typography sx={{ fontSize: '0.9em' }}>{feedback.greatJob}</Typography>
                   </TableCell>
                 </TableRow>
               </React.Fragment>
