@@ -66,3 +66,22 @@ export interface FinalDeliberationData {
 export interface FinalDeliberationVars {
   divisionId: string;
 }
+
+export interface DivisionAwardsData {
+  division: {
+    id: string;
+    judging: {
+      awards: Array<{
+        id: string;
+        name: string;
+        type: 'PERSONAL' | 'TEAM';
+        place: number;
+        winner?: TeamWinner | PersonalWinner;
+      }>;
+    };
+  };
+}
+
+export interface DivisionAwardsVars {
+  divisionId: string;
+}
