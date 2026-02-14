@@ -5,7 +5,7 @@ import { Box, Button, LinearProgress, Stack, Typography, alpha, useTheme } from 
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { OPTIONAL_AWARDS, Award, PERSONAL_AWARDS } from '@lems/shared';
+import { Award, PERSONAL_AWARDS } from '@lems/shared';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -31,7 +31,7 @@ const getProgressColor = (progressPercent: number) => {
 export const OptionalAwardsControlsPanel: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
-  const { deliberation, startDeliberation, awards, awardCounts, advanceStage } =
+  const { deliberation, startDeliberation, awards, awardCounts, advanceStage, deliberationAwards } =
     useFinalDeliberation();
   const currentTime = useTime({ interval: 1000 });
   const [isLoading, setIsLoading] = useState(false);
@@ -62,17 +62,20 @@ export const OptionalAwardsControlsPanel: React.FC = () => {
   const isOptionalAwardsComplete = useMemo(
     () =>
       deliberation
-        ? OPTIONAL_AWARDS.filter(
-            award =>
-              award !== 'excellence-in-engineering' &&
-              !(PERSONAL_AWARDS as readonly string[]).includes(award)
-          ).every(award => {
-            const selectedCount = getAwardArray(awards, award as Award).length;
-            const maxCount = awardCounts[award as Award] ?? 0;
-            return selectedCount === maxCount;
-          })
+        ? deliberationAwards
+            .filter(
+              award =>
+                award.isOptional &&
+                award.name !== 'excellence-in-engineering' &&
+                !(PERSONAL_AWARDS as readonly string[]).includes(award.name)
+            )
+            .every(award => {
+              const selectedCount = getAwardArray(awards, award.name as Award).length;
+              const maxCount = awardCounts[award.name as Award] ?? 0;
+              return selectedCount === maxCount;
+            })
         : false,
-    [deliberation, awards, awardCounts]
+    [deliberation, awards, awardCounts, deliberationAwards]
   );
 
   // Calculate timer values
