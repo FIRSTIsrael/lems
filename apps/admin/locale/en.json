@@ -420,7 +420,7 @@
               "csv-format": "Required CSV Format:",
               "requirements": {
                 "header": "The file should not contain a header row",
-                "columns": "Only one column is required: team number",
+                "columns": "Two columns are required: team number and region",
                 "encoding": "File must be saved with UTF-8 encoding"
               },
               "example": "Example CSV content:"
