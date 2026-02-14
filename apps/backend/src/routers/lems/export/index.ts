@@ -8,22 +8,22 @@ const router = express.Router({ mergeParams: true });
 
 const integrationsJwtSecret = process.env.INTEGRATIONS_LEMS_JWT as string;
 
-router.use('/:teamId/:eventSlug', async (req: Request, res: Response, next: NextFunction) => {
-  const { teamId, eventSlug } = req.params;
+router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: NextFunction) => {
+  const { teamSlug, eventSlug } = req.params;
   try {
     const token = extractToken(req);
     const tokenData = jwt.verify(token, integrationsJwtSecret) as {
-      teamId: string;
-      eventSlug: string;
+      teamSlug: string;
+      divisionId: string;
     };
 
     // Validate team and event from token
-    const team = await db.teams.byId(tokenData.teamId).get();
+    const team = await db.teams.bySlug(teamSlug).get();
     if (!team) {
       throw new Error('Team not found');
     }
-    if (team.id !== teamId) {
-      throw new Error('Invalid team ID');
+    if (teamSlug !== tokenData.teamSlug) {
+      throw new Error('Invalid team slug');
     }
 
     const event = await db.events.bySlug(eventSlug).get();
@@ -34,9 +34,13 @@ router.use('/:teamId/:eventSlug', async (req: Request, res: Response, next: Next
       throw new Error('Invalid event slug');
     }
 
-    const teamDivision = await db.teams.byId(teamId).isInEvent(event.id);
+    const teamDivision = await db.teams.bySlug(teamSlug).isInEvent(event.id);
     if (!teamDivision) {
       throw new Error('Team is not part of the event');
+    }
+
+    if (teamDivision !== tokenData.divisionId) {
+      throw new Error('Invalid division ID');
     }
 
     // Validate that the event is published
@@ -49,6 +53,7 @@ router.use('/:teamId/:eventSlug', async (req: Request, res: Response, next: Next
     }
 
     next();
+    return;
   } catch {
     // Invalid token
   }
@@ -69,7 +74,7 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
 
   const scoresheets = (
     await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
-  ).filter(s => s.stage === 'RANKING');
+  ).filter(s => s.stage === 'RANKING' && s.status === 'submitted');
 
   res.json({
     teamNumber: team.number,
@@ -112,12 +117,12 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
   const season = await db.seasons.byId(event.season_id).get();
 
   const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
-  // const rubrics = allRubrics.filter(r => r.status === 'approved');
+  const rubrics = allRubrics.filter(r => r.status === 'approved');
 
   const optionalAwards = (await db.awards.byDivisionId(division.id).getAll()).filter(
     a => a.allow_nominations
   );
-  const coreValuesRubric = allRubrics.find(r => r.category === 'core-values');
+  const coreValuesRubric = rubrics.find(r => r.category === 'core-values');
   const awards = optionalAwards.reduce((acc, award) => {
     acc[award.name] = coreValuesRubric?.data.awards[award.name] ?? false;
     return acc;
@@ -130,7 +135,7 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     eventName: event.name,
     divisionName: division.name,
     seasonName: season.name,
-    rubrics: allRubrics.map(r => ({
+    rubrics: rubrics.map(r => ({
       id: r._id,
       category: r.category,
       data: r.data
