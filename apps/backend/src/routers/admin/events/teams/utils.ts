@@ -28,11 +28,6 @@ export const parseTeamCSVRegistration = async (
   const teamSlugs = records
     .map(row => {
       const number = parseInt(row.number, 10);
-      console.warn('Parsed CSV row:', {
-        number,
-        region: row.region,
-        slug: `${row.region}-${number}`
-      });
       return isNaN(number) ? null : `${row.region}-${number}`;
     })
     .filter((slug): slug is string => slug !== null);
