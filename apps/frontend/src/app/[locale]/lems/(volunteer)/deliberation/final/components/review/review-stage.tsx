@@ -17,12 +17,10 @@ export const ReviewStage: React.FC = () => {
   const { deliberation, division, teams } = useFinalDeliberation();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-  // Query for live award assignments
   const { data: awardsData, loading: awardsLoading } = useQuery(GET_DIVISION_AWARDS, {
     variables: { divisionId: division.id }
   });
 
-  // Transform awarded data into mappedWinners structure
   const mappedWinners = useMemo(() => {
     const mapped: Record<string, EnrichedTeam[]> = {};
 
@@ -40,7 +38,6 @@ export const ReviewStage: React.FC = () => {
         mapped[award.name] = [];
       }
 
-      // Extract team from the winner (only TeamWinner has team property)
       if ('team' in award.winner) {
         const teamWinner = award.winner;
         if (teamWinner.team) {
