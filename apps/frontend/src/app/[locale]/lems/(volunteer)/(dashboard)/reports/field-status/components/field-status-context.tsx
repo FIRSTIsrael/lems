@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
 import type { Division, Field, Match, Table } from '../graphql';
+import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface FieldStatusContextType {
   division: Division;
@@ -30,6 +31,7 @@ interface FieldStatusProviderProps {
 export function FieldStatusProvider({ data, children }: FieldStatusProviderProps) {
   const { division, field, tables } = data;
   const matches = field.matches;
+  const now = useTime({ interval: 1000 });
 
   const value = useMemo<FieldStatusContextType>(() => {
     const activeMatch = field.activeMatch
@@ -46,7 +48,14 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       .filter(m => m.status === 'not-started' && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)));
 
-    const upcomingMatches = notStartedMatches.slice(0, 10);
+    // Show matches within 30 minutes from now, or delayed matches (before now but not started)
+    const upcomingMatches = notStartedMatches.filter(m => {
+      const scheduledTime = dayjs(m.scheduledTime);
+      const minutesFromNow = scheduledTime.diff(now, 'minute', true);
+
+      // Include if: delayed (before current time) OR within 30 minutes
+      return minutesFromNow < 0 || minutesFromNow <= 30;
+    });
 
     const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
 
@@ -61,7 +70,7 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       upcomingMatches,
       matchLength: field.matchLength
     };
-  }, [division, field, tables, matches]);
+  }, [division, field, tables, matches, now]);
 
   return <FieldStatusContext.Provider value={value}>{children}</FieldStatusContext.Provider>;
 }
