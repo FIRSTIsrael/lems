@@ -870,7 +870,8 @@
         "not-started": "Not Queued",
         "in-progress": "In Progress",
         "completed": "Completed",
-        "queued": "Queued"
+        "queued": "Queued",
+        "not-queued": "Not Queued "
       },
       "warnings": {
         "on-field": "Team is on the field!"
