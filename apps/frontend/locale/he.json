@@ -613,7 +613,8 @@
         "reset": "איפוס",
         "submit-rubric": "הגשה ונעילה",
         "unlock-rubric": "שחרור",
-        "approve-rubric": "אישור"
+        "approve-rubric": "אישור",
+        "save-and-return": "שמור וחזור"
       },
       "submit-dialog": {
         "title": "הגשה ונעילה של המחוון",
@@ -801,7 +802,7 @@
         "not-arrived": "לא הגיעה",
         "status": {
           "loaded": "מקצה הבא",
-          "in-progress": "מקצה נוכחי"
+          "in-progress": "מקצה פעיל"
         },
         "match-title": "סבב {stage} {round}, מקצה #{number}",
         "table": "שולחן"
