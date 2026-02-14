@@ -5,7 +5,7 @@ import { Box, Button, LinearProgress, Stack, Typography, alpha, useTheme } from 
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useCallback, useMemo, useState } from 'react';
-import { Award, OPTIONAL_AWARDS, PERSONAL_AWARDS } from '@lems/shared';
+import { Award } from '@lems/shared';
 import { Countdown } from '../../../../../../../../lib/time/countdown';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -66,9 +66,9 @@ export const OptionalAwardsControlsPanel: React.FC = () => {
         ? deliberationAwards
             .filter(
               award =>
-                (OPTIONAL_AWARDS as readonly string[]).includes(award.name) &&
+                award.isOptional &&
                 award.name !== 'excellence-in-engineering' &&
-                !(PERSONAL_AWARDS as readonly string[]).includes(award.name)
+                award.type === 'TEAM'
             )
             .every(award => {
               const selectedCount = getAwardArray(awards, award.name as Award).length;
