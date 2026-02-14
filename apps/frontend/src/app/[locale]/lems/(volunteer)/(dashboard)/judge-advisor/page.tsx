@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { PageHeader } from '../components/page-header';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
+import { FiltersProvider } from './components/filters-context';
 import { RubricStatusSummary } from './components/rubric-status-summary';
 import { RubricStatusGrid } from './components/rubric-status-grid';
 import { DisqualificationSection } from './components/disqualification/disqualification-section';
@@ -90,24 +91,26 @@ export default function JudgeAdvisorPage() {
       sessionLength={sessionLength}
       loading={loading}
     >
-      <PageHeader title={t('page-title')}>
-        <JudgeAdvisorModeToggle mode={mode} setMode={handleModeChange} />
-      </PageHeader>
+      <FiltersProvider>
+        <PageHeader title={t('page-title')}>
+          <JudgeAdvisorModeToggle mode={mode} setMode={handleModeChange} />
+        </PageHeader>
 
-      {mode === 'judging' && (
-        <Stack spacing={3} my={3}>
-          <RubricStatusSummary />
-          <RubricStatusGrid />
-        </Stack>
-      )}
+        {mode === 'judging' && (
+          <Stack spacing={3} my={3}>
+            <RubricStatusSummary />
+            <RubricStatusGrid />
+          </Stack>
+        )}
 
-      {mode === 'awards' && (
-        <Stack spacing={3} my={3}>
-          <DisqualificationSection />
-          <DeliberationStatusSection />
-          <PersonalAwardsSection />
-        </Stack>
-      )}
+        {mode === 'awards' && (
+          <Stack spacing={3} my={3}>
+            <DisqualificationSection />
+            <DeliberationStatusSection />
+            <PersonalAwardsSection />
+          </Stack>
+        )}
+      </FiltersProvider>
     </JudgeAdvisorProvider>
   );
 }

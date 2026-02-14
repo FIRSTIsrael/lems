@@ -702,7 +702,12 @@
           "team-placeholder": "Search by number, name, or affiliation...",
           "status": "Status",
           "all-statuses": "All Statuses",
-          "results": "Results"
+          "room": "Room",
+          "rooms": "Rooms",
+          "session": "Session #",
+          "sessions": "Sessions",
+          "results": "Results",
+          "clear": "Clear Filters"
         },
         "sort": {
           "room": "Sort by Room",
@@ -1266,7 +1271,12 @@
           "team-placeholder": "Search by number, name, or affiliation...",
           "status": "Status",
           "all-statuses": "All Statuses",
-          "results": "Results"
+          "room": "Room",
+          "rooms": "Rooms",
+          "session": "Session #",
+          "sessions": "Sessions",
+          "results": "Results",
+          "clear": "Clear Filters"
         },
         "sort": {
           "room": "Sort by Room",
