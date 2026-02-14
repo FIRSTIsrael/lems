@@ -43,6 +43,10 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
     return t(`session-status.${status}`) || status;
   };
 
+  const isRubricApproved = () => {
+    return session.rubrics[hyphensToUnderscores(category)]?.status === 'approved';
+  };
+
   if (loading) {
     return (
       <Box>
@@ -59,11 +63,28 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
     );
   }
 
+  const rubricApproved = isRubricApproved();
+  const isTeamArrived = session.team.arrived;
+
   return (
     <Card
       sx={{
-        backgroundColor: theme.palette.mode === 'dark' ? '#1e1e1e' : '#fafafa',
-        borderLeft: `4px solid ${rubricColor}`
+        backgroundColor: rubricApproved
+          ? theme.palette.mode === 'dark'
+            ? 'rgba(76, 175, 80, 0.1)'
+            : 'rgba(76, 175, 80, 0.05)'
+          : theme.palette.mode === 'dark'
+            ? '#1e1e1e'
+            : '#fafafa',
+        borderLeft: `4px solid ${rubricColor}`,
+        opacity: isTeamArrived ? 1 : 0.5,
+        '&:hover': {
+          backgroundColor: rubricApproved
+            ? theme.palette.mode === 'dark'
+              ? 'rgba(76, 175, 80, 0.15)'
+              : 'rgba(76, 175, 80, 0.1)'
+            : undefined
+        }
       }}
     >
       <CardContent sx={{ pb: 1, '&:last-child': { pb: 1 } }}>

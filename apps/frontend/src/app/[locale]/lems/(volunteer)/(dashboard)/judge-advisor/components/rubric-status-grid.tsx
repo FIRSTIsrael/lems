@@ -21,6 +21,7 @@ import {
   IconButton,
   Tooltip
 } from '@mui/material';
+import { Verified } from '@mui/icons-material';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
@@ -89,6 +90,12 @@ export const RubricStatusGrid = () => {
 
   const getSessionStatusLabel = (status: string) => {
     return t(`session-status.${status}`) || status;
+  };
+
+  const isAllRubricsApproved = (session: (typeof sessions)[0]) => {
+    return JUDGING_CATEGORIES.every(
+      category => session.rubrics[hyphensToUnderscores(category)]?.status === 'approved'
+    );
   };
 
   if (loading) {
@@ -203,6 +210,7 @@ export const RubricStatusGrid = () => {
             }}
           >
             <TableRow>
+              <TableCell sx={{ fontWeight: 600, width: '5%' }} align="center" />
               <TableCell sx={{ fontWeight: 600, width: '13%' }}>{t('column.session')}</TableCell>
               <TableCell sx={{ fontWeight: 600, width: '12%' }}>{t('column.room')}</TableCell>
               <TableCell sx={{ fontWeight: 600, width: '20%' }}>{t('column.team')}</TableCell>
@@ -225,61 +233,76 @@ export const RubricStatusGrid = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {sortedAndFilteredSessions.map((session, idx) => (
-              <TableRow
-                key={session.id}
-                sx={{
-                  backgroundColor:
-                    idx % 2 === 0
-                      ? 'transparent'
-                      : theme.palette.mode === 'dark'
-                        ? 'rgba(255, 255, 255, 0.02)'
-                        : 'rgba(0, 0, 0, 0.01)',
-                  '&:hover': {
-                    backgroundColor:
-                      theme.palette.mode === 'dark'
-                        ? 'rgba(255, 255, 255, 0.05)'
-                        : 'rgba(0, 0, 0, 0.02)'
-                  },
-                  borderBottom: `1px solid ${theme.palette.divider}`
-                }}
-              >
-                <TableCell>
-                  <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                    #{session.number}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body2">{session.room.name}</Typography>
-                </TableCell>
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <TeamInfoCell team={session.team} />
-                  </Box>
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    label={getSessionStatusLabel(session.status)}
-                    size="small"
-                    sx={{
-                      backgroundColor: getSessionStatusColor(session.status),
-                      color: 'white',
-                      fontWeight: 600
-                    }}
-                  />
-                </TableCell>
-                {JUDGING_CATEGORIES.map(category => (
-                  <TableCell key={category} align="center" sx={{ p: 1 }}>
-                    <RubricStatusButton
-                      category={category}
-                      status={session.rubrics[hyphensToUnderscores(category)]?.status || 'empty'}
-                      label={getCategory(category)}
-                      teamSlug={session.team.slug}
+            {sortedAndFilteredSessions.map((session, idx) => {
+              const isTeamArrived = session.team.arrived;
+              return (
+                <TableRow
+                  key={session.id}
+                  sx={{
+                    backgroundColor: isAllRubricsApproved(session)
+                      ? theme.palette.mode === 'dark'
+                        ? 'rgba(76, 175, 80, 0.1)'
+                        : 'rgba(76, 175, 80, 0.05)'
+                      : idx % 2 === 0
+                        ? 'transparent'
+                        : theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.02)'
+                          : 'rgba(0, 0, 0, 0.01)',
+                    opacity: isTeamArrived ? 1 : 0.5,
+                    '&:hover': {
+                      backgroundColor: isAllRubricsApproved(session)
+                        ? theme.palette.mode === 'dark'
+                          ? 'rgba(76, 175, 80, 0.15)'
+                          : 'rgba(76, 175, 80, 0.1)'
+                        : theme.palette.mode === 'dark'
+                          ? 'rgba(255, 255, 255, 0.05)'
+                          : 'rgba(0, 0, 0, 0.02)'
+                    },
+                    borderBottom: `1px solid ${theme.palette.divider}`
+                  }}
+                >
+                  <TableCell align="center" sx={{ p: 1 }}>
+                    {isAllRubricsApproved(session) && (
+                      <Verified sx={{ color: '#4caf50', fontSize: '1.25rem' }} />
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2" sx={{ fontWeight: 600 }}>
+                      #{session.number}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{session.room.name}</Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <TeamInfoCell team={session.team} />
+                    </Box>
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      label={getSessionStatusLabel(session.status)}
+                      size="small"
+                      sx={{
+                        backgroundColor: getSessionStatusColor(session.status),
+                        color: 'white',
+                        fontWeight: 600
+                      }}
                     />
                   </TableCell>
-                ))}
-              </TableRow>
-            ))}
+                  {JUDGING_CATEGORIES.map(category => (
+                    <TableCell key={category} align="center" sx={{ p: 1 }}>
+                      <RubricStatusButton
+                        category={category}
+                        status={session.rubrics[hyphensToUnderscores(category)]?.status || 'empty'}
+                        label={getCategory(category)}
+                        teamSlug={session.team.slug}
+                      />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
