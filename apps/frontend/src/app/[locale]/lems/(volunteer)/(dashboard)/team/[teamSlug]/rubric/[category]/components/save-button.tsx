@@ -4,8 +4,8 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Button } from '@mui/material';
 import { Check as CheckIcon } from '@mui/icons-material';
-import { useUser } from '../../../../../../../components/user-context';
-import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
+import { useUser } from '../../../../../../components/user-context';
+import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 
 interface SaveButtonProps {
   disabled?: boolean;
