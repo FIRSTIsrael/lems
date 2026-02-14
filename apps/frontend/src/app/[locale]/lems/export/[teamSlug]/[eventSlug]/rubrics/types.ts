@@ -15,9 +15,3 @@ export interface Rubric {
   feedback?: { greatJob: string; thinkAbout: string };
   schema?: RubricSchema;
 }
-
-export interface OptionalAward {
-  id: string;
-  name: string;
-  description?: string;
-}
