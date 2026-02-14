@@ -14,6 +14,7 @@ interface FiltersContextType {
   setSessionNumberFilter: (value: number[]) => void;
   sortBy: 'room' | 'session';
   setSortBy: (value: 'room' | 'session') => void;
+  clearFilters: () => void;
 }
 
 const FiltersContext = createContext<FiltersContextType | undefined>(undefined);
@@ -124,6 +125,10 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
     [updateUrl]
   );
 
+  const clearFilters = useCallback(() => {
+    router.push('?');
+  }, [router]);
+
   const value: FiltersContextType = {
     teamFilter,
     setTeamFilter,
@@ -134,7 +139,8 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
     sessionNumberFilter,
     setSessionNumberFilter,
     sortBy,
-    setSortBy
+    setSortBy,
+    clearFilters
   };
 
   return <FiltersContext.Provider value={value}>{children}</FiltersContext.Provider>;

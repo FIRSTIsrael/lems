@@ -1,5 +1,16 @@
 import { useMemo } from 'react';
-import { Stack, TextField, Typography, Paper, Button, ButtonGroup } from '@mui/material';
+import {
+  Stack,
+  TextField,
+  Typography,
+  Paper,
+  Button,
+  ButtonGroup,
+  IconButton,
+  Tooltip,
+  Box
+} from '@mui/material';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { useTranslations } from 'next-intl';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { useLeadJudge } from './lead-judge-context';
@@ -19,7 +30,8 @@ export const SessionFilters: React.FC = () => {
     sessionNumberFilter,
     setSessionNumberFilter,
     sortBy,
-    setSortBy
+    setSortBy,
+    clearFilters
   } = useFilters();
 
   const filteredSessions = useFilteredSessions(sessions, {
@@ -82,16 +94,32 @@ export const SessionFilters: React.FC = () => {
           filterType="session"
         />
 
-        {(teamFilter ||
-          statusFilter.length > 0 ||
-          roomFilter.length > 0 ||
-          sessionNumberFilter.length > 0) && (
-          <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
-            {t('filter.results')}: <strong>{filteredSessions.length}</strong>
-          </Typography>
-        )}
+        <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
+              {t('filter.results')}: <strong>{filteredSessions.length}</strong>
+            </Typography>
+          </Box>
 
-        <ButtonGroup size="small" variant="outlined">
+          <Tooltip title={t('filter.clear')}>
+            <span>
+              <IconButton
+                size="small"
+                onClick={clearFilters}
+                disabled={
+                  !teamFilter &&
+                  statusFilter.length === 0 &&
+                  roomFilter.length === 0 &&
+                  sessionNumberFilter.length === 0
+                }
+              >
+                <FilterAltOffIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        </Stack>
+
+        <ButtonGroup size="small" variant="outlined" fullWidth>
           <Button
             onClick={() => setSortBy('room')}
             variant={sortBy === 'room' ? 'contained' : 'outlined'}

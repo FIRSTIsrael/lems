@@ -706,7 +706,8 @@
           "rooms": "Rooms",
           "session": "Session #",
           "sessions": "Sessions",
-          "results": "Results"
+          "results": "Results",
+          "clear": "Clear Filters"
         },
         "sort": {
           "room": "Sort by Room",
@@ -1274,7 +1275,8 @@
           "rooms": "Rooms",
           "session": "Session #",
           "sessions": "Sessions",
-          "results": "Results"
+          "results": "Results",
+          "clear": "Clear Filters"
         },
         "sort": {
           "room": "Sort by Room",

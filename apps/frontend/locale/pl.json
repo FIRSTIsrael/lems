@@ -706,7 +706,8 @@
           "rooms": "Sale",
           "session": "Sesja #",
           "sessions": "Sesje",
-          "results": "Wyniki"
+          "results": "Wyniki",
+          "clear": "Wyczyść filtry"
         },
         "sort": {
           "room": "Sortuj wg sali",
@@ -1273,7 +1274,8 @@
           "rooms": "Sale",
           "session": "Sesja #",
           "sessions": "Sesje",
-          "results": "Wyniki"
+          "results": "Wyniki",
+          "clear": "Wyczyść filtry"
         },
         "sort": {
           "room": "Sortuj wg sali",

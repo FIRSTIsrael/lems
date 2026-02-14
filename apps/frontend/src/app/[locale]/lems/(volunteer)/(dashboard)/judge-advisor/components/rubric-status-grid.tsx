@@ -17,8 +17,11 @@ import {
   TextField,
   Stack,
   Button,
-  ButtonGroup
+  ButtonGroup,
+  IconButton,
+  Tooltip
 } from '@mui/material';
+import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { hyphensToUnderscores } from '@lems/shared/utils';
@@ -46,7 +49,8 @@ export const RubricStatusGrid = () => {
     sessionNumberFilter,
     setSessionNumberFilter,
     sortBy,
-    setSortBy
+    setSortBy,
+    clearFilters
   } = useFilters();
 
   const statuses = ['not-started', 'in-progress', 'completed'];
@@ -148,16 +152,11 @@ export const RubricStatusGrid = () => {
             filterType="session"
           />
 
-          {(teamFilter ||
-            statusFilter.length > 0 ||
-            roomFilter.length > 0 ||
-            sessionNumberFilter.length > 0) && (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Typography variant="caption" color="textSecondary">
-                {t('filter.results')}: <strong>{sortedAndFilteredSessions.length}</strong>
-              </Typography>
-            </Box>
-          )}
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography variant="caption" color="textSecondary">
+              {t('filter.results')}: <strong>{sortedAndFilteredSessions.length}</strong>
+            </Typography>
+          </Box>
 
           <ButtonGroup size="small" variant="outlined" sx={{ ml: 'auto' }}>
             <Button
@@ -173,6 +172,22 @@ export const RubricStatusGrid = () => {
               {t('sort.session')}
             </Button>
           </ButtonGroup>
+          <Tooltip title={t('filter.clear')}>
+            <span>
+              <IconButton
+                size="small"
+                onClick={clearFilters}
+                disabled={
+                  !teamFilter &&
+                  statusFilter.length === 0 &&
+                  roomFilter.length === 0 &&
+                  sessionNumberFilter.length === 0
+                }
+              >
+                <FilterAltOffIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <RubricStatusGlossary />
           </Box>
