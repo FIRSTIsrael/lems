@@ -13,16 +13,11 @@ export const firstIsraelDashboardEventMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    // const token = extractToken(req);
-    // const tokenData = jwt.verify(
-    //   token,
-    //   firstIsraelDashboardSecret
-    // ) as FirstIsraelDashboardTokenDataWithEvent;
-
-    const tokenData = {
-      teamSlug: req.body.teamSlug,
-      eventSfid: req.body.eventSfid
-    };
+    const token = extractToken(req);
+    const tokenData = jwt.verify(
+      token,
+      firstIsraelDashboardSecret
+    ) as FirstIsraelDashboardTokenDataWithEvent;
 
     const eventIntegration = await db.integrations.bySettings({ sfid: tokenData.eventSfid }).get();
     if (!eventIntegration) throw new Error('Event integration not found');

@@ -8,53 +8,53 @@ const router = express.Router({ mergeParams: true });
 
 const integrationsJwtSecret = process.env.INTEGRATIONS_LEMS_JWT as string;
 
-// router.use('/:teamId/:eventSlug', async (req: Request, res: Response, next: NextFunction) => {
-//   const { teamId, eventSlug } = req.params;
-//   try {
-//     const token = extractToken(req);
-//     const tokenData = jwt.verify(token, integrationsJwtSecret) as {
-//       teamId: string;
-//       eventSlug: string;
-//     };
+router.use('/:teamId/:eventSlug', async (req: Request, res: Response, next: NextFunction) => {
+  const { teamId, eventSlug } = req.params;
+  try {
+    const token = extractToken(req);
+    const tokenData = jwt.verify(token, integrationsJwtSecret) as {
+      teamId: string;
+      eventSlug: string;
+    };
 
-//     // Validate team and event from token
-//     const team = await db.teams.byId(tokenData.teamId).get();
-//     if (!team) {
-//       throw new Error('Team not found');
-//     }
-//     if (team.id !== teamId) {
-//       throw new Error('Invalid team ID');
-//     }
+    // Validate team and event from token
+    const team = await db.teams.byId(tokenData.teamId).get();
+    if (!team) {
+      throw new Error('Team not found');
+    }
+    if (team.id !== teamId) {
+      throw new Error('Invalid team ID');
+    }
 
-//     const event = await db.events.bySlug(eventSlug).get();
-//     if (!event) {
-//       throw new Error('Event not found');
-//     }
-//     if (event.slug !== eventSlug) {
-//       throw new Error('Invalid event slug');
-//     }
+    const event = await db.events.bySlug(eventSlug).get();
+    if (!event) {
+      throw new Error('Event not found');
+    }
+    if (event.slug !== eventSlug) {
+      throw new Error('Invalid event slug');
+    }
 
-//     const teamDivision = await db.teams.byId(teamId).isInEvent(event.id);
-//     if (!teamDivision) {
-//       throw new Error('Team is not part of the event');
-//     }
+    const teamDivision = await db.teams.byId(teamId).isInEvent(event.id);
+    if (!teamDivision) {
+      throw new Error('Team is not part of the event');
+    }
 
-//     // Validate that the event is published
-//     const eventSettings = await db.events.bySlug(eventSlug).getSettings();
-//     if (!eventSettings) {
-//       throw new Error('Event settings not found');
-//     }
-//     if (!eventSettings.published) {
-//       throw new Error('Event not published');
-//     }
+    // Validate that the event is published
+    const eventSettings = await db.events.bySlug(eventSlug).getSettings();
+    if (!eventSettings) {
+      throw new Error('Event settings not found');
+    }
+    if (!eventSettings.published) {
+      throw new Error('Event not published');
+    }
 
-//     next();
-//   } catch {
-//     // Invalid token
-//   }
+    next();
+  } catch {
+    // Invalid token
+  }
 
-//   res.status(401).json({ error: 'UNAUTHORIZED' });
-// });
+  res.status(401).json({ error: 'UNAUTHORIZED' });
+});
 
 router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
   const { teamSlug, eventSlug } = req.params;

@@ -13,15 +13,11 @@ export const firstIsraelDashboardTeamMiddleware = async (
   next: NextFunction
 ) => {
   try {
-    // const token = extractToken(req);
-    // const tokenData = jwt.verify(
-    //   token,
-    //   firstIsraelDashboardSecret
-    // ) as FirstIsraelDashboardTokenData;
-
-    const tokenData = {
-      teamSlug: req.body.teamSlug
-    };
+    const token = extractToken(req);
+    const tokenData = jwt.verify(
+      token,
+      firstIsraelDashboardSecret
+    ) as FirstIsraelDashboardTokenData;
 
     const team = await db.teams.bySlug(tokenData.teamSlug).get();
     if (!team) throw new Error('Team not found');
