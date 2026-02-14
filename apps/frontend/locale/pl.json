@@ -702,7 +702,12 @@
           "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
           "status": "Status",
           "all-statuses": "Wszystkie statusy",
-          "results": "Wyniki"
+          "room": "Sala",
+          "rooms": "Sale",
+          "session": "Sesja #",
+          "sessions": "Sesje",
+          "results": "Wyniki",
+          "clear": "Wyczyść filtry"
         },
         "sort": {
           "room": "Sortuj wg sali",
@@ -1265,7 +1270,12 @@
           "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
           "status": "Status",
           "all-statuses": "Wszystkie statusy",
-          "results": "Wyniki"
+          "room": "Sala",
+          "rooms": "Sale",
+          "session": "Sesja #",
+          "sessions": "Sesje",
+          "results": "Wyniki",
+          "clear": "Wyczyść filtry"
         },
         "sort": {
           "room": "Sortuj wg sali",

@@ -198,8 +198,11 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               gap: 1
             }}
           >
-            {match.participants
+            {[...match.participants]
               .filter(p => p.team)
+              .sort((a, b) =>
+                a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
+              )
               .map(participant => {
                 const status = getParticipantStatus(participant);
                 return (

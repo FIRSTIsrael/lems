@@ -8,6 +8,9 @@ export function useFilteredSessions(
   options: {
     teamFilter?: string;
     statusFilter?: string | string[];
+    roomFilter?: string[];
+    sessionNumberFilter?: number[];
+    sortBy?: 'room' | 'session';
   }
 ): JudgingSession[] {
   return useMemo(() => {
@@ -34,11 +37,23 @@ export function useFilteredSessions(
       }
     }
 
-    return filtered.sort((a, b) => {
-      if (a.room.name !== b.room.name) {
-        return a.room.name.localeCompare(b.room.name);
-      }
-      return a.number - b.number;
-    });
+    if (options.roomFilter && options.roomFilter.length > 0) {
+      filtered = filtered.filter(session => options.roomFilter!.includes(session.room.name));
+    }
+
+    if (options.sessionNumberFilter && options.sessionNumberFilter.length > 0) {
+      filtered = filtered.filter(session => options.sessionNumberFilter!.includes(session.number));
+    }
+
+    if (options.sortBy === 'session') {
+      return filtered.sort((a, b) => a.number - b.number);
+    } else {
+      return filtered.sort((a, b) => {
+        if (a.room.name !== b.room.name) {
+          return a.room.name.localeCompare(b.room.name);
+        }
+        return a.number - b.number;
+      });
+    }
   }, [sessions, options]);
 }

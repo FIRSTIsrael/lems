@@ -700,7 +700,12 @@
           "team-placeholder": "חפש לפי מספר, שם או שיוך...",
           "status": "סטטוס",
           "all-statuses": "כל הסטטוסים",
-          "results": "תוצאות"
+          "room": "חדר",
+          "rooms": "חדרים",
+          "session": "סבב #",
+          "sessions": "סבבים",
+          "results": "תוצאות",
+          "clear": "נקה מסננים"
         },
         "sort": {
           "room": "מיין לפי חדר",
@@ -1264,7 +1269,12 @@
           "team-placeholder": "חפש לפי מספר, שם או שיוך...",
           "status": "סטטוס",
           "all-statuses": "כל הסטטוסים",
-          "results": "תוצאות"
+          "room": "חדר",
+          "rooms": "חדרים",
+          "session": "סבב #",
+          "sessions": "סבבים",
+          "results": "תוצאות",
+          "clear": "נקה מסננים"
         },
         "sort": {
           "room": "מיין לפי חדר",

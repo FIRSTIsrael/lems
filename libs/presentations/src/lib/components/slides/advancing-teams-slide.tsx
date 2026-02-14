@@ -9,6 +9,7 @@ import { Stepper, Appear } from '../appear';
 export interface AdvancingTeamsAward {
   id: string;
   name: string;
+  place: number;
   divisionColor?: string;
   winner?: {
     id: string;
@@ -24,6 +25,7 @@ interface AdvancingTeamsSlideProps {
 export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards }) => {
   const t = useTranslations('awards-presentation');
   const teams = awards
+    .sort((a, b) => a.place - b.place)
     .filter(award => award.winner && award.winner.id && award.winner.name && award.winner.number)
     .map(award => award.winner as { id: string; name: string; number: string | number });
 
