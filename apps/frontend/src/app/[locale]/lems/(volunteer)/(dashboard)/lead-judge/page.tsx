@@ -6,7 +6,7 @@ import { Box, Stack } from '@mui/material';
 import { JudgingCategory } from '@lems/database';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { PageHeader } from '../components/page-header';
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
 import { LeadJudgeProvider } from './components/lead-judge-context';

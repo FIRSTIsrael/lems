@@ -7,7 +7,7 @@ import { Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { ResponsiveComponent, useJudgingSounds } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import { SoundTestDialog } from '../components/sound-test-dialog';

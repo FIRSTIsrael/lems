@@ -40,4 +40,5 @@ export interface FirstIsraelDashboardRequest extends Request {
 
 export interface FirstIsraelDashboardEventRequest extends FirstIsraelDashboardRequest {
   divisionId: string;
+  eventSlug: string;
 }

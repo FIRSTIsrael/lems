@@ -23,7 +23,7 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, variant }) =
         fontWeight="bold"
         sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
       >
-        {t(`filters.${variant}`, { count: events.length })}
+        {t(`filters.${variant}`, { count: filteredEvents.length })}
       </Typography>
       <Stack spacing={1}>
         {filteredEvents.map(event => (

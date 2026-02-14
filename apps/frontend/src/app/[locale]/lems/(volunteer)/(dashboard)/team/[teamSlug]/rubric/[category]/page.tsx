@@ -10,7 +10,7 @@ import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
