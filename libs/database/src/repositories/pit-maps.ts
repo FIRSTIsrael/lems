@@ -83,20 +83,22 @@ export class PitMapsRepository {
 
   // Pit Map Assignments
   async createPitMapAssignment(data: InsertablePitMapAssignment): Promise<PitMapAssignment> {
-    return await this.db
+    const result = await this.db
       .insertInto('pit_map_assignments')
       .values(data)
       .returningAll()
       .executeTakeFirstOrThrow();
+    return result as PitMapAssignment;
   }
 
   async createPitMapAssignments(data: InsertablePitMapAssignment[]): Promise<PitMapAssignment[]> {
     if (data.length === 0) return [];
-    return await this.db
+    const results = await this.db
       .insertInto('pit_map_assignments')
       .values(data)
       .returningAll()
       .execute();
+    return results as PitMapAssignment[];
   }
 
   async getPitMapAssignmentsByAreaId(areaId: string): Promise<PitMapAssignment[]> {
@@ -134,10 +136,7 @@ export class PitMapsRepository {
   }
 
   async deletePitMapAssignmentsByAreaId(areaId: string): Promise<void> {
-    await this.db
-      .deleteFrom('pit_map_assignments')
-      .where('pit_map_area_id', '=', areaId)
-      .execute();
+    await this.db.deleteFrom('pit_map_assignments').where('pit_map_area_id', '=', areaId).execute();
   }
 
   async deletePitMapAssignmentsByPitMapId(pitMapId: string): Promise<void> {

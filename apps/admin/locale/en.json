@@ -364,6 +364,7 @@
           "schedule": "Schedule",
           "teams": "Teams",
           "venue": "Venue",
+          "pit-map": "Pit Map",
           "integrations": "Integrations",
           "settings": "Settings",
           "users": "Users",
@@ -605,6 +606,42 @@
           "validation": {
             "name-required": "Name is required"
           }
+        }
+      },
+      "pit-map": {
+        "title": "{eventName}: Pit Map",
+        "canvas": {
+          "title": "Pit Map Image",
+          "no-image": "No pit map image uploaded",
+          "upload-hint": "Click to upload a venue floor plan image",
+          "upload-button": "Upload Image",
+          "change-image": "Change Image",
+          "drawing-mode": "Click on the map to draw the area boundary. Double-click or press Enter to finish.",
+          "cancel-drawing": "Cancel Drawing"
+        },
+        "controls": {
+          "title": "Actions",
+          "add-area": "Add Pit Area",
+          "generate-assignments": "Generate Team Assignments",
+          "generating": "Generating...",
+          "assignments-count": "{count} teams assigned"
+        },
+        "areas": {
+          "title": "Pit Areas",
+          "no-areas": "No areas defined yet. Upload an image and add areas to get started.",
+          "capacity": "Capacity"
+        },
+        "area-dialog": {
+          "title": "Configure Pit Area",
+          "name-label": "Area Name",
+          "name-placeholder": "e.g., Area A, Blue Zone, etc.",
+          "capacity-label": "Team Capacity",
+          "capacity-hint": "Maximum number of teams in this area",
+          "division-label": "Restrict to Division (Optional)",
+          "division-hint": "Leave empty to allow teams from any division",
+          "all-divisions": "All Divisions",
+          "cancel": "Cancel",
+          "save": "Save Area"
         }
       },
       "settings": {

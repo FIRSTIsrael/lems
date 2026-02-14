@@ -13,6 +13,7 @@
     "lib": ["ES2024", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@lems/database": ["libs/database/src/index.ts"],

@@ -364,6 +364,7 @@
           "schedule": "לוח זמנים",
           "teams": "קבוצות",
           "venue": "היכל",
+          "pit-map": "מפת פיטים",
           "integrations": "אינטגרציות",
           "settings": "הגדרות",
           "users": "משתמשים",
@@ -605,6 +606,42 @@
           "validation": {
             "name-required": "שם נדרש"
           }
+        }
+      },
+      "pit-map": {
+        "title": "{eventName}: מפת פיטים",
+        "canvas": {
+          "title": "תמונת מפת פיטים",
+          "no-image": "לא הועלתה תמונת מפת פיטים",
+          "upload-hint": "לחץ להעלאת תמונת תוכנית היכל",
+          "upload-button": "העלאת תמונה",
+          "change-image": "החלפת תמונה",
+          "drawing-mode": "לחץ על המפה לציור גבול האזור. לחיצה כפולה או Enter לסיום.",
+          "cancel-drawing": "ביטול ציור"
+        },
+        "controls": {
+          "title": "פעולות",
+          "add-area": "הוספת אזור פיט",
+          "generate-assignments": "יצירת שיבוץ קבוצות",
+          "generating": "מייצר...",
+          "assignments-count": "{count} קבוצות שובצו"
+        },
+        "areas": {
+          "title": "אזורי פיט",
+          "no-areas": "לא הוגדרו אזורים עדיין. העלה תמונה והוסף אזורים כדי להתחיל.",
+          "capacity": "קיבולת"
+        },
+        "area-dialog": {
+          "title": "הגדרת אזור פיט",
+          "name-label": "שם האזור",
+          "name-placeholder": "לדוגמה: אזור א', אזור כחול, וכו'",
+          "capacity-label": "קיבולת קבוצות",
+          "capacity-hint": "מספר מקסימלי של קבוצות באזור זה",
+          "division-label": "הגבלה לליגה (אופציונלי)",
+          "division-hint": "השאר ריק כדי לאפשר קבוצות מכל ליגה",
+          "all-divisions": "כל הליגות",
+          "cancel": "ביטול",
+          "save": "שמירת אזור"
         }
       },
       "settings": {

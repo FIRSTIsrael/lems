@@ -9,7 +9,8 @@ import {
   IntegrationInstructions,
   Settings,
   ManageAccounts,
-  AccountTree
+  AccountTree,
+  Map
 } from '@mui/icons-material';
 import { useEvent } from '../../components/event-context';
 import EditEventCard from './edit-event-card';
@@ -32,6 +33,9 @@ export const EditEventGrid: React.FC = () => {
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard icon={<Domain />} title="venue" href={`/events/${event.slug}/venue`} />
+      </Grid>
+      <Grid size={cardSize}>
+        <EditEventCard icon={<Map />} title="pit-map" href={`/events/${event.slug}/pit-map`} />
       </Grid>
       <Grid size={cardSize}>
         <EditEventCard
