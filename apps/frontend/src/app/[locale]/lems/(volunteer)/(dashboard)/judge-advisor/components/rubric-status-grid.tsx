@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -23,6 +23,7 @@ import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
+import { useFilters } from './filters-context';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
 import { StatusFilterSelector } from './status-filter-selector';
@@ -35,11 +36,18 @@ export const RubricStatusGrid = () => {
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
 
-  const [teamFilter, setTeamFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
-  const [roomFilter, setRoomFilter] = useState<string[]>([]);
-  const [sessionNumberFilter, setSessionNumberFilter] = useState<number[]>([]);
-  const [sortBy, setSortBy] = useState<'room' | 'session'>('room');
+  const {
+    teamFilter,
+    setTeamFilter,
+    statusFilter,
+    setStatusFilter,
+    roomFilter,
+    setRoomFilter,
+    sessionNumberFilter,
+    setSessionNumberFilter,
+    sortBy,
+    setSortBy
+  } = useFilters();
 
   const statuses = ['not-started', 'in-progress', 'completed'];
 
@@ -110,12 +118,15 @@ export const RubricStatusGrid = () => {
             size="small"
             sx={{ flex: 1, minWidth: 200 }}
           />
+
           <StatusFilterSelector
             statuses={statuses}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
             isStatusFilter={true}
+            filterType="status"
           />
+
           <StatusFilterSelector
             statuses={availableRooms.map(r => r)}
             statusFilter={roomFilter}
@@ -124,6 +135,7 @@ export const RubricStatusGrid = () => {
             isStatusFilter={false}
             filterType="room"
           />
+
           <StatusFilterSelector
             statuses={availableSessionNumbers.map(n => `#${n}`)}
             statusFilter={sessionNumberFilter.map(n => `#${n}`)}
@@ -135,6 +147,18 @@ export const RubricStatusGrid = () => {
             isStatusFilter={false}
             filterType="session"
           />
+
+          {(teamFilter ||
+            statusFilter.length > 0 ||
+            roomFilter.length > 0 ||
+            sessionNumberFilter.length > 0) && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Typography variant="caption" color="textSecondary">
+                {t('filter.results')}: <strong>{sortedAndFilteredSessions.length}</strong>
+              </Typography>
+            </Box>
+          )}
+
           <ButtonGroup size="small" variant="outlined" sx={{ ml: 'auto' }}>
             <Button
               onClick={() => setSortBy('room')}
@@ -152,16 +176,6 @@ export const RubricStatusGrid = () => {
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <RubricStatusGlossary />
           </Box>
-          {(teamFilter ||
-            statusFilter.length > 0 ||
-            roomFilter.length > 0 ||
-            sessionNumberFilter.length > 0) && (
-            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-              <Typography variant="body2" color="textSecondary">
-                {t('filter.results')}: {sortedAndFilteredSessions.length}
-              </Typography>
-            </Box>
-          )}
         </Stack>
       </Paper>
 

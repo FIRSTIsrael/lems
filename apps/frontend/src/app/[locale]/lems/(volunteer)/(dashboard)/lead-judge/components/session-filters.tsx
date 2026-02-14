@@ -82,30 +82,29 @@ export const SessionFilters: React.FC = () => {
           filterType="session"
         />
 
-        <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
-          <ButtonGroup size="small" variant="outlined">
-            <Button
-              onClick={() => setSortBy('room')}
-              variant={sortBy === 'room' ? 'contained' : 'outlined'}
-            >
-              {t('sort.room')}
-            </Button>
-            <Button
-              onClick={() => setSortBy('session')}
-              variant={sortBy === 'session' ? 'contained' : 'outlined'}
-            >
-              {t('sort.session')}
-            </Button>
-          </ButtonGroup>
-          {(teamFilter ||
-            statusFilter.length > 0 ||
-            roomFilter.length > 0 ||
-            sessionNumberFilter.length > 0) && (
-            <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
-              {t('filter.results')}: <strong>{filteredSessions.length}</strong>
-            </Typography>
-          )}
-        </Stack>
+        {(teamFilter ||
+          statusFilter.length > 0 ||
+          roomFilter.length > 0 ||
+          sessionNumberFilter.length > 0) && (
+          <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
+            {t('filter.results')}: <strong>{filteredSessions.length}</strong>
+          </Typography>
+        )}
+
+        <ButtonGroup size="small" variant="outlined">
+          <Button
+            onClick={() => setSortBy('room')}
+            variant={sortBy === 'room' ? 'contained' : 'outlined'}
+          >
+            {t('sort.room')}
+          </Button>
+          <Button
+            onClick={() => setSortBy('session')}
+            variant={sortBy === 'session' ? 'contained' : 'outlined'}
+          >
+            {t('sort.session')}
+          </Button>
+        </ButtonGroup>
       </Stack>
     </Paper>
   );
