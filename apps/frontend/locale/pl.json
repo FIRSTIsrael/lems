@@ -616,7 +616,7 @@
         "submit-rubric": "Prześlij i zablokuj",
         "unlock-rubric": "Odblokuj",
         "approve-rubric": "Zatwierdź",
-        "save-and-return": "Zapisz i wróć"
+        "save": "Zapisz"
       },
       "submit-dialog": {
         "title": "Prześlij i zablokuj rubrykę",

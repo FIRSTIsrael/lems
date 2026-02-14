@@ -616,7 +616,7 @@
         "submit-rubric": "Submit and lock",
         "unlock-rubric": "Unlock",
         "approve-rubric": "Approve",
-        "save-and-return": "Save and Return"
+        "save": "Save"
       },
       "submit-dialog": {
         "title": "Submit and Lock Rubric",
