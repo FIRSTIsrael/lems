@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Table,
@@ -37,13 +37,28 @@ export const RubricStatusGrid = () => {
 
   const [teamFilter, setTeamFilter] = useState('');
   const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [roomFilter, setRoomFilter] = useState<string[]>([]);
+  const [sessionNumberFilter, setSessionNumberFilter] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<'room' | 'session'>('room');
 
   const statuses = ['not-started', 'in-progress', 'completed'];
 
+  // Extract unique rooms and session numbers
+  const availableRooms = useMemo(() => {
+    const rooms = new Set(sessions.map(s => s.room.name));
+    return Array.from(rooms).sort();
+  }, [sessions]);
+
+  const availableSessionNumbers = useMemo(() => {
+    const numbers = new Set(sessions.map(s => s.number));
+    return Array.from(numbers).sort((a, b) => a - b);
+  }, [sessions]);
+
   const sortedAndFilteredSessions = useFilteredSessions(sessions, {
     teamFilter,
     statusFilter,
+    roomFilter,
+    sessionNumberFilter,
     sortBy
   });
 
@@ -86,7 +101,7 @@ export const RubricStatusGrid = () => {
   return (
     <>
       <Paper sx={{ p: 2, borderRadius: 2, mb: 2 }}>
-        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ flexWrap: 'wrap' }}>
           <TextField
             label={t('filter.team')}
             placeholder={t('filter.team-placeholder')}
@@ -99,8 +114,28 @@ export const RubricStatusGrid = () => {
             statuses={statuses}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
+            isStatusFilter={true}
           />
-          <ButtonGroup size="small" variant="outlined">
+          <StatusFilterSelector
+            statuses={availableRooms.map(r => r)}
+            statusFilter={roomFilter}
+            setStatusFilter={setRoomFilter}
+            filterLabel={t('filter.room') || 'Room'}
+            isStatusFilter={false}
+            filterType="room"
+          />
+          <StatusFilterSelector
+            statuses={availableSessionNumbers.map(n => `#${n}`)}
+            statusFilter={sessionNumberFilter.map(n => `#${n}`)}
+            setStatusFilter={values => {
+              const numbers = values.map(v => parseInt(v.slice(1), 10));
+              setSessionNumberFilter(numbers);
+            }}
+            filterLabel={t('filter.session') || 'Session #'}
+            isStatusFilter={false}
+            filterType="session"
+          />
+          <ButtonGroup size="small" variant="outlined" sx={{ ml: 'auto' }}>
             <Button
               onClick={() => setSortBy('room')}
               variant={sortBy === 'room' ? 'contained' : 'outlined'}
@@ -114,11 +149,14 @@ export const RubricStatusGrid = () => {
               {t('sort.session')}
             </Button>
           </ButtonGroup>
-          <Box sx={{ display: 'flex', alignItems: 'center', ml: 'auto' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <RubricStatusGlossary />
           </Box>
-          {(teamFilter || statusFilter.length > 0) && (
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {(teamFilter ||
+            statusFilter.length > 0 ||
+            roomFilter.length > 0 ||
+            sessionNumberFilter.length > 0) && (
+            <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
               <Typography variant="body2" color="textSecondary">
                 {t('filter.results')}: {sortedAndFilteredSessions.length}
               </Typography>

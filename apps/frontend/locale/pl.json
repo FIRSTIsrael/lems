@@ -702,6 +702,10 @@
           "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
           "status": "Status",
           "all-statuses": "Wszystkie statusy",
+          "room": "Sala",
+          "rooms": "Sale",
+          "session": "Sesja #",
+          "sessions": "Sesje",
           "results": "Wyniki"
         },
         "sort": {
@@ -1265,6 +1269,10 @@
           "team-placeholder": "Wyszukaj po numerze, nazwie lub afiliacji...",
           "status": "Status",
           "all-statuses": "Wszystkie statusy",
+          "room": "Sala",
+          "rooms": "Sale",
+          "session": "Sesja #",
+          "sessions": "Sesje",
           "results": "Wyniki"
         },
         "sort": {

@@ -700,6 +700,10 @@
           "team-placeholder": "חפש לפי מספר, שם או שיוך...",
           "status": "סטטוס",
           "all-statuses": "כל הסטטוסים",
+          "room": "חדר",
+          "rooms": "חדרים",
+          "session": "סבב #",
+          "sessions": "סבבים",
           "results": "תוצאות"
         },
         "sort": {
@@ -1264,6 +1268,10 @@
           "team-placeholder": "חפש לפי מספר, שם או שיוך...",
           "status": "סטטוס",
           "all-statuses": "כל הסטטוסים",
+          "room": "חדר",
+          "rooms": "חדרים",
+          "session": "סבב #",
+          "sessions": "סבבים",
           "results": "תוצאות"
         },
         "sort": {

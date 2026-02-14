@@ -1,54 +1,112 @@
-import { Box, Stack, TextField, Typography } from '@mui/material';
+import { useMemo } from 'react';
+import { Stack, TextField, Typography, Paper, Button, ButtonGroup } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { useLeadJudge } from './lead-judge-context';
+import { useFilters } from './filters-context';
 import { StatusFilterSelector } from './status-filter-selector';
 
-interface SessionFiltersProps {
-  teamFilter: string;
-  setTeamFilter: (value: string) => void;
-  statusFilter: string[];
-  setStatusFilter: (value: string[]) => void;
-}
-
-export const SessionFilters: React.FC<SessionFiltersProps> = ({
-  teamFilter,
-  setTeamFilter,
-  statusFilter = [],
-  setStatusFilter
-}) => {
+export const SessionFilters: React.FC = () => {
   const t = useTranslations('pages.lead-judge.list');
   const { sessions } = useLeadJudge();
+  const {
+    teamFilter,
+    setTeamFilter,
+    statusFilter,
+    setStatusFilter,
+    roomFilter,
+    setRoomFilter,
+    sessionNumberFilter,
+    setSessionNumberFilter,
+    sortBy,
+    setSortBy
+  } = useFilters();
 
   const filteredSessions = useFilteredSessions(sessions, {
     teamFilter,
-    statusFilter
+    statusFilter,
+    roomFilter,
+    sessionNumberFilter,
+    sortBy
   });
 
   const sessionStatuses = ['not-started', 'in-progress', 'completed'];
 
+  // Extract unique rooms and session numbers
+  const availableRooms = useMemo(() => {
+    const rooms = new Set(sessions.map(s => s.room.name));
+    return Array.from(rooms).sort();
+  }, [sessions]);
+
+  const availableSessionNumbers = useMemo(() => {
+    const numbers = new Set(sessions.map(s => s.number));
+    return Array.from(numbers).sort((a, b) => a - b);
+  }, [sessions]);
+
   return (
-    <Stack direction={'column'} spacing={1.5}>
-      <TextField
-        label={t('filter.team')}
-        placeholder={t('filter.team-placeholder')}
-        value={teamFilter}
-        onChange={e => setTeamFilter(e.target.value)}
-        size="small"
-        sx={{ flex: 1, minWidth: 150 }}
-      />
-      <StatusFilterSelector
-        statuses={sessionStatuses}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-      />
-      {(teamFilter || statusFilter.length > 0) && (
-        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-          <Typography variant="caption" color="textSecondary">
-            {t('filter.results')}: <strong>{filteredSessions.length}</strong>
-          </Typography>
-        </Box>
-      )}
-    </Stack>
+    <Paper sx={{ p: 2, borderRadius: 2 }}>
+      <Stack spacing={2}>
+        <TextField
+          label={t('filter.team')}
+          placeholder={t('filter.team-placeholder')}
+          value={teamFilter}
+          onChange={e => setTeamFilter(e.target.value)}
+          size="small"
+          fullWidth
+        />
+
+        <StatusFilterSelector
+          statuses={sessionStatuses}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          isStatusFilter={true}
+          filterType="status"
+        />
+        <StatusFilterSelector
+          statuses={availableRooms.map(r => r)}
+          statusFilter={roomFilter}
+          setStatusFilter={setRoomFilter}
+          filterLabel={t('filter.room') || 'Room'}
+          isStatusFilter={false}
+          filterType="room"
+        />
+        <StatusFilterSelector
+          statuses={availableSessionNumbers.map(n => `#${n}`)}
+          statusFilter={sessionNumberFilter.map(n => `#${n}`)}
+          setStatusFilter={values => {
+            const numbers = values.map(v => parseInt(v.slice(1), 10));
+            setSessionNumberFilter(numbers);
+          }}
+          filterLabel={t('filter.session') || 'Session #'}
+          isStatusFilter={false}
+          filterType="session"
+        />
+
+        <Stack direction="row" spacing={1} justifyContent="space-between" alignItems="center">
+          <ButtonGroup size="small" variant="outlined">
+            <Button
+              onClick={() => setSortBy('room')}
+              variant={sortBy === 'room' ? 'contained' : 'outlined'}
+            >
+              {t('sort.room')}
+            </Button>
+            <Button
+              onClick={() => setSortBy('session')}
+              variant={sortBy === 'session' ? 'contained' : 'outlined'}
+            >
+              {t('sort.session')}
+            </Button>
+          </ButtonGroup>
+          {(teamFilter ||
+            statusFilter.length > 0 ||
+            roomFilter.length > 0 ||
+            sessionNumberFilter.length > 0) && (
+            <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
+              {t('filter.results')}: <strong>{filteredSessions.length}</strong>
+            </Typography>
+          )}
+        </Stack>
+      </Stack>
+    </Paper>
   );
 };

@@ -702,6 +702,10 @@
           "team-placeholder": "Search by number, name, or affiliation...",
           "status": "Status",
           "all-statuses": "All Statuses",
+          "room": "Room",
+          "rooms": "Rooms",
+          "session": "Session #",
+          "sessions": "Sessions",
           "results": "Results"
         },
         "sort": {
@@ -1266,6 +1270,10 @@
           "team-placeholder": "Search by number, name, or affiliation...",
           "status": "Status",
           "all-statuses": "All Statuses",
+          "room": "Room",
+          "rooms": "Rooms",
+          "session": "Session #",
+          "sessions": "Sessions",
           "results": "Results"
         },
         "sort": {
