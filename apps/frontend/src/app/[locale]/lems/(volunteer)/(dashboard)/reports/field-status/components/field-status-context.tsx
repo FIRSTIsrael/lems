@@ -48,13 +48,11 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       .filter(m => m.status === 'not-started' && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)));
 
-    // Show matches within 30 minutes from now, or delayed matches (before now but not started)
+    // Show matches within 30 minutes from now
     const upcomingMatches = notStartedMatches.filter(m => {
       const scheduledTime = dayjs(m.scheduledTime);
       const minutesFromNow = scheduledTime.diff(now, 'minute', true);
-
-      // Include if: delayed (before current time) OR within 30 minutes
-      return minutesFromNow < 0 || minutesFromNow <= 30;
+      return minutesFromNow <= 30;
     });
 
     const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
