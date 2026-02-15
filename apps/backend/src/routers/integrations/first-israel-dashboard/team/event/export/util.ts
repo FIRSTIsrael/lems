@@ -42,12 +42,10 @@ class BrowserManager {
         launchConfig.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
       }
 
-      this.initializationPromise = puppeteer
-        .launch(launchConfig)
-        .catch(error => {
-          this.initializationPromise = null;
-          throw error;
-        });
+      this.initializationPromise = puppeteer.launch(launchConfig).catch(error => {
+        this.initializationPromise = null;
+        throw error;
+      });
     }
     return this.initializationPromise;
   }
@@ -232,14 +230,44 @@ export async function getLemsWebpageAsPdf(
     page.setDefaultNavigationTimeout(30000);
     page.setDefaultTimeout(30000);
 
-    await setupPageAuthentication(page, url, token);
-
-    await page.goto(url.toString(), {
-      waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
-      timeout: 30000
+    // Set up error and console listeners to capture frontend issues
+    page.on('error', err => {
+      console.error(`[Puppeteer] Page error: ${err.message}`, err);
     });
 
-    await page.evaluate(() => document.fonts.ready);
+    page.on('console', msg => {
+      const type = msg.type();
+      const text = msg.text();
+
+      // Log all console messages from the frontend export page
+      if (type === 'error') {
+        console.error(`[Frontend ${type}] ${text}`);
+      } else if (type === 'warn') {
+        console.warn(`[Frontend ${type}] ${text}`);
+      } else {
+        console.log(`[Frontend ${type}] ${text}`);
+      }
+    });
+
+    await setupPageAuthentication(page, url, token);
+
+    try {
+      await page.goto(url.toString(), {
+        waitUntil: ['load', 'networkidle0', 'domcontentloaded'],
+        timeout: 30000
+      });
+    } catch (navigationError) {
+      console.error(`[Puppeteer] Navigation failed for URL ${url.toString()}:`, navigationError);
+      throw new Error(
+        `Failed to navigate to export page: ${navigationError instanceof Error ? navigationError.message : String(navigationError)}`
+      );
+    }
+
+    try {
+      await page.evaluate(() => document.fonts.ready);
+    } catch (error) {
+      console.warn('[Puppeteer] Fonts.ready failed, continuing anyway:', error);
+    }
 
     const data = await withTimeout(
       page.pdf({
@@ -252,7 +280,12 @@ export async function getLemsWebpageAsPdf(
     pdfBuffer = Buffer.from(data);
     return pdfBuffer;
   } catch (error) {
-    console.error('Error generating PDF:', error);
+    console.error(
+      '[Puppeteer] Error generating PDF for path:',
+      path,
+      'Error:',
+      error instanceof Error ? error.message : String(error)
+    );
     throw error;
   } finally {
     try {
@@ -272,7 +305,7 @@ export async function getLemsWebpageAsPdf(
 
       if (global.gc) global.gc();
     } catch (cleanupError) {
-      console.error('Cleanup error:', cleanupError);
+      console.error('[Puppeteer] Cleanup error:', cleanupError);
     }
   }
 }
