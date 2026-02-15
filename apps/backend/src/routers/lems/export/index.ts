@@ -2,6 +2,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
 import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
+import { logger } from '../../../lib/logger';
 import db from '../../../lib/database';
 
 const router = express.Router({ mergeParams: true });
@@ -84,6 +85,19 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
     divisionName: division.name,
     seasonName: season.name,
     scoresheets: scoresheets.map(s => {
+      // Gracefully handle missing data object
+      if (!s.data) {
+        logger.warn(
+          { scoresheetId: s._id, teamId: team.id, round: s.round },
+          'Scoresheet missing data object during export'
+        );
+        return {
+          round: s.round,
+          missions: [],
+          score: 0
+        };
+      }
+
       // Transform missions object to use string keys for clause indices
       const missions = s.data.missions || {};
       const transformedMissions: { clauses: Array<{ value: ScoresheetClauseValue }> }[] = [];
@@ -99,7 +113,7 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
       return {
         round: s.round,
         missions: transformedMissions,
-        score: s.data.score
+        score: s.data.score ?? 0
       };
     })
   });
@@ -123,10 +137,27 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     a => a.allow_nominations
   );
   const coreValuesRubric = rubrics.find(r => r.category === 'core-values');
-  const awards = optionalAwards.reduce((acc, award) => {
-    acc[award.name] = coreValuesRubric?.data.awards[award.name] ?? false;
-    return acc;
-  }, {});
+
+  const awards = optionalAwards.reduce(
+    (acc, award) => {
+      acc[award.name] = coreValuesRubric?.data?.awards?.[award.name] ?? false;
+      return acc;
+    },
+    {} as Record<string, boolean>
+  );
+
+  // Log if core values rubric is missing or incomplete
+  if (!coreValuesRubric) {
+    logger.warn(
+      { teamId: team.id, divisionId: division.id },
+      'Core values rubric not found during export'
+    );
+  } else if (!coreValuesRubric.data) {
+    logger.warn(
+      { rubricId: coreValuesRubric._id, rubricCategory: coreValuesRubric.category },
+      'Core values rubric missing data object during export'
+    );
+  }
 
   res.json({
     teamNumber: team.number,
@@ -135,11 +166,20 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     eventName: event.name,
     divisionName: division.name,
     seasonName: season.name,
-    rubrics: rubrics.map(r => ({
-      id: r._id,
-      category: r.category,
-      data: r.data
-    })),
+    rubrics: rubrics.map(r => {
+      if (!r.data) {
+        logger.warn(
+          { rubricId: r._id, category: r.category },
+          'Rubric missing data object during export'
+        );
+      }
+
+      return {
+        id: r._id,
+        category: r.category,
+        data: r.data
+      };
+    }),
     awards: awards
   });
 });

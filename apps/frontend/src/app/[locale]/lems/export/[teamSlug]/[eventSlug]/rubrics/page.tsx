@@ -255,30 +255,32 @@ export default function RubricsExportPage() {
                         {t('feedback.awards.no-awards')}
                       </Typography>
                     ) : (
-                      Object.entries(rubricsData.awards).map(([awardName, nominated]) => (
-                        <Stack key={awardName} spacing={0.25}>
-                          <FormControlLabel
-                            control={<Checkbox size="small" checked={nominated} />}
-                            label={
-                              <Typography
-                                variant="body2"
-                                fontWeight={500}
-                                sx={{ fontSize: '0.875rem' }}
-                              >
-                                {getAwardName(awardName)}
-                              </Typography>
-                            }
-                            sx={{ m: 0 }}
-                          />
-                          <Typography
-                            variant="caption"
-                            color="textSecondary"
-                            sx={{ pl: 3, fontSize: '0.75rem' }}
-                          >
-                            {getAwardDescription(awardName)}
-                          </Typography>
-                        </Stack>
-                      ))
+                      Object.entries(rubricsData.awards)
+                        .filter(([, nominated]) => nominated !== undefined && nominated !== null)
+                        .map(([awardName, nominated]) => (
+                          <Stack key={awardName} spacing={0.25}>
+                            <FormControlLabel
+                              control={<Checkbox size="small" checked={Boolean(nominated)} />}
+                              label={
+                                <Typography
+                                  variant="body2"
+                                  fontWeight={500}
+                                  sx={{ fontSize: '0.875rem' }}
+                                >
+                                  {getAwardName(awardName)}
+                                </Typography>
+                              }
+                              sx={{ m: 0 }}
+                            />
+                            <Typography
+                              variant="caption"
+                              color="textSecondary"
+                              sx={{ pl: 3, fontSize: '0.75rem' }}
+                            >
+                              {getAwardDescription(awardName)}
+                            </Typography>
+                          </Stack>
+                        ))
                     )}
                   </Stack>
                 </Stack>
