@@ -39,15 +39,17 @@ COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
 # These are built to dist/apps/backend/graphql/ during the build process
 COPY --from=builder /app/backend/graphql /app/backend/graphql
 
-# Setup Puppeteer to use downloaded Chrome
-ENV PUPPETEER_EXECUTABLE_PATH=/root/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome
-
-WORKDIR /app/backend
-
 # Setup Puppeteer directories and fix permissions
 RUN mkdir -p /home/backend/Downloads && \
   chown -R backend:lems /home/backend && \
-  chown -R backend:lems /app
+  chown -R backend:lems /app && \
+  # Find the installed Chrome executable and create a symlink for consistent path
+  find /root/.cache/puppeteer -name "chrome" -type f -exec ln -sf {} /usr/local/bin/chrome \; || true
+
+WORKDIR /app/backend
+
+# Setup Puppeteer to use downloaded Chrome via symlink (resolves glob pattern issue)
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome
 
 USER backend
 

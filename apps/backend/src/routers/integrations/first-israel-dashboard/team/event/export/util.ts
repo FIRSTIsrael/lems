@@ -32,11 +32,18 @@ class BrowserManager {
 
   private static async initialize(): Promise<Browser> {
     if (!this.initializationPromise) {
+      const launchConfig: Parameters<typeof puppeteer.launch>[0] = {
+        headless: true,
+        args: BrowserManager.PUPPETEER_ARGS
+      };
+
+      // Use the executable path from environment variable if set (useful in Docker)
+      if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+        launchConfig.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+      }
+
       this.initializationPromise = puppeteer
-        .launch({
-          headless: true,
-          args: BrowserManager.PUPPETEER_ARGS
-        })
+        .launch(launchConfig)
         .catch(error => {
           this.initializationPromise = null;
           throw error;
