@@ -4,9 +4,8 @@ FROM node:22-alpine AS builder
 WORKDIR /app/backend
 COPY dist/apps/backend .
 
-# Install dependencies and Puppeteer Chrome
+# Install dependencies
 RUN npm ci --omit=dev && \
-  npx puppeteer browsers install chrome && \
   npm cache clean --force
 
 # Runtime stage - Minimal image with only what's needed
@@ -21,8 +20,10 @@ WORKDIR /app
 # Create user and group
 RUN addgroup -S lems && adduser -S backend -G lems
 
-# Install runtime dependencies needed for Puppeteer Chrome
+# Install Chromium from Alpine repositories (more reliable than building from source)
+# Also install Puppeteer runtime dependencies
 RUN apk add --no-cache \
+  chromium \
   nss \
   freetype \
   harfbuzz \
@@ -31,9 +32,8 @@ RUN apk add --no-cache \
   udev \
   ttf-opensans
 
-# Copy installed dependencies and Puppeteer Chrome from builder
+# Copy installed dependencies from builder
 COPY --from=builder /app/backend /app/backend
-COPY --from=builder /root/.cache/puppeteer /root/.cache/puppeteer
 
 # Copy GraphQL schema files needed by loadLemsGraphQLSchema()
 # These are built to dist/apps/backend/graphql/ during the build process
@@ -42,14 +42,13 @@ COPY --from=builder /app/backend/graphql /app/backend/graphql
 # Setup Puppeteer directories and fix permissions
 RUN mkdir -p /home/backend/Downloads && \
   chown -R backend:lems /home/backend && \
-  chown -R backend:lems /app && \
-  # Find the installed Chrome executable and create a symlink for consistent path
-  find /root/.cache/puppeteer -name "chrome" -type f -exec ln -sf {} /usr/local/bin/chrome \; || true
+  chown -R backend:lems /app
 
 WORKDIR /app/backend
 
-# Setup Puppeteer to use downloaded Chrome via symlink (resolves glob pattern issue)
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/local/bin/chrome
+# Setup Puppeteer to use system Chromium (Alpine package)
+# This avoids the glob pattern issue and is more reliable in Alpine Linux
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 USER backend
 
