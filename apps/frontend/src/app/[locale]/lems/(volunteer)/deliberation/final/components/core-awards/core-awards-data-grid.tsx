@@ -142,27 +142,6 @@ export function CoreAwardsDataGrid() {
         }
       },
       {
-        field: 'robotDesignRank',
-        headerName: `${getCategory('robot-design')} ${t('table-rank')}`,
-        width: FIELD_COLUMN_WIDTH,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => {
-          const rank = (params.row as EnrichedTeam).ranks['robot-design'];
-          return rank ? `#${rank}` : '-';
-        }
-      },
-      {
-        field: 'robotDesignScore',
-        headerName: getCategory('robot-design'),
-        width: FIELD_COLUMN_WIDTH,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.scores['robot-design'].toFixed(1)
-      },
-      {
         field: 'innovationProjectRank',
         headerName: `${getCategory('innovation-project')} ${t('table-rank')}`,
         width: FIELD_COLUMN_WIDTH,
@@ -182,6 +161,27 @@ export function CoreAwardsDataGrid() {
         align: 'center',
         headerAlign: 'center',
         renderCell: params => params.row.scores['innovation-project'].toFixed(1)
+      },
+      {
+        field: 'robotDesignRank',
+        headerName: `${getCategory('robot-design')} ${t('table-rank')}`,
+        width: FIELD_COLUMN_WIDTH,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => {
+          const rank = (params.row as EnrichedTeam).ranks['robot-design'];
+          return rank ? `#${rank}` : '-';
+        }
+      },
+      {
+        field: 'robotDesignScore',
+        headerName: getCategory('robot-design'),
+        width: FIELD_COLUMN_WIDTH,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => params.row.scores['robot-design'].toFixed(1)
       },
       {
         field: 'coreValuesRank',
