@@ -40,7 +40,7 @@
     "bcrypt": "^6.0.0",
     "bullmq": "^5.69.2",
     "cookie-parser": "^1.4.7",
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "csv-parse": "^6.1.0",
     "dayjs": "^1.11.19",
     "dompurify": "^3.3.1",
