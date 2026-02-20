@@ -59,6 +59,7 @@ export interface FinalDeliberationContextValue {
 
   awards: DeliberationAwards;
   awardCounts: Partial<Record<Award, number>>;
+  deliberationAwards: Array<{ name: string; isOptional: boolean; type: string }>;
 
   roomMetrics: RoomMetricsMap;
 

@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { Award, OPTIONAL_AWARDS } from '@lems/shared/awards';
+import { Award } from '@lems/shared/awards';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -65,12 +65,18 @@ export const updateFinalDeliberationAwardsResolver: GraphQLFieldResolver<
     );
   }
 
+  // Fetch awards from database to check is_optional field
+  const divisionAwards = await db.awards.byDivisionId(divisionId).getAll();
+  const awardOptionalMap = new Map(divisionAwards.map(award => [award.name, award.is_optional]));
+
   const optionalAwards: Partial<Record<Award, string[]>> = {};
   const mandatoryAwards: Partial<Record<Award, string[]>> = {};
   const championsAward: { '1'?: string; '2'?: string; '3'?: string; '4'?: string } = {};
 
   Object.entries(awards).forEach(([awardName, awardData]) => {
-    if ((OPTIONAL_AWARDS as readonly string[]).includes(awardName)) {
+    const isOptional = awardOptionalMap.get(awardName) ?? false;
+
+    if (isOptional) {
       if (awardName === 'champions') {
         Object.assign(championsAward, awardData);
       } else {
