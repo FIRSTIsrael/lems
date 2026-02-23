@@ -88,7 +88,7 @@ export function DeliberationTable() {
         headerName: t('rank'),
         width: 100,
         filterable: false,
-
+        valueGetter: (value, row) => row.rank || 0,
         renderCell: params => params.row.rank || '-'
       },
       {
@@ -98,6 +98,7 @@ export function DeliberationTable() {
         filterable: false,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (value, row) => row.room?.name || '',
         renderCell: params => params.row.room?.name || '-'
       },
       {
@@ -105,6 +106,7 @@ export function DeliberationTable() {
         headerName: t('team'),
         width: 100,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           return (
@@ -126,6 +128,7 @@ export function DeliberationTable() {
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
+            valueGetter: (value, row) => row.rubricFields[label] ?? 0,
             renderCell: params => {
               const value = params.row.rubricFields[label];
               return value !== null ? value : '-';
@@ -150,6 +153,7 @@ export function DeliberationTable() {
                   filterable: false,
                   headerAlign: 'center' as const,
                   align: 'center' as const,
+                  valueGetter: (value, row) => row.gpScores[gpKey] ?? 3,
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
                     return value ?? 3; // Default GP score is 3 if not set
@@ -165,6 +169,7 @@ export function DeliberationTable() {
         align: 'center',
         headerAlign: 'center',
         cellClassName: 'total-score-cell',
+        valueGetter: (value, row) => row.scores[hypenatedCategory],
         renderCell: params => params.row.scores[hypenatedCategory].toFixed(2)
       },
       {
