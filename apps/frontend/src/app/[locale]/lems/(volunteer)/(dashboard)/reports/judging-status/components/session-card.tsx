@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Card, CardContent, Stack, Typography } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { JudgingSession, Room } from '../graphql';
 import { TeamInfo } from '../../../components/team-info';
 import { SessionStatusChip } from './session-status-chip';
@@ -28,11 +28,14 @@ export const SessionCard: React.FC<SessionCardProps> = ({
       key={`${room.id}-${session.id}`}
       sx={{
         mb: 2,
-        bgcolor: isCurrentRound ? 'primary.50' : 'background.paper'
+        bgcolor: isCurrentRound ? 'primary.50' : 'background.paper',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <CardContent>
-        <Stack spacing={1.5}>
+      <CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1, pb: 2 }}>
+        <Stack spacing={1.5} sx={{ flex: 1 }}>
           <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 600 }}>
             {t('table.room', { name: room.name })}
           </Typography>
@@ -40,6 +43,8 @@ export const SessionCard: React.FC<SessionCardProps> = ({
           {team ? (
             <>
               <TeamInfo team={team} size="sm" />
+
+              <Box sx={{ flex: 1 }} />
 
               <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
                 <SessionStatusChip

@@ -15,9 +15,14 @@ export const NextSessionRow: React.FC<NextSessionRowProps> = ({ session }) => {
   const team = session?.team;
 
   return (
-    <TableCell align="center" sx={{ verticalAlign: 'top', py: 2 }}>
+    <TableCell align="center" sx={{ py: 2, height: '100%' }}>
       {session && team ? (
-        <Stack spacing={1} alignItems="center">
+        <Stack
+          spacing={1}
+          alignItems="center"
+          sx={{ height: '100%', minHeight: 150 }}
+          justifyContent="center"
+        >
           <TeamInfo team={team} size="sm" textAlign="center" />
           {!team.arrived && (
             <Chip
