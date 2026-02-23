@@ -172,7 +172,18 @@ export function OptionalAwardsDataGrid() {
             align: 'center' as const,
             renderCell: params => {
               const value = params.row.rubricsFields['core-values'][label];
-              return value !== null ? value : '-';
+              const notes = params.row.rubricsFieldNotes['core-values'][label];
+              const hasExceedsNote = value === 4 && notes;
+
+              if (value === null) return '-';
+
+              return hasExceedsNote ? (
+                <Tooltip title={notes} arrow placement="top">
+                  <Box sx={{ cursor: 'help' }}>{value}</Box>
+                </Tooltip>
+              ) : (
+                value
+              );
             }
           }) as GridColDef<EnrichedTeam>
       ),

@@ -12,6 +12,7 @@ import {
   getFieldDisplayLabels,
   computeNormalizedScores,
   getOrganizedRubricFields,
+  getOrganizedRubricFieldNotes,
   getGPScores
 } from '../utils';
 import type { DeliberationContextValue, EnrichedTeam } from './types';
@@ -126,6 +127,7 @@ export function CategoryDeliberationProvider({
         const rank = computeRank(scores, teamScores, category);
         const isEligible = computeEligibility(team, deliberation);
         const rubricFields = getOrganizedRubricFields(team, category);
+        const rubricFieldNotes = getOrganizedRubricFieldNotes(team, category);
         const gpScores = getGPScores(team);
 
         return {
@@ -141,6 +143,7 @@ export function CategoryDeliberationProvider({
           rank,
           eligible: isEligible,
           rubricFields,
+          rubricFieldNotes,
           gpScores,
           rubricId: team.rubrics[hypenatedCategory as keyof typeof team.rubrics]?.id ?? null,
           awardNominations: team.rubrics.core_values?.data?.awards ?? {}
