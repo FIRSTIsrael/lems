@@ -1400,6 +1400,8 @@
           "normalized": "Normalized",
           "actions": "Actions",
           "view-rubric": "View Rubric",
+          "view-team-info": "View Team Info",
+          "no-team-info": "Team Didn't Upload Info File",
           "add-to-picklist": "Add to Picklist",
           "compare-teams": "Compare Teams"
         }
@@ -1582,6 +1584,7 @@
         "filter-by-category": "Filter by Category",
         "all-categories": "All Categories",
         "judging-room": "Judging Room",
+        "view-team-info": "View Team Info",
         "manage-teams": "Manage Teams",
         "add-team": "Add Team",
         "search-teams": "Search teams...",

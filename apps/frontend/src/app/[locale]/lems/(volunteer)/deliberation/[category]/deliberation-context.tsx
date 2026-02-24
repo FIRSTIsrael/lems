@@ -135,6 +135,7 @@ export function CategoryDeliberationProvider({
           arrived: team.arrived,
           disqualified: team.disqualified,
           slug: team.slug,
+          profileDocumentUrl: team.profileDocumentUrl,
           room: team.judgingSession?.room ?? null,
           scores,
           normalizedScores,

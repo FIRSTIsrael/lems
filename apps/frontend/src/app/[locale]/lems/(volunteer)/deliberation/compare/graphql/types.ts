@@ -67,6 +67,7 @@ export interface Team {
   disqualified: boolean;
   slug: string;
   logoUrl?: string;
+  profileDocumentUrl?: string | null;
   judgingSession?: JudgingSession;
   scoresheets: Scoresheet[];
   rubrics: CategorizedRubrics;

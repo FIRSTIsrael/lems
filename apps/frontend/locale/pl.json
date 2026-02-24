@@ -1399,6 +1399,8 @@
           "normalized": "Znormalizowane",
           "actions": "Akcje",
           "view-rubric": "Zobacz rubrykę",
+          "view-team-info": "Zobacz informacje o drużynie",
+          "no-team-info": "Drużyna nie przesłała pliku informacyjnego",
           "add-to-picklist": "Dodaj do listy wyboru",
           "compare-teams": "Porównaj drużyny"
         }
@@ -1581,6 +1583,7 @@
         "filter-by-category": "Filtruj wg kategorii",
         "all-categories": "Wszystkie kategorie",
         "judging-room": "Sala sędziowania",
+        "view-team-info": "Zobacz informacje o drużynie",
         "manage-teams": "Zarządzaj drużynami",
         "add-team": "Dodaj drużynę",
         "search-teams": "Wyszukaj drużyny...",
