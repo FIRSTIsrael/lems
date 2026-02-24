@@ -213,10 +213,14 @@ export class TeamsRepository {
     return teams;
   }
 
-  async getPage(page: number): Promise<Team[]> {
-    const teams = await this.db
-      .selectFrom('teams')
-      .selectAll('teams')
+  async getPage(page: number, region?: string): Promise<Team[]> {
+    let query = this.db.selectFrom('teams').selectAll('teams');
+
+    if (region) {
+      query = query.where('region', '=', region);
+    }
+
+    const teams = await query
       .orderBy('number', 'asc')
       .offset((page - 1) * this.TEAMS_PER_PAGE)
       .limit(this.TEAMS_PER_PAGE)
@@ -224,9 +228,26 @@ export class TeamsRepository {
     return teams;
   }
 
-  async numberOfPages(): Promise<number> {
-    const count = await this.db.selectFrom('teams').select('id').execute();
+  async numberOfPages(region?: string): Promise<number> {
+    let query = this.db.selectFrom('teams').select('id');
+
+    if (region) {
+      query = query.where('region', '=', region);
+    }
+
+    const count = await query.execute();
     return Math.ceil(count.length / this.TEAMS_PER_PAGE);
+  }
+
+  async getRegions(): Promise<string[]> {
+    const regions = await this.db
+      .selectFrom('teams')
+      .select('region')
+      .distinct()
+      .where('region', 'is not', null)
+      .orderBy('region', 'asc')
+      .execute();
+    return regions.map(r => r.region).filter(r => r && r.trim() !== '');
   }
 
   async search(searchTerm: string, limit: number): Promise<Team[]> {
