@@ -68,6 +68,11 @@ router.get('/current', async (req: AdminRequest, res) => {
 
 router.get('/id/:id', async (req: AdminRequest, res) => {
   const { id } = req.params;
+  if (!id || typeof id !== 'string') {
+    res.status(400).json({ error: 'Invalid season ID' });
+    return;
+  }
+
   const season = await db.seasons.byId(id).get();
   if (!season) {
     res.status(404).json({ error: 'Season not found' });
@@ -78,6 +83,12 @@ router.get('/id/:id', async (req: AdminRequest, res) => {
 
 router.get('/:slug', async (req: AdminRequest, res) => {
   const { slug } = req.params;
+
+  if (!slug || typeof slug !== 'string') {
+    res.status(400).json({ error: 'Invalid season slug' });
+    return;
+  }
+
   const season = await db.seasons.bySlug(slug).get();
 
   if (!season) {

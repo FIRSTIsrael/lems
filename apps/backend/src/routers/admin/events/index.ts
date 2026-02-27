@@ -155,6 +155,11 @@ router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminReq
     const { eventId } = req.params;
     const { name, date, location, region } = req.body;
 
+    if (!eventId || typeof eventId !== 'string') {
+      res.status(400).json({ error: 'EVENT_ID_REQUIRED' });
+      return;
+    }
+
     const existingEvent = await db.events.byId(eventId).get();
     if (!existingEvent) {
       res.status(404).json({ error: 'Event not found' });

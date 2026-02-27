@@ -71,26 +71,32 @@ router.put(
   '/:id',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
+    const { id: integrationId } = req.params;
+    if (!integrationId || typeof integrationId !== 'string') {
+      res.status(400).json({ error: 'INTEGRATION_ID_REQUIRED' });
+      return;
+    }
+
+    const integration = await db.integrations.byId(integrationId).get();
+
+    if (!integration) {
+      res.status(404).json({ error: 'Integration not found' });
+      return;
+    }
+
+    if (integration.event_id !== req.eventId) {
+      res.status(403).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const { enabled, settings } = req.body;
+    const updateData: Record<string, unknown> = {};
+
+    if (typeof enabled === 'boolean') {
+      updateData.enabled = enabled;
+    }
+
     try {
-      const integration = await db.integrations.byId(req.params.id).get();
-
-      if (!integration) {
-        res.status(404).json({ error: 'Integration not found' });
-        return;
-      }
-
-      if (integration.event_id !== req.eventId) {
-        res.status(403).json({ error: 'Unauthorized' });
-        return;
-      }
-
-      const { enabled, settings } = req.body;
-      const updateData: Record<string, unknown> = {};
-
-      if (typeof enabled === 'boolean') {
-        updateData.enabled = enabled;
-      }
-
       if (settings) {
         // Validate settings against the integration type's schema
         const validatedSettings = validateAndUpdateIntegration(
@@ -107,7 +113,7 @@ router.put(
         return;
       }
 
-      const updated = await db.integrations.byId(req.params.id).update(updateDataTyped);
+      const updated = await db.integrations.byId(integrationId).update(updateDataTyped);
       res.json(makeAdminIntegrationResponse(updated));
     } catch (error) {
       if (error instanceof Error && error.message.includes('validation')) {
@@ -125,20 +131,26 @@ router.delete(
   '/:id',
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
+    const { id: integrationId } = req.params;
+    if (!integrationId || typeof integrationId !== 'string') {
+      res.status(400).json({ error: 'INTEGRATION_ID_REQUIRED' });
+      return;
+    }
+
+    const integration = await db.integrations.byId(integrationId).get();
+
+    if (!integration) {
+      res.status(404).json({ error: 'Integration not found' });
+      return;
+    }
+
+    if (integration.event_id !== req.eventId) {
+      res.status(403).json({ error: 'Unauthorized' });
+      return;
+    }
+
     try {
-      const integration = await db.integrations.byId(req.params.id).get();
-
-      if (!integration) {
-        res.status(404).json({ error: 'Integration not found' });
-        return;
-      }
-
-      if (integration.event_id !== req.eventId) {
-        res.status(403).json({ error: 'Unauthorized' });
-        return;
-      }
-
-      await db.integrations.byId(req.params.id).delete();
+      await db.integrations.byId(integrationId).delete();
       res.status(204).end();
     } catch (error) {
       console.error('Error deleting integration:', error);
