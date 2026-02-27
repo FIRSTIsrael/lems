@@ -42,7 +42,7 @@ export function TeamInfo({ team }: TeamInfoProps) {
           {team.name} - #{team.number}
         </Typography>
         {team.profileDocumentUrl && (
-          <Tooltip title={t('view-team-info')}>
+          <Tooltip title={t('view-profile-document')}>
             <IconButton href={team.profileDocumentUrl} target="_blank" size="small" color="primary">
               <Description fontSize="small" />
             </IconButton>

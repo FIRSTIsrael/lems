@@ -198,8 +198,8 @@ export function DeliberationTable() {
               </IconButton>
             </Tooltip>,
             <Tooltip
-              key="view-team-info"
-              title={hasProfileDoc ? t('view-team-info') : t('no-team-info')}
+              key="view-profile-document"
+              title={hasProfileDoc ? t('view-profile-document') : t('no-profile-document')}
             >
               <span>
                 <IconButton

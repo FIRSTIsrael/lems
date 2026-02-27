@@ -1398,8 +1398,8 @@
           "normalized": "מתוקנן",
           "actions": "פעולות",
           "view-rubric": "הצג מחוון",
-          "view-team-info": "הצג מידע על הקבוצה",
-          "no-team-info": "הקבוצה לא העלתה דף מידע",
+          "view-profile-document": "צפה במסמך קבוצה",
+          "no-profile-document": "אין מסמך קבוצה",
           "add-to-picklist": "הוסף לרשימת בחירה",
           "compare-teams": "השוו קבוצות"
         }
@@ -1581,7 +1581,7 @@
         "filter-by-category": "סינון לפי קטגוריה",
         "all-categories": "כל הקטגוריות",
         "judging-room": "חדר שיפוט",
-        "view-team-info": "הצג מידע על הקבוצה",
+        "view-profile-document": "הצג מסמך Profile",
         "manage-teams": "ניהול קבוצות",
         "add-team": "הוסף קבוצה",
         "search-teams": "חפש קבוצות...",
