@@ -71,7 +71,7 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
         return (
           <TableCell key={table.id} align="center">
             {team ? (
-              <Tooltip title={`${team.name} ${team.arrived ? '' : `(${t('not-arrived')})`}`} arrow>
+              <Tooltip title={team.arrived ? '' : t('not-arrived')} arrow>
                 <Box
                   sx={{
                     display: 'inline-flex',
@@ -94,7 +94,7 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
                       fontSize: isMobile ? '0.75rem' : '1rem'
                     }}
                   >
-                    #{team.number}
+                    #{team.number} {team.name}
                   </Typography>
                 </Box>
               </Tooltip>
