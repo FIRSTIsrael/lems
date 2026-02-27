@@ -6,6 +6,7 @@ import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mu
 import { useTranslations } from 'next-intl';
 import { TeamEventResult } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
+import { useAwardTranslations } from '@lems/localization';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
 import { UnpublishedEventCard } from './unpublished-event-card';
@@ -16,6 +17,7 @@ interface TeamEventResultCardProps {
 
 export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
+  const { getName } = useAwardTranslations();
   const team = useTeam();
 
   const getAwardIcon = (award: { name: string; place: number | null }) => {
@@ -96,7 +98,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     >
                       <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {award.name}
+                        {getName(award.name)}
                       </Typography>
                     </Grid>
                   );
