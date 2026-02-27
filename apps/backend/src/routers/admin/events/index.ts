@@ -152,10 +152,10 @@ router.get('/:eventId', async (req: AdminEventRequest, res) => {
 
 router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
-    const { slug } = req.params;
+    const { eventId } = req.params;
     const { name, date, location, region } = req.body;
 
-    const existingEvent = await db.events.bySlug(slug).get();
+    const existingEvent = await db.events.byId(eventId).get();
     if (!existingEvent) {
       res.status(404).json({ error: 'Event not found' });
       return;
@@ -204,7 +204,7 @@ router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminReq
       return;
     }
 
-    const updatedEvent = await db.events.bySlug(slug).update(updateData);
+    const updatedEvent = await db.events.byId(eventId).update(updateData);
 
     if (!updatedEvent) {
       res.status(500).json({ error: 'Failed to update event' });
