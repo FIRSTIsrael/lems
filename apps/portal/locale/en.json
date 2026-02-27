@@ -125,11 +125,17 @@
     },
     "teams": {
       "title": "<i>FIRST</i> LEGO League Challenge Teams",
+      "search": {
+        "title": "Search & Filter Teams",
+        "placeholder": "Search by team name, number, city, or affiliation...",
+        "results-for": "Showing results for \"{query}\"",
+        "results-with-filters": "Showing results for \"{query}\" in {region}"
+      },
       "region": {
         "label": "Region",
         "all": "All regions",
         "current-all": "Showing teams from all regions",
-        "current": "Showing teams from region {region}"
+        "current": "Showing teams from {region}"
       },
       "no-teams": {
         "title": "No Teams to Show",

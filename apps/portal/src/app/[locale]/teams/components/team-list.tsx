@@ -1,6 +1,7 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
 import useSWR from 'swr';
 import { useTranslations } from 'next-intl';
 import {
@@ -11,9 +12,17 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  TextField,
+  InputAdornment,
+  IconButton,
+  Stack
 } from '@mui/material';
-import { Groups as GroupsIcon } from '@mui/icons-material';
+import {
+  Groups as GroupsIcon,
+  Search as SearchIcon,
+  Clear as ClearIcon
+} from '@mui/icons-material';
 import { Team } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
 import { TeamListItem } from './team-list-item';
@@ -25,15 +34,55 @@ export const TeamList: React.FC = () => {
   const searchParams = useSearchParams();
   const pageNumber = Number(searchParams.get('page')) || 1;
   const region = searchParams.get('region') || '';
+  const searchQuery = searchParams.get('search') || '';
+  const [searchInput, setSearchInput] = useState(searchQuery);
 
   const { data: regions } = useSWR<string[]>('/portal/teams/regions', {
     fallbackData: []
   });
 
+  const handleRegionChange = (newRegion: string) => {
+    const params = new URLSearchParams();
+    if (newRegion) params.set('region', newRegion);
+    if (searchQuery) params.set('search', searchQuery);
+    params.set('page', '1');
+    router.replace(`?${params.toString()}`, { scroll: false });
+  };
+
+  const handleSearchChange = useCallback(
+    (newSearch: string) => {
+      const params = new URLSearchParams();
+      if (region) params.set('region', region);
+      if (newSearch) params.set('search', newSearch);
+      params.set('page', '1');
+      router.replace(`?${params.toString()}`, { scroll: false });
+    },
+    [region, router]
+  );
+
+  const handleClearSearch = () => {
+    setSearchInput('');
+    handleSearchChange('');
+  };
+
+  useEffect(() => {
+    setSearchInput(searchQuery);
+  }, [searchQuery]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchInput !== searchQuery) {
+        handleSearchChange(searchInput);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchInput, searchQuery, handleSearchChange]);
+
   const buildQuery = () => {
     const params = new URLSearchParams();
     params.set('page', pageNumber.toString());
     if (region) params.set('region', region);
+    if (searchQuery) params.set('search', searchQuery);
     return params.toString();
   };
 
@@ -44,13 +93,6 @@ export const TeamList: React.FC = () => {
       fallbackData: { teams: [], numberOfPages: 0 }
     }
   );
-
-  const handleRegionChange = (newRegion: string) => {
-    const params = new URLSearchParams();
-    if (newRegion) params.set('region', newRegion);
-    params.set('page', '1');
-    router.replace(`?${params.toString()}`, { scroll: false });
-  };
 
   if (!data || isLoading) {
     return null;
@@ -75,8 +117,29 @@ export const TeamList: React.FC = () => {
 
   return (
     <>
-      <Box sx={{ mb: 2 }}>
-        <FormControl size="small" sx={{ minWidth: 200 }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          size="small"
+          placeholder={t('search.placeholder')}
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+            endAdornment: searchInput && (
+              <InputAdornment position="end">
+                <IconButton size="small" onClick={handleClearSearch} edge="end">
+                  <ClearIcon />
+                </IconButton>
+              </InputAdornment>
+            )
+          }}
+        />
+        <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 200 } }}>
           <InputLabel>{t('region.label')}</InputLabel>
           <Select
             value={region}
@@ -106,7 +169,7 @@ export const TeamList: React.FC = () => {
             ))}
           </Select>
         </FormControl>
-      </Box>
+      </Stack>
       <Grid container spacing={2}>
         <TeamPagination currentPage={pageNumber} totalPages={numberOfPages} />
         {teams.map(team => (

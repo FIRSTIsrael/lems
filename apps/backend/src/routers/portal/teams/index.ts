@@ -12,9 +12,18 @@ import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
-  const { page, region } = req.query;
+  const { page, region, search } = req.query;
 
+  const searchQuery = search ? String(search).trim() : undefined;
   const regionFilter = region ? String(region) : undefined;
+
+  if (searchQuery) {
+    const teams = await db.teams.search(searchQuery, 200);
+    const filteredTeams = regionFilter ? teams.filter(team => team.region === regionFilter) : teams;
+    res.status(200).json({ teams: filteredTeams.map(makePortalTeamResponse), numberOfPages: 1 });
+    return;
+  }
+
   const numberOfPages = await db.teams.numberOfPages(regionFilter);
 
   if (!page) {
