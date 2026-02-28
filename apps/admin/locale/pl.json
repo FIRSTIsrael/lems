@@ -313,6 +313,9 @@
               "label": "Region",
               "placeholder": "region",
               "helper-text": "Dwuliterowy kod kraju ISO-3166"
+            },
+            "timezone": {
+              "label": "Strefa czasowa"
             }
           },
           "actions": {

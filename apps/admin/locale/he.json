@@ -313,6 +313,9 @@
               "placeholder": "מדינה",
               "label": "מדינה",
               "helper-text": "קוד מדינה ISO-3166 בן 2 אותיות"
+            },
+            "timezone": {
+              "label": "אזור זמן"
             }
           },
           "actions": {
