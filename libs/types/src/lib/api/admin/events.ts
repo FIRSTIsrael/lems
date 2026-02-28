@@ -33,7 +33,8 @@ export const AdminEventSettingsResponseSchema = z.object({
   official: z.boolean(),
   completed: z.boolean(),
   published: z.boolean(),
-  advancementPercent: z.number().min(0).max(100)
+  advancementPercent: z.number().min(0).max(100),
+  openRubricsDuringSession: z.boolean()
 });
 
 export type EventSettings = z.infer<typeof AdminEventSettingsResponseSchema>;

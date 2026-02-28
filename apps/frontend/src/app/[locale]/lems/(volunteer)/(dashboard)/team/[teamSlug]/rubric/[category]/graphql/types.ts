@@ -50,6 +50,7 @@ export type GetTeamSessionQueryData = {
   division?: {
     id: string;
     judging: {
+      openRubricsDuringSession: boolean;
       sessions: Array<{ id: string; number: number; status: string; room: { id: string } }>;
     };
   } | null;
