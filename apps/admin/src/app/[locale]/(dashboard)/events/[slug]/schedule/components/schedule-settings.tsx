@@ -22,9 +22,9 @@ import {
   Sports,
   SportsScore,
   Event,
-  WatchLater
+  WatchLater,
+  Public
 } from '@mui/icons-material';
-import { TimeZonePicker } from '@lems/shared';
 import { useSchedule } from './schedule-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -52,8 +52,7 @@ export const ScheduleSettings: React.FC = () => {
     fieldStart,
     matchesPerRound,
     allowStagger,
-    timezone,
-    setTimezone
+    timezone
   } = useSchedule();
 
   const totalMatches = React.useMemo(() => {
@@ -185,12 +184,12 @@ export const ScheduleSettings: React.FC = () => {
               label={t('settings.stagger-matches')}
             />
 
-            <TimeZonePicker
-              value={timezone}
-              onChange={setTimezone}
-              label={t('settings.timezone')}
-              disableClearable
-            />
+            <Stack direction="row" spacing={1} alignItems="center">
+              <Public color="primary" />
+              <Typography variant="body2">
+                {t('settings.timezone')}: {timezone}
+              </Typography>
+            </Stack>
           </Stack>
         </Box>
 
