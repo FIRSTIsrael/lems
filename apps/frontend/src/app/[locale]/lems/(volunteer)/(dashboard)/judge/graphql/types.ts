@@ -45,6 +45,7 @@ export interface Judging {
   sessions: JudgingSession[];
   rooms: string[];
   sessionLength: number;
+  openRubricsDuringSession: boolean;
 }
 
 export interface QueryData {

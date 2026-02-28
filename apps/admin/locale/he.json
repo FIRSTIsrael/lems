@@ -622,7 +622,9 @@
           "visible": "גלוי",
           "visible-description": "האם אירוע זה חשוף לציבור",
           "official": "סוג אירוע",
-          "official-description": "האם אירוע זה הוא אירוע רשמי"
+          "official-description": "האם אירוע זה הוא אירוע רשמי",
+          "open-rubrics-during-session": "פתיחת מחווני שיפוט במהלך מפגש השיפוט",
+          "open-rubrics-during-session-description": "אפשר לשופטים לפתוח את המחוון כשמפגש השיפוט בעיצומו"
         },
         "event-actions": {
           "title": "פעולות אירוע",

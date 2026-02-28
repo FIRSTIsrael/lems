@@ -14,6 +14,7 @@ import {
   useJudgingSessionTimer
 } from './hooks/use-judging-timer';
 import { useSession } from './judging-session-context';
+import { RubricButton } from './rubric-button';
 
 interface JudgingTimerMobileLayoutProps {
   onAbortSession: (sessionId: string) => void;
@@ -26,7 +27,7 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
 
   const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
-  const { session, sessionLength } = useSession();
+  const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
   const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
@@ -198,6 +199,20 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
               {formatTime(totalTimeRemaining)}
             </Typography>
           </Box>
+
+          {openRubricsDuringSession && session.team?.slug && (
+            <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
+              <RubricButton team={session.team} category="innovation-project" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="robot-design" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="core-values" fontSize="0.7rem" />
+            </Stack>
+          )}
 
           <Button
             variant="outlined"
