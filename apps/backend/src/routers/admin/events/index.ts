@@ -102,13 +102,13 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       return;
     }
 
-    // Convert the selected date from midnight in the event's timezone to UTC range
-    // Example: April 4 in Europe/Warsaw (UTC+2) becomes April 3 22:00 UTC to April 4 21:59:59 UTC
+    // Convert the selected date from 8:00 AM to 23:59 in the event's timezone to UTC range
+    // Example: April 4 8:00 AM - 23:59 in Europe/Warsaw (UTC+2) becomes April 4 06:00 UTC to April 4 21:59 UTC
     let startDate: Date;
     let endDate: Date;
 
     try {
-      startDate = dayjs.tz(date, 'YYYY-MM-DD', timezone).startOf('day').toDate();
+      startDate = dayjs.tz(date, 'YYYY-MM-DD', timezone).hour(8).minute(0).second(0).toDate();
       endDate = dayjs.tz(date, 'YYYY-MM-DD', timezone).endOf('day').toDate();
     } catch {
       res.status(400).json({ error: 'Invalid date format or timezone' });
