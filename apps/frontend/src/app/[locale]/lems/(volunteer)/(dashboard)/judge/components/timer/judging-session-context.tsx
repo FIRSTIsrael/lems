@@ -6,6 +6,7 @@ import { JudgingSession } from '../../graphql';
 interface JudgingSessionContextType {
   session: JudgingSession;
   sessionLength: number;
+  openRubricsDuringSession?: boolean;
 }
 
 const JudgingSessionContext = createContext<JudgingSessionContextType | null>(null);
@@ -13,14 +14,18 @@ const JudgingSessionContext = createContext<JudgingSessionContextType | null>(nu
 export function JudgingSessionProvider({
   children,
   session,
-  sessionLength
+  sessionLength,
+  openRubricsDuringSession = false
 }: {
   children: React.ReactNode;
   session: JudgingSession;
   sessionLength: number;
+  openRubricsDuringSession?: boolean;
 }) {
   return (
-    <JudgingSessionContext.Provider value={{ session, sessionLength }}>
+    <JudgingSessionContext.Provider
+      value={{ session, sessionLength, openRubricsDuringSession }}
+    >
       {children}
     </JudgingSessionContext.Provider>
   );
