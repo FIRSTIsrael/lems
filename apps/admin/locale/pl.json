@@ -375,11 +375,13 @@
         "title": "{eventName}: Drużyny",
         "view-toggle": {
           "unified": "Widok scalony",
-          "split": "Widok podzielony"
+          "split": "Widok podzielony",
+          "edit": "Edytuj"
         },
         "schedule-exists": {
           "division-message": "Dla dywizji {divisionName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
           "event-message": "Dla wydarzenia {eventName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
+          "edit-teams": "Edytuj drużyny",
           "view-schedule": "Zobacz harmonogram",
           "delete-schedule": "Usuń harmonogram",
           "delete-schedule-dialog": {
@@ -459,6 +461,32 @@
           "removing": "Usuwanie...",
           "confirm": "Usuń drużynę",
           "error": "Nie udało się usunąć drużyny."
+        },
+        "edit-teams-dialog": {
+          "title": "Wybierz drużyny do edycji",
+          "first-team-selected": "Wybierz kolejną drużynę, aby kontynuować",
+          "search-placeholder": "Szukaj po numerze, nazwie lub afiliacji...",
+          "no-teams": "Brak dostępnych drużyn",
+          "not-registered": "Nie zarejestrowana",
+          "actions": {
+            "cancel": "Anuluj"
+          }
+        },
+        "edit-teams-preview-modal": {
+          "title": "Potwierdź zmiany drużyn",
+          "swap-teams": "Zamień drużyny",
+          "replace-team": "Zastąp drużynę",
+          "before": "Przed",
+          "after": "Po",
+          "affected-matches": "{count, plural, =1 {1 mecz dotkliwy} other {# meczów dotkliwych}}",
+          "swap-description": "Drużyna #{team1Number} zamieni się z drużyną #{team2Number}",
+          "replace-description": "Drużyna #{currentTeamNumber} zostanie zastąpiona drużyną #{newTeamNumber}",
+          "actions": {
+            "cancel": "Anuluj",
+            "confirm": "Potwierdź zmiany",
+            "confirming": "Zapisywanie zmian..."
+          },
+          "error": "Nie udało się zaktualizować drużyn. Spróbuj ponownie."
         },
         "unified": {
           "columns": {

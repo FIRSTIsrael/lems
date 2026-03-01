@@ -375,11 +375,13 @@
         "title": "{eventName}: קבוצות",
         "view-toggle": {
           "unified": "מאוחד",
-          "split": "מפוצל"
+          "split": "מפוצל",
+          "edit": "עריכה"
         },
         "schedule-exists": {
           "division-message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
           "event-message": "נקבע לוח זמנים עבור {eventName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
+          "edit-teams": "עריכת קבוצות",
           "view-schedule": "צפייה בלוח זמנים",
           "delete-schedule": "מחיקת לוח זמנים",
           "delete-schedule-dialog": {
@@ -459,6 +461,32 @@
           "removing": "מבטל רישום...",
           "confirm": "ביטול רישום",
           "error": "ביטול רישום הקבוצה נכשל."
+        },
+        "edit-teams-dialog": {
+          "title": "בחרו קבוצות לעריכה",
+          "first-team-selected": "בחרו קבוצה נוספת להמשך",
+          "search-placeholder": "חפשו לפי מספר, שם או שיוך...",
+          "no-teams": "אין קבוצות זמינות",
+          "not-registered": "לא רשומה",
+          "actions": {
+            "cancel": "ביטול"
+          }
+        },
+        "edit-teams-preview-modal": {
+          "title": "אישור שינויי קבוצות",
+          "swap-teams": "החלפת קבוצות",
+          "replace-team": "החלפת קבוצה",
+          "before": "לפני",
+          "after": "אחרי",
+          "affected-matches": "{count, plural, =1 {משחק אחד מושפע} other {# משחקים מושפעים}}",
+          "swap-description": "קבוצה #{team1Number} תתחלף עם קבוצה #{team2Number}",
+          "replace-description": "קבוצה #{currentTeamNumber} תוחלף בקבוצה #{newTeamNumber}",
+          "actions": {
+            "cancel": "ביטול",
+            "confirm": "אישור שינויים",
+            "confirming": "שמירת שינויים..."
+          },
+          "error": "שגיאה בעדכון הקבוצות. בואו נסו שוב."
         },
         "unified": {
           "columns": {

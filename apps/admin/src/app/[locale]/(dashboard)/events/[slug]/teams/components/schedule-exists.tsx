@@ -15,16 +15,17 @@ import {
   CircularProgress,
   Box
 } from '@mui/material';
-import { CheckCircle, Delete, Schedule } from '@mui/icons-material';
+import { CheckCircle, Delete, Schedule, Edit } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
 interface ScheduleExistsProps {
   divisions: Division[];
+  onEditModeClick?: () => void;
 }
 
-export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => {
+export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions, onEditModeClick }) => {
   const t = useTranslations('pages.events.teams.schedule-exists');
   const event = useEvent();
 
@@ -81,6 +82,15 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => 
                 <Button
                   color="primary"
                   size="small"
+                  startIcon={<Edit />}
+                  onClick={onEditModeClick}
+                  sx={{ color: 'primary.main' }}
+                >
+                  {t('edit-teams')}
+                </Button>
+                <Button
+                  color="primary"
+                  size="small"
                   startIcon={<Schedule />}
                   href={`/admin/events/${event.slug}/schedule?division=${division.id}`}
                   sx={{ color: 'primary.main' }}
@@ -99,10 +109,9 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => 
               </Box>
             }
           >
-            {(divisions.length > 1 
-              ? t('division-message', { divisionName: division.name }) 
-              : t('event-message', { eventName: event.name })
-              )}
+            {divisions.length > 1
+              ? t('division-message', { divisionName: division.name })
+              : t('event-message', { eventName: event.name })}
           </Alert>
         ))}
       </Stack>

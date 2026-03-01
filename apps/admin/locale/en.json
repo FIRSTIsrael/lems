@@ -375,11 +375,13 @@
         "title": "{eventName}: Teams",
         "view-toggle": {
           "unified": "Unified",
-          "split": "Split"
+          "split": "Split",
+          "edit": "Edit"
         },
         "schedule-exists": {
           "division-message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
           "event-message": "A schedule has been set for {eventName}. To edit teams, you must first delete the schedule.",
+          "edit-teams": "Edit Teams",
           "view-schedule": "View Schedule",
           "delete-schedule": "Delete Schedule",
           "delete-schedule-dialog": {
@@ -459,6 +461,32 @@
           "removing": "Removing...",
           "confirm": "Remove Team",
           "error": "Failed to remove team."
+        },
+        "edit-teams-dialog": {
+          "title": "Select Teams to Edit",
+          "first-team-selected": "Select another team to continue",
+          "search-placeholder": "Search by number, name, or affiliation...",
+          "no-teams": "No teams available",
+          "not-registered": "Not registered",
+          "actions": {
+            "cancel": "Cancel"
+          }
+        },
+        "edit-teams-preview-modal": {
+          "title": "Confirm Team Changes",
+          "swap-teams": "Swap Teams",
+          "replace-team": "Replace Team",
+          "before": "Before",
+          "after": "After",
+          "affected-matches": "{count, plural, =1 {1 match affected} other {# matches affected}}",
+          "swap-description": "Team #{team1Number} will swap places with Team #{team2Number}",
+          "replace-description": "Team #{currentTeamNumber} will be replaced by Team #{newTeamNumber}",
+          "actions": {
+            "cancel": "Cancel",
+            "confirm": "Confirm Changes",
+            "confirming": "Saving changes..."
+          },
+          "error": "Failed to update teams. Please try again."
         },
         "unified": {
           "columns": {

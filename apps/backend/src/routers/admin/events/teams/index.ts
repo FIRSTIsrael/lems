@@ -126,6 +126,7 @@ router.post(
     }
 
     try {
+      // TODO: Split DB operations into another function
       const { registered, skipped } = await parseTeamCSVRegistration(
         csvFile,
         selectedDivisions,
@@ -141,10 +142,22 @@ router.post(
       res.status(400).json({ error: String(error) });
       return;
     }
+  }
+);
 
-    // TODO: Split DB operations into another function
-    //  console.error('Error registering teams from CSV:', error);
-    //  res.status(500).json({ error: 'Failed to register teams from CSV' });
+router.post(
+  '/swap-teams',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    res.status(501).json({ error: 'Not implemented' });
+  }
+);
+
+router.post(
+  '/replace-team',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  async (req: AdminEventRequest, res) => {
+    res.status(501).json({ error: 'Not implemented' });
   }
 );
 
