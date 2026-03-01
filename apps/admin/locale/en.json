@@ -375,13 +375,11 @@
         "title": "{eventName}: Teams",
         "view-toggle": {
           "unified": "Unified",
-          "split": "Split",
-          "edit": "Edit"
+          "split": "Split"
         },
         "schedule-exists": {
           "division-message": "A schedule has been set for {divisionName}. To edit teams, you must first delete the schedule.",
           "event-message": "A schedule has been set for {eventName}. To edit teams, you must first delete the schedule.",
-          "edit-teams": "Edit Teams",
           "view-schedule": "View Schedule",
           "delete-schedule": "Delete Schedule",
           "delete-schedule-dialog": {

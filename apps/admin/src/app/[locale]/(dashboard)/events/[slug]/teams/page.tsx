@@ -9,12 +9,11 @@ import { useEvent } from '../components/event-context';
 import { EventPageTitle } from '../components/event-page-title';
 import { EventTeamsUnifiedView } from './components/event-teams-unified-view';
 import { EventTeamsSplitView } from './components/event-teams-split-view';
-import { EventTeamsEditView } from './components/event-teams-edit-view';
 import { RegisterTeamsButton } from './components/register-teams-button';
 import { RegisterTeamsFromCSVButton } from './components/register-teams-from-csv-button';
 import { ScheduleExists } from './components/schedule-exists';
 
-type ViewMode = 'unified' | 'split' | 'edit';
+type ViewMode = 'unified' | 'split';
 
 export default function EventTeamsPage() {
   const event = useEvent();
@@ -24,9 +23,6 @@ export default function EventTeamsPage() {
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
   const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`);
-
-  const divisionsWithSchedule = divisions.filter(division => division.hasSchedule);
-  const canEditTeams = divisionsWithSchedule.length > 0;
 
   return (
     <Box
@@ -45,7 +41,6 @@ export default function EventTeamsPage() {
             <Switch
               checked={viewMode !== 'unified'}
               onChange={e => setViewMode(e.target.checked ? 'split' : 'unified')}
-              disabled={viewMode === 'edit'}
               color="primary"
             />
             <Typography color={viewMode === 'split' ? 'primary' : 'text.secondary'}>
@@ -59,16 +54,13 @@ export default function EventTeamsPage() {
           <RegisterTeamsFromCSVButton event={event} divisions={divisions} />
         </Stack>
 
-        <ScheduleExists divisions={divisions} onEditModeClick={() => setViewMode('edit')} />
+        <ScheduleExists divisions={divisions} />
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
           {viewMode === 'unified' && (
             <EventTeamsUnifiedView teams={teams} divisions={divisions} eventId={event.id} />
           )}
           {viewMode === 'split' && <EventTeamsSplitView eventId={event.id} />}
-          {viewMode === 'edit' && (
-            <EventTeamsEditView eventId={event.id} divisions={divisionsWithSchedule} />
-          )}
         </Box>
       </Box>
     </Box>

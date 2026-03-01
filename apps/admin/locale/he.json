@@ -375,13 +375,11 @@
         "title": "{eventName}: קבוצות",
         "view-toggle": {
           "unified": "מאוחד",
-          "split": "מפוצל",
-          "edit": "עריכה"
+          "split": "מפוצל"
         },
         "schedule-exists": {
           "division-message": "נקבע לוח זמנים עבור {divisionName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
           "event-message": "נקבע לוח זמנים עבור {eventName}. כדי לערוך קבוצות, יש למחוק קודם את לוח הזמנים.",
-          "edit-teams": "עריכת קבוצות",
           "view-schedule": "צפייה בלוח זמנים",
           "delete-schedule": "מחיקת לוח זמנים",
           "delete-schedule-dialog": {

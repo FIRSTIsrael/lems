@@ -4,7 +4,7 @@ import { useMemo, useState, useCallback } from 'react';
 import { mutate } from 'swr';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip, useTheme } from '@mui/material';
-import { Edit } from '@mui/icons-material';
+import { SwapHoriz } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { apiFetch } from '@lems/shared';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
@@ -12,6 +12,7 @@ import { getAsset } from '../../../../../../../lib/assets';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
 import { ChangeDivisionMenu } from './change-division-menu';
+import { EditTeamsDialog } from './edit-teams-dialog';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
@@ -29,6 +30,8 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   const [searchValue, setSearchValue] = useState('');
   const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [teamToEdit, setTeamToEdit] = useState<TeamWithDivision | null>(null);
 
   const handleChangeDivision = useCallback(
     async (newDivisionId: string) => {
@@ -73,6 +76,16 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   const handleCloseDivisionMenu = useCallback(() => {
     setSelectedTeam(null);
     setAnchorEl(null);
+  }, []);
+
+  const handleOpenEditDialog = useCallback((team: TeamWithDivision) => {
+    setTeamToEdit(team);
+    setEditDialogOpen(true);
+  }, []);
+
+  const handleCloseEditDialog = useCallback(() => {
+    setEditDialogOpen(false);
+    setTeamToEdit(null);
   }, []);
 
   const hasMultipleDivisions = divisions.length > 1;
@@ -188,15 +201,11 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       renderCell: params => (
         <>
           <GridActionsCellItem
-            key="edit"
-            icon={<Edit />}
-            label="Edit team"
-            // eslint-disable-next-line no-constant-binary-expression
-            disabled={true || divisionsWithSchedule.has(params.row.division.id)}
-            onClick={() => {
-              // TODO: Implement edit functionality
-              console.log('Edit team:', params.row.id);
-            }}
+            key="swap"
+            icon={<SwapHoriz />}
+            label="Swap/Replace team"
+            disabled={!divisionsWithSchedule.has(params.row.division.id)}
+            onClick={() => handleOpenEditDialog(params.row)}
           />
           <RemoveTeamButton
             team={params.row}
@@ -255,6 +264,16 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
         selectedTeam={selectedTeam}
         onSelectDivision={handleChangeDivision}
       />
+
+      {teamToEdit && (
+        <EditTeamsDialog
+          open={editDialogOpen}
+          onClose={handleCloseEditDialog}
+          selectedTeam={teamToEdit}
+          eventId={eventId}
+          divisions={[]}
+        />
+      )}
     </Box>
   );
 };

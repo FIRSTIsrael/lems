@@ -375,13 +375,11 @@
         "title": "{eventName}: Drużyny",
         "view-toggle": {
           "unified": "Widok scalony",
-          "split": "Widok podzielony",
-          "edit": "Edytuj"
+          "split": "Widok podzielony"
         },
         "schedule-exists": {
           "division-message": "Dla dywizji {divisionName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
           "event-message": "Dla wydarzenia {eventName} ustawiono harmonogram. Aby edytować drużyny, musisz najpierw usunąć harmonogram.",
-          "edit-teams": "Edytuj drużyny",
           "view-schedule": "Zobacz harmonogram",
           "delete-schedule": "Usuń harmonogram",
           "delete-schedule-dialog": {
