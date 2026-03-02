@@ -447,6 +447,7 @@ class EventsSelector {
           slug: row.slug,
           date: row.start_date.toISOString(),
           location: row.location,
+          timezone: row.timezone,
           region: row.region,
           team_count: 0,
           divisions: [],
