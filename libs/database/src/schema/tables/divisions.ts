@@ -6,6 +6,7 @@ export interface DivisionScheduleSettings {
   ranking_cycle_time: number;
   judging_session_length: number;
   judging_session_cycle_time: number;
+  timezone?: string; // IANA timezone identifier (e.g., 'Europe/Warsaw')
 }
 
 export interface DivisionsTable {
