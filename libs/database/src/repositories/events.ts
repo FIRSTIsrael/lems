@@ -313,6 +313,7 @@ class EventsSelector {
           'events.location',
           'events.region',
           'events.coordinates',
+          'events.timezone',
           'events.season_id'
         ])
         .distinctOn('events.id')
