@@ -870,6 +870,15 @@
             "title": "Awards Configuration Valid",
             "description": "The current awards configuration meets all validation requirements."
           }
+        },
+        "override-dialog": {
+          "title": "Awards Outside Guidelines",
+          "description": "The current award configuration does not meet the recommended guidelines:",
+          "continue": "Continue anyway",
+          "cancel": "Cancel",
+          "saving": "Saving...",
+          "no-specific-errors": "Unable to determine specific validation issues.",
+          "note": "Proceeding will save awards that don't meet the 30%-50% team count guidelines."
         }
       },
       "integrations": {

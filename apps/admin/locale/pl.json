@@ -870,6 +870,15 @@
             "title": "Konfiguracja nagród poprawna",
             "description": "Obecna konfiguracja spełnia wszystkie wymagania."
           }
+        },
+        "override-dialog": {
+          "title": "Nagrody poza wytycznymi",
+          "description": "Obecna konfiguracja nagród nie spełnia rekomendowanych wytycznych:",
+          "continue": "Kontynuuj mimo to",
+          "cancel": "Anuluj",
+          "saving": "Zapisuję...",
+          "no-specific-errors": "Nie można określić konkretnych problemów walidacji.",
+          "note": "Kontynuowanie spowoduje zapisanie nagród, które nie spełniają wytycznych 30%-50% liczby drużyn."
         }
       },
       "integrations": {
