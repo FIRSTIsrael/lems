@@ -118,7 +118,7 @@ export const CreateEventLayout = () => {
       const submissionData = {
         name: values.name,
         slug: values.slug,
-        date: values.date?.toISOString() || '',
+        date: values.date ? dayjs(values.date).format('YYYY-MM-DD') : '',
         location: values.location,
         region: values.region.toUpperCase(),
         timezone: values.timezone,
@@ -229,7 +229,7 @@ export const CreateEventLayout = () => {
                   {status === true && <Alert severity="success">{t('messages.success')}</Alert>}
 
                   <Grid container spacing={3}>
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikTextField
                         name="name"
                         label={t('fields.name.label')}
@@ -237,7 +237,7 @@ export const CreateEventLayout = () => {
                       />
                     </Grid>
 
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikTextField
                         name="slug"
                         label={t('fields.slug.label')}
@@ -271,7 +271,7 @@ export const CreateEventLayout = () => {
                       />
                     </Grid>
 
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <TimeZonePicker
                         value={values.timezone}
                         onChange={(tz: string) => setFieldValue('timezone', tz)}

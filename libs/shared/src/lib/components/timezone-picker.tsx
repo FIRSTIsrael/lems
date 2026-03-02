@@ -17,7 +17,7 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
   value,
   onChange,
   label = 'Timezone',
-  size = 'small',
+  size = 'medium',
   fullWidth = true,
   disabled = false,
   disableClearable,
@@ -37,6 +37,7 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
       renderInput={params => (
         <TextField
           {...params}
+          fullWidth
           label={label}
           size={size}
           slotProps={{
