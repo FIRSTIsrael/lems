@@ -17,6 +17,15 @@ export function AwardsPresentationWrapper() {
       .map(award => {
         if (!award.winner) return undefined;
 
+        const baseAward = {
+          id: award.id,
+          name: award.name,
+          index: award.index,
+          place: award.place,
+          type: award.type,
+          isOptional: award.isOptional
+        };
+
         // Handle TEAM awards
         if (award.type === 'TEAM' && 'team' in award.winner) {
           const winner = award.winner as TeamWinner;
@@ -27,13 +36,8 @@ export function AwardsPresentationWrapper() {
             return undefined;
           }
 
-          const mappedAward: PresentationAward = {
-            id: award.id,
-            name: award.name,
-            index: award.index,
-            place: award.place,
-            type: award.type,
-            isOptional: award.isOptional,
+          return {
+            ...baseAward,
             winner: {
               id: teamData.id,
               name: teamData.name,
@@ -41,24 +45,17 @@ export function AwardsPresentationWrapper() {
               city: teamData.city || '',
               affiliation: teamData.affiliation || ''
             }
-          };
-          return mappedAward;
+          } as PresentationAward;
         }
 
         // Handle PERSONAL awards
         if (award.type === 'PERSONAL' && 'name' in award.winner) {
-          const mappedAward: PresentationAward = {
-            id: award.id,
-            name: award.name,
-            index: award.index,
-            place: award.place,
-            type: award.type,
-            isOptional: award.isOptional,
+          return {
+            ...baseAward,
             winner: {
               name: award.winner.name
             }
-          };
-          return mappedAward;
+          } as PresentationAward;
         }
 
         return undefined;
