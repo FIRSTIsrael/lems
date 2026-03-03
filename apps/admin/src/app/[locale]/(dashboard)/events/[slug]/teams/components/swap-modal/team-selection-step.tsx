@@ -126,7 +126,11 @@ export const TeamSelectionStep = ({
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5, flexWrap: 'wrap' }}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ alignItems: 'center', mb: 0.5, flexWrap: 'wrap' }}
+                    >
                       <span>{`#${team.number} - ${team.name}`}</span>
                       <Flag region={team.region} size={20} />
                       <Chip

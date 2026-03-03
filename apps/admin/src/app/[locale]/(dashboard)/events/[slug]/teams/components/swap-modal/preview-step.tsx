@@ -15,7 +15,14 @@ interface PreviewStepProps {
   secondaryTeamEvents?: Array<{ id: string; name: string }>;
 }
 
-export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap, divisionsCount = 1, selectedTeamEvents = [], secondaryTeamEvents = [] }: PreviewStepProps) => {
+export const PreviewStep = ({
+  selectedTeam,
+  secondaryTeam,
+  isSwap,
+  divisionsCount = 1,
+  selectedTeamEvents = [],
+  secondaryTeamEvents = []
+}: PreviewStepProps) => {
   const t = useTranslations('pages.events.teams.edit-teams-preview-modal');
   const theme = useTheme();
   const showDivisions = divisionsCount > 1;
@@ -43,15 +50,15 @@ export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap, divisionsCoun
             Current State
           </Typography>
           <Stack spacing={1.5}>
-            <TeamCard 
-              teamData={selectedTeam} 
+            <TeamCard
+              teamData={selectedTeam}
               label={isSwap ? 'Team 1' : 'Current Team'}
               showDivision={showDivisions}
               seasonEvents={selectedTeamEvents}
             />
             {isSwap && (
-              <TeamCard 
-                teamData={secondaryTeam} 
+              <TeamCard
+                teamData={secondaryTeam}
                 label="Team 2"
                 showDivision={showDivisions}
                 seasonEvents={secondaryTeamEvents}
@@ -109,9 +116,9 @@ export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap, divisionsCoun
               seasonEvents={secondaryTeamEvents}
             />
             {isSwap && (
-              <TeamCard 
-                teamData={selectedTeam} 
-                label="Team 2 (swapped)" 
+              <TeamCard
+                teamData={selectedTeam}
+                label="Team 2 (swapped)"
                 isAfter
                 showDivision={showDivisions}
                 seasonEvents={selectedTeamEvents}

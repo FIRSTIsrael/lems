@@ -11,7 +11,13 @@ interface TeamCardProps {
   seasonEvents?: Array<{ id: string; name: string }>;
 }
 
-export const TeamCard = ({ teamData, label, isAfter, showDivision = true, seasonEvents = [] }: TeamCardProps) => {
+export const TeamCard = ({
+  teamData,
+  label,
+  isAfter,
+  showDivision = true,
+  seasonEvents = []
+}: TeamCardProps) => {
   const theme = useTheme();
   // Check if teamData has division property (is TeamWithDivision)
   const hasDivision = 'division' in teamData;

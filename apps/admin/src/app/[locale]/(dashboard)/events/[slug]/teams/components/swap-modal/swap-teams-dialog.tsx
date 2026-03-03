@@ -22,7 +22,12 @@ import {
 import { useTranslations } from 'next-intl';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { Team as AdminTeam, TeamWithDivision, SwapTeamsRequest, ReplaceTeamRequest } from '@lems/types/api/admin';
+import {
+  Team as AdminTeam,
+  TeamWithDivision,
+  SwapTeamsRequest,
+  ReplaceTeamRequest
+} from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { TeamSelectionStep } from './team-selection-step';
 import { PreviewStep } from './preview-step';
@@ -62,14 +67,19 @@ export const SwapTeamsDialog = ({
   const teamIdsToFetch = [selectedTeam?.id, secondaryTeam?.id].filter(Boolean).join(',');
 
   const { data: registrations = {} } = useSWR(
-    open && teamIdsToFetch ? `/admin/events/${eventId}/teams/registrations?teamIds=${teamIdsToFetch}` : null
+    open && teamIdsToFetch
+      ? `/admin/events/${eventId}/teams/registrations?teamIds=${teamIdsToFetch}`
+      : null
   );
 
   const selectedTeamEvents = selectedTeam ? registrations[selectedTeam.id] || [] : [];
   const secondaryTeamEvents = secondaryTeam ? registrations[secondaryTeam.id] || [] : [];
 
   // Secondary team must have division info and be in the same division as primary team for swap
-  const isSwap = secondaryTeam && 'division' in secondaryTeam && (secondaryTeam as TeamWithDivision).division.id === selectedTeam.division.id;
+  const isSwap =
+    secondaryTeam &&
+    'division' in secondaryTeam &&
+    (secondaryTeam as TeamWithDivision).division.id === selectedTeam.division.id;
   const operationType = isSwap ? 'swap' : 'replace';
 
   const handleTeamSelect = (team: AdminTeam) => {
@@ -198,7 +208,10 @@ export const SwapTeamsDialog = ({
         </Box>
         <Box sx={{ flex: 1 }}>
           {eventName && (
-            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+            <Typography
+              variant="caption"
+              sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}
+            >
               {eventName}
             </Typography>
           )}

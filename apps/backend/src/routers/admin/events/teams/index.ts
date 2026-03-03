@@ -145,54 +145,51 @@ router.post(
   }
 );
 
-router.get(
-  '/registrations',
-  async (req: AdminEventRequest, res) => {
-    const teamIds = req.query.teamIds;
+router.get('/registrations', async (req: AdminEventRequest, res) => {
+  const teamIds = req.query.teamIds;
 
-    if (!teamIds || typeof teamIds !== 'string') {
-      res.status(400).json({ error: 'Team IDs required' });
-      return;
-    }
-
-    const ids = teamIds.split(',');
-    if (ids.length === 0 || ids.length > 100) {
-      res.status(400).json({ error: 'Invalid number of team IDs' });
-      return;
-    }
-
-    try {
-      const event = await db.events.byId(req.eventId).get();
-      if (!event) {
-        res.status(404).json({ error: 'Event not found' });
-        return;
-      }
-
-      const registrations: Record<
-        string,
-        Array<{ id: string; name: string; slug: string; date: string }>
-      > = {};
-
-      for (const teamId of ids) {
-        const events = await db.events.byTeam(teamId).getAllSummaries();
-        // Filter by current season
-        registrations[teamId] = events
-          .filter(e => e.season_id === event.season_id)
-          .map(e => ({
-            id: e.id,
-            name: e.name,
-            slug: e.slug,
-            date: e.date
-          }));
-      }
-
-      res.json(registrations);
-    } catch (error) {
-      console.error('Error fetching team registrations:', error);
-      res.status(500).json({ error: 'Failed to fetch team registrations' });
-    }
+  if (!teamIds || typeof teamIds !== 'string') {
+    res.status(400).json({ error: 'Team IDs required' });
+    return;
   }
-);
+
+  const ids = teamIds.split(',');
+  if (ids.length === 0 || ids.length > 100) {
+    res.status(400).json({ error: 'Invalid number of team IDs' });
+    return;
+  }
+
+  try {
+    const event = await db.events.byId(req.eventId).get();
+    if (!event) {
+      res.status(404).json({ error: 'Event not found' });
+      return;
+    }
+
+    const registrations: Record<
+      string,
+      Array<{ id: string; name: string; slug: string; date: string }>
+    > = {};
+
+    for (const teamId of ids) {
+      const events = await db.events.byTeam(teamId).getAllSummaries();
+      // Filter by current season
+      registrations[teamId] = events
+        .filter(e => e.season_id === event.season_id)
+        .map(e => ({
+          id: e.id,
+          name: e.name,
+          slug: e.slug,
+          date: e.date
+        }));
+    }
+
+    res.json(registrations);
+  } catch (error) {
+    console.error('Error fetching team registrations:', error);
+    res.status(500).json({ error: 'Failed to fetch team registrations' });
+  }
+});
 
 router.post(
   '/swap-teams',
