@@ -3,18 +3,22 @@
 import { Stack, Box, Typography, Card, useTheme } from '@mui/material';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import { useTranslations } from 'next-intl';
-import { TeamWithDivision } from '@lems/types/api/admin';
+import { TeamWithDivision, Team as AdminTeam } from '@lems/types/api/admin';
 import { TeamCard } from './team-card';
 
 interface PreviewStepProps {
   selectedTeam: TeamWithDivision;
-  secondaryTeam: TeamWithDivision;
+  secondaryTeam: AdminTeam;
   isSwap: boolean;
+  divisionsCount?: number;
+  selectedTeamEvents?: Array<{ id: string; name: string }>;
+  secondaryTeamEvents?: Array<{ id: string; name: string }>;
 }
 
-export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap }: PreviewStepProps) => {
+export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap, divisionsCount = 1, selectedTeamEvents = [], secondaryTeamEvents = [] }: PreviewStepProps) => {
   const t = useTranslations('pages.events.teams.edit-teams-preview-modal');
   const theme = useTheme();
+  const showDivisions = divisionsCount > 1;
 
   return (
     <Stack spacing={3}>
@@ -39,8 +43,20 @@ export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap }: PreviewStep
             Current State
           </Typography>
           <Stack spacing={1.5}>
-            <TeamCard teamData={selectedTeam} label={isSwap ? 'Team 1' : 'Current Team'} />
-            {isSwap && <TeamCard teamData={secondaryTeam} label="Team 2" />}
+            <TeamCard 
+              teamData={selectedTeam} 
+              label={isSwap ? 'Team 1' : 'Current Team'}
+              showDivision={showDivisions}
+              seasonEvents={selectedTeamEvents}
+            />
+            {isSwap && (
+              <TeamCard 
+                teamData={secondaryTeam} 
+                label="Team 2"
+                showDivision={showDivisions}
+                seasonEvents={secondaryTeamEvents}
+              />
+            )}
           </Stack>
         </Box>
 
@@ -89,8 +105,18 @@ export const PreviewStep = ({ selectedTeam, secondaryTeam, isSwap }: PreviewStep
               teamData={isSwap ? secondaryTeam : secondaryTeam}
               label={isSwap ? 'Team 1 (swapped)' : 'New Team'}
               isAfter
+              showDivision={showDivisions}
+              seasonEvents={secondaryTeamEvents}
             />
-            {isSwap && <TeamCard teamData={selectedTeam} label="Team 2 (swapped)" isAfter />}
+            {isSwap && (
+              <TeamCard 
+                teamData={selectedTeam} 
+                label="Team 2 (swapped)" 
+                isAfter
+                showDivision={showDivisions}
+                seasonEvents={selectedTeamEvents}
+              />
+            )}
           </Stack>
         </Box>
       </Stack>

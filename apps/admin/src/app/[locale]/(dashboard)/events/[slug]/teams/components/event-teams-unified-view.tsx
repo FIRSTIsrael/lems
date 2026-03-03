@@ -271,6 +271,7 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
           onClose={handleCloseEditDialog}
           selectedTeam={teamToEdit}
           eventId={eventId}
+          divisionsCount={divisions.length}
         />
       )}
     </Box>

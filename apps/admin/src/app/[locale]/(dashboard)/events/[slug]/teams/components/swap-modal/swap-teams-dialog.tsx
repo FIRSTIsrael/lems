@@ -22,7 +22,7 @@ import {
 import { useTranslations } from 'next-intl';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import ArrowRightIcon from '@mui/icons-material/ArrowRight';
-import { TeamWithDivision, SwapTeamsRequest, ReplaceTeamRequest } from '@lems/types/api/admin';
+import { Team as AdminTeam, TeamWithDivision, SwapTeamsRequest, ReplaceTeamRequest } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { TeamSelectionStep } from './team-selection-step';
 import { PreviewStep } from './preview-step';
@@ -32,25 +32,47 @@ interface SwapTeamsDialogProps {
   onClose: () => void;
   selectedTeam: TeamWithDivision;
   eventId: string;
+  eventName?: string;
+  divisionsCount?: number;
 }
 
-export const SwapTeamsDialog = ({ open, onClose, selectedTeam, eventId }: SwapTeamsDialogProps) => {
+export const SwapTeamsDialog = ({
+  open,
+  onClose,
+  selectedTeam,
+  eventId,
+  eventName,
+  divisionsCount = 1
+}: SwapTeamsDialogProps) => {
   const t = useTranslations('pages.events.teams.edit-teams-dialog');
   const tPreview = useTranslations('pages.events.teams.edit-teams-preview-modal');
   const [searchQuery, setSearchQuery] = useState('');
-  const [secondaryTeam, setSecondaryTeam] = useState<TeamWithDivision | null>(null);
+  const [secondaryTeam, setSecondaryTeam] = useState<AdminTeam | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeStep, setActiveStep] = useState(0); // 0 = select teams, 1 = review
 
-  const { data: teams = [], isLoading: teamsLoading } = useSWR<TeamWithDivision[]>(
-    open ? `/admin/events/${eventId}/teams` : null
+  const { data: allTeams = [], isLoading: teamsLoading } = useSWR<AdminTeam[]>(
+    open ? `/admin/teams` : null
   );
 
-  const isSwap = secondaryTeam ? selectedTeam.division.id === secondaryTeam.division.id : false;
+  // Filter out the selected team
+  const teams = allTeams.filter(team => team.id !== selectedTeam.id);
+
+  const teamIdsToFetch = [selectedTeam?.id, secondaryTeam?.id].filter(Boolean).join(',');
+
+  const { data: registrations = {} } = useSWR(
+    open && teamIdsToFetch ? `/admin/events/${eventId}/teams/registrations?teamIds=${teamIdsToFetch}` : null
+  );
+
+  const selectedTeamEvents = selectedTeam ? registrations[selectedTeam.id] || [] : [];
+  const secondaryTeamEvents = secondaryTeam ? registrations[secondaryTeam.id] || [] : [];
+
+  // Secondary team must have division info and be in the same division as primary team for swap
+  const isSwap = secondaryTeam && 'division' in secondaryTeam && (secondaryTeam as TeamWithDivision).division.id === selectedTeam.division.id;
   const operationType = isSwap ? 'swap' : 'replace';
 
-  const handleTeamSelect = (team: TeamWithDivision) => {
+  const handleTeamSelect = (team: AdminTeam) => {
     setSecondaryTeam(team);
     setError(null);
     setActiveStep(1); // Move to preview step
@@ -69,11 +91,12 @@ export const SwapTeamsDialog = ({ open, onClose, selectedTeam, eventId }: SwapTe
 
     try {
       if (isSwap) {
+        const secondaryTeamWithDivision = secondaryTeam as TeamWithDivision;
         const payload: SwapTeamsRequest = {
           team1Id: selectedTeam.id,
           team1DivisionId: selectedTeam.division.id,
           team2Id: secondaryTeam.id,
-          team2DivisionId: secondaryTeam.division.id
+          team2DivisionId: secondaryTeamWithDivision.division.id
         };
 
         const result = await apiFetch(`/admin/events/${eventId}/teams/swap-teams`, {
@@ -174,6 +197,11 @@ export const SwapTeamsDialog = ({ open, onClose, selectedTeam, eventId }: SwapTe
           )}
         </Box>
         <Box sx={{ flex: 1 }}>
+          {eventName && (
+            <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mb: 0.5 }}>
+              {eventName}
+            </Typography>
+          )}
           <DialogTitle sx={{ p: 0, mb: 0.5 }}>
             {activeStep === 0
               ? t('title')
@@ -197,7 +225,7 @@ export const SwapTeamsDialog = ({ open, onClose, selectedTeam, eventId }: SwapTe
         </Box>
       </Box>
 
-      <DialogContent sx={{ pt: 3 }}>
+      <DialogContent sx={{ pt: 3, height: '600px', overflow: 'auto' }}>
         <Stack spacing={3}>
           {/* Progress Stepper */}
           <Stepper activeStep={activeStep} sx={{ pb: 2 }}>
@@ -236,7 +264,10 @@ export const SwapTeamsDialog = ({ open, onClose, selectedTeam, eventId }: SwapTe
             <PreviewStep
               selectedTeam={selectedTeam}
               secondaryTeam={secondaryTeam}
-              isSwap={isSwap}
+              isSwap={isSwap || false}
+              divisionsCount={divisionsCount}
+              selectedTeamEvents={selectedTeamEvents}
+              secondaryTeamEvents={secondaryTeamEvents}
             />
           ) : null}
         </Stack>

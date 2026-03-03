@@ -11,19 +11,22 @@ import {
   CircularProgress,
   Box,
   InputAdornment,
-  Typography
+  Typography,
+  Avatar,
+  ListItemIcon
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTranslations } from 'next-intl';
-import { TeamWithDivision } from '@lems/types/api/admin';
+import { Team as AdminTeam, TeamWithDivision } from '@lems/types/api/admin';
+import { Flag } from '@lems/shared';
 
 interface TeamSelectionStepProps {
-  teams: TeamWithDivision[];
+  teams: AdminTeam[];
   teamsLoading: boolean;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   selectedTeam: TeamWithDivision;
-  onTeamSelect: (team: TeamWithDivision) => void;
+  onTeamSelect: (team: AdminTeam) => void;
 }
 
 export const TeamSelectionStep = ({
@@ -96,8 +99,6 @@ export const TeamSelectionStep = ({
       ) : (
         <List disablePadding sx={{ border: 1, borderColor: 'divider', borderRadius: 1 }}>
           {filteredTeams.map((team, index) => {
-            const isFromOtherDivision = team.division.id !== selectedTeam.division.id;
-
             return (
               <ListItemButton
                 key={team.id}
@@ -106,26 +107,42 @@ export const TeamSelectionStep = ({
                 sx={{
                   '&:hover': {
                     backgroundColor: 'action.hover'
-                  }
+                  },
+                  alignItems: 'flex-start'
                 }}
               >
+                <ListItemIcon sx={{ minWidth: 48, mt: 0.5 }}>
+                  <Avatar
+                    src={team.logoUrl || undefined}
+                    alt={team.name}
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: 'primary.main'
+                    }}
+                  >
+                    {team.number}
+                  </Avatar>
+                </ListItemIcon>
                 <ListItemText
                   primary={
-                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mb: 0.5, flexWrap: 'wrap' }}>
                       <span>{`#${team.number} - ${team.name}`}</span>
-                      {isFromOtherDivision && (
-                        <Chip
-                          label={team.division.name}
-                          size="small"
-                          sx={{
-                            backgroundColor: team.division.color,
-                            color: '#fff'
-                          }}
-                        />
-                      )}
+                      <Flag region={team.region} size={20} />
+                      <Chip
+                        label="Competing in this event"
+                        size="small"
+                        color="primary"
+                        variant="outlined"
+                      />
                     </Stack>
                   }
-                  secondary={team.affiliation}
+                  secondary={
+                    <Stack spacing={0.25}>
+                      <span>{team.city}</span>
+                      <span>{team.affiliation}</span>
+                    </Stack>
+                  }
                 />
               </ListItemButton>
             );
