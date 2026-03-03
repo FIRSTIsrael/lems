@@ -1,4 +1,5 @@
 import express from 'express';
+import dayjs from 'dayjs';
 import { UpdateableEvent } from '@lems/database';
 import db from '../../../lib/database';
 import { attachEvent } from '../middleware/attach-event';
@@ -46,15 +47,22 @@ router.get('/season/:seasonId/summary', async (req, res) => {
 
 router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
   try {
-    const { name, slug, date, location, region, divisions } = req.body;
+    const { name, slug, date, location, region, timezone, divisions } = req.body;
 
-    if (!name || !slug || !date || !location || !region) {
-      res.status(400).json({ error: 'Name, slug, date, location, and region are required' });
+    if (!name || !slug || !date || !location || !region || !timezone) {
+      res
+        .status(400)
+        .json({ error: 'Name, slug, date, location, region, and timezone are required' });
       return;
     }
 
     if (typeof region !== 'string' || region.length !== 2 || !/^[A-Z]{2}$/.test(region)) {
       res.status(400).json({ error: 'Region must be a 2-letter ISO 3166-1 alpha-2 country code' });
+      return;
+    }
+
+    if (typeof timezone !== 'string' || !timezone.trim()) {
+      res.status(400).json({ error: 'Timezone must be a valid IANA timezone string' });
       return;
     }
 
@@ -94,19 +102,27 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       return;
     }
 
-    const eventDate = new Date(date);
-    if (isNaN(eventDate.getTime())) {
-      res.status(400).json({ error: 'Invalid date format' });
+    // Convert the selected date from 8:00 AM to 23:59 in the event's timezone to UTC range
+    // Example: April 4 8:00 AM - 23:59 in Europe/Warsaw (UTC+2) becomes April 4 06:00 UTC to April 4 21:59 UTC
+    let startDate: Date;
+    let endDate: Date;
+
+    try {
+      startDate = dayjs.tz(date, 'YYYY-MM-DD', timezone).hour(8).minute(0).second(0).toDate();
+      endDate = dayjs.tz(date, 'YYYY-MM-DD', timezone).endOf('day').toDate();
+    } catch {
+      res.status(400).json({ error: 'Invalid date format or timezone' });
       return;
     }
 
     const eventResult = await db.events.create({
       name,
       slug,
-      start_date: eventDate,
-      end_date: eventDate, // For now, using same date for start and end
+      start_date: startDate,
+      end_date: endDate,
       location,
       region,
+      timezone,
       season_id: currentSeason.id
     });
 
@@ -130,7 +146,7 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
       return;
     }
 
-    res.status(201).end();
+    res.status(201).json({ timezone });
   } catch (error) {
     console.error('Error creating event:', error);
     res.status(500).json({ error: 'Internal server error' });
