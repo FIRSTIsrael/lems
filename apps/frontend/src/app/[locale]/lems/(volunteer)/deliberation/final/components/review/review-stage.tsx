@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Grid, Button, CircularProgress } from '@mui/material';
@@ -17,9 +17,19 @@ export const ReviewStage: React.FC = () => {
   const { deliberation, division, teams } = useFinalDeliberation();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
-  const { data: awardsData, loading: awardsLoading } = useQuery(GET_DIVISION_AWARDS, {
+  const {
+    data: awardsData,
+    loading: awardsLoading,
+    error: awardsError
+  } = useQuery(GET_DIVISION_AWARDS, {
     variables: { divisionId: division.id }
   });
+
+  useEffect(() => {
+    if (awardsError) {
+      console.error('Error fetching awards:', awardsError);
+    }
+  }, [awardsError]);
 
   const mappedWinners = useMemo(() => {
     const mapped: Record<string, EnrichedTeam[]> = {};

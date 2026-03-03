@@ -152,6 +152,7 @@ export const GET_DIVISION_AWARDS: TypedDocumentNode<DivisionAwardsData, Division
     division(id: $divisionId) {
       id
       judging {
+        divisionId
         awards {
           id
           name
