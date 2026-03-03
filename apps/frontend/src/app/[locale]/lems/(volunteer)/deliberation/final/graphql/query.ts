@@ -1,6 +1,11 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge } from '@lems/shared/utils';
-import type { FinalDeliberationData, FinalDeliberationVars } from './types';
+import type {
+  FinalDeliberationData,
+  FinalDeliberationVars,
+  DivisionAwardsData,
+  DivisionAwardsVars
+} from './types';
 
 export const GET_FINAL_DELIBERATION: TypedDocumentNode<
   FinalDeliberationData,
@@ -138,6 +143,36 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           optionalAwardsManualEligibility
         }
         advancementPercentage
+      }
+    }
+  }
+`;
+
+export const GET_DIVISION_AWARDS: TypedDocumentNode<DivisionAwardsData, DivisionAwardsVars> = gql`
+  query GetDivisionAwards($divisionId: String!) {
+    division(id: $divisionId) {
+      id
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          type
+          place
+          winner {
+            ... on TeamWinner {
+              team {
+                id
+                number
+                name
+                slug
+              }
+            }
+            ... on PersonalWinner {
+              name
+            }
+          }
+        }
       }
     }
   }
