@@ -12,7 +12,7 @@ import { getAsset } from '../../../../../../../lib/assets';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
 import { ChangeDivisionMenu } from './change-division-menu';
-import { EditTeamsDialog } from './edit-teams-dialog';
+import { SwapTeamsDialog } from './swap-modal';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
@@ -266,12 +266,11 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
       />
 
       {teamToEdit && (
-        <EditTeamsDialog
+        <SwapTeamsDialog
           open={editDialogOpen}
           onClose={handleCloseEditDialog}
           selectedTeam={teamToEdit}
           eventId={eventId}
-          divisions={[]}
         />
       )}
     </Box>

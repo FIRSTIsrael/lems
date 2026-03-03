@@ -470,7 +470,8 @@
           "no-teams": "No teams available",
           "not-registered": "Not registered",
           "actions": {
-            "cancel": "Cancel"
+            "cancel": "Cancel",
+            "back": "Back"
           }
         },
         "edit-teams-preview-modal": {

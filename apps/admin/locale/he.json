@@ -470,7 +470,8 @@
           "no-teams": "אין קבוצות זמינות",
           "not-registered": "לא רשומה",
           "actions": {
-            "cancel": "ביטול"
+            "cancel": "ביטול",
+            "back": "חזרה"
           }
         },
         "edit-teams-preview-modal": {

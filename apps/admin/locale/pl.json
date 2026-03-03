@@ -470,7 +470,8 @@
           "no-teams": "Brak dostępnych drużyn",
           "not-registered": "Nie zarejestrowana",
           "actions": {
-            "cancel": "Anuluj"
+            "cancel": "Anuluj",
+            "back": "Wstecz"
           }
         },
         "edit-teams-preview-modal": {
