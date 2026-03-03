@@ -116,6 +116,10 @@ router.get(
   async (req: AdminDivisionRequest, res) => {
     try {
       const { teamId } = req.params;
+      if (!teamId || typeof teamId !== 'string') {
+        res.status(400).json({ error: 'TEAM_ID_REQUIRED' });
+        return;
+      }
 
       const team = await db.teams.byId(teamId).get();
       if (!team) {

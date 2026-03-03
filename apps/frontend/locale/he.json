@@ -870,6 +870,7 @@
         "ends-at": "מסתיים בשעה {time}"
       },
       "status": {
+        "not-started": "לא בקיו",
         "not-queued": "לא בקיו",
         "in-progress": "בתהליך",
         "completed": "הושלם",
@@ -1394,9 +1395,11 @@
           "team": "קבוצה",
           "room": "חדר",
           "total": "סך הכל",
-          "normalized": "מתוקנן",
+          "normalized": "מנורמל",
           "actions": "פעולות",
           "view-rubric": "הצג מחוון",
+          "view-profile-document": "צפה במסמך קבוצה",
+          "no-profile-document": "אין מסמך קבוצה",
           "add-to-picklist": "הוסף לרשימת בחירה",
           "compare-teams": "השוו קבוצות"
         }
@@ -1578,6 +1581,7 @@
         "filter-by-category": "סינון לפי קטגוריה",
         "all-categories": "כל הקטגוריות",
         "judging-room": "חדר שיפוט",
+        "view-profile-document": "הצג מסמך Profile",
         "manage-teams": "ניהול קבוצות",
         "add-team": "הוסף קבוצה",
         "search-teams": "חפש קבוצות...",

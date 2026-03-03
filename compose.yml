@@ -8,13 +8,14 @@ services:
     restart: always
     environment:
       # Frontend (Future use)
-      # - LEMS_DOMAIN=${LEMS_DOMAIN}
+      - LEMS_DOMAIN=${LEMS_DOMAIN}
 
       # Authentication
       - RECAPTCHA=${RECAPTCHA}
       - RECAPTCHA_SECRET_KEY=${RECAPTCHA_SECRET_KEY}
       - JWT_SECRET=${JWT_SECRET}
       - FIRST_ISRAEL_DASHBOARD_SECRET=${FIRST_ISRAEL_DASHBOARD_SECRET}
+      - INTEGRATIONS_LEMS_JWT=${INTEGRATIONS_LEMS_JWT}
 
       # Database connection
       - DB_NAME=${DB_NAME}

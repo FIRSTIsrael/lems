@@ -46,6 +46,11 @@ router.put(
     const { tableId } = req.params;
     const { name } = req.body;
 
+    if (!tableId || typeof tableId !== 'string') {
+      res.status(400).json({ error: 'TABLE_ID_REQUIRED' });
+      return;
+    }
+
     if (!name) {
       res.status(400).json({ error: 'Name is required' });
       return;
@@ -62,6 +67,11 @@ router.delete(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     const { tableId } = req.params;
+    if (!tableId || typeof tableId !== 'string') {
+      res.status(400).json({ error: 'TABLE_ID_REQUIRED' });
+      return;
+    }
+
     await db.tables.byId(tableId).delete();
 
     const tableEventUser = await db.eventUsers.byRoleInfo('tableId', tableId).get();

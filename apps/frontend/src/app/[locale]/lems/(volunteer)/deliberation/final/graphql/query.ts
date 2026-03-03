@@ -27,6 +27,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
         arrived
         disqualified
         slug
+        profileDocumentUrl
         judgingSession {
           id
           status

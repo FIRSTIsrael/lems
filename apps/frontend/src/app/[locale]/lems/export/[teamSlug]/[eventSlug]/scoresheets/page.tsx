@@ -80,23 +80,32 @@ export default function ScoresExportPage() {
           />
 
           <Stack spacing={1.5}>
-            {scoresheet.missions.map((mission, index) => {
-              const missionData = scoresheetData.missions[index];
-              if (!missionData || !missionData.clauses) return null;
+            {scoresheet.missions
+              .map((mission, index) => {
+                const missionData = scoresheetData.missions?.[index];
+                if (!missionData || !missionData.clauses || missionData.clauses.length === 0) {
+                  return null;
+                }
 
-              const score = mission.calculation(
-                ...missionData.clauses.map(clause => clause.value ?? false)
-              );
+                try {
+                  const score = mission.calculation(
+                    ...missionData.clauses.map(clause => clause.value ?? false)
+                  );
 
-              return (
-                <ExportScoresheetMission
-                  key={mission.id}
-                  mission={mission}
-                  clauses={missionData.clauses}
-                  score={score}
-                />
-              );
-            })}
+                  return (
+                    <ExportScoresheetMission
+                      key={mission.id}
+                      mission={mission}
+                      clauses={missionData.clauses}
+                      score={score}
+                    />
+                  );
+                } catch (error) {
+                  console.error(`Error calculating score for mission ${mission.id}:`, error);
+                  return null;
+                }
+              })
+              .filter(Boolean)}
 
             <Box
               sx={{
@@ -109,7 +118,7 @@ export default function ScoresExportPage() {
               }}
             >
               <Typography fontSize="1.5rem" fontWeight={700}>
-                {t('total-points', { points: scoresheetData.score })}
+                {t('total-points', { points: scoresheetData.score ?? 0 })}
               </Typography>
             </Box>
           </Stack>

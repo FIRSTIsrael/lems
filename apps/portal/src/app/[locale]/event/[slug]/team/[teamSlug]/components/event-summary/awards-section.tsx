@@ -4,11 +4,13 @@ import { useMemo } from 'react';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
+import { useAwardTranslations } from '@lems/localization';
 import { useRealtimeData } from '../../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 
 export const AwardsSection: React.FC = () => {
   const { event, team } = useTeamAtEvent();
+  const { getName } = useAwardTranslations();
 
   const { data: awards, isLoading } = useRealtimeData<Award[] | null>(
     `/portal/events/${event.slug}/teams/${team.slug}/awards`,
@@ -69,7 +71,7 @@ export const AwardsSection: React.FC = () => {
           >
             <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
-              {award.name}
+              {getName(award.name)}
             </Typography>
           </Grid>
         );

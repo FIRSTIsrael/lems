@@ -874,7 +874,8 @@
         "not-started": "Nie rozpoczęto",
         "in-progress": "W toku",
         "completed": "Zakończono",
-        "queued": "W kolejce"
+        "queued": "W kolejce",
+        "not-queued": "Nie w kolejce"
       },
       "warnings": {
         "on-field": "Drużyna jest na polu!"
@@ -1398,6 +1399,8 @@
           "normalized": "Znormalizowane",
           "actions": "Akcje",
           "view-rubric": "Zobacz rubrykę",
+          "view-profile-document": "Zobacz dokument Profile",
+          "no-profile-document": "Brak dokumentu Profile",
           "add-to-picklist": "Dodaj do listy wyboru",
           "compare-teams": "Porównaj drużyny"
         }
@@ -1580,6 +1583,7 @@
         "filter-by-category": "Filtruj wg kategorii",
         "all-categories": "Wszystkie kategorie",
         "judging-room": "Sala sędziowania",
+        "view-profile-document": "Zobacz dokument Profile",
         "manage-teams": "Zarządzaj drużynami",
         "add-team": "Dodaj drużynę",
         "search-teams": "Wyszukaj drużyny...",

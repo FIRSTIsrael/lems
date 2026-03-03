@@ -13,6 +13,7 @@ import {
   alpha
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useAwardTranslations } from '@lems/localization';
 import WarningIcon from '@mui/icons-material/Warning';
 
 interface AssignAwardConfirmationDialogProps {
@@ -33,6 +34,7 @@ export function AssignAwardConfirmationDialog({
   onCancel
 }: AssignAwardConfirmationDialogProps) {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
+  const { getName } = useAwardTranslations();
   const theme = useTheme();
 
   return (
@@ -64,7 +66,7 @@ export function AssignAwardConfirmationDialog({
                   {t('award-label')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {awardName}
+                  {awardName ? getName(awardName) : ''}
                 </Typography>
               </Box>
               <Box>

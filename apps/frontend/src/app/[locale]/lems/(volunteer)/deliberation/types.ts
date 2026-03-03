@@ -96,6 +96,7 @@ export interface Team {
   arrived: boolean;
   disqualified: boolean;
   slug: string;
+  profileDocumentUrl?: string | null;
   judgingSession?: JudgingSession;
   scoresheets: Scoresheet[];
   rubrics: CategorizedRubrics;

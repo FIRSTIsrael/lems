@@ -107,6 +107,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           FIRST_ISRAEL_DASHBOARD_SECRET: ${{ secrets.FIRST_ISRAEL_DASHBOARD_SECRET }}
           SCHEDULER_JWT_SECRET: ${{ secrets.SCHEDULER_JWT_SECRET }}
+          INTEGRATIONS_LEMS_JWT: ${{ secrets.INTEGRATIONS_LEMS_JWT }}
           RECAPTCHA: ${{ vars.RECAPTCHA }}
           RECAPTCHA_SECRET_KEY: ${{ secrets.RECAPTCHA_SECRET_KEY }}
           
@@ -149,6 +150,7 @@ jobs:
             JWT_SECRET,
             FIRST_ISRAEL_DASHBOARD_SECRET,
             SCHEDULER_JWT_SECRET,
+            INTEGRATIONS_LEMS_JWT,
 
             RECAPTCHA,
             RECAPTCHA_SECRET_KEY,
