@@ -5,7 +5,7 @@ import { green } from '@mui/material/colors';
 import OpenInFullIcon from '@mui/icons-material/OpenInFull';
 import { cvFormSchema } from '@lems/season';
 import { Division, CoreValuesForm } from '@lems/types';
-import { localizedFormSubject } from '../../localization/cv-form';
+import { localizedFormSubject } from '../locales';
 
 interface CVFormCardProps {
   division: WithId<Division>;

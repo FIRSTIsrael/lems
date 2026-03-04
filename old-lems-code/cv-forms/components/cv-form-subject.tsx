@@ -10,7 +10,7 @@ import {
   useTheme
 } from '@mui/material';
 import { CVFormSubjectTypes, CVFormSubject } from '@lems/types';
-import { localizedFormSubject } from '../../localization/cv-form';
+import { localizedFormSubject } from '../locales';
 import { FastField, FieldProps } from 'formik';
 
 interface CVFormSubjectSelectProps {
