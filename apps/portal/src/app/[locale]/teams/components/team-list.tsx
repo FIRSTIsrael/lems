@@ -76,7 +76,8 @@ export const TeamList: React.FC = () => {
       }
     }, 500);
     return () => clearTimeout(timer);
-  }, [searchInput, searchQuery, handleSearchChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchInput, searchQuery]);
 
   const buildQuery = () => {
     const params = new URLSearchParams();
