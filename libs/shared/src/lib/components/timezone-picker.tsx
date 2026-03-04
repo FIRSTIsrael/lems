@@ -1,10 +1,12 @@
 import React from 'react';
-import { Autocomplete, TextField, AutocompleteProps} from '@mui/material';
+import { Autocomplete, TextField, AutocompleteProps } from '@mui/material';
 import { Public } from '@mui/icons-material';
 import { ALL_TIMEZONES } from '../utils/timezones';
 
-interface TimeZonePickerProps<disableClearable extends boolean> 
-  extends Omit<AutocompleteProps<string, false, disableClearable, false>, 'onChange' | 'value' | 'options' | 'renderInput'> {
+interface TimeZonePickerProps<disableClearable extends boolean> extends Omit<
+  AutocompleteProps<string, false, disableClearable, false>,
+  'onChange' | 'value' | 'options' | 'renderInput'
+> {
   value: string;
   onChange: (timezone: string) => void;
   label?: string;
@@ -15,7 +17,7 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
   value,
   onChange,
   label = 'Timezone',
-  size = 'small',
+  size = 'medium',
   fullWidth = true,
   disabled = false,
   disableClearable,
@@ -35,17 +37,20 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
       renderInput={params => (
         <TextField
           {...params}
+          fullWidth
           label={label}
           size={size}
-          slotProps={{input : {
-            ...params.InputProps,
-            startAdornment: (
-              <>
-                <Public sx={{ mr: 1, color: 'action.active' }} />
-                {params.InputProps.startAdornment}
-              </>
-            )
-          }}}
+          slotProps={{
+            input: {
+              ...params.InputProps,
+              startAdornment: (
+                <>
+                  <Public sx={{ mr: 1, color: 'action.active' }} />
+                  {params.InputProps.startAdornment}
+                </>
+              )
+            }
+          }}
         />
       )}
       fullWidth={fullWidth}
@@ -53,4 +58,3 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
     />
   );
 };
-

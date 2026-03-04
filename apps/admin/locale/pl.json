@@ -313,6 +313,9 @@
               "label": "Region",
               "placeholder": "region",
               "helper-text": "Dwuliterowy kod kraju ISO-3166"
+            },
+            "timezone": {
+              "label": "Strefa czasowa"
             }
           },
           "actions": {
@@ -619,7 +622,9 @@
           "visible": "Widoczne",
           "visible-description": "Czy wydarzenie jest widoczne publicznie",
           "official": "Wydarzenie oficjalne",
-          "official-description": "Czy wydarzenie ma status oficjalny"
+          "official-description": "Czy wydarzenie ma status oficjalny",
+          "open-rubrics-during-session": "Otwórz rubryki podczas sesji",
+          "open-rubrics-during-session-description": "Pozwól sędziom otwierać rubryki podczas trwającej sesji"
         },
         "event-actions": {
           "title": "Akcje wydarzenia",
@@ -865,6 +870,15 @@
             "title": "Konfiguracja nagród poprawna",
             "description": "Obecna konfiguracja spełnia wszystkie wymagania."
           }
+        },
+        "override-dialog": {
+          "title": "Nagrody poza wytycznymi",
+          "description": "Obecna konfiguracja nagród nie spełnia rekomendowanych wytycznych:",
+          "continue": "Kontynuuj mimo to",
+          "cancel": "Anuluj",
+          "saving": "Zapisuję...",
+          "no-specific-errors": "Nie można określić konkretnych problemów walidacji.",
+          "note": "Kontynuowanie spowoduje zapisanie nagród, które nie spełniają wytycznych 30%-50% liczby drużyn."
         }
       },
       "integrations": {

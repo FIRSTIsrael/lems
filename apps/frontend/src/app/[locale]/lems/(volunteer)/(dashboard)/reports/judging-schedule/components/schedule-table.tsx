@@ -174,10 +174,7 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   {row.rooms?.map(room => (
                     <TableCell key={room.id} align="center">
                       {room.team ? (
-                        <Tooltip
-                          title={`${room.team.name} ${room.team.arrived ? '' : `(${t('not-arrived')})`}`}
-                          arrow
-                        >
+                        <Tooltip title={room.team.arrived ? '' : t('not-arrived')} arrow>
                           <Box
                             sx={{
                               display: 'inline-flex',
@@ -200,7 +197,7 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                                 fontSize: isMobile ? '0.75rem' : '1rem'
                               }}
                             >
-                              #{room.team.number}
+                              #{room.team.number} {room.team.name}
                             </Typography>
                           </Box>
                         </Tooltip>
