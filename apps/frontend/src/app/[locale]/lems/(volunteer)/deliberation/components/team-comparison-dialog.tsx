@@ -1,6 +1,5 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Dialog,
@@ -44,13 +43,12 @@ export function TeamComparisonDialog({
   category
 }: TeamComparisonDialogProps) {
   const t = useTranslations('pages.deliberations.compare-dialog');
-  const router = useRouter();
   const { currentDivision } = useEvent();
 
   const handleOpenFullCompare = () => {
     const teamsParam = teamSlugs.join(',');
     const categoryParam = category ? `&category=${category}` : '';
-    router.push(`/lems/deliberation/compare?teams=${teamsParam}${categoryParam}`);
+    window.open(`/lems/deliberation/compare?teams=${teamsParam}${categoryParam}`, '_blank');
   };
 
   const { data, loading, error } = usePageData(
