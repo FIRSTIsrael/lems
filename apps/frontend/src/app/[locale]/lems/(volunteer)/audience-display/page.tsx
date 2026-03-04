@@ -64,17 +64,21 @@ export default function AudienceDisplayPage() {
         .map(award => {
           if (!award.winner) return undefined;
 
+          const baseAward = {
+            id: award.id,
+            name: award.name,
+            index: award.index,
+            place: award.place,
+            type: award.type,
+            isOptional: award.isOptional
+          };
+
           // Handle TEAM awards
           if (award.type === 'TEAM' && 'team' in award.winner) {
             const winner = award.winner as TeamWinner;
 
             return {
-              id: award.id,
-              name: award.name,
-              index: award.index,
-              place: award.place,
-              type: award.type,
-              isOptional: award.isOptional,
+              ...baseAward,
               winner: {
                 id: winner.team.id,
                 name: winner.team.name,
@@ -88,12 +92,7 @@ export default function AudienceDisplayPage() {
           // Handle PERSONAL awards
           if (award.type === 'PERSONAL' && 'name' in award.winner) {
             return {
-              id: award.id,
-              name: award.name,
-              index: award.index,
-              place: award.place,
-              type: award.type,
-              isOptional: award.isOptional,
+              ...baseAward,
               winner: {
                 name: award.winner.name
               }
