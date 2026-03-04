@@ -1,14 +1,14 @@
 'use client';
 
-import { Stack, Typography, Box } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import {
-  JUDGING_STAGES,
   formatTime,
   getStageColor,
-  JudgingSessionTimerState
+  JudgingSessionTimerState,
+  useJudgingSessionTimer
 } from './hooks/use-judging-timer';
 import { useSession } from './judging-session-context';
 
@@ -19,15 +19,17 @@ interface StageTimelineProps {
 export const StageTimeline = ({ timerState }: StageTimelineProps) => {
   const t = useTranslations('pages.judge');
   const { getStage } = useJudgingSessionStageTranslations();
+  const { session, sessionLength } = useSession();
+  const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining } = timerState;
 
   const nextStageIndex = currentStageIndex + 1;
-  const hasNextStage = nextStageIndex < JUDGING_STAGES.length;
+  const hasNextStage = nextStageIndex < judgingStages.length;
 
   return (
     <Stack spacing={2}>
       <AnimatePresence mode="popLayout">
-        {JUDGING_STAGES.map((stage, displayIndex) => {
+        {judgingStages.map((stage, displayIndex) => {
           const isActive = displayIndex === currentStageIndex;
           const isNext = displayIndex === nextStageIndex;
           const isPast = displayIndex < currentStageIndex;
