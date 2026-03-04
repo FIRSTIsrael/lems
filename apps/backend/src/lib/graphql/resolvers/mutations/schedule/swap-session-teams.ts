@@ -49,7 +49,6 @@ async function authorizeTournamentManagerAccess(
  * 2. Both sessions exist in the division
  * 3. Sessions are different
  * 4. Both sessions are in not-started status
- * 5. Neither session is currently called/active
  */
 export const swapSessionTeamsResolver: GraphQLFieldResolver<
   unknown,
@@ -109,14 +108,6 @@ export const swapSessionTeamsResolver: GraphQLFieldResolver<
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Both sessions must be in not-started status to swap teams'
-      );
-    }
-
-    // Check 4: Neither session should be currently called
-    if (session1State.called || session2State.called) {
-      throw new MutationError(
-        MutationErrorCode.CONFLICT,
-        'Cannot swap teams in sessions that have been called'
       );
     }
 
