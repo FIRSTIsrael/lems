@@ -166,12 +166,12 @@ function MatchCard({
                       }
                     }}
                   >
-                    <Box>
+                    <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                       <Typography
                         variant="body2"
                         fontWeight={700}
                         color="text.primary"
-                        sx={{ fontSize: '1.25rem' }}
+                        sx={{ fontSize: '1.25rem', wordBreak: 'break-word' }}
                       >
                         {participant.table.name}
                       </Typography>
@@ -180,22 +180,21 @@ function MatchCard({
                         variant="caption"
                         color="text.secondary"
                         sx={{
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: 'flex',
-                          gap: 0.5,
-                          fontSize: '1rem'
+                          fontSize: '1rem',
+                          wordBreak: 'break-word',
+                          display: 'block'
                         }}
                       >
                         {participant.team!.name} #{participant.team!.number}
                         {participant.team!.region && (
                           <>
+                            {' '}
                             <Box
                               component="span"
                               sx={{
                                 display: 'inline-flex',
-                                alignItems: 'center'
+                                alignItems: 'center',
+                                verticalAlign: 'middle'
                               }}
                             >
                               <Flag region={participant.team!.region} size={16} />
@@ -204,17 +203,15 @@ function MatchCard({
                         )}
                       </Typography>
                       <Typography
+                        variant="caption"
                         color="text.secondary"
                         sx={{
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          display: 'flex',
-                          gap: 0.5,
-                          fontSize: '1rem'
+                          fontSize: '1rem',
+                          wordBreak: 'break-word',
+                          display: 'block'
                         }}
                       >
-                        {participant.team!.affiliation && ` ${participant.team!.affiliation},`}{' '}
+                        {participant.team!.affiliation && `${participant.team!.affiliation}, `}
                         {participant.team!.city}
                       </Typography>
                     </Box>
@@ -273,19 +270,19 @@ function MatchCard({
                       }
                     }}
                   >
-                    <Box>
+                    <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
                       <Typography
                         variant="body2"
                         fontWeight={700}
                         color="text.primary"
-                        sx={{ fontSize: '1.25rem' }}
+                        sx={{ fontSize: '1.25rem', wordBreak: 'break-word' }}
                       >
                         {participant.table.name}
                       </Typography>
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ fontSize: '1rem' }}
+                        sx={{ fontSize: '1rem', wordBreak: 'break-word', display: 'block' }}
                       >
                         {participant.team!.name}
                       </Typography>
