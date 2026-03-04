@@ -16,12 +16,7 @@ import {
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
 import { AbortSessionDialog } from './abort-session-dialog';
-import {
-  formatTime,
-  getStageColor,
-  JUDGING_STAGES,
-  useJudgingSessionTimer
-} from './hooks/use-judging-timer';
+import { formatTime, getStageColor, useJudgingSessionTimer } from './hooks/use-judging-timer';
 import { StageTimeline } from './stage-timeline';
 import { useSession } from './judging-session-context';
 import { RubricButton } from './rubric-button';
@@ -41,10 +36,10 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
 
   const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const { judgingStages, timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
-  const currentStage = JUDGING_STAGES[currentStageIndex];
+  const currentStage = judgingStages[currentStageIndex];
   const stageColor = getStageColor(currentStage.id);
 
   // Calculate stage progress for the main progress bar
