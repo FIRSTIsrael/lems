@@ -45,7 +45,7 @@ export const CompleteDeliberationModal: React.FC<CompleteDeliberationModalProps>
         }
       });
       toast.success(t('success-message'));
-      router.push('/');
+      router.push('/lems');
     } catch (error) {
       console.error('Failed to complete deliberation:', error);
       toast.error(t('error-message'));
