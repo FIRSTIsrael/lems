@@ -1,8 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { apiFetch } from '@lems/shared';
+import { useMemo, useState } from 'react';
 import { useEvent } from '../components/event-context';
 import useKeyboardShortcut from '../hooks/use-keyboard-shortcut';
 import { usePageData } from '../hooks/use-page-data';
@@ -13,6 +11,7 @@ import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
 import { AwardsDisplay } from './components/awards/awards-display';
+import { SettingsModal } from './components/settings';
 import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
@@ -24,20 +23,13 @@ import { createPresentationUpdatedSubscription } from './components/awards/graph
 
 export default function AudienceDisplayPage() {
   const { currentDivision } = useEvent();
-  const router = useRouter();
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
-  console.log('Ctrl + Shift + L to logout.');
+  console.log('Ctrl + Shift + L to open settings.');
   useKeyboardShortcut(
-    () =>
-      apiFetch('/lems/auth/logout', {
-        method: 'POST'
-      }).then(response => {
-        if (response.ok) {
-          router.push('/');
-        } else {
-          console.error('Logout failed:', response.error);
-        }
-      }),
+    () => {
+      setSettingsOpen(prev => !prev);
+    },
     { code: 'KeyL', ctrlKey: true, shiftKey: true }
   );
 
@@ -119,27 +111,30 @@ export default function AudienceDisplayPage() {
   const activeDisplay = data.displayState.activeDisplay;
 
   return (
-    <AudienceDisplayProvider
-      displayState={data.displayState}
-      awards={data.awards}
-      awardsAssigned={data.awardsAssigned}
-    >
-      {activeDisplay === 'logo' && <LogoDisplay />}
-      {activeDisplay === 'message' && <MessageDisplay />}
-      {activeDisplay === 'sponsors' && <SponsorsDisplay />}
-      {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
-      {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
-      {activeDisplay === 'awards' && (
-        <AwardsDisplay
-          awards={data.awards}
-          awardWinnerSlideStyle={
-            (data.displayState.settings?.awards?.awardWinnerSlideStyle as
-              | 'chroma'
-              | 'full'
-              | 'both') || 'both'
-          }
-        />
-      )}
-    </AudienceDisplayProvider>
+    <>
+      <AudienceDisplayProvider
+        displayState={data.displayState}
+        awards={data.awards}
+        awardsAssigned={data.awardsAssigned}
+      >
+        {activeDisplay === 'logo' && <LogoDisplay />}
+        {activeDisplay === 'message' && <MessageDisplay />}
+        {activeDisplay === 'sponsors' && <SponsorsDisplay />}
+        {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
+        {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
+        {activeDisplay === 'awards' && (
+          <AwardsDisplay
+            awards={data.awards}
+            awardWinnerSlideStyle={
+              (data.displayState.settings?.awards?.awardWinnerSlideStyle as
+                | 'chroma'
+                | 'full'
+                | 'both') || 'both'
+            }
+          />
+        )}
+      </AudienceDisplayProvider>
+      <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </>
   );
 }

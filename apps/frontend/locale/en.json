@@ -1182,6 +1182,7 @@
       }
     },
     "audience-display": {
+      "settings": "Settings",
       "match-preview": {
         "round": "Round",
         "match": "Match",

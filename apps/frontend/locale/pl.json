@@ -1181,6 +1181,7 @@
       }
     },
     "audience-display": {
+      "settings": "Ustawienia",
       "match-preview": {
         "round": "Runda",
         "match": "Mecz",
