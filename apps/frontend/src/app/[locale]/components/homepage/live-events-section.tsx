@@ -39,6 +39,7 @@ export const LiveEventsSection: React.FC = () => {
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
       location: '', // Not fetched anymore
+      timezone: '',
       region: event.region,
       coordinates: null,
       official: event.official,
