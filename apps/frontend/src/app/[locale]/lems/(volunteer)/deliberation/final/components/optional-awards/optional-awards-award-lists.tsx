@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, alpha, useTheme, IconButton, Tooltip } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { Award, OPTIONAL_AWARDS } from '@lems/shared';
+import { Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
@@ -108,7 +108,7 @@ const AwardListItem: React.FC<AwardListItemProps> = ({ team, index, onRemove }) 
 export const OptionalAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
-  const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
+  const { teams, awards, awardCounts, updateAward, deliberationAwards } = useFinalDeliberation();
   const { getName } = useAwardTranslations();
 
   const handleRemoveAward = useCallback(
@@ -123,10 +123,15 @@ export const OptionalAwardsAwardLists: React.FC = () => {
   // Filter out excellence-in-engineering from optional awards
   const displayedAwards = useMemo(
     () =>
-      OPTIONAL_AWARDS.filter(
-        award => award !== 'excellence-in-engineering' && (awardCounts[award] ?? 0) > 0
-      ) as Award[],
-    [awardCounts]
+      deliberationAwards
+        .filter(
+          award =>
+            award.isOptional &&
+            award.name !== 'excellence-in-engineering' &&
+            (awardCounts[award.name as Award] ?? 0) > 0
+        )
+        .map(award => award.name as Award),
+    [awardCounts, deliberationAwards]
   );
 
   const awardSelections = useMemo(
