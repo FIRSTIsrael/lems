@@ -13,20 +13,14 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  TextField,
-  InputAdornment,
-  IconButton,
   Stack
 } from '@mui/material';
-import {
-  Groups as GroupsIcon,
-  Search as SearchIcon,
-  Clear as ClearIcon
-} from '@mui/icons-material';
+import { Groups as GroupsIcon } from '@mui/icons-material';
 import { Team } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
 import { TeamListItem } from './team-list-item';
 import { TeamPagination } from './team-pagination';
+import { TeamSearchInput } from './team-search-input';
 
 export const TeamList: React.FC = () => {
   const t = useTranslations('pages.teams');
@@ -35,7 +29,7 @@ export const TeamList: React.FC = () => {
   const pageNumber = Number(searchParams.get('page')) || 1;
   const region = searchParams.get('region') || '';
   const searchQuery = searchParams.get('search') || '';
-  const [searchInput, setSearchInput] = useState(searchQuery);
+  const [debouncedSearch, setDebouncedSearch] = useState(searchQuery);
 
   const { data: regions } = useSWR<string[]>('/portal/teams/regions', {
     fallbackData: []
@@ -46,7 +40,7 @@ export const TeamList: React.FC = () => {
     if (newRegion) params.set('region', newRegion);
     if (searchQuery) params.set('search', searchQuery);
     params.set('page', '1');
-    router.replace(`?${params.toString()}`, { scroll: false });
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const handleSearchChange = useCallback(
@@ -55,90 +49,48 @@ export const TeamList: React.FC = () => {
       if (region) params.set('region', region);
       if (newSearch) params.set('search', newSearch);
       params.set('page', '1');
-      router.replace(`?${params.toString()}`, { scroll: false });
+      router.push(`?${params.toString()}`, { scroll: false });
     },
     [region, router]
   );
 
   const handleClearSearch = () => {
-    setSearchInput('');
-    handleSearchChange('');
+    setDebouncedSearch('');
   };
 
   useEffect(() => {
-    setSearchInput(searchQuery);
+    setDebouncedSearch(searchQuery);
   }, [searchQuery]);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchInput !== searchQuery) {
-        handleSearchChange(searchInput);
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchInput, searchQuery]);
 
   const buildQuery = () => {
     const params = new URLSearchParams();
-    params.set('page', pageNumber.toString());
+    params.set('page', '1');
     if (region) params.set('region', region);
-    if (searchQuery) params.set('search', searchQuery);
+    if (debouncedSearch) params.set('search', debouncedSearch);
     return params.toString();
   };
 
-  const { data, isLoading } = useSWR<{ teams: Team[]; numberOfPages: number }>(
+  const { data } = useSWR<{ teams: Team[]; numberOfPages: number }>(
     `/portal/teams?${buildQuery()}`,
     {
-      suspense: true,
-      fallbackData: { teams: [], numberOfPages: 0 }
+      fallbackData: { teams: [], numberOfPages: 0 },
+      keepPreviousData: true,
+      revalidateOnFocus: false
     }
   );
 
-  if (!data || isLoading) {
-    return null;
-  }
-
-  const teams = data.teams;
-  const numberOfPages = data.numberOfPages;
-
-  if (teams.length === 0) {
-    return (
-      <Paper sx={{ p: 6, textAlign: 'center' }}>
-        <GroupsIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
-        <Typography variant="h5" gutterBottom color="text.secondary">
-          {t('no-teams.title')}
-        </Typography>
-        <Typography variant="body1" color="text.secondary">
-          {t('no-teams.message')}
-        </Typography>
-      </Paper>
-    );
-  }
+  const teams = data?.teams || [];
+  const numberOfPages = data?.numberOfPages || 0;
 
   return (
     <>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 3 }}>
-        <TextField
-          fullWidth
-          size="small"
+        <TeamSearchInput
+          initialValue={searchQuery}
           placeholder={t('search.placeholder')}
-          value={searchInput}
-          onChange={e => setSearchInput(e.target.value)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-            endAdornment: searchInput && (
-              <InputAdornment position="end">
-                <IconButton size="small" onClick={handleClearSearch} edge="end">
-                  <ClearIcon />
-                </IconButton>
-              </InputAdornment>
-            )
-          }}
+          onSearchChange={setDebouncedSearch}
+          onClear={handleClearSearch}
+          showClearButton={!!debouncedSearch}
         />
         <FormControl size="small" sx={{ minWidth: { xs: '100%', sm: 200 } }}>
           <InputLabel>{t('region.label')}</InputLabel>
@@ -171,13 +123,25 @@ export const TeamList: React.FC = () => {
           </Select>
         </FormControl>
       </Stack>
-      <Grid container spacing={2}>
-        <TeamPagination currentPage={pageNumber} totalPages={numberOfPages} />
-        {teams.map(team => (
-          <TeamListItem key={team.id} team={team} />
-        ))}
-        <TeamPagination currentPage={pageNumber} totalPages={numberOfPages} />
-      </Grid>
+      {teams.length === 0 ? (
+        <Paper sx={{ p: 6, textAlign: 'center' }}>
+          <GroupsIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
+          <Typography variant="h5" gutterBottom color="text.secondary">
+            {t('no-teams.title')}
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            {t('no-teams.message')}
+          </Typography>
+        </Paper>
+      ) : (
+        <Grid container spacing={2}>
+          <TeamPagination currentPage={pageNumber} totalPages={numberOfPages} />
+          {teams.map(team => (
+            <TeamListItem key={team.id} team={team} />
+          ))}
+          <TeamPagination currentPage={pageNumber} totalPages={numberOfPages} />
+        </Grid>
+      )}
     </>
   );
 };
