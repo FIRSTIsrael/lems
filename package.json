@@ -89,7 +89,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.6",
     "@babel/preset-react": "^7.28.5",
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@firstisrael/prettier-config": "^1.1.0",
     "@next/eslint-plugin-next": "^16.1.1",
     "@nx/devkit": "22.5.3",
