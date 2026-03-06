@@ -1181,6 +1181,7 @@
       }
     },
     "audience-display": {
+      "settings": "Ustawienia",
       "match-preview": {
         "round": "Runda",
         "match": "Mecz",
@@ -1399,6 +1400,8 @@
           "normalized": "Znormalizowane",
           "actions": "Akcje",
           "view-rubric": "Zobacz rubrykę",
+          "view-profile-document": "Zobacz dokument Profile",
+          "no-profile-document": "Brak dokumentu Profile",
           "add-to-picklist": "Dodaj do listy wyboru",
           "compare-teams": "Porównaj drużyny"
         }
@@ -1581,6 +1584,7 @@
         "filter-by-category": "Filtruj wg kategorii",
         "all-categories": "Wszystkie kategorie",
         "judging-room": "Sala sędziowania",
+        "view-profile-document": "Zobacz dokument Profile",
         "manage-teams": "Zarządzaj drużynami",
         "add-team": "Dodaj drużynę",
         "search-teams": "Wyszukaj drużyny...",

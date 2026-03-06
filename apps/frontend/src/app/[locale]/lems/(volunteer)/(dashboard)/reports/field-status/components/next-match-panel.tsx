@@ -174,7 +174,7 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
                     sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}
                   >
                     {participant.team
-                      ? t('next-match.team-number', { number: participant.team.number })
+                      ? `${t('next-match.team-number', { number: participant.team.number })} ${participant.team.name}`
                       : '—'}
                   </Typography>
                   <Box

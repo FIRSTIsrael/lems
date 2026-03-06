@@ -19,14 +19,6 @@ const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
 const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
 const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
-const getDefaultTimezone = () => {
-  try {
-    return dayjs.tz.guess();
-  } catch {
-    return 'UTC';
-  }
-};
-
 const multiplyCycleTime = (cycleTime: Dayjs, multiplier: number) => {
   let newTime = cycleTime.clone();
   newTime = newTime.set('hour', 0).set('minute', 0).set('second', 0);
@@ -69,7 +61,6 @@ export interface ScheduleContextType {
   setFieldStart: React.Dispatch<React.SetStateAction<Dayjs>>;
   setPracticeRounds: React.Dispatch<React.SetStateAction<number>>;
   setRankingRounds: React.Dispatch<React.SetStateAction<number>>;
-  setTimezone: React.Dispatch<React.SetStateAction<string>>;
 
   resetSettings: () => void;
 }
@@ -121,7 +112,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
 
   const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
   const [judgingStart, setJudgingStart] = useState<Dayjs>(getJudgingStart(event.startDate));
-  const [timezone, setTimezone] = useState<string>(getDefaultTimezone());
+  const timezone = event.timezone;
 
   useEffect(() => {
     if (!allowStagger && staggerMatches) {
@@ -155,7 +146,6 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     setJudgingSessionLength(DEFAULT_JUDGING_SESSION_LENGTH);
     setFieldStart(getFieldStart(event.startDate));
     setJudgingStart(getJudgingStart(event.startDate));
-    setTimezone(getDefaultTimezone());
   };
 
   const contextValue: ScheduleContextType = {
@@ -187,7 +177,6 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     setRankingCycleTime,
     setPracticeRounds,
     setRankingRounds,
-    setTimezone,
 
     setJudgingStart,
     setJudgingSessionLength,

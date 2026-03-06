@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
-import { OpenInNew, Add, CheckCircleOutline } from '@mui/icons-material';
+import { OpenInNew, Add, CheckCircleOutline, Description } from '@mui/icons-material';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/database';
 import { useCategoryDeliberation } from '../deliberation-context';
@@ -88,7 +88,7 @@ export function DeliberationTable() {
         headerName: t('rank'),
         width: 100,
         filterable: false,
-
+        valueGetter: (value, row) => row.rank || 0,
         renderCell: params => params.row.rank || '-'
       },
       {
@@ -98,6 +98,7 @@ export function DeliberationTable() {
         filterable: false,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (value, row) => row.room?.name || '',
         renderCell: params => params.row.room?.name || '-'
       },
       {
@@ -105,6 +106,7 @@ export function DeliberationTable() {
         headerName: t('team'),
         width: 100,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           return (
@@ -126,6 +128,7 @@ export function DeliberationTable() {
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
+            valueGetter: (value, row) => row.rubricFields[label] ?? 0,
             renderCell: params => {
               const value = params.row.rubricFields[label];
               return value !== null ? value : '-';
@@ -150,6 +153,7 @@ export function DeliberationTable() {
                   filterable: false,
                   headerAlign: 'center' as const,
                   align: 'center' as const,
+                  valueGetter: (value, row) => row.gpScores[gpKey] ?? 3,
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
                     return value ?? 3; // Default GP score is 3 if not set
@@ -165,6 +169,7 @@ export function DeliberationTable() {
         align: 'center',
         headerAlign: 'center',
         cellClassName: 'total-score-cell',
+        valueGetter: (value, row) => row.scores[hypenatedCategory],
         renderCell: params => params.row.scores[hypenatedCategory].toFixed(2)
       },
       {
@@ -181,11 +186,12 @@ export function DeliberationTable() {
         field: 'actions',
         type: 'actions',
         headerName: t('actions'),
-        width: 80,
+        width: 100,
         getActions: params => {
           const team = params.row as EnrichedTeam;
+          const hasProfileDoc = !!team.profileDocumentUrl;
 
-          return (
+          const actions = [
             <Tooltip key="view-rubric" title={t('view-rubric')}>
               <IconButton
                 href={`/lems/team/${team.slug}/rubric/${hypenatedCategory}`}
@@ -195,8 +201,31 @@ export function DeliberationTable() {
               >
                 <OpenInNew fontSize="small" />
               </IconButton>
+            </Tooltip>,
+            <Tooltip
+              key="view-profile-document"
+              title={hasProfileDoc ? t('view-profile-document') : t('no-profile-document')}
+            >
+              <span>
+                <IconButton
+                  {...(hasProfileDoc && { href: team.profileDocumentUrl!, target: '_blank' })}
+                  size="small"
+                  color={hasProfileDoc ? 'primary' : 'default'}
+                  disabled={!hasProfileDoc}
+                  sx={{
+                    ...(!hasProfileDoc && {
+                      color: 'action.disabled',
+                      cursor: 'not-allowed'
+                    })
+                  }}
+                >
+                  <Description fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
-          );
+          ];
+
+          return actions;
         }
       }
     ],

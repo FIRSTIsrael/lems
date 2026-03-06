@@ -38,6 +38,7 @@ export const UpcomingEventsSection: React.FC = () => {
       endDate: new Date(event.endDate),
       coordinates: null,
       location: '', // Not fetched anymore
+      timezone: '',
       region: event.region,
       official: event.official,
       seasonId: '' // Placeholder - not available from current query

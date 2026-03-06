@@ -59,8 +59,13 @@ router.put(
     const { teamId } = req.params;
     const { divisionId } = req.body;
 
-    if (!teamId || !divisionId) {
-      res.status(400).json({ error: 'Team ID and division ID are required' });
+    if (!teamId || typeof teamId !== 'string') {
+      res.status(400).json({ error: 'Team ID is required' });
+      return;
+    }
+
+    if (!divisionId) {
+      res.status(400).json({ error: 'Division ID is required' });
       return;
     }
 

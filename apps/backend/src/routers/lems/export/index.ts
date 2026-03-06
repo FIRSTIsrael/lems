@@ -11,6 +11,17 @@ const integrationsJwtSecret = process.env.INTEGRATIONS_LEMS_JWT as string;
 
 router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: NextFunction) => {
   const { teamSlug, eventSlug } = req.params;
+
+  if (!teamSlug || typeof teamSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid team slug' });
+    return;
+  }
+
+  if (!eventSlug || typeof eventSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid event slug' });
+    return;
+  }
+
   try {
     const token = extractToken(req);
     const tokenData = jwt.verify(token, integrationsJwtSecret) as {
@@ -64,6 +75,16 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
 
 router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
   const { teamSlug, eventSlug } = req.params;
+
+  if (!teamSlug || typeof teamSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid team slug' });
+    return;
+  }
+
+  if (!eventSlug || typeof eventSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid event slug' });
+    return;
+  }
 
   const team = await db.teams.bySlug(teamSlug).get();
   const event = await db.events.bySlug(eventSlug).get();
@@ -121,6 +142,16 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
 
 router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
   const { teamSlug, eventSlug } = req.params;
+
+  if (!teamSlug || typeof teamSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid team slug' });
+    return;
+  }
+
+  if (!eventSlug || typeof eventSlug !== 'string') {
+    res.status(400).json({ error: 'Invalid event slug' });
+    return;
+  }
 
   const team = await db.teams.bySlug(teamSlug).get();
   const event = await db.events.bySlug(eventSlug).get();

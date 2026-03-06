@@ -17,7 +17,11 @@ export const AwardsSection: React.FC = () => {
     { suspense: true, fallbackData: null }
   );
 
-  const getAwardIcon = (award: { name: string; place: number }) => {
+  const getAwardIcon = (award: { name: string; place: number; showPlaces: boolean }) => {
+    if (!award.showPlaces) {
+      return null;
+    }
+
     switch (award.place) {
       case 1:
         return 'award.first';
@@ -69,7 +73,7 @@ export const AwardsSection: React.FC = () => {
               borderColor: 'grey.200'
             }}
           >
-            <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+            {award.showPlaces && <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />}
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
               {getName(award.name)}
             </Typography>
