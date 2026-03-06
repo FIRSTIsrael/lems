@@ -12,9 +12,19 @@ import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
-  const { page } = req.query;
+  const { page, region, search } = req.query;
 
-  const numberOfPages = await db.teams.numberOfPages();
+  const searchQuery = search ? String(search).trim() : undefined;
+  const regionFilter = region ? String(region) : undefined;
+
+  if (searchQuery) {
+    const teams = await db.teams.search(searchQuery, 200);
+    const filteredTeams = regionFilter ? teams.filter(team => team.region === regionFilter) : teams;
+    res.status(200).json({ teams: filteredTeams.map(makePortalTeamResponse), numberOfPages: 1 });
+    return;
+  }
+
+  const numberOfPages = await db.teams.numberOfPages(regionFilter);
 
   if (!page) {
     const teams = await db.teams.getAll();
@@ -29,8 +39,13 @@ router.get('/', async (req: Request, res: Response) => {
     return;
   }
 
-  const teams = await db.teams.getPage(pageNumber);
+  const teams = await db.teams.getPage(pageNumber, regionFilter);
   res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+});
+
+router.get('/regions', async (_req: Request, res: Response) => {
+  const regions = await db.teams.getRegions();
+  res.status(200).json(regions);
 });
 
 router.use('/:teamSlug', attachTeam());

@@ -1,4 +1,4 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
@@ -213,10 +213,14 @@ export class TeamsRepository {
     return teams;
   }
 
-  async getPage(page: number): Promise<Team[]> {
-    const teams = await this.db
-      .selectFrom('teams')
-      .selectAll('teams')
+  async getPage(page: number, region?: string): Promise<Team[]> {
+    let query = this.db.selectFrom('teams').selectAll('teams');
+
+    if (region) {
+      query = query.where('region', '=', region);
+    }
+
+    const teams = await query
       .orderBy('number', 'asc')
       .offset((page - 1) * this.TEAMS_PER_PAGE)
       .limit(this.TEAMS_PER_PAGE)
@@ -224,9 +228,26 @@ export class TeamsRepository {
     return teams;
   }
 
-  async numberOfPages(): Promise<number> {
-    const count = await this.db.selectFrom('teams').select('id').execute();
+  async numberOfPages(region?: string): Promise<number> {
+    let query = this.db.selectFrom('teams').select('id');
+
+    if (region) {
+      query = query.where('region', '=', region);
+    }
+
+    const count = await query.execute();
     return Math.ceil(count.length / this.TEAMS_PER_PAGE);
+  }
+
+  async getRegions(): Promise<string[]> {
+    const regions = await this.db
+      .selectFrom('teams')
+      .select('region')
+      .distinct()
+      .where('region', 'is not', null)
+      .orderBy('region', 'asc')
+      .execute();
+    return regions.map(r => r.region).filter(r => r && r.trim() !== '');
   }
 
   async search(searchTerm: string, limit: number): Promise<Team[]> {
@@ -236,7 +257,7 @@ export class TeamsRepository {
       .where(eb =>
         eb.or([
           eb('name', 'ilike', `%${searchTerm}%`),
-          eb('number', '=', parseInt(searchTerm) || -1),
+          sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`,
           eb('affiliation', 'ilike', `%${searchTerm}%`),
           eb('city', 'ilike', `%${searchTerm}%`)
         ])
@@ -247,8 +268,10 @@ export class TeamsRepository {
             .case()
             .when('name', 'ilike', searchTerm)
             .then(100)
-            .when('number', '=', parseInt(searchTerm) || -1)
+            .when(sql<boolean>`CAST(number AS TEXT) = ${searchTerm}`)
             .then(95)
+            .when(sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`)
+            .then(90)
             .when('name', 'ilike', `${searchTerm}%`)
             .then(80)
             .else(50)
