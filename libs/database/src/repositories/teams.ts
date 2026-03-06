@@ -1,4 +1,4 @@
-import { Kysely } from 'kysely';
+import { Kysely, sql } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
 import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
@@ -257,7 +257,7 @@ export class TeamsRepository {
       .where(eb =>
         eb.or([
           eb('name', 'ilike', `%${searchTerm}%`),
-          eb('number', '=', parseInt(searchTerm) || -1),
+          sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`,
           eb('affiliation', 'ilike', `%${searchTerm}%`),
           eb('city', 'ilike', `%${searchTerm}%`)
         ])
@@ -268,8 +268,10 @@ export class TeamsRepository {
             .case()
             .when('name', 'ilike', searchTerm)
             .then(100)
-            .when('number', '=', parseInt(searchTerm) || -1)
+            .when(sql<boolean>`CAST(number AS TEXT) = ${searchTerm}`)
             .then(95)
+            .when(sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`)
+            .then(90)
             .when('name', 'ilike', `${searchTerm}%`)
             .then(80)
             .else(50)
