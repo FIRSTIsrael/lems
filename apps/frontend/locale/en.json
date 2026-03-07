@@ -1177,8 +1177,13 @@
       "table": {
         "match": "Match",
         "scheduled-time": "Time",
+        "participant-queued": "Queued",
+        "participant-present": "Present",
         "participant-ready": "Ready",
-        "participant-not-ready": "Not Ready"
+        "participant-not-ready": "Not Ready",
+        "participant-no-show": "No Show",
+        "status-queued": "QUEUED",
+        "status-present": "PRESENT"
       }
     },
     "audience-display": {

@@ -5,7 +5,11 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
-import { Cancel, CheckCircleSharp } from '@mui/icons-material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import BlockIcon from '@mui/icons-material/Block';
 import { Flag } from '@lems/shared';
 import type { Match, Scoresheet } from '../graphql/types';
 import { useTime } from '../../../../../../../lib/time/hooks';
@@ -235,22 +239,61 @@ function MatchCard({
               }
 
               // Show participant readiness state for non-completed matches
+              const isQueued = participant.queued;
+              const isPresent = participant.present;
               const isReady = participant.ready;
+
+              // Determine participant status (matching field status report logic)
+              const getParticipantStatus = () => {
+                if (!participant.team!.arrived) return 'no-show';
+                if (isReady) return 'ready';
+                if (isPresent) return 'present';
+                if (isQueued) return 'queued';
+                return 'missing';
+              };
+
+              const status = getParticipantStatus();
+
+              // Get status icon
+              const getStatusIcon = () => {
+                const iconProps = { sx: { fontSize: '1.5rem' } };
+                switch (status) {
+                  case 'ready':
+                    return <CheckCircleIcon {...iconProps} color="success" />;
+                  case 'present':
+                    return <PersonPinIcon {...iconProps} color="warning" />;
+                  case 'queued':
+                    return <HourglassEmptyIcon {...iconProps} color="info" />;
+                  case 'no-show':
+                    return <BlockIcon {...iconProps} color="error" />;
+                  case 'missing':
+                    return <HelpOutlineIcon {...iconProps} color="disabled" />;
+                  default:
+                    return null;
+                }
+              };
 
               // Show icons only for the loaded match
               const showIcon = isLoaded;
 
+              // Build tooltip based on status
+              let tooltipTitle = `${participant.team!.affiliation} • ${participant.team!.city}`;
+              if (isLoaded) {
+                const statuses = [];
+                if (isQueued) statuses.push(t('table.participant-queued'));
+                if (isPresent) statuses.push(t('table.participant-present'));
+                if (isReady) statuses.push(t('table.participant-ready'));
+                if (statuses.length > 0) {
+                  tooltipTitle = statuses.join(' • ');
+                } else if (status === 'no-show') {
+                  tooltipTitle = t('table.participant-no-show');
+                } else {
+                  tooltipTitle = t('table.participant-not-ready');
+                }
+              }
+
               return (
-                <Tooltip
-                  key={participant.id}
-                  title={
-                    isLoaded && isReady
-                      ? t('table.participant-ready')
-                      : isLoaded && !isReady
-                        ? t('table.participant-not-ready')
-                        : ''
-                  }
-                >
+                <Tooltip key={participant.id} title={tooltipTitle}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -282,27 +325,29 @@ function MatchCard({
                       <Typography
                         variant="caption"
                         color="text.secondary"
-                        sx={{ fontSize: '1rem', wordBreak: 'break-word', display: 'block' }}
+                        sx={{
+                          fontSize: '1rem',
+                          wordBreak: 'break-word',
+                          display: 'block'
+                        }}
                       >
-                        {participant.team!.name}
+                        {participant.team!.name} #{participant.team!.number}
+                        {participant.team!.region && (
+                          <>
+                            {' '}
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                verticalAlign: 'middle'
+                              }}
+                            ></Box>
+                          </>
+                        )}
                       </Typography>
                     </Box>
-                    {showIcon &&
-                      (isReady ? (
-                        <CheckCircleSharp
-                          color="success"
-                          sx={{
-                            fontSize: '1.5rem'
-                          }}
-                        />
-                      ) : (
-                        <Cancel
-                          color="error"
-                          sx={{
-                            fontSize: '1.5rem'
-                          }}
-                        />
-                      ))}
+                    {showIcon && getStatusIcon()}
                   </Box>
                 </Tooltip>
               );

@@ -5,7 +5,10 @@ import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { TableCell, TableRow, Typography, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import CancelIcon from '@mui/icons-material/Cancel';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import BlockIcon from '@mui/icons-material/Block';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { ScoresheetStatusButton } from '../scoresheet-status-button';
 
@@ -98,6 +101,8 @@ export function MatchRow({
                 teamNumber={participant.team.number}
                 teamSlug={participant.team.slug}
                 teamName={participant.team.name}
+                teamAffiliation={participant.team.affiliation}
+                teamCity={participant.team.city}
                 scoresheetSlug={scoresheet.slug}
                 status={scoresheet.status}
                 escalated={scoresheet.escalated}
@@ -111,13 +116,59 @@ export function MatchRow({
         }
 
         // Show participant readiness state for non-completed matches
+        const isQueued = participant.queued;
+        const isPresent = participant.present;
         const isReady = participant.ready;
+
+        // Determine participant status
+        const getParticipantStatus = () => {
+          if (!participant.team?.arrived) return 'no-show';
+          if (isReady) return 'ready';
+          if (isPresent) return 'present';
+          if (isQueued) return 'queued';
+          return 'missing';
+        };
+
+        const status = getParticipantStatus();
+
+        const getStatusIcon = () => {
+          const iconProps = { sx: { fontSize: '1.25rem' } };
+          switch (status) {
+            case 'ready':
+              return <CheckCircleIcon {...iconProps} color="success" />;
+            case 'present':
+              return <PersonPinIcon {...iconProps} color="warning" />;
+            case 'queued':
+              return <HourglassEmptyIcon {...iconProps} color="info" />;
+            case 'no-show':
+              return <BlockIcon {...iconProps} color="error" />;
+            case 'missing':
+              return <HelpOutlineIcon {...iconProps} color="disabled" />;
+            default:
+              return null;
+          }
+        };
 
         // Show icons only for the loaded match
         const showIcon = isLoaded;
 
         // Check if team matches search filter
         const isTeamFiltered = doesTeamMatchSearch(participant.team.number, participant.team.name);
+
+        let tooltipTitle = `${participant.team.affiliation} • ${participant.team.city}`;
+        if (isLoaded) {
+          const statuses = [];
+          if (isQueued) statuses.push(t('table.participant-queued'));
+          if (isPresent) statuses.push(t('table.participant-present'));
+          if (isReady) statuses.push(t('table.participant-ready'));
+          if (statuses.length > 0) {
+            tooltipTitle = statuses.join(' • ');
+          } else if (status === 'no-show') {
+            tooltipTitle = t('table.participant-no-show');
+          } else {
+            tooltipTitle = t('table.participant-not-ready');
+          }
+        }
 
         return (
           <TableCell
@@ -127,15 +178,7 @@ export function MatchRow({
               cursor: 'default'
             }}
           >
-            <Tooltip
-              title={
-                isLoaded && isReady
-                  ? t('table.participant-ready')
-                  : isLoaded && !isReady
-                    ? t('table.participant-not-ready')
-                    : ''
-              }
-            >
+            <Tooltip title={tooltipTitle}>
               <Stack
                 direction="row"
                 alignItems="center"
@@ -143,29 +186,21 @@ export function MatchRow({
                 spacing={0.5}
                 sx={{ width: '100%' }}
               >
-                {showIcon &&
-                  (isReady ? (
-                    <CheckCircleIcon
-                      sx={{
-                        color: 'success.main',
-                        fontSize: '1.25rem',
-                        opacity: isTeamFiltered ? 1 : 0.35,
-                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
-                      }}
-                    />
-                  ) : (
-                    <CancelIcon
-                      sx={{
-                        color: 'error.main',
-                        fontSize: '1.25rem',
-                        opacity: isTeamFiltered ? 1 : 0.35,
-                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
-                      }}
-                    />
-                  ))}
+                {showIcon && (
+                  <Stack
+                    sx={{
+                      opacity: isTeamFiltered ? 1 : 0.35,
+                      filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
+                    }}
+                  >
+                    {getStatusIcon()}
+                  </Stack>
+                )}
                 <Stack
+                  direction="column"
+                  alignItems="center"
+                  spacing={0.25}
                   sx={{
-                    alignItems: 'center',
                     minWidth: 0,
                     flex: 1,
                     opacity: isTeamFiltered ? 1 : 0.35,
@@ -179,7 +214,7 @@ export function MatchRow({
                     variant="caption"
                     color="text.secondary"
                     noWrap
-                    sx={{ fontSize: '1rem' }}
+                    sx={{ fontSize: '0.875rem' }}
                   >
                     {participant.team.name}
                   </Typography>
