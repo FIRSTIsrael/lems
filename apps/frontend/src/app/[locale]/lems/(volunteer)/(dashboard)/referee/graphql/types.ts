@@ -57,6 +57,7 @@ export interface RefereeFieldData {
 export interface RefereeData {
   division: {
     id: string;
+    tables: { id: string; name: string }[];
     field: RefereeFieldData;
   };
 }
@@ -83,12 +84,6 @@ export interface MatchCompletedEvent {
   matchId: string;
   status: RobotGameMatchStatus;
   completedAt: string;
-}
-
-export interface ParticipantStatusUpdatedEvent {
-  participantId: string;
-  present: string | null;
-  ready: string | null;
 }
 
 export interface MatchLoadedEvent {

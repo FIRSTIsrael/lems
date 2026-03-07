@@ -32,8 +32,8 @@ export function ChampionsDataGrid() {
         field: 'teamDisplay',
         headerName: t('table-team'),
         width: 100,
-        sortable: false,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           return (
@@ -49,51 +49,51 @@ export function ChampionsDataGrid() {
         field: 'innovationProjectRank',
         headerName: t('table-innovation-project-rank'),
         width: 140,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['innovation-project'] || 0,
         renderCell: params => params.row.ranks['innovation-project']
       },
       {
         field: 'robotDesignRank',
         headerName: t('table-robot-design-rank'),
         width: 140,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['robot-design'] || 0,
         renderCell: params => params.row.ranks['robot-design']
       },
       {
         field: 'coreValuesRank',
         headerName: t('table-core-values-rank'),
         width: 140,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['core-values'] || 0,
         renderCell: params => params.row.ranks['core-values']
       },
       {
         field: 'robotGameRank',
         headerName: t('table-robot-game-rank'),
         width: 140,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['robot-game'] || 0,
         renderCell: params => params.row.ranks['robot-game']
       },
       {
         field: 'totalRank',
         headerName: t('table-rank'),
         width: 100,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
         cellClassName: 'total-rank-cell',
+        valueGetter: (value, row) => row.ranks.total || 0,
         renderCell: params => params.row.ranks.total
       }
     ],

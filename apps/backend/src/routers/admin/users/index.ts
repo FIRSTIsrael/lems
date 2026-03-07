@@ -30,7 +30,7 @@ router.get('/me', async (req: AdminRequest, res) => {
 
 router.get('/:userId', async (req: AdminRequest, res) => {
   const userId = req.params.userId;
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
     return;
   }
@@ -48,7 +48,7 @@ router.patch('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminReq
   const userId = req.params.userId;
   const { firstName, lastName } = req.body;
 
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
     return;
   }
@@ -86,7 +86,7 @@ router.patch(
     const userId = req.params.userId;
     const { password } = req.body;
 
-    if (!userId) {
+    if (!userId || typeof userId !== 'string') {
       res.status(400).json({ error: 'User ID is required' });
       return;
     }
@@ -117,7 +117,7 @@ router.patch(
 router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
   const userId = req.params.userId;
 
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
     return;
   }

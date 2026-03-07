@@ -1,6 +1,6 @@
 'use client';
 
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 import { authorizeUserRole } from '../../../lib/role-authorizer';
 
 export default function HeadRefereeLayout({ children }: { children: React.ReactNode }) {

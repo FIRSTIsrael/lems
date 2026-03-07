@@ -7,12 +7,18 @@ interface StatusFilterSelectorProps {
   statuses: string[];
   statusFilter: string[];
   setStatusFilter: (statuses: string[]) => void;
+  filterLabel?: string;
+  isStatusFilter?: boolean;
+  filterType?: 'status' | 'room' | 'session';
 }
 
 export const StatusFilterSelector: React.FC<StatusFilterSelectorProps> = ({
   statuses,
   statusFilter,
-  setStatusFilter
+  setStatusFilter,
+  filterLabel,
+  isStatusFilter = true,
+  filterType = 'status'
 }) => {
   const t = useTranslations('pages.lead-judge.list');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -34,10 +40,31 @@ export const StatusFilterSelector: React.FC<StatusFilterSelectorProps> = ({
     }
   };
 
-  const displayLabel =
-    statusFilter.length > 0
-      ? `${statusFilter.map(s => t(`session-status.${s}`)).join(', ')}`
-      : t('filter.status');
+  const defaultLabel = filterLabel || t('filter.status');
+
+  const getDisplayLabel = () => {
+    if (statusFilter.length === 0) return defaultLabel;
+
+    switch (filterType) {
+      case 'status':
+        return `${t('filter.status')}: ${statusFilter.map(s => t(`session-status.${s}`)).join(', ')}`;
+      case 'room':
+        return `${t('filter.rooms')}: ${statusFilter.join(', ')}`;
+      case 'session':
+        return `${t('filter.sessions')}: ${statusFilter.join(', ')}`;
+      default:
+        return statusFilter.join(', ');
+    }
+  };
+
+  const displayLabel = getDisplayLabel();
+
+  const getItemLabel = (status: string) => {
+    if (isStatusFilter) {
+      return t(`session-status.${status}`);
+    }
+    return status;
+  };
 
   return (
     <>
@@ -70,7 +97,7 @@ export const StatusFilterSelector: React.FC<StatusFilterSelectorProps> = ({
         {statuses.map(status => (
           <MenuItem key={status} onClick={() => handleStatusChange(status)}>
             <Checkbox checked={statusFilter.includes(status)} />
-            <ListItemText primary={t(`session-status.${status}`)} />
+            <ListItemText primary={getItemLabel(status)} />
           </MenuItem>
         ))}
       </Menu>

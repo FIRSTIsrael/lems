@@ -6,8 +6,9 @@ import { getStatusIcon, type TeamReadinessStatus } from './utils';
 
 const ALL_STATUSES: TeamReadinessStatus[] = [
   'ready',
-  'no-show',
+  'present',
   'queued',
+  'no-show',
   'conflict',
   'missing',
   'empty'

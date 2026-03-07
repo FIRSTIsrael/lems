@@ -1,4 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { sql } from 'kysely';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../apollo-server';
@@ -63,6 +64,53 @@ export const disqualifyTeamResolver: GraphQLFieldResolver<
         MutationErrorCode.CONFLICT,
         `Team #${teamId} has already been disqualified in this division`
       );
+    }
+
+    // Check if team has any awards assigned in this division
+    const awardCount = await db.raw.sql
+      .selectFrom('awards')
+      .select(sql`count(*)`.as('count'))
+      .where('division_id', '=', divisionId)
+      .where('winner_id', '=', teamId)
+      .where('type', '=', 'TEAM')
+      .executeTakeFirst();
+
+    if (awardCount && Number(awardCount.count) > 0) {
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        `Team #${teamId} cannot be disqualified because they have been assigned an award`
+      );
+    }
+
+    // Remove team from all picklists in this division
+    try {
+      const deliberations = await db.raw.sql
+        .selectFrom('judging_deliberations')
+        .select(['id', 'picklist'])
+        .where('division_id', '=', divisionId)
+        .execute();
+
+      for (const deliberation of deliberations) {
+        if (deliberation.picklist && Array.isArray(deliberation.picklist)) {
+          const updatedPicklist = deliberation.picklist.filter((id: string) => id !== teamId);
+          if (updatedPicklist.length !== deliberation.picklist.length) {
+            await db.raw.sql
+              .updateTable('judging_deliberations')
+              .set({ picklist: updatedPicklist })
+              .where('id', '=', deliberation.id)
+              .execute();
+          }
+        }
+      }
+    } catch (picklistError) {
+      console.warn(
+        'Failed to remove team from picklists during disqualification:',
+        teamId,
+        'in division:',
+        divisionId,
+        picklistError
+      );
+      // Continue with disqualification even if picklist cleanup fails
     }
 
     await db.raw.sql

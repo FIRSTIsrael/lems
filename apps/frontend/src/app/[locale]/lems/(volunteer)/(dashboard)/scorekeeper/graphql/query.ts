@@ -66,6 +66,7 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
                 number
                 city
                 affiliation
+                logoUrl
               }
             }
             ... on PersonalWinner {

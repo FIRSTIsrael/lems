@@ -11,8 +11,7 @@ import {
   TextField,
   Button,
   CircularProgress,
-  useTheme,
-  useMediaQuery
+  useTheme
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Flag } from '@lems/shared';
@@ -34,7 +33,6 @@ export function TeamArrivalInput({
   const t = useTranslations('pages.pit-admin.team-input');
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -86,10 +84,10 @@ export function TeamArrivalInput({
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           spacing={2}
-          alignItems={{ xs: 'stretch', d: 'flex-end' }}
+          alignItems={{ xs: 'stretch', md: 'flex-end' }}
         >
           <Autocomplete
-            fullWidth={isMobile}
+            fullWidth
             sx={{
               flex: { xs: undefined, md: 1 },
               '& .MuiOutlinedInput-root': {

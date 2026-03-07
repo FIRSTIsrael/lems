@@ -1,13 +1,15 @@
 'use client';
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
-import type { Match, MatchStage } from '../graphql/types';
+import type { Match, MatchStage, Award } from '../graphql/types';
 
 interface McContextType {
   matches: Match[];
   currentStage: MatchStage;
   loadedMatch: string | null;
   awardsAssigned: boolean;
+  awards: Award[];
+  isAdvancementEnabled: boolean;
   loading: boolean;
 }
 
@@ -18,6 +20,8 @@ interface McProviderProps {
   currentStage: MatchStage;
   loadedMatch: string | null;
   awardsAssigned: boolean;
+  awards: Award[];
+  isAdvancementEnabled: boolean;
   loading?: boolean;
   children?: ReactNode;
 }
@@ -27,6 +31,8 @@ export function McProvider({
   currentStage,
   loadedMatch,
   awardsAssigned,
+  awards,
+  isAdvancementEnabled,
   loading = false,
   children
 }: McProviderProps) {
@@ -36,9 +42,11 @@ export function McProvider({
       currentStage,
       loadedMatch,
       awardsAssigned,
+      awards,
+      isAdvancementEnabled,
       loading
     }),
-    [matches, currentStage, loadedMatch, awardsAssigned, loading]
+    [matches, currentStage, loadedMatch, awardsAssigned, awards, isAdvancementEnabled, loading]
   );
 
   return <McContext.Provider value={value}>{children}</McContext.Provider>;

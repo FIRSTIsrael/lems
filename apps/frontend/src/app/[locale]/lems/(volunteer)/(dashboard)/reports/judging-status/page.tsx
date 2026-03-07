@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Container, CircularProgress } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
@@ -11,23 +11,28 @@ import {
   GET_JUDGING_STATUS,
   createJudgingSessionStartedSubscription,
   createJudgingSessionCompletedSubscription,
+  createJudgingSessionUpdatedSubscription,
   createTeamArrivalSubscription
 } from './graphql';
 import { JudgingStatusProvider } from './judging-status-context';
 import { CountdownHeader } from './components/countdown-header';
 import { JudgingStatusTable } from './components/judging-status-table';
 import { JudgingStatusMobile } from './components/judging-status-mobile';
+import { StatusLegend } from './components/status-legend';
 
 function JudgingStatusContent() {
   const t = useTranslations('pages.judging-status');
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const openLegend = Boolean(anchorEl);
 
   return (
     <>
       <PageHeader title={t('page-title')} />
-      <CountdownHeader />
+      <CountdownHeader onLegendClick={event => setAnchorEl(event.currentTarget)} />
       <Box py={1} width="100%">
         <ResponsiveComponent mobile={<JudgingStatusMobile />} desktop={<JudgingStatusTable />} />
       </Box>
+      <StatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </>
   );
 }
@@ -39,6 +44,7 @@ export default function JudgingStatusPage() {
     () => [
       createJudgingSessionStartedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
+      createJudgingSessionUpdatedSubscription(currentDivision.id),
       createTeamArrivalSubscription(currentDivision.id)
     ],
     [currentDivision.id]

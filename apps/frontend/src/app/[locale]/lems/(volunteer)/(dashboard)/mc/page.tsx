@@ -18,7 +18,7 @@ import {
 } from './graphql';
 import { CurrentMatchHero } from './components/current-match-hero';
 import { MatchScheduleTable } from './components/match-schedule-table';
-import { AwardsPlaceholder } from './components/awards-placeholder';
+import { AwardsView } from './components/awards-view';
 import { McLoadingSkeleton } from './components/mc-loading-skeleton';
 import { McProvider } from './components/mc-context';
 import { McModeToggle, type McMode } from './components/mc-mode-toggle';
@@ -88,6 +88,8 @@ export default function McPage() {
       currentStage={data.currentStage}
       loadedMatch={data.loadedMatch}
       awardsAssigned={data.awardsAssigned}
+      awards={data.awards}
+      isAdvancementEnabled={data.isAdvancementEnabled}
       loading={loading}
     >
       <PageHeader title={t('page-title')}>
@@ -102,9 +104,9 @@ export default function McPage() {
       )}
 
       {mode === 'awards' && (
-        <Stack spacing={3} my={3}>
-          <AwardsPlaceholder />
-        </Stack>
+        <Container maxWidth="md" sx={{ my: 3 }}>
+          <AwardsView />
+        </Container>
       )}
     </McProvider>
   );

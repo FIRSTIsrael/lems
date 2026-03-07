@@ -45,27 +45,27 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({ team, size, textAlign = 'lef
           variant={secondaryTypographyVariantMap[size] as 'caption' | 'body2' | 'h6'}
           color="text.secondary"
           sx={{
-            whiteSpace: 'nowrap',
             overflow: 'hidden',
-            textOverflow: 'ellipsis',
             display: 'flex',
-            gap: 0.5
+            gap: 0.5,
+            flexWrap: 'wrap',
+            alignItems: 'center'
           }}
         >
+          {team.affiliation && `${team.affiliation}, `}
+          {team.city}
           {team.region && (
-            <>
-              <Box
-                component="span"
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center'
-                }}
-              >
-                <Flag region={team.region} size={flagSizeMap[size]} />
-              </Box>
-            </>
+            <Box
+              component="span"
+              sx={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                ml: 0.5
+              }}
+            >
+              <Flag region={team.region} size={flagSizeMap[size]} />
+            </Box>
           )}
-          {team.affiliation && ` ${team.affiliation},`} {team.city}
         </Typography>
       </Stack>
     </Box>

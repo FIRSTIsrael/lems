@@ -7,8 +7,9 @@ interface ParticipantStatusUpdatedSubscribeArgs {
 
 interface ParticipantStatusUpdatedEvent {
   participantId: string;
-  present: Date | null;
-  ready: Date | null;
+  queued: string | null;
+  present: string | null;
+  ready: string | null;
 }
 
 const processParticipantStatusUpdatedEvent = async (
@@ -16,17 +17,27 @@ const processParticipantStatusUpdatedEvent = async (
 ): Promise<ParticipantStatusUpdatedEvent | null> => {
   const eventData = event.data as Record<string, unknown>;
   const participantId = (eventData.participantId as string) || '';
-  const present = (eventData.present as string | null) || null;
-  const ready = (eventData.ready as string | null) || null;
+  const queued = eventData.queued;
+  const present = eventData.present;
+  const ready = eventData.ready;
 
   if (!participantId) {
     return null;
   }
 
+  // Convert Date objects to ISO strings
+  const convertToISOString = (value: unknown): string | null => {
+    if (!value) return null;
+    if (value instanceof Date) return value.toISOString();
+    if (typeof value === 'string') return value;
+    return null;
+  };
+
   const result: ParticipantStatusUpdatedEvent = {
     participantId,
-    present: present ? new Date(present) : null,
-    ready: ready ? new Date(ready) : null
+    queued: convertToISOString(queued),
+    present: convertToISOString(present),
+    ready: convertToISOString(ready)
   };
 
   return result;
@@ -43,7 +54,9 @@ const participantStatusUpdatedSubscribe = (
 
 /**
  * Subscription resolver object for participantStatusUpdated
- * Emitted when a referee updates a participant's status (present/ready) in a match
+ * Emitted when any participant status field is updated (queued, present, ready)
+ * Called by field head queuer when marking teams as queued/arrived
+ * Called by referees when marking teams as present or ready
  */
 export const participantStatusUpdatedResolver = {
   subscribe: participantStatusUpdatedSubscribe,

@@ -152,7 +152,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           </Grid>
         )}
       </Grid>
-      <Grid borderRadius={8} p={2} size={{ xs: 0, md: 4 }} display={{ xs: 'none', md: 'block' }}>
+      <Grid borderRadius={8} p={2} size={{ xs: 0, sm: 4 }} display={{ xs: 'none', sm: 'block' }}>
         <Image
           src={src}
           width={0}

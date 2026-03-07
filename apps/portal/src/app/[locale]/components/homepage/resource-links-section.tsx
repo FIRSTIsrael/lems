@@ -22,28 +22,28 @@ import {
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 
-const RESOURCES = [
-  {
-    title: 'fll-website',
-    description: 'fll-website-description',
-    icon: MapIcon,
-    href: 'fll-website-link',
-    color: 'primary' as const,
-    external: true
-  },
-  {
-    title: 'github',
-    description: 'github-description',
-    icon: GitHubIcon,
-    href: 'https://github.com/FIRSTIsrael/lems',
-    color: 'primary' as const,
-    external: true
-  }
-];
-
 export const ResourceLinksSection = () => {
   const theme = useTheme();
   const t = useTranslations('pages.index.resources');
+
+  const RESOURCES = [
+    {
+      title: 'fll-website',
+      description: 'fll-website-description',
+      icon: MapIcon,
+      href: t('fll-website-link'),
+      color: 'primary' as const,
+      external: true
+    },
+    {
+      title: 'github',
+      description: 'github-description',
+      icon: GitHubIcon,
+      href: 'https://github.com/FIRSTIsrael/lems',
+      color: 'primary' as const,
+      external: true
+    }
+  ];
 
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 } }}>

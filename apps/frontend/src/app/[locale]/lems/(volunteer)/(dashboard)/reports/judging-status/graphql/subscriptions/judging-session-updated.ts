@@ -7,6 +7,7 @@ interface SubscriptionData {
   judgingSessionUpdated: {
     sessionId: string;
     called: boolean;
+    queued: boolean;
   };
 }
 
@@ -18,6 +19,7 @@ export const JUDGING_SESSION_UPDATED_SUBSCRIPTION: TypedDocumentNode<
     judgingSessionUpdated(divisionId: $divisionId) {
       sessionId
       called
+      queued
     }
   }
 `;
@@ -51,13 +53,13 @@ export function createJudgingSessionUpdatedSubscription(
     updateQuery: (prev: QueryData, { data }: { data?: unknown }) => {
       if (!data) return prev;
 
-      const { sessionId, called } = (data as SubscriptionData).judgingSessionUpdated;
+      const { sessionId, called, queued } = (data as SubscriptionData).judgingSessionUpdated;
 
       return updateJudgingSessions(prev, sessions =>
         updateInArray(
           sessions,
           session => session.id === sessionId,
-          session => merge(session, { called })
+          session => merge(session, { called, queued })
         )
       );
     }

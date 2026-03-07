@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { usePathname } from 'next/navigation';
 import { Stack, Box, alpha, Typography, useTheme } from '@mui/material';
-import { useUser } from '../../../../components/user-context';
+import { useUser } from '../../../components/user-context';
 import { buildNavigationItems } from '../../../../lib/navigation-items';
 
 interface NavigationListProps {

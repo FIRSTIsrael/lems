@@ -8,6 +8,7 @@ interface TeamWinner {
   number: string;
   city: string;
   affiliation: string;
+  logoUrl?: string;
 }
 
 interface PersonalWinner {

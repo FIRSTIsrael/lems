@@ -12,16 +12,17 @@ import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
-  const { page } = req.params;
+  const { page } = req.query;
 
   const numberOfPages = await db.teams.numberOfPages();
 
   if (!page) {
     const teams = await db.teams.getAll();
     res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+    return;
   }
 
-  const pageNumber = parseInt(page, 10);
+  const pageNumber = parseInt(page as string, 10);
 
   if (isNaN(pageNumber) || pageNumber < 1) {
     res.status(400).json({ error: 'Invalid page number' });
@@ -140,6 +141,7 @@ router.get(
       const eventResult: TeamEventResult = {
         eventName: event.name,
         eventSlug: event.slug,
+        eventDate: event.date,
         published: event.published,
         results: null
       };

@@ -10,7 +10,7 @@ import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
@@ -18,10 +18,10 @@ import { RubricTable } from './components/rubric-table';
 import { AwardNominations } from './components/award-nominations';
 import { ResetRubricButton } from './components/reset-rubric-button';
 import { LockUnlockRubricButton } from './components/lock-unlock-rubric-button';
+import { SaveButton } from './components/save-button';
 import { ApproveRubricButton } from './components/approve-rubric-button';
 import { GET_RUBRIC_QUERY, parseRubricData, createRubricUpdatedSubscription } from './graphql';
 import { ValidationAlert } from './components/validation-alert';
-import { SubmitRubricButton } from './components/submit-rubric-button';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
@@ -101,9 +101,11 @@ export default function RubricPage() {
 
           <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
             <ResetRubricButton disabled={!isEditable} />
+            <SaveButton disabled={!isEditable} />
             <LockUnlockRubricButton disabled={!isEditable} />
             <ApproveRubricButton disabled={!isEditable} />
-            <SubmitRubricButton disabled={!isEditable} />
+            {/* Submit removed for now */}
+            {/* <SubmitRubricButton disabled={!isEditable} /> */}
           </Stack>
         </RubricProvider>
       </Container>

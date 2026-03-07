@@ -20,6 +20,7 @@
         "view-event": "צפייה באירוע",
         "view-results": "צפייה בתוצאות",
         "view-details": "פרטים נוספים",
+        "more-events": "ועוד {count} אירועים {variant}...",
         "status-completed": "הושלם",
         "status-upcoming": "קרוב",
         "unofficial-event": "אירוע לא רשמי"
@@ -40,7 +41,7 @@
       },
       "quick-actions": {
         "title": "פעולות מהירות",
-        "robot-scorer": "מחשבון ניקוד רובוט",
+        "robot-scorer": "מחשבון ניקוד משחק הרובוט",
         "robot-scorer-description": "ניקוד מקצי רובוט",
         "browse-events": "עיון באירועים",
         "browse-events-description": "מצאו וחקרו אירועים"
@@ -130,7 +131,9 @@
         "event-performance": "תוצאות אירוע",
         "view-details": "פרטים נוספים",
         "event-in-progress": "אירוע בעיצומו",
-        "view-live-data": "צפייה בנתונים חיים"
+        "view-live-data": "צפייה בנתונים חיים",
+        "view-event-details": "צפייה בפרטי האירוע",
+        "view-event-results": "לצפייה בתוצאות האירוע"
       }
     },
     "event": {
@@ -149,7 +152,7 @@
         "title": "משהו השתבש",
         "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת האירוע. אנא נסה שוב מאוחר יותר או צור קשר עם התמיכה אם הבעיה נמשכת.",
         "back-to-events": "חזרה לאירועים",
-        "retry": "ניסיון חוזר"
+        "retry": "ניסיון נוסף"
       },
       "quick-links": {
         "title": "קישורים מהירים",
@@ -172,11 +175,11 @@
         "match": "מקצה",
         "time": "שעה",
         "table": "שולחן",
-        "no-data": "אין לוח זמנים זירה זמין"
+        "no-data": "אין לוח זמנים זמין לזירה"
       },
       "judging-schedule": {
         "start-time": "התחלה",
-        "no-data": "אין לוח זמנים שיפוט זמין"
+        "no-data": "אין לוח זמנים זמין לשיפוט"
       },
       "awards": {
         "team-awards": "פרסי קבוצות",
@@ -205,12 +208,12 @@
         "title": "משהו השתבש",
         "description": "נתקלנו בשגיאה בלתי צפויה בעת טעינת הקבוצה. אנא נסה שוב מאוחר יותר או צור קשר עם התמיכה אם הבעיה נמשכת.",
         "back-to-event": "חזרה לאירוע",
-        "retry": "ניסיון חוזר"
+        "retry": "ניסיון נוסף"
       },
       "header": {
         "back-to-event": "חזרה לאירוע",
         "rank": "דירוג במשחק הרובוט #{rank}",
-        "best-score": "ניקוד הגבוה ביותר: {score}"
+        "best-score": "הניקוד הגבוה ביותר: {score}"
       },
       "performance": {
         "title": "ביצועי רובוט",
@@ -219,7 +222,7 @@
         "match-number": "מקצה {number}",
         "match-results": "תוצאות מקצים",
         "points": "{score} נקודות",
-        "best-score": "ניקוד הגבוה ביותר",
+        "best-score": "הניקוד הגבוה ביותר",
         "highest-score": "הניקוד הגבוה ביותר",
         "robot-rank": "דירוג משחק רובוט",
         "robot-game-rank": "דירוג במשחק הרובוט",
@@ -241,7 +244,7 @@
         "field-matches": "מקצי זירה",
         "judging-sessions": "מפגש שיפוט",
         "match-type": "מקצה {stage} #{number} - שולחן {table}",
-        "judging-session": "מפגש שיפוט #{number} - {room}",
+        "judging-session": "מפגש שיפוט - חדר {room}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"

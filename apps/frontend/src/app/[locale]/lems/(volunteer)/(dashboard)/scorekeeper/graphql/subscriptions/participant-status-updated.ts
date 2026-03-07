@@ -5,6 +5,7 @@ import type { ScorekeeperData } from '../types';
 
 export interface ParticipantStatusUpdatedEvent {
   participantId: string;
+  queued: string | null;
   present: string | null;
   ready: string | null;
 }
@@ -24,19 +25,13 @@ export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription ParticipantStatusUpdated($divisionId: String!) {
     participantStatusUpdated(divisionId: $divisionId) {
       participantId
+      queued
       present
       ready
     }
   }
 `;
 
-/**
- * Creates a subscription configuration for participant status updated events in the scorekeeper view.
- * When a participant's presence or ready status is updated, updates the corresponding match participants.
- *
- * @param divisionId - The division ID to subscribe to
- * @returns Subscription configuration for use with usePageData hook
- */
 export function createParticipantStatusUpdatedSubscription(divisionId: string) {
   return {
     subscription: PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
@@ -47,18 +42,21 @@ export function createParticipantStatusUpdatedSubscription(divisionId: string) {
       return merge(prev, {
         division: {
           field: {
-            matches: prev.division.field.matches.map(match => ({
-              ...match,
-              participants: match.participants.map(p =>
-                p.id === event.participantId
-                  ? {
-                      ...p,
-                      present: !!event.present,
-                      ready: !!event.ready
-                    }
-                  : p
-              )
-            }))
+            matches: prev.division.field.matches.map(match => {
+              return {
+                ...match,
+                participants: match.participants.map(p =>
+                  p.id === event.participantId
+                    ? {
+                        ...p,
+                        queued: event.queued !== null,
+                        present: event.present !== null,
+                        ready: event.ready !== null
+                      }
+                    : p
+                )
+              };
+            })
           }
         }
       });

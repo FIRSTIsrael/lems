@@ -36,6 +36,11 @@ export const SessionStatusChip: React.FC<SessionStatusChipProps> = ({
     return 'default' as const;
   };
 
+  const getStatusLabel = (status: string) => {
+    if (status === 'not-started') return t('status.not-queued');
+    return t(`status.${status}`);
+  };
+
   if (isQueued) {
     return (
       <Chip
@@ -52,7 +57,7 @@ export const SessionStatusChip: React.FC<SessionStatusChipProps> = ({
     <>
       <Chip
         icon={getStatusIcon(status, called)}
-        label={t(`status.${status}`)}
+        label={getStatusLabel(status)}
         color={getStatusColor(status)}
         size="small"
         sx={status === 'in-progress' ? { fontWeight: 600 } : undefined}

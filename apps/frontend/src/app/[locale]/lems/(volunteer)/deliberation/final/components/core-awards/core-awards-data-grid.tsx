@@ -8,6 +8,7 @@ import { useJudgingCategoryTranslations } from '@lems/localization';
 import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple, blue, green, red } from '@mui/material/colors';
 import { JudgingCategory } from '@lems/database';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
@@ -64,12 +65,7 @@ export function CoreAwardsDataGrid() {
 
   // Get teams that have been selected for any core award
   const selectedTeamIds = useMemo<Set<string>>(
-    () =>
-      new Set([
-        ...(awards['robot-design'] || []),
-        ...(awards['innovation-project'] || []),
-        ...(awards['core-values'] || [])
-      ]),
+    () => new Set(JUDGING_CATEGORIES.flatMap(category => awards[category] || [])),
     [awards]
   );
 
@@ -115,18 +111,18 @@ export function CoreAwardsDataGrid() {
         field: 'room',
         headerName: t('table-room'),
         width: 80,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.room?.name || '',
         renderCell: params => params.row.room?.name || '-'
       },
       {
         field: 'teamDisplay',
         headerName: t('table-team'),
         width: 110,
-        sortable: false,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           const isManual = deliberation.coreAwardsManualEligibility.includes(team.id);
@@ -148,36 +144,13 @@ export function CoreAwardsDataGrid() {
         }
       },
       {
-        field: 'robotDesignRank',
-        headerName: `${getCategory('robot-design')} ${t('table-rank')}`,
-        width: FIELD_COLUMN_WIDTH,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => {
-          const rank = (params.row as EnrichedTeam).ranks['robot-design'];
-          return rank ? `#${rank}` : '-';
-        }
-      },
-      {
-        field: 'robotDesignScore',
-        headerName: getCategory('robot-design'),
-        width: FIELD_COLUMN_WIDTH,
-        sortable: false,
-        filterable: false,
-        align: 'center',
-        headerAlign: 'center',
-        renderCell: params => params.row.scores['robot-design'].toFixed(1)
-      },
-      {
         field: 'innovationProjectRank',
         headerName: `${getCategory('innovation-project')} ${t('table-rank')}`,
         width: FIELD_COLUMN_WIDTH,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['innovation-project'] || 0,
         renderCell: params => {
           const rank = (params.row as EnrichedTeam).ranks['innovation-project'];
           return rank ? `#${rank}` : '-';
@@ -187,20 +160,43 @@ export function CoreAwardsDataGrid() {
         field: 'innovationProjectScore',
         headerName: getCategory('innovation-project'),
         width: FIELD_COLUMN_WIDTH,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.scores['innovation-project'],
         renderCell: params => params.row.scores['innovation-project'].toFixed(1)
+      },
+      {
+        field: 'robotDesignRank',
+        headerName: `${getCategory('robot-design')} ${t('table-rank')}`,
+        width: FIELD_COLUMN_WIDTH,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['robot-design'] || 0,
+        renderCell: params => {
+          const rank = (params.row as EnrichedTeam).ranks['robot-design'];
+          return rank ? `#${rank}` : '-';
+        }
+      },
+      {
+        field: 'robotDesignScore',
+        headerName: getCategory('robot-design'),
+        width: FIELD_COLUMN_WIDTH,
+        filterable: false,
+        align: 'center',
+        headerAlign: 'center',
+        valueGetter: (value, row) => row.scores['robot-design'],
+        renderCell: params => params.row.scores['robot-design'].toFixed(1)
       },
       {
         field: 'coreValuesRank',
         headerName: `${getCategory('core-values')} ${t('table-rank')}`,
         width: FIELD_COLUMN_WIDTH,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['core-values'] || 0,
         renderCell: params => {
           const rank = (params.row as EnrichedTeam).ranks['core-values'];
           return rank ? `#${rank}` : '-';
@@ -210,10 +206,10 @@ export function CoreAwardsDataGrid() {
         field: 'coreValuesScore',
         headerName: getCategory('core-values'),
         width: FIELD_COLUMN_WIDTH,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.scores['core-values'],
         renderCell: params => params.row.scores['core-values'].toFixed(1)
       },
       {
@@ -227,13 +223,14 @@ export function CoreAwardsDataGrid() {
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           const isManualTeam = deliberation.coreAwardsManualEligibility.includes(team.id);
-          const categories: JudgingCategory[] = [
-            'robot-design',
-            'innovation-project',
-            'core-values'
-          ];
 
           const categoryColors: Record<JudgingCategory, string> = {
+            'robot-design': green[300],
+            'innovation-project': blue[300],
+            'core-values': red[300]
+          };
+
+          const categoryDarkColors: Record<JudgingCategory, string> = {
             'robot-design': green[400],
             'innovation-project': blue[400],
             'core-values': red[400]
@@ -241,10 +238,12 @@ export function CoreAwardsDataGrid() {
 
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center', width: '100%' }}>
-              {categories.map(category => {
+              {JUDGING_CATEGORIES.map(category => {
                 const isInPicklist = categoryPicklists[category].includes(team.id);
                 const canAdd = isInPicklist || isManualTeam;
-                const isAlreadyAdded = (awards[category] || []).includes(team.id);
+                const isAlreadyAdded = JUDGING_CATEGORIES.flatMap(
+                  cat => awards[cat] || []
+                ).includes(team.id);
 
                 return (
                   <Tooltip
@@ -253,7 +252,7 @@ export function CoreAwardsDataGrid() {
                       !canAdd
                         ? t('team-not-eligible-for-category', { category: getCategory(category) })
                         : isAlreadyAdded
-                          ? t('team-already-added-to-category', { category: getCategory(category) })
+                          ? t('team-already-added-to-category')
                           : t('add-team-to-category', { category: getCategory(category) })
                     }
                   >
@@ -265,16 +264,19 @@ export function CoreAwardsDataGrid() {
                           !canAdd || isAlreadyAdded || deliberation.status !== 'in-progress'
                         }
                         sx={{
-                          p: 0.5,
-                          color: isAlreadyAdded
-                            ? categoryColors[category]
-                            : categoryColors[category],
-                          opacity: isAlreadyAdded ? 1 : 0.6,
+                          bgcolor: categoryColors[category],
+                          color: 'white',
+                          width: 28,
+                          height: 28,
+                          opacity: isAlreadyAdded ? 0.5 : 1,
                           '&:hover:not(:disabled)': {
-                            opacity: 1
+                            bgcolor: categoryDarkColors[category],
+                            opacity: isAlreadyAdded ? 0.5 : 1
                           },
                           '&:disabled': {
-                            opacity: 0.3
+                            bgcolor: theme.palette.action.disabledBackground,
+                            color: theme.palette.action.disabled,
+                            opacity: 1
                           }
                         }}
                       >
@@ -291,6 +293,7 @@ export function CoreAwardsDataGrid() {
     ],
     [
       t,
+      theme,
       getCategory,
       deliberation.coreAwardsManualEligibility,
       deliberation.status,

@@ -30,12 +30,17 @@ import {
   Info as InfoIcon,
   Description as DescriptionIcon
 } from '@mui/icons-material';
-import { FileUpload, apiFetch } from '@lems/shared';
+import { FileUpload, Flag, apiFetch } from '@lems/shared';
 import { Division } from '@lems/types/api/admin';
 
 interface RegisterTeamsCSVResult {
-  registered: Array<{ name: string; number: number; division: { name: string; color: string } }>;
-  skipped: Array<{ name: string; number: number; reason: string }>;
+  registered: Array<{
+    name: string;
+    number: string;
+    region: string;
+    division: { name: string; color: string };
+  }>;
+  skipped: Array<{ name: string; number: string; region: string; reason: string }>;
 }
 
 interface RegisterTeamsFromCSVDialogProps {
@@ -158,9 +163,9 @@ const RegisterForm: React.FC<{
         </Typography>
         <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'monospace' }}>
           <Typography variant="body2" component="pre" dir="ltr" sx={{ whiteSpace: 'pre-wrap' }}>
-            {`1234
-5678
-9999`}
+            {`1234,IL
+5678,US
+9999,PL`}
           </Typography>
         </Paper>
       </Paper>
@@ -274,6 +279,7 @@ const SuccessView: React.FC<{
                     primary={`#${team.number} - ${team.name}`}
                     slotProps={{ primary: { variant: 'body2' } }}
                   />
+                  <Flag region={team.region} size={16} />
                 </Box>
               </ListItem>
             ))}
@@ -298,7 +304,14 @@ const SuccessView: React.FC<{
             {result.skipped.slice(0, 5).map(team => (
               <ListItem key={team.number} disablePadding>
                 <ListItemText
-                  primary={`#${team.number} - ${team.name}`}
+                  primary={
+                    <Stack direction="row" spacing={1} alignItems="center" component="span">
+                      <Typography variant="body2">
+                        #{team.number} - {team.name}
+                      </Typography>
+                      <Flag region={team.region} size={16} />
+                    </Stack>
+                  }
                   secondary={t(`skip-reasons.${team.reason}`)}
                   slotProps={{
                     primary: { variant: 'body2' },

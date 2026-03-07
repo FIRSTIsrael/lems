@@ -172,6 +172,7 @@ export const setMatchParticipantTeamResolver: GraphQLFieldResolver<
         .execute();
     }
 
+    // Return the match ID - GraphQL field resolvers will fetch nested data
     return { id: matchId };
   } catch (error) {
     if (error instanceof MutationError) {

@@ -12,7 +12,7 @@ import { TeamPagination } from './team-pagination';
 export const TeamList: React.FC = () => {
   const t = useTranslations('pages.teams');
   const searchParams = useSearchParams();
-  const pageNumber = Number(searchParams.get('division')) || 1;
+  const pageNumber = Number(searchParams.get('page')) || 1;
 
   const { data, isLoading } = useSWR<{ teams: Team[]; numberOfPages: number }>(
     `/portal/teams?page=${pageNumber}`,

@@ -20,6 +20,7 @@ import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
 import { RubricStatusGlossary } from './rubric-status-glossary';
+import { ProfileDocumentButton } from './profile-document-button';
 
 interface RoomScheduleTableProps {
   onStartSession: (sessionId: string) => Promise<void>;
@@ -193,7 +194,10 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                 </TableCell>
 
                 <TableCell align="center" sx={{ py: 2.5 }}>
-                  <StartSessionButton session={session} onStartSession={onStartSession} />
+                  <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                    <StartSessionButton session={session} onStartSession={onStartSession} />
+                    <ProfileDocumentButton profileDocumentUrl={session.team.profileDocumentUrl} />
+                  </Stack>
                 </TableCell>
 
                 <TableCell sx={{ py: 2.5 }}>

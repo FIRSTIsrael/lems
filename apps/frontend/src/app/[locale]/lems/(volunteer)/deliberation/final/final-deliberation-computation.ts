@@ -1,7 +1,22 @@
 import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
 import { compareScoreArrays } from '@lems/shared/utils/arrays';
+import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { EnrichedTeam, OptionalAwardNominations, RanksPerCategory } from './types';
+
+/**
+ * Represents an anomaly where a team's picklist position differs significantly
+ * from their calculated rank based on rubric scores.
+ */
+export interface Anomaly {
+  teamId: string;
+  teamNumber: string;
+  category: JudgingCategory;
+  calculatedRank: number;
+  picklistPosition: number;
+  difference: number;
+  isHigher: boolean; // true if team ranked higher (more favorable) in picklist than calculated
+}
 
 /**
  * Extracts optional award nominations from a rubric
@@ -29,6 +44,42 @@ export function extractOptionalAwards(rubrics: CategorizedRubrics): OptionalAwar
   });
 
   return nominations;
+}
+
+/**
+ * Computes raw ranking for teams based purely on rubric scores (no picklist consideration).
+ *
+ * This is used for anomaly detection to compare against picklist positions.
+ *
+ * @param team - The team to compute raw rank for
+ * @param allTeams - All teams (used for relative ranking)
+ * @returns RanksPerCategory object with score-based ranks only
+ */
+export function computeRawRank(
+  team: Team & { scores: MetricPerCategory; robotGameScores: number[] },
+  allTeams: (Team & { scores: MetricPerCategory; robotGameScores: number[] })[]
+): RanksPerCategory {
+  const rawRanks: RanksPerCategory = {
+    'innovation-project': 0,
+    'robot-design': 0,
+    'core-values': 0,
+    'robot-game': 0,
+    total: 0
+  };
+
+  const computeRankByScore = (category: JudgingCategory, teamScore: number): number => {
+    const higherScoreCount = allTeams.filter(t => {
+      const score = t.scores[category];
+      return score > teamScore;
+    }).length;
+    return higherScoreCount + 1;
+  };
+
+  JUDGING_CATEGORIES.forEach(category => {
+    rawRanks[category] = computeRankByScore(category, team.scores[category]);
+  });
+
+  return rawRanks;
 }
 
 /**
@@ -93,22 +144,6 @@ export function computeRank(
   return ranks;
 }
 
-export const computeChampionsEligibility = (
-  teamId: string,
-  sortedTeams: EnrichedTeam[],
-  numOfEligibleTeams: number
-): boolean => {
-  const team = sortedTeams.find(t => t.id === teamId);
-  const teamRank = sortedTeams.findIndex(t => t.id === teamId) + 1;
-  if (!team) return false;
-
-  if (!team.arrived) return false;
-
-  if (team.disqualified) return false;
-
-  return teamRank <= numOfEligibleTeams;
-};
-
 export const computeCoreAwardsEligibility = (
   team: Team,
   picklists: Record<JudgingCategory, string[]>,
@@ -152,3 +187,53 @@ export const computeOptionalAwardsEligibility = (
 
   return Object.keys(team.awardNominations).length > 0 || manualNominations.includes(team.id);
 };
+
+/**
+ * Computes anomalies for the final deliberation.
+ *
+ * An anomaly occurs when a team's picklist position differs by 3 or more places
+ * from their raw rubric score rank (score-based ranking without picklist consideration).
+ *
+ * @param enrichedTeams - Teams with computed scores and ranks
+ * @param categoryPicklists - Picklist rankings for each category
+ * @returns Array of detected anomalies
+ */
+export function computeAnomalies(
+  enrichedTeams: EnrichedTeam[],
+  categoryPicklists: Record<JudgingCategory, string[]>
+): Anomaly[] {
+  const anomalies: Anomaly[] = [];
+
+  const categories: JudgingCategory[] = ['core-values', 'innovation-project', 'robot-design'];
+
+  categories.forEach(category => {
+    const picklist = categoryPicklists[category];
+
+    enrichedTeams.forEach(team => {
+      const picklistPosition = picklist.indexOf(team.id) + 1;
+
+      // Only check teams that are in the picklist
+      if (picklistPosition > 0) {
+        const calculatedRank = team.rawRanks[category];
+        const difference = Math.abs(picklistPosition - calculatedRank);
+
+        // Anomaly threshold is 3 or more places difference
+        if (difference >= 3) {
+          const isHigher = picklistPosition < calculatedRank;
+
+          anomalies.push({
+            teamId: team.id,
+            teamNumber: team.number,
+            category,
+            calculatedRank,
+            picklistPosition,
+            difference,
+            isHigher
+          });
+        }
+      }
+    });
+  });
+
+  return anomalies;
+}

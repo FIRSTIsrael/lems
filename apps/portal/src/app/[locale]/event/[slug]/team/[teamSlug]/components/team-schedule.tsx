@@ -52,9 +52,7 @@ export const TeamSchedule: React.FC = () => {
           {
             time: new Date(judgingSession.scheduledTime),
             description: t('schedule.judging-session', {
-              number: judgingSession.number,
-              room: judgingSession.room.name,
-              teamNumber: team.number
+              room: judgingSession.room.name
             }),
             location: judgingSession.room.name
           }

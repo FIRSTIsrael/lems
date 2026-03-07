@@ -14,22 +14,22 @@ export const ScoresTableHeader = ({ rounds }: ScoresTableHeaderProps) => {
   return (
     <TableHead sx={{ bgcolor: theme => alpha(theme.palette.primary.main, 0.08) }}>
       <TableRow sx={{ bgcolor: theme => alpha(theme.palette.primary.main, 0.08) }}>
-        <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}>
+        <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '1.25rem' }}>
           {t('rank')}
         </TableCell>
-        <TableCell sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }} width="35%">
+        <TableCell sx={{ fontWeight: 700, py: 1.5, fontSize: '1.25rem' }} width="35%">
           {t('team')}
         </TableCell>
         {rounds.map(round => (
           <TableCell
             key={`round-${round.stage}-${round.round}`}
             align="center"
-            sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}
+            sx={{ fontWeight: 700, py: 1.5, fontSize: '1.25rem' }}
           >
             {`${getStage(round.stage)} #${round.round}`}
           </TableCell>
         ))}
-        <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '0.95rem' }}>
+        <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '1.25rem' }}>
           {t('highest-score')}
         </TableCell>
       </TableRow>

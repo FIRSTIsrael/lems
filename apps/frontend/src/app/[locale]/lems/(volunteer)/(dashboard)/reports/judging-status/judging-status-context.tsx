@@ -2,6 +2,7 @@
 
 import dayjs, { Dayjs } from 'dayjs';
 import { createContext, useContext, useMemo, ReactNode } from 'react';
+import { useTime } from '../../../../../../../lib/time/hooks';
 import type { QueryData, JudgingSession, Room } from './graphql/types';
 
 export interface JudgingStatusContextType {
@@ -13,7 +14,10 @@ export interface JudgingStatusContextType {
   countdownTargetTime: Dayjs | null;
 }
 
-function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType, 'loading'> {
+function parseJudgingStatus(
+  queryData: QueryData,
+  now: Dayjs
+): Omit<JudgingStatusContextType, 'loading'> {
   const sessions = queryData?.division?.judging.sessions ?? [];
   const rooms = queryData?.division?.rooms ?? [];
   const sessionLength = queryData?.division?.judging.sessionLength ?? 0;
@@ -39,22 +43,43 @@ function parseJudgingStatus(queryData: QueryData): Omit<JudgingStatusContextType
   }
 
   let currentRoundNumber = sortedSessionNumbers[0];
+  const ADVANCEMENT_TIME_SECONDS = 15 * 60;
 
-  // Start at session 1, then increment if every session in the round
-  // with a team that arrived is completed
-  for (const sessionNumber of sortedSessionNumbers) {
+  for (let i = 0; i < sortedSessionNumbers.length; i++) {
+    const sessionNumber = sortedSessionNumbers[i];
     const roundSessions = sessionsByNumber.get(sessionNumber)!;
-
     const arrivedSessions = roundSessions.filter(s => s.team?.arrived);
 
-    if (arrivedSessions.length > 0) {
-      const allArrivedInProgressOrCompleted = arrivedSessions.every(s => s.status === 'completed');
+    if (arrivedSessions.length === 0) continue;
 
-      if (allArrivedInProgressOrCompleted) {
+    const startedSessions = arrivedSessions.filter(s => s.status === 'in-progress');
+
+    if (startedSessions.length > 0) {
+      const earliestStartTime = startedSessions.reduce(
+        (earliest, session) => {
+          if (!session.startTime) return earliest;
+          const startTime = dayjs(session.startTime);
+          return !earliest || startTime.isBefore(earliest) ? startTime : earliest;
+        },
+        null as dayjs.Dayjs | null
+      );
+
+      if (earliestStartTime) {
+        const secondsSinceStart = now.diff(earliestStartTime, 'second');
+
+        if (secondsSinceStart >= ADVANCEMENT_TIME_SECONDS) {
+          currentRoundNumber = sessionNumber;
+          continue;
+        }
+
         currentRoundNumber = sessionNumber;
-      } else {
         break;
       }
+    }
+
+    const allCompleted = arrivedSessions.every(s => s.status === 'completed');
+    if (allCompleted) {
+      currentRoundNumber = sessionNumber;
     }
   }
 
@@ -100,13 +125,15 @@ export function JudgingStatusProvider({
   data,
   loading = false
 }: JudgingStatusProviderProps) {
+  const now = useTime({ interval: 1000 });
+
   const value = useMemo(() => {
-    const parsed = parseJudgingStatus(data);
+    const parsed = parseJudgingStatus(data, now);
     return {
       ...parsed,
       loading
     };
-  }, [data, loading]);
+  }, [data, loading, now]);
 
   return <JudgingStatusContext.Provider value={value}>{children}</JudgingStatusContext.Provider>;
 }

@@ -12,13 +12,13 @@ const getStatus = (participant: Match['participants'][number]): TeamReadinessSta
   // No-show: Team did not arrive at event
   if (!participant.team.arrived) return 'no-show';
 
-  if (participant.ready) {
-    if (participant.present)
-      return 'ready'; // Table is ready, participant is present
-    else return 'no-show'; // Participant not present
-  }
+  // Ready: Team is at table and marked ready
+  if (participant.ready) return 'ready';
 
-  // Queued: team arrived at queue but not at the table
+  // Present: Team arrived at table but not yet ready
+  if (participant.present) return 'present';
+
+  // Queued: Team called to match, on the way to table
   if (participant.queued) return 'queued';
 
   // Conflict: team is somewhere else (not present, not queued)
@@ -45,7 +45,10 @@ export const TeamStatusBadge = ({ participant }: StatusBadgeProps) => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          flexShrink: 0
+          flexShrink: 0,
+          minWidth: 28,
+          width: 28,
+          height: 28
         }}
       >
         {getStatusIcon(status)}

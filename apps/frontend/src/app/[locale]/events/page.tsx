@@ -27,6 +27,7 @@ export default function BrowseEventsPage() {
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
       location: '', // Not fetched
+      timezone: '',
       region: event.region,
       coordinates: null,
       seasonId: '', // Placeholder - not available from current query

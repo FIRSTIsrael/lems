@@ -5,11 +5,12 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import {
-  JUDGING_STAGES,
   formatTime,
   getStageColor,
-  JudgingSessionTimerState
+  JudgingSessionTimerState,
+  useJudgingSessionTimer
 } from './hooks/use-judging-timer';
+import { useSession } from './judging-session-context';
 
 interface StageTimelineProps {
   timerState: JudgingSessionTimerState;
@@ -18,15 +19,17 @@ interface StageTimelineProps {
 export const StageTimeline = ({ timerState }: StageTimelineProps) => {
   const t = useTranslations('pages.judge');
   const { getStage } = useJudgingSessionStageTranslations();
+  const { session, sessionLength } = useSession();
+  const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining } = timerState;
 
   const nextStageIndex = currentStageIndex + 1;
-  const hasNextStage = nextStageIndex < JUDGING_STAGES.length;
+  const hasNextStage = nextStageIndex < judgingStages.length;
 
   return (
     <Stack spacing={2}>
       <AnimatePresence mode="popLayout">
-        {JUDGING_STAGES.map((stage, displayIndex) => {
+        {judgingStages.map((stage, displayIndex) => {
           const isActive = displayIndex === currentStageIndex;
           const isNext = displayIndex === nextStageIndex;
           const isPast = displayIndex < currentStageIndex;
@@ -42,8 +45,7 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
               layout
             >
               <Stack
-                direction="row"
-                alignItems="center"
+                direction="column"
                 justifyContent="space-between"
                 p={2}
                 sx={{
@@ -54,61 +56,63 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
                   position: 'relative'
                 }}
               >
-                <Stack spacing={0.5} flex={1} mr={1}>
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      fontWeight: isActive ? 700 : 600,
-                      color: isActive ? color : 'text.primary',
-                      fontSize: '1rem'
-                    }}
-                  >
-                    {getStage(stage.id)}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontWeight: 500,
-                      color: 'text.secondary',
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    {t('timer.minutes', { count: stage.duration / 60 })}
-                  </Typography>
-                </Stack>
-                <Stack spacing={0.5} alignItems="flex-end">
-                  <Typography
-                    sx={{
-                      fontSize: '1rem',
-                      fontWeight: 700,
-                      color: color,
-                      fontFamily: 'monospace',
-                      flexShrink: 0
-                    }}
-                  >
-                    {isActive
-                      ? formatTime(stageTimeRemaining)
-                      : isPast
-                        ? formatTime(0)
-                        : formatTime(stage.duration)}
-                  </Typography>
-                  {isNext && hasNextStage && (
+                <Stack direction="row" alignItems="center" justifyContent="space-between">
+                  <Stack spacing={0.5} flex={1} mr={1}>
                     <Typography
-                      variant="caption"
+                      variant="body1"
                       sx={{
-                        fontWeight: 600,
-                        color: 'text.secondary',
-                        fontSize: '0.7rem',
-                        letterSpacing: 0.5,
-                        backgroundColor: 'rgba(0, 0, 0, 0.05)',
-                        px: 1,
-                        py: 0.25,
-                        borderRadius: 0.5
+                        fontWeight: isActive ? 700 : 600,
+                        color: isActive ? color : 'text.primary',
+                        fontSize: '1rem'
                       }}
                     >
-                      {t('timer.up-next')}
+                      {getStage(stage.id)}
                     </Typography>
-                  )}
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 500,
+                        color: 'text.secondary',
+                        fontSize: '0.85rem'
+                      }}
+                    >
+                      {t('timer.minutes', { count: stage.duration / 60 })}
+                    </Typography>
+                  </Stack>
+                  <Stack spacing={0.5} alignItems="flex-end">
+                    <Typography
+                      sx={{
+                        fontSize: '1rem',
+                        fontWeight: 700,
+                        color: color,
+                        fontFamily: 'monospace',
+                        flexShrink: 0
+                      }}
+                    >
+                      {isActive
+                        ? formatTime(stageTimeRemaining)
+                        : isPast
+                          ? formatTime(0)
+                          : formatTime(stage.duration)}
+                    </Typography>
+                    {isNext && hasNextStage && (
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          fontWeight: 600,
+                          color: 'text.secondary',
+                          fontSize: '0.7rem',
+                          letterSpacing: 0.5,
+                          backgroundColor: 'rgba(0, 0, 0, 0.05)',
+                          px: 1,
+                          py: 0.25,
+                          borderRadius: 0.5
+                        }}
+                      >
+                        {t('timer.up-next')}
+                      </Typography>
+                    )}
+                  </Stack>
                 </Stack>
               </Stack>
             </motion.div>

@@ -2,7 +2,7 @@
 
 import { Stack, Typography } from '@mui/material';
 import { useRoleTranslations } from '@lems/localization';
-import { useUser } from '../../../../components/user-context';
+import { useUser } from '../../../components/user-context';
 import { useEvent } from '../../../components/event-context';
 import { DivisionSwitcher } from './division-switcher';
 

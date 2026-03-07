@@ -5,7 +5,7 @@ import { redirect, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import { authorizeUserRole } from '../../../../../../lib/role-authorizer';
 import { useEvent } from '../../../../../components/event-context';
 import { useTeam } from '../../components/team-context';

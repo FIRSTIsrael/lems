@@ -8,6 +8,7 @@ export interface JudgingSessionGraphQL {
   scheduledTime: string;
   status: string;
   called: boolean;
+  queued: boolean;
   roomId: string;
   teamId: string | null;
   startTime?: string;
@@ -93,6 +94,7 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
         scheduledTime: session.scheduled_time.toISOString(),
         status: state.status,
         called: !!state.called,
+        queued: !!state.queued,
         roomId: session.room_id,
         teamId: session.team_id,
         startTime: state.startTime ? state.startTime.toISOString() : undefined,

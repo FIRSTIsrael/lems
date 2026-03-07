@@ -32,6 +32,10 @@ router.get('/', async (req: AdminRequest, res) => {
 
 router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
   const teamId = req.params.teamId;
+  if (!teamId || typeof teamId !== 'string') {
+    res.status(400).json({ error: 'Team ID is required' });
+    return;
+  }
 
   const team = await db.teams.byId(teamId).get();
   if (!team) {
@@ -57,6 +61,11 @@ router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRe
 
 router.get('/:teamId', async (req: AdminRequest, res) => {
   const id = req.params.teamId;
+  if (!id || typeof id !== 'string') {
+    res.status(400).json({ error: 'Team ID is required' });
+    return;
+  }
+
   const team = await db.teams.byId(id).get();
   if (!team) {
     res.status(404).json({ error: 'Team not found' });
@@ -78,7 +87,7 @@ router.put(
     }
 
     const teamId = req.params.teamId;
-    if (!teamId) {
+    if (!teamId || typeof teamId !== 'string') {
       res.status(400).json({ error: 'Team ID must be provided' });
       return;
     }
@@ -103,9 +112,7 @@ router.put(
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
           return;
         }
-        if (
-          logoFile.size > FILE_SIZE_LIMIT
-        ) {
+        if (logoFile.size > FILE_SIZE_LIMIT) {
           res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
           return;
         }
@@ -174,9 +181,7 @@ router.post(
           res.status(400).json({ error: 'Logo must be an image file (JPG, PNG, or SVG)' });
           return;
         }
-        if (
-          logoFile.size > FILE_SIZE_LIMIT
-        ) {
+        if (logoFile.size > FILE_SIZE_LIMIT) {
           res.status(400).json({ error: 'Logo file size must not exceed 2 MB' });
           return;
         }

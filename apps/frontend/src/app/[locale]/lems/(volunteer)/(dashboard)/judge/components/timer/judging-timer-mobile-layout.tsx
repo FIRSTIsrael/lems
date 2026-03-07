@@ -7,13 +7,9 @@ import { Box, Button, Stack, Paper, Typography, LinearProgress } from '@mui/mate
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
 import { AbortSessionDialog } from './abort-session-dialog';
-import {
-  formatTime,
-  getStageColor,
-  JUDGING_STAGES,
-  useJudgingSessionTimer
-} from './hooks/use-judging-timer';
+import { formatTime, getStageColor, useJudgingSessionTimer } from './hooks/use-judging-timer';
 import { useSession } from './judging-session-context';
+import { RubricButton } from './rubric-button';
 
 interface JudgingTimerMobileLayoutProps {
   onAbortSession: (sessionId: string) => void;
@@ -26,12 +22,12 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
 
   const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
-  const { session, sessionLength } = useSession();
+  const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const { judgingStages, timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
-  const currentStage = JUDGING_STAGES[currentStageIndex];
+  const currentStage = judgingStages[currentStageIndex];
   const stageColor = getStageColor(currentStage.id);
 
   // Calculate stage progress for the main progress bar
@@ -198,6 +194,20 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
               {formatTime(totalTimeRemaining)}
             </Typography>
           </Box>
+
+          {openRubricsDuringSession && session.team?.slug && (
+            <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
+              <RubricButton team={session.team} category="innovation-project" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="robot-design" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="core-values" fontSize="0.7rem" />
+            </Stack>
+          )}
 
           <Button
             variant="outlined"

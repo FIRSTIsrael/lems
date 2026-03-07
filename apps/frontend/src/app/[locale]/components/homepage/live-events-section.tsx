@@ -15,20 +15,19 @@ export const LiveEventsSection: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('homepage');
 
-  const { now, oneDayAgo } = useMemo(() => {
+  const { startOfDay, endOfDay } = useMemo(() => {
     const currentTime = dayjs();
     return {
-      now: currentTime.toISOString(),
-      oneDayAgo: currentTime.subtract(1, 'day').toISOString()
+      startOfDay: currentTime.startOf('day').subtract(1, 'minute').toISOString(),
+      endOfDay: currentTime.endOf('day').add(1, 'minute').toISOString()
     };
   }, []);
 
   const { data, loading } = useQuery(GET_EVENTS_QUERY, {
     variables: {
       fullySetUp: true,
-      startAfter: oneDayAgo,
-      startBefore: now,
-      endAfter: now
+      startAfter: startOfDay,
+      endBefore: endOfDay
     }
   });
 
@@ -40,6 +39,7 @@ export const LiveEventsSection: React.FC = () => {
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
       location: '', // Not fetched anymore
+      timezone: '',
       region: event.region,
       coordinates: null,
       official: event.official,

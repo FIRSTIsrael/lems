@@ -313,6 +313,9 @@
               "label": "Region",
               "placeholder": "region",
               "helper-text": "ISO-3166 2-letter country code"
+            },
+            "timezone": {
+              "label": "Timezone"
             }
           },
           "actions": {
@@ -420,7 +423,7 @@
               "csv-format": "Required CSV Format:",
               "requirements": {
                 "header": "The file should not contain a header row",
-                "columns": "Only one column is required: team number",
+                "columns": "Two columns are required: team number and region",
                 "encoding": "File must be saved with UTF-8 encoding"
               },
               "example": "Example CSV content:"
@@ -619,7 +622,9 @@
           "visible": "Visible",
           "visible-description": "Whether this event is visible to the public",
           "official": "Official Event",
-          "official-description": "Whether this event is official"
+          "official-description": "Whether this event is official",
+          "open-rubrics-during-session": "Open Rubrics During Session",
+          "open-rubrics-during-session-description": "Allow judges to open rubrics while sessions are in progress"
         },
         "event-actions": {
           "title": "Event Actions",
@@ -865,6 +870,15 @@
             "title": "Awards Configuration Valid",
             "description": "The current awards configuration meets all validation requirements."
           }
+        },
+        "override-dialog": {
+          "title": "Awards Outside Guidelines",
+          "description": "The current award configuration does not meet the recommended guidelines:",
+          "continue": "Continue anyway",
+          "cancel": "Cancel",
+          "saving": "Saving...",
+          "no-specific-errors": "Unable to determine specific validation issues.",
+          "note": "Proceeding will save awards that don't meet the 30%-50% team count guidelines."
         }
       },
       "integrations": {

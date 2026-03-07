@@ -1,5 +1,6 @@
 'use client';
 
+import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Formik, Form, FormikErrors, FormikHelpers } from 'formik';
@@ -7,7 +8,13 @@ import { Paper, Typography, Box, Stack, IconButton, Button, Alert } from '@mui/m
 import Grid from '@mui/material/Grid';
 import { Add as AddIcon } from '@mui/icons-material';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
-import { FormikDatePicker, FormikTextField, ColorPicker, apiFetch } from '@lems/shared';
+import {
+  FormikDatePicker,
+  FormikTextField,
+  ColorPicker,
+  TimeZonePicker,
+  apiFetch
+} from '@lems/shared';
 import { defaultColor } from '../../../../../../theme';
 import { isValidSlug } from '../../utils';
 import { DivisionItem } from './division-item';
@@ -23,6 +30,7 @@ interface EventFormValues {
   date: Date | null;
   location: string;
   region: string;
+  timezone: string;
   divisions: Division[];
 }
 
@@ -32,6 +40,7 @@ const initialValues: EventFormValues = {
   date: null,
   location: '',
   region: '',
+  timezone: dayjs.tz.guess(),
   divisions: [{ name: '', color: hexToHsva(defaultColor) }]
 };
 
@@ -109,9 +118,10 @@ export const CreateEventLayout = () => {
       const submissionData = {
         name: values.name,
         slug: values.slug,
-        date: values.date?.toISOString() || '',
+        date: values.date ? dayjs(values.date).format('YYYY-MM-DD') : '',
         location: values.location,
         region: values.region.toUpperCase(),
+        timezone: values.timezone,
         divisions: values.divisions.map(division => ({
           name: division.name,
           color: hsvaToHex(division.color) // Convert to hex string for backend
@@ -219,7 +229,7 @@ export const CreateEventLayout = () => {
                   {status === true && <Alert severity="success">{t('messages.success')}</Alert>}
 
                   <Grid container spacing={3}>
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikTextField
                         name="name"
                         label={t('fields.name.label')}
@@ -227,7 +237,7 @@ export const CreateEventLayout = () => {
                       />
                     </Grid>
 
-                    <Grid size={6}>
+                    <Grid size={4}>
                       <FormikTextField
                         name="slug"
                         label={t('fields.slug.label')}
@@ -258,6 +268,15 @@ export const CreateEventLayout = () => {
                           htmlInput: { maxLength: 2 },
                           input: { style: { textTransform: 'uppercase' } }
                         }}
+                      />
+                    </Grid>
+
+                    <Grid size={4}>
+                      <TimeZonePicker
+                        value={values.timezone}
+                        onChange={(tz: string) => setFieldValue('timezone', tz)}
+                        label={t('fields.timezone.label')}
+                        disableClearable
                       />
                     </Grid>
                   </Grid>

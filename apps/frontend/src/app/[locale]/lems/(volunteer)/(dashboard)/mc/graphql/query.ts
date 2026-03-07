@@ -6,6 +6,35 @@ export const GET_MC_DATA: TypedDocumentNode<McData, McVars> = gql`
     division(id: $divisionId) {
       id
       awardsAssigned
+      judging {
+        divisionId
+        awards {
+          id
+          name
+          index
+          place
+          type
+          description
+          showPlaces
+          winner {
+            __typename
+            ... on TeamWinner {
+              team {
+                id
+                name
+                number
+                affiliation
+                city
+                region
+              }
+            }
+            ... on PersonalWinner {
+              name
+            }
+          }
+        }
+        advancementPercentage
+      }
       field {
         divisionId
         matches {
@@ -47,7 +76,9 @@ export function parseMcData(queryData: McData): ParsedMcData {
       matches: [],
       currentStage: 'PRACTICE',
       loadedMatch: null,
-      awardsAssigned: false
+      awardsAssigned: false,
+      awards: [],
+      isAdvancementEnabled: false
     };
   }
 
@@ -56,10 +87,15 @@ export function parseMcData(queryData: McData): ParsedMcData {
     match => match.stage === field.currentStage && match.status !== 'completed'
   );
 
+  const awards = queryData.division?.judging?.awards ?? [];
+  const advancementPercentage = queryData.division?.judging?.advancementPercentage ?? null;
+
   return {
     matches: currentStageMatches,
     currentStage: field.currentStage,
     loadedMatch: field.loadedMatch,
-    awardsAssigned: queryData.division?.awardsAssigned ?? false
+    awardsAssigned: queryData.division?.awardsAssigned ?? false,
+    awards,
+    isAdvancementEnabled: advancementPercentage !== null && advancementPercentage > 0
   };
 }

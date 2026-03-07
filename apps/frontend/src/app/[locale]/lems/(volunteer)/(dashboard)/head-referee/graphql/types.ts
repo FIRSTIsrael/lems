@@ -42,6 +42,9 @@ export interface TeamInfo {
   name: string;
   slug: string;
   arrived: boolean;
+  affiliation: string;
+  city: string;
+  region: string;
 }
 
 export interface Table {
