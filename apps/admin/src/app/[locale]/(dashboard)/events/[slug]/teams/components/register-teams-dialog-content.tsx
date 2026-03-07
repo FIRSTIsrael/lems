@@ -144,7 +144,9 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                     }
                   >
                     <ListItemText primary={`#${team.number}`} secondary={team.name} />
-                    <Flag region={team.region} size={16} />
+                    <Box sx={{ ml: 1, display: 'flex', alignItems: 'center' }}>
+                      <Flag region={team.region} size={16} />
+                    </Box>
                   </ListItem>
                 ))}
                 {availableTeams.length === 0 && (
