@@ -463,6 +463,33 @@
           "confirm": "ביטול רישום",
           "error": "ביטול רישום הקבוצה נכשל."
         },
+        "edit-teams-dialog": {
+          "title": "בחרו קבוצות לעריכה",
+          "first-team-selected": "בחרו קבוצה נוספת להמשך",
+          "search-placeholder": "חפשו לפי מספר, שם או שיוך...",
+          "no-teams": "אין קבוצות זמינות",
+          "not-registered": "לא רשומה",
+          "actions": {
+            "cancel": "ביטול",
+            "back": "חזרה"
+          }
+        },
+        "edit-teams-preview-modal": {
+          "title": "אישור שינויי קבוצות",
+          "swap-teams": "החלפת קבוצות",
+          "replace-team": "החלפת קבוצה",
+          "before": "לפני",
+          "after": "אחרי",
+          "affected-matches": "{count, plural, =1 {משחק אחד מושפע} other {# משחקים מושפעים}}",
+          "swap-description": "קבוצה #{team1Number} תתחלף עם קבוצה #{team2Number}",
+          "replace-description": "קבוצה #{currentTeamNumber} תוחלף בקבוצה #{newTeamNumber}",
+          "actions": {
+            "cancel": "ביטול",
+            "confirm": "אישור שינויים",
+            "confirming": "שמירת שינויים..."
+          },
+          "error": "שגיאה בעדכון הקבוצות. בואו נסו שוב."
+        },
         "unified": {
           "columns": {
             "division": "בית",
