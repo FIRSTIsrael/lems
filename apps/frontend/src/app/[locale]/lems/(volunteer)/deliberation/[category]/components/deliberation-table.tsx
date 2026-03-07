@@ -131,7 +131,18 @@ export function DeliberationTable() {
             valueGetter: (value, row) => row.rubricFields[label] ?? 0,
             renderCell: params => {
               const value = params.row.rubricFields[label];
-              return value !== null ? value : '-';
+              const notes = params.row.rubricFieldNotes[label];
+              const hasExceedsNote = value === 4 && notes;
+
+              if (value === null) return '-';
+
+              return hasExceedsNote ? (
+                <Tooltip title={notes} arrow placement="top">
+                  <Box sx={{ cursor: 'help' }}>{value}</Box>
+                </Tooltip>
+              ) : (
+                value
+              );
             }
           }) as GridColDef<EnrichedTeam>
       ),

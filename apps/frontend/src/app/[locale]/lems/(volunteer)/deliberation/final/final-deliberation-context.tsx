@@ -9,7 +9,8 @@ import {
   computeRoomMetrics,
   computeTeamScores,
   getGPScores,
-  getOrganizedRubricFields
+  getOrganizedRubricFields,
+  getOrganizedRubricFieldNotes
 } from '../utils';
 import {
   DeliberationAwards,
@@ -208,6 +209,11 @@ export const FinalDeliberationProvider = ({
           'robot-design': getOrganizedRubricFields(team, 'robot-design'),
           'innovation-project': getOrganizedRubricFields(team, 'innovation-project'),
           'core-values': getOrganizedRubricFields(team, 'core-values')
+        },
+        rubricsFieldNotes: {
+          'robot-design': getOrganizedRubricFieldNotes(team, 'robot-design'),
+          'innovation-project': getOrganizedRubricFieldNotes(team, 'innovation-project'),
+          'core-values': getOrganizedRubricFieldNotes(team, 'core-values')
         },
         rubricIds: {
           'robot-design': team.rubrics.robot_design?.id || null,
