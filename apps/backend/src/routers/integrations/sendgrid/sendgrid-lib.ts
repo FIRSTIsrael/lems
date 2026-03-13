@@ -9,6 +9,7 @@ interface EmailAttachment {
 interface SendEmailParams {
   apiKey: string;
   from: string;
+  fromName?: string;
   to: string;
   toName?: string;
   templateId: string;
@@ -20,18 +21,27 @@ export async function sendEmailWithSendGrid(params: SendEmailParams): Promise<vo
   sgMail.setApiKey(params.apiKey);
 
   const mail = {
-    to: {
-      email: params.to,
-      name: params.toName
+    personalizations: [
+      {
+        to: [
+          {
+            email: params.to,
+            name: params.toName
+          }
+        ]
+      }
+    ],
+    from: {
+      email: params.from,
+      name: params.fromName
     },
-    from: params.from,
     templateId: params.templateId,
     dynamicTemplateData: params.dynamicTemplateData,
     attachments: params.attachments?.map(att => ({
       filename: att.filename,
       content: att.content,
       type: att.type,
-      disposition: 'attachment' as const
+      disposition: 'attachment'
     }))
   };
 
@@ -41,6 +51,7 @@ export async function sendEmailWithSendGrid(params: SendEmailParams): Promise<vo
     if (error instanceof Error) {
       throw new Error(`Failed to send email to ${params.to}: ${error.message}`);
     }
+    console.error(error);
     throw error;
   }
 }

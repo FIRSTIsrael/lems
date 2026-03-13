@@ -20,8 +20,9 @@ import {
   ListItemText
 } from '@mui/material';
 import { SendGridSettingsSchema } from '@lems/shared/integrations';
+import { apiFetch } from '@lems/shared/fetch';
+import { useEvent } from '../../../components/event-context';
 import { IntegrationSettingsComponentProps } from './settings-factory';
-
 interface SendGridFormValues {
   templateId: string;
   fromAddress: string;
@@ -35,6 +36,7 @@ export const SendGridSettings: React.FC<IntegrationSettingsComponentProps> = ({
   showErrors = false
 }) => {
   const t = useTranslations('pages.events.integrations.detail-panel.settings.sendgrid');
+  const event = useEvent();
 
   const [formValues, setFormValues] = useState<SendGridFormValues>({
     templateId: '',
@@ -105,22 +107,21 @@ export const SendGridSettings: React.FC<IntegrationSettingsComponentProps> = ({
 
     try {
       const csvContent = await file.text();
-      const eventId = window.location.pathname.split('/')[3];
 
-      const response = await fetch(`/api/integrations/sendgrid/${eventId}/upload-contacts`, {
+      const result = await apiFetch(`/integrations/sendgrid/${event.id}/upload-contacts`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ csvContent })
       });
 
-      if (!response.ok) {
-        const error = await response.json();
-        setCsvError(error.error || t('csv-error-upload-failed'));
+      if (!result.ok) {
+        const error = result.error as string;
+        setCsvError(error || t('csv-error-upload-failed'));
         return;
       }
 
-      const result = await response.json();
-      setCsvSuccess(t('csv-success-contacts-uploaded', { count: result.count }));
+      const data = result.data as { count: number };
+      setCsvSuccess(t('csv-success-contacts-uploaded', { count: data.count }));
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -132,14 +133,13 @@ export const SendGridSettings: React.FC<IntegrationSettingsComponentProps> = ({
   const handleTestEmail = async () => {
     setIsTestingEmail(true);
     try {
-      const eventId = window.location.pathname.split('/')[3];
-      const response = await fetch(`/api/integrations/sendgrid/${eventId}/send-test`, {
+      const { ok, response } = await apiFetch(`/integrations/sendgrid/${event.id}/send-test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formValues)
       });
 
-      if (!response.ok) {
+      if (!ok) {
         const error = await response.json();
         setCsvError(error.error || t('csv-error-send-test-failed'));
         return;

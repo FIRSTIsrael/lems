@@ -1,11 +1,13 @@
-import puppeteer from 'puppeteer';
+import puppeteer, { Browser } from 'puppeteer';
 
 /**
  * TODO: Replace this placeholder with actual scoresheet/rubric PDF generation
  * This should query the database for event results and generate PDFs from templates
+ *
+ * @returns A base64-encoded string of the generated PDF document
  */
-export async function generatePlaceholderPDF(): Promise<Buffer> {
-  let browser;
+export async function generatePlaceholderPDF(): Promise<string> {
+  let browser: Browser | null = null;
   try {
     browser = await puppeteer.launch({
       headless: true,
@@ -14,36 +16,74 @@ export async function generatePlaceholderPDF(): Promise<Buffer> {
 
     const page = await browser.newPage();
 
-    // Generate empty A4 page with basic styling
-    await page.setContent(`
+    // Generate a properly formatted A4 page with basic content
+    await page.setContent(
+      `
       <!DOCTYPE html>
-      <html>
+      <html lang="en">
         <head>
+          <meta charset="UTF-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Document</title>
           <style>
-            body {
+            * {
               margin: 0;
-              padding: 20px;
+              padding: 0;
+              box-sizing: border-box;
+            }
+            body {
               font-family: Arial, sans-serif;
+              padding: 20px;
+              background: white;
+              color: #000;
             }
             .page {
-              width: 210mm;
-              height: 297mm;
+              width: 100%;
+              min-height: 100vh;
               background: white;
+              padding: 20px;
+            }
+            h1 {
+              font-size: 24px;
+              margin-bottom: 10px;
+            }
+            p {
+              font-size: 12px;
+              line-height: 1.6;
+              margin-bottom: 10px;
             }
           </style>
         </head>
         <body>
-          <div class="page"></div>
+          <div class="page">
+            <h1>Event Results</h1>
+            <p>This is a placeholder document generated for event results distribution.</p>
+            <p>Generated: ${new Date().toISOString()}</p>
+          </div>
         </body>
       </html>
-    `);
+    `,
+      {
+        waitUntil: 'networkidle0'
+      }
+    );
 
     const pdf = await page.pdf({
       format: 'A4',
-      margin: { top: 0, right: 0, bottom: 0, left: 0 }
+      margin: { top: 10, right: 10, bottom: 10, left: 10 }
     });
 
-    return pdf || Buffer.alloc(0);
+    if (!pdf || pdf.length === 0) {
+      throw new Error('PDF generation resulted in empty buffer');
+    }
+
+    const base64String = Buffer.from(pdf).toString('base64');
+    return base64String;
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw new Error(
+      `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`
+    );
   } finally {
     if (browser) {
       await browser.close();
