@@ -33,7 +33,7 @@ export async function publishEventResults(options: SendGridPublishOptions) {
   // Decode base64 CSV data
   const csvContent = Buffer.from(emailContactsData as string, 'base64').toString('utf-8');
   const contacts = parse(csvContent, {
-    columns: ['team_number', 'region', 'recipient_name', 'recipient_email'],
+    columns: ['team_number', 'region', 'recipient_email'],
     skip_empty_lines: true,
     from_line: 2 // Skip header row
   });
@@ -57,12 +57,10 @@ export async function publishEventResults(options: SendGridPublishOptions) {
         apiKey,
         from: fromAddress as string,
         to: typedContact.recipient_email?.toString().trim() || '',
-        toName: typedContact.recipient_name?.toString().trim(),
         templateId: templateId as string,
         dynamicTemplateData: {
           eventName: event?.name || 'Event',
           teamNumber,
-          recipientName: typedContact.recipient_name,
           region: typedContact.region
         },
         attachments: [

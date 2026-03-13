@@ -270,10 +270,10 @@ export const SendGridSettings: React.FC<IntegrationSettingsComponentProps> = ({
         </Typography>
         <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'monospace' }}>
           <Typography variant="body2" component="pre" dir="ltr" sx={{ whiteSpace: 'pre-wrap' }}>
-            {`Team Number,Region,Recipient Name,Recipient Email
-1234,North,John Doe,john@example.com
-5678,South,Jane Smith,jane@example.com
-9999,Central,Bob Johnson,bob@example.com`}
+            {`Team Number,Region,Recipient Email
+1234,US,john@example.com
+5678,US,jane@example.com
+9999,US,bob@example.com`}
           </Typography>
         </Paper>
 

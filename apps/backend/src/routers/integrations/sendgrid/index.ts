@@ -31,7 +31,7 @@ router.post(
         typeof csvContent === 'string' ? csvContent : Buffer.from(csvContent).toString('utf-8');
 
       const records = parse(csvText, {
-        columns: ['team_number', 'region', 'recipient_name', 'recipient_email'],
+        columns: ['team_number', 'region', 'recipient_email'],
         skip_empty_lines: true,
         from_line: 2 // Skip header row
       }) as CSVRecord[];
@@ -108,8 +108,7 @@ router.post(
         templateId,
         dynamicTemplateData: {
           eventName: 'Test Event',
-          teamNumber: 0,
-          recipientName: 'Test User'
+          teamNumber: 0
         },
         attachments: [
           {
