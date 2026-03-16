@@ -253,9 +253,11 @@
     "tools": {
       "scorer": {
         "title": "מחשבון ניקוד",
-        "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",
+        "no-equipment-constraint-title": "מגבלת \"ללא מגע ציוד של הקבוצה\":",
         "no-equipment-constraint": "כאשר סמל זה מופיע בפינה השמאלית העליונה של משימה, החוק הבא חל: דגם משימה אינו יכול לקבל נקודות אם הוא נוגע בציוד בסיום המקצה.",
-        "score": "{points} נק'"
+        "score": "{points} נק'",
+        "final-score": "ניקוד סופי",
+        "points": "נקודות"
       },
       "rubrics": {
         "title": "מחווני שיפוט",

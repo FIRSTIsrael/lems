@@ -255,7 +255,9 @@
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",
         "no-equipment-constraint": "When this symbol appears in the top-right corner of a mission, the following constraint is applied: “No equipment may be touching any part of this mission model at the end of the match to score for this mission.”",
-        "score": "{points} pts"
+        "score": "{points} pts",
+        "final-score": "Final Score",
+        "points": "Points"
       },
       "rubrics": {
         "title": "Rubrics",
