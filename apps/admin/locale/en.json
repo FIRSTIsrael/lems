@@ -934,10 +934,21 @@
               "validation-from-address-required": "Valid email required",
               "validation-test-email-required": "Valid email required",
               "csv-error-invalid-format": "Please upload a CSV file",
+              "csv-error-no-valid-emails": "No valid email addresses found in CSV file",
               "csv-error-upload-failed": "Failed to upload contacts",
               "csv-error-send-test-failed": "Failed to send test email",
               "csv-success-contacts-uploaded": "Successfully uploaded {count} email contacts",
-              "csv-success-test-email-sent": "Test email sent successfully to {email}"
+              "csv-success-test-email-sent": "Test email sent successfully to {email}",
+              "csv-success-upload-title": "Contacts Imported Successfully",
+              "csv-summary-successful": "{count} imported",
+              "csv-summary-errors": "{count} errors",
+              "csv-sample-contacts-title": "Sample Contacts",
+              "csv-and-more-contacts": "...and {count} more",
+              "close-button": "Close",
+              "upload-another-csv-button": "Upload Another",
+              "uploaded-contacts-title": "Uploaded Contacts",
+              "uploaded-contacts-description": "{count} contacts uploaded",
+              "replace-contacts-button": "Replace Contacts"
             }
           }
         },

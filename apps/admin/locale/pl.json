@@ -934,10 +934,21 @@
               "validation-from-address-required": "Wymagany prawidłowy e-mail",
               "validation-test-email-required": "Wymagany prawidłowy e-mail",
               "csv-error-invalid-format": "Proszę przesłać plik CSV",
+              "csv-error-no-valid-emails": "Nie znaleziono prawidłowych adresów e-mail w pliku CSV",
               "csv-error-upload-failed": "Nie udało się przesłać kontaktów",
               "csv-error-send-test-failed": "Nie udało się wysłać testową wiadomość e-mail",
               "csv-success-contacts-uploaded": "Pomyślnie przesłano {count} kontaktów e-mail",
-              "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}"
+              "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}",
+              "csv-success-upload-title": "Kontakty zaimportowane pomyślnie",
+              "csv-summary-successful": "{count} zaimportowano",
+              "csv-summary-errors": "{count} błędów",
+              "csv-sample-contacts-title": "Przykładowe kontakty",
+              "csv-and-more-contacts": "...i jeszcze {count}",
+              "close-button": "Zamknij",
+              "upload-another-csv-button": "Prześlij kolejny",
+              "uploaded-contacts-title": "Przesłane kontakty",
+              "uploaded-contacts-description": "Przesłano {count} kontaktów",
+              "replace-contacts-button": "Zastąp kontakty"
             }
           }
         },

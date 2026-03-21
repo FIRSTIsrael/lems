@@ -934,10 +934,21 @@
               "validation-from-address-required": "דוא״ל תקין נדרש",
               "validation-test-email-required": "דוא״ל תקין נדרש",
               "csv-error-invalid-format": "אנא העלה קובץ CSV",
+              "csv-error-no-valid-emails": "לא נמצאו כתובות דוא״ל תקינות בקובץ CSV",
               "csv-error-upload-failed": "העלאת אנשי קשר נכשלה",
               "csv-error-send-test-failed": "שליחת דוא״ל בדיקה נכשלה",
               "csv-success-contacts-uploaded": "העלאת {count} אנשי קשר בדוא״ל בהצלחה",
-              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}"
+              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}",
+              "csv-success-upload-title": "אנשי קשר יובאו בהצלחה",
+              "csv-summary-successful": "{count} יובא",
+              "csv-summary-errors": "{count} שגיאות",
+              "csv-sample-contacts-title": "אנשי קשר לדוגמה",
+              "csv-and-more-contacts": "...ו-{count} נוספים",
+              "close-button": "סגור",
+              "upload-another-csv-button": "העלה עוד",
+              "uploaded-contacts-title": "אנשי קשר שהועלו",
+              "uploaded-contacts-description": "{count} אנשי קשר הועלו",
+              "replace-contacts-button": "החלף אנשי קשר"
             }
           }
         },
