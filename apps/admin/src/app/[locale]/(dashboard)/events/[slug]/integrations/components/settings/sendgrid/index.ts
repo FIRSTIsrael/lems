@@ -1,1 +1,1 @@
-export { SendGridSettings } from './components/sendgrid-settings';
+export { SendGridSettingsPanel } from './components/sendgrid-settings';

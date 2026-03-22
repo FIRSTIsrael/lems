@@ -975,7 +975,9 @@
               "csv-error-upload-failed": "העלאת אנשי קשר נכשלה",
               "csv-error-send-test-failed": "שליחת דוא״ל בדיקה נכשלה",
               "csv-success-contacts-uploaded": "העלאת {count} אנשי קשר בדוא״ל בהצלחה",
-              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}"
+              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}",
+              "deleting": "מוחק...",
+              "delete-error": "המחיקה נכשלה"
             }
           }
         },

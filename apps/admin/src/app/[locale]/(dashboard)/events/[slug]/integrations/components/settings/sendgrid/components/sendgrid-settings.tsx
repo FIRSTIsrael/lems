@@ -11,11 +11,15 @@ import {
   Typography,
   Paper,
   List,
-  ListItem,
-  ListItemText
+  ListItem
 } from '@mui/material';
-import { Info as InfoIcon, Visibility as EyeIcon, CloudUpload as CloudUploadIcon } from '@mui/icons-material';
+import {
+  Info as InfoIcon,
+  Visibility as EyeIcon,
+  CloudUpload as CloudUploadIcon
+} from '@mui/icons-material';
 import { apiFetch } from '@lems/shared/fetch';
+import { Flag } from '@lems/shared';
 import type { SendGridSettings } from '@lems/shared/integrations';
 import { useEvent } from '../../../../../components/event-context';
 import { SendGridProvider, useSendGridContacts } from '../context';
@@ -30,9 +34,6 @@ interface SendGridSettingsProps {
   showErrors?: boolean;
 }
 
-/**
- * Inner component that uses SendGrid context
- */
 const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
   settings,
   onSave,
@@ -78,7 +79,6 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
 
   return (
     <Stack spacing={3} sx={{ py: 2 }}>
-      {/* Settings Section */}
       <Stack>
         <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
           {t('settings-title')}
@@ -95,19 +95,17 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
 
       <Divider />
 
-      {/* Info Alert */}
       <Alert severity="info" icon={<InfoIcon />}>
         <AlertTitle>{t('info-alert-title')}</AlertTitle>
         {t('info-alert-description')}
       </Alert>
 
-      {/* Contacts Section */}
       <Stack>
         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
           {t('contacts-section-title')}
         </Typography>
 
-        {contacts.length === 0 ? (
+        {contacts.length === 0 && (
           <Paper
             variant="outlined"
             sx={{
@@ -128,7 +126,9 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
               {t('upload-contacts-button')}
             </Button>
           </Paper>
-        ) : (
+        )}
+
+        {contacts.length > 0 && (
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ p: 2 }}>
               <Stack spacing={1.5}>
@@ -144,14 +144,10 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
                     <List dense>
                       {contactSample.map(contact => (
                         <ListItem key={contact.team_number} disablePadding>
-                          <ListItemText
-                            primary={`#${contact.team_number} - ${contact.recipient_email}`}
-                            secondary={contact.region}
-                            slotProps={{
-                              primary: { variant: 'body2' },
-                              secondary: { variant: 'caption' }
-                            }}
-                          />
+                          <Stack direction="row" spacing={1}>
+                            <Flag region={contact.region} size={20} />
+                            <Typography variant="body2">{`#${contact.team_number} - ${contact.recipient_email}`}</Typography>
+                          </Stack>
                         </ListItem>
                       ))}
                     </List>
@@ -181,22 +177,13 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
       </Stack>
 
       {/* Modals */}
-      <UploadContactsModal
-        isOpen={uploadModalOpen}
-        onClose={() => setUploadModalOpen(false)}
-      />
-      <ViewAllModal
-        isOpen={viewAllModalOpen}
-        onClose={() => setViewAllModalOpen(false)}
-      />
+      <UploadContactsModal isOpen={uploadModalOpen} onClose={() => setUploadModalOpen(false)} />
+      <ViewAllModal isOpen={viewAllModalOpen} onClose={() => setViewAllModalOpen(false)} />
     </Stack>
   );
 };
 
-/**
- * Main SendGrid Settings component wrapped with provider
- */
-export const SendGridSettingsComponent: React.FC<SendGridSettingsProps> = (props) => {
+export const SendGridSettingsPanel: React.FC<SendGridSettingsProps> = props => {
   const event = useEvent();
   return (
     <SendGridProvider initialSettings={props.settings} eventId={event.id}>
@@ -204,6 +191,3 @@ export const SendGridSettingsComponent: React.FC<SendGridSettingsProps> = (props
     </SendGridProvider>
   );
 };
-
-// Export as SendGridSettings for backward compatibility
-export { SendGridSettingsComponent as SendGridSettings };

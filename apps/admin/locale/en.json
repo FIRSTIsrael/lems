@@ -975,7 +975,9 @@
               "csv-error-upload-failed": "Failed to upload contacts",
               "csv-error-send-test-failed": "Failed to send test email",
               "csv-success-contacts-uploaded": "Successfully uploaded {count} email contacts",
-              "csv-success-test-email-sent": "Test email sent successfully to {email}"
+              "csv-success-test-email-sent": "Test email sent successfully to {email}",
+              "deleting": "Deleting...",
+              "delete-error": "Delete failed"
             }
           }
         },

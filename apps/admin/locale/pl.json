@@ -975,7 +975,9 @@
               "csv-error-upload-failed": "Nie udało się przesłać kontaktów",
               "csv-error-send-test-failed": "Nie udało się wysłać testową wiadomość e-mail",
               "csv-success-contacts-uploaded": "Pomyślnie przesłano {count} kontaktów e-mail",
-              "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}"
+              "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}",
+              "deleting": "usuwanie...",
+              "delete-error": "Usunięcie nie powiodło się"
             }
           }
         },

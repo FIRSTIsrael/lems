@@ -3,7 +3,16 @@
 import { createContext, ReactNode, useState, useCallback, useContext } from 'react';
 import { apiFetch } from '@lems/shared/fetch';
 import { Contact } from './types';
-import { decodeContactsFromBase64 } from './helpers';
+
+const decodeContactsFromBase64 = (base64: string): Contact[] => {
+  try {
+    if (!base64) return [];
+    const json = Buffer.from(base64, 'base64').toString('utf-8');
+    return JSON.parse(json) as Contact[];
+  } catch {
+    return [];
+  }
+};
 
 interface SendGridContextType {
   contacts: Contact[];
@@ -31,9 +40,6 @@ export const SendGridProvider = ({
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
   const [loading, setLoading] = useState(false);
 
-  /**
-   * Delete a single contact via API and update local state
-   */
   const deleteContact = useCallback(
     async (teamNumber: number) => {
       if (!eventId) throw new Error('Event ID not available');
@@ -54,9 +60,6 @@ export const SendGridProvider = ({
     [contacts, eventId]
   );
 
-  /**
-   * Sync contacts from backend (after upload or other changes)
-   */
   const syncContacts = useCallback((newContacts: Contact[]) => {
     setContacts(newContacts);
   }, []);
@@ -68,11 +71,7 @@ export const SendGridProvider = ({
     syncContacts
   };
 
-  return (
-    <SendGridContext.Provider value={value}>
-      {children}
-    </SendGridContext.Provider>
-  );
+  return <SendGridContext.Provider value={value}>{children}</SendGridContext.Provider>;
 };
 
 export function useSendGridContacts() {

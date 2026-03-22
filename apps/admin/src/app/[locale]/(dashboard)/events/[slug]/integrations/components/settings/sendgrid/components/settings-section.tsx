@@ -89,21 +89,20 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   const prevSettingsRef = useRef<string | null>(null);
   const hasInitializedRef = useRef(false);
 
-  // Initialize form state from settings
+  // Initialize form
   useEffect(() => {
     const settingsStr = JSON.stringify(settings);
     if (!hasInitializedRef.current || prevSettingsRef.current !== settingsStr) {
       hasInitializedRef.current = true;
       prevSettingsRef.current = settingsStr;
-      
+
       const newFormValues = {
         templateId: (settings.templateId as string | null) || null,
         fromAddress: (settings.fromAddress as string | null) || null,
         testEmailAddress: (settings.testEmailAddress as string | null) || null,
-        emailContactsData: (settings.emailContactsData as string | undefined)
+        emailContactsData: settings.emailContactsData as string | undefined
       };
-      
-      // Single dispatch call for both state updates
+
       dispatch({ type: 'INITIALIZE', payload: newFormValues });
     }
   }, [settings]);
@@ -114,13 +113,11 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
 
     try {
       const validated = SendGridSettingsSchema.parse(formValues);
-      // Clear any previous errors and save the validated values
       dispatch({ type: 'CLEAR_ERRORS' });
       onSave(validated);
     } catch (error) {
-      // Only set errors on validation failure
       const newErrors: FieldErrors = {};
-      
+
       if (error instanceof Error) {
         const message = error.message;
         if (message.includes('templateId'))
@@ -130,17 +127,14 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
         if (message.includes('testEmailAddress'))
           newErrors.testEmailAddress = t('validation-test-email-required');
       }
-      
+
       dispatch({ type: 'SET_ERRORS', payload: newErrors });
     }
   }, [showErrors, formValues, onSave, t]);
 
-  const handleFieldChange = useCallback(
-    (field: keyof FieldErrors, value: string) => {
-      dispatch({ type: 'UPDATE_FIELD', field, value });
-    },
-    []
-  );
+  const handleFieldChange = useCallback((field: keyof FieldErrors, value: string) => {
+    dispatch({ type: 'UPDATE_FIELD', field, value });
+  }, []);
 
   const handleTestEmail = async () => {
     try {
