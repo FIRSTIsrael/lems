@@ -2,7 +2,7 @@
 
 import { IntegrationType } from '@lems/shared/integrations';
 import { FirstIsraelDashboardSettings } from './first-israel-dashboard-settings';
-import { SendGridSettings } from './sendgrid-settings';
+import { SendGridSettings } from './sendgrid';
 
 /**
  * Props passed to integration settings components
