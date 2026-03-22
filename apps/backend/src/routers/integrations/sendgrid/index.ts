@@ -33,11 +33,6 @@ router.use(
   requirePermission('MANAGE_EVENT_DETAILS')
 );
 
-/**
- * POST /:eventId/upload-contacts
- * Upload and merge email contacts from CSV
- * Returns summary with added, updated, errors, and total count
- */
 router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => {
   try {
     const { csvContent } = req.body;
