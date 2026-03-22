@@ -8,8 +8,23 @@ import db from '../../../lib/database';
 import { sendEmailWithSendGrid } from './sendgrid-lib';
 import { generatePlaceholderPDF } from './placeholder-generator';
 import { CSVRecord } from './types';
+import {
+  Contact,
+  ContactError,
+  mergeContacts,
+  validateContact,
+  decodeContacts,
+  encodeContacts
+} from './contact-utils';
 
 const router = express.Router({ mergeParams: true });
+
+interface UploadSummary {
+  added: Contact[];
+  updated: Contact[];
+  errors: ContactError[];
+  total: number;
+}
 
 router.use(
   '/:eventId',
@@ -40,18 +55,26 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
       return;
     }
 
-    // Validate email format
-    const validRecords = records.filter((record: CSVRecord) => {
-      const email = record.recipient_email?.toString().trim();
-      return email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const contacts: Contact[] = [];
+    const errors: ContactError[] = [];
+
+    records.forEach((record, index) => {
+      const result = validateContact(record, index + 2); // +2: header (1) + 0-indexed (1)
+      if ('rowIndex' in result) {
+        errors.push(result);
+      } else {
+        contacts.push(result);
+      }
     });
 
-    if (validRecords.length === 0) {
-      res.status(400).json({ error: 'No valid email addresses found in CSV' });
+    if (contacts.length === 0) {
+      res.status(400).json({
+        error: 'No valid email addresses found in CSV',
+        errorDetails: errors
+      });
       return;
     }
 
-    // Get current integration and update with base64-encoded CSV data
     const eventId = (req as AdminEventRequest).eventId;
     const integration = await db.integrations.byType(eventId, 'sendgrid').get();
     if (!integration) {
@@ -59,10 +82,11 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
       return;
     }
 
-    // Encode CSV content to base64
-    const emailContactsData = Buffer.from(csvContent).toString('base64');
+    const existingContacts = decodeContacts(integration.settings.emailContactsData as string);
 
-    // Update integration settings with encoded data
+    const { merged, added, updated } = mergeContacts(existingContacts, contacts);
+
+    const emailContactsData = encodeContacts(merged);
     const updatedSettings = {
       ...integration.settings,
       emailContactsData
@@ -70,10 +94,53 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
 
     await db.integrations.byId(integration.pk.toString()).update({ settings: updatedSettings });
 
-    res.json({ count: validRecords.length });
+    const summary: UploadSummary = {
+      added,
+      updated,
+      errors,
+      total: merged.length
+    };
+
+    res.json(summary);
   } catch (error) {
     console.error('Error uploading contacts:', error);
     res.status(500).json({ error: 'Failed to process CSV file' });
+  }
+});
+
+router.delete('/:eventId/contacts/:teamNumber', async (req: AdminEventRequest, res) => {
+  try {
+    const { teamNumber } = req.params;
+    const teamNum = parseInt(String(teamNumber), 10);
+
+    if (isNaN(teamNum)) {
+      res.status(400).json({ error: 'Invalid team number' });
+      return;
+    }
+
+    const eventId = (req as AdminEventRequest).eventId;
+    const integration = await db.integrations.byType(eventId, 'sendgrid').get();
+    if (!integration) {
+      res.status(404).json({ error: 'SendGrid integration not found' });
+      return;
+    }
+
+    const contacts = decodeContacts(integration.settings.emailContactsData as string);
+
+    const filtered = contacts.filter(c => c.team_number !== teamNum);
+
+    const emailContactsData = encodeContacts(filtered);
+    const updatedSettings = {
+      ...integration.settings,
+      emailContactsData
+    };
+
+    await db.integrations.byId(integration.pk.toString()).update({ settings: updatedSettings });
+
+    res.json({ success: true, total: filtered.length });
+  } catch (error) {
+    console.error('Error deleting contact:', error);
+    res.status(500).json({ error: 'Failed to delete contact' });
   }
 });
 

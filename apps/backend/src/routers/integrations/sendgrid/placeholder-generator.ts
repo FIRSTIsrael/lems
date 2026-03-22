@@ -1,9 +1,7 @@
 import puppeteer, { Browser } from 'puppeteer';
 
 /**
- * TODO: Replace this placeholder with actual scoresheet/rubric PDF generation
- * This should query the database for event results and generate PDFs from templates
- *
+ * Generates a placeholder PDF document using Puppeteer. The PDF is formatted as an A4 page with basic content.
  * @returns A base64-encoded string of the generated PDF document
  */
 export async function generatePlaceholderPDF(): Promise<string> {
@@ -16,7 +14,6 @@ export async function generatePlaceholderPDF(): Promise<string> {
 
     const page = await browser.newPage();
 
-    // Generate a properly formatted A4 page with basic content
     await page.setContent(
       `
       <!DOCTYPE html>
