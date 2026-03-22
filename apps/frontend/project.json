@@ -7,7 +7,9 @@
   "targets": {
     "build": {
       "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/frontend"
@@ -25,8 +27,7 @@
       "options": {
         "buildTarget": "frontend:build",
         "port": 4200,
-        "dev": true,
-        "turbo": true
+        "dev": true
       },
       "configurations": {
         "development": {
@@ -40,6 +41,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint"    }
+      "executor": "@nx/eslint:lint"
+    }
   }
 }
