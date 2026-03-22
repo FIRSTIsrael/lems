@@ -8,20 +8,16 @@ import db from '../../../lib/database';
 import { sendEmailWithSendGrid } from './sendgrid-lib';
 import { generatePlaceholderPDF } from './placeholder-generator';
 import { CSVRecord } from './types';
+import {
+  Contact,
+  ContactError,
+  mergeContacts,
+  validateContact,
+  decodeContacts,
+  encodeContacts
+} from './contact-utils';
 
 const router = express.Router({ mergeParams: true });
-
-interface Contact {
-  team_number: number;
-  region: string;
-  recipient_email: string;
-}
-
-interface ContactError {
-  rowIndex: number;
-  field: keyof Contact;
-  message: string;
-}
 
 interface UploadSummary {
   added: Contact[];
@@ -36,112 +32,6 @@ router.use(
   attachEvent(),
   requirePermission('MANAGE_EVENT_DETAILS')
 );
-
-/**
- * Validate email format
- */
-function validateEmail(email: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
-
-/**
- * Decode contacts from base64
- */
-function decodeContacts(base64: string): Contact[] {
-  try {
-    if (!base64) return [];
-    const json = Buffer.from(base64, 'base64').toString('utf-8');
-    return JSON.parse(json) as Contact[];
-  } catch {
-    return [];
-  }
-}
-
-/**
- * Encode contacts to base64
- */
-function encodeContacts(contacts: Contact[]): string {
-  const json = JSON.stringify(contacts);
-  return Buffer.from(json).toString('base64');
-}
-
-/**
- * Validate a single contact record
- */
-function validateContact(record: CSVRecord, rowIndex: number): Contact | ContactError {
-  const teamNumber = parseInt(String(record.team_number || ''), 10);
-  const region = String(record.region || '').trim();
-  const email = String(record.recipient_email || '').trim();
-
-  // Validate team number
-  if (isNaN(teamNumber) || teamNumber <= 0) {
-    return {
-      rowIndex,
-      field: 'team_number',
-      message: 'Team number must be a positive integer'
-    };
-  }
-
-  // Validate region
-  if (!region) {
-    return {
-      rowIndex,
-      field: 'region',
-      message: 'Region is required'
-    };
-  }
-
-  // Validate email
-  if (!email) {
-    return {
-      rowIndex,
-      field: 'recipient_email',
-      message: 'Email address is required'
-    };
-  }
-
-  if (!validateEmail(email)) {
-    return {
-      rowIndex,
-      field: 'recipient_email',
-      message: 'Invalid email address format'
-    };
-  }
-
-  return {
-    team_number: teamNumber,
-    region,
-    recipient_email: email
-  };
-}
-
-/**
- * Merge new contacts with existing, tracking added vs updated
- */
-function mergeContacts(
-  existing: Contact[],
-  incoming: Contact[]
-): { merged: Contact[]; added: Contact[]; updated: Contact[] } {
-  const existingMap = new Map(existing.map(c => [c.team_number, c]));
-  const added: Contact[] = [];
-  const updated: Contact[] = [];
-  const merged = existing.slice();
-
-  incoming.forEach(incomingContact => {
-    if (existingMap.has(incomingContact.team_number)) {
-      const index = merged.findIndex(c => c.team_number === incomingContact.team_number);
-      if (index >= 0) {
-        merged[index] = incomingContact;
-      }
-      updated.push(incomingContact);
-    } else {
-      merged.push(incomingContact);
-      added.push(incomingContact);
-    }
-  });
-
-  return { merged, added, updated };
-}
 
 /**
  * POST /:eventId/upload-contacts
@@ -159,7 +49,6 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
     const csvText =
       typeof csvContent === 'string' ? csvContent : Buffer.from(csvContent).toString('utf-8');
 
-    // Parse CSV
     const records = parse(csvText, {
       columns: ['team_number', 'region', 'recipient_email'],
       skip_empty_lines: true,
@@ -171,7 +60,6 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
       return;
     }
 
-    // Validate each record
     const contacts: Contact[] = [];
     const errors: ContactError[] = [];
 
@@ -192,7 +80,6 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
       return;
     }
 
-    // Get current integration
     const eventId = (req as AdminEventRequest).eventId;
     const integration = await db.integrations.byType(eventId, 'sendgrid').get();
     if (!integration) {
@@ -200,13 +87,10 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
       return;
     }
 
-    // Decode existing contacts
     const existingContacts = decodeContacts(integration.settings.emailContactsData as string);
 
-    // Merge with new contacts
     const { merged, added, updated } = mergeContacts(existingContacts, contacts);
 
-    // Encode and save
     const emailContactsData = encodeContacts(merged);
     const updatedSettings = {
       ...integration.settings,
@@ -215,7 +99,6 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
 
     await db.integrations.byId(integration.pk.toString()).update({ settings: updatedSettings });
 
-    // Return summary
     const summary: UploadSummary = {
       added,
       updated,
@@ -230,10 +113,6 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
   }
 });
 
-/**
- * DELETE /:eventId/contacts/:teamNumber
- * Delete a single contact by team number
- */
 router.delete('/:eventId/contacts/:teamNumber', async (req: AdminEventRequest, res) => {
   try {
     const { teamNumber } = req.params;
@@ -251,13 +130,10 @@ router.delete('/:eventId/contacts/:teamNumber', async (req: AdminEventRequest, r
       return;
     }
 
-    // Decode existing contacts
     const contacts = decodeContacts(integration.settings.emailContactsData as string);
 
-    // Filter out the contact
     const filtered = contacts.filter(c => c.team_number !== teamNum);
 
-    // Encode and save
     const emailContactsData = encodeContacts(filtered);
     const updatedSettings = {
       ...integration.settings,

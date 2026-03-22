@@ -35,7 +35,6 @@ const sendEmailToContact = async (
       throw new Error(`Team ${teamSlug} is not registered in event ${event.id}`);
     }
 
-    // Generate both PDFs in parallel
     const [scoresheetPdf, rubricPdf] = await Promise.all([
       getLemsWebpageAsPdf(`/lems/export/${teamSlug}/${event.slug}/scoresheets`, {
         teamSlug,
@@ -98,7 +97,6 @@ export async function publishEventResults(options: SendGridPublishOptions) {
     throw new Error('No email contacts configured for event');
   }
 
-  // Decode base64 CSV data
   const csvContent = Buffer.from(emailContactsData as string, 'base64').toString('utf-8');
   const contacts = parse(csvContent, {
     columns: ['team_number', 'region', 'recipient_email'],
