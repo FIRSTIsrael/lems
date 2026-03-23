@@ -155,6 +155,7 @@ router.post('/:eventId/send-test', async (req: AdminEventRequest, res) => {
 
     const apiKey = process.env.SENDGRID_API_KEY;
     if (!apiKey) {
+      console.log('SendGrid API key not configured');
       res.status(500).json({ error: 'SendGrid API key not configured' });
       return;
     }

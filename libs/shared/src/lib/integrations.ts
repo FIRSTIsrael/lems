@@ -25,7 +25,8 @@ export const SendGridSettingsSchema = z.object({
     .nullable()
     .default(null)
     .describe('Test recipient email address'),
-  emailContactsData: z.string().optional().describe('Base64-encoded CSV contact data')
+  emailContactsData: z.string().optional().describe('Base64-encoded CSV contact data'),
+  language: z.string().default('en').describe('Language for PDF exports')
 });
 
 export type SendGridSettings = z.infer<typeof SendGridSettingsSchema>;

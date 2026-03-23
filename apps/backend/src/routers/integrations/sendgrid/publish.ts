@@ -15,9 +15,9 @@ const apiKey = process.env.SENDGRID_API_KEY;
 const sendEmailToContact = async (
   event: Event,
   contact: CSVRecord,
-  emailOptions: { templateId: string; fromAddress: string }
+  emailOptions: { templateId: string; fromAddress: string; language: string }
 ) => {
-  const { templateId, fromAddress } = emailOptions;
+  const { templateId, fromAddress, language } = emailOptions;
 
   const teamNumber = parseInt(contact.team_number, 10);
   const region = contact.region?.toString().toUpperCase() || '';
@@ -36,11 +36,11 @@ const sendEmailToContact = async (
     }
 
     const [scoresheetPdf, rubricPdf] = await Promise.all([
-      getLemsWebpageAsPdf(`/lems/export/${teamSlug}/${event.slug}/scoresheets`, {
+      getLemsWebpageAsPdf(`/${language}/lems/export/${teamSlug}/${event.slug}/scoresheets`, {
         teamSlug,
         divsionId: divisionId
       }),
-      getLemsWebpageAsPdf(`/lems/export/${teamSlug}/${event.slug}/rubrics`, {
+      getLemsWebpageAsPdf(`/${language}/lems/export/${teamSlug}/${event.slug}/rubrics`, {
         teamSlug,
         divsionId: divisionId
       })
@@ -88,7 +88,7 @@ export async function publishEventResults(options: SendGridPublishOptions) {
     throw new Error('SendGrid API key not configured');
   }
 
-  const { templateId, fromAddress, emailContactsData } = settings;
+  const { templateId, fromAddress, emailContactsData, language = 'en' } = settings;
   if (!templateId || !fromAddress) {
     throw new Error('SendGrid integration missing required settings');
   }
@@ -116,7 +116,8 @@ export async function publishEventResults(options: SendGridPublishOptions) {
   const emailPromises = contacts.map(contact =>
     sendEmailToContact(event, contact as CSVRecord, {
       templateId: String(templateId),
-      fromAddress: String(fromAddress)
+      fromAddress: String(fromAddress),
+      language: String(language)
     })
   );
 

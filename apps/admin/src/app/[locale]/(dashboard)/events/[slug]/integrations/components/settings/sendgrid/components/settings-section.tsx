@@ -2,13 +2,25 @@
 
 import { useEffect, useRef, useCallback, useReducer } from 'react';
 import { useTranslations } from 'next-intl';
-import { Stack, TextField, Button, CircularProgress } from '@mui/material';
+import toast from 'react-hot-toast';
+import {
+  Stack,
+  TextField,
+  Button,
+  CircularProgress,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel
+} from '@mui/material';
+import { Locales, Locale } from '@lems/localization';
 import { SendGridSettingsSchema, SendGridSettings } from '@lems/shared/integrations';
 
 type FieldErrors = {
   templateId?: string;
   fromAddress?: string;
   testEmailAddress?: string;
+  language?: string;
 };
 
 type FormState = {
@@ -34,7 +46,7 @@ function formReducer(state: FormState, action: FormAction): FormState {
         ...state,
         formValues: {
           ...state.formValues,
-          [action.field]: action.value || null
+          [action.field]: action.field === 'language' ? action.value : (action.value || null)
         },
         errors: {
           ...state.errors,
@@ -79,7 +91,8 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
     formValues: {
       templateId: null,
       fromAddress: null,
-      testEmailAddress: null
+      testEmailAddress: null,
+      language: 'en'
     },
     errors: {}
   };
@@ -100,7 +113,8 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
         templateId: (settings.templateId as string | null) || null,
         fromAddress: (settings.fromAddress as string | null) || null,
         testEmailAddress: (settings.testEmailAddress as string | null) || null,
-        emailContactsData: settings.emailContactsData as string | undefined
+        emailContactsData: settings.emailContactsData as string | undefined,
+        language: ((settings.language as Locale) || 'en') as Locale
       };
 
       dispatch({ type: 'INITIALIZE', payload: newFormValues });
@@ -139,8 +153,10 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
   const handleTestEmail = async () => {
     try {
       await onTestEmail(formValues);
-    } catch {
-      // Error handling is done in parent component
+      toast.success(t('csv-success-test-email-sent', { email: formValues.testEmailAddress || '' }));
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : t('csv-error-send-test-failed');
+      toast.error(errorMessage);
     }
   };
 
@@ -194,6 +210,24 @@ export const SettingsSection: React.FC<SettingsSectionProps> = ({
           }
           size="small"
         />
+      </Stack>
+
+      <Stack spacing={1}>
+        <FormControl fullWidth size="small">
+          <InputLabel>{t('language-label')}</InputLabel>
+          <Select
+            value={formValues.language || undefined}
+            label={t('language-label')}
+            onChange={e => handleFieldChange('language', e.target.value)}
+            disabled={isLoading}
+          >
+            {Object.entries(Locales).map(([localeKey, localeData]) => (
+              <MenuItem key={localeKey} value={localeKey}>
+                {localeData.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Stack>
 
       <Button

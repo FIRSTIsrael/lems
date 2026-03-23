@@ -977,7 +977,9 @@
               "csv-success-contacts-uploaded": "Pomyślnie przesłano {count} kontaktów e-mail",
               "csv-success-test-email-sent": "Testowa wiadomość e-mail została wysłana pomyślnie na adres {email}",
               "deleting": "usuwanie...",
-              "delete-error": "Usunięcie nie powiodło się"
+              "delete-error": "Usunięcie nie powiodło się",
+              "language-label": "Język eksportu PDF",
+              "language-help": "Język używany dla arkuszy wyników i kryteriów oceny w formacie PDF"
             }
           }
         },

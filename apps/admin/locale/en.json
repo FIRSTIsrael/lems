@@ -977,7 +977,9 @@
               "csv-success-contacts-uploaded": "Successfully uploaded {count} email contacts",
               "csv-success-test-email-sent": "Test email sent successfully to {email}",
               "deleting": "Deleting...",
-              "delete-error": "Delete failed"
+              "delete-error": "Delete failed",
+              "language-label": "PDF Export Language",
+              "language-help": "Language used for PDF scoresheets and rubrics"
             }
           }
         },

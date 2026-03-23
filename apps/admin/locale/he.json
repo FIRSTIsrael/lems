@@ -977,7 +977,9 @@
               "csv-success-contacts-uploaded": "העלאת {count} אנשי קשר בדוא״ל בהצלחה",
               "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}",
               "deleting": "מוחק...",
-              "delete-error": "המחיקה נכשלה"
+              "delete-error": "המחיקה נכשלה",
+              "language-label": "שפת ייצוא PDF",
+              "language-help": "השפה המשמשת ליצירת גיליונות ניקוד וקריטריונים בפורמט PDF"
             }
           }
         },
