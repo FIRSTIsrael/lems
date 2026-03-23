@@ -1,6 +1,6 @@
 import express, { Response } from 'express';
 import { FirstIsraelDashboardEventRequest } from '../../../../../../types/express';
-import { getLemsWebpageAsPdf } from './util';
+import { getLemsWebpageAsPdf } from '../../../../export';
 
 const router = express.Router({ mergeParams: true });
 
