@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { KeyedMutator } from 'swr';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Box, Card, CardContent, Typography, Button, Divider, Stack } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -24,6 +24,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
 }) => {
   const t = useTranslations('pages.events.settings');
   const event = useEvent();
+  const locale = useLocale();
 
   const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
@@ -72,10 +73,13 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
     setAlert(null);
     setIsDownloadLoading(true);
     try {
-      const response = await apiFetch(`/admin/events/${event.id}/settings/download`, {
-        method: 'POST',
-        responseType: 'binary'
-      });
+      const response = await apiFetch(
+        `/admin/events/${event.id}/settings/download?language=${locale}`,
+        {
+          method: 'POST',
+          responseType: 'binary'
+        }
+      );
 
       if (response.ok) {
         const blob = response.data as Blob;
