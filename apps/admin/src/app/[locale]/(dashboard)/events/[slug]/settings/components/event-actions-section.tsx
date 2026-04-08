@@ -28,6 +28,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
   const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [isDownloadLoading, setIsDownloadLoading] = useState(false);
 
   const handleCompleteEvent = async () => {
     setAlert(null);
@@ -69,6 +70,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
 
   const handleDownloadResults = async () => {
     setAlert(null);
+    setIsDownloadLoading(true);
     try {
       const response = await apiFetch(`/admin/events/${event.id}/settings/download`, {
         method: 'POST',
@@ -93,6 +95,8 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
       }
     } catch {
       setAlert({ type: 'error', message: t('messages.download-error') });
+    } finally {
+      setIsDownloadLoading(false);
     }
   };
 
@@ -165,6 +169,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                   disabled={!settings.published}
                   onClick={() => setDownloadDialogOpen(true)}
                   sx={{ minWidth: 160 }}
+                  loading={isDownloadLoading}
                 >
                   {t('event-actions.download-results')}
                 </Button>
