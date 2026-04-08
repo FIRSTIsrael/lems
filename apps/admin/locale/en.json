@@ -665,7 +665,7 @@
             "title": "Download Event Results",
             "message": "Download results as a ZIP file? This will include rubrics and scoresheets for all teams registered in this event.",
             "event-name": "Event: {eventName}",
-            "info": "The ZIP file will be organized by team slug (e.g., 841-IL) with PDFs inside each folder.",
+            "info": "The ZIP file will be organized by team slug (e.g.,9999-IL) with PDFs inside each folder.",
             "confirm": "Download",
             "cancel": "Cancel",
             "downloading": "Downloading..."
