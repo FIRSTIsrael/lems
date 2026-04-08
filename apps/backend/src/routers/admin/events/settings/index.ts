@@ -77,25 +77,47 @@ router.post('/download', async (req: AdminEventRequest, res) => {
     }
 
     const language = (req.query.language as string) || 'en';
+    console.info(
+      `Starting results ZIP generation for event ${req.eventId} (language: ${language})`
+    );
+
     const { archive, fileName, statistics } = await generateEventResultsZip(req.eventId, language);
 
+    if (statistics.teamsWithPdfs === 0) {
+      console.error(
+        `CRITICAL: Event ${req.eventId} generated an empty ZIP with 0 successful PDFs. ` +
+          `Total teams: ${statistics.totalTeams}, Failed PDFs: ${statistics.failedPdfs}. ` +
+          `Check backend logs for PDF generation errors.`
+      );
+      res.status(500).json({
+        error:
+          'Failed to generate results: no PDFs were created. Check that all event teams have completed all scoring and that the system has necessary permissions.'
+      });
+      return;
+    }
+
     console.info(
-      `Generating results ZIP for event ${req.eventId}: ${statistics.totalTeams} total teams, ${statistics.teamsWithPdfs} with PDFs, ${statistics.failedPdfs} failed`
+      `Results ZIP ready for download: ${fileName} ` +
+        `(${statistics.teamsWithPdfs}/${statistics.totalTeams} teams with PDFs, ${statistics.failedPdfs} failed PDFs)`
     );
 
     res.attachment(fileName);
     res.setHeader('Content-Type', 'application/zip');
 
     archive.on('error', err => {
-      console.error('Archive error:', err);
-      res.status(500).json({ error: 'Failed to generate ZIP file' });
+      console.error(`Archive error while generating ${fileName}:`, err);
+      // Note: Cannot send JSON response here - headers already sent
     });
 
     archive.pipe(res);
     await archive.finalize();
   } catch (error) {
-    console.error('Error downloading event results:', error);
-    res.status(500).json({ error: 'Failed to download event results' });
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(
+      `Error downloading event results for event ${req.eventId}: ${errorMessage}`,
+      error
+    );
+    res.status(500).json({ error: `Failed to download event results: ${errorMessage}` });
   }
 });
 

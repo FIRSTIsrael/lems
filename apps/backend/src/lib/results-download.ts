@@ -38,7 +38,9 @@ const createPdfTask = (
       teamSlug,
       divsionId: divisionId
     }).catch(error => {
-      console.warn(`Failed to generate ${pdfType} PDF for ${teamSlug}:`, error);
+      console.warn(
+        `Failed to generate ${pdfType} PDF for ${teamSlug} (event: ${eventSlug}): ${error instanceof Error ? error.message : String(error)}`
+      );
       return null;
     })
   };
@@ -80,6 +82,10 @@ const collectPdfTasks = async (
     }
   }
 
+  if (totalTeams === 0) {
+    throw new Error('No teams found for event - cannot generate results');
+  }
+
   return { tasks, totalTeams };
 };
 
@@ -115,7 +121,7 @@ export async function generateEventResultsZip(
   // Wait for all PDFs to generate in parallel
   const pdfResults = await Promise.all(pdfTasks.map(task => task.promise));
 
-  const failedPdfs = pdfTasks.filter(task => task !== null).length;
+  const failedPdfs = pdfResults.filter(result => result === null).length;
 
   // Group PDFs by team and add to archive
   const teamsWithResults = new Set<string>();
@@ -134,6 +140,19 @@ export async function generateEventResultsZip(
   }
 
   const teamsWithPdfs = teamsWithResults.size;
+
+  // Log detailed statistics for diagnostics
+  const successCount = (pdfTasks.length - failedPdfs) / 2; // Each team has 2 PDFs
+  console.info(
+    `PDF Generation Summary: ${successCount}/${totalTeams} teams with PDFs, ${failedPdfs}/${pdfTasks.length} PDF tasks failed`
+  );
+
+  if (teamsWithPdfs === 0) {
+    console.error(
+      `ERROR: No PDFs were successfully generated for event '${event.name}'. This will result in an empty ZIP file. ` +
+        `Check that the export page is working and LEMS_DOMAIN environment variable is set correctly.`
+    );
+  }
 
   return {
     archive,
