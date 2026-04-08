@@ -1,79 +1,106 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import { KeyedMutator } from "swr";
-import { useTranslations } from "next-intl";
-import {
-  Box,
-  Card,
-  CardContent,
-  Typography,
-  Button,
-  Divider,
-  Stack,
-} from "@mui/material";
-import { EventSettings } from "@lems/types/api/admin";
-import { apiFetch } from "@lems/shared";
-import { useEvent } from "../../components/event-context";
-import { CompleteEventDialog } from "./complete-event-dialog";
-import { PublishEventDialog } from "./publish-event-dialog";
+import React, { useState } from 'react';
+import { KeyedMutator } from 'swr';
+import { useLocale, useTranslations } from 'next-intl';
+import { Box, Card, CardContent, Typography, Button, Divider, Stack } from '@mui/material';
+import { EventSettings } from '@lems/types/api/admin';
+import { apiFetch } from '@lems/shared';
+import { useEvent } from '../../components/event-context';
+import { CompleteEventDialog } from './complete-event-dialog';
+import { PublishEventDialog } from './publish-event-dialog';
+import { DownloadResultsDialog } from './download-results-dialog';
 
 interface EventActionsSectionProps {
   settings: EventSettings;
   mutateSettings: KeyedMutator<EventSettings>;
-  setAlert: (
-    alert: { type: "success" | "error"; message: string } | null
-  ) => void;
+  setAlert: (alert: { type: 'success' | 'error'; message: string } | null) => void;
 }
 
 export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
   settings,
   mutateSettings,
-  setAlert,
+  setAlert
 }) => {
-  const t = useTranslations("pages.events.settings");
+  const t = useTranslations('pages.events.settings');
   const event = useEvent();
+  const locale = useLocale();
 
   const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [isDownloadLoading, setIsDownloadLoading] = useState(false);
 
   const handleCompleteEvent = async () => {
     setAlert(null);
     try {
-      const response = await apiFetch(
-        `/admin/events/${event.id}/settings/complete`,
-        { method: "POST" }
-      );
+      const response = await apiFetch(`/admin/events/${event.id}/settings/complete`, {
+        method: 'POST'
+      });
 
       if (response.ok) {
         await mutateSettings();
-        setAlert({ type: "success", message: t("messages.complete-success") });
+        setAlert({ type: 'success', message: t('messages.complete-success') });
         setCompleteDialogOpen(false);
       } else {
-        setAlert({ type: "error", message: t("messages.complete-error") });
+        setAlert({ type: 'error', message: t('messages.complete-error') });
       }
     } catch {
-      setAlert({ type: "error", message: t("messages.complete-error") });
+      setAlert({ type: 'error', message: t('messages.complete-error') });
     }
   };
 
   const handlePublishEvent = async () => {
     setAlert(null);
     try {
-      const response = await apiFetch(
-        `/admin/events/${event.id}/settings/publish`,
-        { method: "POST" }
-      );
+      const response = await apiFetch(`/admin/events/${event.id}/settings/publish`, {
+        method: 'POST'
+      });
 
       if (response.ok) {
         await mutateSettings();
-        setAlert({ type: "success", message: t("messages.publish-success") });
+        setAlert({ type: 'success', message: t('messages.publish-success') });
         setPublishDialogOpen(false);
       } else {
-        setAlert({ type: "error", message: t("messages.publish-error") });
+        setAlert({ type: 'error', message: t('messages.publish-error') });
       }
     } catch {
-      setAlert({ type: "error", message: t("messages.publish-error") });
+      setAlert({ type: 'error', message: t('messages.publish-error') });
+    }
+  };
+
+  const handleDownloadResults = async () => {
+    setAlert(null);
+    setIsDownloadLoading(true);
+    try {
+      const response = await apiFetch(
+        `/admin/events/${event.id}/settings/download?language=${locale}`,
+        {
+          method: 'POST',
+          responseType: 'binary'
+        }
+      );
+
+      if (response.ok) {
+        const blob = response.data as Blob;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${event.name.replace(/\s+/g, '_')}-results.zip`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        setAlert({ type: 'success', message: t('messages.download-success') });
+        setDownloadDialogOpen(false);
+      } else {
+        setAlert({ type: 'error', message: t('messages.download-error') });
+      }
+    } catch {
+      setAlert({ type: 'error', message: t('messages.download-error') });
+    } finally {
+      setIsDownloadLoading(false);
     }
   };
 
@@ -82,7 +109,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
       <Card>
         <CardContent>
           <Typography variant="h6" gutterBottom>
-            {t("event-actions.title")}
+            {t('event-actions.title')}
           </Typography>
 
           <Stack spacing={3} sx={{ mt: 3 }}>
@@ -95,15 +122,15 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                   onClick={() => setCompleteDialogOpen(true)}
                   sx={{ minWidth: 160 }}
                 >
-                  {t("event-actions.complete-event")}
+                  {t('event-actions.complete-event')}
                 </Button>
                 <Box>
                   <Typography variant="body2">
-                    {t("event-actions.complete-event-description")}
+                    {t('event-actions.complete-event-description')}
                   </Typography>
                   {settings.completed && (
                     <Typography variant="caption" color="text.secondary">
-                      {t("event-actions.already-completed")}
+                      {t('event-actions.already-completed')}
                     </Typography>
                   )}
                 </Box>
@@ -121,15 +148,42 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                   onClick={() => setPublishDialogOpen(true)}
                   sx={{ minWidth: 160 }}
                 >
-                  {t("event-actions.publish-event")}
+                  {t('event-actions.publish-event')}
                 </Button>
                 <Box>
                   <Typography variant="body2">
-                    {t("event-actions.publish-event-description")}
+                    {t('event-actions.publish-event-description')}
                   </Typography>
                   {settings.published && (
                     <Typography variant="caption" color="text.secondary">
-                      {t("event-actions.already-published")}
+                      {t('event-actions.already-published')}
+                    </Typography>
+                  )}
+                </Box>
+              </Stack>
+            </Box>
+
+            <Divider />
+
+            <Box>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  disabled={!settings.published}
+                  onClick={() => setDownloadDialogOpen(true)}
+                  sx={{ minWidth: 160 }}
+                  loading={isDownloadLoading}
+                >
+                  {t('event-actions.download-results')}
+                </Button>
+                <Box>
+                  <Typography variant="body2">
+                    {t('event-actions.download-results-description')}
+                  </Typography>
+                  {!settings.published && (
+                    <Typography variant="caption" color="text.secondary">
+                      {t('event-actions.not-published')}
                     </Typography>
                   )}
                 </Box>
@@ -150,6 +204,13 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
         open={publishDialogOpen}
         onClose={() => setPublishDialogOpen(false)}
         onConfirm={handlePublishEvent}
+        eventName={event.name}
+      />
+
+      <DownloadResultsDialog
+        open={downloadDialogOpen}
+        onClose={() => setDownloadDialogOpen(false)}
+        onConfirm={handleDownloadResults}
         eventName={event.name}
       />
     </>

@@ -632,8 +632,11 @@
           "complete-event-description": "Mark this event as completed. Event results can no longer be modified.",
           "publish-event": "Publish Event",
           "publish-event-description": "Make event results public and allow the public to view them.",
+          "download-results": "Download Results",
+          "download-results-description": "Download a ZIP file containing rubrics and scoresheets for all teams.",
           "already-completed": "Event is already completed",
-          "already-published": "Event is already published"
+          "already-published": "Event is already published",
+          "not-published": "Event must be published first"
         },
         "danger-zone": {
           "title": "Danger Zone",
@@ -657,6 +660,15 @@
             "confirm": "Publish Event",
             "cancel": "Cancel",
             "publishing": "Publishing..."
+          },
+          "download-results": {
+            "title": "Download Event Results",
+            "message": "Download results as a ZIP file? This will include rubrics and scoresheets for all teams registered in this event.",
+            "event-name": "Event: {eventName}",
+            "info": "The ZIP file will be organized by team slug (e.g.,9999-IL) with PDFs inside each folder.",
+            "confirm": "Download",
+            "cancel": "Cancel",
+            "downloading": "Downloading..."
           }
         },
         "messages": {
@@ -666,6 +678,8 @@
           "complete-error": "Failed to complete event",
           "publish-success": "Event published successfully",
           "publish-error": "Failed to publish event",
+          "download-success": "Event results downloaded successfully",
+          "download-error": "Failed to download event results",
           "load-error": "Failed to load event settings"
         }
       },

@@ -632,8 +632,11 @@
           "complete-event-description": "Oznacz wydarzenie jako zakończone. Wyników nie będzie można już modyfikować.",
           "publish-event": "Opublikuj wydarzenie",
           "publish-event-description": "Udostępnij wyniki publicznie.",
+          "download-results": "Pobierz wyniki",
+          "download-results-description": "Pobierz plik ZIP zawierający rubryki i karty oceny dla wszystkich drużyn.",
           "already-completed": "Wydarzenie jest już zakończone",
-          "already-published": "Wydarzenie jest już opublikowane"
+          "already-published": "Wydarzenie jest już opublikowane",
+          "not-published": "Wydarzenie musi zostać najpierw opublikowane"
         },
         "danger-zone": {
           "title": "Strefa ryzyka",
@@ -657,6 +660,15 @@
             "confirm": "Opublikuj wydarzenie",
             "cancel": "Anuluj",
             "publishing": "Publikowanie..."
+          },
+          "download-results": {
+            "title": "Pobierz wyniki wydarzenia",
+            "message": "Pobrać wyniki jako plik ZIP? Będzie zawierać rubryki i karty oceny dla wszystkich drużyn zarejestrowanych w tym wydarzeniu.",
+            "event-name": "Wydarzenie: {eventName}",
+            "info": "Plik ZIP będzie zorganizowany według identyfikatora drużyny (np. 9999-IL) z plikami PDF w każdym folderze.",
+            "confirm": "Pobierz",
+            "cancel": "Anuluj",
+            "downloading": "Pobieranie..."
           }
         },
         "messages": {
@@ -666,6 +678,8 @@
           "complete-error": "Nie udało się zakończyć wydarzenia",
           "publish-success": "Wydarzenie opublikowano pomyślnie",
           "publish-error": "Nie udało się opublikować wydarzenia",
+          "download-success": "Wyniki wydarzenia pobrano pomyślnie",
+          "download-error": "Nie udało się pobrać wyników wydarzenia",
           "load-error": "Nie udało się wczytać ustawień wydarzenia"
         }
       },
