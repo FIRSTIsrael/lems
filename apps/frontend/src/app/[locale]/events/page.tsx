@@ -6,6 +6,7 @@ import { Box, Container, Typography, Stack, Button } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { Event } from '@lems/types/api/lems';
+import { RichText } from '@lems/localization';
 import { EventCard } from '../components/homepage/event-card';
 import { GET_EVENTS_QUERY, HomepageEvent } from '../components/homepage/graphql';
 
@@ -63,7 +64,7 @@ export default function BrowseEventsPage() {
               maxWidth: '600px'
             }}
           >
-            {t('description')}
+            <RichText>{tags => t.rich('description', tags)}</RichText>
           </Typography>
         </Box>
 
