@@ -11,44 +11,45 @@ export interface DownloadResults {
   };
 }
 
-interface PdfTask {
-  teamSlug: string;
-  teamFolderPath: string;
-  pdfType: 'rubrics' | 'scoresheets';
-  promise: Promise<Buffer | null>;
-  success: boolean;
-}
-
 interface TeamBatchInfo {
-  teams: Array<{ teamSlug: string; teamFolderPath: string; divisionId: string }>;
-  tasks: PdfTask[];
+  teams: Array<{
+    teamSlug: string;
+    teamFolderPath: string;
+    divisionId: string;
+    eventSlug: string;
+  }>;
 }
 
-const createPdfTask = (
+/**
+ * Generates a single PDF for a team.
+ * Serializes PDF generation to prevent browser context timeouts.
+ */
+const generateSinglePdf = async (
   teamSlug: string,
-  teamFolderPath: string,
   pdfType: 'rubrics' | 'scoresheets',
   eventSlug: string,
   language: string,
   divisionId: string
-): PdfTask => {
+): Promise<Buffer | null> => {
   const pdfPath = pdfType === 'rubrics' ? 'rubrics' : 'scoresheets';
 
-  return {
-    teamSlug,
-    teamFolderPath,
-    pdfType,
-    success: false,
-    promise: getLemsWebpageAsPdf(`/${language}/lems/export/${teamSlug}/${eventSlug}/${pdfPath}`, {
-      teamSlug,
-      divsionId: divisionId
-    }).catch(error => {
-      console.warn(
-        `Failed to generate ${pdfType} PDF for ${teamSlug} (event: ${eventSlug}): ${error instanceof Error ? error.message : String(error)}`
-      );
-      return null;
-    })
-  };
+  try {
+    console.info(`Generating ${pdfType} PDF for ${teamSlug}...`);
+    const buffer = await getLemsWebpageAsPdf(
+      `/${language}/lems/export/${teamSlug}/${eventSlug}/${pdfPath}`,
+      {
+        teamSlug,
+        divsionId: divisionId
+      }
+    );
+    console.info(`✓ Generated ${pdfType} PDF for ${teamSlug}`);
+    return buffer;
+  } catch (error) {
+    console.warn(
+      `Failed to generate ${pdfType} PDF for ${teamSlug} (event: ${eventSlug}): ${error instanceof Error ? error.message : String(error)}`
+    );
+    return null;
+  }
 };
 
 /**
@@ -59,7 +60,6 @@ async function* getTeamResults(
   eventId: string,
   eventName: string,
   eventSlug: string,
-  language: string,
   batchSize: number = 10
 ): AsyncGenerator<TeamBatchInfo> {
   const divisions = await db.divisions.byEventId(eventId).getAll();
@@ -69,7 +69,6 @@ async function* getTeamResults(
 
   const folderName = `${eventName} Results`;
   let currentBatch: TeamBatchInfo['teams'] = [];
-  let currentBatchTasks: PdfTask[] = [];
   let teamCount = 0;
 
   // Collect teams from all divisions and process in batches
@@ -81,23 +80,12 @@ async function* getTeamResults(
       const teamSlug = `${team.region.toUpperCase()}-${team.number}`;
       const teamFolderPath = `${folderName}/${teamSlug}`;
 
-      currentBatch.push({ teamSlug, teamFolderPath, divisionId: division.id });
-
-      // Queue rubrics PDF generation
-      currentBatchTasks.push(
-        createPdfTask(teamSlug, teamFolderPath, 'rubrics', eventSlug, language, division.id)
-      );
-
-      // Queue scoresheets PDF generation
-      currentBatchTasks.push(
-        createPdfTask(teamSlug, teamFolderPath, 'scoresheets', eventSlug, language, division.id)
-      );
+      currentBatch.push({ teamSlug, teamFolderPath, divisionId: division.id, eventSlug });
 
       // Yield batch when it reaches batchSize
       if (currentBatch.length === batchSize) {
-        yield { teams: currentBatch, tasks: currentBatchTasks };
+        yield { teams: currentBatch };
         currentBatch = [];
-        currentBatchTasks = [];
       }
     }
   }
@@ -108,7 +96,7 @@ async function* getTeamResults(
 
   // Yield remaining batch
   if (currentBatch.length > 0) {
-    yield { teams: currentBatch, tasks: currentBatchTasks };
+    yield { teams: currentBatch };
   }
 }
 
@@ -133,28 +121,46 @@ async function getZippedResults(
   let failedPdfs = 0;
   let batchNumber = 0;
 
-  for await (const batch of getTeamResults(eventId, eventName, eventSlug, language, batchSize)) {
+  for await (const batch of getTeamResults(eventId, eventName, eventSlug, batchSize)) {
     batchNumber++;
     totalTeams += batch.teams.length;
 
-    console.info(
-      `Processing batch ${batchNumber} (${batch.teams.length} teams, ${batch.tasks.length} PDFs)...`
-    );
+    console.info(`Processing batch ${batchNumber} (${batch.teams.length} teams)...`);
 
-    // Wait for all PDFs in this batch to generate in parallel
-    const pdfResults = await Promise.all(batch.tasks.map(task => task.promise));
+    // Process PDFs sequentially to prevent browser context timeouts
+    for (const team of batch.teams) {
+      // Generate rubrics PDF
+      const rubricsBuffer = await generateSinglePdf(
+        team.teamSlug,
+        'rubrics',
+        team.eventSlug,
+        language,
+        team.divisionId
+      );
 
-    // Add successful PDFs to archive and track results
-    for (let i = 0; i < batch.tasks.length; i++) {
-      const task = batch.tasks[i];
-      const pdfBuffer = pdfResults[i];
-
-      if (pdfBuffer) {
-        const fileName = task.pdfType === 'rubrics' ? 'rubrics.pdf' : 'scoresheets.pdf';
-        archive.append(pdfBuffer, {
-          name: `${task.teamFolderPath}/${fileName}`
+      if (rubricsBuffer) {
+        archive.append(rubricsBuffer, {
+          name: `${team.teamFolderPath}/rubrics.pdf`
         });
-        teamsWithResults.add(task.teamSlug);
+        teamsWithResults.add(team.teamSlug);
+      } else {
+        failedPdfs++;
+      }
+
+      // Generate scoresheets PDF
+      const scoresheetBuffer = await generateSinglePdf(
+        team.teamSlug,
+        'scoresheets',
+        team.eventSlug,
+        language,
+        team.divisionId
+      );
+
+      if (scoresheetBuffer) {
+        archive.append(scoresheetBuffer, {
+          name: `${team.teamFolderPath}/scoresheets.pdf`
+        });
+        teamsWithResults.add(team.teamSlug);
       } else {
         failedPdfs++;
       }

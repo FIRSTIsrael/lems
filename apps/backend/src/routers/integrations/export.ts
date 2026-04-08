@@ -34,7 +34,8 @@ class BrowserManager {
     if (!this.initializationPromise) {
       const launchConfig: Parameters<typeof puppeteer.launch>[0] = {
         headless: true,
-        args: BrowserManager.PUPPETEER_ARGS
+        args: BrowserManager.PUPPETEER_ARGS,
+        protocolTimeout: 60000 // 60s timeout for protocol operations like createBrowserContext
       };
 
       // Use the executable path from environment variable if set (useful in Docker)
