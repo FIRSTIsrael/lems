@@ -90,8 +90,7 @@ router.post('/download', async (req: AdminEventRequest, res) => {
           `Check backend logs for PDF generation errors.`
       );
       res.status(500).json({
-        error:
-          'Failed to generate results: no PDFs were created. Check that all event teams have completed all scoring and that the system has necessary permissions.'
+        error: 'Failed to generate results: no PDFs were created.'
       });
       return;
     }

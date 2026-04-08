@@ -20,10 +20,6 @@ interface TeamBatchInfo {
   }>;
 }
 
-/**
- * Generates a single PDF for a team.
- * Serializes PDF generation to prevent browser context timeouts.
- */
 const generateSinglePdf = async (
   teamSlug: string,
   pdfType: 'rubrics' | 'scoresheets',
@@ -31,12 +27,10 @@ const generateSinglePdf = async (
   language: string,
   divisionId: string
 ): Promise<Buffer | null> => {
-  const pdfPath = pdfType === 'rubrics' ? 'rubrics' : 'scoresheets';
-
   try {
     console.info(`Generating ${pdfType} PDF for ${teamSlug}...`);
     const buffer = await getLemsWebpageAsPdf(
-      `/${language}/lems/export/${teamSlug}/${eventSlug}/${pdfPath}`,
+      `/${language}/lems/export/${teamSlug}/${eventSlug}/${pdfType}`,
       {
         teamSlug,
         divsionId: divisionId
@@ -71,7 +65,6 @@ async function* getTeamResults(
   let currentBatch: TeamBatchInfo['teams'] = [];
   let teamCount = 0;
 
-  // Collect teams from all divisions and process in batches
   for (const division of divisions) {
     const teams = await db.teams.byDivisionId(division.id).getAll();
 
@@ -82,7 +75,6 @@ async function* getTeamResults(
 
       currentBatch.push({ teamSlug, teamFolderPath, divisionId: division.id, eventSlug });
 
-      // Yield batch when it reaches batchSize
       if (currentBatch.length === batchSize) {
         yield { teams: currentBatch };
         currentBatch = [];
@@ -101,8 +93,8 @@ async function* getTeamResults(
 }
 
 /**
- * Processes PDF batches sequentially, appending them to archive to manage memory.
- * Returns statistics about the generation process.
+ * Processes PDF batches sequentially.
+ * @returns statistics about the generation process.
  */
 async function getZippedResults(
   eventId: string,
@@ -127,9 +119,7 @@ async function getZippedResults(
 
     console.info(`Processing batch ${batchNumber} (${batch.teams.length} teams)...`);
 
-    // Process PDFs sequentially to prevent browser context timeouts
     for (const team of batch.teams) {
-      // Generate rubrics PDF
       const rubricsBuffer = await generateSinglePdf(
         team.teamSlug,
         'rubrics',
@@ -147,7 +137,6 @@ async function getZippedResults(
         failedPdfs++;
       }
 
-      // Generate scoresheets PDF
       const scoresheetBuffer = await generateSinglePdf(
         team.teamSlug,
         'scoresheets',
@@ -174,7 +163,6 @@ async function getZippedResults(
 
   const teamsWithPdfs = teamsWithResults.size;
 
-  // Log detailed statistics for diagnostics
   const successCount = (totalTeams * 2 - failedPdfs) / 2; // Each team has 2 PDFs
   console.info(
     `PDF Generation Complete: ${successCount}/${totalTeams} teams with PDFs, ${failedPdfs} total PDF tasks failed`
