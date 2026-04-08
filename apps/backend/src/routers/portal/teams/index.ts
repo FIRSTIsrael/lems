@@ -187,7 +187,7 @@ router.get(
       eventResult.results = {
         awards: teamAwards.map(award => ({
           name: award.name,
-          place: award.place || null
+          place: award.show_places ? award.place : null
         })),
         matches: teamMatchResults,
         robotGameRank

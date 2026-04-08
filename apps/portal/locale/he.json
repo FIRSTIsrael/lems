@@ -128,6 +128,7 @@
         "match-results": "תוצאות מקצים",
         "match-number": "מקצה {number}",
         "robot-game-rank": "דירוג במשחק הרובוט",
+        "award": "פרס",
         "event-performance": "תוצאות אירוע",
         "view-details": "פרטים נוספים",
         "event-in-progress": "אירוע בעיצומו",
@@ -226,6 +227,7 @@
         "highest-score": "הניקוד הגבוה ביותר",
         "robot-rank": "דירוג משחק רובוט",
         "robot-game-rank": "דירוג במשחק הרובוט",
+        "award": "פרס",
         "no-scores": "אין ניקודים זמינים עדיין",
         "no-data": "אין נתוני ביצועים זמינים עדיין"
       },
