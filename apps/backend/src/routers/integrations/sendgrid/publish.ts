@@ -113,15 +113,26 @@ export async function publishEventResults(options: SendGridPublishOptions) {
     throw new Error('Event not found');
   }
 
-  const emailPromises = contacts.map(contact =>
-    sendEmailToContact(event, contact as CSVRecord, {
+  const results = [];
+  let emailCount = 0;
+
+  for (const contact of contacts as CSVRecord[]) {
+    emailCount++;
+    console.info(`Sending email ${emailCount}/${contacts.length}...`);
+
+    const result = await sendEmailToContact(event, contact as CSVRecord, {
       templateId: String(templateId),
       fromAddress: String(fromAddress),
       language: String(language)
-    })
-  );
+    });
 
-  const results = await Promise.all(emailPromises);
+    results.push(result);
+
+    if (!result.success) {
+      console.warn(`✗ Failed to send email`);
+    }
+  }
+
   const failedEmails = results.filter(r => !r.success).map(r => r.email);
 
   return {
