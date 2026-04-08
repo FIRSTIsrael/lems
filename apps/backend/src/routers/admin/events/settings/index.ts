@@ -3,6 +3,7 @@ import { IntegrationTypes } from '@lems/shared/integrations';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { publishEventResults } from '../../../integrations/sendgrid/publish';
+import { generateEventResultsZip } from '../../../../lib/results-download';
 import { makeAdminSettingsResponse, makeUpdateableEventSettings } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -64,6 +65,37 @@ router.post('/publish', async (req: AdminEventRequest, res) => {
   } catch (error) {
     console.error('Error publishing event:', error);
     res.status(500).json({ error: 'Failed to publish event' });
+  }
+});
+
+router.post('/download', async (req: AdminEventRequest, res) => {
+  try {
+    const settings = await db.events.byId(req.eventId).getSettings();
+    if (!settings.published) {
+      res.status(400).json({ error: 'Event must be published before downloading results' });
+      return;
+    }
+
+    const language = (req.query.language as string) || 'en';
+    const { archive, fileName, statistics } = await generateEventResultsZip(req.eventId, language);
+
+    console.info(
+      `Generating results ZIP for event ${req.eventId}: ${statistics.totalTeams} total teams, ${statistics.teamsWithPdfs} with PDFs, ${statistics.failedPdfs} failed`
+    );
+
+    res.attachment(fileName);
+    res.setHeader('Content-Type', 'application/zip');
+
+    archive.on('error', err => {
+      console.error('Archive error:', err);
+      res.status(500).json({ error: 'Failed to generate ZIP file' });
+    });
+
+    archive.pipe(res);
+    await archive.finalize();
+  } catch (error) {
+    console.error('Error downloading event results:', error);
+    res.status(500).json({ error: 'Failed to download event results' });
   }
 });
 

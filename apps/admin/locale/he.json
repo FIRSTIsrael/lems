@@ -632,8 +632,11 @@
           "complete-event-description": "סמן אירוע זה כמושלם. לא ניתן יהיה לשנות את תוצאות האירוע לאחר מכן.",
           "publish-event": "פרסום אירוע",
           "publish-event-description": "הפוך את תוצאות האירוע לציבוריות ואפשר לציבור לצפות בהן.",
+          "download-results": "הורדת תוצאות",
+          "download-results-description": "הורד קובץ ZIP המכיל מחווני שיפוט ודפי ניקוד לכל הקבוצות.",
           "already-completed": "האירוע כבר הושלם",
-          "already-published": "האירוע כבר פורסם"
+          "already-published": "האירוע כבר פורסם",
+          "not-published": "יש לפרסם את האירוע תחילה"
         },
         "danger-zone": {
           "title": "אזור סכנה",
@@ -657,6 +660,15 @@
             "confirm": "פרסום אירוע",
             "cancel": "ביטול",
             "publishing": "מפרסם..."
+          },
+          "download-results": {
+            "title": "הורדת תוצאות אירוע",
+            "message": "להוריד תוצאות כקובץ ZIP? זה יכלול מחווני שיפוט ודפי ניקוד לכל הקבוצות הרשומות באירוע זה.",
+            "event-name": "אירוע: {eventName}",
+            "info": "קובץ ה-ZIP יהיה מאורגן לפי סימון הקבוצה (לדוגמה, 841-IL) עם קבצי PDF בתוך כל תיקייה.",
+            "confirm": "הורדה",
+            "cancel": "ביטול",
+            "downloading": "מוריד..."
           }
         },
         "messages": {
@@ -666,6 +678,8 @@
           "complete-error": "סיום האירוע נכשל",
           "publish-success": "האירוע פורסם בהצלחה",
           "publish-error": "פרסום האירוע נכשל",
+          "download-success": "תוצאות האירוע הורדו בהצלחה",
+          "download-error": "הורדת תוצאות האירוע נכשלה",
           "load-error": "טעינת הגדרות האירוע נכשלה"
         }
       },
