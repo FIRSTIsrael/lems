@@ -4,6 +4,7 @@ import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
 import { logger } from '../../../lib/logger';
 import db from '../../../lib/database';
+import { ExportRequest } from '../../../types/express';
 
 const router = express.Router({ mergeParams: true });
 
@@ -64,6 +65,11 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
       throw new Error('Event not published');
     }
 
+    // Attach validated data to request for downstream handlers
+    (req as ExportRequest).team = team;
+    (req as ExportRequest).event = event;
+    (req as ExportRequest).divisionId = teamDivision;
+
     next();
     return;
   } catch {
@@ -74,22 +80,8 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
 });
 
 router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
+  const { team, event, divisionId } = req as ExportRequest;
 
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
-    return;
-  }
-
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
-
-  const team = (await db.teams.bySlug(teamSlug).get())!;
-  const event = (await db.events.bySlug(eventSlug).get())!;
-
-  const divisionId = (await db.teams.bySlug(teamSlug).isInEvent(event.id))!;
   const division = (await db.divisions.byId(divisionId).get())!;
   const season = (await db.seasons.byId(event.season_id).get())!;
 
@@ -143,22 +135,8 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
 });
 
 router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
+  const { team, event, divisionId } = req as ExportRequest;
 
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
-    return;
-  }
-
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
-
-  const team = (await db.teams.bySlug(teamSlug).get())!;
-  const event = (await db.events.bySlug(eventSlug).get())!;
-
-  const divisionId = (await db.teams.bySlug(teamSlug).isInEvent(event.id))!;
   const division = (await db.divisions.byId(divisionId).get())!;
   const season = (await db.seasons.byId(event.season_id).get())!;
 
