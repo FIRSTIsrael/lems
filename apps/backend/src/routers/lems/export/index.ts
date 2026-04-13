@@ -82,8 +82,17 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
 router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
   const { team, event, divisionId } = req as ExportRequest;
 
-  const division = (await db.divisions.byId(divisionId).get())!;
-  const season = (await db.seasons.byId(event.season_id).get())!;
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
+    return;
+  }
+
+  const season = await db.seasons.byId(event.season_id).get();
+  if (!season) {
+    res.status(404).json({ error: 'Season not found' });
+    return;
+  }
 
   const scoresheets = (
     await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
@@ -137,8 +146,17 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
 router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
   const { team, event, divisionId } = req as ExportRequest;
 
-  const division = (await db.divisions.byId(divisionId).get())!;
-  const season = (await db.seasons.byId(event.season_id).get())!;
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
+    return;
+  }
+
+  const season = await db.seasons.byId(event.season_id).get();
+  if (!season) {
+    res.status(404).json({ error: 'Season not found' });
+    return;
+  }
 
   const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
   const rubrics = allRubrics.filter(r => r.status === 'approved');
