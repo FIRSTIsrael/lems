@@ -86,13 +86,12 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
     return;
   }
 
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
+  const team = (await db.teams.bySlug(teamSlug).get())!;
+  const event = (await db.events.bySlug(eventSlug).get())!;
 
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
-
-  const season = await db.seasons.byId(event.season_id).get();
+  const divisionId = (await db.teams.bySlug(teamSlug).isInEvent(event.id))!;
+  const division = (await db.divisions.byId(divisionId).get())!;
+  const season = (await db.seasons.byId(event.season_id).get())!;
 
   const scoresheets = (
     await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
@@ -119,16 +118,19 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
         };
       }
 
-      // Transform missions object to use string keys for clause indices
+      // Transform missions object to preserve mission IDs and convert clause values
       const missions = s.data.missions || {};
-      const transformedMissions: { clauses: Array<{ value: ScoresheetClauseValue }> }[] = [];
+      const transformedMissions: Array<{
+        id: string;
+        clauses: Array<{ value: ScoresheetClauseValue }>;
+      }> = [];
 
-      for (const clauses of Object.values(missions)) {
-        const clausesObject: { clauses: Array<{ value: ScoresheetClauseValue }> } = { clauses: [] };
+      for (const [missionId, clauses] of Object.entries(missions)) {
+        const clausesArray: Array<{ value: ScoresheetClauseValue }> = [];
         for (const value of Object.values(clauses)) {
-          clausesObject.clauses.push({ value });
+          clausesArray.push({ value });
         }
-        transformedMissions.push(clausesObject);
+        transformedMissions.push({ id: missionId, clauses: clausesArray });
       }
 
       return {
@@ -153,13 +155,12 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) 
     return;
   }
 
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
+  const team = (await db.teams.bySlug(teamSlug).get())!;
+  const event = (await db.events.bySlug(eventSlug).get())!;
 
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
-
-  const season = await db.seasons.byId(event.season_id).get();
+  const divisionId = (await db.teams.bySlug(teamSlug).isInEvent(event.id))!;
+  const division = (await db.divisions.byId(divisionId).get())!;
+  const season = (await db.seasons.byId(event.season_id).get())!;
 
   const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
   const rubrics = allRubrics.filter(r => r.status === 'approved');
