@@ -79,8 +79,8 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
   res.status(401).json({ error: 'UNAUTHORIZED' });
 });
 
-router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
-  const { team, event, divisionId } = req as ExportRequest;
+router.get('/:teamSlug/:eventSlug/scoresheets', async (req: ExportRequest, res: Response) => {
+  const { team, event, divisionId } = req;
 
   const division = await db.divisions.byId(divisionId).get();
   if (!division) {
@@ -128,8 +128,13 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
 
       for (const [missionId, clauses] of Object.entries(missions)) {
         const clausesArray: Array<{ value: ScoresheetClauseValue }> = [];
-        for (const value of Object.values(clauses)) {
-          clausesArray.push({ value });
+        for (const [indexStr, value] of Object.entries(clauses)) {
+          const index = Number(indexStr);
+          // Fill any gaps with null placeholders to preserve clause positions
+          while (clausesArray.length < index) {
+            clausesArray.push({ value: null });
+          }
+          clausesArray[index] = { value };
         }
         transformedMissions.push({ id: missionId, clauses: clausesArray });
       }
@@ -143,8 +148,8 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
   });
 });
 
-router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
-  const { team, event, divisionId } = req as ExportRequest;
+router.get('/:teamSlug/:eventSlug/rubrics', async (req: ExportRequest, res: Response) => {
+  const { team, event, divisionId } = req;
 
   const division = await db.divisions.byId(divisionId).get();
   if (!division) {
