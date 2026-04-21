@@ -12,11 +12,20 @@ export interface SendGridPublishOptions {
 
 const apiKey = process.env.SENDGRID_API_KEY;
 
+if (!apiKey) {
+  console.warn('SendGrid API key not configured. Emails will not be sent.');
+}
+
 const sendEmailToContact = async (
   event: Event,
   contact: CSVRecord,
   emailOptions: { templateId: string; fromAddress: string; language: string }
 ) => {
+  if (!apiKey) {
+    console.warn('SendGrid API key not configured. Skipping email sending.');
+    return { success: false, email: contact.recipient_email };
+  }
+
   const { templateId, fromAddress, language } = emailOptions;
 
   const teamNumber = parseInt(contact.team_number, 10);
