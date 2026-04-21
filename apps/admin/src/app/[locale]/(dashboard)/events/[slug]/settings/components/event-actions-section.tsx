@@ -49,22 +49,41 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
     }
   };
 
-  const handlePublishEvent = async () => {
+  const handlePublishEvent = async (onProgress: (percent: number, message?: string) => void) => {
     setAlert(null);
     try {
-      const response = await apiFetch(`/admin/events/${event.id}/settings/publish`, {
-        method: 'POST'
-      });
+      const result = await connectSseStream<{
+        published: boolean;
+        emailsSent: number;
+        emailsFailed: number;
+        failedEmails?: string[];
+      }>(
+        `/admin/events/${event.id}/settings/publish`,
+        { method: 'POST' },
+        {
+          onStart: () => onProgress(0),
+          onProgress: (percent, message) => onProgress(percent, message)
+        }
+      );
 
-      if (response.ok) {
+      if (result?.published) {
         await mutateSettings();
-        setAlert({ type: 'success', message: t('messages.publish-success') });
+        const successMsg =
+          result.emailsSent > 0
+            ? t('messages.publish-success-with-emails', {
+                emailsSent: result.emailsSent,
+                emailsFailed: result.emailsFailed
+              })
+            : t('messages.publish-success');
+        setAlert({ type: 'success', message: successMsg });
         setPublishDialogOpen(false);
       } else {
         setAlert({ type: 'error', message: t('messages.publish-error') });
       }
-    } catch {
-      setAlert({ type: 'error', message: t('messages.publish-error') });
+    } catch (error) {
+      const errorMsg =
+        error instanceof Error ? error.message : t('messages.publish-error');
+      setAlert({ type: 'error', message: errorMsg });
     }
   };
 

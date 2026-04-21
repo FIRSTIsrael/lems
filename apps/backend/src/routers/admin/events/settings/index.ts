@@ -16,6 +16,11 @@ const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: AdminEventRequest, res) => {
   const settings = await db.events.byId(req.eventId).getSettings();
+  if (!settings) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
+
   res.json(makeAdminSettingsResponse(settings));
 });
 
@@ -37,17 +42,21 @@ router.post('/complete', async (req: AdminEventRequest, res) => {
 });
 
 router.post('/publish', async (req: AdminEventRequest, res) => {
+  const emitter = createSseEmitter(res);
+
   try {
     const settings = await db.events.byId(req.eventId).getSettings();
     if (!settings) {
-      res.status(404).json({ error: 'Event not found' });
+      emitter.sendFailure('Event not found');
       return;
     }
 
     if (!settings.completed) {
-      res.status(400).json({ error: 'Event must be completed before publishing' });
+      emitter.sendFailure('Event must be completed before publishing');
       return;
     }
+
+    emitter.sendStart();
 
     const updatedSettings = await db.events.byId(req.eventId).updateSettings({ published: true });
     if (!updatedSettings) {
@@ -62,20 +71,38 @@ router.post('/publish', async (req: AdminEventRequest, res) => {
 
     if (sendgridIntegration) {
       try {
-        await publishEventResults({
+        const emailResult = await publishEventResults({
           eventId: req.eventId,
-          settings: sendgridIntegration.settings
+          settings: sendgridIntegration.settings,
+          onProgress: (percent, message) => emitter.sendProgress(percent, message)
+        });
+        console.info(
+          `Event ${req.eventId} published with emails sent. ` +
+            `Total: ${emailResult.total}, Failed: ${emailResult.failed}`
+        );
+        emitter.sendSuccess({
+          published: true,
+          emailsSent: emailResult.total,
+          emailsFailed: emailResult.failed,
+          failedEmails: emailResult.failedEmails
         });
       } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
         console.error('Error sending SendGrid emails:', error);
-        // Don't fail the publish - log the error but continue
+        emitter.sendFailure(`Failed to send emails: ${message}`);
       }
+    } else {
+      console.info(`Event ${req.eventId} published`);
+      emitter.sendSuccess({
+        published: true,
+        emailsSent: 0,
+        emailsFailed: 0
+      });
     }
-
-    res.json({ success: true });
   } catch (error) {
-    console.error('Error publishing event:', error);
-    res.status(500).json({ error: 'Failed to publish event' });
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Error publishing event ${req.eventId}: ${message}`, error);
+    emitter.sendFailure(`Failed to publish event: ${message}`);
   }
 });
 

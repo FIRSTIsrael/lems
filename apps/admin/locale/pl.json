@@ -657,6 +657,8 @@
             "title": "Opublikuj wydarzenie",
             "message": "Czy na pewno chcesz opublikować to wydarzenie? Wyniki będą widoczne dla wszystkich.",
             "event-name": "Wydarzenie: {eventName}",
+            "info": "Jeśli integracja SendGrid jest włączona, wiadomości e-mail z wynikami będą wysłane do kontaktów drużyn.",
+            "publishing-progress": "Publikowanie wydarzenia...",
             "confirm": "Opublikuj wydarzenie",
             "cancel": "Anuluj",
             "publishing": "Publikowanie..."
@@ -678,6 +680,7 @@
           "complete-success": "Wydarzenie zakończono pomyślnie",
           "complete-error": "Nie udało się zakończyć wydarzenia",
           "publish-success": "Wydarzenie opublikowano pomyślnie",
+          "publish-success-with-emails": "Wydarzenie opublikowano pomyślnie! Wysłano {emailsSent} wiadomości e-mail ({emailsFailed} nie powiodło się).",
           "publish-error": "Nie udało się opublikować wydarzenia",
           "download-success": "Wyniki wydarzenia pobrano pomyślnie",
           "download-error": "Nie udało się pobrać wyników wydarzenia",

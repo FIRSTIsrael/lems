@@ -657,6 +657,8 @@
             "title": "Publish Event",
             "message": "Are you sure you want to publish this event? This will make the results public and visible to everyone.",
             "event-name": "Event: {eventName}",
+            "info": "If SendGrid integration is enabled, emails will be sent to team contacts with their results.",
+            "publishing-progress": "Publishing event...",
             "confirm": "Publish Event",
             "cancel": "Cancel",
             "publishing": "Publishing..."
@@ -678,6 +680,7 @@
           "complete-success": "Event completed successfully",
           "complete-error": "Failed to complete event",
           "publish-success": "Event published successfully",
+          "publish-success-with-emails": "Event published successfully! Sent {emailsSent} emails ({emailsFailed} failed).",
           "publish-error": "Failed to publish event",
           "download-success": "Event results downloaded successfully",
           "download-error": "Failed to download event results",

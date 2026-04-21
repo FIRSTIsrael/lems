@@ -657,6 +657,8 @@
             "title": "פרסום אירוע",
             "message": "האם אתם בטוחים שברצונכם לפרסם את האירוע? פעולה זו תהפוך את התוצאות לציבוריות ונראות לכולם.",
             "event-name": "אירוע: {eventName}",
+            "info": "אם קיימת אינטגרציה עם SendGrid, יישלחו הודעות דוא\"ל ליצירי קשר של הקבוצה עם התוצאות שלהם.",
+            "publishing-progress": "מפרסם תוצאות...",
             "confirm": "פרסום אירוע",
             "cancel": "ביטול",
             "publishing": "מפרסם..."
@@ -678,6 +680,7 @@
           "complete-success": "האירוע הושלם בהצלחה",
           "complete-error": "סיום האירוע נכשל",
           "publish-success": "האירוע פורסם בהצלחה",
+          "publish-success-with-emails": "האירוע פורסם בהצלחה! נשלחו {emailsSent} הודעות דוא\"ל ({emailsFailed} נכשלו).",
           "publish-error": "פרסום האירוע נכשל",
           "download-success": "תוצאות האירוע הורדו בהצלחה",
           "download-error": "הורדת תוצאות האירוע נכשלה",

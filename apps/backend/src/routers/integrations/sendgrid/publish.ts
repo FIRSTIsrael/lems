@@ -8,6 +8,7 @@ import { CSVRecord } from './types';
 export interface SendGridPublishOptions {
   eventId: string;
   settings: Record<string, unknown>;
+  onProgress?: (percent: number, message?: string) => void;
 }
 
 const apiKey = process.env.SENDGRID_API_KEY;
@@ -87,7 +88,7 @@ const sendEmailToContact = async (
 };
 
 export async function publishEventResults(options: SendGridPublishOptions) {
-  const { eventId, settings } = options;
+  const { eventId, settings, onProgress } = options;
 
   if (!settings) {
     throw new Error('Missing integration settings');
@@ -127,7 +128,10 @@ export async function publishEventResults(options: SendGridPublishOptions) {
 
   for (const contact of contacts as CSVRecord[]) {
     emailCount++;
-    console.info(`Sending email ${emailCount}/${contacts.length}...`);
+    const percent = Math.round((emailCount / contacts.length) * 100);
+    const message = `Sending email ${emailCount}/${contacts.length}...`;
+    console.info(message);
+    onProgress?.(percent, message);
 
     const result = await sendEmailToContact(event, contact as CSVRecord, {
       templateId: String(templateId),
@@ -138,7 +142,7 @@ export async function publishEventResults(options: SendGridPublishOptions) {
     results.push(result);
 
     if (!result.success) {
-      console.warn(`✗ Failed to send email`);
+      console.warn(`✗ Failed to send email to ${contact.recipient_email}`);
     }
   }
 
