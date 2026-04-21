@@ -666,6 +666,7 @@
             "message": "Pobrać wyniki jako plik ZIP? Będzie zawierać rubryki i karty oceny dla wszystkich drużyn zarejestrowanych w tym wydarzeniu.",
             "event-name": "Wydarzenie: {eventName}",
             "info": "Plik ZIP będzie zorganizowany według identyfikatora drużyny (np. 9999-IL) z plikami PDF w każdym folderze.",
+            "generating": "Generowanie wyników...",
             "confirm": "Pobierz",
             "cancel": "Anuluj",
             "downloading": "Pobieranie..."

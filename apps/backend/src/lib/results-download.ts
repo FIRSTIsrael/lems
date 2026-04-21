@@ -102,14 +102,19 @@ async function getZippedResults(
   eventSlug: string,
   archive: archiver.Archiver,
   language: string,
+  onProgress?: (percent: number) => void,
   batchSize: number = 10
 ): Promise<{
   totalTeams: number;
   teamsWithPdfs: number;
   failedPdfs: number;
 }> {
+  const registeredTeams = await db.events.byId(eventId).getRegisteredTeams();
+  const totalTeamCount = registeredTeams.length;
+
   const teamsWithResults = new Set<string>();
   let totalTeams = 0;
+  let teamsProcessed = 0;
   let failedPdfs = 0;
   let batchNumber = 0;
 
@@ -153,6 +158,11 @@ async function getZippedResults(
       } else {
         failedPdfs++;
       }
+
+      teamsProcessed++;
+      if (totalTeamCount > 0) {
+        onProgress?.(Math.round((teamsProcessed / totalTeamCount) * 100));
+      }
     }
 
     console.info(
@@ -189,7 +199,8 @@ async function getZippedResults(
  */
 export async function generateEventResultsZip(
   eventId: string,
-  language: string = 'en'
+  language: string = 'en',
+  onProgress?: (percent: number) => void
 ): Promise<{
   archive: archiver.Archiver;
   fileName: string;
@@ -210,6 +221,7 @@ export async function generateEventResultsZip(
     event.slug,
     archive,
     language,
+    onProgress,
     5 // Process 5 teams at a time
   );
 

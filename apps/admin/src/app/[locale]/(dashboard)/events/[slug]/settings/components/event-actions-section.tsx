@@ -5,7 +5,7 @@ import { KeyedMutator } from 'swr';
 import { useLocale, useTranslations } from 'next-intl';
 import { Box, Card, CardContent, Typography, Button, Divider, Stack } from '@mui/material';
 import { EventSettings } from '@lems/types/api/admin';
-import { apiFetch } from '@lems/shared';
+import { apiFetch, connectSseStream, getApiBase } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 import { CompleteEventDialog } from './complete-event-dialog';
 import { PublishEventDialog } from './publish-event-dialog';
@@ -29,7 +29,6 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
   const [completeDialogOpen, setCompleteDialogOpen] = useState(false);
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
-  const [isDownloadLoading, setIsDownloadLoading] = useState(false);
 
   const handleCompleteEvent = async () => {
     setAlert(null);
@@ -69,38 +68,30 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
     }
   };
 
-  const handleDownloadResults = async () => {
+  const handleDownloadResults = async (onProgress: (percent: number) => void) => {
     setAlert(null);
-    setIsDownloadLoading(true);
     try {
-      const response = await apiFetch(
+      const result = await connectSseStream<{ token: string }>(
         `/admin/events/${event.id}/settings/download?language=${locale}`,
+        { method: 'POST' },
         {
-          method: 'POST',
-          responseType: 'binary'
+          onStart: () => onProgress(0),
+          onProgress
         }
       );
 
-      if (response.ok) {
-        const blob = response.data as Blob;
-        const url = window.URL.createObjectURL(blob);
+      if (result?.token) {
         const a = document.createElement('a');
-        a.href = url;
-        a.download = `${event.name.replace(/\s+/g, '_')}-results.zip`;
+        a.href = `${getApiBase(true)}/admin/events/${event.id}/settings/download/file?token=${result.token}`;
         document.body.appendChild(a);
         a.click();
         a.remove();
-        window.URL.revokeObjectURL(url);
-
-        setAlert({ type: 'success', message: t('messages.download-success') });
-        setDownloadDialogOpen(false);
-      } else {
-        setAlert({ type: 'error', message: t('messages.download-error') });
       }
+
+      setAlert({ type: 'success', message: t('messages.download-success') });
+      setDownloadDialogOpen(false);
     } catch {
       setAlert({ type: 'error', message: t('messages.download-error') });
-    } finally {
-      setIsDownloadLoading(false);
     }
   };
 
@@ -173,7 +164,6 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                   disabled={!settings.published}
                   onClick={() => setDownloadDialogOpen(true)}
                   sx={{ minWidth: 160 }}
-                  loading={isDownloadLoading}
                 >
                   {t('event-actions.download-results')}
                 </Button>
