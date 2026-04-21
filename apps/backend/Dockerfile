@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app/backend
 COPY dist/apps/backend .
@@ -9,7 +9,7 @@ RUN npm ci --omit=dev && \
   npm cache clean --force
 
 # Runtime stage - Minimal image with only what's needed
-FROM node:22-alpine
+FROM node:24-alpine
 
 ENV HOST=0.0.0.0
 ENV PORT=3333
