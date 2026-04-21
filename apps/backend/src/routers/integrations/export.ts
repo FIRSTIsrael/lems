@@ -34,7 +34,8 @@ class BrowserManager {
     if (!this.initializationPromise) {
       const launchConfig: Parameters<typeof puppeteer.launch>[0] = {
         headless: true,
-        args: BrowserManager.PUPPETEER_ARGS
+        args: BrowserManager.PUPPETEER_ARGS,
+        protocolTimeout: 60000 // 60s timeout for protocol operations like createBrowserContext
       };
 
       // Use the executable path from environment variable if set (useful in Docker)
@@ -184,7 +185,7 @@ const withTimeout = async <T>(promise: Promise<T>, ms: number): Promise<T> => {
 
 const createAuthToken = (teamSlug: string, divisionId: string): string => {
   const jwtSecret = process.env.INTEGRATIONS_LEMS_JWT;
-  if (!jwtSecret) throw new Error('JWT_SECRET is not configured');
+  if (!jwtSecret) throw new Error('INTEGRATIONS_LEMS_JWT is not configured');
 
   return jwt.sign({ teamSlug, divisionId }, jwtSecret, {
     issuer: 'FIRST',

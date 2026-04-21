@@ -4,6 +4,7 @@ import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
 import { logger } from '../../../lib/logger';
 import db from '../../../lib/database';
+import { ExportRequest } from '../../../types/express';
 
 const router = express.Router({ mergeParams: true });
 
@@ -64,6 +65,11 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
       throw new Error('Event not published');
     }
 
+    // Attach validated data to request for downstream handlers
+    (req as ExportRequest).team = team;
+    (req as ExportRequest).event = event;
+    (req as ExportRequest).divisionId = teamDivision;
+
     next();
     return;
   } catch {
@@ -73,26 +79,20 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
   res.status(401).json({ error: 'UNAUTHORIZED' });
 });
 
-router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
+router.get('/:teamSlug/:eventSlug/scoresheets', async (req: ExportRequest, res: Response) => {
+  const { team, event, divisionId } = req;
 
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
     return;
   }
-
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
-
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
-
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
 
   const season = await db.seasons.byId(event.season_id).get();
+  if (!season) {
+    res.status(404).json({ error: 'Season not found' });
+    return;
+  }
 
   const scoresheets = (
     await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
@@ -119,16 +119,24 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
         };
       }
 
-      // Transform missions object to use string keys for clause indices
+      // Transform missions object to preserve mission IDs and convert clause values
       const missions = s.data.missions || {};
-      const transformedMissions: { clauses: Array<{ value: ScoresheetClauseValue }> }[] = [];
+      const transformedMissions: Array<{
+        id: string;
+        clauses: Array<{ value: ScoresheetClauseValue }>;
+      }> = [];
 
-      for (const clauses of Object.values(missions)) {
-        const clausesObject: { clauses: Array<{ value: ScoresheetClauseValue }> } = { clauses: [] };
-        for (const value of Object.values(clauses)) {
-          clausesObject.clauses.push({ value });
+      for (const [missionId, clauses] of Object.entries(missions)) {
+        const clausesArray: Array<{ value: ScoresheetClauseValue }> = [];
+        for (const [indexStr, value] of Object.entries(clauses)) {
+          const index = Number(indexStr);
+          // Fill any gaps with null placeholders to preserve clause positions
+          while (clausesArray.length < index) {
+            clausesArray.push({ value: null });
+          }
+          clausesArray[index] = { value };
         }
-        transformedMissions.push(clausesObject);
+        transformedMissions.push({ id: missionId, clauses: clausesArray });
       }
 
       return {
@@ -140,26 +148,20 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Respon
   });
 });
 
-router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
+router.get('/:teamSlug/:eventSlug/rubrics', async (req: ExportRequest, res: Response) => {
+  const { team, event, divisionId } = req;
 
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
     return;
   }
-
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
-
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
-
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
 
   const season = await db.seasons.byId(event.season_id).get();
+  if (!season) {
+    res.status(404).json({ error: 'Season not found' });
+    return;
+  }
 
   const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
   const rubrics = allRubrics.filter(r => r.status === 'approved');

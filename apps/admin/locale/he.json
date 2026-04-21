@@ -632,8 +632,11 @@
           "complete-event-description": "סמן אירוע זה כמושלם. לא ניתן יהיה לשנות את תוצאות האירוע לאחר מכן.",
           "publish-event": "פרסום אירוע",
           "publish-event-description": "הפוך את תוצאות האירוע לציבוריות ואפשר לציבור לצפות בהן.",
+          "download-results": "הורדת תוצאות",
+          "download-results-description": "הורד קובץ ZIP המכיל מחווני שיפוט ודפי ניקוד לכל הקבוצות.",
           "already-completed": "האירוע כבר הושלם",
-          "already-published": "האירוע כבר פורסם"
+          "already-published": "האירוע כבר פורסם",
+          "not-published": "יש לפרסם את האירוע תחילה"
         },
         "danger-zone": {
           "title": "אזור סכנה",
@@ -657,6 +660,15 @@
             "confirm": "פרסום אירוע",
             "cancel": "ביטול",
             "publishing": "מפרסם..."
+          },
+          "download-results": {
+            "title": "הורדת תוצאות אירוע",
+            "message": "להוריד תוצאות כקובץ ZIP? זה יכלול מחווני שיפוט ודפי ניקוד לכל הקבוצות הרשומות באירוע זה.",
+            "event-name": "אירוע: {eventName}",
+            "info": "קובץ ה-ZIP יהיה מאורגן לפי סימון הקבוצה (לדוגמה, 9999-IL) עם קבצי PDF בתוך כל תיקייה.",
+            "confirm": "הורדה",
+            "cancel": "ביטול",
+            "downloading": "מוריד..."
           }
         },
         "messages": {
@@ -666,6 +678,8 @@
           "complete-error": "סיום האירוע נכשל",
           "publish-success": "האירוע פורסם בהצלחה",
           "publish-error": "פרסום האירוע נכשל",
+          "download-success": "תוצאות האירוע הורדו בהצלחה",
+          "download-error": "הורדת תוצאות האירוע נכשלה",
           "load-error": "טעינת הגדרות האירוע נכשלה"
         }
       },
@@ -910,13 +924,87 @@
               "sfid-label": "מזהה אירוע של Salesforce",
               "sfid-placeholder": "הזן את מזהה ה-Salesforce Event ID שלך",
               "sfid-help": "המזהה הייחודי של האירוע שלך ב-Salesforce"
+            },
+            "sendgrid": {
+              "template-id-label": "SendGrid Template ID",
+              "template-id-placeholder": "d-xxxxxxxxxxxxxxxxxxxxxxxx",
+              "template-id-help": "מזהה תבנית דינמית מ-SendGrid",
+              "from-address-label": "כתובת דוא״ל מ",
+              "from-address-placeholder": "noreply@example.com",
+              "from-address-help": "כתובת דוא״ל של משלח מאומת",
+              "test-email-address-label": "כתובת דוא״ל לבדיקה",
+              "test-email-address-placeholder": "admin@example.com",
+              "test-email-address-help": "לאן ישלחו דוא״ל בדיקה",
+              "send-test-email-button": "שלח דוא״ל בדיקה",
+              "fields": {
+                "file": {
+                  "label": "קובץ CSV",
+                  "description": "העלה קובץ CSV עם אנשי קשר בדוא״ל (מספר קבוצה, אזור, כתובת דוא״ל)",
+                  "placeholder": "בחר קובץ CSV"
+                }
+              },
+              "settings-title": "הגדרות",
+              "contacts-section-title": "אנשי קשר בדוא״ל",
+              "info-alert-title": "פרסום האירוע",
+              "info-alert-description": "כאשר אירוע זה מפורסם, התוצאות יישלחו לכל אנשי הקשר בדוא״ל המחוברים.",
+              "email-contacts-title": "אנשי קשר בדוא״ל",
+              "csv-description": "העלה קובץ CSV עם עמודות: Team Number, Region, Email Address",
+              "csv-requirements-title": "דרישות קובץ CSV",
+              "csv-requirement-header": "הקובץ חייב לכלול שורת כותרת",
+              "csv-requirement-columns": "עמודות: Team Number, Region, Recipient Email",
+              "csv-requirement-encoding": "שמור כקובץ CSV בקידוד UTF-8",
+              "csv-example": "פורמט דוגמה",
+              "upload-contacts-button": "העלה אנשי קשר",
+              "view-all-button": "הצג הכל",
+              "upload-contacts-modal-title": "העלה אנשי קשר בדוא״ל",
+              "view-all-contacts-modal-title": "כל אנשי הקשר בדוא״ל",
+              "view-all-contacts-count": "{count, plural, one {איש קשר אחד} other {# אנשי קשר}}",
+              "contacts-count": "{count, plural, one {איש קשר אחד הועלה} other {# אנשי קשר הועלו}}",
+              "contacts-preview-label": "תצוגה מקדימה:",
+              "no-contacts-uploaded": "לא הועלו אנשי קשר בדוא״ל",
+              "csv-success-title": "אנשי קשר הועלו בהצלחה",
+              "csv-success-added": "{count, plural, one {איש קשר חדש אחד נוסף} other {# אנשי קשר חדשים נוספו}}",
+              "csv-success-updated": "{count, plural, one {איש קשר אחד עודכן} other {# אנשי קשר עודכנו}}",
+              "csv-success-and-more": "ו{count} נוספים",
+              "csv-validation-errors": "{count, plural, one {שגיאת אימות אחת} other {# שגיאות אימות}}",
+              "csv-error-and-more": "ו{count} נוספים",
+              "csv-preview-confirm": "ייבא אנשי קשר",
+              "csv-preview-cancel": "ביטול",
+              "dataGrid-column-team-number": "מספר קבוצה",
+              "dataGrid-column-region": "אזור",
+              "dataGrid-column-email": "כתובת דוא״ל",
+              "confirm-delete-contact": "מחק אנשי קשר #{teamNumber}?",
+              "upload-csv-button": "העלה CSV",
+              "uploading": "מעלה...",
+              "upload": "העלה",
+              "cancel": "ביטול",
+              "delete": "מחק",
+              "close": "סגור",
+              "validation-template-id-required": "מזהה תבנית נדרש",
+              "validation-from-address-required": "דוא״ל תקין נדרש",
+              "validation-test-email-required": "דוא״ל תקין נדרש",
+              "csv-error-invalid-format": "אנא העלה קובץ CSV",
+              "csv-error-no-records": "קובץ CSV ריק",
+              "csv-error-no-valid-records": "לא נמצאו כתובות דוא״ל תקינות בקובץ CSV",
+              "csv-error-upload-failed": "העלאת אנשי קשר נכשלה",
+              "csv-error-send-test-failed": "שליחת דוא״ל בדיקה נכשלה",
+              "csv-success-contacts-uploaded": "העלאת {count} אנשי קשר בדוא״ל בהצלחה",
+              "csv-success-test-email-sent": "דוא״ל בדיקה נשלח בהצלחה אל {email}",
+              "deleting": "מוחק...",
+              "delete-error": "המחיקה נכשלה",
+              "language-label": "שפת ייצוא PDF",
+              "language-help": "השפה המשמשת ליצירת גיליונות ניקוד וקריטריונים בפורמט PDF"
             }
           }
         },
         "integration-types": {
           "first-israel-dashboard": {
-            "name": "לוח הבקרה של FIRST Israel",
-            "description": "העלה מידע על קבוצות וייצא תוצאות מהחשבון שלך בלוח הבקרה של FIRST Israel"
+            "name": "לוח בקרה FIRST Israel",
+            "description": "העלה מידע קבוצות וייצא תוצאות מחשבון לוח הבקרה של FIRST Israel שלך"
+          },
+          "sendgrid": {
+            "name": "SendGrid",
+            "description": "שלח דוא״ל הקשור לאירועים לקבוצות באמצעות תבניות דוא״ל של SendGrid"
           }
         }
       },

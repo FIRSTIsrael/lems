@@ -115,6 +115,7 @@
         "match-results": "Match Results",
         "match-number": "Match {number}",
         "robot-game-rank": "Robot Game Rank",
+        "award": "Award",
         "event-performance": "Event results",
         "view-details": "View Details",
         "event-in-progress": "Event in Progress",
@@ -226,6 +227,7 @@
         "highest-score": "Highest Score",
         "robot-rank": "Robot Game Rank",
         "robot-game-rank": "Robot Game Rank",
+        "award": "Award",
         "no-scores": "No scores available yet",
         "no-data": "No performance data available yet"
       },

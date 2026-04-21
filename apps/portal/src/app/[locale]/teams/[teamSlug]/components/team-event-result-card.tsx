@@ -88,7 +88,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 1,
+                        gap: 0.5,
                         p: 2,
                         bgcolor: 'grey.50',
                         borderRadius: 2,
@@ -96,7 +96,14 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                         borderColor: 'grey.200'
                       }}
                     >
-                      <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+                      {award.place !== null && (
+                        <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+                      )}
+                      {award.place === null && (
+                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                          {t('award')}
+                        </Typography>
+                      )}
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
                         {getName(award.name)}
                       </Typography>

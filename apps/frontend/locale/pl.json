@@ -1632,7 +1632,7 @@
   "browse-events": {
     "page-title": "Przeglądaj wydarzenia",
     "title": "Wszystkie wydarzenia",
-    "description": "Odkryj wszystkie dostępne wydarzenia FIRST LEGO League",
+    "description": "Odkryj wszystkie dostępne wydarzenia <i>FIRST</i>  LEGO League",
     "loading": "Ładowanie wydarzeń...",
     "no-events": "Nie znaleziono wydarzeń",
     "no-events-description": "Spróbuj ponownie później lub skontaktuj się z pomocą techniczną po więcej informacji",

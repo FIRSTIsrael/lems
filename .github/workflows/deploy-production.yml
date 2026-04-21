@@ -147,6 +147,9 @@ jobs:
           DIGITALOCEAN_SPACE: ${{ vars.DIGITALOCEAN_SPACE }}
           DIGITALOCEAN_KEY: ${{ secrets.DIGITALOCEAN_KEY }}
           DIGITALOCEAN_SECRET: ${{ secrets.DIGITALOCEAN_SECRET }}
+          
+          # Email Integration
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -188,7 +191,9 @@ jobs:
             DIGITALOCEAN_ENDPOINT,
             DIGITALOCEAN_SPACE,
             DIGITALOCEAN_KEY,
-            DIGITALOCEAN_SECRET
+            DIGITALOCEAN_SECRET,
+            
+            SENDGRID_API_KEY
           script: |
             echo "🔐 Logging into DigitalOcean registry..."
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
