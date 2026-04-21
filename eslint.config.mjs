@@ -1,15 +1,14 @@
 import { defineConfig, globalIgnores } from 'eslint/config';
+import { fixupConfigRules } from '@eslint/compat';
 import nextCoreWebVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
 import nx from '@nx/eslint-plugin';
 import js from '@eslint/js';
-import tseslint from 'typescript-eslint';
 
 const config = defineConfig([
   js.configs.recommended,
-  ...tseslint.configs.recommended,
-  ...nextCoreWebVitals,
-  ...nextTs,
+  ...fixupConfigRules(nextCoreWebVitals),
+  ...fixupConfigRules(nextTs),
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     settings: {
