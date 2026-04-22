@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { SseEvent } from '@lems/shared';
+import type { SseEvent } from '@lems/shared';
 
 export interface SseEmitter {
   sendStart(): void;
