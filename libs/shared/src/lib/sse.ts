@@ -24,13 +24,13 @@ export async function connectSseStream<T = unknown>(
     onProgress?: (percent: number, message?: string) => void;
   }
 ): Promise<T | undefined> {
+  const headers = new Headers(init?.headers);
+  headers.set('x-lems-csrf-enabled', 'true');
+
   const response = await fetch(getApiBase() + path, {
     ...init,
     credentials: 'include',
-    headers: {
-      'x-lems-csrf-enabled': 'true',
-      ...init?.headers
-    }
+    headers
   });
 
   if (!response.ok || !response.body) {
