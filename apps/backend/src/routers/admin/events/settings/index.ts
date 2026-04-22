@@ -3,6 +3,7 @@ import os from 'os';
 import path from 'path';
 import crypto from 'crypto';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import { IntegrationTypes } from '@lems/shared/integrations';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
@@ -13,6 +14,20 @@ import { storeTempFile, consumeTempFile } from '../../../../lib/temp-download-st
 import { makeAdminSettingsResponse, makeUpdateableEventSettings } from './util';
 
 const router = express.Router({ mergeParams: true });
+
+const downloadRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const downloadFileRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 router.get('/', async (req: AdminEventRequest, res) => {
   const settings = await db.events.byId(req.eventId).getSettings();
@@ -106,7 +121,7 @@ router.post('/publish', async (req: AdminEventRequest, res) => {
   }
 });
 
-router.post('/download', async (req: AdminEventRequest, res) => {
+router.post('/download', downloadRateLimiter, async (req: AdminEventRequest, res) => {
   const emitter = createSseEmitter(res);
   let tempPath: string | undefined;
   let fileStream: fs.WriteStream | undefined;
@@ -196,7 +211,7 @@ router.post('/download', async (req: AdminEventRequest, res) => {
   }
 });
 
-router.get('/download/file', (req: AdminEventRequest, res) => {
+router.get('/download/file', downloadFileRateLimiter, (req: AdminEventRequest, res) => {
   const token = req.query.token as string;
   if (!token) {
     res.status(400).json({ error: 'Missing token' });
