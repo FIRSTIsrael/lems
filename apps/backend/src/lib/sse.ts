@@ -14,8 +14,26 @@ export function createSseEmitter(res: Response): SseEmitter {
   res.setHeader('Connection', 'keep-alive');
   res.flushHeaders();
 
+  let closed = false;
+
+  res.on('close', () => {
+    closed = true;
+  });
+
   const write = (payload: SseEvent) => {
+    if (closed || res.writableEnded || res.destroyed) {
+      return;
+    }
+
     res.write(`data: ${JSON.stringify(payload)}\n\n`);
+  };
+
+  const end = () => {
+    if (closed || res.writableEnded || res.destroyed) {
+      return;
+    }
+
+    res.end();
   };
 
   return {
@@ -27,11 +45,11 @@ export function createSseEmitter(res: Response): SseEmitter {
     },
     sendSuccess(data) {
       write({ type: 'success', data });
-      res.end();
+      end();
     },
     sendFailure(message) {
       write({ type: 'failure', message });
-      res.end();
+      end();
     }
   };
 }
