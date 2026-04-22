@@ -29,6 +29,7 @@ export function storeTempFile(filePath: string, fileName: string): string {
 }
 
 export function consumeTempFile(token: string): TempFileEntry | null {
+  purgeTtl();
   const entry = store.get(token) ?? null;
   if (entry) store.delete(token);
   return entry;
