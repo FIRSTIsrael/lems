@@ -108,6 +108,16 @@ router.post('/publish', async (req: AdminEventRequest, res) => {
 
 router.post('/download', async (req: AdminEventRequest, res) => {
   const emitter = createSseEmitter(res);
+  let tempPath: string | undefined;
+  let fileStream: fs.WriteStream | undefined;
+  let archive:
+    | (NodeJS.ReadableStream & {
+        on(event: 'error', listener: (error: Error) => void): unknown;
+        pipe<T extends NodeJS.WritableStream>(destination: T): T;
+        finalize(): unknown;
+        destroy?: (error?: Error) => void;
+      })
+    | undefined;
 
   try {
     const settings = await db.events.byId(req.eventId).getSettings();
@@ -128,11 +138,13 @@ router.post('/download', async (req: AdminEventRequest, res) => {
 
     emitter.sendStart();
 
-    const { archive, fileName, statistics } = await generateEventResultsZip(
+    const result = await generateEventResultsZip(
       req.eventId,
       language,
       percent => emitter.sendProgress(percent)
     );
+    archive = result.archive;
+    const { fileName, statistics } = result;
 
     if (statistics.teamsWithPdfs === 0) {
       console.error(
@@ -148,20 +160,36 @@ router.post('/download', async (req: AdminEventRequest, res) => {
         `(${statistics.teamsWithPdfs}/${statistics.totalTeams} teams with PDFs, ${statistics.failedPdfs} failed PDFs)`
     );
 
-    const tempPath = path.join(os.tmpdir(), `${crypto.randomUUID()}.zip`);
-    const fileStream = fs.createWriteStream(tempPath);
+    tempPath = path.join(os.tmpdir(), `${crypto.randomUUID()}.zip`);
+    fileStream = fs.createWriteStream(tempPath);
 
     await new Promise<void>((resolve, reject) => {
-      fileStream.on('finish', resolve);
-      fileStream.on('error', reject);
-      archive.on('error', reject);
-      archive.pipe(fileStream);
-      archive.finalize();
+      fileStream!.on('finish', resolve);
+      fileStream!.on('error', reject);
+      archive!.on('error', reject);
+      archive!.pipe(fileStream!);
+      archive!.finalize();
     });
 
     const token = storeTempFile(tempPath, fileName);
     emitter.sendSuccess({ token });
   } catch (error) {
+    archive?.destroy?.(error instanceof Error ? error : undefined);
+    fileStream?.destroy(error instanceof Error ? error : undefined);
+
+    if (tempPath) {
+      try {
+        await fs.promises.unlink(tempPath);
+      } catch (unlinkError) {
+        if ((unlinkError as NodeJS.ErrnoException).code !== 'ENOENT') {
+          console.error(
+            `Failed to clean up temporary results ZIP for event ${req.eventId}: ${tempPath}`,
+            unlinkError
+          );
+        }
+      }
+    }
+
     const message = error instanceof Error ? error.message : String(error);
     console.error(`Error downloading event results for event ${req.eventId}: ${message}`, error);
     emitter.sendFailure(`Failed to download event results: ${message}`);
