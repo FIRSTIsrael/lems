@@ -13,11 +13,13 @@ import { RegisterTeamsButton } from './components/register-teams-button';
 import { RegisterTeamsFromCSVButton } from './components/register-teams-from-csv-button';
 import { ScheduleExists } from './components/schedule-exists';
 
+type ViewMode = 'unified' | 'split';
+
 export default function EventTeamsPage() {
   const event = useEvent();
 
   const t = useTranslations('pages.events.teams');
-  const [isUnified, setIsUnified] = useState(true);
+  const [viewMode, setViewMode] = useState<ViewMode>('unified');
 
   const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`);
   const { data: teams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`);
@@ -33,15 +35,15 @@ export default function EventTeamsPage() {
       <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
         <EventPageTitle title={t('title', { eventName: event.name })}>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography color={isUnified ? 'primary' : 'text.secondary'}>
+            <Typography color={viewMode === 'unified' ? 'primary' : 'text.secondary'}>
               {t('view-toggle.unified')}
             </Typography>
             <Switch
-              checked={!isUnified}
-              onChange={e => setIsUnified(!e.target.checked)}
+              checked={viewMode !== 'unified'}
+              onChange={e => setViewMode(e.target.checked ? 'split' : 'unified')}
               color="primary"
             />
-            <Typography color={!isUnified ? 'primary' : 'text.secondary'}>
+            <Typography color={viewMode === 'split' ? 'primary' : 'text.secondary'}>
               {t('view-toggle.split')}
             </Typography>
           </Stack>
@@ -55,11 +57,10 @@ export default function EventTeamsPage() {
         <ScheduleExists divisions={divisions} />
 
         <Box sx={{ flex: 1, minHeight: 0 }}>
-          {isUnified ? (
+          {viewMode === 'unified' && (
             <EventTeamsUnifiedView teams={teams} divisions={divisions} eventId={event.id} />
-          ) : (
-            <EventTeamsSplitView eventId={event.id} />
           )}
+          {viewMode === 'split' && <EventTeamsSplitView eventId={event.id} />}
         </Box>
       </Box>
     </Box>
