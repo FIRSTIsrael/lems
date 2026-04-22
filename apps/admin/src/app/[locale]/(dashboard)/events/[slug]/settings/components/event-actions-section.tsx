@@ -99,13 +99,16 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
         }
       );
 
-      if (result?.token) {
-        const a = document.createElement('a');
-        a.href = `${getApiBase(true)}/admin/events/${event.id}/settings/download/file?token=${result.token}`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
+      if (!result?.token) {
+        setAlert({ type: 'error', message: t('messages.download-error') });
+        return;
       }
+
+      const a = document.createElement('a');
+      a.href = `${getApiBase(true)}/admin/events/${event.id}/settings/download/file?token=${result.token}`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
 
       setAlert({ type: 'success', message: t('messages.download-success') });
       setDownloadDialogOpen(false);
