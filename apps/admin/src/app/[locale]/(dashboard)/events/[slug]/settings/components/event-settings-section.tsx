@@ -15,7 +15,7 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material';
-import { EventSettings, TeamWithDivision } from '@lems/types/api/admin';
+import { Award, EventSettings, TeamWithDivision } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
@@ -37,6 +37,24 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
     suspense: false,
     fallbackData: []
   });
+
+  const divisionIds = useMemo(
+    () => [...new Set(allTeams.map(t => t.division.id))].sort(),
+    [allTeams]
+  );
+
+  const { data: divisionAwards } = useSWR(
+    divisionIds.length > 0 ? ['division-awards', event.id, ...divisionIds] : null,
+    async ([, eventId, ...ids]: string[]) => {
+      const results = await Promise.all(
+        ids.map(id => apiFetch(`/admin/events/${eventId}/divisions/${id}/awards`))
+      );
+      return ids.reduce(
+        (acc, id, i) => ({ ...acc, [id]: (results[i].ok ? results[i].data : []) as Award[] }),
+        {} as Record<string, Award[]>
+      );
+    }
+  );
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -66,6 +84,31 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
 
     return { advancingTeams: advancing, totalTeams: total };
   }, [allTeams, advancementPercent]);
+
+  // Calculate the minimum advancement percentage such that at least all champions advance.
+  // For each division: smallest p where Math.round(teamCount * p / 100) >= championsCount.
+  // minPercent = max across all divisions (null while data is loading).
+  const minAdvancementPercent = useMemo(() => {
+    if (!divisionAwards) return null;
+
+    const teamsByDivision: Record<string, number> = {};
+    allTeams.forEach(team => {
+      teamsByDivision[team.division.id] ??= 0;
+      teamsByDivision[team.division.id] += 1;
+    });
+
+    let max = 1;
+    Object.entries(teamsByDivision).forEach(([divId, teamCount]) => {
+      const champCount = (divisionAwards[divId] ?? []).filter(a => a.name === 'champions').length;
+      if (champCount > 0 && teamCount > 0) {
+        // Smallest p (integer) where Math.round(teamCount * p / 100) >= champCount.
+        // Math.round(x) >= c iff x >= c - 0.5, so p >= (champCount - 0.5) * 100 / teamCount.
+        const minP = Math.ceil((100 * champCount - 50) / teamCount);
+        max = Math.max(max, minP);
+      }
+    });
+    return max;
+  }, [allTeams, divisionAwards]);
 
   useEffect(() => {
     if (settings) {
@@ -176,7 +219,15 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
             <Box sx={{ px: 2, mt: 5 }}>
               <Slider
                 value={advancementPercent}
-                onChange={(_, value) => setAdvancementPercent(value as number)}
+                onChange={(_, value) => {
+                  const v = value as number;
+                  if (minAdvancementPercent !== null && v > 0 && v < minAdvancementPercent) {
+                    // Snap over the invalid range: if dragging down snap to 0, if dragging up snap to minPercent
+                    setAdvancementPercent(v < advancementPercent ? 0 : minAdvancementPercent);
+                  } else {
+                    setAdvancementPercent(v);
+                  }
+                }}
                 min={0}
                 max={100}
                 step={1}
@@ -184,11 +235,14 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
                 valueLabelFormat={value => `${value}%`}
                 marks={[
                   { value: 0, label: '0%' },
+                  ...(minAdvancementPercent !== null && minAdvancementPercent > 1
+                    ? [{ value: minAdvancementPercent, label: `${minAdvancementPercent}%` }]
+                    : []),
                   { value: 25, label: '25%' },
                   { value: 50, label: '50%' },
                   { value: 75, label: '75%' },
                   { value: 100, label: '100%' }
-                ]}
+                ].filter((m, i, arr) => arr.findIndex(x => x.value === m.value) === i)}
               />
             </Box>
           </Grid>
