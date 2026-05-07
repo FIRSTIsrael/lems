@@ -101,4 +101,48 @@ router.get('/:divisionId/awards', async (req: PortalDivisionRequest, res: Respon
   res.status(200).json(awards.map(makePortalAwardsResponse));
 });
 
+router.get('/:divisionId/current-activity', async (req: PortalDivisionRequest, res: Response) => {
+  const divisionState = await db.raw.mongo
+    .collection('division_states')
+    .findOne({ divisionId: req.divisionId });
+
+  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+
+  let activeMatch = null;
+  let loadedMatch = null;
+
+  if (divisionState?.field?.activeMatch) {
+    const match = await db.robotGameMatches.byId(divisionState.field.activeMatch).get();
+    if (match) {
+      activeMatch = makePortalMatchResponse(match, tables, teams);
+    }
+  }
+
+  if (divisionState?.field?.loadedMatch) {
+    const match = await db.robotGameMatches.byId(divisionState.field.loadedMatch).get();
+    if (match) {
+      loadedMatch = makePortalMatchResponse(match, tables, teams);
+    }
+  }
+
+  // Get current judging sessions (sessions happening now)
+  const now = new Date();
+  const allSessions = await db.judgingSessions.byDivision(req.divisionId).getAll();
+  const currentSessions = allSessions
+    .filter(session => {
+      const sessionStart = new Date(session.scheduled_time);
+      const sessionEnd = new Date(sessionStart.getTime() + 30 * 60 * 1000); // 30 min sessions
+      return now >= sessionStart && now <= sessionEnd;
+    })
+    .map(session => makePortalJudgingSessionResponse(session, rooms, teams));
+
+  res.status(200).json({
+    activeMatch,
+    loadedMatch,
+    currentSessions
+  });
+});
+
 export default router;

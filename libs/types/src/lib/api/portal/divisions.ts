@@ -76,3 +76,11 @@ export const PortalScoreboardEntrySchema = z.object({
 export type ScoreboardEntry = z.infer<typeof PortalScoreboardEntrySchema>;
 
 export const PortalScoreboardSchema = z.array(PortalScoreboardEntrySchema);
+
+export const PortalCurrentActivitySchema = z.object({
+  activeMatch: PortalDivisionRobotGameMatchSchema.nullable(),
+  loadedMatch: PortalDivisionRobotGameMatchSchema.nullable(),
+  currentSessions: z.array(PortalDivisionJudgingSessionSchema)
+});
+
+export type CurrentActivity = z.infer<typeof PortalCurrentActivitySchema>;
