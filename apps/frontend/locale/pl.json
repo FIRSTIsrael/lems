@@ -1176,8 +1176,13 @@
       "table": {
         "match": "Mecz",
         "scheduled-time": "Czas",
+        "participant-queued": "W kolejce",
+        "participant-present": "Obecny",
         "participant-ready": "Gotowy",
-        "participant-not-ready": "Niegotowy"
+        "participant-not-ready": "Niegotowy",
+        "participant-no-show": "Nieobecny",
+        "status-queued": "W KOLEJCE",
+        "status-present": "OBECNY"
       }
     },
     "audience-display": {

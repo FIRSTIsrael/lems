@@ -1175,8 +1175,13 @@
       "table": {
         "match": "מקצה",
         "scheduled-time": "שעה",
+        "participant-queued": "בקיו",
+        "participant-present": "נוכחת",
         "participant-ready": "מוכנה",
-        "participant-not-ready": "לא מוכנה"
+        "participant-not-ready": "לא מוכנה",
+        "participant-no-show": "לא הגיעה",
+        "status-queued": "בקיו",
+        "status-present": "נוכחת"
       }
     },
     "audience-display": {

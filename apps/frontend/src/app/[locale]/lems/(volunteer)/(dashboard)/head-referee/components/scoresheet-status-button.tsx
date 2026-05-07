@@ -16,6 +16,8 @@ export interface ScoresheetStatusButtonProps {
   teamNumber: string;
   teamSlug: string;
   teamName: string;
+  teamAffiliation?: string;
+  teamCity?: string;
   scoresheetSlug: string;
   status: ScoresheetStatus;
   escalated: boolean;
@@ -80,6 +82,8 @@ export function ScoresheetStatusButton({
   teamNumber,
   teamSlug,
   teamName,
+  teamAffiliation,
+  teamCity,
   scoresheetSlug,
   status,
   escalated,
@@ -96,7 +100,7 @@ export function ScoresheetStatusButton({
 
   const textColor = isSubmitted ? 'common.white' : statusColor;
 
-  const tooltipTitle = teamName;
+  const tooltipTitle = teamAffiliation && teamCity ? `${teamAffiliation} • ${teamCity}` : teamName;
 
   const button = (
     <Box
@@ -148,21 +152,36 @@ export function ScoresheetStatusButton({
           display: 'flex',
           flexDirection: 'column',
           gap: 0.25,
-          textAlign: 'center'
+          textAlign: 'left'
         }}
       >
-        <Typography
-          variant="caption"
-          sx={{
-            fontWeight: 700,
-            fontSize: '0.8rem',
-            lineHeight: 1,
-            color: textColor,
-            textDecoration: 'none'
-          }}
-        >
-          #{teamNumber}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 700,
+              fontSize: '0.8rem',
+              lineHeight: 1,
+              color: textColor,
+              textDecoration: 'none'
+            }}
+          >
+            #{teamNumber}
+          </Typography>
+          <Typography
+            variant="caption"
+            sx={{
+              fontWeight: 500,
+              fontSize: '0.7rem',
+              lineHeight: 1,
+              color: textColor,
+              textDecoration: 'none',
+              opacity: 0.85
+            }}
+          >
+            {teamName}
+          </Typography>
+        </Box>
         {(score !== undefined || gp) && (
           <Typography
             variant="caption"
