@@ -252,10 +252,19 @@
       },
       "create-button": "יצירה",
       "grid": {
+        "search-placeholder": "חפש אירועים לפי שם, מיקום או בית...",
+        "filter-by-region": "סינון לפי אזור",
+        "filtering-by-regions": "מסנן לפי אזורים",
+        "view-grid": "תצוגת רשת",
+        "view-list": "תצוגת רשימה",
+        "pinned-events": "אירועים מוצמדים",
+        "all-events": "כל האירועים",
         "empty-state": {
           "no-events": "לא נמצאו אירועים",
           "no-events-description": "צור את האירוע הראשון שלך כדי להתחיל",
-          "create-new-event": "צור אירוע חדש"
+          "create-new-event": "צור אירוע חדש",
+          "no-results": "לא נמצאו אירועים התואמים לחיפוש",
+          "no-results-description": "נסה לשנות את מונחי החיפוש"
         }
       },
       "card": {

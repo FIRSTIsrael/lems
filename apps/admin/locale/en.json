@@ -252,10 +252,19 @@
       },
       "create-button": "Create",
       "grid": {
+        "search-placeholder": "Search events by name, location, or division...",
+        "filter-by-region": "Filter by Region",
+        "filtering-by-regions": "Filtering by regions",
+        "view-grid": "Grid view",
+        "view-list": "List view",
+        "pinned-events": "Pinned Events",
+        "all-events": "All Events",
         "empty-state": {
           "no-events": "No events found",
           "no-events-description": "Create your first event to get started",
-          "create-new-event": "Create New Event"
+          "create-new-event": "Create New Event",
+          "no-results": "No events match your search",
+          "no-results-description": "Try adjusting your search terms"
         }
       },
       "card": {
