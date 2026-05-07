@@ -48,7 +48,7 @@
     "dompurify": "^3.4.0",
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
-    "express-rate-limit": "^8.2.2",
+    "express-rate-limit": "^8.4.0",
     "formik": "^2.4.9",
     "graphiql": "^5.2.2",
     "graphql": "^16.12.0",
