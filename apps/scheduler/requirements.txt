@@ -2,4 +2,4 @@ fastapi[standard]==0.136.0
 pandas==3.0.2
 python-dotenv==1.2.2
 requests==2.33.1
-pyjwt==2.12.1
+pyjwt==2.13.0
