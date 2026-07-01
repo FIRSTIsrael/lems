@@ -93,7 +93,6 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
       <TableRow
         sx={{
           '& .MuiTableCell-root': {
-            padding: '0px',
             '&:first-of-type': {
               borderRadius: '0 0 0 12px'
             },
@@ -127,7 +126,6 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
               onChange={e => setFeedback(prev => ({ ...prev, [field]: e.target.value }))}
               onBlur={e => handleFeedbackBlur(field, e.target.value)}
               sx={{
-                p: 1,
                 borderRadius: '12px',
                 '& .MuiInput-root': {
                   '&::before': {
