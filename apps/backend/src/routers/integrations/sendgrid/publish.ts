@@ -90,7 +90,7 @@ export async function publishEventResults(options: SendGridPublishOptions) {
     throw new Error('Missing integration settings');
   }
 
-  if (!apiKey) {
+  if (!process.env.SENDGRID_API_KEY) {
     throw new Error('SendGrid API key not configured');
   }
 

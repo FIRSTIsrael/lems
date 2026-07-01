@@ -29,7 +29,7 @@ export default function TeamLayout({ children }: TeamLayoutProps) {
     throw new Error(error.message);
   }
 
-  if (!data.division?.teams || data.division.teams.length === 0) {
+  if (!data?.division?.teams || data.division.teams.length === 0) {
     toast.error(t('error-not-found'));
     redirect(`/lems/${role}`);
   }

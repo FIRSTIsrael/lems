@@ -68,6 +68,10 @@ export const { getClient, query, PreloadQuery } = registerApolloClient(() => {
     cache: createApolloCache(),
     link,
     defaultOptions: {
+      watchQuery: {
+        fetchPolicy: 'cache-first',
+        errorPolicy: 'all'
+      },
       query: {
         fetchPolicy: 'cache-first',
         errorPolicy: 'all'

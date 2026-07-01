@@ -9,12 +9,7 @@ import { useUser } from '../../../../../components/user-context';
 import { authorizeUserRole } from '../../../../../../lib/role-authorizer';
 import { useEvent } from '../../../../../components/event-context';
 import { useTeam } from '../../components/team-context';
-import {
-  GET_TEAM_MATCH_QUERY,
-  type GetTeamMatchQueryData,
-  type GetTeamMatchQueryVars,
-  type MatchData
-} from './graphql';
+import { GET_TEAM_MATCH_QUERY, type MatchData } from './graphql';
 import { ParticipantNotPresentModal } from './components/participant-not-present-modal';
 
 const parseScoresheetSlug = (scoresheetSlug: string) => {
@@ -42,17 +37,14 @@ export default function ScoresheetLayout({ children }: ScoresheetLayoutProps) {
 
   const { id: teamId, number: teamNumber } = useTeam();
 
-  const { data, error } = useSuspenseQuery<GetTeamMatchQueryData, GetTeamMatchQueryVars>(
-    GET_TEAM_MATCH_QUERY,
-    {
-      variables: {
-        divisionId: currentDivision.id,
-        stage,
-        round,
-        teamId
-      }
+  const { data, error } = useSuspenseQuery(GET_TEAM_MATCH_QUERY, {
+    variables: {
+      divisionId: currentDivision.id,
+      stage,
+      round,
+      teamId
     }
-  );
+  });
 
   // Check participant presence - must be before any conditional returns
   const match = data?.division?.field?.matches[0] as MatchData | undefined;
