@@ -65,3 +65,7 @@ logs/
 .cursor/rules/nx-rules.mdc
 /.cursor/
 /WARP.md
+
+.nx/polygraph
+.nx/self-healing
+.nx/migrate-runs
