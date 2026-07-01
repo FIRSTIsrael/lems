@@ -20,22 +20,33 @@ export const UploadInstructions: React.FC<PaperProps> = props => {
 
   return (
     <Paper elevation={0} variant="outlined" sx={{ p: 3 }} {...props}>
-      <Stack direction="row" spacing={2} alignItems="flex-start" mb={1}>
-        <Box pt={0.33}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "flex-start",
+          mb: 1
+        }}>
+        <Box sx={{
+          pt: 0.33
+        }}>
           <InfoIcon color="primary" />
         </Box>
         <Box>
           <Typography variant="h6" gutterBottom>
             {t('email-contacts-title')}
           </Typography>
-          <Typography variant="body2" color="text.secondary" paragraph>
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              marginBottom: "16px"
+            }}>
             {t('csv-description')}
           </Typography>
         </Box>
       </Stack>
-
       <Divider sx={{ mb: 2 }} />
-
       <Typography variant="subtitle2" gutterBottom>
         {t('csv-requirements-title')}
       </Typography>
@@ -68,7 +79,6 @@ export const UploadInstructions: React.FC<PaperProps> = props => {
           />
         </ListItem>
       </List>
-
       <Typography variant="subtitle2" gutterBottom sx={{ mt: 2 }}>
         {t('csv-example')}
       </Typography>

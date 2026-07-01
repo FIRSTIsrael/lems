@@ -27,7 +27,9 @@ export function PitMapView() {
   if (error || !pitMapUrl) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" color="text.secondary">
+        <Typography variant="h6" sx={{
+          color: "text.secondary"
+        }}>
           {error ? t('error') : t('no-map')}
         </Typography>
       </Paper>
@@ -45,14 +47,17 @@ export function PitMapView() {
       }}
     >
       <Box sx={{ width: '100%', mb: 2 }}>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{
+          fontWeight: 600
+        }}>
           {t('title')}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{
+          color: "text.secondary"
+        }}>
           {t('subtitle')}
         </Typography>
       </Box>
-
       <Box
         component="img"
         src={pitMapUrl}

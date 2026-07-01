@@ -111,7 +111,9 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
         return (
           <Form>
             <Stack direction="column" spacing={3}>
-              <Box display={{ xs: 'none', md: 'block' }}>
+              <Box sx={{
+                display: { xs: 'none', md: 'block' }
+              }}>
                 <StepIndicator
                   currentStep={values.currentStep}
                   completedSteps={completedSteps}

@@ -201,9 +201,11 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                 {registeredTeams.length === 0 && (
                   <Typography
                     variant="body2"
-                    color="text.secondary"
-                    sx={{ textAlign: 'center', mt: 2 }}
-                  >
+                    sx={{
+                      color: "text.secondary",
+                      textAlign: 'center',
+                      mt: 2
+                    }}>
                     {t('no-teams-selected')}
                   </Typography>
                 )}
@@ -212,7 +214,6 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
           </Grid>
         </Grid>{' '}
       </DialogContent>
-
       <DialogActions sx={{ my: 1 }}>
         <Button onClick={onClose}>{t('actions.cancel')}</Button>
         <Button

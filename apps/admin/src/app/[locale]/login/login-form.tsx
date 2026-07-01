@@ -118,7 +118,12 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
           {({ isSubmitting, status, isValid }) => (
             <Form>
               <Stack direction="column" spacing={3}>
-                <Typography variant="h2" textAlign="center" sx={{ mb: 2 }}>
+                <Typography
+                  variant="h2"
+                  sx={{
+                    textAlign: "center",
+                    mb: 2
+                  }}>
                   {t('title')}
                 </Typography>
 
@@ -159,7 +164,12 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                   }}
                 />
 
-                <Box display="flex" justifyContent="center" width="100%">
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%"
+                  }}>
                   <Button
                     type="submit"
                     variant="contained"

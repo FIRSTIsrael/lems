@@ -175,7 +175,9 @@ export function PersonalAwardsSection() {
               borderLeft: `4px solid ${theme.palette.info.main}`
             }}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {t('no-awards')}
             </Typography>
           </Paper>
@@ -238,9 +240,11 @@ export function PersonalAwardsSection() {
                         <Typography
                           component="span"
                           variant="caption"
-                          color="text.secondary"
-                          sx={{ display: 'block', mt: 0.25 }}
-                        >
+                          sx={{
+                            color: "text.secondary",
+                            display: 'block',
+                            mt: 0.25
+                          }}>
                           ({t('optional')})
                         </Typography>
                       )}
@@ -258,7 +262,7 @@ export function PersonalAwardsSection() {
                         <Box key={award.id}>
                           {isAssigned ? (
                             // Assigned award: show winner name as text
-                            <Box
+                            (<Box
                               sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -280,10 +284,10 @@ export function PersonalAwardsSection() {
                               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                 {assignedWinner}
                               </Typography>
-                            </Box>
+                            </Box>)
                           ) : (
                             // Unassigned award: show input field and button on same line
-                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
+                            (<Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
                               <TextField
                                 fullWidth
                                 size="medium"
@@ -292,12 +296,14 @@ export function PersonalAwardsSection() {
                                 onChange={e => handleAwardInputChange(award.id, e.target.value)}
                                 disabled={loading || mutationLoading}
                                 variant="outlined"
-                                inputProps={{
-                                  maxLength: 64
-                                }}
                                 sx={{
                                   '& .MuiOutlinedInput-root': {
                                     backgroundColor: 'background.paper'
+                                  }
+                                }}
+                                slotProps={{
+                                  htmlInput: {
+                                    maxLength: 64
                                   }
                                 }}
                               />
@@ -321,7 +327,7 @@ export function PersonalAwardsSection() {
                                 ) : null}
                                 {t('assign-button')}
                               </Button>
-                            </Box>
+                            </Box>)
                           )}
                         </Box>
                       );
@@ -333,7 +339,6 @@ export function PersonalAwardsSection() {
           </Grid>
         </Stack>
       </CardContent>
-
       {/* Confirmation Dialog */}
       <AssignAwardConfirmationDialog
         open={confirmDialog.open}

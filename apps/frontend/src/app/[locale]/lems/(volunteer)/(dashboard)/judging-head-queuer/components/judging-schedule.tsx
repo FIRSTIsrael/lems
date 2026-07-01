@@ -107,10 +107,17 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
   if (timeSlots.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" color="text.secondary">
+        <Typography variant="h6" sx={{
+          color: "text.secondary"
+        }}>
           {t('no-sessions')}
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mt: 1
+          }}>
           {t('no-sessions-description')}
         </Typography>
       </Paper>
@@ -121,7 +128,9 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
     <Paper sx={{ p: 0, bgcolor: 'white' }}>
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Typography variant="h6">{t('title')}</Typography>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{
+          color: "text.secondary"
+        }}>
           {t('subtitle')}
         </Typography>
       </Box>
@@ -137,15 +146,21 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600}>{t('time')}</Typography>
+                <Typography sx={{
+                  fontWeight: 600
+                }}>{t('time')}</Typography>
               </TableCell>
               {rooms.map(room => (
                 <TableCell key={room.id} align="center">
-                  <Typography fontWeight={600}>{room.name}</Typography>
+                  <Typography sx={{
+                    fontWeight: 600
+                  }}>{room.name}</Typography>
                 </TableCell>
               ))}
               <TableCell width={100} align="center">
-                <Typography fontWeight={600}>{t('actions')}</Typography>
+                <Typography sx={{
+                  fontWeight: 600
+                }}>{t('actions')}</Typography>
               </TableCell>
             </TableRow>
           </TableHead>
@@ -158,7 +173,11 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
               return (
                 <TableRow key={time}>
                   <TableCell align="center">
-                    <Typography fontFamily="monospace" fontWeight={500}>
+                    <Typography
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500
+                      }}>
                       {currentTime
                         .set('hour', new Date(time).getHours())
                         .set('minute', new Date(time).getMinutes())
@@ -170,7 +189,9 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
                     if (!session) {
                       return (
                         <TableCell key={room.id} align="center">
-                          <Typography color="text.disabled">-</Typography>
+                          <Typography sx={{
+                            color: "text.disabled"
+                          }}>-</Typography>
                         </TableCell>
                       );
                     }
@@ -195,7 +216,11 @@ export function JudgingSchedule({ divisionId, sessions, rooms, loading }: Judgin
                               </Typography>
                             </Tooltip>
                           ) : (
-                            <Typography color="text.disabled" sx={{ fontSize: '0.875rem' }}>
+                            <Typography
+                              sx={{
+                                color: "text.disabled",
+                                fontSize: '0.875rem'
+                              }}>
                               —
                             </Typography>
                           )}

@@ -71,7 +71,12 @@ export const AwardNominations: React.FC<AwardNominationsProps> = ({ awards, disa
     <Paper sx={{ p: 3, borderRadius: 2, boxShadow: 1, mb: 3 }}>
       <Stack spacing={2.5}>
         <Stack spacing={0.5}>
-          <Typography variant="h4" fontSize="1.125rem" fontWeight={600}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontSize: "1.125rem",
+              fontWeight: 600
+            }}>
             {t('title')}
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ fontSize: '0.875rem' }}>
@@ -97,7 +102,9 @@ export const AwardNominations: React.FC<AwardNominationsProps> = ({ awards, disa
                     />
                   }
                   label={
-                    <Typography variant="body2" fontWeight={500}>
+                    <Typography variant="body2" sx={{
+                      fontWeight: 500
+                    }}>
                       {getName(awardName)}
                     </Typography>
                   }

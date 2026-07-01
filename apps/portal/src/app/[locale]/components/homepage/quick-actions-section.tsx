@@ -45,13 +45,20 @@ export const QuickActionsSection = () => {
 
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          mb: 3
+        }}>
         <TrophyIcon color="primary" />
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" sx={{
+          fontWeight: "bold"
+        }}>
           {t('title')}
         </Typography>
       </Stack>
-
       <Stack spacing={2}>
         {ACTIONS.map(action => {
           const IconComponent = action.icon;
@@ -70,7 +77,9 @@ export const QuickActionsSection = () => {
               onClick={() => (window.location.href = action.href)}
             >
               <CardContent>
-                <Stack direction="row" alignItems="center" spacing={2}>
+                <Stack direction="row" spacing={2} sx={{
+                  alignItems: "center"
+                }}>
                   <Box
                     sx={{
                       p: 1.5,
@@ -84,10 +93,14 @@ export const QuickActionsSection = () => {
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography variant="subtitle1" sx={{
+                      fontWeight: "bold"
+                    }}>
                       {t(action.title)}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t(action.description)}
                     </Typography>
                   </Box>

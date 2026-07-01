@@ -19,7 +19,13 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
   return (
     <TableCell align="center" sx={{ py: 2, height: '100%' }}>
       {session && team ? (
-        <Stack spacing={1} alignItems="center" sx={{ height: '100%', minHeight: 150 }}>
+        <Stack
+          spacing={1}
+          sx={{
+            alignItems: "center",
+            height: '100%',
+            minHeight: 150
+          }}>
           <Box sx={{ minWidth: 180 }}>
             <TeamInfo team={team} size="sm" textAlign="center" />
           </Box>
@@ -29,10 +35,11 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
           <Stack
             direction="row"
             spacing={0.5}
-            alignItems="center"
-            flexWrap="wrap"
-            justifyContent="center"
-          >
+            sx={{
+              alignItems: "center",
+              flexWrap: "wrap",
+              justifyContent: "center"
+            }}>
             <SessionStatusChip
               status={session.status}
               called={session.called}
@@ -42,7 +49,9 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
           </Stack>
 
           {session.startTime && session.startDelta !== undefined && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {t('table.started-at', {
                 time: dayjs(session.startTime).format('HH:mm')
               })}
@@ -50,7 +59,9 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
           )}
 
           {session.status === 'in-progress' && session.startTime && (
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {t('table.ends-at', {
                 time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
               })}
@@ -58,7 +69,9 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
           )}
         </Stack>
       ) : (
-        <Typography variant="body2" color="text.disabled">
+        <Typography variant="body2" sx={{
+          color: "text.disabled"
+        }}>
           —
         </Typography>
       )}

@@ -54,9 +54,13 @@ export function JudgingStatusTimer({
   return (
     <Paper sx={{ p: 3 }}>
       <Stack spacing={3}>
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <GroupsIcon color="primary" />
-          <Typography variant="h6" fontWeight={600}>
+          <Typography variant="h6" sx={{
+            fontWeight: 600
+          }}>
             {t('title')}
           </Typography>
         </Stack>
@@ -64,8 +68,15 @@ export function JudgingStatusTimer({
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
           <Box sx={{ flex: 1 }}>
             <Stack spacing={2}>
-              <Stack direction="row" alignItems="center" justifyContent="space-between">
-                <Typography variant="subtitle1" fontWeight={600}>
+              <Stack
+                direction="row"
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                <Typography variant="subtitle1" sx={{
+                  fontWeight: 600
+                }}>
                   {t('current-session', { number: currentSessionNumber })}
                 </Typography>
                 <Chip
@@ -81,7 +92,9 @@ export function JudgingStatusTimer({
                 sx={{ height: 8, borderRadius: 1 }}
               />
 
-              <Stack direction="row" spacing={2} flexWrap="wrap">
+              <Stack direction="row" spacing={2} sx={{
+                flexWrap: "wrap"
+              }}>
                 <Chip
                   label={t('in-progress', { count: currentStats.inProgress })}
                   size="small"
@@ -107,8 +120,15 @@ export function JudgingStatusTimer({
           {nextSessions.length > 0 && (
             <Box sx={{ flex: 1 }}>
               <Stack spacing={2}>
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Typography variant="subtitle1" fontWeight={600}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    alignItems: "center",
+                    justifyContent: "space-between"
+                  }}>
+                  <Typography variant="subtitle1" sx={{
+                    fontWeight: 600
+                  }}>
                     {t('next-session', { number: currentSessionNumber + 1 })}
                   </Typography>
                   <Chip
@@ -125,7 +145,9 @@ export function JudgingStatusTimer({
                   color="secondary"
                 />
 
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('teams-ready', { count: nextStats.queued })}
                 </Typography>
               </Stack>

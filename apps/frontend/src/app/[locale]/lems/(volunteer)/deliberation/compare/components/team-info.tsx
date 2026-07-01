@@ -38,7 +38,9 @@ export function TeamInfo({ team }: TeamInfoProps) {
   return (
     <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{
+          fontWeight: 600
+        }}>
           {team.name} - #{team.number}
         </Typography>
         {team.profileDocumentUrl && (
@@ -49,11 +51,15 @@ export function TeamInfo({ team }: TeamInfoProps) {
           </Tooltip>
         )}
       </Box>
-      <Typography variant="h6" color="text.secondary">
+      <Typography variant="h6" sx={{
+        color: "text.secondary"
+      }}>
         {team.affiliation}
       </Typography>
       {team.judgingSession?.room && (
-        <Typography variant="h6" color="text.secondary">
+        <Typography variant="h6" sx={{
+          color: "text.secondary"
+        }}>
           {t('judging-room')}: {team.judgingSession.room.name}
         </Typography>
       )}

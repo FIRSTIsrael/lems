@@ -29,7 +29,11 @@ function JudgingStatusContent() {
     <>
       <PageHeader title={t('page-title')} />
       <CountdownHeader onLegendClick={event => setAnchorEl(event.currentTarget)} />
-      <Box py={1} width="100%">
+      <Box
+        sx={{
+          py: 1,
+          width: "100%"
+        }}>
         <ResponsiveComponent mobile={<JudgingStatusMobile />} desktop={<JudgingStatusTable />} />
       </Box>
       <StatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />

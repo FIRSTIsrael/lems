@@ -56,10 +56,14 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
     return (
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h5" sx={{
+            fontWeight: 600
+          }}>
             {t('next-match.title')}
           </Typography>
-          <Typography color="text.secondary">{t('next-match.no-match')}</Typography>
+          <Typography sx={{
+            color: "text.secondary"
+          }}>{t('next-match.no-match')}</Typography>
         </Stack>
       </Paper>
     );
@@ -97,18 +101,26 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
         <Stack
           direction="row"
           spacing={2}
-          alignItems="center"
-          justifyContent="space-between"
-          flexWrap="wrap"
-        >
-          <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
+          sx={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap"
+          }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.35rem'
+            }}>
             {getStage(match.stage)} #{match.number}
           </Typography>
           <Typography
             variant="body2"
-            color="text.secondary"
-            sx={{ fontSize: '1.05rem', fontWeight: 700 }}
-          >
+            sx={{
+              color: "text.secondary",
+              fontSize: '1.05rem',
+              fontWeight: 700
+            }}>
             {currentTime
               .set('hour', dayjs(match.scheduledTime).hour())
               .set('minute', dayjs(match.scheduledTime).minute())
@@ -116,8 +128,15 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
           </Typography>
         </Stack>
 
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: '1.05rem' }}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.05rem'
+            }}>
             {t('next-match.tables-ready')}:
           </Typography>
           <Chip
@@ -146,12 +165,13 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
                   key={participant.id}
                   direction="row"
                   spacing={0.5}
-                  alignItems="center"
                   sx={{
+                    alignItems: "center",
                     py: 0.75,
                     px: 2,
                     borderRadius: 1,
                     border: '2px solid',
+
                     borderColor:
                       status === 'ready'
                         ? 'success.main'
@@ -160,13 +180,14 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
                           : status === 'queued'
                             ? 'info.main'
                             : 'error.main'
-                  }}
-                >
+                  }}>
                   <Typography
                     variant="body2"
-                    fontWeight={500}
-                    sx={{ minWidth: 80, fontSize: '1.05rem' }}
-                  >
+                    sx={{
+                      fontWeight: 500,
+                      minWidth: 80,
+                      fontSize: '1.05rem'
+                    }}>
                     {participant.table.name}:
                   </Typography>
                   <Typography

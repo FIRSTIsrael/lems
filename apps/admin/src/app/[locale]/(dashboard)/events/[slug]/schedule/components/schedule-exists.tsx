@@ -57,7 +57,9 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
 
   return (
     <>
-      <Stack height="100%" spacing={2}>
+      <Stack spacing={2} sx={{
+        height: "100%"
+      }}>
         <Alert
           severity="success"
           icon={<CheckCircle />}
@@ -78,7 +80,6 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
         </Alert>
         <TeamSwapper division={division} />
       </Stack>
-
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

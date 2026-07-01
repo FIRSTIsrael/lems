@@ -30,7 +30,12 @@ export const RubricStatusSummary = () => {
   if (loading) {
     return (
       <Stack spacing={2}>
-        <Box display="flex" flexWrap="wrap" gap={2}>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2
+          }}>
           {range(JUDGING_CATEGORIES.length).map(i => (
             <Box
               key={i}
@@ -48,7 +53,12 @@ export const RubricStatusSummary = () => {
   }
 
   return (
-    <Box display="flex" flexWrap="wrap" gap={2}>
+    <Box
+      sx={{
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 2
+      }}>
       {Object.entries(stats).map(([category, stat]) => {
         const color = getRubricColor(category as JudgingCategory);
 
@@ -70,17 +80,24 @@ export const RubricStatusSummary = () => {
               }}
             >
               <CardContent>
-                <Typography variant="subtitle1" fontWeight={600} mb={2} color={color}>
+                <Typography
+                  variant="subtitle1"
+                  color={color}
+                  sx={{
+                    fontWeight: 600,
+                    mb: 2
+                  }}>
                   {label}
                 </Typography>
 
                 <Grid container spacing={1}>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
-                      display="flex"
-                      justifyContent={{ xs: 'space-between', md: 'flex-start' }}
-                      gap={2}
-                    >
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: 'space-between', md: 'flex-start' },
+                        gap: 2
+                      }}>
                       <Typography variant="body2" color="textSecondary">
                         {t('status.empty')}
                       </Typography>
@@ -92,10 +109,11 @@ export const RubricStatusSummary = () => {
 
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
-                      display="flex"
-                      justifyContent={{ xs: 'space-between', md: 'flex-start' }}
-                      gap={2}
-                    >
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: 'space-between', md: 'flex-start' },
+                        gap: 2
+                      }}>
                       <Typography variant="body2" color="textSecondary">
                         {t('status.draft')}
                       </Typography>
@@ -107,31 +125,48 @@ export const RubricStatusSummary = () => {
 
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
-                      display="flex"
-                      justifyContent={{ xs: 'space-between', md: 'flex-start' }}
-                      gap={2}
-                    >
+                      sx={{
+                        display: "flex",
+                        justifyContent: { xs: 'space-between', md: 'flex-start' },
+                        gap: 2
+                      }}>
                       <Typography variant="body2" color="textSecondary">
                         {t('status.completed')}
                       </Typography>
                       <Typography
                         variant="body2"
-                        fontWeight={600}
                         sx={{
+                          fontWeight: 600,
                           color: completed + locked + approved === total ? '#4caf50' : 'inherit'
-                        }}
-                      >
+                        }}>
                         {completed + locked + approved}
                       </Typography>
                     </Box>
                   </Grid>
                 </Grid>
 
-                <Stack direction="row" justifyContent="space-between" mt={2}>
-                  <Typography variant="body2" color="textSecondary" mt={2} mb={1}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    justifyContent: "space-between",
+                    mt: 2
+                  }}>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{
+                      mt: 2,
+                      mb: 1
+                    }}>
                     {t('status.approved')}
                   </Typography>
-                  <Typography variant="body2" fontWeight={600} mt={2} mb={1}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 600,
+                      mt: 2,
+                      mb: 1
+                    }}>
                     {total > 0 ? Math.round((approved / total) * 100) : 0}%
                   </Typography>
                 </Stack>

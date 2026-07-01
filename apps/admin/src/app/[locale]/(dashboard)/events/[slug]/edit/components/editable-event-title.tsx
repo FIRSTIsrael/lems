@@ -78,7 +78,9 @@ export const EditableEventTitle: React.FC = () => {
   if (isEditing) {
     return (
       <Box sx={{ mb: 3, position: 'relative' }}>
-        <Stack direction="row" spacing={1} alignItems="flex-start">
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "flex-start"
+        }}>
           <TextField
             inputRef={inputRef}
             value={editValue}
@@ -111,7 +113,9 @@ export const EditableEventTitle: React.FC = () => {
               }
             }}
           />
-          <Stack direction="row" spacing={0.5} pt={1.5}>
+          <Stack direction="row" spacing={0.5} sx={{
+            pt: 1.5
+          }}>
             <IconButton
               onClick={handleEditSave}
               size="small"
@@ -153,7 +157,13 @@ export const EditableEventTitle: React.FC = () => {
   }
 
   return (
-    <Stack direction="row" spacing={1} alignItems="center" sx={{ mb: 3 }}>
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{
+        alignItems: "center",
+        mb: 3
+      }}>
       <Typography
         variant="h1"
         gutterBottom={false}

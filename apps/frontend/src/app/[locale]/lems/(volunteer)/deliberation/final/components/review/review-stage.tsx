@@ -79,11 +79,16 @@ export const ReviewStage: React.FC = () => {
       sx={{ flex: 1, display: 'flex', flexDirection: 'column', p: 2.5, gap: 2.5, overflow: 'auto' }}
     >
       <Paper sx={{ p: 2.5, borderRadius: 1.5 }}>
-        <Typography variant="h2" textAlign="center" sx={{ fontWeight: 700, fontSize: '1.75rem' }}>
+        <Typography
+          variant="h2"
+          sx={{
+            textAlign: "center",
+            fontWeight: 700,
+            fontSize: '1.75rem'
+          }}>
           {t('title')}
         </Typography>
       </Paper>
-
       {awardsLoading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
           <CircularProgress />
@@ -99,7 +104,6 @@ export const ReviewStage: React.FC = () => {
           </Grid>
         </Box>
       )}
-
       <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2.5 }}>
         <Button
           variant="contained"
@@ -118,7 +122,6 @@ export const ReviewStage: React.FC = () => {
           {t('approve-button')}
         </Button>
       </Box>
-
       <ApprovalModal
         open={openConfirmDialog}
         onClose={handleCloseConfirm}

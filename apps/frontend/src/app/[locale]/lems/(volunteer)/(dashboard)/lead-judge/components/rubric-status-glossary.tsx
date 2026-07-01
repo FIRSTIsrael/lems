@@ -42,7 +42,6 @@ export const RubricStatusGlossary: React.FC = () => {
       >
         <InfoOutlinedIcon fontSize="small" />
       </IconButton>
-
       <Popover
         open={open}
         anchorEl={anchorEl}
@@ -111,9 +110,10 @@ export const RubricStatusGlossary: React.FC = () => {
                 key={status}
                 direction="row"
                 spacing={1.5}
-                alignItems="flex-start"
-                sx={{ py: 0.5 }}
-              >
+                sx={{
+                  alignItems: "flex-start",
+                  py: 0.5
+                }}>
                 <Box
                   sx={{
                     display: 'flex',

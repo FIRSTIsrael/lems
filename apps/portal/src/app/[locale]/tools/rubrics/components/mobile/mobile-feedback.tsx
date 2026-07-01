@@ -58,7 +58,12 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
     >
       <CardHeader
         title={
-          <Typography variant="h6" fontWeight={700} sx={{ color }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color
+            }}>
             {t('mobile-feedback')}
           </Typography>
         }

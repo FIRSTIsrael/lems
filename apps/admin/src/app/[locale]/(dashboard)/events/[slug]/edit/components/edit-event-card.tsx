@@ -45,7 +45,12 @@ const EditEventCard: React.FC<EditEventCardProps> = ({ icon, title, href, sx }) 
         >
           {icon}
         </Avatar>
-        <Typography variant="h6" textAlign="center" fontWeight={500}>
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: "center",
+            fontWeight: 500
+          }}>
           {t(title)}
         </Typography>
       </Paper>

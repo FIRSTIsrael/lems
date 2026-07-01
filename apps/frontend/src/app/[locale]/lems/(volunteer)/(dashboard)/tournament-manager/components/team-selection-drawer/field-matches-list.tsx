@@ -21,7 +21,9 @@ export function FieldMatchesList({
 
   return (
     <Box>
-      <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+      <Typography variant="subtitle2" gutterBottom sx={{
+        fontWeight: 600
+      }}>
         {t('field-matches')}
       </Typography>
       <Box
@@ -35,8 +37,21 @@ export function FieldMatchesList({
           const participant = match.participants.find(p => p.team?.id === slot?.team?.id);
           return (
             <Paper key={match.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
-                <Typography variant="body2" fontWeight={600} noWrap sx={{ flex: 1, minWidth: 0 }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
+                <Typography
+                  variant="body2"
+                  noWrap
+                  sx={{
+                    fontWeight: 600,
+                    flex: 1,
+                    minWidth: 0
+                  }}>
                   {getStage?.(match.stage)} #{match.number} • {participant?.table.name} •{' '}
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>

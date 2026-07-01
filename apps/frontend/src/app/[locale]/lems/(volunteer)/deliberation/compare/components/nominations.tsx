@@ -43,7 +43,9 @@ export function Nominations({ team }: NominationsProps) {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="subtitle2" fontWeight={600}>
+      <Typography variant="subtitle2" sx={{
+        fontWeight: 600
+      }}>
         {t('nominations')}
       </Typography>
       <Stack spacing={0.5}>

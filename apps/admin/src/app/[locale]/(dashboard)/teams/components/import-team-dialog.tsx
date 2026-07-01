@@ -80,15 +80,28 @@ const ImportForm: React.FC<{ onSuccess: (result: ImportResult) => void }> = ({ o
   return (
     <Stack spacing={3}>
       <Paper elevation={0} variant="outlined" sx={{ p: 3 }}>
-        <Stack direction="row" spacing={2} alignItems="flex-start" mb={1}>
-          <Box pt={0.33}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: "flex-start",
+            mb: 1
+          }}>
+          <Box sx={{
+            pt: 0.33
+          }}>
             <InfoIcon color="primary" />
           </Box>
           <Box>
             <Typography variant="h6" gutterBottom>
               {t('instructions.title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                marginBottom: "16px"
+              }}>
               {t('instructions.description')}
             </Typography>
           </Box>
@@ -140,7 +153,6 @@ const ImportForm: React.FC<{ onSuccess: (result: ImportResult) => void }> = ({ o
           </Typography>
         </Paper>
       </Paper>
-
       <FileUpload
         label={t('fields.file.label')}
         accept=".csv,text/csv"
@@ -150,10 +162,10 @@ const ImportForm: React.FC<{ onSuccess: (result: ImportResult) => void }> = ({ o
         disabled={isSubmitting}
         placeholder={t('fields.file.placeholder')}
       />
-
       {error && <Alert severity="error">{t(`errors.${error}`)}</Alert>}
-
-      <Stack direction="row" justifyContent="center">
+      <Stack direction="row" sx={{
+        justifyContent: "center"
+      }}>
         <Button
           onClick={handleSubmit}
           variant="contained"
@@ -175,13 +187,15 @@ const SuccessView: React.FC<{ result: ImportResult; onClose: () => void }> = ({
   const t = useTranslations('pages.teams.import-dialog.success');
 
   return (
-    <Stack spacing={3} alignItems="center">
+    <Stack spacing={3} sx={{
+      alignItems: "center"
+    }}>
       <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-
-      <Typography variant="h6" textAlign="center">
+      <Typography variant="h6" sx={{
+        textAlign: "center"
+      }}>
         {t('title')}
       </Typography>
-
       {result.created.length > 0 && (
         <Box>
           <Typography variant="subtitle2" gutterBottom>
@@ -207,7 +221,6 @@ const SuccessView: React.FC<{ result: ImportResult; onClose: () => void }> = ({
           </List>
         </Box>
       )}
-
       {result.updated.length > 0 && (
         <Box>
           <Typography variant="subtitle2" gutterBottom>
@@ -233,7 +246,6 @@ const SuccessView: React.FC<{ result: ImportResult; onClose: () => void }> = ({
           </List>
         </Box>
       )}
-
       <Button variant="contained" onClick={onClose} sx={{ minWidth: 200 }}>
         {t('close')}
       </Button>

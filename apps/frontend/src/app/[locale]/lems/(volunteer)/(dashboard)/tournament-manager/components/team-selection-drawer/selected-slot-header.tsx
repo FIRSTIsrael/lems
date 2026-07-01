@@ -16,22 +16,36 @@ export function SelectedSlotHeader({ selectedSlot, onClose }: SelectedSlotHeader
     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
       <Box sx={{ flex: 1, minWidth: 0 }}>
         {!isMissingTeam && (
-          <Typography variant="caption" color="text.secondary" display="block">
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: "block"
+            }}>
             {selectedSlot?.type === 'match'
               ? `${t('labels.match')} - ${selectedSlot.tableName}`
               : `${t('labels.session')} - ${selectedSlot?.roomName}`}
           </Typography>
         )}
         {isMissingTeam && (
-          <Typography variant="caption" color="warning.main" display="block">
+          <Typography
+            variant="caption"
+            sx={{
+              color: "warning.main",
+              display: "block"
+            }}>
             {t('labels.not-assigned')}
           </Typography>
         )}
-        <Typography variant="h6" fontWeight={700} color="primary" noWrap>
+        <Typography variant="h6" color="primary" noWrap sx={{
+          fontWeight: 700
+        }}>
           #{selectedSlot?.team?.number} {selectedSlot?.team?.name}
         </Typography>
         {(selectedSlot?.team?.affiliation || selectedSlot?.team?.city) && (
-          <Typography variant="body2" color="text.secondary" noWrap>
+          <Typography variant="body2" noWrap sx={{
+            color: "text.secondary"
+          }}>
             {[selectedSlot.team.affiliation, selectedSlot.team.city].filter(Boolean).join(' • ')}
           </Typography>
         )}

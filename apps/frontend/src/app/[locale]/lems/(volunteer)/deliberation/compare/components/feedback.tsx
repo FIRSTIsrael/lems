@@ -156,10 +156,11 @@ export function Feedback({ team }: FeedbackProps) {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="subtitle2" fontWeight={600}>
+      <Typography variant="subtitle2" sx={{
+        fontWeight: 600
+      }}>
         {t('feedback')}
       </Typography>
-
       {category ? (
         Object.entries(feedbacksByCategory).map(([cat, feedback]) => (
           <CategoryFeedbackCard key={cat} category={cat} feedback={feedback} />

@@ -128,7 +128,12 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               }
               label={t('event-settings.visible')}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
               {t('event-settings.visible-description')}
             </Typography>
             <FormControlLabel
@@ -142,7 +147,12 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               sx={{ mt: 2 }}
               label={t('event-settings.official')}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
               {t('event-settings.official-description')}
             </Typography>
             <FormControlLabel
@@ -156,13 +166,27 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               sx={{ mt: 2 }}
               label={t('event-settings.open-rubrics-during-session')}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
               {t('event-settings.open-rubrics-during-session-description')}
             </Typography>
           </Grid>
 
-          <Grid size={4} spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Grid
+            size={4}
+            spacing={3}
+            sx={{
+              alignItems: "center",
+              mt: 1,
+              mb: 4
+            }}>
+            <Typography variant="body2" gutterBottom sx={{
+              color: "text.secondary"
+            }}>
               {t('event-settings.advancement-percent')}
               {totalTeams > 0 && (
                 <Typography component="span" variant="body2" color="primary" sx={{ ml: 1 }}>
@@ -170,7 +194,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
                 </Typography>
               )}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {t('event-settings.advancement-percent-description')}
             </Typography>
             <Box sx={{ px: 2, mt: 5 }}>

@@ -51,13 +51,19 @@ export const TeamsTab: React.FC = () => {
           <TableHead>
             <TableRow>
               <TableCell>
-                <Typography fontWeight={500}>{t('team')}</Typography>
+                <Typography sx={{
+                  fontWeight: 500
+                }}>{t('team')}</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight={500}>{t('region')}</Typography>
+                <Typography sx={{
+                  fontWeight: 500
+                }}>{t('region')}</Typography>
               </TableCell>
               <TableCell>
-                <Typography fontWeight={500}>{t('location')}</Typography>
+                <Typography sx={{
+                  fontWeight: 500
+                }}>{t('location')}</Typography>
               </TableCell>
               <TableCell />
             </TableRow>

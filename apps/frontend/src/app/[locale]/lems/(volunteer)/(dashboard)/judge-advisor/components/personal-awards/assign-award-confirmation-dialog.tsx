@@ -49,7 +49,9 @@ export function AssignAwardConfirmationDialog({
       </DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {t('confirm-assignment-message')}
           </Typography>
           <Box
@@ -62,7 +64,9 @@ export function AssignAwardConfirmationDialog({
           >
             <Stack spacing={1}>
               <Box>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('award-label')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -70,7 +74,9 @@ export function AssignAwardConfirmationDialog({
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('winner-label')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -79,7 +85,9 @@ export function AssignAwardConfirmationDialog({
               </Box>
             </Stack>
           </Box>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{
+            color: "text.secondary"
+          }}>
             {t('confirm-assignment-warning')}
           </Typography>
         </Stack>

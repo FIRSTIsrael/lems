@@ -64,7 +64,9 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           borderRadius: 3
         }}
       >
-        <Box p={2}>
+        <Box sx={{
+          p: 2
+        }}>
           <Typography
             variant="overline"
             sx={{
@@ -78,7 +80,13 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           >
             {t('current-stage')}
           </Typography>
-          <Stack direction="row" spacing={1.5} alignItems="center" mt={1}>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={{
+              alignItems: "center",
+              mt: 1
+            }}>
             <Box
               sx={{
                 width: 5,
@@ -100,7 +108,9 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Stack>
         </Box>
 
-        <Box textAlign="center">
+        <Box sx={{
+          textAlign: "center"
+        }}>
           <Typography
             sx={{
               fontSize: '7rem',
@@ -196,7 +206,13 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Box>
 
           {openRubricsDuringSession && session.team?.slug && (
-            <Stack direction="row" spacing={1} flexWrap="wrap" justifyContent="center">
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                flexWrap: "wrap",
+                justifyContent: "center"
+              }}>
               <RubricButton team={session.team} category="innovation-project" fontSize="0.7rem" />
               <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
                 •
@@ -230,7 +246,6 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Button>
         </Stack>
       </Stack>
-
       <AbortSessionDialog
         open={abortDialogOpen}
         onClose={() => setAbortDialogOpen(false)}

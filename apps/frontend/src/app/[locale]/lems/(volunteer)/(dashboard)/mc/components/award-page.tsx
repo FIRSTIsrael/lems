@@ -37,19 +37,20 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
   };
 
   return (
-    <Stack spacing={3} alignItems="center">
+    <Stack spacing={3} sx={{
+      alignItems: "center"
+    }}>
       <Stack
         direction="row"
         spacing={3}
-        alignItems="center"
         sx={{
+          alignItems: "center",
           background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, 0.08)} 0%, ${alpha(theme.palette.primary.main, 0.02)} 100%)`,
           p: 3,
           borderRadius: 2,
           border: `1px solid ${alpha(theme.palette.primary.main, 0.1)}`,
           width: '100%'
-        }}
-      >
+        }}>
         <Box
           sx={{
             display: 'flex',
@@ -71,12 +72,17 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
           >
             {t('award', { awardName: getName(awardGroup.name) })}
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mt: 0.5, fontSize: '0.95rem' }}>
+          <Typography
+            variant="body1"
+            sx={{
+              color: "text.secondary",
+              mt: 0.5,
+              fontSize: '0.95rem'
+            }}>
             {getDescription(awardGroup.name)}
           </Typography>
         </Box>
       </Stack>
-
       <Stack spacing={2} sx={{ width: '100%' }}>
         {awardGroup.awards.map((award, index) => {
           const medalColor =
@@ -98,7 +104,13 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
                 animation: `fadeIn 0.5s ease-out ${index * 0.1}s both`
               }}
             >
-              <Stack direction="row" spacing={3} alignItems="center" justifyContent="flex-start">
+              <Stack
+                direction="row"
+                spacing={3}
+                sx={{
+                  alignItems: "center",
+                  justifyContent: "flex-start"
+                }}>
                 {/* Place Badge */}
                 {award.place > 0 && awardGroup.showPlaces && (
                   <Box
@@ -129,7 +141,9 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
                       minWidth: 0
                     }}
                   >
-                    <Stack direction="row" spacing={1.5} alignItems="center">
+                    <Stack direction="row" spacing={1.5} sx={{
+                      alignItems: "center"
+                    }}>
                       <Typography
                         variant="h5"
                         sx={{
@@ -150,14 +164,13 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
                     {award.winner.team.affiliation && (
                       <Typography
                         variant="body2"
-                        color="text.secondary"
                         sx={{
+                          color: "text.secondary",
                           fontSize: '0.9rem',
                           display: 'flex',
                           gap: 0.5,
                           alignItems: 'center'
-                        }}
-                      >
+                        }}>
                         <Typography component="span" variant="body2" sx={{ fontWeight: 500 }}>
                           {award.winner.team.affiliation}
                         </Typography>
@@ -190,7 +203,6 @@ export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
           );
         })}
       </Stack>
-
       <style>{`
         @keyframes fadeIn {
           from {

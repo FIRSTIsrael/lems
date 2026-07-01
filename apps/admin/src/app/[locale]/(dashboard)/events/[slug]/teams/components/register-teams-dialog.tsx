@@ -59,15 +59,15 @@ export const RegisterTeamsDialog = ({ open, onClose, event }: RegisterTeamsDialo
       slotProps={{ paper: { sx: { height: '80vh', maxHeight: '800px' } } }}
     >
       <DialogTitle>{t('title', { divisions: divisions.length })}</DialogTitle>
-
       {isLoading ? (
         <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height="100%"
-          minHeight="400px"
-        >
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100%",
+            minHeight: "400px"
+          }}>
           <CircularProgress size={60} />
         </Box>
       ) : (

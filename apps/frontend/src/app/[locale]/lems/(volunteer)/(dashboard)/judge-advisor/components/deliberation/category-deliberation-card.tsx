@@ -71,19 +71,32 @@ export function CategoryDeliberationCard({
         }}
       >
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography variant="subtitle1" fontWeight={600} mb={2} color={color}>
+          <Typography
+            variant="subtitle1"
+            color={color}
+            sx={{
+              fontWeight: 600,
+              mb: 2
+            }}>
             {label}
           </Typography>
 
           <Stack
             spacing={2}
             direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-            mb={2}
-          >
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center",
+              mb: 2
+            }}>
             <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  display: "block",
+                  mb: 0.5
+                }}>
                 {t('status')}
               </Typography>
               <Chip
@@ -96,16 +109,33 @@ export function CategoryDeliberationCard({
             </Box>
 
             <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  display: "block",
+                  mb: 0.5
+                }}>
                 {t('start-time')}
               </Typography>
-              <Typography variant="body2" fontWeight={500} fontFamily="monospace">
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 500,
+                  fontFamily: "monospace"
+                }}>
                 {deliberation.startTime ? dayjs(deliberation.startTime).format('HH:mm') : '—'}
               </Typography>
             </Box>
 
             <Box>
-              <Typography variant="caption" color="text.secondary" display="block" mb={0.5}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "text.secondary",
+                  display: "block",
+                  mb: 0.5
+                }}>
                 {t('picklist')}
               </Typography>
               {deliberation ? (
@@ -113,7 +143,9 @@ export function CategoryDeliberationCard({
                   {deliberation.picklist.length} / {desiredPicklistLength}
                 </Typography>
               ) : (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   —
                 </Typography>
               )}

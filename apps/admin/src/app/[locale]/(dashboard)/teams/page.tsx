@@ -25,7 +25,13 @@ export default async function TeamsPage() {
         flexDirection: 'column'
       }}
     >
-      <Stack direction="row" alignItems="center" gap={2} mb={3}>
+      <Stack
+        direction="row"
+        sx={{
+          alignItems: "center",
+          gap: 2,
+          mb: 3
+        }}>
         <Typography variant="h1" gutterBottom sx={{ mb: 0 }}>
           {t('title')}
         </Typography>

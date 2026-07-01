@@ -95,14 +95,14 @@ export default function McPage() {
       <PageHeader title={t('page-title')}>
         <McModeToggle mode={mode} setMode={handleModeChange} />
       </PageHeader>
-
       {mode === 'matches' && (
-        <Stack spacing={3} my={3}>
+        <Stack spacing={3} sx={{
+          my: 3
+        }}>
           <CurrentMatchHero />
           <MatchScheduleTable />
         </Stack>
       )}
-
       {mode === 'awards' && (
         <Container maxWidth="md" sx={{ my: 3 }}>
           <AwardsView />

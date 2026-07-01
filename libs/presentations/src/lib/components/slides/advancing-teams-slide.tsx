@@ -37,17 +37,16 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
     <Slide>
       <Stack
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         spacing={5}
         sx={{
+          alignItems: "center",
+          justifyContent: "center",
           height: '100%',
           width: '100%',
           px: 4,
           textAlign: 'center',
           position: 'relative'
-        }}
-      >
+        }}>
         <Appear activeStyle={{ opacity: 1, y: 0 }} inactiveStyle={{ opacity: 0, y: 20 }}>
           <Typography variant="h2" sx={{ fontSize: '5rem', fontWeight: 700, color: 'black' }}>
             {t('advancing-teams')}
@@ -97,22 +96,22 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
                     <Stack
                       key={teamData.id}
                       direction="column"
-                      alignItems="center"
                       spacing={2}
                       sx={{
+                        alignItems: "center",
                         p: 3,
                         borderRadius: 2,
                         backgroundColor: '#f9fafb',
                         border: '2px solid #e5e7eb',
                         transition: 'all 0.3s ease',
+
                         '&:hover': {
                           backgroundColor: '#f3f4f6',
                           borderColor: '#d1d5db',
                           transform: 'translateY(-4px)',
                           boxShadow: '0 10px 30px rgba(0, 0, 0, 0.1)'
                         }
-                      }}
-                    >
+                      }}>
                       <Typography
                         sx={{
                           fontSize: '3rem',

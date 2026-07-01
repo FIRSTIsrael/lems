@@ -57,29 +57,44 @@ export function EventAdminsSection() {
       <Typography variant="h5" gutterBottom>
         {t('title')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          mb: 2
+        }}>
         {t('description')}
       </Typography>
-
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 2
+        }}>
         <Typography variant="h6">{t('current-admins')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
           {t('assign-admins')}
         </Button>
       </Stack>
-
       {eventAdmins.length === 0 && <Alert severity="info">{t('no-admins')}</Alert>}
-
       <Stack spacing={2}>
         {eventAdmins.map(admin => (
           <Card key={admin.id} variant="outlined">
             <CardContent>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Stack
+                direction="row"
+                sx={{
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}>
                 <Box>
                   <Typography variant="subtitle1">
                     {admin.firstName} {admin.lastName}
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
+                  <Typography variant="body2" sx={{
+                    color: "text.secondary"
+                  }}>
                     @{admin.username}
                   </Typography>
                 </Box>
@@ -96,7 +111,6 @@ export function EventAdminsSection() {
           </Card>
         ))}
       </Stack>
-
       <AssignAdminsDialog open={dialogOpen} onClose={() => setDialogOpen(false)} />
     </Box>
   );

@@ -31,17 +31,22 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
           borderColor: 'grey.200'
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <ScoreIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
-          <Typography variant="body1" fontWeight="600">
+          <Typography variant="body1" sx={{
+            fontWeight: "600"
+          }}>
             {t('performance.highest-score')}
           </Typography>
         </Stack>
-        <Typography variant="h6" fontWeight="600" color="primary">
+        <Typography variant="h6" color="primary" sx={{
+          fontWeight: "600"
+        }}>
           {highestScore ?? '-'}
         </Typography>
       </Grid>
-
       <Grid
         size={{ xs: 12, sm: 6, lg: 3 }}
         sx={{
@@ -55,13 +60,19 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
           borderColor: 'grey.200'
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
           <RobotIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
-          <Typography variant="body1" fontWeight="600">
+          <Typography variant="body1" sx={{
+            fontWeight: "600"
+          }}>
             {t('performance.robot-game-rank')}
           </Typography>
         </Stack>
-        <Typography variant="h6" fontWeight="600" color="primary">
+        <Typography variant="h6" color="primary" sx={{
+          fontWeight: "600"
+        }}>
           {robotGameRank ?? '-'}
         </Typography>
       </Grid>

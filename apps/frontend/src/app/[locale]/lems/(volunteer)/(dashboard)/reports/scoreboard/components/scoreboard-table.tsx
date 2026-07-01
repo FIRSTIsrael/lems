@@ -59,7 +59,13 @@ export function ScoreboardTable({ data, matchesPerTeam }: ScoreboardTableProps) 
         getRowId={row => row.id}
         slots={{
           noRowsOverlay: () => (
-            <Box display="flex" alignItems="center" justifyContent="center" height="100%">
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                height: "100%"
+              }}>
               <Typography variant="body1">{t('no-data')}</Typography>
             </Box>
           )

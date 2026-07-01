@@ -81,17 +81,44 @@ export function SearchTeamSection({
         )}
         renderOption={(props, team) => (
           <Box component="li" {...props} key={team.id}>
-            <Stack spacing={0.5} width="100%">
-              <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack
+              spacing={0.5}
+              sx={{
+                width: '100%'
+              }}
+            >
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   #{team.number}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {team.name}
                 </Typography>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={0.5}>
-                <Typography variant="caption" color="text.secondary">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {team.affiliation} • {team.city}
                 </Typography>
               </Stack>

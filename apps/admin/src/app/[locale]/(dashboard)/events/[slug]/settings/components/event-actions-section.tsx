@@ -127,7 +127,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
 
           <Stack spacing={3} sx={{ mt: 3 }}>
             <Box>
-              <Stack direction="row" spacing={2} alignItems="center">
+              <Stack direction="row" spacing={2} sx={{
+                alignItems: "center"
+              }}>
                 <Button
                   variant="outlined"
                   color="primary"
@@ -142,7 +144,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.complete-event-description')}
                   </Typography>
                   {settings.completed && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('event-actions.already-completed')}
                     </Typography>
                   )}
@@ -153,7 +157,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
             <Divider />
 
             <Box>
-              <Stack direction="row" spacing={2} alignItems="center">
+              <Stack direction="row" spacing={2} sx={{
+                alignItems: "center"
+              }}>
                 <Button
                   variant="outlined"
                   color="primary"
@@ -168,7 +174,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.publish-event-description')}
                   </Typography>
                   {settings.published && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('event-actions.already-published')}
                     </Typography>
                   )}
@@ -179,7 +187,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
             <Divider />
 
             <Box>
-              <Stack direction="row" spacing={2} alignItems="center">
+              <Stack direction="row" spacing={2} sx={{
+                alignItems: "center"
+              }}>
                 <Button
                   variant="outlined"
                   color="primary"
@@ -194,7 +204,9 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.download-results-description')}
                   </Typography>
                   {!settings.published && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('event-actions.not-published')}
                     </Typography>
                   )}
@@ -204,21 +216,18 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
           </Stack>
         </CardContent>
       </Card>
-
       <CompleteEventDialog
         open={completeDialogOpen}
         onClose={() => setCompleteDialogOpen(false)}
         onConfirm={handleCompleteEvent}
         eventName={event.name}
       />
-
       <PublishEventDialog
         open={publishDialogOpen}
         onClose={() => setPublishDialogOpen(false)}
         onConfirm={handlePublishEvent}
         eventName={event.name}
       />
-
       <DownloadResultsDialog
         open={downloadDialogOpen}
         onClose={() => setDownloadDialogOpen(false)}

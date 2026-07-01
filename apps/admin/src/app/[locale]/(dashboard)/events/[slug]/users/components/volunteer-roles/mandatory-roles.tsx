@@ -13,7 +13,13 @@ export const MandatoryRolesSection: React.FC = () => {
       <Card sx={{ height: 'fit-content' }}>
         <CardHeader title={t('mandatory-roles.title')} slotProps={{ title: { variant: 'h6' } }} />
         <CardContent>
-          <Typography variant="caption" color="text.secondary" sx={{ mb: 2, display: 'block' }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              mb: 2,
+              display: 'block'
+            }}>
             {t('mandatory-roles.description')}
           </Typography>
           <Stack spacing={2}>

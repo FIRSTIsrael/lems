@@ -2,14 +2,7 @@
 
 import React from 'react';
 import { useTranslations } from 'next-intl';
-import {
-  Menu,
-  Paper,
-  Box,
-  Typography,
-  Chip,
-  Stack
-} from '@mui/material';
+import { Menu, Box, Typography, Chip, Stack } from '@mui/material';
 import { Division, TeamWithDivision } from '@lems/types/api/admin';
 
 interface ChangeDivisionMenuProps {
@@ -41,11 +34,13 @@ export const ChangeDivisionMenu: React.FC<ChangeDivisionMenuProps> = ({
       anchorEl={anchorEl}
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          minWidth: 200,
-          borderRadius: 2,
-          boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+      slotProps={{
+        paper: {
+          sx: {
+            minWidth: 200,
+            borderRadius: 2,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)'
+          }
         }
       }}
       transformOrigin={{ horizontal: 'left', vertical: 'top' }}
@@ -74,7 +69,8 @@ export const ChangeDivisionMenu: React.FC<ChangeDivisionMenuProps> = ({
               onDelete={undefined}
               variant={division.id === selectedTeam?.division.id ? 'filled' : 'outlined'}
               sx={{
-                backgroundColor: division.id === selectedTeam?.division.id ? division.color : 'transparent',
+                backgroundColor:
+                  division.id === selectedTeam?.division.id ? division.color : 'transparent',
                 color: division.id === selectedTeam?.division.id ? 'white' : division.color,
                 borderColor: division.color,
                 borderWidth: 2,
@@ -87,7 +83,10 @@ export const ChangeDivisionMenu: React.FC<ChangeDivisionMenuProps> = ({
                   px: 2
                 },
                 '&:hover': {
-                  backgroundColor: division.id === selectedTeam?.division.id ? division.color : `${division.color}15`,
+                  backgroundColor:
+                    division.id === selectedTeam?.division.id
+                      ? division.color
+                      : `${division.color}15`,
                   borderColor: division.color,
                   boxShadow: `0 2px 8px ${division.color}30`
                 }
@@ -99,4 +98,3 @@ export const ChangeDivisionMenu: React.FC<ChangeDivisionMenuProps> = ({
     </Menu>
   );
 };
-

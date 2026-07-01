@@ -19,7 +19,9 @@ export function JudgingSessionsList({
 
   return (
     <Box>
-      <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+      <Typography variant="subtitle2" gutterBottom sx={{
+        fontWeight: 600
+      }}>
         {t('judging-sessions')}
       </Typography>
       <Box
@@ -31,8 +33,21 @@ export function JudgingSessionsList({
       >
         {teamSessions.map(session => (
           <Paper key={session.id} sx={{ p: 1, bgcolor: 'action.hover' }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
-              <Typography variant="body2" fontWeight={600} noWrap sx={{ flex: 1, minWidth: 0 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center"
+              }}>
+              <Typography
+                variant="body2"
+                noWrap
+                sx={{
+                  fontWeight: 600,
+                  flex: 1,
+                  minWidth: 0
+                }}>
                 {t('labels.session')} #{session.number} • {session.room.name} •{' '}
                 {dayjs(session.scheduledTime).format('HH:mm')}
               </Typography>

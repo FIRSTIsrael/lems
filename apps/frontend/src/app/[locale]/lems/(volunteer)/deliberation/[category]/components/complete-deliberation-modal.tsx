@@ -60,17 +60,20 @@ export const CompleteDeliberationModal: React.FC<CompleteDeliberationModalProps>
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: 2
+      slotProps={{
+        paper: {
+          sx: {
+            borderRadius: 2
+          }
         }
       }}
     >
       <DialogTitle sx={{ fontWeight: 700, fontSize: '1.25rem', pb: 1 }}>{t('title')}</DialogTitle>
-
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{
+            color: "text.secondary"
+          }}>
             {t('description')}
           </Typography>
 
@@ -91,7 +94,6 @@ export const CompleteDeliberationModal: React.FC<CompleteDeliberationModalProps>
           </Box>
         </Stack>
       </DialogContent>
-
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button
           onClick={onClose}

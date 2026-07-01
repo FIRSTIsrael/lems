@@ -87,7 +87,6 @@ export default function RubricPage() {
           teamNumber: team.number
         })}
       />
-
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <RubricProvider rubric={data.rubric}>
           <ValidationAlert />
@@ -99,7 +98,13 @@ export default function RubricPage() {
             disabled={!isEditable}
           />
 
-          <Stack direction="row" spacing={2} justifyContent="flex-end" mt={3}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              justifyContent: "flex-end",
+              mt: 3
+            }}>
             <ResetRubricButton disabled={!isEditable} />
             <SaveButton disabled={!isEditable} />
             <LockUnlockRubricButton disabled={!isEditable} />

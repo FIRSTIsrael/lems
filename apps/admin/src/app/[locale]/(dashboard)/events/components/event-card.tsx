@@ -75,7 +75,9 @@ export const EventCard: React.FC<EventCardProps> = ({
         <Stack spacing={1.5} sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOn color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {location}
             </Typography>
             <Flag region={region} size={18} />
@@ -83,14 +85,18 @@ export const EventCard: React.FC<EventCardProps> = ({
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CalendarMonth color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {dayjs(date).format('DD/MM/YYYY')}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Group color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {teamCount} {t('teams')}
             </Typography>
           </Box>
@@ -98,7 +104,12 @@ export const EventCard: React.FC<EventCardProps> = ({
 
         {divisions.length > 1 && (
           <Box sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" color="text.secondary" sx={{ mb: 1 }}>
+            <Typography
+              variant="subtitle2"
+              sx={{
+                color: "text.secondary",
+                mb: 1
+              }}>
               {t('divisions')}:
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
@@ -134,7 +145,6 @@ export const EventCard: React.FC<EventCardProps> = ({
           />
         </Box>
       </CardContent>
-
       {isAssigned && (
         <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
           <Tooltip title={t('edit')}>

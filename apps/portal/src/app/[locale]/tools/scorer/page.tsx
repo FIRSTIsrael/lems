@@ -13,14 +13,26 @@ export default async function ScorerPage() {
   return (
     <MissionProvider>
       <Container maxWidth="md" sx={{ mt: 2 }}>
-        <Box maxWidth="95%" mb={8}>
+        <Box
+          sx={{
+            maxWidth: "95%",
+            mb: 8
+          }}>
           <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
             {t('title')}
           </Typography>
-          <Stack direction="row" spacing={2} alignItems="center" justifyContent="center">
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              alignItems: "center",
+              justifyContent: "center"
+            }}>
             <Image src={NoEquipmentImage} width={50} height={50} alt="איסור ציוד" />
             <Stack>
-              <Typography fontWeight={500}>{t('no-equipment-constraint-title')}</Typography>
+              <Typography sx={{
+                fontWeight: 500
+              }}>{t('no-equipment-constraint-title')}</Typography>
               <Typography>{t('no-equipment-constraint')}</Typography>
             </Stack>
           </Stack>

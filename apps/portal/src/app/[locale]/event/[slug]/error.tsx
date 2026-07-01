@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Box, Button, Container, Typography, Stack } from '@mui/material';
-import { Event as EventIcon, ErrorOutline } from '@mui/icons-material';
+import { Event as EventIcon, ErrorOutlined } from '@mui/icons-material';
 
 interface EventErrorProps {
   error: Error & { digest?: string };
@@ -20,7 +20,7 @@ export default function EventError({ error, reset }: EventErrorProps) {
 
   const isNotFound = error.message?.includes('404') || error.message?.includes('not found');
   const translationKey = isNotFound ? 'not-found' : 'server-error';
-  const Icon = isNotFound ? EventIcon : ErrorOutline;
+  const Icon = isNotFound ? EventIcon : ErrorOutlined;
 
   return (
     <Box
@@ -34,7 +34,13 @@ export default function EventError({ error, reset }: EventErrorProps) {
       }}
     >
       <Container maxWidth="sm">
-        <Stack spacing={3} alignItems="center" textAlign="center">
+        <Stack
+          spacing={3}
+          sx={{
+            alignItems: 'center',
+            textAlign: 'center'
+          }}
+        >
           <Box
             sx={{
               display: 'flex',

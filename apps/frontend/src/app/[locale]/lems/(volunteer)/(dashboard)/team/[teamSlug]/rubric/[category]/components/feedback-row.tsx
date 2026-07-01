@@ -85,11 +85,12 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
               }
             }}
           >
-            <Typography fontWeight={600}>{getFeedbackTitle(field)}...</Typography>
+            <Typography sx={{
+              fontWeight: 600
+            }}>{getFeedbackTitle(field)}...</Typography>
           </TableCell>
         ))}
       </TableRow>
-
       <TableRow
         sx={{
           '& .MuiTableCell-root': {

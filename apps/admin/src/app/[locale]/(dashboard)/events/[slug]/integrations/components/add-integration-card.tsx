@@ -40,7 +40,13 @@ export const AddIntegrationCard: React.FC<AddIntegrationCardProps> = ({ onClick 
             height: '100%'
           }}
         >
-          <Stack spacing={2} alignItems="center" justifyContent="center" sx={{ height: '100%' }}>
+          <Stack
+            spacing={2}
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              height: '100%'
+            }}>
             <Box
               sx={{
                 display: 'flex',

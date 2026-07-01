@@ -17,14 +17,19 @@ export const PreviewView: React.FC<PreviewViewProps> = ({ result, onConfirm, onC
   const t = useTranslations('pages.events.integrations.detail-panel.settings.sendgrid');
 
   return (
-    <Stack spacing={3} alignItems="center">
-      <Stack spacing={1} alignItems="center">
+    <Stack spacing={3} sx={{
+      alignItems: "center"
+    }}>
+      <Stack spacing={1} sx={{
+        alignItems: "center"
+      }}>
         <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-        <Typography variant="h6" textAlign="center">
+        <Typography variant="h6" sx={{
+          textAlign: "center"
+        }}>
           {t('csv-success-title')}
         </Typography>
       </Stack>
-
       {result.added.length > 0 && (
         <ContactsListSection
           title={t('csv-success-added', { count: result.added.length })}
@@ -32,7 +37,6 @@ export const PreviewView: React.FC<PreviewViewProps> = ({ result, onConfirm, onC
           moreLabel={t('csv-success-and-more', { count: result.added.length - 3 })}
         />
       )}
-
       {result.updated.length > 0 && (
         <ContactsListSection
           title={t('csv-success-updated', { count: result.updated.length })}
@@ -40,9 +44,7 @@ export const PreviewView: React.FC<PreviewViewProps> = ({ result, onConfirm, onC
           moreLabel={t('csv-success-and-more', { count: result.updated.length - 3 })}
         />
       )}
-
       <ErrorsSection errors={result.errors} />
-
       <Stack direction="row" spacing={2} sx={{ width: '100%', justifyContent: 'center', mt: 2 }}>
         <Button onClick={onCancel} variant="outlined">
           {t('csv-preview-cancel')}

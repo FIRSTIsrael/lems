@@ -51,8 +51,12 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
   };
 
   return (
-    <Stack alignItems="center">
-      <Stack direction="row" spacing={0.5} alignItems="center" ref={ref}>
+    <Stack sx={{
+      alignItems: "center"
+    }}>
+      <Stack direction="row" spacing={0.5} ref={ref} sx={{
+        alignItems: "center"
+      }}>
         <IconButton
           onClick={e => handleStep(e, 'decrement')}
           disabled={disabled || value === null || value <= min}
@@ -103,7 +107,13 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
           <AddRoundedIcon fontSize="small" />
         </IconButton>
       </Stack>
-      <Typography variant="body2" color="text.secondary" fontSize="0.75rem" marginTop={0.5}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          fontSize: "0.75rem",
+          marginTop: 0.5
+        }}>
         {helperText}
       </Typography>
     </Stack>

@@ -110,7 +110,11 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
                   }}
                 >
-                  <Typography fontSize="1.3em" fontWeight={700}>
+                  <Typography
+                    sx={{
+                      fontSize: "1.3em",
+                      fontWeight: 700
+                    }}>
                     {getColumnTitle(column)}
                   </Typography>
                 </TableCell>
@@ -133,8 +137,16 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                       fontWeight: 500
                     }}
                   >
-                    <Stack direction="row" spacing={0.6} alignItems="center">
-                      <Typography fontSize="1em" fontWeight={700} component="span" flexShrink={0}>
+                    <Stack direction="row" spacing={0.6} sx={{
+                      alignItems: "center"
+                    }}>
+                      <Typography
+                        component="span"
+                        sx={{
+                          fontSize: "1em",
+                          fontWeight: 700,
+                          flexShrink: 0
+                        }}>
                         {getSectionTitle(section.id)}
                       </Typography>
                       <Box sx={{ whiteSpace: 'pre' }}> - </Box>
@@ -176,9 +188,10 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                               <Stack
                                 spacing={0.3}
                                 direction="row"
-                                alignItems={levelText ? 'flex-start' : 'center'}
-                                justifyContent={levelText ? 'flex-start' : 'center'}
-                              >
+                                sx={{
+                                  alignItems: levelText ? 'flex-start' : 'center',
+                                  justifyContent: levelText ? 'flex-start' : 'center'
+                                }}>
                                 {field.coreValues ? (
                                   isChecked ? (
                                     <CoreValuesFieldCheckedIcon
@@ -213,14 +226,15 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                                   />
                                 )}
                                 {levelText && (
-                                  <Typography fontSize="0.85em">{levelText}</Typography>
+                                  <Typography sx={{
+                                    fontSize: "0.85em"
+                                  }}>{levelText}</Typography>
                                 )}
                               </Stack>
                             </TableCell>
                           );
                         })}
                       </TableRow>
-
                       {hasNotes && (
                         <TableRow>
                           <TableCell

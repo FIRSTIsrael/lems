@@ -100,7 +100,9 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <Box ref={setAnchorEl} display="inline-block">
+    <Box ref={setAnchorEl} sx={{
+      display: "inline-block"
+    }}>
       <Box
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
@@ -111,7 +113,6 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
       >
         {children}
       </Box>
-
       <Popper
         open={open}
         anchorEl={anchorEl}
@@ -172,7 +173,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             }}
           >
             <Stack spacing={2}>
-              <Box width="100%" height={160} overflow="hidden">
+              <Box
+                sx={{
+                  width: "100%",
+                  height: 160,
+                  overflow: "hidden"
+                }}>
                 <Saturation
                   hsva={value}
                   onChange={handleSaturationChange}
@@ -181,7 +187,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
                 />
               </Box>
 
-              <Box width="100%" height={16}>
+              <Box
+                sx={{
+                  width: "100%",
+                  height: 16
+                }}>
                 <Hue
                   hue={value.h}
                   onChange={handleHueChange}
@@ -203,7 +213,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               />
 
               {/* Preset color swatches */}
-              <Box display="flex" flexWrap="wrap" gap={1}>
+              <Box
+                sx={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 1
+                }}>
                 {PRESET_COLORS.map(hex => (
                   <IconButton
                     disableRipple
@@ -226,11 +241,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               </Box>
 
               <Box
-                width="100%"
-                height={32}
-                borderRadius={theme.shape.borderRadius}
-                sx={{ backgroundColor: hsvaToHex(value) }}
-              />
+                sx={{
+                  width: "100%",
+                  height: 32,
+                  borderRadius: theme.shape.borderRadius,
+                  backgroundColor: hsvaToHex(value)
+                }} />
             </Stack>
           </Paper>
         </ClickAwayListener>

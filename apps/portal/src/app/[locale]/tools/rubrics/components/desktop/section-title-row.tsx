@@ -37,8 +37,16 @@ export const SectionTitleRow: React.FC<SectionTitleRowProps> = ({ sectionId, cat
         }}
         colSpan={4}
       >
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Typography fontSize="1em" fontWeight={700} component="span" flexShrink={0}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Typography
+            component="span"
+            sx={{
+              fontSize: "1em",
+              fontWeight: 700,
+              flexShrink: 0
+            }}>
             {getSectionTitle(sectionId)}
           </Typography>
           <Box sx={{ whiteSpace: 'pre' }}> - </Box>

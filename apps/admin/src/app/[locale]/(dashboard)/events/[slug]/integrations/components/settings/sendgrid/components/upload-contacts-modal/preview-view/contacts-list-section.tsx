@@ -16,7 +16,9 @@ export const ContactsListSection: React.FC<ContactsListSectionProps> = ({
   moreLabel
 }) => {
   return (
-    <Box width="100%">
+    <Box sx={{
+      width: "100%"
+    }}>
       <Typography variant="subtitle2" gutterBottom>
         {title}
       </Typography>

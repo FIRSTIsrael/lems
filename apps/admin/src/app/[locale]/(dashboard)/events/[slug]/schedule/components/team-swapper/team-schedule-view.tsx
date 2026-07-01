@@ -32,7 +32,6 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
       <Typography variant="h6" gutterBottom>
         {t('schedule')}
       </Typography>
-
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 2 }}>
           <CircularProgress size={24} />
@@ -54,13 +53,20 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
 
           {teamSchedule.matches.length > 0 && (
             <>
-              <Typography variant="subtitle2" color="text.secondary">
+              <Typography variant="subtitle2" sx={{
+                color: "text.secondary"
+              }}>
                 {t('matches')}
               </Typography>
               {teamSchedule.matches.map(match => (
                 <Card key={match.id} variant="outlined" sx={{ bgcolor: 'grey.50' }}>
                   <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
-                    <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Stack
+                      direction="row"
+                      sx={{
+                        justifyContent: "space-between",
+                        alignItems: "center"
+                      }}>
                       <Typography variant="body2">
                         {t('match', {
                           round: match.round,
@@ -68,7 +74,9 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
                           stage: getStage(match.stage)
                         })}
                       </Typography>
-                      <Typography variant="body2" color="text.secondary">
+                      <Typography variant="body2" sx={{
+                        color: "text.secondary"
+                      }}>
                         {dayjs(match.scheduledTime).format('HH:mm')}
                       </Typography>
                     </Stack>

@@ -99,7 +99,9 @@ export const MatchScheduleTable: React.FC = () => {
                   <Stack spacing={1}>
                     {match.participants.map(participant => (
                       <Box key={participant.id}>
-                        <Stack direction="row" spacing={1} alignItems="center">
+                        <Stack direction="row" spacing={1} sx={{
+                          alignItems: "center"
+                        }}>
                           <Chip
                             label={participant.table.name}
                             size="small"

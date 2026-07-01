@@ -33,10 +33,14 @@ export const TeamList: React.FC = () => {
     return (
       <Paper sx={{ p: 6, textAlign: 'center' }}>
         <GroupsIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
-        <Typography variant="h5" gutterBottom color="text.secondary">
+        <Typography variant="h5" gutterBottom sx={{
+          color: "text.secondary"
+        }}>
           {t('no-teams.title')}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" sx={{
+          color: "text.secondary"
+        }}>
           {t('no-teams.message')}
         </Typography>
       </Paper>

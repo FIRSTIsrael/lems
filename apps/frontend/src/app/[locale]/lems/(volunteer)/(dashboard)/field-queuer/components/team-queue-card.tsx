@@ -60,10 +60,22 @@ export function TeamQueueCard({
           })
       }}
     >
-      <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between">
-        <Stack spacing={0.5} flex={1}>
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Typography variant="h6" fontWeight={600}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          justifyContent: "space-between"
+        }}>
+        <Stack spacing={0.5} sx={{
+          flex: 1
+        }}>
+          <Stack direction="row" spacing={1} sx={{
+            alignItems: "center"
+          }}>
+            <Typography variant="h6" sx={{
+              fontWeight: 600
+            }}>
               #{teamNumber}
             </Typography>
             {isInJudging && (
@@ -72,19 +84,24 @@ export function TeamQueueCard({
               </Tooltip>
             )}
           </Stack>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {teamName}
           </Typography>
         </Stack>
 
-        <Stack spacing={0.5} alignItems="flex-end">
+        <Stack spacing={0.5} sx={{
+          alignItems: "flex-end"
+        }}>
           <Stack
             direction="row"
             spacing={1}
-            alignItems="center"
-            flexWrap="wrap"
-            justifyContent="flex-end"
-          >
+            sx={{
+              alignItems: "center",
+              flexWrap: "wrap",
+              justifyContent: "flex-end"
+            }}>
             <Chip
               label={`${tCommon('match')} ${matchNumber}`}
               size="small"
@@ -99,7 +116,9 @@ export function TeamQueueCard({
               sx={{ fontWeight: 600, fontSize: '0.95rem' }}
             />
           </Stack>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {timeInfo.formattedTime} (
             {timeInfo.isPast
               ? t('time-ago', { minutes: timeInfo.diffMinutes })

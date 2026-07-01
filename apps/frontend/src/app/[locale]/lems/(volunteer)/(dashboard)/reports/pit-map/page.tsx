@@ -31,12 +31,18 @@ export default function PitMapReportPage() {
             alignItems: 'center'
           }}
         >
-          {loading && <Typography color="text.secondary">{t('loading')}</Typography>}
+          {loading && <Typography sx={{
+            color: "text.secondary"
+          }}>{t('loading')}</Typography>}
 
-          {error && !loading && <Typography color="error.main">{t('error-loading')}</Typography>}
+          {error && !loading && <Typography sx={{
+            color: "error.main"
+          }}>{t('error-loading')}</Typography>}
 
           {!loading && !error && !pitMapUrl && (
-            <Typography color="text.secondary">{t('no-map')}</Typography>
+            <Typography sx={{
+              color: "text.secondary"
+            }}>{t('no-map')}</Typography>
           )}
 
           {!loading && !error && pitMapUrl && (

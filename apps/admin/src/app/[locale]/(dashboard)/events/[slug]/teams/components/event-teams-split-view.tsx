@@ -23,7 +23,9 @@ export const EventTeamsSplitView: React.FC<EventTeamsSplitView> = ({ eventId }) 
         backgroundColor: 'grey.50'
       }}
     >
-      <Typography variant="h6" color="text.secondary">
+      <Typography variant="h6" sx={{
+        color: "text.secondary"
+      }}>
         {t('placeholder', { eventId })}
       </Typography>
     </Box>

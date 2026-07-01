@@ -49,17 +49,26 @@ export const AwardsHeader = () => {
   return (
     <>
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
               {t('title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {t('subtitle')}
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Tooltip
               title={isNew ? t('status.new-awards-tooltip') : t('status.existing-awards-tooltip')}
               arrow
@@ -115,23 +124,25 @@ export const AwardsHeader = () => {
               border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
             }}
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Chip label={t('unsaved-changes')} color="warning" variant="outlined" size="small" />
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {t('unsaved-warning')}
               </Typography>
             </Stack>
           </Box>
         )}
       </Paper>
-
       <AddAwardDialog
         open={addDialogOpen}
         options={availableAwards}
         onAdd={addAward}
         onClose={() => setAddDialogOpen(false)}
       />
-
       <OverrideValidationDialog
         open={overrideDialogOpen}
         validation={validation}

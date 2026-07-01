@@ -54,7 +54,9 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
             flex: 1
           }}
         >
-          <Typography color="text.secondary" align="center">
+          <Typography align="center" sx={{
+            color: "text.secondary"
+          }}>
             {t('detail-panel.no-selection')}
           </Typography>
         </CardContent>
@@ -81,7 +83,6 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
         }
         sx={{ pb: 2 }}
       />
-
       <CardContent
         sx={{
           flex: 1,
@@ -130,7 +131,9 @@ export const IntegrationDetailPanel: React.FC<IntegrationDetailPanelProps> = ({
                 borderColor: 'divider'
               }}
             >
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{
+                color: "text.secondary"
+              }}>
                 {t('detail-panel.settings-placeholder')}
               </Typography>
             </Box>

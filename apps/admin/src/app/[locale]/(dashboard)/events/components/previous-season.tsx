@@ -37,7 +37,12 @@ export const PreviousSeason: React.FC<PreviousSeasonProps> = ({ season }) => {
         }}
         onClick={handleToggle}
       >
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <SeasonHeader
             logoUrl={season.logoUrl}
             seasonName={season.name}
@@ -47,7 +52,6 @@ export const PreviousSeason: React.FC<PreviousSeasonProps> = ({ season }) => {
           <IconButton>{isExpanded ? <ExpandLess /> : <ExpandMore />}</IconButton>
         </Stack>
       </Box>
-
       <Collapse in={isExpanded} sx={{ mt: 2 }}>
         <Box
           sx={{

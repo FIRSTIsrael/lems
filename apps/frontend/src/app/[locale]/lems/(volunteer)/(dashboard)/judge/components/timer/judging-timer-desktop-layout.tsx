@@ -67,7 +67,6 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           <StageTimeline timerState={timerState} />
         </Grid>
       )}
-
       <Grid
         size={{ md: 12, lg: 8 }}
         sx={{
@@ -82,8 +81,15 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           width: '100%'
         }}
       >
-        <Stack spacing={4} height="100%" justifyContent="space-between">
-          <Box p={2.5}>
+        <Stack
+          spacing={4}
+          sx={{
+            height: "100%",
+            justifyContent: "space-between"
+          }}>
+          <Box sx={{
+            p: 2.5
+          }}>
             <Typography
               variant="overline"
               sx={{
@@ -96,7 +102,13 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
             >
               {t('current-stage')}
             </Typography>
-            <Stack direction="row" spacing={2} alignItems="center" mt={1}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                alignItems: "center",
+                mt: 1
+              }}>
               <Box
                 sx={{
                   width: 6,
@@ -118,7 +130,9 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
             </Stack>
           </Box>
 
-          <Box textAlign="center">
+          <Box sx={{
+            textAlign: "center"
+          }}>
             <Typography
               sx={{
                 fontSize: isTablet ? '10rem' : '14rem',
@@ -176,7 +190,9 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
               </Box>
             </Box>
 
-            <Stack direction="row" spacing={2} alignItems="flex-end">
+            <Stack direction="row" spacing={2} sx={{
+              alignItems: "flex-end"
+            }}>
               <Box
                 sx={{
                   flex: 1,
@@ -192,10 +208,11 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
               >
                 <Stack
                   direction="row"
-                  alignItems="flex-end"
-                  justifyContent="space-between"
                   spacing={2}
-                >
+                  sx={{
+                    alignItems: "flex-end",
+                    justifyContent: "space-between"
+                  }}>
                   <Box>
                     <Typography
                       variant="overline"
@@ -229,10 +246,11 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
                     <Stack
                       direction="row"
                       spacing={1}
-                      flexWrap="wrap"
-                      alignItems="flex-start"
-                      mt={2}
-                    >
+                      sx={{
+                        flexWrap: "wrap",
+                        alignItems: "flex-start",
+                        mt: 2
+                      }}>
                       <RubricButton team={session.team} category="innovation-project" />
                       <Typography
                         variant="caption"
@@ -276,7 +294,6 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           </Stack>
         </Stack>
       </Grid>
-
       <AbortSessionDialog
         open={abortDialogOpen}
         onClose={() => setAbortDialogOpen(false)}

@@ -57,15 +57,16 @@ const DesktopAppBar: React.FC = () => {
   return (
     <Toolbar disableGutters>
       <Box
-        display={{ xs: 'none', md: 'flex' }}
-        mr={1}
-        height="44px"
-        width="164px"
-        position="relative"
-        sx={{ cursor: 'pointer' }}
         component={Link}
         href="/"
-      >
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          mr: 1,
+          height: "44px",
+          width: "164px",
+          position: "relative",
+          cursor: 'pointer'
+        }}>
         <Image
           src="/assets/first-horizontal-reverse.svg"
           alt=""
@@ -87,7 +88,6 @@ const DesktopAppBar: React.FC = () => {
         ))}
       </Box>
       <NavSearch />
-
       <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
         <LanguageSwitcher />
       </Box>
@@ -147,22 +147,23 @@ const MobileAppBar: React.FC = () => {
           ))}
         </Menu>
       </Box>
-
       <Box
-        width="100%"
-        display={{ xs: 'flex', md: 'none' }}
-        justifyContent="center"
-        alignItems="center"
-      >
+        sx={{
+          width: "100%",
+          display: { xs: 'flex', md: 'none' },
+          justifyContent: "center",
+          alignItems: "center"
+        }}>
         <Box
-          mr={1}
-          height="44px"
-          width="164px"
-          position="relative"
-          sx={{ cursor: 'pointer' }}
           component={Link}
           href="/"
-        >
+          sx={{
+            mr: 1,
+            height: "44px",
+            width: "164px",
+            position: "relative",
+            cursor: 'pointer'
+          }}>
           <Image
             src="/assets/first-horizontal-reverse.svg"
             alt=""
@@ -171,7 +172,6 @@ const MobileAppBar: React.FC = () => {
           />
         </Box>
       </Box>
-
       <LanguageSwitcher />
     </Toolbar>
   );

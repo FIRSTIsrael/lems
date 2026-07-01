@@ -32,11 +32,11 @@ export function TimerDisplay({ targetDate, isDesktop }: TimerDisplayProps) {
         <Countdown
           targetDate={targetDate}
           expiredText="00:00"
-          fontFamily="monospace"
-          fontSize={isDesktop ? '15rem' : '8rem'}
-          fontWeight={700}
-          letterSpacing="-0.02em"
           sx={{
+            fontSize: isDesktop ? '15rem' : '8rem',
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
             color: theme => theme.palette.primary.main,
             textShadow: theme => `0 4px 12px ${theme.palette.primary.main}30`,
             fontVariantNumeric: 'tabular-nums'

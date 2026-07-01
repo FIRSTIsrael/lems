@@ -81,15 +81,15 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               }}
             >
               <Typography
-                fontWeight={600}
                 sx={{
+                  fontWeight: 600,
                   fontSize: '0.75rem',
+
                   '@media print': {
                     lineHeight: '12px',
                     height: '12px'
                   }
-                }}
-              >
+                }}>
                 {getFeedbackTitle('thinkAbout')}
               </Typography>
             </TableCell>
@@ -112,15 +112,15 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
               }}
             >
               <Typography
-                fontWeight={600}
                 sx={{
+                  fontWeight: 600,
                   fontSize: '0.75rem',
+
                   '@media print': {
                     lineHeight: '12px',
                     height: '12px'
                   }
-                }}
-              >
+                }}>
                 {getFeedbackTitle('greatJob')}
               </Typography>
             </TableCell>

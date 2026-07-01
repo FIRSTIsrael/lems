@@ -9,7 +9,9 @@ export function LoadingState() {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 6, gap: 2 }}>
       <CircularProgress size={24} />
-      <Typography variant="body1" color="text.secondary">
+      <Typography variant="body1" sx={{
+        color: "text.secondary"
+      }}>
         {t('loading')}
       </Typography>
     </Box>

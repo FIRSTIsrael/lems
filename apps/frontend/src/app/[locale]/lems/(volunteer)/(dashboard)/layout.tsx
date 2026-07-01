@@ -16,8 +16,13 @@ export default function VolunteerDashboardLayout({ children }: { children: React
         mobile={<MobileAppBar />}
         mobileBreakpoint="lg"
       />
-
-      <Box component="main" flexGrow={1} sx={{ backgroundColor: '#fafafa', mt: { xs: 8, lg: 0 } }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          backgroundColor: '#fafafa',
+          mt: { xs: 8, lg: 0 }
+        }}>
         <Container
           maxWidth="xl"
           sx={{

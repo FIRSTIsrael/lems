@@ -53,7 +53,9 @@ export const LinkCard: React.FC<LinkCardProps> = ({
           <Typography variant="h6" component="h3" gutterBottom>
             {title}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {description}
           </Typography>
         </CardContent>

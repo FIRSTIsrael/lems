@@ -92,14 +92,11 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
           isTestingEmail={isTestingEmail}
         />
       </Stack>
-
       <Divider />
-
       <Alert severity="info" icon={<InfoIcon />}>
         <AlertTitle>{t('info-alert-title')}</AlertTitle>
         {t('info-alert-description')}
       </Alert>
-
       <Stack>
         <Typography variant="subtitle2" sx={{ mb: 2, fontWeight: 600 }}>
           {t('contacts-section-title')}
@@ -114,7 +111,9 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
               bgcolor: 'action.hover'
             }}
           >
-            <Typography color="text.secondary" variant="body2" gutterBottom>
+            <Typography variant="body2" gutterBottom sx={{
+              color: "text.secondary"
+            }}>
               {t('no-contacts-uploaded')}
             </Typography>
             <Button
@@ -138,7 +137,9 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
 
                 {contactSample.length > 0 && (
                   <>
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('contacts-preview-label')}
                     </Typography>
                     <List dense>
@@ -175,7 +176,6 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
           </Stack>
         )}
       </Stack>
-
       {/* Modals */}
       <UploadContactsModal isOpen={uploadModalOpen} onClose={() => setUploadModalOpen(false)} />
       <ViewAllModal isOpen={viewAllModalOpen} onClose={() => setViewAllModalOpen(false)} />

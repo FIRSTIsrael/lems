@@ -67,8 +67,16 @@ export const AwardsTab: React.FC = () => {
         <Typography variant="h2" gutterBottom>
           {t('quick-links.awards')}
         </Typography>
-        <Box display="flex" alignItems="center" justifyContent="center" py={8}>
-          <Typography variant="h6" color="text.secondary">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 8
+          }}>
+          <Typography variant="h6" sx={{
+            color: "text.secondary"
+          }}>
             {t('awards.no-data')}
           </Typography>
         </Box>

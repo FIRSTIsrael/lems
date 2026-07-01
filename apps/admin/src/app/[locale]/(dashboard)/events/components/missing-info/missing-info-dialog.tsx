@@ -77,16 +77,20 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
       onClose={onClose}
       maxWidth="xs"
       fullWidth
-      PaperProps={{
-        sx: {
-          maxHeight: '80vh'
+      slotProps={{
+        paper: {
+          sx: {
+            maxHeight: '80vh'
+          }
         }
       }}
     >
       <DialogTitle>{t('dialog-title')}</DialogTitle>
       <DialogContent sx={{ pt: 3, pb: 2, overflow: 'visible' }}>
         {!hasDetailedData ? (
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {tCard('missing-details')}
           </Typography>
         ) : (
@@ -122,7 +126,12 @@ export const MissingInfoDialog: React.FC<MissingInfoDialogProps> = ({
                     ))}
                   </List>
                 ) : (
-                  <Typography variant="body2" color="success.main" sx={{ fontStyle: 'italic' }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: "success.main",
+                      fontStyle: 'italic'
+                    }}>
                     {t('division-fully-configured')}
                   </Typography>
                 )}

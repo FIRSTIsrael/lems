@@ -79,8 +79,9 @@ export const FieldScheduleTab: React.FC = () => {
           {t('quick-links.field-schedule')}
         </Typography>
       </Box>
-
-      <Stack spacing={3} mt={2}>
+      <Stack spacing={3} sx={{
+        mt: 2
+      }}>
         {Object.values(groupedMatches).map((roundObject, roundIndex) => (
           <Paper key={roundIndex} sx={{ p: 0, bgcolor: 'white' }}>
             <TableContainer sx={{ overflowX: 'auto' }}>
@@ -102,7 +103,9 @@ export const FieldScheduleTab: React.FC = () => {
                         border: 'none'
                       }}
                     >
-                      <Typography fontWeight={500}>
+                      <Typography sx={{
+                        fontWeight: 500
+                      }}>
                         {t('field-schedule.round', {
                           stage: getStage(roundObject.stage),
                           number: roundObject.round
@@ -112,18 +115,30 @@ export const FieldScheduleTab: React.FC = () => {
                   </TableRow>
                   <TableRow sx={{ bgcolor: 'grey.100' }}>
                     <TableCell width={isMobile ? 60 : 80} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {t('field-schedule.match')}
                       </Typography>
                     </TableCell>
                     <TableCell width={isMobile ? 70 : 100} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {t('field-schedule.time')}
                       </Typography>
                     </TableCell>
                     {tables.map((table) => (
                       <TableCell key={table.id} width={isMobile ? 80 : 120} align="center">
-                        <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        <Typography
+                          sx={{
+                            fontWeight: 600,
+                            fontSize: isMobile ? '0.75rem' : '1rem'
+                          }}>
                           {table.name}
                         </Typography>
                       </TableCell>
@@ -134,16 +149,21 @@ export const FieldScheduleTab: React.FC = () => {
                   {roundObject.matches.map((match, matchIndex) => (
                     <TableRow key={matchIndex} sx={{ bgcolor: 'white' }}>
                       <TableCell align="center">
-                        <Typography fontWeight={500} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        <Typography
+                          sx={{
+                            fontWeight: 500,
+                            fontSize: isMobile ? '0.75rem' : '1rem'
+                          }}>
                           {match.number}
                         </Typography>
                       </TableCell>
                       <TableCell align="center">
                         <Typography
-                          fontFamily="monospace"
-                          fontWeight={500}
-                          fontSize={isMobile ? '0.75rem' : '1rem'}
-                        >
+                          sx={{
+                            fontFamily: "monospace",
+                            fontWeight: 500,
+                            fontSize: isMobile ? '0.75rem' : '1rem'
+                          }}>
                           {dayjs(match.scheduledTime).format('HH:mm')}
                         </Typography>
                       </TableCell>
@@ -173,9 +193,10 @@ export const FieldScheduleTab: React.FC = () => {
                               </Tooltip>
                             ) : (
                               <Typography
-                                color="text.disabled"
-                                fontSize={isMobile ? '0.75rem' : '1rem'}
-                              >
+                                sx={{
+                                  color: "text.disabled",
+                                  fontSize: isMobile ? '0.75rem' : '1rem'
+                                }}>
                                 -
                               </Typography>
                             )}
@@ -190,10 +211,18 @@ export const FieldScheduleTab: React.FC = () => {
           </Paper>
         ))}
       </Stack>
-
       {Object.keys(groupedMatches).length === 0 && (
-        <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
-          <Typography variant="body1" color="text.secondary">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 4,
+            px: 3
+          }}>
+          <Typography variant="body1" sx={{
+            color: "text.secondary"
+          }}>
             {t('field-schedule.no-data')}
           </Typography>
         </Box>

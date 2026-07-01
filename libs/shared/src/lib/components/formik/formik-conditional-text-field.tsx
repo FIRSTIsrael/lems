@@ -22,7 +22,9 @@ export const FormikConditionalTextField: React.FC<FormikConditionalTextFieldProp
   return (
     <Field name={name}>
       {({ field, form }: FieldProps) => (
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row" sx={{
+          alignItems: "center"
+        }}>
           <Checkbox
             checked={readOnly ? !!field.value : checked}
             disabled={disabled}

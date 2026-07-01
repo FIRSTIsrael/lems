@@ -36,7 +36,12 @@ export const SessionCard: React.FC<SessionCardProps> = ({
     >
       <CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1, pb: 2 }}>
         <Stack spacing={1.5} sx={{ flex: 1 }}>
-          <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 600 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "text.secondary",
+              fontWeight: 600
+            }}>
             {t('table.room', { name: room.name })}
           </Typography>
 
@@ -46,7 +51,13 @@ export const SessionCard: React.FC<SessionCardProps> = ({
 
               <Box sx={{ flex: 1 }} />
 
-              <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: "center",
+                  flexWrap: "wrap"
+                }}>
                 <SessionStatusChip
                   status={session.status}
                   called={session.called}
@@ -56,7 +67,9 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               </Stack>
 
               {session.startTime && session.startDelta !== undefined && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('table.started-at', {
                     time: dayjs(session.startTime).format('HH:mm')
                   })}
@@ -75,7 +88,9 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               )}
 
               {session.status === 'in-progress' && session.startTime && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('table.ends-at', {
                     time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
                   })}
@@ -83,7 +98,9 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               )}
             </>
           ) : (
-            <Typography variant="body2" color="text.disabled">
+            <Typography variant="body2" sx={{
+              color: "text.disabled"
+            }}>
               {t('empty-state.no-team')}
             </Typography>
           )}

@@ -50,7 +50,6 @@ export function TeamSelectionDrawer({
       }}
     >
       <SelectedSlotHeader selectedSlot={selectedSlot} onClose={onClose} />
-
       {selectedSlot && (
         <Stack spacing={3}>
           {error && (
@@ -97,7 +96,12 @@ export function TeamSelectionDrawer({
 
           {!secondSlot && (
             <Box>
-              <Typography variant="body2" color="text.secondary" textAlign="center">
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  textAlign: "center"
+                }}>
                 {t('slots.select-second-team-instruction')}
               </Typography>
             </Box>

@@ -173,7 +173,6 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     #{session.number}
                   </Box>
                 </TableCell>
-
                 <TableCell align="center" sx={{ py: 2.5 }}>
                   <Typography
                     variant="h6"
@@ -188,20 +187,25 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     {formattedTime}
                   </Typography>
                 </TableCell>
-
                 <TableCell sx={{ py: 2.5 }}>
                   <TeamInfoCell team={session.team} />
                 </TableCell>
-
                 <TableCell align="center" sx={{ py: 2.5 }}>
-                  <Stack direction="row" spacing={1} justifyContent="center" alignItems="center">
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}>
                     <StartSessionButton session={session} onStartSession={onStartSession} />
                     <ProfileDocumentButton profileDocumentUrl={session.team.profileDocumentUrl} />
                   </Stack>
                 </TableCell>
-
                 <TableCell sx={{ py: 2.5 }}>
-                  <Stack direction="row" spacing={1.5} justifyContent="center">
+                  <Stack direction="row" spacing={1.5} sx={{
+                    justifyContent: "center"
+                  }}>
                     <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovation_project?.status}

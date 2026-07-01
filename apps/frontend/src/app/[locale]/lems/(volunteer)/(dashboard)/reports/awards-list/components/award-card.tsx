@@ -61,7 +61,12 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
         >
           <EmojiEvents sx={{ fontSize: 28, color: 'primary.main' }} />
 
-          <Typography variant="h6" fontWeight={600} sx={{ flexGrow: 1 }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              flexGrow: 1
+            }}>
             {localizedName}
           </Typography>
 
@@ -88,7 +93,12 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
           <Box sx={{ px: 3, pb: 3 }}>
             <Divider sx={{ mb: 2 }} />
             {description && (
-              <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  lineHeight: 1.6
+                }}>
                 {description}
               </Typography>
             )}

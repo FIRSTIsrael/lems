@@ -15,10 +15,10 @@ export const ScoreFloater = () => {
       <Stack
         component={Paper}
         direction="row"
-        alignItems="center"
-        justifyContent="center"
         spacing={3}
         sx={{
+          alignItems: "center",
+          justifyContent: "center",
           p: 4,
           position: 'fixed',
           bottom: 10,
@@ -30,9 +30,13 @@ export const ScoreFloater = () => {
           bgcolor: 'primary.main',
           borderRadius: 4,
           height: 50
-        }}
-      >
-        <Typography sx={{ color: '#FFF' }} fontWeight={500} fontSize="1.25rem">
+        }}>
+        <Typography
+          sx={{
+            fontWeight: 500,
+            fontSize: "1.25rem",
+            color: '#FFF'
+          }}>
           {t('score', { points })}
         </Typography>
         <IconButton sx={{ color: '#FFF' }} onClick={resetScore}>

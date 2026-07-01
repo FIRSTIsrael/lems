@@ -38,8 +38,15 @@ export const ActiveMatch = () => {
   );
 
   return (
-    <Grid container spacing={1.5} alignItems="center">
-      <Grid size={2} display="flex" justifyContent="center">
+    <Grid container spacing={1.5} sx={{
+      alignItems: "center"
+    }}>
+      <Grid
+        size={2}
+        sx={{
+          display: "flex",
+          justifyContent: "center"
+        }}>
         <Box
           sx={{
             position: 'relative',
@@ -55,18 +62,20 @@ export const ActiveMatch = () => {
           />
         </Box>
       </Grid>
-
       <Grid size={8}>
         <Stack
           component={Paper}
-          p={1.5}
-          borderRadius={2}
-          sx={{ bgcolor: theme => alpha(theme.palette.background.paper, 0.98) }}
           spacing={2}
-          alignItems="flex-start"
           direction="row"
-        >
-          <Box width="fit-content">
+          sx={{
+            p: 1.5,
+            borderRadius: 2,
+            alignItems: "flex-start",
+            bgcolor: theme => alpha(theme.palette.background.paper, 0.98)
+          }}>
+          <Box sx={{
+            width: "fit-content"
+          }}>
             <Typography
               variant="overline"
               sx={{
@@ -94,7 +103,12 @@ export const ActiveMatch = () => {
             </Typography>
           </Box>
           {activeMatch && (
-            <Stack alignItems="flex-end" spacing={0.5} width="100%">
+            <Stack
+              spacing={0.5}
+              sx={{
+                alignItems: "flex-end",
+                width: "100%"
+              }}>
               <Countdown
                 targetDate={matchEnd!.toDate()}
                 sx={{
@@ -125,8 +139,12 @@ export const ActiveMatch = () => {
           )}
         </Stack>
       </Grid>
-
-      <Grid size={2} display="flex" justifyContent="center">
+      <Grid
+        size={2}
+        sx={{
+          display: "flex",
+          justifyContent: "center"
+        }}>
         <Box
           sx={{
             position: 'relative',

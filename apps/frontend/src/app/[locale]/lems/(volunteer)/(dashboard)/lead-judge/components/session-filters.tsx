@@ -94,7 +94,12 @@ export const SessionFilters: React.FC = () => {
           filterType="session"
         />
 
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography variant="caption" color="textSecondary" sx={{ whiteSpace: 'nowrap' }}>
               {t('filter.results')}: <strong>{filteredSessions.length}</strong>

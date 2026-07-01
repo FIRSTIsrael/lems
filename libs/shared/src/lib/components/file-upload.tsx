@@ -44,12 +44,17 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       <Typography variant="body2" sx={{ mb: 1 }}>
         {label}
         {description && (
-          <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
+          <Typography
+            component="span"
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              ml: 1
+            }}>
             ({description})
           </Typography>
         )}
       </Typography>
-
       <label htmlFor={inputId}>
         <Input
           id={inputId}

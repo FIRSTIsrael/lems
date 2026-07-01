@@ -45,7 +45,6 @@ export const MobileAppBar = () => {
           <ConnectionIndicator compact={true} />
         </Toolbar>
       </AppBar>
-
       <Drawer
         anchor="left"
         open={menuOpen}
@@ -67,7 +66,13 @@ export const MobileAppBar = () => {
 
         <Divider sx={{ my: 1 }} />
 
-        <Stack spacing={2} justifyContent="center" sx={{ px: 2, py: 1.5 }}>
+        <Stack
+          spacing={2}
+          sx={{
+            justifyContent: "center",
+            px: 2,
+            py: 1.5
+          }}>
           <LanguageSwitcher onClose={() => setMenuOpen(false)} />
 
           <LogoutButton variant="menu-item" onClose={() => setMenuOpen(false)} />

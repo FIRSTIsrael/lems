@@ -166,28 +166,48 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.200' }}>
               <TableCell width={70} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('match-schedule.columns.match-number')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('match-schedule.columns.start-time')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('match-schedule.columns.end-time')}
                 </Typography>
               </TableCell>
               <TableCell width={120} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('match-schedule.columns.status')}
                 </Typography>
               </TableCell>
               {tables.map(table => (
                 <TableCell key={table.id} align="center">
-                  <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '1rem'
+                    }}>
                     {table.name}
                   </Typography>
                 </TableCell>
@@ -204,28 +224,31 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                 <TableRow key={match.id}>
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {match.number}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {matchTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {endTime.format('HH:mm')}
                     </Typography>
                   </TableCell>

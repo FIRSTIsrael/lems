@@ -21,9 +21,10 @@ export function RefereeNoMatch() {
           {t('no-match-title')}
         </Typography>
       </Box>
-
       <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Stack spacing={3} alignItems="center">
+        <Stack spacing={3} sx={{
+          alignItems: "center"
+        }}>
           <Avatar
             sx={{
               width: 80,
@@ -35,7 +36,9 @@ export function RefereeNoMatch() {
             <Schedule sx={{ fontSize: '2.5rem' }} />
           </Avatar>
 
-          <Stack spacing={1} alignItems="center">
+          <Stack spacing={1} sx={{
+            alignItems: "center"
+          }}>
             <Typography variant="h6" sx={{ fontWeight: 600, color: 'text.primary' }}>
               {t('no-match-instructions')}
             </Typography>

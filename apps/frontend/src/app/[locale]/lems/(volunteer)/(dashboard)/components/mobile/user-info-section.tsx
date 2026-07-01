@@ -23,19 +23,20 @@ export const UserInfoSection = () => {
       >
         {getRole(user.role)}
       </Typography>
-      <Stack direction="row" spacing={1.5} alignItems="flex-end">
+      <Stack direction="row" spacing={1.5} sx={{
+        alignItems: "flex-end"
+      }}>
         <Typography
           variant="body2"
-          pb={0.25}
+          title={event.eventName}
           sx={{
+            pb: 0.25,
             fontWeight: 600,
             fontSize: '0.85rem',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-          }}
-          title={event.eventName}
-        >
+          }}>
           {event.eventName}
         </Typography>
 

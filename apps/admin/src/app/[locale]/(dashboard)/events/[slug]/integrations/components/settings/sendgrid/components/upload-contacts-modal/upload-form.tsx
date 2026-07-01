@@ -58,7 +58,6 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSuccess, onError }) =>
   return (
     <Stack spacing={3}>
       <UploadInstructions />
-
       <FileUpload
         label={t('fields.file.label')}
         accept=".csv,text/csv"
@@ -68,8 +67,9 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSuccess, onError }) =>
         disabled={isSubmitting}
         placeholder={t('fields.file.placeholder')}
       />
-
-      <Stack direction="row" justifyContent="center">
+      <Stack direction="row" sx={{
+        justifyContent: "center"
+      }}>
         <Button
           onClick={handleSubmit}
           variant="contained"

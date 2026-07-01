@@ -14,10 +14,18 @@ export const ResponsiveComponent = ({
 }: ResponsiveComponentProps) => {
   return (
     <>
-      <Box display={{ xs: 'block', [mobileBreakpoint]: 'none' }} {...boxProps}>
+      <Box
+        {...boxProps}
+        sx={[{
+          display: { xs: 'block', [mobileBreakpoint]: 'none' }
+        }, ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])]}>
         {mobile}
       </Box>
-      <Box display={{ xs: 'none', [mobileBreakpoint]: 'block' }} {...boxProps}>
+      <Box
+        {...boxProps}
+        sx={[{
+          display: { xs: 'none', [mobileBreakpoint]: 'block' }
+        }, ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])]}>
         {desktop}
       </Box>
     </>

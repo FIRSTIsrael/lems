@@ -50,10 +50,14 @@ export const MobileTeamListTable: React.FC<MobileTeamListTableProps> = ({ teams 
                   variant={team.arrived ? 'filled' : 'outlined'}
                 />
               </Box>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {team.affiliation}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {team.city}
               </Typography>
             </Stack>

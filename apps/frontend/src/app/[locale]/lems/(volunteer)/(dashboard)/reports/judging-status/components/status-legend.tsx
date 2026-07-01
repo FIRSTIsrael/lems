@@ -107,9 +107,10 @@ export const StatusLegend: React.FC<StatusLegendProps> = ({ open, anchorEl, onCl
               key={status}
               direction="row"
               spacing={1.5}
-              alignItems="flex-start"
-              sx={{ py: 0.5 }}
-            >
+              sx={{
+                alignItems: "flex-start",
+                py: 0.5
+              }}>
               <Box
                 sx={{
                   display: 'flex',

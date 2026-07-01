@@ -84,20 +84,23 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) =
           <Close fontSize="small" />
         </IconButton>
       </DialogTitle>
-
       <DialogContent
         sx={{
           py: 3,
           backgroundImage: `linear-gradient(to bottom, ${theme.palette.background.paper}, ${theme.palette.grey[50]})`
         }}
       >
-        <Stack spacing={3} pt={3} pb={2}>
+        <Stack
+          spacing={3}
+          sx={{
+            pt: 3,
+            pb: 2
+          }}>
           <Box>
             <SettingsLanguageSwitcher onLanguageChange={onClose} />
           </Box>
         </Stack>
       </DialogContent>
-
       <DialogActions
         sx={{
           padding: 2,

@@ -70,7 +70,14 @@ export function RoleStep() {
       >
         {t('steps.role')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+          mb: 3,
+          lineHeight: 1.6
+        }}
+      >
         {t('instructions.role')}
       </Typography>
       <Autocomplete

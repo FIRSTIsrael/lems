@@ -14,19 +14,20 @@ export const MatchParticipantCard: React.FC<MatchParticipantCardProps> = ({ part
   }
 
   return (
-    <Grid key={participant.team.id} size={1} display="flex">
+    <Grid key={participant.team.id} size={1} sx={{
+      display: "flex"
+    }}>
       <Stack
         spacing={2}
-        justifyContent="space-between"
         sx={{
+          justifyContent: "space-between",
           flex: 1,
           p: 3,
           borderRadius: 1.5,
           border: '2px solid',
           borderColor: 'divider',
           backgroundColor: theme => alpha(theme.palette.primary.main, 0.05)
-        }}
-      >
+        }}>
         <Box
           sx={{
             display: 'flex',

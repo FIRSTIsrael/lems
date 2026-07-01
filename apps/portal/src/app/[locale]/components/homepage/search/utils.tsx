@@ -39,13 +39,12 @@ export const highlightText = (text: string, highlight: string, theme: Theme) => 
       <Box
         key={index}
         component="span"
-        fontWeight="bold"
-        px={0.5}
-        borderRadius={0.5}
         sx={{
+          fontWeight: "bold",
+          px: 0.5,
+          borderRadius: 0.5,
           backgroundColor: alpha(theme.palette.primary.main, 0.2)
-        }}
-      >
+        }}>
         {part}
       </Box>
     ) : (

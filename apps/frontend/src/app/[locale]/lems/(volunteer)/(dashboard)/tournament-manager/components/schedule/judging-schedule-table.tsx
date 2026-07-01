@@ -71,18 +71,30 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell width={80} align="center">
-              <Typography fontWeight={600} fontSize={headerFontSize}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: headerFontSize
+                }}>
                 {t('judging-schedule.columns.start-time')}
               </Typography>
             </TableCell>
             <TableCell width={80} align="center">
-              <Typography fontWeight={600} fontSize={headerFontSize}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: headerFontSize
+                }}>
                 {t('judging-schedule.columns.end-time')}
               </Typography>
             </TableCell>
             {rooms.map(room => (
               <TableCell key={room.id} align="center">
-                <Typography fontWeight={600} fontSize={headerFontSize}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: headerFontSize
+                  }}>
                   {room.name}
                 </Typography>
               </TableCell>
@@ -98,12 +110,22 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
             return (
               <TableRow key={index}>
                 <TableCell align="center">
-                  <Typography fontFamily="monospace" fontWeight={500} fontSize={cellFontSize}>
+                  <Typography
+                    sx={{
+                      fontFamily: "monospace",
+                      fontWeight: 500,
+                      fontSize: cellFontSize
+                    }}>
                     {sessionTime.format('HH:mm')}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
-                  <Typography fontFamily="monospace" fontWeight={500} fontSize={cellFontSize}>
+                  <Typography
+                    sx={{
+                      fontFamily: "monospace",
+                      fontWeight: 500,
+                      fontSize: cellFontSize
+                    }}>
                     {sessionEndTime.format('HH:mm')}
                   </Typography>
                 </TableCell>

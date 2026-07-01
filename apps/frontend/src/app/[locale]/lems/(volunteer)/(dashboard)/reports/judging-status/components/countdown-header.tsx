@@ -42,7 +42,13 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({ onLegendClick 
           </Tooltip>
         </Box>
       )}
-      <Stack spacing={2} alignItems="center" justifyContent="center">
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         <Box
           sx={{
             textAlign: 'center',
@@ -59,9 +65,11 @@ export const CountdownHeader: React.FC<CountdownHeaderProps> = ({ onLegendClick 
           <Countdown
             targetDate={countdownTargetTime.toDate()}
             allowNegativeValues={true}
-            fontFamily="monospace"
-            fontWeight={900}
             dir="ltr"
+            sx={{
+              fontFamily: 'monospace',
+              fontWeight: 900
+            }}
           />
         </Box>
 

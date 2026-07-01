@@ -59,7 +59,9 @@ export const EventsSearchSection: React.FC<EventsSearchSectionProps> = ({
           }}
         />
 
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={1} useFlexGap sx={{
+          flexWrap: "wrap"
+        }}>
           <Chip
             label={t('filters.all', { count: eventCounts.all })}
             onClick={() => onFilterChange(EventFilter.ALL)}

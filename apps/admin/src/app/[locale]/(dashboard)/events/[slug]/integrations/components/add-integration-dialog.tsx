@@ -93,17 +93,18 @@ export const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
       open
       maxWidth="sm"
       fullWidth
-      PaperProps={{
-        sx: {
-          height: '80vh',
-          maxHeight: '600px',
-          display: 'flex',
-          flexDirection: 'column'
+      slotProps={{
+        paper: {
+          sx: {
+            height: '80vh',
+            maxHeight: '600px',
+            display: 'flex',
+            flexDirection: 'column'
+          }
         }
       }}
     >
       <DialogTitle>{t('add-dialog.title')}</DialogTitle>
-
       <DialogContent
         sx={{
           display: 'flex',
@@ -189,12 +190,16 @@ export const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
                   />
                 </Box>
 
-                <Stack spacing={0.25} flex={1}>
+                <Stack spacing={0.25} sx={{
+                  flex: 1
+                }}>
                   <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                     {getIntegrationName(integration.type)}
                   </Typography>
                   {getIntegrationDescription(integration.type) && (
-                    <Typography variant="caption" color="text.secondary">
+                    <Typography variant="caption" sx={{
+                      color: "text.secondary"
+                    }}>
                       {getIntegrationDescription(integration.type)}
                     </Typography>
                   )}
@@ -204,13 +209,14 @@ export const AddIntegrationDialog: React.FC<AddIntegrationDialogProps> = ({
           </Box>
         ) : (
           <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-            <Typography color="text.secondary" align="center">
+            <Typography align="center" sx={{
+              color: "text.secondary"
+            }}>
               {searchQuery ? t('add-dialog.no-results') : t('add-dialog.no-available-integrations')}
             </Typography>
           </Box>
         )}
       </DialogContent>
-
       <DialogActions>
         <Button onClick={close} disabled={isLoading}>
           {t('add-dialog.cancel')}

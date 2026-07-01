@@ -53,7 +53,13 @@ export const LoadedMatchDisplay = () => {
         height: '100%'
       }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 2
+        }}>
         <Stack spacing={0}>
           <Typography
             variant="subtitle2"
@@ -72,7 +78,12 @@ export const LoadedMatchDisplay = () => {
           )}
         </Stack>
 
-        <Stack direction="row" gap={0.75} alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            gap: 0.75,
+            alignItems: "center"
+          }}>
           <LoadedMatchDelay />
 
           <Tooltip title={t('legend.title')}>
@@ -96,11 +107,8 @@ export const LoadedMatchDisplay = () => {
           </Tooltip>
         </Stack>
       </Stack>
-
       <LoadedMatchTeams />
-
       <NotReadyWarning />
-
       <TeamStatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />
     </Paper>
   );

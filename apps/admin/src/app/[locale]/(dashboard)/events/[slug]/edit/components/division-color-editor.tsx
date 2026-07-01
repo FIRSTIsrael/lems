@@ -49,14 +49,26 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
   };
 
   return (
-    <Box display="flex" alignItems="center" gap={1}>
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        gap: 1
+      }}>
       <Palette color="primary" />
       <Stack>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{
+          color: "text.secondary"
+        }}>
           {t('color')}
         </Typography>
         {isEditingColor ? (
-          <Stack direction="row" alignItems="center" gap={1}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 1
+            }}>
             <ColorPicker value={editColor} onChange={color => setEditColor(color)} defaultOpen>
               <IconButton
                 sx={{
@@ -74,7 +86,13 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
                 }}
               />
             </ColorPicker>
-            <Typography variant="body1" dir="ltr" fontWeight={500} sx={{ fontFamily: 'monospace' }}>
+            <Typography
+              variant="body1"
+              dir="ltr"
+              sx={{
+                fontWeight: 500,
+                fontFamily: 'monospace'
+              }}>
               {hsvaToHex(editColor)}
             </Typography>
             <IconButton onClick={handleColorEditSave} color="primary" size="small">
@@ -85,7 +103,12 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
             </IconButton>
           </Stack>
         ) : (
-          <Stack direction="row" alignItems="center" gap={1}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 1
+            }}>
             <Box
               sx={{
                 width: 32,
@@ -102,7 +125,13 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
               }}
               onClick={handleColorEditStart}
             />
-            <Typography variant="body1" dir="ltr" fontWeight={500} sx={{ fontFamily: 'monospace' }}>
+            <Typography
+              variant="body1"
+              dir="ltr"
+              sx={{
+                fontWeight: 500,
+                fontFamily: 'monospace'
+              }}>
               {division.color}
             </Typography>
           </Stack>

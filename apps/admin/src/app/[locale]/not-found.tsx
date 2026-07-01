@@ -18,7 +18,12 @@ export default function NotFound() {
         <Typography variant="h1" gutterBottom>
           {t('title')}
         </Typography>
-        <Typography variant="h2" sx={{ color: '#666' }} fontSize="1.5rem">
+        <Typography
+          variant="h2"
+          sx={{
+            fontSize: "1.5rem",
+            color: '#666'
+          }}>
           {t('subtitle')}
         </Typography>
       </Paper>

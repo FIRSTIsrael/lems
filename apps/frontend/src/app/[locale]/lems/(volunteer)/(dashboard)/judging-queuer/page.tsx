@@ -182,7 +182,6 @@ export default function JudgingQueuerPage() {
           </Badge>
         </PageHeader>
       )}
-
       {activeTab === 'home' && (
         <>
           <Popover
@@ -193,7 +192,9 @@ export default function JudgingQueuerPage() {
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
             <Paper sx={{ p: 2, minWidth: 200 }}>
-              <Typography variant="subtitle2" fontWeight={600} gutterBottom>
+              <Typography variant="subtitle2" gutterBottom sx={{
+                fontWeight: 600
+              }}>
                 {t('filter-by-room')}
               </Typography>
               <FormGroup>
@@ -224,10 +225,17 @@ export default function JudgingQueuerPage() {
 
             {!loading && filteredTeams.length === 0 && (
               <Paper sx={{ p: 4, textAlign: 'center' }}>
-                <Typography variant="h6" color="text.secondary">
+                <Typography variant="h6" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('no-teams')}
                 </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    mt: 1
+                  }}>
                   {t('no-teams-description')}
                 </Typography>
               </Paper>
@@ -248,19 +256,16 @@ export default function JudgingQueuerPage() {
           </Stack>
         </>
       )}
-
       {activeTab === 'schedule' && (
         <Stack sx={{ pt: 3, pb: 10 }}>
           <JudgingScheduleView data={safeData} loading={loading} />
         </Stack>
       )}
-
       {activeTab === 'pit-map' && (
         <Stack sx={{ pt: 3, pb: 10 }}>
           <PitMapView />
         </Stack>
       )}
-
       <JudgingQueuerBottomNav value={activeTab} onChange={handleTabChange} />
     </>
   );

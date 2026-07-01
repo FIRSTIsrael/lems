@@ -20,18 +20,23 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
   const theme = useTheme();
 
   return (
-    <Stack spacing={1.5} flex={1} minWidth={0} sx={{ maxWidth: '50%' }}>
+    <Stack
+      spacing={1.5}
+      sx={{
+        flex: 1,
+        minWidth: 0,
+        maxWidth: '50%'
+      }}>
       <Typography
-        textAlign="center"
         variant="subtitle1"
         sx={{
+          textAlign: "center",
           fontWeight: 600,
           color: 'text.secondary',
           fontSize: '0.875rem',
           letterSpacing: 0.5,
           textTransform: 'uppercase'
-        }}
-      >
+        }}>
         {label}
       </Typography>
       <Paper

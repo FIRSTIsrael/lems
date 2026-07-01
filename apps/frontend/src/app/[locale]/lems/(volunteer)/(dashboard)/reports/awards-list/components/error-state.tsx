@@ -8,7 +8,9 @@ export function ErrorState() {
 
   return (
     <Alert severity="error" variant="outlined" sx={{ borderRadius: 2 }}>
-      <Typography variant="body2" color="error.dark">
+      <Typography variant="body2" sx={{
+        color: "error.dark"
+      }}>
         {t('error-loading')}
       </Typography>
     </Alert>

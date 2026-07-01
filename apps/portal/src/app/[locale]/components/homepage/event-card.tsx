@@ -121,19 +121,40 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
     >
       <CardContent sx={{ position: 'relative' }}>
         {variant === 'active' && (
-          <Box position="absolute" top={16} right={16} zIndex={1}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              zIndex: 1
+            }}
+          >
             <LiveIcon />
           </Box>
         )}
         <Stack
           direction={{ xs: 'column', sm: 'row' }}
-          justifyContent="space-between"
-          alignItems={{ xs: 'stretch', sm: 'flex-start' }}
           spacing={{ xs: 2, sm: 0 }}
+          sx={{
+            justifyContent: 'space-between',
+            alignItems: { xs: 'stretch', sm: 'flex-start' }
+          }}
         >
           <Box sx={{ flex: 1, pr: variant === 'active' ? { xs: 6, sm: 0 } : 0 }}>
-            <Stack direction="row" alignItems="center" spacing={1} mb={1}>
-              <Typography variant="h6" fontWeight="bold">
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center',
+                mb: 1
+              }}
+            >
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 'bold'
+                }}
+              >
                 {event.name}
               </Typography>
               {!event.official && (
@@ -147,26 +168,58 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant = 'upcoming
               )}
             </Stack>
             <Stack spacing={1}>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <CalendarIcon fontSize="small" color="action" />
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {event.startDate.toLocaleDateString()}
                 </Typography>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <LocationIcon fontSize="small" color="action" />
                 <Typography
                   variant="body2"
-                  color="text.secondary"
-                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
+                  sx={{
+                    color: 'text.secondary',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 0.5
+                  }}
                 >
                   {event.location}
                   <Flag region={event.region} size={18} />
                 </Typography>
               </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <PeopleIcon fontSize="small" color="action" />
-                <Typography variant="body2" color="text.secondary">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {t('teams-registered', { count: event.teamsRegistered })}
                 </Typography>
               </Stack>

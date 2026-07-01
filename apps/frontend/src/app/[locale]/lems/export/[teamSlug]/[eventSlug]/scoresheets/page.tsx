@@ -118,7 +118,11 @@ export default function ScoresExportPage() {
                 }
               }}
             >
-              <Typography fontSize="1.5rem" fontWeight={700}>
+              <Typography
+                sx={{
+                  fontSize: "1.5rem",
+                  fontWeight: 700
+                }}>
                 {t('total-points', { points: scoresheetData.score ?? 0 })}
               </Typography>
             </Box>

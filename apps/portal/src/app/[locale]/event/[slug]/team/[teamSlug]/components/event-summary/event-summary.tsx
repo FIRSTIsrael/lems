@@ -37,7 +37,12 @@ export const EventSummary: React.FC = () => {
       }}
     >
       <Box>
-        <Typography variant="h6" fontWeight="700" mb={1}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "700",
+            mb: 1
+          }}>
           {t('performance.event-summary')}
         </Typography>
         <Grid container spacing={2}>
@@ -45,7 +50,6 @@ export const EventSummary: React.FC = () => {
           <PerformanceMetrics highestScore={highestScore} robotGameRank={robotGameRank} />
         </Grid>
       </Box>
-
       {scores.length > 0 && <MatchResults scores={scores} />}
     </Paper>
   );
