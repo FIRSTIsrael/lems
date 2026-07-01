@@ -179,7 +179,7 @@ router.post('/download', downloadRateLimiter, async (req: AdminEventRequest, res
     fileStream = fs.createWriteStream(tempPath);
 
     await new Promise<void>((resolve, reject) => {
-      fileStream!.on('finish', resolve);
+      fileStream!.on('close', resolve);
       fileStream!.on('error', reject);
       archive!.on('error', reject);
       archive!.pipe(fileStream!);
