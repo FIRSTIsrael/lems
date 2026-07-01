@@ -53,8 +53,10 @@ export function SearchTeamSection({
             placeholder={t('search-placeholder')}
             size="small"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 startAdornment: (
                   <Box component="span" sx={{ display: 'flex', alignItems: 'center', mr: 1 }}>
                     <SearchIcon sx={{ color: 'text.secondary', fontSize: 20 }} />
@@ -63,7 +65,7 @@ export function SearchTeamSection({
                 endAdornment: (
                   <>
                     {loading && <CircularProgress color="inherit" size={20} />}
-                    {params.InputProps.endAdornment}
+                    {params.slotProps.input.endAdornment}
                   </>
                 )
               }

@@ -61,9 +61,11 @@ export async function generatePlaceholderPDF(): Promise<string> {
       </html>
     `,
       {
-        waitUntil: 'networkidle0'
+        waitUntil: 'load'
       }
     );
+
+    await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
 
     const pdf = await page.pdf({
       format: 'A4',

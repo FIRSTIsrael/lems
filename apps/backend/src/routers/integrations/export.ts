@@ -57,7 +57,7 @@ class BrowserManager {
     }
 
     try {
-      if (!this.instance || !this.instance.isConnected()) {
+      if (!this.instance || !this.instance.connected) {
         this.instance = await this.initialize();
       }
       return this.instance;

@@ -107,8 +107,10 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
             size="small"
             variant="outlined"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 sx: {
                   fontSize: '0.875rem'
                 }
@@ -131,8 +133,10 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
             size="small"
             variant="outlined"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 sx: {
                   fontSize: '0.875rem'
                 }

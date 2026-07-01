@@ -121,12 +121,14 @@ export function TeamArrivalInput({
                 label={t('search-label')}
                 placeholder={t('search-placeholder')}
                 slotProps={{
+                  ...params.slotProps,
+
                   input: {
-                    ...params.InputProps,
+                    ...params.slotProps.input,
                     endAdornment: (
                       <>
                         {submitting && <CircularProgress color="inherit" size={20} />}
-                        {params.InputProps.endAdornment}
+                        {params.slotProps.input.endAdornment}
                       </>
                     )
                   }

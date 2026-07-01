@@ -1,4 +1,4 @@
-import archiver from 'archiver';
+import { ZipArchive } from 'archiver';
 import { getLemsWebpageAsPdf } from '../routers/integrations/export';
 import db from './database';
 
@@ -100,7 +100,7 @@ async function getZippedResults(
   eventId: string,
   eventName: string,
   eventSlug: string,
-  archive: archiver.Archiver,
+  archive: ZipArchive,
   language: string,
   onProgress?: (percent: number) => void,
   batchSize: number = 10
@@ -202,7 +202,7 @@ export async function generateEventResultsZip(
   language: string = 'en',
   onProgress?: (percent: number) => void
 ): Promise<{
-  archive: archiver.Archiver;
+  archive: ZipArchive;
   fileName: string;
   statistics: { totalTeams: number; teamsWithPdfs: number; failedPdfs: number };
 }> {
@@ -211,7 +211,7 @@ export async function generateEventResultsZip(
     throw new Error('Event not found');
   }
 
-  const archive = archiver('zip', {
+  const archive = new ZipArchive({
     zlib: { level: 9 } // Maximum compression
   });
 

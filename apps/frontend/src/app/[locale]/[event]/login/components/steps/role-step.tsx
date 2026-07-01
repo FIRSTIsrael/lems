@@ -92,12 +92,13 @@ export function RoleStep() {
             required
             disabled={isSubmitting}
             slotProps={{
+              ...params.slotProps,
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 endAdornment: (
                   <>
                     {isLoadingVolunteerData ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
+                    {params.slotProps.input.endAdornment}
                   </>
                 )
               }
