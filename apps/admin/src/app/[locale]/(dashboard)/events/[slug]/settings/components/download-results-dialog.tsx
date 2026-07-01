@@ -10,13 +10,15 @@ import {
   DialogActions,
   Typography,
   CircularProgress,
-  Stack
+  LinearProgress,
+  Stack,
+  Box
 } from '@mui/material';
 
 interface DownloadResultsDialogProps {
   open: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void>;
+  onConfirm: (onProgress: (percent: number) => void) => Promise<void>;
   eventName: string;
 }
 
@@ -27,14 +29,17 @@ export const DownloadResultsDialog: React.FC<DownloadResultsDialogProps> = ({
   eventName
 }) => {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState<number | null>(null);
   const t = useTranslations('pages.events.settings.dialogs.download-results');
 
   const handleConfirm = async () => {
     setIsDownloading(true);
+    setProgress(0);
     try {
-      await onConfirm();
+      await onConfirm(setProgress);
     } finally {
       setIsDownloading(false);
+      setProgress(null);
     }
   };
 
@@ -50,6 +55,14 @@ export const DownloadResultsDialog: React.FC<DownloadResultsDialogProps> = ({
           <Typography variant="caption" color="text.secondary">
             {t('info')}
           </Typography>
+          {progress !== null && (
+            <Box>
+              <Typography variant="caption" color="text.secondary">
+                {t('generating')}
+              </Typography>
+              <LinearProgress variant="determinate" value={progress} sx={{ mt: 0.5 }} />
+            </Box>
+          )}
         </Stack>
       </DialogContent>
       <DialogActions>
