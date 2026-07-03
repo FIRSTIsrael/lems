@@ -25,7 +25,7 @@ export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event 
     startDate,
     endDate,
     location: event.location,
-    coordinates: event.coordinates,
+    coordinates: event.coordinates ?? undefined,
     seasonId: event.season_id,
     region: event.region,
     timezone: event.timezone

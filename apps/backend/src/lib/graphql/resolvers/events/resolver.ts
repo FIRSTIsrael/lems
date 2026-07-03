@@ -107,7 +107,21 @@ function buildEventQuery(args: EventsArgs) {
  * Converts database date format to ISO strings for GraphQL.
  * Optionally includes isFullySetUp if provided (e.g., from aggregated queries).
  */
-function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean; official?: boolean }): EventGraphQL {
+function buildResult(
+  event: Partial<Event> & { is_fully_set_up?: boolean; official?: boolean | null }
+): EventGraphQL {
+  if (
+    !event.id ||
+    !event.slug ||
+    !event.name ||
+    !event.start_date ||
+    !event.end_date ||
+    !event.region ||
+    !event.timezone
+  ) {
+    throw new Error('Incomplete event data');
+  }
+
   return {
     id: event.id,
     slug: event.slug,

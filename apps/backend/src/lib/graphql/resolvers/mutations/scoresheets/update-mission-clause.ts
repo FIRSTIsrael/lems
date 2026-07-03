@@ -62,11 +62,12 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   validateClauseValue(clause, value);
 
   // Calculate points
-  const { data = {} } = dbScoresheet;
-  data['missions'] ??= {};
-  data['missions'][missionId] ??= {};
-  data['missions'][missionId][clauseIndex] = value;
-  const points = calculateScore(data['missions']);
+  type MissionData = Record<string, Record<number, ScoresheetClauseValue>>;
+  const data = (dbScoresheet.data ?? {}) as { missions?: MissionData };
+  data.missions ??= {};
+  data.missions[missionId] ??= {};
+  data.missions[missionId][clauseIndex] = value;
+  const points = calculateScore(data.missions);
 
   // Determine new status based on completion criteria
   // Don't change status if already submitted or in gp status (locked states)

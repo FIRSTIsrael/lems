@@ -1,14 +1,15 @@
 import express from 'express';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
-import { requirePermission } from '../../../middleware/require-permission';
+import { requirePermission } from '../../../middleware/require-permission';import { asHandler } from '../../../../../types/express-handlers';
+
 
 const router = express.Router({ mergeParams: true });
 
 router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const agendaEvents = req.body;
       if (!Array.isArray(agendaEvents)) {
@@ -21,13 +22,13 @@ router.post(
       console.error('Error updating agenda events:', error);
       res.status(500).json({ error: 'Failed to update agenda events' });
     }
-  }
+  })
 );
 
 router.delete(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       await db.divisions.byId(req.divisionId).agenda().delete();
       res.status(200).json({ ok: true });
@@ -35,7 +36,7 @@ router.delete(
       console.error('Error deleting agenda event:', error);
       res.status(500).json({ error: 'Failed to delete agenda event' });
     }
-  }
+  })
 );
 
 export default router;

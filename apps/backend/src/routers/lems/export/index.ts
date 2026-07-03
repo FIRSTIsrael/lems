@@ -4,7 +4,8 @@ import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
 import { logger } from '../../../lib/logger';
 import db from '../../../lib/database';
-import { ExportRequest } from '../../../types/express';
+import { ExportRequest } from '../../../types/express';import { asHandler } from '../../../types/express-handlers';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -79,7 +80,7 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
   res.status(401).json({ error: 'UNAUTHORIZED' });
 });
 
-router.get('/:teamSlug/:eventSlug/scoresheets', async (req: ExportRequest, res: Response) => {
+router.get('/:teamSlug/:eventSlug/scoresheets', asHandler<ExportRequest>(async (req, res: Response) => {
   const { team, event, divisionId } = req;
 
   const division = await db.divisions.byId(divisionId).get();
@@ -146,9 +147,9 @@ router.get('/:teamSlug/:eventSlug/scoresheets', async (req: ExportRequest, res: 
       };
     })
   });
-});
+}));
 
-router.get('/:teamSlug/:eventSlug/rubrics', async (req: ExportRequest, res: Response) => {
+router.get('/:teamSlug/:eventSlug/rubrics', asHandler<ExportRequest>(async (req, res: Response) => {
   const { team, event, divisionId } = req;
 
   const division = await db.divisions.byId(divisionId).get();
@@ -215,6 +216,6 @@ router.get('/:teamSlug/:eventSlug/rubrics', async (req: ExportRequest, res: Resp
     }),
     awards: awards
   });
-});
+}));
 
 export default router;

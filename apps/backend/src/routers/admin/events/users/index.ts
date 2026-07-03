@@ -2,7 +2,7 @@ import express from 'express';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminUserResponse } from '../../users/util';
-import { requirePermission } from '../../middleware/require-permission';
+import { requirePermission } from '../../middleware/require-permission';import { asHandler } from '../../../../types/express-handlers';
 import {
   makeAdminVolunteerResponse,
   generateVolunteerPassword,
@@ -12,25 +12,25 @@ import {
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/admins', async (req: AdminEventRequest, res) => {
+router.get('/admins', asHandler<AdminEventRequest>(async (req, res) => {
   const admins = await db.admins.byEventId(req.eventId).getAll();
   res.json(admins.map(admin => makeAdminUserResponse(admin)));
-});
+}));
 
 router.post(
   '/admins',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { adminIds } = req.body;
-    adminIds.forEach(async id => await db.events.byId(req.eventId).addAdmin(id));
+    adminIds.forEach(async (id: string) => await db.events.byId(req.eventId).addAdmin(id));
     res.status(204).end();
-  }
+  })
 );
 
 router.delete(
   '/admins/:adminId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { adminId } = req.params;
     if (!adminId || typeof adminId !== 'string') {
       res.status(400).json({ error: 'Admin ID is required' });
@@ -43,18 +43,18 @@ router.delete(
     }
     await db.events.byId(req.eventId).removeAdmin(adminId);
     res.status(204).end();
-  }
+  })
 );
 
-router.get('/volunteers', async (req: AdminEventRequest, res) => {
+router.get('/volunteers', asHandler<AdminEventRequest>(async (req, res) => {
   const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
   res.json(volunteers.map(volunteer => makeAdminVolunteerResponse(volunteer)));
-});
+}));
 
 router.post(
   '/volunteers',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { volunteers } = req.body;
 
     if (!Array.isArray(volunteers) || volunteers.length === 0) {
@@ -108,13 +108,13 @@ router.post(
     res
       .status(201)
       .json(finalVolunteersWithDivisions.map(volunteer => makeAdminVolunteerResponse(volunteer)));
-  }
+  })
 );
 
 router.get(
   '/volunteers/passwords',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
     const divisions = await db.divisions.byEventId(req.eventId).getAll();
 
@@ -136,7 +136,7 @@ router.get(
     );
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.send(csvContent);
-  }
+  })
 );
 
 export default router;

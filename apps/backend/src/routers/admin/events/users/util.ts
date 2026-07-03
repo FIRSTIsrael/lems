@@ -65,14 +65,15 @@ export const getDivisionNamesString = (divisionIds: string[], infoMapping: Recor
   return divisionIds.map(id => infoMapping[id] || id).join('; ');
 }
 
-const parseRoleInfo = (roleInfo: Record<string, unknown>, infoMapping: Record<string, string>): string => {
-  if (!roleInfo) return null;
-  Object.entries(roleInfo).map(([key, value]) => {
+const parseRoleInfo = (roleInfo: Record<string, unknown> | null, infoMapping: Record<string, string>): string => {
+  if (!roleInfo) return '';
+  const roleInfoCopy = { ...roleInfo };
+  Object.entries(roleInfoCopy).forEach(([key, value]) => {
     if (typeof value === 'string' && infoMapping[value]) {
-      roleInfo[key] = infoMapping[value];
+      roleInfoCopy[key] = infoMapping[value];
     }
   });
-  return JSON.stringify(roleInfo);
+  return JSON.stringify(roleInfoCopy);
 }
 
 export const formatVolunteerInfo = (user: EventUser & { divisions: string[] }, infoMapping: Record<string, string>) : string => {

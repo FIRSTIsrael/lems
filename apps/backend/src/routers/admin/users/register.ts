@@ -7,7 +7,9 @@ import {
 } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../middleware/require-permission';
+import { asHandler } from '../../../types/express-handlers';
 import { makeAdminUserResponse } from './util';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -23,7 +25,7 @@ class RegistrationError extends Error {
   }
 }
 
-router.post('/', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
+router.post('/', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
   try {
     const { username, password, firstName, lastName } = req.body;
 
@@ -33,12 +35,12 @@ router.post('/', requirePermission('MANAGE_USERS'), async (req: AdminRequest, re
 
     const usernameValidation = validateUsername(username);
     if (!usernameValidation.isValid) {
-      throw new RegistrationError(400, 'Invalid username', usernameValidation.error);
+      throw new RegistrationError(400, 'Invalid username', usernameValidation.error ?? 'invalid-username');
     }
 
     const passwordValidation = validatePassword(password);
     if (!passwordValidation.isValid) {
-      throw new RegistrationError(400, 'Invalid password', passwordValidation.error);
+      throw new RegistrationError(400, 'Invalid password', passwordValidation.error ?? 'invalid-password');
     }
 
     if (firstName.length > 64 || lastName.length > 64) {
@@ -77,6 +79,6 @@ router.post('/', requirePermission('MANAGE_USERS'), async (req: AdminRequest, re
       details: 'An error occurred while creating the user'
     });
   }
-});
+}));
 
 export default router;

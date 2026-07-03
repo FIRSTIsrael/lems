@@ -2,11 +2,12 @@ import express from 'express';
 import { ALL_ADMIN_PERMISSIONS } from '@lems/types/api/admin';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
-import { requirePermission } from '../middleware/require-permission';
+import { requirePermission } from '../middleware/require-permission';import { asHandler } from '../../../types/express-handlers';
+
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/me', async (req: AdminRequest, res) => {
+router.get('/me', asHandler<AdminRequest>(async (req, res) => {
   const permissions = await db.admins.byId(req.userId).getPermissions();
 
   if (!permissions) {
@@ -15,9 +16,9 @@ router.get('/me', async (req: AdminRequest, res) => {
   }
 
   res.json(permissions);
-});
+}));
 
-router.get('/:userId', async (req: AdminRequest, res) => {
+router.get('/:userId', asHandler<AdminRequest>(async (req, res) => {
   const userId = req.params.userId;
   if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
@@ -31,9 +32,9 @@ router.get('/:userId', async (req: AdminRequest, res) => {
   }
 
   res.json(permissions);
-});
+}));
 
-router.put('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
+router.put('/:userId', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
   const userId = req.params.userId;
   if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
@@ -68,6 +69,6 @@ router.put('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminReque
     console.error('Error updating permissions:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+}));
 
 export default router;

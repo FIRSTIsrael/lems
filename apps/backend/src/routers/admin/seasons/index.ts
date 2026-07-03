@@ -3,6 +3,7 @@ import fileUpload from 'express-fileupload';
 import db from '../../../lib/database';
 import { requirePermission } from '../middleware/require-permission';
 import { AdminRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 import { makeAdminSeasonResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -11,7 +12,7 @@ router.post(
   '/',
   requirePermission('MANAGE_SEASONS'),
   fileUpload(),
-  async (req: AdminRequest, res) => {
+  asHandler<AdminRequest>(async (req, res) => {
     const { slug, name, startDate, endDate } = req.body;
 
     if (!slug || !name || !startDate || !endDate) {
@@ -49,24 +50,24 @@ router.post(
     }
 
     res.status(201).json(makeAdminSeasonResponse(season));
-  }
+  })
 );
 
-router.get('/', async (req: AdminRequest, res) => {
+router.get('/', asHandler<AdminRequest>(async (req, res) => {
   const seasons = await db.seasons.getAll();
   res.status(200).json(seasons.map(makeAdminSeasonResponse));
-});
+}));
 
-router.get('/current', async (req: AdminRequest, res) => {
+router.get('/current', asHandler<AdminRequest>(async (req, res) => {
   const currentSeason = await db.seasons.getCurrent();
   if (!currentSeason) {
     res.status(404).json({ error: 'No current season found' });
     return;
   }
   res.status(200).json(makeAdminSeasonResponse(currentSeason));
-});
+}));
 
-router.get('/id/:id', async (req: AdminRequest, res) => {
+router.get('/id/:id', asHandler<AdminRequest>(async (req, res) => {
   const { id } = req.params;
   if (!id || typeof id !== 'string') {
     res.status(400).json({ error: 'Invalid season ID' });
@@ -79,9 +80,9 @@ router.get('/id/:id', async (req: AdminRequest, res) => {
     return;
   }
   res.status(200).json(makeAdminSeasonResponse(season));
-});
+}));
 
-router.get('/:slug', async (req: AdminRequest, res) => {
+router.get('/:slug', asHandler<AdminRequest>(async (req, res) => {
   const { slug } = req.params;
 
   if (!slug || typeof slug !== 'string') {
@@ -97,6 +98,6 @@ router.get('/:slug', async (req: AdminRequest, res) => {
   }
 
   res.status(200).json(makeAdminSeasonResponse(season));
-});
+}));
 
 export default router;

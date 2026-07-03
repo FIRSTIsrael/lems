@@ -7,11 +7,12 @@ import {
 import { AdminEventRequest } from '../../../../types/express';
 import { requirePermission } from '../../middleware/require-permission';
 import db from '../../../../lib/database';
-import { makeAdminIntegrationResponse, validateAndUpdateIntegration } from './util';
+import { asHandler } from '../../../../types/express-handlers';
+import { makeAdminIntegrationResponse, validateAndUpdateIntegration } from './util';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminEventRequest, res) => {
+router.get('/', asHandler<AdminEventRequest>(async (req, res) => {
   try {
     const integrations = await db.integrations.byEventId(req.eventId).getAll();
     res.json(integrations.map(makeAdminIntegrationResponse));
@@ -19,9 +20,9 @@ router.get('/', async (req: AdminEventRequest, res) => {
     console.error('Error fetching integrations:', error);
     res.status(500).json({ error: 'Failed to fetch integrations' });
   }
-});
+}));
 
-router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminEventRequest, res) => {
+router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), asHandler<AdminEventRequest>(async (req, res) => {
   try {
     const { type, settings, enabled } = req.body;
 
@@ -57,7 +58,7 @@ router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminEve
       return;
     }
 
-    if (error.message.includes('validation')) {
+    if (error instanceof Error && error.message.includes('validation')) {
       res.status(400).json({ error: `Invalid settings: ${error.message}` });
       return;
     }
@@ -65,12 +66,12 @@ router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminEve
     console.error('Error creating integration:', error);
     res.status(500).json({ error: 'Failed to create integration' });
   }
-});
+}));
 
 router.put(
   '/:id',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { id: integrationId } = req.params;
     if (!integrationId || typeof integrationId !== 'string') {
       res.status(400).json({ error: 'INTEGRATION_ID_REQUIRED' });
@@ -124,13 +125,13 @@ router.put(
       console.error('Error updating integration:', error);
       res.status(500).json({ error: 'Failed to update integration' });
     }
-  }
+  })
 );
 
 router.delete(
   '/:id',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { id: integrationId } = req.params;
     if (!integrationId || typeof integrationId !== 'string') {
       res.status(400).json({ error: 'INTEGRATION_ID_REQUIRED' });
@@ -156,7 +157,7 @@ router.delete(
       console.error('Error deleting integration:', error);
       res.status(500).json({ error: 'Failed to delete integration' });
     }
-  }
+  })
 );
 
 export default router;

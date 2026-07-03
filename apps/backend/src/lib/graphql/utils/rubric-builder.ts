@@ -13,7 +13,7 @@ export interface RubricGraphQL {
   status: string;
   data?: {
     awards?: Record<string, boolean>;
-    fields: Record<string, { value: 1 | 2 | 3 | 4; notes?: string }>;
+    fields: Record<string, { value: 1 | 2 | 3 | 4 | null; notes?: string }>;
     feedback?: { greatJob: string; thinkAbout: string };
   };
 }

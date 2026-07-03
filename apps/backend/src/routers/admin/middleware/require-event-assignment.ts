@@ -1,6 +1,7 @@
-import { NextFunction, Response } from 'express';
 import { AdminRequest } from '../../../types/express';
 import database from '../../../lib/database';
+import { asMiddleware } from '../../../types/express-handlers';
+
 
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
@@ -14,7 +15,7 @@ export const requireEventAssignment = (
   eventIdentifier: string,
   identifierType: 'id' | 'slug' = 'id'
 ) => {
-  return async (req: AdminRequest, res: Response, next: NextFunction) => {
+  return asMiddleware<AdminRequest>(async (req, res, next) => {
     try {
       let eventId: string;
 
@@ -41,5 +42,5 @@ export const requireEventAssignment = (
       console.error('Error checking event assignment:', error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  };
+  });
 };

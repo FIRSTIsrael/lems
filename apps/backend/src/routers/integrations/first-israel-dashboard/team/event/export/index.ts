@@ -1,10 +1,11 @@
 import express, { Response } from 'express';
 import { FirstIsraelDashboardEventRequest } from '../../../../../../types/express';
-import { getLemsWebpageAsPdf } from '../../../../export';
+import { getLemsWebpageAsPdf } from '../../../../export';import { asHandler } from '../../../../../../types/express-handlers';
+
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/rubrics', async (req: FirstIsraelDashboardEventRequest, res: Response) => {
+router.get('/rubrics', asHandler<FirstIsraelDashboardEventRequest>(async (req, res: Response) => {
   try {
     const pdf = await getLemsWebpageAsPdf(
       `/he/lems/export/${req.teamSlug}/${req.eventSlug}/rubrics`,
@@ -29,9 +30,9 @@ router.get('/rubrics', async (req: FirstIsraelDashboardEventRequest, res: Respon
           : 'Unknown error occurred. Check that all rubrics are approved and data is complete.'
     });
   }
-});
+}));
 
-router.get('/scoresheets', async (req: FirstIsraelDashboardEventRequest, res: Response) => {
+router.get('/scoresheets', asHandler<FirstIsraelDashboardEventRequest>(async (req, res: Response) => {
   try {
     const pdf = await getLemsWebpageAsPdf(
       `/he/lems/export/${req.teamSlug}/${req.eventSlug}/scoresheets`,
@@ -56,5 +57,5 @@ router.get('/scoresheets', async (req: FirstIsraelDashboardEventRequest, res: Re
           : 'Unknown error occurred. Check that all scoresheets are submitted and data is complete.'
     });
   }
-});
+}));
 export default router;

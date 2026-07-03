@@ -16,11 +16,16 @@ export const attachEvent = () => {
         return;
       }
 
-      let settings: EventSettings;
+      let settings: EventSettings | null = null;
 
       try {
         settings = await database.events.bySlug(eventSlug).getSettings();
       } catch {
+        res.status(404).json({ error: 'EVENT_NOT_FOUND' });
+        return;
+      }
+
+      if (!settings) {
         res.status(404).json({ error: 'EVENT_NOT_FOUND' });
         return;
       }

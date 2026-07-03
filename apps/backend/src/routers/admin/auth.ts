@@ -8,7 +8,9 @@ import db from '../../lib/database';
 import { getRecaptchaResponse } from '../../lib/security/captcha';
 import { verifyPassword } from '../../lib/security/credentials';
 import { logger } from '../../lib/logger';
+import { asHandler } from '../../types/express-handlers';
 import { makeAdminUserResponse } from './users/util';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -34,8 +36,12 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   const { captchaToken, ...loginDetails }: LoginRequest = req.body;
 
   if (process.env.RECAPTCHA === 'true') {
+    if (!captchaToken) {
+      res.status(400).json({ error: 'CAPTCHA_REQUIRED' });
+      return;
+    }
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
-    if (!captcha.success || captcha['error-codes']?.length > 0) {
+    if (!captcha.success || (captcha['error-codes']?.length ?? 0) > 0) {
       logger.warn({ component: 'auth', action: 'login', errorCodes: captcha['error-codes'] || [] }, 'Captcha failure');
       res.status(500).json({ error: 'CAPTCHA_FAILED' });
       return;
@@ -115,7 +121,7 @@ router.post('/logout', (req: Request, res: Response) => {
   res.json({ ok: true });
 });
 
-router.get('/verify', async (req: AdminRequest, res) => {
+router.get('/verify', asHandler<AdminRequest>(async (req, res) => {
   const user = await db.admins.byId(req.userId!).get();
   if (!user) {
     res.status(401).json({ error: 'UNAUTHORIZED' });
@@ -123,6 +129,6 @@ router.get('/verify', async (req: AdminRequest, res) => {
   }
 
   res.json({ ok: true, user: makeAdminUserResponse(user) });
-});
+}));
 
 export default router;

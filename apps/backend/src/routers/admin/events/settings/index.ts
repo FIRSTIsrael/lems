@@ -11,7 +11,9 @@ import { publishEventResults } from '../../../integrations/sendgrid/publish';
 import { generateEventResultsZip } from '../../../../lib/results-download';
 import { createSseEmitter } from '../../../../lib/sse';
 import { storeTempFile, consumeTempFile } from '../../../../lib/temp-download-store';
+import { asHandler } from '../../../../types/express-handlers';
 import { makeAdminSettingsResponse, makeUpdateableEventSettings } from './util';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -29,7 +31,7 @@ const downloadFileRateLimiter = rateLimit({
   legacyHeaders: false,
 });
 
-router.get('/', async (req: AdminEventRequest, res) => {
+router.get('/', asHandler<AdminEventRequest>(async (req, res) => {
   const settings = await db.events.byId(req.eventId).getSettings();
   if (!settings) {
     res.status(404).json({ error: 'Event not found' });
@@ -37,26 +39,26 @@ router.get('/', async (req: AdminEventRequest, res) => {
   }
 
   res.json(makeAdminSettingsResponse(settings));
-});
+}));
 
-router.put('/', async (req: AdminEventRequest, res) => {
+router.put('/', asHandler<AdminEventRequest>(async (req, res) => {
   const updateData = makeUpdateableEventSettings(req.body);
   const updatedSettings = await db.events.byId(req.eventId).updateSettings(updateData);
   if (!updatedSettings) {
     throw new Error('Failed to update event settings');
   }
   res.json({ success: true });
-});
+}));
 
-router.post('/complete', async (req: AdminEventRequest, res) => {
+router.post('/complete', asHandler<AdminEventRequest>(async (req, res) => {
   const updatedSettings = await db.events.byId(req.eventId).updateSettings({ completed: true });
   if (!updatedSettings) {
     throw new Error('Failed to complete event');
   }
   res.json({ success: true });
-});
+}));
 
-router.post('/publish', async (req: AdminEventRequest, res) => {
+router.post('/publish', asHandler<AdminEventRequest>(async (req, res) => {
   const emitter = createSseEmitter(res);
 
   try {
@@ -119,9 +121,9 @@ router.post('/publish', async (req: AdminEventRequest, res) => {
     console.error(`Error publishing event ${req.eventId}: ${message}`, error);
     emitter.sendFailure(`Failed to publish event: ${message}`);
   }
-});
+}));
 
-router.post('/download', downloadRateLimiter, async (req: AdminEventRequest, res) => {
+router.post('/download', downloadRateLimiter, asHandler<AdminEventRequest>(async (req, res) => {
   const emitter = createSseEmitter(res);
   let tempPath: string | undefined;
   let fileStream: fs.WriteStream | undefined;
@@ -209,9 +211,9 @@ router.post('/download', downloadRateLimiter, async (req: AdminEventRequest, res
     console.error(`Error downloading event results for event ${req.eventId}: ${message}`, error);
     emitter.sendFailure(`Failed to download event results: ${message}`);
   }
-});
+}));
 
-router.get('/download/file', downloadFileRateLimiter, (req: AdminEventRequest, res) => {
+router.get('/download/file', downloadFileRateLimiter, asHandler<AdminEventRequest>((req, res) => {
   const token = req.query.token as string;
   if (!token) {
     res.status(400).json({ error: 'Missing token' });
@@ -227,6 +229,6 @@ router.get('/download/file', downloadFileRateLimiter, (req: AdminEventRequest, r
   res.download(entry.filePath, entry.fileName, () => {
     fs.unlink(entry.filePath, () => {});
   });
-});
+}));
 
 export default router;

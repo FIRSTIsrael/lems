@@ -2,7 +2,8 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
-import { AdminDivisionRequest } from '../../../../../types/express';
+import { AdminDivisionRequest } from '../../../../../types/express';import { asHandler } from '../../../../../types/express-handlers';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -10,7 +11,7 @@ router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
   fileUpload(),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     if (!req.files || !req.files.pitMap) {
       res.status(400).json({ error: 'No pit map file provided' });
       return;
@@ -42,13 +43,13 @@ router.post(
       res.status(500).json({ error: 'Failed to upload pit map' });
       return;
     }
-  }
+  })
 );
 
 router.delete(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const success = await db.divisions.byId(req.divisionId).update({ pit_map_url: null });
       if (success) {
@@ -63,7 +64,7 @@ router.delete(
       res.status(500).json({ error: 'Failed to delete pit map' });
       return;
     }
-  }
+  })
 );
 
 export default router;

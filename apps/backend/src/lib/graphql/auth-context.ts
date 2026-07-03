@@ -39,7 +39,10 @@ function extractTokenFromWebsocketConnection(
 
 function verifyToken(token: string): { userId: string; userType: string } | null {
   try {
-    const decoded = jwt.verify(token, jwtSecret) as { userId: string; userType: string };
+    const decoded = jwt.verify(token, jwtSecret!) as unknown as {
+      userId: string;
+      userType: string;
+    };
     if (decoded.userType !== 'volunteer') {
       console.warn('[Auth] Invalid user type in token:', decoded.userType);
       return null;

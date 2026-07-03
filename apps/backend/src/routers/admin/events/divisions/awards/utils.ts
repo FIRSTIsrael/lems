@@ -19,6 +19,6 @@ export const makeAdminAwardResponse = (award: DbAward, includeWinner = false): A
     automaticAssignment: award.automatic_assignment,
     place: award.place,
     index: award.index,
-    ...(includeWinner && { winner })
+    ...(includeWinner && winner != null && { winner })
   };
 };

@@ -52,7 +52,7 @@ export const useAudioPlayer = <T extends string>(
         audio.preload = preload;
         soundRefs.current[key as T] = audio;
       });
-      setIsReady(true);
+      queueMicrotask(() => setIsReady(true));
     } catch (error) {
       console.error('Failed to initialize audio:', error);
     }
@@ -66,7 +66,7 @@ export const useAudioPlayer = <T extends string>(
         }
       });
       soundRefs.current = {} as Record<T, HTMLAudioElement | null>;
-      setIsReady(false);
+      queueMicrotask(() => setIsReady(false));
     };
   }, [sounds, preload]);
 

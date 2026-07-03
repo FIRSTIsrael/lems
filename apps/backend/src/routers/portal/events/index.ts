@@ -3,8 +3,10 @@ import { EventDetails, EventSummary } from '@lems/database';
 import db from '../../../lib/database';
 import { attachEvent } from '../middleware/attach-event';
 import { PortalEventRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 import eventTeamRouter from './teams';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
+
 
 const router = express.Router({ mergeParams: true });
 
@@ -22,6 +24,10 @@ router.get('/', async (req: Request, res: Response) => {
     const registeredTeams = await db.events.bySlug(eventSlug).getRegisteredTeams();
     const divisions = await db.divisions.byEventId(event.id).getAll();
     const settings = await db.events.byId(event.id).getSettings();
+    if (!settings) {
+      res.status(404).json({ error: 'Event settings not found' });
+      return;
+    }
 
     const eventSummary: EventSummary = {
       ...event,
@@ -76,11 +82,23 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.use('/:slug', attachEvent());
 
-router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
+router.get('/:slug', asHandler<PortalEventRequest>(async (req, res: Response) => {
   const event = await db.events.byId(req.eventId).get();
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
   const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
   const season = await db.seasons.byId(event.season_id).get();
+  if (!season) {
+    res.status(404).json({ error: 'Season not found' });
+    return;
+  }
   const settings = await db.events.byId(event.id).getSettings();
+  if (!settings) {
+    res.status(404).json({ error: 'Event settings not found' });
+    return;
+  }
 
   const eventSummary: EventDetails = {
     ...event,
@@ -91,7 +109,7 @@ router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
   };
 
   res.json(makePortalEventDetailsResponse(eventSummary));
-});
+}));
 
 router.use('/:slug/teams', eventTeamRouter);
 

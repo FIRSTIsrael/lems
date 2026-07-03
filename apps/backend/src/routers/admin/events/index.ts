@@ -5,24 +5,25 @@ import db from '../../../lib/database';
 import { attachEvent } from '../middleware/attach-event';
 import { requirePermission } from '../middleware/require-permission';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
 import eventUsersRouter from './users';
 import eventTeamsRouter from './teams';
 import eventDivisionsRouter from './divisions';
 import eventSettingsRouter from './settings';
-import eventIntegrationsRouter from './integrations';
+import eventIntegrationsRouter from './integrations';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminEventRequest, res) => {
+router.get('/', asHandler<AdminEventRequest>(async (req, res) => {
   const events = await db.events.getAll();
   res.json(events.map(event => makeAdminEventResponse(event)));
-});
+}));
 
-router.get('/me', async (req: AdminRequest, res) => {
+router.get('/me', asHandler<AdminRequest>(async (req, res) => {
   const events = await db.admins.byId(req.userId).getEvents();
   res.json(events.map(event => makeAdminEventResponse(event)));
-});
+}));
 
 router.get('/slug/:slug', async (req, res) => {
   const event = await db.events.bySlug(req.params.slug).get();
@@ -45,7 +46,7 @@ router.get('/season/:seasonId/summary', async (req, res) => {
   res.json(events.map(event => makeAdminEventSummaryResponse(event)));
 });
 
-router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
+router.post('/', requirePermission('MANAGE_EVENTS'), asHandler<AdminRequest>(async (req, res) => {
   try {
     const { name, slug, date, location, region, timezone, divisions } = req.body;
 
@@ -151,7 +152,7 @@ router.post('/', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, r
     console.error('Error creating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+}));
 
 router.use('/:eventId', attachEvent());
 
@@ -161,12 +162,16 @@ router.use('/:eventId/users', eventUsersRouter);
 router.use('/:eventId/settings', eventSettingsRouter);
 router.use('/:eventId/integrations', eventIntegrationsRouter);
 
-router.get('/:eventId', async (req: AdminEventRequest, res) => {
+router.get('/:eventId', asHandler<AdminEventRequest>(async (req, res) => {
   const event = await db.events.byId(req.eventId).get();
+  if (!event) {
+    res.status(404).json({ error: 'Event not found' });
+    return;
+  }
   res.json(makeAdminEventResponse(event));
-});
+}));
 
-router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminRequest, res) => {
+router.put('/:eventId', requirePermission('MANAGE_EVENTS'), asHandler<AdminRequest>(async (req, res) => {
   try {
     const { eventId } = req.params;
     const { name, date, location, region } = req.body;
@@ -237,6 +242,6 @@ router.put('/:eventId', requirePermission('MANAGE_EVENTS'), async (req: AdminReq
     console.error('Error updating event:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-});
+}));
 
 export default router;

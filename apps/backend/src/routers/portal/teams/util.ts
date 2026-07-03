@@ -16,7 +16,7 @@ export const makePortalTeamResponse = (team: DbTeam): Team => ({
 export const makePortalTeamSummaryResponse = (
   team: DbTeam,
   lastCompetedSeason: Season | null
-): TeamSummary => ({
+) => ({
   ...makePortalTeamResponse(team),
   lastCompetedSeason
 });

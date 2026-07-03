@@ -5,6 +5,7 @@ import { requirePermission } from '../../../routers/admin/middleware/require-per
 import { attachEvent } from '../../../routers/admin/middleware/attach-event';
 import { authMiddleware as adminAuth } from '../../../routers/admin/middleware/auth';
 import db from '../../../lib/database';
+import { asHandler } from '../../../types/express-handlers';
 import { sendEmailWithSendGrid } from './sendgrid-lib';
 import { generatePlaceholderPDF } from './placeholder-generator';
 import { CSVRecord } from './types';
@@ -33,7 +34,7 @@ router.use(
   requirePermission('MANAGE_EVENT_DETAILS')
 );
 
-router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => {
+router.post('/:eventId/upload-contacts', asHandler<AdminEventRequest>(async (req, res) => {
   try {
     const { csvContent } = req.body;
     if (!csvContent) {
@@ -106,9 +107,9 @@ router.post('/:eventId/upload-contacts', async (req: AdminEventRequest, res) => 
     console.error('Error uploading contacts:', error);
     res.status(500).json({ error: 'Failed to process CSV file' });
   }
-});
+}));
 
-router.delete('/:eventId/contacts/:teamNumber', async (req: AdminEventRequest, res) => {
+router.delete('/:eventId/contacts/:teamNumber', asHandler<AdminEventRequest>(async (req, res) => {
   try {
     const { teamNumber } = req.params;
     const teamNum = parseInt(String(teamNumber), 10);
@@ -142,9 +143,9 @@ router.delete('/:eventId/contacts/:teamNumber', async (req: AdminEventRequest, r
     console.error('Error deleting contact:', error);
     res.status(500).json({ error: 'Failed to delete contact' });
   }
-});
+}));
 
-router.post('/:eventId/send-test', async (req: AdminEventRequest, res) => {
+router.post('/:eventId/send-test', asHandler<AdminEventRequest>(async (req, res) => {
   try {
     const { templateId, fromAddress, testEmailAddress } = req.body;
 
@@ -192,6 +193,6 @@ router.post('/:eventId/send-test', async (req: AdminEventRequest, res) => {
       .status(500)
       .json({ error: error instanceof Error ? error.message : 'Failed to send test email' });
   }
-});
+}));
 
 export default router;

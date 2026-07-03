@@ -24,7 +24,7 @@ export const attachDivision = () => {
 
       const eventSettings = await database.events.byId(division.event_id).getSettings();
 
-      if (!eventSettings.visible) {
+      if (!eventSettings?.visible) {
         res.status(404).json({ error: 'DIVISION_NOT_FOUND' });
         return;
       }

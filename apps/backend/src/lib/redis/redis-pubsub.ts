@@ -130,7 +130,8 @@ export class RedisPubSub {
       isActive = false;
       if (timeoutHandle) clearTimeout(timeoutHandle);
       broadcaster.removeListener('event', messageHandler);
-      if (resolveWait) resolveWait();
+      const pendingResolve = resolveWait as (() => void) | null;
+      if (pendingResolve) pendingResolve();
       broadcaster.decrementSubscribers();
     }
   }

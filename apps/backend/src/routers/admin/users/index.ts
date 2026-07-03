@@ -3,6 +3,7 @@ import db from '../../../lib/database';
 import { requirePermission } from '../middleware/require-permission';
 import { hashPassword } from '../../../lib/security/credentials';
 import { AdminRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 import { makeAdminUserResponse } from './util';
 import registrationRouter from './register';
 import permissionsRouter from './permissions';
@@ -12,12 +13,12 @@ const router = express.Router({ mergeParams: true });
 router.use('/register', registrationRouter);
 router.use('/permissions', permissionsRouter);
 
-router.get('/', async (req: AdminRequest, res) => {
+router.get('/', asHandler<AdminRequest>(async (req, res) => {
   const users = await db.admins.getAll();
   res.json(users.map(user => makeAdminUserResponse(user)));
-});
+}));
 
-router.get('/me', async (req: AdminRequest, res) => {
+router.get('/me', asHandler<AdminRequest>(async (req, res) => {
   const user = await db.admins.byId(req.userId).get();
 
   if (!user) {
@@ -26,9 +27,9 @@ router.get('/me', async (req: AdminRequest, res) => {
   }
 
   res.json(makeAdminUserResponse(user));
-});
+}));
 
-router.get('/:userId', async (req: AdminRequest, res) => {
+router.get('/:userId', asHandler<AdminRequest>(async (req, res) => {
   const userId = req.params.userId;
   if (!userId || typeof userId !== 'string') {
     res.status(400).json({ error: 'User ID is required' });
@@ -42,9 +43,9 @@ router.get('/:userId', async (req: AdminRequest, res) => {
   }
 
   res.json(makeAdminUserResponse(user));
-});
+}));
 
-router.patch('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
+router.patch('/:userId', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
   const userId = req.params.userId;
   const { firstName, lastName } = req.body;
 
@@ -77,12 +78,12 @@ router.patch('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminReq
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Failed to update user' });
   }
-});
+}));
 
 router.patch(
   '/:userId/password',
   requirePermission('MANAGE_USERS'),
-  async (req: AdminRequest, res) => {
+  asHandler<AdminRequest>(async (req, res) => {
     const userId = req.params.userId;
     const { password } = req.body;
 
@@ -111,10 +112,10 @@ router.patch(
       console.error('Error updating password:', error);
       res.status(500).json({ error: 'Failed to update password' });
     }
-  }
+  })
 );
 
-router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRequest, res) => {
+router.delete('/:userId', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
   const userId = req.params.userId;
 
   if (!userId || typeof userId !== 'string') {
@@ -149,6 +150,6 @@ router.delete('/:userId', requirePermission('MANAGE_USERS'), async (req: AdminRe
     console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Failed to delete user' });
   }
-});
+}));
 
 export default router;

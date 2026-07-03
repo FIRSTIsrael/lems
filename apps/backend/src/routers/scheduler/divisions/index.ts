@@ -10,18 +10,19 @@ import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import db from '../../../lib/database';
 import { attachDivision } from '../middleware/attach-division';
 import { SchedulerRequest } from '../../../types/express';
-import { makeSchedulerLocationResponse, makeSchedulerTeamResponse } from './utils';
+import { asHandler } from '../../../types/express-handlers';
+import { makeSchedulerLocationResponse, makeSchedulerTeamResponse } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
 router.use(attachDivision());
 
-router.get('/teams', async (req: SchedulerRequest, res) => {
+router.get('/teams', asHandler<SchedulerRequest>(async (req, res) => {
   const teams = await db.teams.byDivisionId(req.divisionId).getAll();
   res.status(200).json(teams.map(team => makeSchedulerTeamResponse(team)));
-});
+}));
 
-router.get('/team/:teamSlug', async (req: SchedulerRequest, res) => {
+router.get('/team/:teamSlug', asHandler<SchedulerRequest>(async (req, res) => {
   const { teamSlug } = req.params;
   if (!teamSlug || typeof teamSlug !== 'string') {
     res.status(400).json({ error: 'Team slug is required' });
@@ -48,19 +49,19 @@ router.get('/team/:teamSlug', async (req: SchedulerRequest, res) => {
   }
 
   res.status(200).json(makeSchedulerTeamResponse(team));
-});
+}));
 
-router.get('/tables', async (req: SchedulerRequest, res) => {
+router.get('/tables', asHandler<SchedulerRequest>(async (req, res) => {
   const tables = await db.tables.byDivisionId(req.divisionId).getAll();
   res.status(200).json(tables.map(table => makeSchedulerLocationResponse(table)));
-});
+}));
 
-router.get('/rooms', async (req: SchedulerRequest, res) => {
+router.get('/rooms', asHandler<SchedulerRequest>(async (req, res) => {
   const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
   res.status(200).json(rooms.map(room => makeSchedulerLocationResponse(room)));
-});
+}));
 
-router.post('/sessions', async (req: SchedulerRequest, res) => {
+router.post('/sessions', asHandler<SchedulerRequest>(async (req, res) => {
   const { sessions }: { sessions: InsertableJudgingSession[] } = req.body;
 
   if (!sessions || !Array.isArray(sessions)) {
@@ -69,6 +70,10 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   }
 
   const division = await db.divisions.byId(req.divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
+    return;
+  }
   if (division.has_schedule) {
     res
       .status(400)
@@ -107,7 +112,7 @@ router.post('/sessions', async (req: SchedulerRequest, res) => {
   await db.rubrics.createMany(rubrics);
 
   res.status(200).json({ ok: true });
-});
+}));
 
 interface MatchRequest {
   number: number;
@@ -117,7 +122,7 @@ interface MatchRequest {
   tables: Record<string, { team_id: string | null; team_number?: number }>;
 }
 
-router.post('/matches', async (req: SchedulerRequest, res) => {
+router.post('/matches', asHandler<SchedulerRequest>(async (req, res) => {
   const { matches }: { matches: MatchRequest[] } = req.body;
 
   if (!matches || !Array.isArray(matches)) {
@@ -126,6 +131,10 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
   }
 
   const division = await db.divisions.byId(req.divisionId).get();
+  if (!division) {
+    res.status(404).json({ error: 'Division not found' });
+    return;
+  }
   if (division.has_schedule) {
     res
       .status(400)
@@ -187,9 +196,9 @@ router.post('/matches', async (req: SchedulerRequest, res) => {
     console.error('Error creating matches:', error);
     res.status(500).json({ error: 'Failed to create matches' });
   }
-});
+}));
 
-router.put('/settings', async (req: SchedulerRequest, res) => {
+router.put('/settings', asHandler<SchedulerRequest>(async (req, res) => {
   try {
     const { schedule_settings } = req.body;
 
@@ -226,9 +235,9 @@ router.put('/settings', async (req: SchedulerRequest, res) => {
     console.error('Error updating division has_schedule:', error);
     res.status(500).json({ error: 'Failed to update division has_schedule' });
   }
-});
+}));
 
-router.delete('/schedule', async (req: SchedulerRequest, res) => {
+router.delete('/schedule', asHandler<SchedulerRequest>(async (req, res) => {
   try {
     await Promise.all([
       db.judgingSessions.byDivision(req.divisionId).deleteAll(),
@@ -244,6 +253,6 @@ router.delete('/schedule', async (req: SchedulerRequest, res) => {
     console.error('Error deleting division schedule:', error);
     res.status(500).json({ error: 'Failed to delete division schedule' });
   }
-});
+}));
 
 export default router;

@@ -66,7 +66,9 @@ export const matchesResolver: GraphQLFieldResolver<
     // Filter by team IDs if provided
     if (args.teamIds && args.teamIds.length > 0) {
       const teamIdsSet = new Set(args.teamIds);
-      matches = matches.filter(match => match.participants.some(p => teamIdsSet.has(p.team_id)));
+      matches = matches.filter(match =>
+        match.participants.some(p => p.team_id != null && teamIdsSet.has(p.team_id))
+      );
     }
 
     // Fetch state data from MongoDB for all matches

@@ -5,7 +5,8 @@ import { firstIsraelDashboardEventMiddleware, teamDocumentFileValidator } from '
 import db from '../../../../../lib/database';
 import { uploadFile } from '../../../../../lib/blob-storage/upload';
 import { FirstIsraelDashboardEventRequest } from '../../../../../types/express';
-import exportRouter from './export';
+import { asHandler } from '../../../../../types/express-handlers';
+import exportRouter from './export';
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,7 +16,7 @@ router.post(
   '/team-info',
   fileUpload({ limits: { fileSize: 15 * 1024 * 1024, files: 1 } }),
   teamDocumentFileValidator,
-  async (req: FirstIsraelDashboardEventRequest, res: Response) => {
+  asHandler<FirstIsraelDashboardEventRequest>(async (req, res: Response) => {
     try {
       const team = await db.teams.bySlug(req.teamSlug).get();
       if (!team) {
@@ -35,7 +36,7 @@ router.post(
         return;
       }
 
-      const documentFile = req.files.file as UploadedFile;
+      const documentFile = req.files?.file as UploadedFile | undefined;
       if (!documentFile) {
         res.status(400).json({ error: 'NO_FILE_UPLOADED' });
         return;
@@ -64,7 +65,7 @@ router.post(
       res.status(500).json({ error: 'SERVER_ERROR' });
       return;
     }
-  }
+  })
 );
 
 router.use('/export', exportRouter);

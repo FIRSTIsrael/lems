@@ -22,6 +22,10 @@ export const judgingSessionLengthResolver: GraphQLFieldResolver<
       throw new Error(`Division not found for division ID: ${judging.divisionId}`);
     }
 
+    if (!division?.schedule_settings) {
+      throw new Error(`Division schedule settings not found for division ID: ${judging.divisionId}`);
+    }
+
     return division.schedule_settings.judging_session_length;
   } catch (error) {
     console.error('Error fetching judging rooms for division:', judging.divisionId, error);

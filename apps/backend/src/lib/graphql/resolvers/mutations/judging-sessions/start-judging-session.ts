@@ -32,6 +32,12 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     await checkSessionCanBeStarted(divisionId, session);
 
     const division = await db.divisions.byId(divisionId).get();
+    if (!division?.schedule_settings) {
+      throw new MutationError(
+        MutationErrorCode.INTERNAL_ERROR,
+        `Division schedule settings not found for division ${divisionId}`
+      );
+    }
 
     const scheduledTime = dayjs(session.scheduled_time);
     const startTime = new Date();
