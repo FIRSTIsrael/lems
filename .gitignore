@@ -2,6 +2,7 @@
 
 #.env files
 **/.env.local
+next-env.d.ts
 
 # DataGrip queries
 queries
