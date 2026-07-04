@@ -21,9 +21,10 @@ export default function NotFound() {
         <Typography
           variant="h2"
           sx={{
-            fontSize: "1.5rem",
+            fontSize: '1.5rem',
             color: '#666'
-          }}>
+          }}
+        >
           {t('subtitle')}
         </Typography>
       </Paper>

@@ -17,97 +17,118 @@ const router = express.Router({ mergeParams: true });
 
 router.use('/:divisionId', attachDivision());
 
-router.get('/:divisionId', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const division = await db.divisions.byId(req.divisionId).get();
-  if (!division) {
-    res.status(404).json({ error: 'Division not found' });
-    return;
-  }
-  res.status(200).json(makePortalDivisionResponse(division));
-}));
+router.get(
+  '/:divisionId',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+    res.status(200).json(makePortalDivisionResponse(division));
+  })
+);
 
-router.get('/:divisionId/teams', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const divisionId = req.divisionId;
-  const teams = await db.teams.byDivisionId(divisionId).getAll();
-  res.status(200).json(teams.map(makePortalTeamResponse));
-}));
+router.get(
+  '/:divisionId/teams',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const divisionId = req.divisionId;
+    const teams = await db.teams.byDivisionId(divisionId).getAll();
+    res.status(200).json(teams.map(makePortalTeamResponse));
+  })
+);
 
-router.get('/:divisionId/schedule/judging', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
-  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-  const judgingSchedule = await db.judgingSessions.byDivision(req.divisionId).getAll();
+router.get(
+  '/:divisionId/schedule/judging',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+    const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+    const judgingSchedule = await db.judgingSessions.byDivision(req.divisionId).getAll();
 
-  const sessions = judgingSchedule.map(session =>
-    makePortalJudgingSessionResponse(session, rooms, teams)
-  );
-  res.status(200).json(sessions);
-}));
+    const sessions = judgingSchedule.map(session =>
+      makePortalJudgingSessionResponse(session, rooms, teams)
+    );
+    res.status(200).json(sessions);
+  })
+);
 
-router.get('/:divisionId/schedule/field', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
-  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-  const fieldSchedule = await db.robotGameMatches.byDivision(req.divisionId).getAll();
+router.get(
+  '/:divisionId/schedule/field',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+    const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+    const fieldSchedule = await db.robotGameMatches.byDivision(req.divisionId).getAll();
 
-  const matches = fieldSchedule.map(match => makePortalMatchResponse(match, tables, teams));
-  res.status(200).json(matches);
-}));
+    const matches = fieldSchedule.map(match => makePortalMatchResponse(match, tables, teams));
+    res.status(200).json(matches);
+  })
+);
 
-router.get('/:divisionId/agenda', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
-  const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
-  const agenda = [...agendaPublic, ...agendaTeams].sort(
-    (a, b) => a.start_time.getTime() - b.start_time.getTime()
-  );
+router.get(
+  '/:divisionId/agenda',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
+    const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
+    const agenda = [...agendaPublic, ...agendaTeams].sort(
+      (a, b) => a.start_time.getTime() - b.start_time.getTime()
+    );
 
-  res.status(200).json(agenda.map(makePortalAgendaResponse));
-}));
+    res.status(200).json(agenda.map(makePortalAgendaResponse));
+  })
+);
 
 // TODO: Implement this properly
-router.get('/:divisionId/scoreboard', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const teams = await db.teams.byDivisionId(req.divisionId).getAll();
+router.get(
+  '/:divisionId/scoreboard',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const teams = await db.teams.byDivisionId(req.divisionId).getAll();
 
-  const rankings = await calculateRobotGameRankings(req.divisionId);
+    const rankings = await calculateRobotGameRankings(req.divisionId);
 
-  const scoreboard = teams.map(team => {
-    const rankingData = rankings.get(team.id);
+    const scoreboard = teams.map(team => {
+      const rankingData = rankings.get(team.id);
 
-    const scores =
-      rankingData?.scoresWithRounds.sort((a, b) => a.round - b.round).map(s => s.score) ?? [];
+      const scores =
+        rankingData?.scoresWithRounds.sort((a, b) => a.round - b.round).map(s => s.score) ?? [];
 
-    return {
-      team: {
-        id: team.id,
-        name: team.name,
-        number: team.number,
-        affiliation: team.affiliation,
-        city: team.city,
-        region: team.region,
-        slug: `${team.region}-${team.number}`.toUpperCase()
-      },
-      robotGameRank: rankingData?.rank ?? null,
-      maxScore: rankingData?.maxScore ?? null,
-      scores: scores.length > 0 ? scores : null
-    };
-  });
+      return {
+        team: {
+          id: team.id,
+          name: team.name,
+          number: team.number,
+          affiliation: team.affiliation,
+          city: team.city,
+          region: team.region,
+          slug: `${team.region}-${team.number}`.toUpperCase()
+        },
+        robotGameRank: rankingData?.rank ?? null,
+        maxScore: rankingData?.maxScore ?? null,
+        scores: scores.length > 0 ? scores : null
+      };
+    });
 
-  res.status(200).json(scoreboard);
-}));
+    res.status(200).json(scoreboard);
+  })
+);
 
-router.get('/:divisionId/awards', asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-  const division = await db.divisions.byId(req.divisionId).get();
-  if (!division) {
-    res.status(404).json({ error: 'Division not found' });
-    return;
-  }
-  const eventSettings = await db.events.byId(division.event_id).getSettings();
+router.get(
+  '/:divisionId/awards',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+    const eventSettings = await db.events.byId(division.event_id).getSettings();
 
-  if (!eventSettings?.published) {
-    res.status(200).json(null);
-    return;
-  }
+    if (!eventSettings?.published) {
+      res.status(200).json(null);
+      return;
+    }
 
-  const awards = await db.awards.byDivisionId(req.divisionId).getAll();
-  res.status(200).json(awards.map(makePortalAwardsResponse));
-}));
+    const awards = await db.awards.byDivisionId(req.divisionId).getAll();
+    res.status(200).json(awards.map(makePortalAwardsResponse));
+  })
+);
 
 export default router;

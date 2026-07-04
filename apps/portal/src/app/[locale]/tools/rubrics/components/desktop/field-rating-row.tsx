@@ -73,9 +73,10 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
               spacing={0.5}
               direction="row"
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 justifyContent: label ? 'flex-start' : 'center'
-              }}>
+              }}
+            >
               <IconButton
                 disabled={disabled}
                 disableRipple
@@ -98,9 +99,10 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
               {label && (
                 <Typography
                   sx={{
-                    fontSize: "0.875em",
+                    fontSize: '0.875em',
                     pt: '0.25em'
-                  }}>
+                  }}
+                >
                   {label}
                 </Typography>
               )}

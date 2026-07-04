@@ -59,9 +59,12 @@ export const PublishEventDialog: React.FC<PublishEventDialogProps> = ({
           <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
             {t('event-name', { eventName })}
           </Typography>
-          <Typography variant="caption" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('info')}
           </Typography>
           {progress !== null && (
@@ -75,9 +78,12 @@ export const PublishEventDialog: React.FC<PublishEventDialogProps> = ({
                 </Alert>
               ) : (
                 <Box>
-                  <Typography variant="caption" sx={{
-                    color: "text.secondary"
-                  }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     {t('publishing-progress')}
                   </Typography>
                   <LinearProgress variant="determinate" value={progress} sx={{ mt: 0.5 }} />

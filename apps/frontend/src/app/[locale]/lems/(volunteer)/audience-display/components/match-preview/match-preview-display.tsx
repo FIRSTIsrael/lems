@@ -83,18 +83,26 @@ export const MatchPreviewDisplay = () => {
           animation: 'fadeInScale 0.6s ease-out'
         }}
       >
-        <Stack spacing={4} sx={{
-          height: "100%"
-        }}>
-          <Grid container spacing={3} sx={{
-            alignItems: "center"
-          }}>
+        <Stack
+          spacing={4}
+          sx={{
+            height: '100%'
+          }}
+        >
+          <Grid
+            container
+            spacing={3}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             <Grid
               size={2}
               sx={{
-                display: "flex",
-                justifyContent: "center"
-              }}>
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
               <Box
                 sx={{
                   position: 'relative',
@@ -114,10 +122,11 @@ export const MatchPreviewDisplay = () => {
             <Grid
               size={8}
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center"
-              }}>
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center'
+              }}
+            >
               <Typography
                 variant="h4"
                 sx={{
@@ -145,9 +154,10 @@ export const MatchPreviewDisplay = () => {
             <Grid
               size={2}
               sx={{
-                display: "flex",
-                justifyContent: "center"
-              }}>
+                display: 'flex',
+                justifyContent: 'center'
+              }}
+            >
               <Box
                 sx={{
                   position: 'relative',

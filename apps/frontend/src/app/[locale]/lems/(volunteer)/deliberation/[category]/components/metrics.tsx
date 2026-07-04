@@ -15,9 +15,13 @@ export function Metrics() {
     : undefined;
 
   return (
-    <Stack direction="row" spacing={2.5} sx={{
-      height: 270
-    }}>
+    <Stack
+      direction="row"
+      spacing={2.5}
+      sx={{
+        height: 270
+      }}
+    >
       <RoomScoresDistribution roomMetrics={roomMetrics} teams={teams} />
       <CompareTeamsPicker teams={teams} category={category} />
     </Stack>

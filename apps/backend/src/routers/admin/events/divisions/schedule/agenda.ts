@@ -1,8 +1,8 @@
 import express from 'express';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
-import { requirePermission } from '../../../middleware/require-permission';import { asHandler } from '../../../../../types/express-handlers';
-
+import { requirePermission } from '../../../middleware/require-permission';
+import { asHandler } from '../../../../../types/express-handlers';
 
 const router = express.Router({ mergeParams: true });
 

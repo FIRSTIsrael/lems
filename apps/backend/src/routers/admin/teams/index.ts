@@ -7,74 +7,83 @@ import { requirePermission } from '../middleware/require-permission';
 import { asHandler } from '../../../types/express-handlers';
 import { makeAdminTeamResponse, parseTeamList } from './util';
 
-
 const router = express.Router({ mergeParams: true });
 const FILE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 
-router.get('/', asHandler<AdminRequest>(async (req, res) => {
-  let teams = await db.teams.getAllWithActiveStatus();
+router.get(
+  '/',
+  asHandler<AdminRequest>(async (req, res) => {
+    let teams = await db.teams.getAllWithActiveStatus();
 
-  const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
+    const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
 
-  if (extraFields.includes('deletable')) {
-    const unregistered = await db.teams.getAllUnregistered();
-    const unregisteredIds = new Set(unregistered.map(t => t.id));
+    if (extraFields.includes('deletable')) {
+      const unregistered = await db.teams.getAllUnregistered();
+      const unregisteredIds = new Set(unregistered.map(t => t.id));
 
-    teams = teams.map(team => {
-      return {
-        ...team,
-        deletable: unregisteredIds.has(team.id)
-      };
-    });
-  }
+      teams = teams.map(team => {
+        return {
+          ...team,
+          deletable: unregisteredIds.has(team.id)
+        };
+      });
+    }
 
-  const response = teams.map(team => makeAdminTeamResponse(team));
-  res.json(response);
-}));
+    const response = teams.map(team => makeAdminTeamResponse(team));
+    res.json(response);
+  })
+);
 
-router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), asHandler<AdminRequest>(async (req, res) => {
-  const teamId = req.params.teamId;
-  if (!teamId || typeof teamId !== 'string') {
-    res.status(400).json({ error: 'Team ID is required' });
-    return;
-  }
+router.delete(
+  '/:teamId',
+  requirePermission('MANAGE_TEAMS'),
+  asHandler<AdminRequest>(async (req, res) => {
+    const teamId = req.params.teamId;
+    if (!teamId || typeof teamId !== 'string') {
+      res.status(400).json({ error: 'Team ID is required' });
+      return;
+    }
 
-  const team = await db.teams.byId(teamId).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
+    const team = await db.teams.byId(teamId).get();
+    if (!team) {
+      res.status(404).json({ error: 'Team not found' });
+      return;
+    }
 
-  const teamEvents = await db.events.byTeam(team.id).getAll();
+    const teamEvents = await db.events.byTeam(team.id).getAll();
 
-  if (teamEvents.length > 0) {
-    res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
-    return;
-  }
+    if (teamEvents.length > 0) {
+      res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
+      return;
+    }
 
-  const success = await db.teams.byId(teamId).delete();
-  if (!success) {
-    res.status(500).json({ error: 'Could not delete team' });
-    return;
-  }
+    const success = await db.teams.byId(teamId).delete();
+    if (!success) {
+      res.status(500).json({ error: 'Could not delete team' });
+      return;
+    }
 
-  res.status(200).end();
-}));
+    res.status(200).end();
+  })
+);
 
-router.get('/:teamId', asHandler<AdminRequest>(async (req, res) => {
-  const id = req.params.teamId;
-  if (!id || typeof id !== 'string') {
-    res.status(400).json({ error: 'Team ID is required' });
-    return;
-  }
+router.get(
+  '/:teamId',
+  asHandler<AdminRequest>(async (req, res) => {
+    const id = req.params.teamId;
+    if (!id || typeof id !== 'string') {
+      res.status(400).json({ error: 'Team ID is required' });
+      return;
+    }
 
-  const team = await db.teams.byId(id).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
-  res.json(makeAdminTeamResponse(team));
-}));
+    const team = await db.teams.byId(id).get();
+    if (!team) {
+      res.status(404).json({ error: 'Team not found' });
+      return;
+    }
+    res.json(makeAdminTeamResponse(team));
+  })
+);
 
 router.put(
   '/:teamId',

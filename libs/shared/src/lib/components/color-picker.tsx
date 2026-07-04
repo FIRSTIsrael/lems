@@ -104,9 +104,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   };
 
   return (
-    <Box ref={setAnchorEl} sx={{
-      display: "inline-block"
-    }}>
+    <Box
+      ref={setAnchorEl}
+      sx={{
+        display: 'inline-block'
+      }}
+    >
       <Box
         onClick={handleTriggerClick}
         onKeyDown={handleKeyDown}
@@ -179,10 +182,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             <Stack spacing={2}>
               <Box
                 sx={{
-                  width: "100%",
+                  width: '100%',
                   height: 160,
-                  overflow: "hidden"
-                }}>
+                  overflow: 'hidden'
+                }}
+              >
                 <Saturation
                   hsva={value}
                   onChange={handleSaturationChange}
@@ -193,9 +197,10 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
               <Box
                 sx={{
-                  width: "100%",
+                  width: '100%',
                   height: 16
-                }}>
+                }}
+              >
                 <Hue
                   hue={value.h}
                   onChange={handleHueChange}
@@ -219,10 +224,11 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
               {/* Preset color swatches */}
               <Box
                 sx={{
-                  display: "flex",
-                  flexWrap: "wrap",
+                  display: 'flex',
+                  flexWrap: 'wrap',
                   gap: 1
-                }}>
+                }}
+              >
                 {PRESET_COLORS.map(hex => (
                   <IconButton
                     disableRipple
@@ -246,11 +252,12 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
 
               <Box
                 sx={{
-                  width: "100%",
+                  width: '100%',
                   height: 32,
                   borderRadius: theme.shape.borderRadius,
                   backgroundColor: hsvaToHex(value)
-                }} />
+                }}
+              />
             </Stack>
           </Paper>
         </ClickAwayListener>

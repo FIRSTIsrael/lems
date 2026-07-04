@@ -9,15 +9,21 @@ import { isTeamsRegistration, parseTeamCSVRegistration } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', asHandler<AdminEventRequest>(async (req, res) => {
-  const teams = await db.events.byId(req.eventId).getRegisteredTeams();
-  res.json(teams.map(team => makeAdminTeamWithDivisionResponse(team)));
-}));
+router.get(
+  '/',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const teams = await db.events.byId(req.eventId).getRegisteredTeams();
+    res.json(teams.map(team => makeAdminTeamWithDivisionResponse(team)));
+  })
+);
 
-router.get('/available', asHandler<AdminEventRequest>(async (req, res) => {
-  const teams = await db.events.byId(req.eventId).getAvailableTeams();
-  res.json(teams.map(team => makeAdminTeamResponse(team)));
-}));
+router.get(
+  '/available',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const teams = await db.events.byId(req.eventId).getAvailableTeams();
+    res.json(teams.map(team => makeAdminTeamResponse(team)));
+  })
+);
 
 router.post(
   '/register',

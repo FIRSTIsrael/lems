@@ -13,72 +13,85 @@ const router = express.Router({ mergeParams: true });
 router.use('/register', registrationRouter);
 router.use('/permissions', permissionsRouter);
 
-router.get('/', asHandler<AdminRequest>(async (req, res) => {
-  const users = await db.admins.getAll();
-  res.json(users.map(user => makeAdminUserResponse(user)));
-}));
+router.get(
+  '/',
+  asHandler<AdminRequest>(async (req, res) => {
+    const users = await db.admins.getAll();
+    res.json(users.map(user => makeAdminUserResponse(user)));
+  })
+);
 
-router.get('/me', asHandler<AdminRequest>(async (req, res) => {
-  const user = await db.admins.byId(req.userId).get();
+router.get(
+  '/me',
+  asHandler<AdminRequest>(async (req, res) => {
+    const user = await db.admins.byId(req.userId).get();
 
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
-  }
-
-  res.json(makeAdminUserResponse(user));
-}));
-
-router.get('/:userId', asHandler<AdminRequest>(async (req, res) => {
-  const userId = req.params.userId;
-  if (!userId || typeof userId !== 'string') {
-    res.status(400).json({ error: 'User ID is required' });
-    return;
-  }
-
-  const user = await db.admins.byId(userId).get();
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
-  }
-
-  res.json(makeAdminUserResponse(user));
-}));
-
-router.patch('/:userId', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
-  const userId = req.params.userId;
-  const { firstName, lastName } = req.body;
-
-  if (!userId || typeof userId !== 'string') {
-    res.status(400).json({ error: 'User ID is required' });
-    return;
-  }
-
-  if (!firstName && !lastName) {
-    res.status(400).json({ error: 'At least one field to update is required' });
-    return;
-  }
-
-  const user = await db.admins.byId(userId).get();
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
-  }
-
-  try {
-    await db.admins.byId(userId).updateProfile({ firstName, lastName });
-
-    const updatedUser = await db.admins.byId(userId).get();
-    if (!updatedUser) {
-      throw new Error('Failed to retrieve updated user');
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
     }
 
-    res.json(makeAdminUserResponse(updatedUser));
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ error: 'Failed to update user' });
-  }
-}));
+    res.json(makeAdminUserResponse(user));
+  })
+);
+
+router.get(
+  '/:userId',
+  asHandler<AdminRequest>(async (req, res) => {
+    const userId = req.params.userId;
+    if (!userId || typeof userId !== 'string') {
+      res.status(400).json({ error: 'User ID is required' });
+      return;
+    }
+
+    const user = await db.admins.byId(userId).get();
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    res.json(makeAdminUserResponse(user));
+  })
+);
+
+router.patch(
+  '/:userId',
+  requirePermission('MANAGE_USERS'),
+  asHandler<AdminRequest>(async (req, res) => {
+    const userId = req.params.userId;
+    const { firstName, lastName } = req.body;
+
+    if (!userId || typeof userId !== 'string') {
+      res.status(400).json({ error: 'User ID is required' });
+      return;
+    }
+
+    if (!firstName && !lastName) {
+      res.status(400).json({ error: 'At least one field to update is required' });
+      return;
+    }
+
+    const user = await db.admins.byId(userId).get();
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    try {
+      await db.admins.byId(userId).updateProfile({ firstName, lastName });
+
+      const updatedUser = await db.admins.byId(userId).get();
+      if (!updatedUser) {
+        throw new Error('Failed to retrieve updated user');
+      }
+
+      res.json(makeAdminUserResponse(updatedUser));
+    } catch (error) {
+      console.error('Error updating user:', error);
+      res.status(500).json({ error: 'Failed to update user' });
+    }
+  })
+);
 
 router.patch(
   '/:userId/password',
@@ -115,41 +128,45 @@ router.patch(
   })
 );
 
-router.delete('/:userId', requirePermission('MANAGE_USERS'), asHandler<AdminRequest>(async (req, res) => {
-  const userId = req.params.userId;
+router.delete(
+  '/:userId',
+  requirePermission('MANAGE_USERS'),
+  asHandler<AdminRequest>(async (req, res) => {
+    const userId = req.params.userId;
 
-  if (!userId || typeof userId !== 'string') {
-    res.status(400).json({ error: 'User ID is required' });
-    return;
-  }
-
-  if (userId === req.userId) {
-    res.status(403).json({ error: 'CANNOT_DELETE_SELF' });
-    return;
-  }
-
-  const user = await db.admins.byId(userId).get();
-  if (!user) {
-    res.status(404).json({ error: 'User not found' });
-    return;
-  }
-
-  try {
-    const userEvents = await db.admins.byId(user.id).getEvents();
-    for (const event of userEvents) {
-      const eventAdmins = await db.admins.byEventId(event.id).getAll();
-      await db.events.byId(event.id).removeAdmin(user.id);
-      if (eventAdmins.length <= 1) {
-        await db.events.byId(event.id).addAdmin(req.userId);
-      }
+    if (!userId || typeof userId !== 'string') {
+      res.status(400).json({ error: 'User ID is required' });
+      return;
     }
 
-    await db.admins.byId(userId).delete();
-    res.status(204).send();
-  } catch (error) {
-    console.error('Error deleting user:', error);
-    res.status(500).json({ error: 'Failed to delete user' });
-  }
-}));
+    if (userId === req.userId) {
+      res.status(403).json({ error: 'CANNOT_DELETE_SELF' });
+      return;
+    }
+
+    const user = await db.admins.byId(userId).get();
+    if (!user) {
+      res.status(404).json({ error: 'User not found' });
+      return;
+    }
+
+    try {
+      const userEvents = await db.admins.byId(user.id).getEvents();
+      for (const event of userEvents) {
+        const eventAdmins = await db.admins.byEventId(event.id).getAll();
+        await db.events.byId(event.id).removeAdmin(user.id);
+        if (eventAdmins.length <= 1) {
+          await db.events.byId(event.id).addAdmin(req.userId);
+        }
+      }
+
+      await db.admins.byId(userId).delete();
+      res.status(204).send();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ error: 'Failed to delete user' });
+    }
+  })
+);
 
 export default router;

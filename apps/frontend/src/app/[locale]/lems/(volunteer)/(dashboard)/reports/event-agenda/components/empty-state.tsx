@@ -10,9 +10,12 @@ export function EmptyState() {
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
       <EventNote sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-      <Typography variant="h6" sx={{
-        color: "text.secondary"
-      }}>
+      <Typography
+        variant="h6"
+        sx={{
+          color: 'text.secondary'
+        }}
+      >
         {t('no-events')}
       </Typography>
     </Box>

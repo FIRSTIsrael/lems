@@ -23,12 +23,13 @@ export const CreateSeasonCard = () => {
       sx={{
         minHeight: 250,
         p: 2,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        flexDirection: "column",
-        color: "text.primary"
-      }}>
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        color: 'text.primary'
+      }}
+    >
       <AddRounded fontSize="large" />
       <Typography variant="h4" align="center" gutterBottom>
         {t('create-new-season')}

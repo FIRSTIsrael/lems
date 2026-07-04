@@ -225,7 +225,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 export async function down(db: Kysely<any>): Promise<void> {
   // Drop partial unique index for team-match assignments
   await sql`DROP INDEX IF EXISTS uk_robot_game_match_participants_team_match_not_null`.execute(db);
-  
+
   // Drop indexes for robot_game_match_participants table
   await db.schema.dropIndex('idx_robot_game_match_participants_team_id').ifExists().execute();
   await db.schema.dropIndex('idx_robot_game_match_participants_table_id').ifExists().execute();

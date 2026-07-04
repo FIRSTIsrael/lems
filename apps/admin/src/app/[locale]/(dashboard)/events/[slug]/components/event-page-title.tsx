@@ -27,12 +27,17 @@ export function EventPageTitle({ title, children }: EventPageTitleProps) {
       <Stack
         direction="row"
         sx={{
-          alignItems: "center",
-          justifyContent: "space-between"
-        }}>
-        <Stack direction="row" spacing={2} sx={{
-          alignItems: "center"
-        }}>
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <IconButton
             onClick={handleBackClick}
             sx={{

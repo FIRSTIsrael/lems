@@ -2,8 +2,8 @@ import express from 'express';
 import fileUpload from 'express-fileupload';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
-import { AdminDivisionRequest } from '../../../../../types/express';import { asHandler } from '../../../../../types/express-handlers';
-
+import { AdminDivisionRequest } from '../../../../../types/express';
+import { asHandler } from '../../../../../types/express-handlers';
 
 const router = express.Router({ mergeParams: true });
 

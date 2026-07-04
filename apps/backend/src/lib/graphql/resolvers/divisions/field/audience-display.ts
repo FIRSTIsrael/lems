@@ -25,9 +25,11 @@ export const audienceDisplayResolver: GraphQLFieldResolver<
       throw new Error(`Division state not found for division ID: ${field.divisionId}`);
     }
 
-    return divisionState.audienceDisplay ?? {
-      activeDisplay: 'logo'
-    };
+    return (
+      divisionState.audienceDisplay ?? {
+        activeDisplay: 'logo'
+      }
+    );
   } catch (error) {
     console.error('Error fetching audience display for division:', field.divisionId, error);
     throw error;

@@ -175,9 +175,12 @@ export function PersonalAwardsSection() {
               borderLeft: `4px solid ${theme.palette.info.main}`
             }}
           >
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-awards')}
             </Typography>
           </Paper>
@@ -241,10 +244,11 @@ export function PersonalAwardsSection() {
                           component="span"
                           variant="caption"
                           sx={{
-                            color: "text.secondary",
+                            color: 'text.secondary',
                             display: 'block',
                             mt: 0.25
-                          }}>
+                          }}
+                        >
                           ({t('optional')})
                         </Typography>
                       )}
@@ -262,7 +266,7 @@ export function PersonalAwardsSection() {
                         <Box key={award.id}>
                           {isAssigned ? (
                             // Assigned award: show winner name as text
-                            (<Box
+                            <Box
                               sx={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -284,10 +288,10 @@ export function PersonalAwardsSection() {
                               <Typography variant="body2" sx={{ fontWeight: 500 }}>
                                 {assignedWinner}
                               </Typography>
-                            </Box>)
+                            </Box>
                           ) : (
                             // Unassigned award: show input field and button on same line
-                            (<Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
+                            <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
                               <TextField
                                 fullWidth
                                 size="medium"
@@ -327,7 +331,7 @@ export function PersonalAwardsSection() {
                                 ) : null}
                                 {t('assign-button')}
                               </Button>
-                            </Box>)
+                            </Box>
                           )}
                         </Box>
                       );

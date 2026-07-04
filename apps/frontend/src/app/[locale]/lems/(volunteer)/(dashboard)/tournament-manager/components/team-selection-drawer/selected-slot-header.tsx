@@ -19,9 +19,10 @@ export function SelectedSlotHeader({ selectedSlot, onClose }: SelectedSlotHeader
           <Typography
             variant="caption"
             sx={{
-              color: "text.secondary",
-              display: "block"
-            }}>
+              color: 'text.secondary',
+              display: 'block'
+            }}
+          >
             {selectedSlot?.type === 'match'
               ? `${t('labels.match')} - ${selectedSlot.tableName}`
               : `${t('labels.session')} - ${selectedSlot?.roomName}`}
@@ -31,21 +32,31 @@ export function SelectedSlotHeader({ selectedSlot, onClose }: SelectedSlotHeader
           <Typography
             variant="caption"
             sx={{
-              color: "warning.main",
-              display: "block"
-            }}>
+              color: 'warning.main',
+              display: 'block'
+            }}
+          >
             {t('labels.not-assigned')}
           </Typography>
         )}
-        <Typography variant="h6" color="primary" noWrap sx={{
-          fontWeight: 700
-        }}>
+        <Typography
+          variant="h6"
+          color="primary"
+          noWrap
+          sx={{
+            fontWeight: 700
+          }}
+        >
           #{selectedSlot?.team?.number} {selectedSlot?.team?.name}
         </Typography>
         {(selectedSlot?.team?.affiliation || selectedSlot?.team?.city) && (
-          <Typography variant="body2" noWrap sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            noWrap
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {[selectedSlot.team.affiliation, selectedSlot.team.city].filter(Boolean).join(' • ')}
           </Typography>
         )}

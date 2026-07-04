@@ -66,7 +66,8 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
             sx={{
               fontWeight: 600,
               flexGrow: 1
-            }}>
+            }}
+          >
             {localizedName}
           </Typography>
 
@@ -96,9 +97,10 @@ export function AwardCard({ name, awardList }: AwardCardProps) {
               <Typography
                 variant="body2"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   lineHeight: 1.6
-                }}>
+                }}
+              >
                 {description}
               </Typography>
             )}

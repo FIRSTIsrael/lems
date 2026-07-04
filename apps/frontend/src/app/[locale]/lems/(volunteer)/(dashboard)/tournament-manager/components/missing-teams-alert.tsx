@@ -27,9 +27,14 @@ export function MissingTeamsAlert({
           ? `${t('slots.missing-teams.from-round')}: ${currentRoundTitle}`
           : t('slots.missing-teams.title')}
       </AlertTitle>
-      <Stack direction="row" spacing={0.5} useFlexGap sx={{
-        flexWrap: "wrap"
-      }}>
+      <Stack
+        direction="row"
+        spacing={0.5}
+        useFlexGap
+        sx={{
+          flexWrap: 'wrap'
+        }}
+      >
         {missingTeams.map(team => (
           <Chip
             key={team.id}

@@ -42,19 +42,21 @@ export function Filters() {
           spacing={2}
           useFlexGap
           sx={{
-            alignItems: "center",
-            flexWrap: "wrap",
-            justifyContent: "space-between"
-          }}>
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between'
+          }}
+        >
           <Stack
             direction="row"
             spacing={2}
             useFlexGap
             sx={{
-              alignItems: "center",
-              flexWrap: "wrap",
+              alignItems: 'center',
+              flexWrap: 'wrap',
               flex: 1
-            }}>
+            }}
+          >
             <TextField
               label={t('filters.search-label')}
               placeholder={t('filters.search-placeholder')}

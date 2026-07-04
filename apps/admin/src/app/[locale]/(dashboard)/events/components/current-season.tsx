@@ -12,9 +12,11 @@ interface CurrentSeasonProps {
 export const CurrentSeason: React.FC<CurrentSeasonProps> = ({ season }) => {
   return (
     <>
-      <Box sx={{
-        p: 3
-      }}>
+      <Box
+        sx={{
+          p: 3
+        }}
+      >
         <SeasonHeader seasonName={season.name} logoUrl={season.logoUrl} allowCreate />
       </Box>
       <Box

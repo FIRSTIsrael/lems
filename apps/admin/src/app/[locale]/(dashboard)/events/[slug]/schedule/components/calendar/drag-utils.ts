@@ -1,5 +1,5 @@
-import { Dayjs } from "dayjs";
-import { HEADER_HEIGHT, INTERVAL_MINUTES, TIME_SLOT_HEIGHT } from "./calendar-types";
+import { Dayjs } from 'dayjs';
+import { HEADER_HEIGHT, INTERVAL_MINUTES, TIME_SLOT_HEIGHT } from './calendar-types';
 
 const SNAP_MINUTES = 5;
 

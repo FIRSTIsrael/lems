@@ -101,8 +101,8 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
       }
       router.push(decodeURIComponent(returnUrl));
     } catch (error) {
-        const message = error instanceof Error ? error.message : 'server-error';
-        setStatus(message);
+      const message = error instanceof Error ? error.message : 'server-error';
+      setStatus(message);
     }
   };
 
@@ -121,9 +121,10 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
                 <Typography
                   variant="h2"
                   sx={{
-                    textAlign: "center",
+                    textAlign: 'center',
                     mb: 2
-                  }}>
+                  }}
+                >
                   {t('title')}
                 </Typography>
 
@@ -166,10 +167,11 @@ export function LoginForm({ recaptchaRequired }: LoginFormProps) {
 
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "center",
-                    width: "100%"
-                  }}>
+                    display: 'flex',
+                    justifyContent: 'center',
+                    width: '100%'
+                  }}
+                >
                   <Button
                     type="submit"
                     variant="contained"

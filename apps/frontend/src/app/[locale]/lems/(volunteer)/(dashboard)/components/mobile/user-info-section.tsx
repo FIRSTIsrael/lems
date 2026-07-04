@@ -23,9 +23,13 @@ export const UserInfoSection = () => {
       >
         {getRole(user.role)}
       </Typography>
-      <Stack direction="row" spacing={1.5} sx={{
-        alignItems: "flex-end"
-      }}>
+      <Stack
+        direction="row"
+        spacing={1.5}
+        sx={{
+          alignItems: 'flex-end'
+        }}
+      >
         <Typography
           variant="body2"
           title={event.eventName}
@@ -36,7 +40,8 @@ export const UserInfoSection = () => {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap'
-          }}>
+          }}
+        >
           {event.eventName}
         </Typography>
 

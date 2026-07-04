@@ -109,9 +109,13 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       : undefined;
 
   return (
-    <Stack ref={columnRef} onMouseDown={handleMouseDown} sx={{
-      width: "33.33%"
-    }}>
+    <Stack
+      ref={columnRef}
+      onMouseDown={handleMouseDown}
+      sx={{
+        width: '33.33%'
+      }}
+    >
       <Box
         sx={{
           height: HEADER_HEIGHT,
@@ -147,7 +151,8 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
               borderRadius: 1,
               pointerEvents: 'none',
               zIndex: 500
-            }} />
+            }}
+          />
         )}
 
         {agendaBlocks.map(block => {

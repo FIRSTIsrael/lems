@@ -2,7 +2,8 @@ import express from 'express';
 import db from '../../../../lib/database';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminUserResponse } from '../../users/util';
-import { requirePermission } from '../../middleware/require-permission';import { asHandler } from '../../../../types/express-handlers';
+import { requirePermission } from '../../middleware/require-permission';
+import { asHandler } from '../../../../types/express-handlers';
 import {
   makeAdminVolunteerResponse,
   generateVolunteerPassword,
@@ -12,10 +13,13 @@ import {
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/admins', asHandler<AdminEventRequest>(async (req, res) => {
-  const admins = await db.admins.byEventId(req.eventId).getAll();
-  res.json(admins.map(admin => makeAdminUserResponse(admin)));
-}));
+router.get(
+  '/admins',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const admins = await db.admins.byEventId(req.eventId).getAll();
+    res.json(admins.map(admin => makeAdminUserResponse(admin)));
+  })
+);
 
 router.post(
   '/admins',
@@ -46,10 +50,13 @@ router.delete(
   })
 );
 
-router.get('/volunteers', asHandler<AdminEventRequest>(async (req, res) => {
-  const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
-  res.json(volunteers.map(volunteer => makeAdminVolunteerResponse(volunteer)));
-}));
+router.get(
+  '/volunteers',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const volunteers = await db.eventUsers.byEventId(req.eventId).getAll();
+    res.json(volunteers.map(volunteer => makeAdminVolunteerResponse(volunteer)));
+  })
+);
 
 router.post(
   '/volunteers',

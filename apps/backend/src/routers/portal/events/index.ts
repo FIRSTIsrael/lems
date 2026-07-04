@@ -7,7 +7,6 @@ import { asHandler } from '../../../types/express-handlers';
 import eventTeamRouter from './teams';
 import { makePortalEventDetailsResponse, makePortalEventSummaryResponse } from './util';
 
-
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
@@ -82,34 +81,37 @@ router.get('/', async (req: Request, res: Response) => {
 
 router.use('/:slug', attachEvent());
 
-router.get('/:slug', asHandler<PortalEventRequest>(async (req, res: Response) => {
-  const event = await db.events.byId(req.eventId).get();
-  if (!event) {
-    res.status(404).json({ error: 'Event not found' });
-    return;
-  }
-  const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
-  const season = await db.seasons.byId(event.season_id).get();
-  if (!season) {
-    res.status(404).json({ error: 'Season not found' });
-    return;
-  }
-  const settings = await db.events.byId(event.id).getSettings();
-  if (!settings) {
-    res.status(404).json({ error: 'Event settings not found' });
-    return;
-  }
+router.get(
+  '/:slug',
+  asHandler<PortalEventRequest>(async (req, res: Response) => {
+    const event = await db.events.byId(req.eventId).get();
+    if (!event) {
+      res.status(404).json({ error: 'Event not found' });
+      return;
+    }
+    const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
+    const season = await db.seasons.byId(event.season_id).get();
+    if (!season) {
+      res.status(404).json({ error: 'Season not found' });
+      return;
+    }
+    const settings = await db.events.byId(event.id).getSettings();
+    if (!settings) {
+      res.status(404).json({ error: 'Event settings not found' });
+      return;
+    }
 
-  const eventSummary: EventDetails = {
-    ...event,
-    divisions,
-    season_name: season.name,
-    season_slug: season.slug,
-    official: settings.official
-  };
+    const eventSummary: EventDetails = {
+      ...event,
+      divisions,
+      season_name: season.name,
+      season_slug: season.slug,
+      official: settings.official
+    };
 
-  res.json(makePortalEventDetailsResponse(eventSummary));
-}));
+    res.json(makePortalEventDetailsResponse(eventSummary));
+  })
+);
 
 router.use('/:slug/teams', eventTeamRouter);
 

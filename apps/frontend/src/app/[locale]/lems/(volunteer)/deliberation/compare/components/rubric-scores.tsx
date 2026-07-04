@@ -159,9 +159,10 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
-          textAlign: "center"
-        }}>
+          color: 'text.secondary',
+          textAlign: 'center'
+        }}
+      >
         {t('no-rubric-data')}
       </Typography>
     );
@@ -174,7 +175,8 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
         sx={{
           fontWeight: 600,
           fontSize: '1.1rem'
-        }}>
+        }}
+      >
         {t('rubric-scores')}
       </Typography>
       {category ? (

@@ -24,9 +24,10 @@ export function SectionScoreRow({
       direction="row"
       spacing={1}
       sx={{
-        justifyContent: "space-between",
-        alignItems: "center"
-      }}>
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
       {showSectionName && (
         <Typography
           variant="body2"

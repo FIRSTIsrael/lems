@@ -50,10 +50,11 @@ export function RoleInfoStep() {
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
+          color: 'text.secondary',
           mb: 3,
           lineHeight: 1.6
-        }}>
+        }}
+      >
         {t(`instructions.role-info-${roleInfoType}`)}
       </Typography>
       <Autocomplete

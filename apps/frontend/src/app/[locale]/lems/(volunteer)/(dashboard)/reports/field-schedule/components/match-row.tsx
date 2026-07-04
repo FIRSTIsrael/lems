@@ -40,30 +40,33 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
       <TableCell align="center">
         <Typography
           sx={{
-            fontFamily: "monospace",
+            fontFamily: 'monospace',
             fontWeight: 500,
             fontSize: isMobile ? '0.75rem' : '1rem'
-          }}>
+          }}
+        >
           {match.number}
         </Typography>
       </TableCell>
       <TableCell align="center">
         <Typography
           sx={{
-            fontFamily: "monospace",
+            fontFamily: 'monospace',
             fontWeight: 500,
             fontSize: isMobile ? '0.75rem' : '1rem'
-          }}>
+          }}
+        >
           {startTime.format('HH:mm')}
         </Typography>
       </TableCell>
       <TableCell align="center">
         <Typography
           sx={{
-            fontFamily: "monospace",
+            fontFamily: 'monospace',
             fontWeight: 500,
             fontSize: isMobile ? '0.75rem' : '1rem'
-          }}>
+          }}
+        >
           {endTime.format('HH:mm')}
         </Typography>
       </TableCell>
@@ -102,9 +105,13 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
                 </Box>
               </Tooltip>
             ) : (
-              <Typography sx={{
-                fontSize: isMobile ? '0.75rem' : '1rem'
-              }}>-</Typography>
+              <Typography
+                sx={{
+                  fontSize: isMobile ? '0.75rem' : '1rem'
+                }}
+              >
+                -
+              </Typography>
             )}
           </TableCell>
         );

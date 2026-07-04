@@ -64,7 +64,8 @@ export function MatchRow({
           sx={{
             fontWeight: 600,
             fontSize: '1.25rem'
-          }}>
+          }}
+        >
           #{match.number}
         </Typography>
       </TableCell>
@@ -72,10 +73,11 @@ export function MatchRow({
         <Typography
           variant="body1"
           sx={{
-            fontFamily: "monospace",
+            fontFamily: 'monospace',
             fontWeight: 500,
             fontSize: '1.25rem'
-          }}>
+          }}
+        >
           {scheduledTime}
         </Typography>
       </TableCell>
@@ -87,9 +89,10 @@ export function MatchRow({
               <Typography
                 variant="body1"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   fontSize: '1.25rem'
-                }}>
+                }}
+              >
                 -
               </Typography>
             </TableCell>
@@ -151,10 +154,11 @@ export function MatchRow({
                 direction="row"
                 spacing={0.5}
                 sx={{
-                  alignItems: "center",
-                  justifyContent: "center",
+                  alignItems: 'center',
+                  justifyContent: 'center',
                   width: '100%'
-                }}>
+                }}
+              >
                 {showIcon &&
                   (isReady ? (
                     <CheckCircleIcon
@@ -190,16 +194,18 @@ export function MatchRow({
                     sx={{
                       fontWeight: 700,
                       fontSize: '1.25rem'
-                    }}>
+                    }}
+                  >
                     #{participant.team.number}
                   </Typography>
                   <Typography
                     variant="caption"
                     noWrap
                     sx={{
-                      color: "text.secondary",
+                      color: 'text.secondary',
                       fontSize: '1rem'
-                    }}>
+                    }}
+                  >
                     {participant.team.name}
                   </Typography>
                 </Stack>

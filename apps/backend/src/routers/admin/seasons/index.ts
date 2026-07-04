@@ -53,51 +53,63 @@ router.post(
   })
 );
 
-router.get('/', asHandler<AdminRequest>(async (req, res) => {
-  const seasons = await db.seasons.getAll();
-  res.status(200).json(seasons.map(makeAdminSeasonResponse));
-}));
+router.get(
+  '/',
+  asHandler<AdminRequest>(async (req, res) => {
+    const seasons = await db.seasons.getAll();
+    res.status(200).json(seasons.map(makeAdminSeasonResponse));
+  })
+);
 
-router.get('/current', asHandler<AdminRequest>(async (req, res) => {
-  const currentSeason = await db.seasons.getCurrent();
-  if (!currentSeason) {
-    res.status(404).json({ error: 'No current season found' });
-    return;
-  }
-  res.status(200).json(makeAdminSeasonResponse(currentSeason));
-}));
+router.get(
+  '/current',
+  asHandler<AdminRequest>(async (req, res) => {
+    const currentSeason = await db.seasons.getCurrent();
+    if (!currentSeason) {
+      res.status(404).json({ error: 'No current season found' });
+      return;
+    }
+    res.status(200).json(makeAdminSeasonResponse(currentSeason));
+  })
+);
 
-router.get('/id/:id', asHandler<AdminRequest>(async (req, res) => {
-  const { id } = req.params;
-  if (!id || typeof id !== 'string') {
-    res.status(400).json({ error: 'Invalid season ID' });
-    return;
-  }
+router.get(
+  '/id/:id',
+  asHandler<AdminRequest>(async (req, res) => {
+    const { id } = req.params;
+    if (!id || typeof id !== 'string') {
+      res.status(400).json({ error: 'Invalid season ID' });
+      return;
+    }
 
-  const season = await db.seasons.byId(id).get();
-  if (!season) {
-    res.status(404).json({ error: 'Season not found' });
-    return;
-  }
-  res.status(200).json(makeAdminSeasonResponse(season));
-}));
+    const season = await db.seasons.byId(id).get();
+    if (!season) {
+      res.status(404).json({ error: 'Season not found' });
+      return;
+    }
+    res.status(200).json(makeAdminSeasonResponse(season));
+  })
+);
 
-router.get('/:slug', asHandler<AdminRequest>(async (req, res) => {
-  const { slug } = req.params;
+router.get(
+  '/:slug',
+  asHandler<AdminRequest>(async (req, res) => {
+    const { slug } = req.params;
 
-  if (!slug || typeof slug !== 'string') {
-    res.status(400).json({ error: 'Invalid season slug' });
-    return;
-  }
+    if (!slug || typeof slug !== 'string') {
+      res.status(400).json({ error: 'Invalid season slug' });
+      return;
+    }
 
-  const season = await db.seasons.bySlug(slug).get();
+    const season = await db.seasons.bySlug(slug).get();
 
-  if (!season) {
-    res.status(404).json({ error: 'Season not found' });
-    return;
-  }
+    if (!season) {
+      res.status(404).json({ error: 'Season not found' });
+      return;
+    }
 
-  res.status(200).json(makeAdminSeasonResponse(season));
-}));
+    res.status(200).json(makeAdminSeasonResponse(season));
+  })
+);
 
 export default router;

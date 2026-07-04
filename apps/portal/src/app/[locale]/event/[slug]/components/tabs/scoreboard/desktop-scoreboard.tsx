@@ -84,11 +84,12 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
           noRowsOverlay: () => (
             <Box
               sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                height: "100%"
-              }}>
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%'
+              }}
+            >
               <Typography variant="body1">{t('scoreboard.no-data')}</Typography>
             </Box>
           )

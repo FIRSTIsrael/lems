@@ -9,7 +9,7 @@ interface RemoveTeamButtonProps {
   disabled?: boolean;
 }
 
-export const RemoveTeamButton: React.FC<RemoveTeamButtonProps> = ({ team, disabled}) => {
+export const RemoveTeamButton: React.FC<RemoveTeamButtonProps> = ({ team, disabled }) => {
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);
 
   return (

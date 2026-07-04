@@ -2,15 +2,18 @@ import express from 'express';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
-import { generateVolunteerPassword } from '../../users/util';import { asHandler } from '../../../../../types/express-handlers';
-
+import { generateVolunteerPassword } from '../../users/util';
+import { asHandler } from '../../../../../types/express-handlers';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', asHandler<AdminDivisionRequest>(async (req, res) => {
-  const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-  res.status(200).json(tables);
-}));
+router.get(
+  '/',
+  asHandler<AdminDivisionRequest>(async (req, res) => {
+    const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+    res.status(200).json(tables);
+  })
+);
 
 router.post(
   '/',

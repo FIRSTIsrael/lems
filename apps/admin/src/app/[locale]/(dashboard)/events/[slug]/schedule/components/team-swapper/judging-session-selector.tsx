@@ -37,9 +37,10 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
         <Typography
           variant="body1"
           sx={{
-            color: "text.secondary",
-            textAlign: "center"
-          }}>
+            color: 'text.secondary',
+            textAlign: 'center'
+          }}
+        >
           {t('select-team-to-continue')}
         </Typography>
       </Box>
@@ -101,17 +102,24 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
                         <Stack
                           direction="row"
                           sx={{
-                            justifyContent: "space-between",
-                            alignItems: "center"
-                          }}>
-                          <Typography variant="body2" sx={{
-                            fontWeight: 500
-                          }}>
+                            justifyContent: 'space-between',
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              fontWeight: 500
+                            }}
+                          >
                             {room.name}
                           </Typography>
-                          <Typography variant="body2" sx={{
-                            color: "text.secondary"
-                          }}>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: 'text.secondary'
+                            }}
+                          >
                             {isEmpty
                               ? t('empty')
                               : isCurrentTeam

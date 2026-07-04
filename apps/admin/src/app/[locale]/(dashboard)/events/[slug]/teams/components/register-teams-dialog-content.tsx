@@ -202,10 +202,11 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                   <Typography
                     variant="body2"
                     sx={{
-                      color: "text.secondary",
+                      color: 'text.secondary',
                       textAlign: 'center',
                       mt: 2
-                    }}>
+                    }}
+                  >
                     {t('no-teams-selected')}
                   </Typography>
                 )}

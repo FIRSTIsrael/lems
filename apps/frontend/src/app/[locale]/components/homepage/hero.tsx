@@ -12,40 +12,43 @@ export const Hero: React.FC = () => {
   return (
     <Box
       sx={{
-        position: "relative",
-        overflow: "hidden",
+        position: 'relative',
+        overflow: 'hidden',
         bgcolor: theme.palette.primary.main,
         color: 'white',
         py: { xs: 10, md: 14 },
         background: `linear-gradient(180deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`
-      }}>
+      }}
+    >
       {/* Decorative circles */}
       <Box
         sx={{
-          position: "absolute",
-          top: "-10%",
-          right: "-5%",
+          position: 'absolute',
+          top: '-10%',
+          right: '-5%',
           width: { xs: 300, md: 500 },
           height: { xs: 300, md: 500 },
           borderRadius: '50%',
           background: `radial-gradient(circle, ${alpha(theme.palette.secondary.light, 0.3)} 0%, transparent 70%)`,
           filter: 'blur(40px)'
-        }} />
+        }}
+      />
       <Box
         sx={{
-          position: "absolute",
-          bottom: "-10%",
-          left: "-5%",
+          position: 'absolute',
+          bottom: '-10%',
+          left: '-5%',
           width: { xs: 250, md: 400 },
           height: { xs: 250, md: 400 },
           borderRadius: '50%',
           background: `radial-gradient(circle, ${alpha(theme.palette.primary.light, 0.3)} 0%, transparent 70%)`,
           filter: 'blur(40px)'
-        }} />
+        }}
+      />
       {/* Subtle grid lines for depth */}
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
@@ -58,17 +61,19 @@ export const Hero: React.FC = () => {
 
           backgroundSize: '60px 60px',
           opacity: 0.5
-        }} />
+        }}
+      />
       {/* Clean gradient fade at bottom */}
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
-          height: "30%",
+          height: '30%',
           background: `linear-gradient(to bottom, transparent, ${theme.palette.primary.dark})`
-        }} />
+        }}
+      />
       <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
         <Stack
           spacing={3}
@@ -76,7 +81,8 @@ export const Hero: React.FC = () => {
             alignItems: { xs: 'center', md: 'flex-start' },
             textAlign: { xs: 'center', md: 'left' },
             maxWidth: 900
-          }}>
+          }}
+        >
           {/* Minimal badge */}
           <Box
             sx={{
@@ -101,12 +107,13 @@ export const Hero: React.FC = () => {
           <Typography
             variant="h1"
             sx={{
-              fontWeight: "800",
+              fontWeight: '800',
               fontSize: { xs: '3rem', sm: '4rem', md: '5rem' },
               letterSpacing: '-0.03em',
               lineHeight: 1.1,
               textShadow: '0 4px 20px rgba(0,0,0,0.2)'
-            }}>
+            }}
+          >
             {t('title')}
           </Typography>
 
@@ -114,7 +121,7 @@ export const Hero: React.FC = () => {
           <Typography
             variant="h5"
             sx={{
-              fontWeight: "400",
+              fontWeight: '400',
               fontSize: { xs: '1.25rem', sm: '1.5rem' },
               maxWidth: 700,
               opacity: 0.95,
@@ -124,7 +131,8 @@ export const Hero: React.FC = () => {
               '& i': {
                 fontStyle: 'italic'
               }
-            }}>
+            }}
+          >
             <RichText>{tags => t.rich('subtitle', tags)}</RichText>
           </Typography>
 

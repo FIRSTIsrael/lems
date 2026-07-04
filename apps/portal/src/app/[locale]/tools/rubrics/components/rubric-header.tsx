@@ -12,12 +12,17 @@ export const RubricHeader = () => {
     <Stack
       direction="row"
       sx={{
-        justifyContent: "space-between",
-        alignItems: "center"
-      }}>
-      <Stack direction="row" spacing={3} sx={{
-        alignItems: "center"
-      }}>
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
+      <Stack
+        direction="row"
+        spacing={3}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
           {t('title')}
         </Typography>

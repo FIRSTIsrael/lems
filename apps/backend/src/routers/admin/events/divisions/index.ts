@@ -14,23 +14,30 @@ import divisionAwardsRouter from './awards';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', asHandler<AdminEventRequest>(async (req, res) => {
-  const divisions = await db.divisions.byEventId(req.eventId).getAll();
-  res.json(divisions.map(division => makeAdminDivisionResponse(division)));
-}));
+router.get(
+  '/',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const divisions = await db.divisions.byEventId(req.eventId).getAll();
+    res.json(divisions.map(division => makeAdminDivisionResponse(division)));
+  })
+);
 
-router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), asHandler<AdminEventRequest>(async (req, res) => {
-  const { name, color } = req.body;
+router.post(
+  '/',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const { name, color } = req.body;
 
-  if (!name || !color) {
-    res.status(400).json({ error: 'Name and color are required' });
-    return;
-  }
+    if (!name || !color) {
+      res.status(400).json({ error: 'Name and color are required' });
+      return;
+    }
 
-  const division = await db.divisions.create({ name, color, event_id: req.eventId });
+    const division = await db.divisions.create({ name, color, event_id: req.eventId });
 
-  res.status(201).json(makeAdminDivisionResponse(division));
-}));
+    res.status(201).json(makeAdminDivisionResponse(division));
+  })
+);
 
 router.use('/:divisionId', attachDivision());
 

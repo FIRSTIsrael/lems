@@ -166,8 +166,7 @@ export function determineRubricCompletionStatus(
   }
 
   const fields = rubricData.fields as
-    | Record<string, { value: number | null; notes?: string }>
-    | undefined;
+    Record<string, { value: number | null; notes?: string }> | undefined;
   const feedback = rubricData.feedback as { greatJob?: string; thinkAbout?: string } | undefined;
 
   let hasAnyValue = false;
@@ -225,8 +224,7 @@ export function isRubricComplete(
   }
 
   const fields = rubricData.fields as
-    | Record<string, { value: number | null; notes?: string }>
-    | undefined;
+    Record<string, { value: number | null; notes?: string }> | undefined;
   const feedback = rubricData.feedback as { greatJob?: string; thinkAbout?: string } | undefined;
 
   // Criterion 1: All fields must have non-null values

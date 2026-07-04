@@ -81,8 +81,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
         setAlert({ type: 'error', message: t('messages.publish-error') });
       }
     } catch (error) {
-      const errorMsg =
-        error instanceof Error ? error.message : t('messages.publish-error');
+      const errorMsg = error instanceof Error ? error.message : t('messages.publish-error');
       setAlert({ type: 'error', message: errorMsg });
     }
   };
@@ -127,9 +126,13 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
 
           <Stack spacing={3} sx={{ mt: 3 }}>
             <Box>
-              <Stack direction="row" spacing={2} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Button
                   variant="outlined"
                   color="primary"
@@ -144,9 +147,12 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.complete-event-description')}
                   </Typography>
                   {settings.completed && (
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('event-actions.already-completed')}
                     </Typography>
                   )}
@@ -157,9 +163,13 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
             <Divider />
 
             <Box>
-              <Stack direction="row" spacing={2} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Button
                   variant="outlined"
                   color="primary"
@@ -174,9 +184,12 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.publish-event-description')}
                   </Typography>
                   {settings.published && (
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('event-actions.already-published')}
                     </Typography>
                   )}
@@ -187,9 +200,13 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
             <Divider />
 
             <Box>
-              <Stack direction="row" spacing={2} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Button
                   variant="outlined"
                   color="primary"
@@ -204,9 +221,12 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
                     {t('event-actions.download-results-description')}
                   </Typography>
                   {!settings.published && (
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('event-actions.not-published')}
                     </Typography>
                   )}

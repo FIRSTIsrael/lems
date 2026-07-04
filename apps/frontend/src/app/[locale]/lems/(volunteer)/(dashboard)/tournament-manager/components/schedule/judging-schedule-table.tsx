@@ -75,7 +75,8 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                 sx={{
                   fontWeight: 600,
                   fontSize: headerFontSize
-                }}>
+                }}
+              >
                 {t('judging-schedule.columns.start-time')}
               </Typography>
             </TableCell>
@@ -84,7 +85,8 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                 sx={{
                   fontWeight: 600,
                   fontSize: headerFontSize
-                }}>
+                }}
+              >
                 {t('judging-schedule.columns.end-time')}
               </Typography>
             </TableCell>
@@ -94,7 +96,8 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                   sx={{
                     fontWeight: 600,
                     fontSize: headerFontSize
-                  }}>
+                  }}
+                >
                   {room.name}
                 </Typography>
               </TableCell>
@@ -112,20 +115,22 @@ function JudgingScheduleTableComponent({ isMobile }: JudgingScheduleTableProps) 
                 <TableCell align="center">
                   <Typography
                     sx={{
-                      fontFamily: "monospace",
+                      fontFamily: 'monospace',
                       fontWeight: 500,
                       fontSize: cellFontSize
-                    }}>
+                    }}
+                  >
                     {sessionTime.format('HH:mm')}
                   </Typography>
                 </TableCell>
                 <TableCell align="center">
                   <Typography
                     sx={{
-                      fontFamily: "monospace",
+                      fontFamily: 'monospace',
                       fontWeight: 500,
                       fontSize: cellFontSize
-                    }}>
+                    }}
+                  >
                     {sessionEndTime.format('HH:mm')}
                   </Typography>
                 </TableCell>

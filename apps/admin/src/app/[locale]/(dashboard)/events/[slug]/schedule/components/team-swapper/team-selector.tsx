@@ -37,9 +37,10 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
         variant="body2"
         gutterBottom
         sx={{
-          fontSize: "small",
-          color: "text.secondary"
-        }}>
+          fontSize: 'small',
+          color: 'text.secondary'
+        }}
+      >
         {t('description')}
       </Typography>
       <TextField
@@ -56,10 +57,11 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
-            textAlign: "center",
+            color: 'text.secondary',
+            textAlign: 'center',
             py: 4
-          }}>
+          }}
+        >
           {searchQuery ? t('no-teams-found') : t('no-teams')}
         </Typography>
       ) : (

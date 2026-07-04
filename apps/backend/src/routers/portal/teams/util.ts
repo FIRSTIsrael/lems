@@ -13,10 +13,7 @@ export const makePortalTeamResponse = (team: DbTeam): Team => ({
   slug: `${team.region}-${team.number}`.toUpperCase()
 });
 
-export const makePortalTeamSummaryResponse = (
-  team: DbTeam,
-  lastCompetedSeason: Season | null
-) => ({
+export const makePortalTeamSummaryResponse = (team: DbTeam, lastCompetedSeason: Season | null) => ({
   ...makePortalTeamResponse(team),
   lastCompetedSeason
 });

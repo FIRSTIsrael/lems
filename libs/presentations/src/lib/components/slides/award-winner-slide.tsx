@@ -58,14 +58,15 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award }) => 
         direction="column"
         spacing={3}
         sx={{
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: 'center',
+          justifyContent: 'center',
           height: '100%',
           width: '100%',
           px: 4,
           textAlign: 'center',
           position: 'relative'
-        }}>
+        }}
+      >
         <Stack direction="column" spacing={1}>
           <Typography variant="h2" sx={{ fontSize: '5rem', fontWeight: 700, color: 'black' }}>
             {localizedAwardName}

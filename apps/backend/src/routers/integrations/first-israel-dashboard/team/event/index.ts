@@ -6,7 +6,7 @@ import db from '../../../../../lib/database';
 import { uploadFile } from '../../../../../lib/blob-storage/upload';
 import { FirstIsraelDashboardEventRequest } from '../../../../../types/express';
 import { asHandler } from '../../../../../types/express-handlers';
-import exportRouter from './export';
+import exportRouter from './export';
 
 const router = express.Router({ mergeParams: true });
 

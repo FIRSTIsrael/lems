@@ -27,10 +27,11 @@ export default async function UsersPage() {
       <Stack
         direction="row"
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           gap: 2,
           mb: 3
-        }}>
+        }}
+      >
         <Typography variant="h1" gutterBottom sx={{ mb: 0 }}>
           {t('title')}
         </Typography>

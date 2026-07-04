@@ -23,7 +23,8 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
       sx={{
         mt: 4,
         mb: 16
-      }}>
+      }}
+    >
       {scoresheet.missions.map((mission, index) => (
         <ScoresheetMission
           key={mission.id}
@@ -38,9 +39,13 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
         <Stack spacing={2}>
           {validation.validatorErrors.map(errorId => (
             <Alert key={errorId} severity="error">
-              <Typography sx={{
-                fontSize: "0.875rem"
-              }}>{getError(errorId)}</Typography>
+              <Typography
+                sx={{
+                  fontSize: '0.875rem'
+                }}
+              >
+                {getError(errorId)}
+              </Typography>
             </Alert>
           ))}
         </Stack>

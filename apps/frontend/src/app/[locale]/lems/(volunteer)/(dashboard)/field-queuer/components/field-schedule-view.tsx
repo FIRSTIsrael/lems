@@ -63,9 +63,12 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
   if (upcomingMatches.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('no-matches')}
         </Typography>
       </Paper>
@@ -75,14 +78,20 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
   return (
     <Stack spacing={2}>
       <Box sx={{ px: 2, pt: 2 }}>
-        <Typography variant="h6" sx={{
-          fontWeight: 600
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 600
+          }}
+        >
           {t('title')}
         </Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('subtitle')}
         </Typography>
       </Box>
@@ -166,9 +175,12 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
                     />
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2" sx={{
-                      fontWeight: 500
-                    }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 500
+                      }}
+                    >
                       {dayjs(match.scheduledTime).format('HH:mm')}
                     </Typography>
                   </TableCell>
@@ -187,9 +199,12 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
                             sx={{ fontWeight: 600, minWidth: 50 }}
                           />
                         ) : (
-                          <Typography variant="body2" sx={{
-                            color: "text.secondary"
-                          }}>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: 'text.secondary'
+                            }}
+                          >
                             —
                           </Typography>
                         )}

@@ -19,9 +19,13 @@ export function JudgingSessionsList({
 
   return (
     <Box>
-      <Typography variant="subtitle2" gutterBottom sx={{
-        fontWeight: 600
-      }}>
+      <Typography
+        variant="subtitle2"
+        gutterBottom
+        sx={{
+          fontWeight: 600
+        }}
+      >
         {t('judging-sessions')}
       </Typography>
       <Box
@@ -37,9 +41,10 @@ export function JudgingSessionsList({
               direction="row"
               spacing={1}
               sx={{
-                justifyContent: "space-between",
-                alignItems: "center"
-              }}>
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
               <Typography
                 variant="body2"
                 noWrap
@@ -47,7 +52,8 @@ export function JudgingSessionsList({
                   fontWeight: 600,
                   flex: 1,
                   minWidth: 0
-                }}>
+                }}
+              >
                 {t('labels.session')} #{session.number} • {session.room.name} •{' '}
                 {dayjs(session.scheduledTime).format('HH:mm')}
               </Typography>

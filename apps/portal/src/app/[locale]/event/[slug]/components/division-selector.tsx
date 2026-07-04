@@ -24,9 +24,14 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
   };
 
   return (
-    <Grid container direction="row" spacing={2} sx={{
-      mb: 3
-    }}>
+    <Grid
+      container
+      direction="row"
+      spacing={2}
+      sx={{
+        mb: 3
+      }}
+    >
       {divisions.map(division => {
         const isActive = division.id === selectedDivisionId;
         return (
@@ -67,17 +72,19 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
             >
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 1
-                }}>
+                }}
+              >
                 <Box
                   sx={{
                     width: 12,
                     height: 12,
-                    borderRadius: "100%",
+                    borderRadius: '100%',
                     bgcolor: isActive ? 'white' : division.color
-                  }} />
+                  }}
+                />
                 <Typography
                   variant="button"
                   color={isActive ? 'white' : division.color}

@@ -95,9 +95,10 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             mb: 2
-          }}>
+          }}
+        >
           {t('description')}
         </Typography>
 
@@ -110,7 +111,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         <FormGroup>
           {ALL_ADMIN_PERMISSIONS.map(permission => {
             const isEditor = user.id === userId;
-            const isManageUsers = permission === "MANAGE_USERS";
+            const isManageUsers = permission === 'MANAGE_USERS';
             return (
               <FormControlLabel
                 key={permission}
@@ -122,7 +123,9 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
                   />
                 }
                 label={getPermissionName(permission)}
-                title={isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined}
+                title={
+                  isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined
+                }
               />
             );
           })}
@@ -168,10 +171,11 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
             <DialogContent>
               <Box
                 sx={{
-                  display: "flex",
-                  justifyContent: "center",
+                  display: 'flex',
+                  justifyContent: 'center',
                   p: 3
-                }}>
+                }}
+              >
                 <CircularProgress />
               </Box>
             </DialogContent>

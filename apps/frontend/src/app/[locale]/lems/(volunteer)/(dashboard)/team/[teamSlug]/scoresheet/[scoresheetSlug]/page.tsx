@@ -96,9 +96,10 @@ export default function ScoresheetPage() {
                 direction="row"
                 spacing={2}
                 sx={{
-                  justifyContent: "flex-end",
-                  alignItems: "top"
-                }}>
+                  justifyContent: 'flex-end',
+                  alignItems: 'top'
+                }}
+              >
                 <EditButton scoresheet={scoresheet} isEditMode={forceEdit} />
                 <HeadRefViewToggle />
                 <ScoresheetSwitcher />

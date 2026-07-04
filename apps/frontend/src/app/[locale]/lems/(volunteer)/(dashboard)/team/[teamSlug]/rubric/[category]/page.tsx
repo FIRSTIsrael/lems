@@ -102,9 +102,10 @@ export default function RubricPage() {
             direction="row"
             spacing={2}
             sx={{
-              justifyContent: "flex-end",
+              justifyContent: 'flex-end',
               mt: 3
-            }}>
+            }}
+          >
             <ResetRubricButton disabled={!isEditable} />
             <SaveButton disabled={!isEditable} />
             <LockUnlockRubricButton disabled={!isEditable} />

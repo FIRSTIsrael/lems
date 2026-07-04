@@ -19,20 +19,25 @@ export default async function CurrentSeasonWidget() {
           <Stack
             spacing={1}
             sx={{
-              alignItems: "center",
-              textAlign: "center"
-            }}>
+              alignItems: 'center',
+              textAlign: 'center'
+            }}
+          >
             <Typography
               variant="h6"
               sx={{
-                color: "error.main",
+                color: 'error.main',
                 fontWeight: 600
-              }}>
+              }}
+            >
               {t('error')}
             </Typography>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('error-description')}
             </Typography>
           </Stack>
@@ -62,11 +67,12 @@ export default async function CurrentSeasonWidget() {
       <CardContent sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 3,
-            width: "100%"
-          }}>
+            width: '100%'
+          }}
+        >
           <Avatar
             variant="rounded"
             src={season.logoUrl || getAsset('FIRST-Logo.svg')}
@@ -84,12 +90,13 @@ export default async function CurrentSeasonWidget() {
             <Typography
               variant="overline"
               sx={{
-                color: "text.secondary",
+                color: 'text.secondary',
                 lineHeight: 1,
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 letterSpacing: 0.5
-              }}>
+              }}
+            >
               {t('current-season')}
             </Typography>
 

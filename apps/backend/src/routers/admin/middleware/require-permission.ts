@@ -3,7 +3,6 @@ import { AdminRequest } from '../../../types/express';
 import db from '../../../lib/database';
 import { asMiddleware } from '../../../types/express-handlers';
 
-
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
  * has the required permission.

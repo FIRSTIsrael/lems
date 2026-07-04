@@ -7,10 +7,13 @@ import { makeAdminAwardResponse } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', asHandler<AdminDivisionRequest>(async (req, res) => {
-  const awards = await db.awards.byDivisionId(req.divisionId).getAll();
-  res.status(200).json(awards.map(award => makeAdminAwardResponse(award)));
-}));
+router.get(
+  '/',
+  asHandler<AdminDivisionRequest>(async (req, res) => {
+    const awards = await db.awards.byDivisionId(req.divisionId).getAll();
+    res.status(200).json(awards.map(award => makeAdminAwardResponse(award)));
+  })
+);
 
 router.post(
   '/',

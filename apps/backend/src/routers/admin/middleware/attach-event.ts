@@ -2,7 +2,6 @@ import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import database from '../../../lib/database';
 import { asMiddleware } from '../../../types/express-handlers';
 
-
 /**
  * Middleware to attach the event ID to the request.
  * If the event is not found, a 404 error is returned.

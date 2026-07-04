@@ -40,27 +40,34 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({ children }) => {
           flexShrink: 0,
           borderRight: '1px solid',
           borderColor: 'divider'
-        }}>
-        <Box sx={{
-          height: HEADER_HEIGHT
-        }} />
+        }}
+      >
+        <Box
+          sx={{
+            height: HEADER_HEIGHT
+          }}
+        />
         <Box>
           {slots.map((time, index) => (
             <Box
               key={index}
               sx={{
                 height: TIME_SLOT_HEIGHT * INTERVAL_MINUTES,
-                display: "flex",
+                display: 'flex',
                 px: 1,
                 pt: 0.5,
                 borderTop: index % (60 / INTERVAL_MINUTES) === 0 ? '1px solid' : 'none',
                 borderColor: 'divider',
                 backgroundColor: 'grey.50'
-              }}>
+              }}
+            >
               {index % (60 / INTERVAL_MINUTES) === 0 && (
-                <Typography variant="caption" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {time.format('HH:mm')}
                 </Typography>
               )}

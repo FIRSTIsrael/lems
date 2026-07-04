@@ -22,7 +22,8 @@ export default function VolunteerDashboardLayout({ children }: { children: React
           flexGrow: 1,
           backgroundColor: '#fafafa',
           mt: { xs: 8, lg: 0 }
-        }}>
+        }}
+      >
         <Container
           maxWidth="xl"
           sx={{

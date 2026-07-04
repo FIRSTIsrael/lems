@@ -62,47 +62,65 @@ export function AgendaEventCard({ event }: AgendaEventCardProps) {
         <Schedule sx={{ color: visibilityColor, fontSize: 24 }} />
       </Box>
       <Stack spacing={0.5} sx={{ flexGrow: 1, minWidth: 0 }}>
-        <Typography variant="subtitle1" noWrap sx={{
-          fontWeight: 600
-        }}>
+        <Typography
+          variant="subtitle1"
+          noWrap
+          sx={{
+            fontWeight: 600
+          }}
+        >
           {event.title}
         </Typography>
         <Stack
           direction="row"
           spacing={1}
           sx={{
-            alignItems: "center",
+            alignItems: 'center',
             flexWrap: 'wrap',
             gap: 0.5
-          }}>
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          }}
+        >
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {formattedTime}
           </Typography>
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             •
           </Typography>
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('duration-minutes', { count: durationMinutes })}
           </Typography>
           {event.location && (
             <>
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary'
+                }}
+              >
                 •
               </Typography>
               <Typography
                 variant="body2"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   fontWeight: 500
-                }}>
+                }}
+              >
                 {event.location}
               </Typography>
             </>

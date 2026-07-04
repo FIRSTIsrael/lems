@@ -2,7 +2,6 @@ import { AdminRequest } from '../../../types/express';
 import database from '../../../lib/database';
 import { asMiddleware } from '../../../types/express-handlers';
 
-
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
  * is assigned to a specific event.

@@ -96,9 +96,10 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
               direction="row"
               spacing={1.5}
               sx={{
-                alignItems: "flex-start",
+                alignItems: 'flex-start',
                 py: 0.5
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   display: 'flex',

@@ -51,13 +51,17 @@ export const ResourceLinksSection = () => {
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           mb: 3
-        }}>
+        }}
+      >
         <WebsiteIcon color="primary" />
-        <Typography variant="h6" sx={{
-          fontWeight: "bold"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 'bold'
+          }}
+        >
           {t('title')}
         </Typography>
       </Stack>
@@ -85,9 +89,13 @@ export const ResourceLinksSection = () => {
               }}
             >
               <CardContent>
-                <Stack direction="row" spacing={2} sx={{
-                  alignItems: "center"
-                }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
                   <Box
                     sx={{
                       p: 1.5,
@@ -101,14 +109,20 @@ export const ResourceLinksSection = () => {
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" sx={{
-                      fontWeight: "bold"
-                    }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 'bold'
+                      }}
+                    >
                       {t(resource.title)}
                     </Typography>
-                    <Typography variant="body2" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t(resource.description)}
                     </Typography>
                   </Box>

@@ -49,13 +49,17 @@ export const QuickActionsSection = () => {
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           mb: 3
-        }}>
+        }}
+      >
         <TrophyIcon color="primary" />
-        <Typography variant="h6" sx={{
-          fontWeight: "bold"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 'bold'
+          }}
+        >
           {t('title')}
         </Typography>
       </Stack>
@@ -77,9 +81,13 @@ export const QuickActionsSection = () => {
               onClick={() => (window.location.href = action.href)}
             >
               <CardContent>
-                <Stack direction="row" spacing={2} sx={{
-                  alignItems: "center"
-                }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
                   <Box
                     sx={{
                       p: 1.5,
@@ -93,14 +101,20 @@ export const QuickActionsSection = () => {
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" sx={{
-                      fontWeight: "bold"
-                    }}>
+                    <Typography
+                      variant="subtitle1"
+                      sx={{
+                        fontWeight: 'bold'
+                      }}
+                    >
                       {t(action.title)}
                     </Typography>
-                    <Typography variant="body2" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t(action.description)}
                     </Typography>
                   </Box>

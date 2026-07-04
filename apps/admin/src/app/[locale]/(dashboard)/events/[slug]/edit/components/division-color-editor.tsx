@@ -51,24 +51,29 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
   return (
     <Box
       sx={{
-        display: "flex",
-        alignItems: "center",
+        display: 'flex',
+        alignItems: 'center',
         gap: 1
-      }}>
+      }}
+    >
       <Palette color="primary" />
       <Stack>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('color')}
         </Typography>
         {isEditingColor ? (
           <Stack
             direction="row"
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
               gap: 1
-            }}>
+            }}
+          >
             <ColorPicker value={editColor} onChange={color => setEditColor(color)} defaultOpen>
               <IconButton
                 sx={{
@@ -92,7 +97,8 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
               sx={{
                 fontWeight: 500,
                 fontFamily: 'monospace'
-              }}>
+              }}
+            >
               {hsvaToHex(editColor)}
             </Typography>
             <IconButton onClick={handleColorEditSave} color="primary" size="small">
@@ -106,9 +112,10 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
           <Stack
             direction="row"
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
               gap: 1
-            }}>
+            }}
+          >
             <Box
               sx={{
                 width: 32,
@@ -131,7 +138,8 @@ export const DivisionColorEditor: React.FC<DivisionColorEditorProps> = ({ divisi
               sx={{
                 fontWeight: 500,
                 fontFamily: 'monospace'
-              }}>
+              }}
+            >
               {division.color}
             </Typography>
           </Stack>
