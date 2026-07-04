@@ -95,7 +95,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ open, onClose }) =
           sx={{
             pt: 3,
             pb: 2
-          }}>
+          }}
+        >
           <Box>
             <SettingsLanguageSwitcher onLanguageChange={onClose} />
           </Box>

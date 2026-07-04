@@ -135,10 +135,11 @@ export const RubricStatusSummary: React.FC = () => {
             <Stack
               direction="row"
               sx={{
-                justifyContent: "space-between",
-                alignItems: "center",
+                justifyContent: 'space-between',
+                alignItems: 'center',
                 mt: 1.5
-              }}>
+              }}
+            >
               <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
                 {t('status.approved')}
               </Typography>

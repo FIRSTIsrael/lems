@@ -12,17 +12,22 @@ export default function TeamError() {
     <Box sx={{ minHeight: '100vh', bgcolor: '#f5f5f5' }}>
       <Container maxWidth="xl" sx={{ py: 2 }}>
         <Paper sx={{ p: 6, textAlign: 'center' }}>
-          <Typography variant="h4" gutterBottom sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="h4"
+            gutterBottom
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('not-found.title')}
           </Typography>
           <Typography
             variant="body1"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               mb: 3
-            }}>
+            }}
+          >
             {t('not-found.description')}
           </Typography>
           <Button component={Link} href="/teams" variant="outlined" startIcon={<LocationIcon />}>

@@ -3,18 +3,22 @@ import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { generateVolunteerPassword } from '../../users/util';
+import { asHandler } from '../../../../../types/express-handlers';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminDivisionRequest, res) => {
-  const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-  res.status(200).json(rooms);
-});
+router.get(
+  '/',
+  asHandler<AdminDivisionRequest>(async (req, res) => {
+    const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
+    res.status(200).json(rooms);
+  })
+);
 
 router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     const { name } = req.body;
 
     if (!name) {
@@ -24,6 +28,10 @@ router.post(
 
     const room = await db.rooms.create({ division_id: req.divisionId, name });
     const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
 
     const eventUser = await db.eventUsers.create({
       event_id: division.event_id,
@@ -36,13 +44,13 @@ router.post(
     await db.eventUsers.assignUserToDivisions(eventUser.id, [req.divisionId]);
 
     res.status(201).end();
-  }
+  })
 );
 
 router.put(
   '/:roomId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     const { roomId } = req.params;
     if (!roomId || typeof roomId !== 'string') {
       res.status(400).json({ error: 'ROOM_ID_REQUIRED' });
@@ -59,13 +67,13 @@ router.put(
     await db.rooms.byId(roomId).update({ name });
 
     res.status(200).end();
-  }
+  })
 );
 
 router.delete(
   '/:roomId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     const { roomId } = req.params;
     if (!roomId || typeof roomId !== 'string') {
       res.status(400).json({ error: 'ROOM_ID_REQUIRED' });
@@ -81,7 +89,7 @@ router.delete(
     }
 
     res.status(204).end();
-  }
+  })
 );
 
 export default router;

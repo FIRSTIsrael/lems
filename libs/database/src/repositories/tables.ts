@@ -83,11 +83,11 @@ export class TablesRepository {
       .values(newTable)
       .returningAll()
       .execute();
-    
+
     if (!createdTable) {
       throw new Error('Failed to create table');
     }
-        
+
     return createdTable;
   }
 }

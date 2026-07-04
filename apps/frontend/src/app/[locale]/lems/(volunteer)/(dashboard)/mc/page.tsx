@@ -96,9 +96,12 @@ export default function McPage() {
         <McModeToggle mode={mode} setMode={handleModeChange} />
       </PageHeader>
       {mode === 'matches' && (
-        <Stack spacing={3} sx={{
-          my: 3
-        }}>
+        <Stack
+          spacing={3}
+          sx={{
+            my: 3
+          }}
+        >
           <CurrentMatchHero />
           <MatchScheduleTable />
         </Stack>

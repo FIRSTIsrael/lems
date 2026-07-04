@@ -93,6 +93,15 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
     nextStage = STAGE_PROGRESSION[nextStage];
   }
 
+  if (!nextStage) {
+    throw new MutationError(
+      MutationErrorCode.FORBIDDEN,
+      'Cannot advance beyond review stage. Use completeFinalDeliberation instead.'
+    );
+  }
+
+  const stageToAdvance = nextStage;
+
   // Handle stage specific advancement logic
   switch (deliberation.stage) {
     case 'champions':
@@ -113,11 +122,11 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
 
   // Update to next stage and clear stage-specific data
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
-    stage: nextStage,
+    stage: stageToAdvance,
     status: 'not-started',
     stageData: {
       ...deliberation.stageData,
-      [nextStage]: {}
+      [stageToAdvance]: {}
     }
   });
 

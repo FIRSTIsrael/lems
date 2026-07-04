@@ -84,12 +84,15 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
         <Stack
           spacing={4}
           sx={{
-            height: "100%",
-            justifyContent: "space-between"
-          }}>
-          <Box sx={{
-            p: 2.5
-          }}>
+            height: '100%',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Box
+            sx={{
+              p: 2.5
+            }}
+          >
             <Typography
               variant="overline"
               sx={{
@@ -106,9 +109,10 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
               direction="row"
               spacing={2}
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 mt: 1
-              }}>
+              }}
+            >
               <Box
                 sx={{
                   width: 6,
@@ -130,9 +134,11 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
             </Stack>
           </Box>
 
-          <Box sx={{
-            textAlign: "center"
-          }}>
+          <Box
+            sx={{
+              textAlign: 'center'
+            }}
+          >
             <Typography
               sx={{
                 fontSize: isTablet ? '10rem' : '14rem',
@@ -190,9 +196,13 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
               </Box>
             </Box>
 
-            <Stack direction="row" spacing={2} sx={{
-              alignItems: "flex-end"
-            }}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                alignItems: 'flex-end'
+              }}
+            >
               <Box
                 sx={{
                   flex: 1,
@@ -210,9 +220,10 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
                   direction="row"
                   spacing={2}
                   sx={{
-                    alignItems: "flex-end",
-                    justifyContent: "space-between"
-                  }}>
+                    alignItems: 'flex-end',
+                    justifyContent: 'space-between'
+                  }}
+                >
                   <Box>
                     <Typography
                       variant="overline"
@@ -247,10 +258,11 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
                       direction="row"
                       spacing={1}
                       sx={{
-                        flexWrap: "wrap",
-                        alignItems: "flex-start",
+                        flexWrap: 'wrap',
+                        alignItems: 'flex-start',
                         mt: 2
-                      }}>
+                      }}
+                    >
                       <RubricButton team={session.team} category="innovation-project" />
                       <Typography
                         variant="caption"

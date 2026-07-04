@@ -15,17 +15,15 @@ export interface MatchUpdatedData {
   matchUpdated: MatchUpdatedEvent;
 }
 
-export const MATCH_UPDATED_SUBSCRIPTION: TypedDocumentNode<
-  MatchUpdatedData,
-  SubscriptionVars
-> = gql`
-  subscription MatchUpdated($divisionId: String!) {
-    matchUpdated(divisionId: $divisionId) {
-      id
-      called
+export const MATCH_UPDATED_SUBSCRIPTION: TypedDocumentNode<MatchUpdatedData, SubscriptionVars> =
+  gql`
+    subscription MatchUpdated($divisionId: String!) {
+      matchUpdated(divisionId: $divisionId) {
+        id
+        called
+      }
     }
-  }
-`;
+  `;
 
 export function createMatchCallUpdatedSubscription(divisionId: string) {
   return {
@@ -34,7 +32,7 @@ export function createMatchCallUpdatedSubscription(divisionId: string) {
     updateQuery: (prev: QueryData, subscriptionData: { data?: unknown }) => {
       const data = subscriptionData.data as MatchUpdatedData | undefined;
       if (!data || !prev.division) return prev;
-      
+
       const updatedMatchId = data.matchUpdated.id;
       const updatedCalled = data.matchUpdated.called;
 
@@ -45,9 +43,7 @@ export function createMatchCallUpdatedSubscription(divisionId: string) {
           field: {
             ...prev.division.field,
             matches: prev.division.field.matches.map(match =>
-              match.id === updatedMatchId
-                ? { ...match, called: updatedCalled }
-                : match
+              match.id === updatedMatchId ? { ...match, called: updatedCalled } : match
             )
           }
         }

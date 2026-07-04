@@ -1,7 +1,16 @@
 'use client';
 
 import { useState, useContext, useRef, useEffect } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Fab, useTheme, useMediaQuery } from '@mui/material';
+import {
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  Slide,
+  Fab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -73,9 +82,9 @@ export const FieldTimer = () => {
     if ((e.target as HTMLElement).closest('button')) {
       return;
     }
-    
+
     if (!paperRef.current) return;
-    
+
     const rect = paperRef.current.getBoundingClientRect();
     setDragState({
       isDragging: true,
@@ -191,12 +200,13 @@ export const FieldTimer = () => {
 
           <Stack
             sx={{
-              alignItems: "center",
-              justifyContent: "center",
+              alignItems: 'center',
+              justifyContent: 'center',
               px: 3,
               py: 2,
               textAlign: 'center'
-            }}>
+            }}
+          >
             <Typography
               variant="h2"
               sx={{
@@ -215,9 +225,10 @@ export const FieldTimer = () => {
               direction="row"
               spacing={1}
               sx={{
-                justifyContent: "center",
+                justifyContent: 'center',
                 p: 1.5
-              }}>
+              }}
+            >
               <IconButton
                 onClick={handlePlayPause}
                 disabled={isFinished || justStarted}

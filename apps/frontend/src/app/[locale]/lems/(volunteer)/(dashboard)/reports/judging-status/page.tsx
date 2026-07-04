@@ -32,8 +32,9 @@ function JudgingStatusContent() {
       <Box
         sx={{
           py: 1,
-          width: "100%"
-        }}>
+          width: '100%'
+        }}
+      >
         <ResponsiveComponent mobile={<JudgingStatusMobile />} desktop={<JudgingStatusTable />} />
       </Box>
       <StatusLegend open={openLegend} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} />

@@ -20,11 +20,12 @@ export const NavButtons: React.FC<NavButtonsProps> = ({ current, total, onPrevio
       direction="row"
       spacing={2}
       sx={{
-        alignItems: "center",
-        justifyContent: "center",
+        alignItems: 'center',
+        justifyContent: 'center',
         pt: 2,
         pb: 1
-      }}>
+      }}
+    >
       <IconButton
         onClick={onPrevious}
         disabled={current === 0}

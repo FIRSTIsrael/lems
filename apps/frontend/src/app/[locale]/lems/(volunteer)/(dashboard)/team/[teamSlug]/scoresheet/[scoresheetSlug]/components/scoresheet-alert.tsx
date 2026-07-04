@@ -53,10 +53,11 @@ export const ScoresheetIncompleteAlert: React.FC<ScoresheetIncompleteAlertProps>
       <Box
         sx={{
           mt: 1,
-          color: "inherit",
-          fontSize: "0.875rem",
+          color: 'inherit',
+          fontSize: '0.875rem',
           fontWeight: 500
-        }}>
+        }}
+      >
         {t('incomplete-action')}
       </Box>
     </Alert>

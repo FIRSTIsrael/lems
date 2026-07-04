@@ -75,9 +75,12 @@ export const EventCard: React.FC<EventCardProps> = ({
         <Stack spacing={1.5} sx={{ mb: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOn color="action" fontSize="small" />
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {location}
             </Typography>
             <Flag region={region} size={18} />
@@ -85,18 +88,24 @@ export const EventCard: React.FC<EventCardProps> = ({
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CalendarMonth color="action" fontSize="small" />
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {dayjs(date).format('DD/MM/YYYY')}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Group color="action" fontSize="small" />
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {teamCount} {t('teams')}
             </Typography>
           </Box>
@@ -107,9 +116,10 @@ export const EventCard: React.FC<EventCardProps> = ({
             <Typography
               variant="subtitle2"
               sx={{
-                color: "text.secondary",
+                color: 'text.secondary',
                 mb: 1
-              }}>
+              }}
+            >
               {t('divisions')}:
             </Typography>
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>

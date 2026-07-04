@@ -52,9 +52,13 @@ export function AudienceDisplayControl() {
           height: '100%'
         }}
       >
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <ToggleButtonGroup
             value={currentMode}
             exclusive

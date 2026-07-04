@@ -8,8 +8,10 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AddRoundedIcon from '@mui/icons-material/Add';
 import { Typography } from '@mui/material';
 
-export interface NumberInputProps
-  extends Omit<TextFieldProps, 'onChange' | 'value' | 'type' | 'disabled'> {
+export interface NumberInputProps extends Omit<
+  TextFieldProps,
+  'onChange' | 'value' | 'type' | 'disabled'
+> {
   value: number | null;
   onChange: (event: React.MouseEvent | React.ChangeEvent, value: number | null) => void;
   min?: number;
@@ -51,12 +53,19 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
   };
 
   return (
-    <Stack sx={{
-      alignItems: "center"
-    }}>
-      <Stack direction="row" spacing={0.5} ref={ref} sx={{
-        alignItems: "center"
-      }}>
+    <Stack
+      sx={{
+        alignItems: 'center'
+      }}
+    >
+      <Stack
+        direction="row"
+        spacing={0.5}
+        ref={ref}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <IconButton
           onClick={e => handleStep(e, 'decrement')}
           disabled={disabled || value === null || value <= min}
@@ -110,10 +119,11 @@ export const NumberInput = React.forwardRef(function CustomNumberInput(
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
-          fontSize: "0.75rem",
+          color: 'text.secondary',
+          fontSize: '0.75rem',
           marginTop: 0.5
-        }}>
+        }}
+      >
         {helperText}
       </Typography>
     </Stack>

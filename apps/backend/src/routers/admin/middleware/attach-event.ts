@@ -1,6 +1,6 @@
-import { NextFunction, Response } from 'express';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import database from '../../../lib/database';
+import { asMiddleware } from '../../../types/express-handlers';
 
 /**
  * Middleware to attach the event ID to the request.
@@ -8,7 +8,7 @@ import database from '../../../lib/database';
  * If the user tries to access an event they are not assigned to, a 403 error is returned.
  */
 export const attachEvent = () => {
-  return async (req: AdminRequest, res: Response, next: NextFunction) => {
+  return asMiddleware<AdminRequest>(async (req, res, next) => {
     try {
       const eventId = req.params.eventId;
       if (!eventId || typeof eventId !== 'string') {
@@ -37,5 +37,5 @@ export const attachEvent = () => {
       console.error('Error attaching event:', error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  };
+  });
 };

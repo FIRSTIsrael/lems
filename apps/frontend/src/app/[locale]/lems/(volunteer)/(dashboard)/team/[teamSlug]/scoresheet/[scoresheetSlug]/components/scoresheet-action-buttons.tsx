@@ -45,9 +45,13 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
   const submitButtonHandler = shouldSwitchToGP ? onSwitchToGP : onSubmit;
 
   return (
-    <Stack direction="row" spacing={2} sx={{
-      justifyContent: "flex-end"
-    }}>
+    <Stack
+      direction="row"
+      spacing={2}
+      sx={{
+        justifyContent: 'flex-end'
+      }}
+    >
       {showEscalateButton && (
         <Button
           variant={isEscalated && isHeadReferee ? 'outlined' : 'contained'}
@@ -64,9 +68,10 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
             <Stack
               direction="row"
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 gap: 1
-              }}>
+              }}
+            >
               <CircularProgress size={20} color="inherit" />
               {t('processing')}
             </Stack>
@@ -93,9 +98,10 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
             <Stack
               direction="row"
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 gap: 1
-              }}>
+              }}
+            >
               <CircularProgress size={20} color="inherit" />
               {t('processing')}
             </Stack>
@@ -126,9 +132,10 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           <Stack
             direction="row"
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
               gap: 1
-            }}>
+            }}
+          >
             <CircularProgress size={20} color="inherit" />
             {t('submitting')}
           </Stack>

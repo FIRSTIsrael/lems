@@ -1,10 +1,5 @@
 export type AudienceDisplayScreen =
-  | 'scoreboard'
-  | 'match_preview'
-  | 'sponsors'
-  | 'logo'
-  | 'message'
-  | 'awards';
+  'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
 
 export interface AwardsPresentation {
   slideIndex: number;

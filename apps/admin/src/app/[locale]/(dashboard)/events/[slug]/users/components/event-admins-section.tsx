@@ -60,18 +60,20 @@ export function EventAdminsSection() {
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
+          color: 'text.secondary',
           mb: 2
-        }}>
+        }}
+      >
         {t('description')}
       </Typography>
       <Stack
         direction="row"
         sx={{
-          justifyContent: "space-between",
-          alignItems: "center",
+          justifyContent: 'space-between',
+          alignItems: 'center',
           mb: 2
-        }}>
+        }}
+      >
         <Typography variant="h6">{t('current-admins')}</Typography>
         <Button variant="contained" startIcon={<AddIcon />} onClick={() => setDialogOpen(true)}>
           {t('assign-admins')}
@@ -85,16 +87,20 @@ export function EventAdminsSection() {
               <Stack
                 direction="row"
                 sx={{
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}>
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
                 <Box>
                   <Typography variant="subtitle1">
                     {admin.firstName} {admin.lastName}
                   </Typography>
-                  <Typography variant="body2" sx={{
-                    color: "text.secondary"
-                  }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     @{admin.username}
                   </Typography>
                 </Box>

@@ -21,9 +21,13 @@ export function FieldMatchesList({
 
   return (
     <Box>
-      <Typography variant="subtitle2" gutterBottom sx={{
-        fontWeight: 600
-      }}>
+      <Typography
+        variant="subtitle2"
+        gutterBottom
+        sx={{
+          fontWeight: 600
+        }}
+      >
         {t('field-matches')}
       </Typography>
       <Box
@@ -41,9 +45,10 @@ export function FieldMatchesList({
                 direction="row"
                 spacing={1}
                 sx={{
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}>
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}
+              >
                 <Typography
                   variant="body2"
                   noWrap
@@ -51,7 +56,8 @@ export function FieldMatchesList({
                     fontWeight: 600,
                     flex: 1,
                     minWidth: 0
-                  }}>
+                  }}
+                >
                   {getStage?.(match.stage)} #{match.number} • {participant?.table.name} •{' '}
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>

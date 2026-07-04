@@ -32,10 +32,11 @@ export const RubricStatusSummary = () => {
       <Stack spacing={2}>
         <Box
           sx={{
-            display: "flex",
-            flexWrap: "wrap",
+            display: 'flex',
+            flexWrap: 'wrap',
             gap: 2
-          }}>
+          }}
+        >
           {range(JUDGING_CATEGORIES.length).map(i => (
             <Box
               key={i}
@@ -55,10 +56,11 @@ export const RubricStatusSummary = () => {
   return (
     <Box
       sx={{
-        display: "flex",
-        flexWrap: "wrap",
+        display: 'flex',
+        flexWrap: 'wrap',
         gap: 2
-      }}>
+      }}
+    >
       {Object.entries(stats).map(([category, stat]) => {
         const color = getRubricColor(category as JudgingCategory);
 
@@ -86,7 +88,8 @@ export const RubricStatusSummary = () => {
                   sx={{
                     fontWeight: 600,
                     mb: 2
-                  }}>
+                  }}
+                >
                   {label}
                 </Typography>
 
@@ -94,10 +97,11 @@ export const RubricStatusSummary = () => {
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
                       sx={{
-                        display: "flex",
+                        display: 'flex',
                         justifyContent: { xs: 'space-between', md: 'flex-start' },
                         gap: 2
-                      }}>
+                      }}
+                    >
                       <Typography variant="body2" color="textSecondary">
                         {t('status.empty')}
                       </Typography>
@@ -110,10 +114,11 @@ export const RubricStatusSummary = () => {
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
                       sx={{
-                        display: "flex",
+                        display: 'flex',
                         justifyContent: { xs: 'space-between', md: 'flex-start' },
                         gap: 2
-                      }}>
+                      }}
+                    >
                       <Typography variant="body2" color="textSecondary">
                         {t('status.draft')}
                       </Typography>
@@ -126,10 +131,11 @@ export const RubricStatusSummary = () => {
                   <Grid size={{ xs: 12, md: 4 }}>
                     <Box
                       sx={{
-                        display: "flex",
+                        display: 'flex',
                         justifyContent: { xs: 'space-between', md: 'flex-start' },
                         gap: 2
-                      }}>
+                      }}
+                    >
                       <Typography variant="body2" color="textSecondary">
                         {t('status.completed')}
                       </Typography>
@@ -138,7 +144,8 @@ export const RubricStatusSummary = () => {
                         sx={{
                           fontWeight: 600,
                           color: completed + locked + approved === total ? '#4caf50' : 'inherit'
-                        }}>
+                        }}
+                      >
                         {completed + locked + approved}
                       </Typography>
                     </Box>
@@ -148,16 +155,18 @@ export const RubricStatusSummary = () => {
                 <Stack
                   direction="row"
                   sx={{
-                    justifyContent: "space-between",
+                    justifyContent: 'space-between',
                     mt: 2
-                  }}>
+                  }}
+                >
                   <Typography
                     variant="body2"
                     color="textSecondary"
                     sx={{
                       mt: 2,
                       mb: 1
-                    }}>
+                    }}
+                  >
                     {t('status.approved')}
                   </Typography>
                   <Typography
@@ -166,7 +175,8 @@ export const RubricStatusSummary = () => {
                       fontWeight: 600,
                       mt: 2,
                       mb: 1
-                    }}>
+                    }}
+                  >
                     {total > 0 ? Math.round((approved / total) * 100) : 0}%
                   </Typography>
                 </Stack>

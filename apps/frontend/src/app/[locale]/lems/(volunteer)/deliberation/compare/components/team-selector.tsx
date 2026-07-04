@@ -118,14 +118,20 @@ export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProp
           <Typography
             variant="body2"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               mb: 1
-            }}>
+            }}
+          >
             {t('select-teams-to-compare')} ({currentTeams.length}/6)
           </Typography>
-          <Stack direction="row" spacing={1} useFlexGap sx={{
-            flexWrap: "wrap"
-          }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            useFlexGap
+            sx={{
+              flexWrap: 'wrap'
+            }}
+          >
             {currentTeamObjects.length > 0 ? (
               currentTeamObjects.map(team => (
                 <Chip
@@ -137,9 +143,12 @@ export const TeamSelector = ({ currentTeams, compact = false }: TeamSelectorProp
                 />
               ))
             ) : (
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary'
+                }}
+              >
                 {t('no-teams-selected')}
               </Typography>
             )}

@@ -26,17 +26,19 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
         flex: 1,
         minWidth: 0,
         maxWidth: '50%'
-      }}>
+      }}
+    >
       <Typography
         variant="subtitle1"
         sx={{
-          textAlign: "center",
+          textAlign: 'center',
           fontWeight: 600,
           color: 'text.secondary',
           fontSize: '0.875rem',
           letterSpacing: 0.5,
           textTransform: 'uppercase'
-        }}>
+        }}
+      >
         {label}
       </Typography>
       <Paper

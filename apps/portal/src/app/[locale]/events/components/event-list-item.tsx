@@ -92,23 +92,26 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
           direction={{ xs: 'column', sm: 'row' }}
           spacing={2}
           sx={{
-            justifyContent: "space-between",
+            justifyContent: 'space-between',
             alignItems: { xs: 'flex-start', sm: 'center' }
-          }}>
+          }}
+        >
           <Box sx={{ flex: 1 }}>
             <Stack
               direction="row"
               spacing={2}
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 mb: 1
-              }}>
+              }}
+            >
               <Typography
                 variant="h6"
                 sx={{
-                  fontWeight: "600",
+                  fontWeight: '600',
                   color: 'text.primary'
-                }}>
+                }}
+              >
                 {event.name}
               </Typography>
               {!event.official && (
@@ -128,26 +131,38 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               spacing={{ xs: 1, sm: 3 }}
               sx={{ color: 'text.secondary' }}
             >
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <CalendarIcon fontSize="small" />
                 <Typography variant="body2">
                   {new Date(event.startDate).toLocaleDateString()}
                 </Typography>
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <LocationIcon fontSize="small" />
                 <Typography variant="body2">{event.location}</Typography>
                 <Flag region={event.region} size={18} />
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <PeopleIcon fontSize="small" />
                 <Typography variant="body2">
                   {tEvents('teams-registered', { count: event.teamsRegistered })}

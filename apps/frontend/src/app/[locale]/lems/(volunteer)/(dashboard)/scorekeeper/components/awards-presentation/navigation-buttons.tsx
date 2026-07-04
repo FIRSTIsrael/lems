@@ -117,9 +117,10 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, t
       direction="row"
       spacing={1.5}
       sx={{
-        flexWrap: "wrap",
-        justifyContent: "center"
-      }}>
+        flexWrap: 'wrap',
+        justifyContent: 'center'
+      }}
+    >
       <Button
         size="small"
         variant="outlined"

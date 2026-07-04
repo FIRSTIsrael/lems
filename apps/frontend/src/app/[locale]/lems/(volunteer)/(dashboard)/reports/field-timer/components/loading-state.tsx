@@ -16,9 +16,12 @@ export function LoadingState() {
           minHeight: 'calc(100vh - 200px)'
         }}
       >
-        <Typography variant="h4" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h4"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('loading')}
         </Typography>
       </Box>

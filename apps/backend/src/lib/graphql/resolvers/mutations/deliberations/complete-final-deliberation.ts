@@ -115,9 +115,10 @@ function validateFinalAwards(deliberation: { awards: FinalDeliberationAwards }):
   }
 
   // Validate core awards
-  const requiredCoreAwards = ['innovation-project', 'robot-design', 'core-values'];
+  const requiredCoreAwards = ['innovation-project', 'robot-design', 'core-values'] as const;
   for (const awardName of requiredCoreAwards) {
-    if (!awards[awardName] || awards[awardName].length === 0) {
+    const winners = awards[awardName];
+    if (!winners || winners.length === 0) {
       throw new MutationError(MutationErrorCode.FORBIDDEN, `${awardName} award must be assigned`);
     }
   }

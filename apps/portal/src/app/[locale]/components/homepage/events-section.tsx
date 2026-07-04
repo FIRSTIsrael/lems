@@ -56,19 +56,21 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
         spacing={2}
         onClick={() => setExpanded(!expanded)}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           mt: variant === 'active' ? 0 : 4,
           mb: 2,
           cursor: 'pointer'
-        }}>
+        }}
+      >
         {showIcon}
         <Typography
           variant={variant === 'active' ? 'h5' : 'h6'}
           sx={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: variant === 'active' ? { xs: '1.25rem', sm: '1.5rem' } : undefined,
             flex: 1
-          }}>
+          }}
+        >
           {title}
         </Typography>
         <Chip label={events.length} color={chipColor} size="small" sx={{ fontWeight: 600 }} />
@@ -78,10 +80,11 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
         {events.length === 0 ? (
           <Box
             sx={{
-              textAlign: "center",
+              textAlign: 'center',
               py: 6,
-              color: "text.secondary"
-            }}>
+              color: 'text.secondary'
+            }}
+          >
             <CalendarIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
             <Typography variant="h6" gutterBottom>
               {emptyMessage || t('no-events')}
@@ -99,10 +102,11 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
           <Typography
             variant="body2"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               mt: 2,
               textAlign: 'center'
-            }}>
+            }}
+          >
             {t('more-events', { count: events.length - maxDisplayed!, variant })}
           </Typography>
         )}

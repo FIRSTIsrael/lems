@@ -41,26 +41,35 @@ export const AssetCell: React.FC<AssetCellProps> = ({
 
   return (
     <Box key={asset.id}>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "flex-start"
-      }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: 'flex-start'
+        }}
+      >
         <Typography
           variant="h4"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             minWidth: '24px',
             textAlign: 'center',
             fontWeight: 500,
             pt: 0.25
-          }}>
+          }}
+        >
           {index + 1}
         </Typography>
         <Box sx={{ flexGrow: 1 }}>
           {isEditing ? (
             <Box>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <TextField
                   size="small"
                   value={editingValue}
@@ -109,8 +118,8 @@ export const AssetCell: React.FC<AssetCellProps> = ({
               <Stack
                 direction="row"
                 sx={{
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
                   px: 2,
                   border: '1px solid',
                   borderColor: error ? 'error.main' : 'divider',
@@ -122,7 +131,8 @@ export const AssetCell: React.FC<AssetCellProps> = ({
                   '&:hover': {
                     backgroundColor: 'action.hover'
                   }
-                }}>
+                }}
+              >
                 <Typography
                   variant="body1"
                   onClick={() => onStartEditing()}

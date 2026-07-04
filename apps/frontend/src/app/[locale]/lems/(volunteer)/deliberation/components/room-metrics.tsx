@@ -95,9 +95,12 @@ export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistrib
             justifyContent: 'center'
           }}
         >
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('no-data-available')}
           </Typography>
         </Box>

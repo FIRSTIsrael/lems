@@ -40,11 +40,12 @@ export const highlightText = (text: string, highlight: string, theme: Theme) => 
         key={index}
         component="span"
         sx={{
-          fontWeight: "bold",
+          fontWeight: 'bold',
           px: 0.5,
           borderRadius: 0.5,
           backgroundColor: alpha(theme.palette.primary.main, 0.2)
-        }}>
+        }}
+      >
         {part}
       </Box>
     ) : (

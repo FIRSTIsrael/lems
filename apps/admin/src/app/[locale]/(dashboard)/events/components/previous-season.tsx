@@ -40,9 +40,10 @@ export const PreviousSeason: React.FC<PreviousSeasonProps> = ({ season }) => {
         <Stack
           direction="row"
           sx={{
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <SeasonHeader
             logoUrl={season.logoUrl}
             seasonName={season.name}

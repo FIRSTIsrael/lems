@@ -139,9 +139,12 @@ export function ChampionsPodium() {
         })}
       </Box>
       {/* Team Selection Dropdowns */}
-      <Stack spacing={1.5} sx={{
-        pt: 2
-      }}>
+      <Stack
+        spacing={1.5}
+        sx={{
+          pt: 2
+        }}
+      >
         {places.map(place => (
           <FormControl key={place} fullWidth size="small">
             <InputLabel id={`place-${place}-label`}>{t('place-label', { place })}</InputLabel>

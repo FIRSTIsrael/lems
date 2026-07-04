@@ -38,9 +38,10 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
         spacing={1}
         useFlexGap
         sx={{
-          flexWrap: "wrap",
-          alignItems: "center"
-        }}>
+          flexWrap: 'wrap',
+          alignItems: 'center'
+        }}
+      >
         <Chip
           label={tCompare('all-categories')}
           variant={!currentCategory ? 'filled' : 'outlined'}
@@ -71,9 +72,14 @@ export function CategoryFilter({ currentCategory, compact = false }: CategoryFil
       <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
         {tCompare('filter-by-category')}
       </Typography>
-      <Stack direction="row" spacing={1} useFlexGap sx={{
-        flexWrap: "wrap"
-      }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        useFlexGap
+        sx={{
+          flexWrap: 'wrap'
+        }}
+      >
         <Chip
           label={tCompare('all-categories')}
           variant={!currentCategory ? 'filled' : 'outlined'}

@@ -111,9 +111,13 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
               bgcolor: 'action.hover'
             }}
           >
-            <Typography variant="body2" gutterBottom sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              gutterBottom
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-contacts-uploaded')}
             </Typography>
             <Button
@@ -137,9 +141,12 @@ const SendGridSettingsContent: React.FC<SendGridSettingsProps> = ({
 
                 {contactSample.length > 0 && (
                   <>
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('contacts-preview-label')}
                     </Typography>
                     <List dense>

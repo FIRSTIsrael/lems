@@ -25,8 +25,9 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
       spacing={4}
       sx={{
         mt: 2,
-        alignItems: "center"
-      }}>
+        alignItems: 'center'
+      }}
+    >
       {items.map(item => (
         <Link
           key={item.label}
@@ -57,9 +58,9 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
                 bgcolor: item.active ? lighten(theme.palette.primary.main, 0.8) : 'none',
                 width: 70,
                 height: 40,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
                 color: item.active ? 'primary.main' : 'text.secondary',
 
                 transition:
@@ -67,7 +68,8 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
 
                 boxShadow: item.active ? theme.shadows[3] : 'none',
                 transform: 'translateY(0)'
-              }}>
+              }}
+            >
               {item.icon}
             </Box>
             <Typography
@@ -79,7 +81,8 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
                 mt: 1,
                 fontWeight: item.active ? 700 : 600,
                 transition: 'color 0.15s, font-weight 0.15s'
-              }}>
+              }}
+            >
               {t(item.label)}
             </Typography>
           </Box>

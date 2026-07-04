@@ -284,11 +284,8 @@ export class RobotGameMatchesRepository {
         .selectFrom('robot_game_match_participants')
         .selectAll()
         .where('team_id', '=', teamId1)
-        .where('match_id', 'in', (eb) =>
-          eb
-            .selectFrom('robot_game_matches')
-            .select('id')
-            .where('division_id', '=', divisionId)
+        .where('match_id', 'in', eb =>
+          eb.selectFrom('robot_game_matches').select('id').where('division_id', '=', divisionId)
         )
         .execute();
 
@@ -296,11 +293,8 @@ export class RobotGameMatchesRepository {
         .selectFrom('robot_game_match_participants')
         .selectAll()
         .where('team_id', '=', teamId2)
-        .where('match_id', 'in', (eb) =>
-          eb
-            .selectFrom('robot_game_matches')
-            .select('id')
-            .where('division_id', '=', divisionId)
+        .where('match_id', 'in', eb =>
+          eb.selectFrom('robot_game_matches').select('id').where('division_id', '=', divisionId)
         )
         .execute();
 

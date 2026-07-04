@@ -51,9 +51,12 @@ export default function TeamListPage() {
 
             {error && (
               <Alert severity="error" variant="outlined" sx={{ borderRadius: 2 }}>
-                <Typography variant="body2" sx={{
-                  color: "error.dark"
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'error.dark'
+                  }}
+                >
                   {t('error-loading')}
                 </Typography>
               </Alert>
@@ -68,9 +71,13 @@ export default function TeamListPage() {
 
             {loading && (
               <Box sx={{ textAlign: 'center', py: 4 }}>
-                <Typography sx={{
-                  color: "text.secondary"
-                }}>{t('loading')}</Typography>
+                <Typography
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
+                  {t('loading')}
+                </Typography>
               </Box>
             )}
           </Stack>

@@ -201,9 +201,13 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
       </Typography>
       {/* Add new asset */}
       <Box sx={{ mb: 3 }}>
-        <Stack direction="row" spacing={2} sx={{
-          alignItems: "flex-start"
-        }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'flex-start'
+          }}
+        >
           <TextField
             size="small"
             placeholder={t(`${assetType as string}.name-placeholder`)}
@@ -246,10 +250,11 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
-            textAlign: "center",
+            color: 'text.secondary',
+            textAlign: 'center',
             py: 4
-          }}>
+          }}
+        >
           {t(`${assetType as string}.empty-state`)}
         </Typography>
       ) : (

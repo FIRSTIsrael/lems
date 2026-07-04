@@ -68,9 +68,13 @@ export const ParticipantNotPresentModal = ({
   return (
     <Dialog open={open} maxWidth="sm" fullWidth>
       <DialogTitle>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <WarningAmber color="warning" />
           <Typography variant="h6">{t('participant-not-present-title')}</Typography>
         </Stack>

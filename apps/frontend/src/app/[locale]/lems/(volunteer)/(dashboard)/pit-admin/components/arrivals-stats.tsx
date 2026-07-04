@@ -74,13 +74,18 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
           direction={{ xs: 'column', md: 'row' }}
           spacing={2}
           sx={{
-            alignItems: "flex-start",
-            justifyContent: "space-between"
-          }}>
+            alignItems: 'flex-start',
+            justifyContent: 'space-between'
+          }}
+        >
           <Stack spacing={0.5}>
-            <Stack direction="row" spacing={1} sx={{
-              alignItems: "center"
-            }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center'
+              }}
+            >
               <GroupIcon sx={{ opacity: 0.9 }} />
               <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
                 {t('total-teams')}
@@ -102,9 +107,13 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
           </Stack>
 
           <Stack spacing={0.5}>
-            <Stack direction="row" spacing={1} sx={{
-              alignItems: "center"
-            }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center'
+              }}
+            >
               <CheckCircleIcon sx={{ fontSize: '1.5rem' }} />
               <Typography variant="body2" sx={{ opacity: 0.9, fontWeight: 500 }}>
                 {t('arrived')}
@@ -150,9 +159,12 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
             }}
           />
 
-          <Stack direction="row" sx={{
-            justifyContent: "space-between"
-          }}>
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: 'space-between'
+            }}
+          >
             <Typography variant="caption" sx={{ opacity: 0.85 }}>
               {stats.pending > 0 && t('teams-pending', { count: stats.pending })}
               {stats.pending === 0 && t('all-arrived')}
@@ -180,13 +192,20 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
               border: '1px solid rgba(255, 255, 255, 0.2)'
             }}
           >
-            <Stack direction="row" spacing={1.5} sx={{
-              alignItems: "flex-start"
-            }}>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              sx={{
+                alignItems: 'flex-start'
+              }}
+            >
               <WarningIcon sx={{ mt: 0.5, flexShrink: 0, fontSize: '1.2rem' }} />
-              <Stack spacing={1} sx={{
-                flex: 1
-              }}>
+              <Stack
+                spacing={1}
+                sx={{
+                  flex: 1
+                }}
+              >
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                   {t('waiting-for', { count: stats.missingTeams.length })}
                 </Typography>

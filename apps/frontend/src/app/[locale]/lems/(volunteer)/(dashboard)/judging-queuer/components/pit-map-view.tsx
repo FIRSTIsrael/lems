@@ -9,18 +9,27 @@ export function PitMapView() {
 
   return (
     <Paper sx={{ p: 4, textAlign: 'center' }}>
-      <Stack spacing={2} sx={{
-        alignItems: "center"
-      }}>
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <MapIcon sx={{ fontSize: 64, color: 'text.secondary' }} />
-        <Typography variant="h6" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('title')}
         </Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('description')}
         </Typography>
       </Stack>

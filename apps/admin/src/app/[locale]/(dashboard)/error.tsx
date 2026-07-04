@@ -16,9 +16,12 @@ export default function Error({
 
   return (
     <Box sx={{ py: 6 }}>
-      <Stack spacing={2} sx={{
-        alignItems: "flex-start"
-      }}>
+      <Stack
+        spacing={2}
+        sx={{
+          alignItems: 'flex-start'
+        }}
+      >
         <Typography variant="h4">Something went wrong</Typography>
         <Alert severity="error">{error.message || 'Unexpected error'}</Alert>
         <Button variant="outlined" onClick={reset}>

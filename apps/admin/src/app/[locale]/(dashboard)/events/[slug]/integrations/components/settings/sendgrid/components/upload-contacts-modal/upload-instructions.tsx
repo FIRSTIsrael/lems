@@ -24,12 +24,15 @@ export const UploadInstructions: React.FC<PaperProps> = props => {
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "flex-start",
+          alignItems: 'flex-start',
           mb: 1
-        }}>
-        <Box sx={{
-          pt: 0.33
-        }}>
+        }}
+      >
+        <Box
+          sx={{
+            pt: 0.33
+          }}
+        >
           <InfoIcon color="primary" />
         </Box>
         <Box>
@@ -39,9 +42,10 @@ export const UploadInstructions: React.FC<PaperProps> = props => {
           <Typography
             variant="body2"
             sx={{
-              color: "text.secondary",
-              marginBottom: "16px"
-            }}>
+              color: 'text.secondary',
+              marginBottom: '16px'
+            }}
+          >
             {t('csv-description')}
           </Typography>
         </Box>

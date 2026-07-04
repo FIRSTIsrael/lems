@@ -52,16 +52,22 @@ export const DownloadResultsDialog: React.FC<DownloadResultsDialogProps> = ({
           <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
             {t('event-name', { eventName })}
           </Typography>
-          <Typography variant="caption" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('info')}
           </Typography>
           {progress !== null && (
             <Box>
-              <Typography variant="caption" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: 'text.secondary'
+                }}
+              >
                 {t('generating')}
               </Typography>
               <LinearProgress variant="determinate" value={progress} sx={{ mt: 0.5 }} />

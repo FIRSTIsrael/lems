@@ -39,10 +39,11 @@ export function DeliberationStatusSection() {
         <Stack spacing={3}>
           <Box
             sx={{
-              display: "flex",
-              flexWrap: "wrap",
+              display: 'flex',
+              flexWrap: 'wrap',
               gap: 2
-            }}>
+            }}
+          >
             {categoriesWithStatuses.map(({ category, deliberation }) => (
               <CategoryDeliberationCard
                 key={category}

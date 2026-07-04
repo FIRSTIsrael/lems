@@ -82,7 +82,7 @@ export default function ScoresExportPage() {
 
           <Stack spacing={1.5}>
             {scoresheet.missions
-              .map((mission) => {
+              .map(mission => {
                 const missionData = scoresheetData.missions?.find(m => m.id === mission.id);
                 if (!missionData || !missionData.clauses || missionData.clauses.length === 0) {
                   return null;
@@ -120,9 +120,10 @@ export default function ScoresExportPage() {
             >
               <Typography
                 sx={{
-                  fontSize: "1.5rem",
+                  fontSize: '1.5rem',
                   fontWeight: 700
-                }}>
+                }}
+              >
                 {t('total-points', { points: scoresheetData.score ?? 0 })}
               </Typography>
             </Box>

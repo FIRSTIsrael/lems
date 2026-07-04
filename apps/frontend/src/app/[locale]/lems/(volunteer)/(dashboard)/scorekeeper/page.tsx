@@ -86,9 +86,12 @@ export default function ScorekeeperPage() {
           <Stack spacing={3}>
             <Grid container spacing={3}>
               <Grid size={{ lg: 12, xl: 6 }}>
-                <Stack spacing={2} sx={{
-                  height: "100%"
-                }}>
+                <Stack
+                  spacing={2}
+                  sx={{
+                    height: '100%'
+                  }}
+                >
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('audience-display.section-title')}
                   </Typography>
@@ -97,9 +100,12 @@ export default function ScorekeeperPage() {
               </Grid>
 
               <Grid size={{ lg: 12, xl: 6 }}>
-                <Stack spacing={2} sx={{
-                  height: "100%"
-                }}>
+                <Stack
+                  spacing={2}
+                  sx={{
+                    height: '100%'
+                  }}
+                >
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('controls.section-title')}
                   </Typography>
@@ -109,9 +115,12 @@ export default function ScorekeeperPage() {
 
               {isAwardsMode ? (
                 <Grid size={{ xs: 12 }}>
-                  <Stack spacing={2} sx={{
-                    height: "100%"
-                  }}>
+                  <Stack
+                    spacing={2}
+                    sx={{
+                      height: '100%'
+                    }}
+                  >
                     <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                       {t('awards-presentation.title')}
                     </Typography>
@@ -121,9 +130,12 @@ export default function ScorekeeperPage() {
               ) : (
                 <>
                   <Grid size={{ xs: 12, lg: 6 }}>
-                    <Stack spacing={2} sx={{
-                      height: "100%"
-                    }}>
+                    <Stack
+                      spacing={2}
+                      sx={{
+                        height: '100%'
+                      }}
+                    >
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                         {t('current-match.section-title')}
                       </Typography>
@@ -132,9 +144,12 @@ export default function ScorekeeperPage() {
                   </Grid>
 
                   <Grid size={{ xs: 12, lg: 6 }}>
-                    <Stack spacing={2} sx={{
-                      height: "100%"
-                    }}>
+                    <Stack
+                      spacing={2}
+                      sx={{
+                        height: '100%'
+                      }}
+                    >
                       <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                         {t('next-match.section-title')}
                       </Typography>
@@ -150,9 +165,10 @@ export default function ScorekeeperPage() {
                 <Stack
                   direction="row"
                   sx={{
-                    alignItems: "center",
-                    justifyContent: "space-between"
-                  }}>
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
                   <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                     {t('schedule.title')}
                   </Typography>

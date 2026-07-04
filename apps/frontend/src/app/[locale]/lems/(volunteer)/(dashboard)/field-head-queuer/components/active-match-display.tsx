@@ -90,13 +90,17 @@ export function ActiveMatchDisplay() {
             direction="row"
             spacing={1}
             sx={{
-              alignItems: "center",
-              flexWrap: "wrap"
-            }}>
+              alignItems: 'center',
+              flexWrap: 'wrap'
+            }}
+          >
             <PlayArrowIcon />
-            <Typography variant="h6" sx={{
-              fontWeight: 600
-            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600
+              }}
+            >
               {t('running-match')}
             </Typography>
             <Chip
@@ -118,13 +122,20 @@ export function ActiveMatchDisplay() {
           </Stack>
         ) : (
           <Stack spacing={2}>
-            <Stack direction="row" spacing={1} sx={{
-              alignItems: "center"
-            }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center'
+              }}
+            >
               <PlayArrowIcon />
-              <Typography variant="h6" sx={{
-                fontWeight: 600
-              }}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600
+                }}
+              >
                 {t('running-match')}
               </Typography>
             </Stack>
@@ -141,13 +152,20 @@ export function ActiveMatchDisplay() {
         }}
       >
         <Stack spacing={2}>
-          <Stack direction="row" spacing={1} sx={{
-            alignItems: "center"
-          }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             <ScheduleIcon />
-            <Typography variant="h6" sx={{
-              fontWeight: 600
-            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600
+              }}
+            >
               {t('next-match')}
             </Typography>
           </Stack>
@@ -157,17 +175,19 @@ export function ActiveMatchDisplay() {
                 direction="row"
                 spacing={1}
                 sx={{
-                  alignItems: "center",
-                  flexWrap: "wrap",
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
                   justifyContent: 'space-between'
-                }}>
+                }}
+              >
                 <Stack
                   direction="row"
                   spacing={1}
                   sx={{
-                    alignItems: "center",
-                    flexWrap: "wrap"
-                  }}>
+                    alignItems: 'center',
+                    flexWrap: 'wrap'
+                  }}
+                >
                   <Chip
                     label={`${t('match')} ${loadedMatch.number}`}
                     size="medium"
@@ -225,11 +245,12 @@ export function ActiveMatchDisplay() {
                           direction="row"
                           spacing={1}
                           sx={{
-                            alignItems: "center",
+                            alignItems: 'center',
                             p: 1,
                             borderRadius: 1,
                             bgcolor: 'rgba(255,255,255,0.08)'
-                          }}>
+                          }}
+                        >
                           <Chip
                             label={tableName}
                             size="small"

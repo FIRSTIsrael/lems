@@ -16,16 +16,24 @@ export const ResponsiveComponent = ({
     <>
       <Box
         {...boxProps}
-        sx={[{
-          display: { xs: 'block', [mobileBreakpoint]: 'none' }
-        }, ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])]}>
+        sx={[
+          {
+            display: { xs: 'block', [mobileBreakpoint]: 'none' }
+          },
+          ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])
+        ]}
+      >
         {mobile}
       </Box>
       <Box
         {...boxProps}
-        sx={[{
-          display: { xs: 'none', [mobileBreakpoint]: 'block' }
-        }, ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])]}>
+        sx={[
+          {
+            display: { xs: 'none', [mobileBreakpoint]: 'block' }
+          },
+          ...(Array.isArray(boxProps.sx) ? boxProps.sx : [boxProps.sx])
+        ]}
+      >
         {desktop}
       </Box>
     </>

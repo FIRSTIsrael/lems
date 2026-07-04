@@ -55,20 +55,22 @@ export const updatePresentationResolver: GraphQLFieldResolver<
       { returnDocument: 'after' }
     );
 
-    if (!result) {
+    if (!result?.audienceDisplay?.awardsPresentation) {
       throw new MutationError(
         MutationErrorCode.INTERNAL_ERROR,
         `Failed to update audience display for ${divisionId}`
       );
     }
 
+    const awardsPresentation = result.audienceDisplay.awardsPresentation;
+
     // Publish event to notify subscribers
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.AWARDS_PRESENTATION_UPDATED, {
-      awardsPresentation: result.audienceDisplay.awardsPresentation
+      awardsPresentation
     });
 
-    return { awardsPresentation: result.audienceDisplay.awardsPresentation };
+    return { awardsPresentation };
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error));
   }

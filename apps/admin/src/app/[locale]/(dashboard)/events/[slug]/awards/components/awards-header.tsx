@@ -52,23 +52,31 @@ export const AwardsHeader = () => {
         <Stack
           direction="row"
           sx={{
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
               {t('title')}
             </Typography>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('subtitle')}
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={2} sx={{
-            alignItems: "center"
-          }}>
+          <Stack
+            direction="row"
+            spacing={2}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             <Tooltip
               title={isNew ? t('status.new-awards-tooltip') : t('status.existing-awards-tooltip')}
               arrow
@@ -124,13 +132,20 @@ export const AwardsHeader = () => {
               border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
             }}
           >
-            <Stack direction="row" spacing={1} sx={{
-              alignItems: "center"
-            }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center'
+              }}
+            >
               <Chip label={t('unsaved-changes')} color="warning" variant="outlined" size="small" />
-              <Typography variant="body2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary'
+                }}
+              >
                 {t('unsaved-warning')}
               </Typography>
             </Stack>

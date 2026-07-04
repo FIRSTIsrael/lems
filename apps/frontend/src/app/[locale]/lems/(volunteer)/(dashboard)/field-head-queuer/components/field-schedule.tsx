@@ -112,17 +112,21 @@ export function FieldSchedule() {
   if (availableMatches.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('no-matches')}
         </Typography>
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             mt: 1
-          }}>
+          }}
+        >
           {t('no-matches-description')}
         </Typography>
       </Paper>
@@ -133,9 +137,12 @@ export function FieldSchedule() {
     <TableContainer component={Paper}>
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Typography variant="h6">{t('title')}</Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('subtitle')}
         </Typography>
       </Box>
@@ -217,9 +224,12 @@ export function FieldSchedule() {
                 <Chip label={match.number} size="small" color="primary" />
               </TableCell>
               <TableCell>
-                <Typography variant="body2" sx={{
-                  fontWeight: 500
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 500
+                  }}
+                >
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>
               </TableCell>
@@ -234,9 +244,10 @@ export function FieldSchedule() {
                     <Stack
                       spacing={1}
                       sx={{
-                        alignItems: "center",
-                        justifyContent: "center"
-                      }}>
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
                       {team ? (
                         <Tooltip title={`${team.number} - ${team.name}`} arrow>
                           <Chip
@@ -247,17 +258,24 @@ export function FieldSchedule() {
                           />
                         </Tooltip>
                       ) : (
-                        <Typography variant="body2" sx={{
-                          color: "text.secondary"
-                        }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            color: 'text.secondary'
+                          }}
+                        >
                           —
                         </Typography>
                       )}
 
                       {match.called && team && participant && (
-                        <Stack direction="row" spacing={1} sx={{
-                          alignItems: "center"
-                        }}>
+                        <Stack
+                          direction="row"
+                          spacing={1}
+                          sx={{
+                            alignItems: 'center'
+                          }}
+                        >
                           <Chip
                             label={t(`status.${statusKey}`)}
                             size="small"

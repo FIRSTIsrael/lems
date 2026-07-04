@@ -35,14 +35,18 @@ export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen 
         <Stack
           direction="row"
           sx={{
-            justifyContent: "space-evenly",
-            width: "100%",
+            justifyContent: 'space-evenly',
+            width: '100%',
             mt: 2
-          }}>
+          }}
+        >
           {['start', 'change', 'end'].map(key => (
-            <Stack key={key} sx={{
-              alignItems: "center"
-            }}>
+            <Stack
+              key={key}
+              sx={{
+                alignItems: 'center'
+              }}
+            >
               <IconButton
                 onClick={() => playSound(key as 'start' | 'change' | 'end')}
                 sx={{ width: 36, height: 36 }}
@@ -53,9 +57,10 @@ export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen 
               <Typography
                 color="textSecondary"
                 sx={{
-                  fontSize: "0.75rem",
-                  textAlign: "center"
-                }}>
+                  fontSize: '0.75rem',
+                  textAlign: 'center'
+                }}
+              >
                 {t(`sounds.${key}`)}
               </Typography>
             </Stack>

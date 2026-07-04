@@ -113,9 +113,10 @@ function MatchCard({
             variant="h6"
             sx={{
               fontWeight: 600,
-              color: "text.primary",
+              color: 'text.primary',
               fontSize: '1.5rem'
-            }}>
+            }}
+          >
             #{match.number}
           </Typography>
           <Chip
@@ -172,21 +173,23 @@ function MatchCard({
                         variant="body2"
                         sx={{
                           fontWeight: 700,
-                          color: "text.primary",
+                          color: 'text.primary',
                           fontSize: '1.25rem',
                           wordBreak: 'break-word'
-                        }}>
+                        }}
+                      >
                         {participant.table.name}
                       </Typography>
 
                       <Typography
                         variant="caption"
                         sx={{
-                          color: "text.secondary",
+                          color: 'text.secondary',
                           fontSize: '1rem',
                           wordBreak: 'break-word',
                           display: 'block'
-                        }}>
+                        }}
+                      >
                         {participant.team!.name} #{participant.team!.number}
                         {participant.team!.region && (
                           <>
@@ -207,11 +210,12 @@ function MatchCard({
                       <Typography
                         variant="caption"
                         sx={{
-                          color: "text.secondary",
+                          color: 'text.secondary',
                           fontSize: '1rem',
                           wordBreak: 'break-word',
                           display: 'block'
-                        }}>
+                        }}
+                      >
                         {participant.team!.affiliation && `${participant.team!.affiliation}, `}
                         {participant.team!.city}
                       </Typography>
@@ -275,20 +279,22 @@ function MatchCard({
                         variant="body2"
                         sx={{
                           fontWeight: 700,
-                          color: "text.primary",
+                          color: 'text.primary',
                           fontSize: '1.25rem',
                           wordBreak: 'break-word'
-                        }}>
+                        }}
+                      >
                         {participant.table.name}
                       </Typography>
                       <Typography
                         variant="caption"
                         sx={{
-                          color: "text.secondary",
+                          color: 'text.secondary',
                           fontSize: '1rem',
                           wordBreak: 'break-word',
                           display: 'block'
-                        }}>
+                        }}
+                      >
                         {participant.team!.name}
                       </Typography>
                     </Box>

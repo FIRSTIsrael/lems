@@ -21,12 +21,13 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, variant }) =
       <Typography
         variant="h5"
         sx={{
-          fontWeight: "bold",
+          fontWeight: 'bold',
           mb: 3,
           display: 'flex',
           alignItems: 'center',
           gap: 1
-        }}>
+        }}
+      >
         {t(`filters.${variant}`, { count: filteredEvents.length })}
       </Typography>
       <Stack spacing={1}>

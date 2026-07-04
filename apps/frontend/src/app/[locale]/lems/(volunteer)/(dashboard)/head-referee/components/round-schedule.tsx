@@ -62,8 +62,9 @@ export function RoundSchedule({ roundGroup, defaultExpanded = true }: RoundSched
           variant="h6"
           sx={{
             fontWeight: 600,
-            color: "text.primary"
-          }}>
+            color: 'text.primary'
+          }}
+        >
           {title}
         </Typography>
       </AccordionSummary>

@@ -69,10 +69,11 @@ export const MobileAppBar = () => {
         <Stack
           spacing={2}
           sx={{
-            justifyContent: "center",
+            justifyContent: 'center',
             px: 2,
             py: 1.5
-          }}>
+          }}
+        >
           <LanguageSwitcher onClose={() => setMenuOpen(false)} />
 
           <LogoutButton variant="menu-item" onClose={() => setMenuOpen(false)} />

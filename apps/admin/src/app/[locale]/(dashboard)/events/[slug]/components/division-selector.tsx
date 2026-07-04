@@ -30,9 +30,14 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
       <Typography variant="subtitle1" sx={{ mb: 1, fontWeight: 600 }}>
         {t('label')}
       </Typography>
-      <Stack direction="row" spacing={1} useFlexGap sx={{
-        flexWrap: "wrap"
-      }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        useFlexGap
+        sx={{
+          flexWrap: 'wrap'
+        }}
+      >
         {divisions.map(division => {
           const isSelected = division.id === selectedDivisionId;
           const divisionColor = division.color || '#666';
