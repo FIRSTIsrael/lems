@@ -103,7 +103,7 @@ const serverCleanup = createGraphqlWsServer(
     schema,
     context: async (ctx): Promise<GraphQLContext> => {
       const user = await authenticateWebsocket(ctx.connectionParams);
-      return { user: user ?? undefined };
+      return { user };
     },
     onConnect: async () => {
       logger.info({ component: 'websocket' }, 'Client connected');
@@ -133,7 +133,7 @@ app.use(
   expressMiddleware(apolloServer, {
     context: async ({ req }): Promise<GraphQLContext> => {
       const user = await authenticateHttp(req);
-      return { user: user ?? undefined };
+      return { user };
     }
   })
 );

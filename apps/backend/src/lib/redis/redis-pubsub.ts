@@ -130,8 +130,8 @@ export class RedisPubSub {
       isActive = false;
       if (timeoutHandle) clearTimeout(timeoutHandle);
       broadcaster.removeListener('event', messageHandler);
-      const pendingResolve = resolveWait as (() => void) | null;
-      if (pendingResolve) pendingResolve();
+      // Typescript thinks resolveWait is of type never, so we need to cast it to a function
+      if (resolveWait) (resolveWait as () => void)();
       broadcaster.decrementSubscribers();
     }
   }
