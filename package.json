@@ -57,7 +57,7 @@
     "idb": "^8.0.3",
     "ioredis": "^5.10.1",
     "jsonwebtoken": "^9.0.3",
-    "kysely": "^0.28.16",
+    "kysely": "^0.28.17",
     "mongodb": "^7.4.0",
     "morgan": "^1.11.0",
     "motion": "^12.42.2",
