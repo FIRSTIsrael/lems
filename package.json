@@ -43,7 +43,7 @@
     "bullmq": "^5.79.2",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
-    "csv-parse": "^7.0.0",
+    "csv-parse": "^7.0.1",
     "dayjs": "^1.11.21",
     "dompurify": "^3.4.11",
     "express": "^5.2.1",
