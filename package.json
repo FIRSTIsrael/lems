@@ -29,7 +29,7 @@
     "@hello-pangea/dnd": "^18.0.1",
     "@json2csv/plainjs": "^7.0.6",
     "@mui/icons-material": "^9.1.1",
-    "@mui/material": "^9.1.2",
+    "@mui/material": "^9.2.0",
     "@mui/material-nextjs": "^9.1.1",
     "@mui/stylis-plugin-rtl": "^9.1.1",
     "@mui/x-data-grid": "^9.7.0",
