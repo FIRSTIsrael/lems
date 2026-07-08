@@ -252,6 +252,62 @@ export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
 }
 
 /**
+ * Extracts organized field notes for a team in a specific category.
+ *
+ * Returns field notes mapped by their display labels, ordered by field number.
+ * For core-values category, includes both IP and RD fields with their respective prefixes.
+ *
+ * @param team - The team to extract field notes from
+ * @param category - The deliberation category (hyphenated)
+ * @returns Object mapping display labels (e.g., 'IP-1') to field notes
+ */
+export function getOrganizedRubricFieldNotes(
+  team: Team,
+  category: JudgingCategory
+): Record<string, string | undefined> {
+  const fields = buildFieldMetadata(category);
+  const result: Record<string, string | undefined> = {};
+
+  const categoryKey = hyphensToUnderscores(category) as
+    | 'innovation_project'
+    | 'robot_design'
+    | 'core_values';
+
+  const categoryMap = {
+    innovation_project: team.rubrics.innovation_project,
+    robot_design: team.rubrics.robot_design,
+    core_values: team.rubrics.core_values
+  } as const;
+
+  if (categoryKey === 'core_values') {
+    // For core-values, include both IP and RD fields with prefixes
+    const ipFields = buildFieldMetadata('innovation-project').filter(f => f.coreValues);
+    const rdFields = buildFieldMetadata('robot-design').filter(f => f.coreValues);
+
+    ipFields.forEach(field => {
+      const ipRubric = team.rubrics.innovation_project;
+      const notes = ipRubric?.data?.fields?.[field.id]?.notes;
+      result[field.displayLabel] = notes;
+    });
+
+    rdFields.forEach(field => {
+      const rdRubric = team.rubrics.robot_design;
+      const notes = rdRubric?.data?.fields?.[field.id]?.notes;
+      result[field.displayLabel] = notes;
+    });
+  } else {
+    // For IP/RD, include only their own fields
+    fields.forEach(field => {
+      const rubric = categoryMap[categoryKey];
+      const notes = rubric?.data?.fields?.[field.id]?.notes;
+      result[field.displayLabel] = notes;
+    });
+  }
+
+  return result;
+}
+
+/**
  * Extracts GP scores with formatted keys for a team.
  *
  * @param team - The team to extract GP scores from
