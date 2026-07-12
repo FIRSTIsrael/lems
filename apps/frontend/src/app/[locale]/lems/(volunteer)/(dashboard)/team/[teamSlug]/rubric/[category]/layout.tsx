@@ -4,7 +4,7 @@ import { redirect, useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { toast } from 'react-hot-toast';
 import { useSuspenseQuery } from '@apollo/client/react';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import { authorizeUserRole } from '../../../../../../lib/role-authorizer';
 import { useEvent } from '../../../../../components/event-context';
 import { useTeam } from '../../components/team-context';
@@ -45,15 +45,20 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
     redirect(`/lems/${user.role}`);
   }
 
-  const teamSession = data.division?.judging?.sessions?.[0];
+  const teamSession = data?.division?.judging?.sessions?.[0];
+  const openRubricsDuringSession = data?.division?.judging?.openRubricsDuringSession ?? false;
 
-  if (teamSession?.status !== 'completed') {
+  const canAccessRubric =
+    teamSession?.status === 'completed' ||
+    (openRubricsDuringSession && teamSession?.status !== 'not-started');
+
+  if (!canAccessRubric) {
     toast.error(t('error-team-not-judged'));
     redirect(`/lems/${user.role}`);
   }
 
   const room = user.roleInfo?.['roomId'];
-  if (room && room !== data.division?.judging?.sessions?.[0]?.room.id) {
+  if (room && room !== data?.division?.judging?.sessions?.[0]?.room.id) {
     toast.error(t('error-not-authorized'));
     redirect(`/lems/${user.role}/rooms/${room}`);
   }

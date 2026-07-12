@@ -8,6 +8,7 @@ export const PortalEventResponseSchema = z.object({
   endDate: z.coerce.date(),
   location: z.string(),
   region: z.string(),
+  timezone: z.string(),
   coordinates: z.string().optional(),
   seasonId: z.string()
 });
@@ -20,7 +21,8 @@ export const PortalEventSummaryResponseSchema = z.object({
   ...PortalEventResponseSchema.shape,
   teamsRegistered: z.number(),
   status: z.enum(['upcoming', 'active', 'past']),
-  completed: z.boolean()
+  completed: z.boolean(),
+  official: z.boolean()
 });
 
 export type EventSummary = z.infer<typeof PortalEventSummaryResponseSchema>;
@@ -42,7 +44,8 @@ export const PortalEventDetailsResponseSchema = z.object({
   ...PortalEventResponseSchema.shape,
   seasonName: z.string(),
   seasonSlug: z.string(),
-  divisions: PortalEventDetailsDivisionsSchema
+  divisions: PortalEventDetailsDivisionsSchema,
+  official: z.boolean()
 });
 
 export type EventDetails = z.infer<typeof PortalEventDetailsResponseSchema>;

@@ -16,11 +16,23 @@ export default async function CurrentSeasonWidget() {
         <CardContent
           sx={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
         >
-          <Stack spacing={1} alignItems="center" textAlign="center">
-            <Typography variant="h6" color="error.main" fontWeight={600}>
+          <Stack
+            spacing={1}
+            sx={{
+              alignItems: "center",
+              textAlign: "center"
+            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                color: "error.main",
+                fontWeight: 600
+              }}>
               {t('error')}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {t('error-description')}
             </Typography>
           </Stack>
@@ -48,7 +60,13 @@ export default async function CurrentSeasonWidget() {
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
-        <Box display="flex" alignItems="center" gap={3} width="100%">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+            width: "100%"
+          }}>
           <Avatar
             variant="rounded"
             src={season.logoUrl || getAsset('FIRST-Logo.svg')}
@@ -65,14 +83,13 @@ export default async function CurrentSeasonWidget() {
           <Stack spacing={1.5} sx={{ minWidth: 0, flex: 1 }}>
             <Typography
               variant="overline"
-              color="text.secondary"
               sx={{
+                color: "text.secondary",
                 lineHeight: 1,
                 fontSize: '0.875rem',
                 fontWeight: 600,
                 letterSpacing: 0.5
-              }}
-            >
+              }}>
               {t('current-season')}
             </Typography>
 

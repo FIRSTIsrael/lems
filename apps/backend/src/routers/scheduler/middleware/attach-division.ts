@@ -12,7 +12,7 @@ export const attachDivision = () => {
     try {
       const divisionId = req.params.divisionId;
 
-      if (!divisionId) {
+      if (!divisionId || typeof divisionId !== 'string') {
         res.status(400).json({ error: 'DIVISION_ID_REQUIRED' });
         return;
       }

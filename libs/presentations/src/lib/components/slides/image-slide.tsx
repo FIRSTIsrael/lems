@@ -26,7 +26,7 @@ export const ImageSlide: React.FC<ImageSlideProps> = ({
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          width: '100%',
+          width: '80%',
           position: 'relative'
         }}
       >

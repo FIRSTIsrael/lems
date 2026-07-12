@@ -19,7 +19,7 @@ export const DeliberationGrid: React.FC = () => {
   const { deliberation } = useCategoryDeliberation();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <AppBar
         position="static"
         elevation={1}
@@ -40,14 +40,21 @@ export const DeliberationGrid: React.FC = () => {
         </Toolbar>
       </AppBar>
 
-      <Box sx={{ flex: 1, display: 'flex', minHeight: 0, p: 2.5, gap: 2.5 }}>
+      <Box sx={{ flex: 1, display: 'flex', p: 2.5, gap: 2.5, overflow: 'auto' }}>
         <Box
-          sx={{ flex: '0 1 80%', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2.5 }}
+          sx={{
+            flex: '1 1 auto',
+            minWidth: 0,
+            maxWidth: '80%',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2.5
+          }}
         >
           <Paper
             sx={{
               flex: 1,
-              minHeight: 0,
+              minHeight: 600,
               display: 'flex',
               flexDirection: 'column',
               borderRadius: 1.5,
@@ -63,8 +70,9 @@ export const DeliberationGrid: React.FC = () => {
 
         <Box
           sx={{
-            flex: '0 1 20%',
-            minHeight: 0,
+            flex: '0 0 auto',
+            width: 300,
+            minWidth: 250,
             display: 'flex',
             flexDirection: 'column',
             gap: 2.5
@@ -84,7 +92,7 @@ export const DeliberationGrid: React.FC = () => {
           <Paper
             sx={{
               flex: 1,
-              minHeight: 0,
+              minHeight: 400,
               borderRadius: 1.5,
               boxShadow: theme => theme.shadows[1],
               display: 'flex',

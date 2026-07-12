@@ -1,9 +1,16 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { merge } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
-import type { ParticipantStatusUpdatedEvent, RefereeData } from '../types';
+import type { RefereeData } from '../types';
 
-interface ParticipantStatusUpdatedSubscriptionData {
+export interface ParticipantStatusUpdatedEvent {
+  participantId: string;
+  queued: string | null;
+  present: string | null;
+  ready: string | null;
+}
+
+export interface ParticipantStatusUpdatedSubscriptionData {
   participantStatusUpdated: ParticipantStatusUpdatedEvent;
 }
 
@@ -18,6 +25,7 @@ export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription ParticipantStatusUpdated($divisionId: String!) {
     participantStatusUpdated(divisionId: $divisionId) {
       participantId
+      queued
       present
       ready
     }
@@ -34,18 +42,21 @@ export function createParticipantStatusUpdatedSubscription(divisionId: string) {
       return merge(prev, {
         division: {
           field: {
-            matches: prev.division.field.matches.map(_match => ({
-              ..._match,
-              participants: _match.participants.map(p =>
-                p.id === event.participantId
-                  ? {
-                      ...p,
-                      present: !!event.present,
-                      ready: !!event.ready
-                    }
-                  : p
-              )
-            }))
+            matches: prev.division.field.matches.map(match => {
+              return {
+                ...match,
+                participants: match.participants.map(p =>
+                  p.id === event.participantId
+                    ? {
+                        ...p,
+                        queued: event.queued !== null,
+                        present: event.present !== null,
+                        ready: event.ready !== null
+                      }
+                    : p
+                )
+              };
+            })
           }
         }
       });

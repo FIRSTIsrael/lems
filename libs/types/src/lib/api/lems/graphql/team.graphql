@@ -32,6 +32,9 @@ type Team {
   "URL to the team's logo image"
   logoUrl: String
 
+  "URL to the team's profile document for this division"
+  profileDocumentUrl: String
+
   "Whether the team has been disqualified in this division"
   disqualified: Boolean!
 
@@ -87,5 +90,8 @@ extend type Subscription {
   """
   Subscribe to events when teams are disqualified in a specific division.
   """
-  teamDisqualified("The division ID to listen for disqualification events in" divisionId: String!): TeamEvent!
+  teamDisqualified(
+    "The division ID to listen for disqualification events in"
+    divisionId: String!
+  ): TeamEvent!
 }

@@ -77,9 +77,13 @@ export const CurrentMatchHero: React.FC = () => {
       >
         <EmojiEvents sx={{ fontSize: 200 }} />
       </Box>
-
       <Stack spacing={3} sx={{ position: 'relative', zIndex: 1 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Typography
             variant="h3"
             sx={{
@@ -121,10 +125,11 @@ export const CurrentMatchHero: React.FC = () => {
                 <Stack spacing={1.5}>
                   <Stack
                     direction="row"
-                    alignItems="center"
                     spacing={1.5}
-                    justifyContent="space-between"
-                  >
+                    sx={{
+                      alignItems: "center",
+                      justifyContent: "space-between"
+                    }}>
                     <Typography
                       variant="h5"
                       sx={{

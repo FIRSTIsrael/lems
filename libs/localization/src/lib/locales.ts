@@ -1,6 +1,14 @@
-import { enUS, heIL } from '@mui/material/locale';
-import { heIL as xDataGridHeIL, enUS as xDataGridEnUS } from '@mui/x-data-grid/locales';
-import { heIL as xDatePickersHeIL, enUS as xDatePickersEnUS } from '@mui/x-date-pickers/locales';
+import { enUS, heIL, plPL } from '@mui/material/locale';
+import {
+  heIL as xDataGridHeIL,
+  enUS as xDataGridEnUS,
+  plPL as xDataGridPlPL
+} from '@mui/x-data-grid/locales';
+import {
+  heIL as xDatePickersHeIL,
+  enUS as xDatePickersEnUS,
+  plPL as xDatePickersPlPL
+} from '@mui/x-date-pickers/locales';
 
 /**
  * This file contains the locales supported by LEMS
@@ -24,6 +32,15 @@ export const Locales = {
     xDataGridLocale: xDataGridEnUS,
     xDatePickersLocale: xDatePickersEnUS,
     dayjsLocale: 'en'
+  },
+  pl: {
+    displayName: 'Polski',
+    id: 'pl',
+    direction: 'ltr',
+    muiLocale: plPL,
+    xDataGridLocale: xDataGridPlPL,
+    xDatePickersLocale: xDatePickersPlPL,
+    dayjsLocale: 'pl'
   }
 };
 

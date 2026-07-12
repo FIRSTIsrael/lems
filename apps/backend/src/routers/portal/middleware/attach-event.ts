@@ -11,8 +11,7 @@ export const attachEvent = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const eventSlug = req.params.slug;
-
-      if (!eventSlug) {
+      if (!eventSlug || typeof eventSlug !== 'string') {
         res.status(400).json({ error: 'EVENT_SLUG_REQUIRED' });
         return;
       }

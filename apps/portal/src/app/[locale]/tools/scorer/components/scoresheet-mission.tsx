@@ -30,23 +30,40 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
   };
 
   return (
-    <Grid component={Paper} container pb={2} id={mission.id}>
+    <Grid component={Paper} container id={mission.id} sx={{
+      pb: 2
+    }}>
       <Grid container size={{ xs: 12, md: 8 }} ref={measureRef}>
         <Grid
-          py={1}
           size={2}
-          alignSelf="flex-start"
-          bgcolor={errors.length > 0 ? theme.palette.error.main : theme.palette.primary.main}
-          borderRadius="6px 0 0 0"
-          textAlign="center"
-        >
-          <Typography fontSize="1.5rem" fontWeight={600} sx={{ color: '#FFF' }}>
+          sx={{
+            py: 1,
+            alignSelf: "flex-start",
+            bgcolor: errors.length > 0 ? theme.palette.error.main : theme.palette.primary.main,
+            borderRadius: "6px 0 0 0",
+            textAlign: "center"
+          }}>
+          <Typography
+            sx={{
+              fontSize: "1.5rem",
+              fontWeight: 600,
+              color: '#FFF'
+            }}>
             {mission.id.toUpperCase()}
           </Typography>
         </Grid>
-        <Grid size={10} pt={1}>
-          <Stack direction="row" spacing={2} alignItems="center">
-            <Typography fontSize="1.5rem" fontWeight={600} pl={4}>
+        <Grid size={10} sx={{
+          pt: 1
+        }}>
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
+            <Typography
+              sx={{
+                fontSize: "1.5rem",
+                fontWeight: 600,
+                pl: 4
+              }}>
               {title}
             </Typography>
             {mission.noEquipment && (
@@ -56,7 +73,13 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
         </Grid>
         {description && (
           <Grid size={12}>
-            <Typography fontSize="1rem" fontWeight={600} mt={1} ml={2}>
+            <Typography
+              sx={{
+                fontSize: "1rem",
+                fontWeight: 600,
+                mt: 1,
+                ml: 2
+              }}>
               {description}
             </Typography>
           </Grid>
@@ -80,29 +103,46 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
             />
           );
         })}
-        <Grid size={12} mt={2}>
+        <Grid size={12} sx={{
+          mt: 2
+        }}>
           {remarks.map((remark, index) => (
             <Typography
               key={`${mission.id}-remark-${index}`}
-              pl={3}
-              fontSize="1rem"
               color="primary"
-              sx={{ fontStyle: 'italic' }}
-            >
+              sx={{
+                pl: 3,
+                fontSize: "1rem",
+                fontStyle: 'italic'
+              }}>
               {remark}
             </Typography>
           ))}
         </Grid>
         {errors.length > 0 &&
           errors.map(error => (
-            <Grid key={error.id} size={12} mt={2}>
-              <Typography pl={3} fontSize="1rem" color="error" fontWeight={700}>
+            <Grid key={error.id} size={12} sx={{
+              mt: 2
+            }}>
+              <Typography
+                color="error"
+                sx={{
+                  pl: 3,
+                  fontSize: "1rem",
+                  fontWeight: 700
+                }}>
                 {getError(error.id)}
               </Typography>
             </Grid>
           ))}
       </Grid>
-      <Grid borderRadius={8} p={2} size={{ xs: 0, md: 4 }} display={{ xs: 'none', md: 'block' }}>
+      <Grid
+        size={{ xs: 0, md: 4 }}
+        sx={{
+          borderRadius: 8,
+          p: 2,
+          display: { xs: 'none', md: 'block' }
+        }}>
         <Image
           src={src}
           width={0}

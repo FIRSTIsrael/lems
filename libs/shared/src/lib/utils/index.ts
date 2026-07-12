@@ -4,3 +4,4 @@ export * from './regions';
 export * from './merge';
 export * from './reconcilers';
 export * from './strings';
+export * from './random';

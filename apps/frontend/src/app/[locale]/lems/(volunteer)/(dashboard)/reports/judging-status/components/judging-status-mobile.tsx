@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Box, Card, CardContent, Paper, Skeleton, Stack, Typography } from '@mui/material';
+import { Box, Card, CardContent, Grid, Paper, Skeleton, Stack, Typography } from '@mui/material';
 import { useJudgingStatus } from '../judging-status-context';
 import { SessionCard } from './session-card';
 
@@ -43,7 +43,9 @@ export const JudgingStatusMobile: React.FC = () => {
   if (currentSessions.length === 0 && nextSessions.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" sx={{
+          color: "text.secondary"
+        }}>
           {t('empty-state.message')}
         </Typography>
       </Paper>
@@ -59,27 +61,31 @@ export const JudgingStatusMobile: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 {t('table.current-round')}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>
 
-          {sortedRooms.map(room => {
-            const session = currentSessions.find(s => s.room.id === room.id);
-            return session ? (
-              <SessionCard
-                key={`${room.id}-${session.id}`}
-                session={session}
-                room={room}
-                isCurrentRound={true}
-                sessionLength={sessionLength}
-              />
-            ) : null;
-          })}
+          <Grid container spacing={2}>
+            {sortedRooms.map(room => {
+              const session = currentSessions.find(s => s.room.id === room.id);
+              return session ? (
+                <Grid key={`${room.id}-${session.id}`} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <SessionCard
+                    session={session}
+                    room={room}
+                    isCurrentRound={true}
+                    sessionLength={sessionLength}
+                  />
+                </Grid>
+              ) : null;
+            })}
+          </Grid>
         </Box>
       )}
-
       {nextSessions.length > 0 && (
         <Box>
           <Paper sx={{ p: 2, mb: 2, bgcolor: 'grey.100' }}>
@@ -87,24 +93,29 @@ export const JudgingStatusMobile: React.FC = () => {
               <Typography variant="h6" sx={{ fontWeight: 600 }}>
                 {t('table.next-round')}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
               </Typography>
             </Stack>
           </Paper>
 
-          {sortedRooms.map(room => {
-            const session = nextSessions.find(s => s.room.id === room.id);
-            return session ? (
-              <SessionCard
-                key={`${room.id}-${session.id}`}
-                session={session}
-                room={room}
-                isCurrentRound={false}
-                sessionLength={sessionLength}
-              />
-            ) : null;
-          })}
+          <Grid container spacing={2}>
+            {sortedRooms.map(room => {
+              const session = nextSessions.find(s => s.room.id === room.id);
+              return session ? (
+                <Grid key={`${room.id}-${session.id}`} size={{ xs: 12, sm: 6, md: 4 }}>
+                  <SessionCard
+                    session={session}
+                    room={room}
+                    isCurrentRound={false}
+                    sessionLength={sessionLength}
+                  />
+                </Grid>
+              ) : null;
+            })}
+          </Grid>
         </Box>
       )}
     </Stack>

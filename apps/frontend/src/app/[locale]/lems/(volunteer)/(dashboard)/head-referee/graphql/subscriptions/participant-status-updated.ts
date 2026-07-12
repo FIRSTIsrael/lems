@@ -3,16 +3,19 @@ import { merge } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { HeadRefereeData } from '../types';
 
-export interface ParticipantStatusUpdatedData {
-  participantStatusUpdated: {
-    participantId: string;
-    present: string | null;
-    ready: string | null;
-  };
+interface SubscriptionVars {
+  divisionId: string;
 }
 
-export interface SubscriptionVars {
-  divisionId: string;
+export interface ParticipantStatusUpdatedEvent {
+  participantId: string;
+  queued: string | null;
+  present: string | null;
+  ready: string | null;
+}
+
+export interface ParticipantStatusUpdatedData {
+  participantStatusUpdated: ParticipantStatusUpdatedEvent;
 }
 
 export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
@@ -22,54 +25,38 @@ export const PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription ParticipantStatusUpdated($divisionId: String!) {
     participantStatusUpdated(divisionId: $divisionId) {
       participantId
+      queued
       present
       ready
     }
   }
 `;
 
-/**
- * Creates a subscription configuration for participant status updates.
- * Updates participant status (present, ready) in real-time.
- *
- * @param divisionId - The division ID to subscribe to
- * @returns Subscription configuration for use with usePageData hook
- */
 export function createParticipantStatusUpdatedSubscription(divisionId: string) {
   return {
     subscription: PARTICIPANT_STATUS_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
     updateQuery: (prev: HeadRefereeData, { data }: { data?: unknown }) => {
-      if (!prev.division?.field?.matches || !data) return prev;
-
-      const participantData = (data as ParticipantStatusUpdatedData).participantStatusUpdated;
-
-      // Find the match containing the participant and update it
-      const matches = prev.division.field.matches.map(match => {
-        const hasParticipant = match.participants.some(p => p.id === participantData.participantId);
-        
-        if (!hasParticipant) {
-          return match;
-        }
-
-        return {
-          ...match,
-          participants: match.participants.map(p =>
-            p.id === participantData.participantId
-              ? {
-                  ...p,
-                  present: participantData.present !== null,
-                  ready: participantData.ready !== null
-                }
-              : p
-          )
-        };
-      });
-
+      if (!prev.division?.field || !data) return prev;
+      const event = (data as ParticipantStatusUpdatedData).participantStatusUpdated;
       return merge(prev, {
         division: {
           field: {
-            matches
+            matches: prev.division.field.matches.map(match => {
+              return {
+                ...match,
+                participants: match.participants.map(p =>
+                  p.id === event.participantId
+                    ? {
+                        ...p,
+                        queued: event.queued !== null,
+                        present: event.present !== null,
+                        ready: event.ready !== null
+                      }
+                    : p
+                )
+              };
+            })
           }
         }
       });

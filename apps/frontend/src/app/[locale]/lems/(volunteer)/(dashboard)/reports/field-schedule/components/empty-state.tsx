@@ -10,7 +10,9 @@ export function EmptyState() {
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
       <EventNoteOutlined sx={{ fontSize: 48, color: 'text.secondary', mb: 2 }} />
-      <Typography variant="h6" color="text.secondary">
+      <Typography variant="h6" sx={{
+        color: "text.secondary"
+      }}>
         {t('empty-state')}
       </Typography>
     </Box>

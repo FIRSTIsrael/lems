@@ -78,7 +78,19 @@ export async function authorizeRubricAccess(
 
   const sessionState = await db.judgingSessions.byId(session.id).state().get();
 
-  if (sessionState?.status !== 'completed') {
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    throw new MutationError(MutationErrorCode.FORBIDDEN, 'Division not found');
+  }
+
+  const eventSettings = await db.events.byId(division.event_id).getSettings();
+  const canOpenDuringSession = eventSettings?.open_rubrics_during_session === true;
+
+  const isSessionCompleted = sessionState?.status === 'completed';
+  const isSessionInProgress = sessionState?.status === 'in-progress';
+  const canAccess = isSessionCompleted || (canOpenDuringSession && isSessionInProgress);
+
+  if (!canAccess) {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
       'Cannot access rubric before the team session is completed'

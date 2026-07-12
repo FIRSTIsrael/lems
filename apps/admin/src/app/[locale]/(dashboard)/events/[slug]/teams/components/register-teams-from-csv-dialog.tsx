@@ -30,12 +30,17 @@ import {
   Info as InfoIcon,
   Description as DescriptionIcon
 } from '@mui/icons-material';
-import { FileUpload, apiFetch } from '@lems/shared';
+import { FileUpload, Flag, apiFetch } from '@lems/shared';
 import { Division } from '@lems/types/api/admin';
 
 interface RegisterTeamsCSVResult {
-  registered: Array<{ name: string; number: number; division: { name: string; color: string } }>;
-  skipped: Array<{ name: string; number: number; reason: string }>;
+  registered: Array<{
+    name: string;
+    number: string;
+    region: string;
+    division: { name: string; color: string };
+  }>;
+  skipped: Array<{ name: string; number: string; region: string; reason: string }>;
 }
 
 interface RegisterTeamsFromCSVDialogProps {
@@ -104,15 +109,28 @@ const RegisterForm: React.FC<{
   return (
     <Stack spacing={3}>
       <Paper elevation={0} variant="outlined" sx={{ p: 3 }}>
-        <Stack direction="row" spacing={2} alignItems="flex-start" mb={1}>
-          <Box pt={0.33}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: "flex-start",
+            mb: 1
+          }}>
+          <Box sx={{
+            pt: 0.33
+          }}>
             <InfoIcon color="primary" />
           </Box>
           <Box>
             <Typography variant="h6" gutterBottom>
               {t('instructions.title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary" paragraph>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                marginBottom: "16px"
+              }}>
               {t('instructions.description')}
             </Typography>
           </Box>
@@ -158,13 +176,12 @@ const RegisterForm: React.FC<{
         </Typography>
         <Paper variant="outlined" sx={{ p: 2, bgcolor: 'grey.50', fontFamily: 'monospace' }}>
           <Typography variant="body2" component="pre" dir="ltr" sx={{ whiteSpace: 'pre-wrap' }}>
-            {`1234
-5678
-9999`}
+            {`1234,IL
+5678,US
+9999,PL`}
           </Typography>
         </Paper>
       </Paper>
-
       {hasMultipleDivisions && (
         <FormControl fullWidth>
           <InputLabel>{registrationT('division')}</InputLabel>
@@ -207,7 +224,6 @@ const RegisterForm: React.FC<{
           </Select>
         </FormControl>
       )}
-
       <FileUpload
         label={t('fields.file.label')}
         accept=".csv,text/csv"
@@ -217,10 +233,10 @@ const RegisterForm: React.FC<{
         disabled={isSubmitting}
         placeholder={t('fields.file.placeholder')}
       />
-
       {error && <Alert severity="error">{t(`errors.${error}`)}</Alert>}
-
-      <Stack direction="row" justifyContent="center">
+      <Stack direction="row" sx={{
+        justifyContent: "center"
+      }}>
         <Button
           onClick={handleSubmit}
           variant="contained"
@@ -243,13 +259,15 @@ const SuccessView: React.FC<{
   const t = useTranslations('pages.events.teams.register-from-csv-dialog.success');
 
   return (
-    <Stack spacing={3} alignItems="center">
+    <Stack spacing={3} sx={{
+      alignItems: "center"
+    }}>
       <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-
-      <Typography variant="h6" textAlign="center">
+      <Typography variant="h6" sx={{
+        textAlign: "center"
+      }}>
         {t('title')}
       </Typography>
-
       {result.registered.length > 0 && (
         <Box>
           <Typography variant="subtitle2" gutterBottom>
@@ -274,6 +292,7 @@ const SuccessView: React.FC<{
                     primary={`#${team.number} - ${team.name}`}
                     slotProps={{ primary: { variant: 'body2' } }}
                   />
+                  <Flag region={team.region} size={16} />
                 </Box>
               </ListItem>
             ))}
@@ -288,7 +307,6 @@ const SuccessView: React.FC<{
           </List>
         </Box>
       )}
-
       {result.skipped.length > 0 && (
         <Box>
           <Typography variant="subtitle2" gutterBottom>
@@ -298,7 +316,16 @@ const SuccessView: React.FC<{
             {result.skipped.slice(0, 5).map(team => (
               <ListItem key={team.number} disablePadding>
                 <ListItemText
-                  primary={`#${team.number} - ${team.name}`}
+                  primary={
+                    <Stack direction="row" spacing={1} component="span" sx={{
+                      alignItems: "center"
+                    }}>
+                      <Typography variant="body2">
+                        #{team.number} - {team.name}
+                      </Typography>
+                      <Flag region={team.region} size={16} />
+                    </Stack>
+                  }
                   secondary={t(`skip-reasons.${team.reason}`)}
                   slotProps={{
                     primary: { variant: 'body2' },
@@ -318,7 +345,6 @@ const SuccessView: React.FC<{
           </List>
         </Box>
       )}
-
       <Button variant="contained" onClick={onClose} sx={{ minWidth: 200 }}>
         {t('close')}
       </Button>
@@ -348,7 +374,13 @@ export const RegisterTeamsFromCSVDialog: React.FC<RegisterTeamsFromCSVDialogProp
         sx={{ minWidth: 600, maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}
       >
         {divisionsLoading ? (
-          <Box display="flex" justifyContent="center" alignItems="center" minHeight="300px">
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "300px"
+            }}>
             <CircularProgress size={60} />
           </Box>
         ) : result ? (

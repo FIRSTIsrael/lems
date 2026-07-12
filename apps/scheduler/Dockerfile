@@ -1,5 +1,5 @@
 # Builder stage - Install dependencies
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Runtime stage - Minimal image
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 # Create non-root user
 RUN groupadd -r scheduler && useradd -r -g scheduler scheduler

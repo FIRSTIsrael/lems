@@ -19,6 +19,7 @@ import { ScoresheetsRepository } from './repositories/scoresheets';
 import { JudgingDeliberationsRepository } from './repositories/judging-deliberations';
 import { FinalDeliberationsRepository } from './repositories/final-deliberations';
 import { FaqsRepository } from './repositories/faqs-mongo';
+import { EventIntegrationsRepository } from './repositories/integrations';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -61,6 +62,7 @@ export class Database {
   public events: EventsRepository;
   public divisions: DivisionsRepository;
   public eventUsers: EventUsersRepository;
+  public integrations: EventIntegrationsRepository;
 
   public rooms: RoomsRepository;
   public judgingSessions: JudgingSessionsRepository;
@@ -128,6 +130,7 @@ export class Database {
     this.events = new EventsRepository(this.kysely);
     this.divisions = new DivisionsRepository(this.kysely, this.space, this.mongoDb);
     this.eventUsers = new EventUsersRepository(this.kysely);
+    this.integrations = new EventIntegrationsRepository(this.kysely);
 
     this.rooms = new RoomsRepository(this.kysely);
     this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);

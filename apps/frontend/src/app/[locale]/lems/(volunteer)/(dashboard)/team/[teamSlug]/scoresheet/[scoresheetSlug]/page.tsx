@@ -6,10 +6,10 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Container, Box, CircularProgress, Stack } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { PageHeader } from '../../../../components/page-header';
-import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
+import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import { useTeam } from '../../components/team-context';
 import { useEvent } from '../../../../../components/event-context';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetSwitcher } from './components/scoresheet-switcher';
@@ -92,7 +92,13 @@ export default function ScoresheetPage() {
             }
           >
             <RoleAuthorizer user={user} allowedRoles="head-referee">
-              <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="top">
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  justifyContent: "flex-end",
+                  alignItems: "top"
+                }}>
                 <EditButton scoresheet={scoresheet} isEditMode={forceEdit} />
                 <HeadRefViewToggle />
                 <ScoresheetSwitcher />

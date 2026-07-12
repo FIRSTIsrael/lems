@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { Team, Event } from '@lems/database';
 
 export interface AdminRequest extends Request {
   userId: string;
@@ -31,5 +32,20 @@ export interface PortalDivisionRequest extends Request {
 }
 
 export interface SchedulerRequest extends Request {
+  divisionId: string;
+}
+
+export interface FirstIsraelDashboardRequest extends Request {
+  teamSlug: string;
+}
+
+export interface FirstIsraelDashboardEventRequest extends FirstIsraelDashboardRequest {
+  divisionId: string;
+  eventSlug: string;
+}
+
+export interface ExportRequest extends Request {
+  team: Team;
+  event: Event;
   divisionId: string;
 }

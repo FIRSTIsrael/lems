@@ -119,10 +119,14 @@ const MissionClause: React.FC<MissionClauseProps> = ({
 
   return (
     <React.Fragment key={missionIndex}>
-      <Grid size={10} ml={3}>
+      <Grid size={10} sx={{
+        ml: 3
+      }}>
         <Typography>{description}</Typography>
       </Grid>
-      <Grid size={12} ml={3}>
+      <Grid size={12} sx={{
+        ml: 3
+      }}>
         {clause.type === 'boolean' ? (
           <BooleanClause
             missionId={missionId}

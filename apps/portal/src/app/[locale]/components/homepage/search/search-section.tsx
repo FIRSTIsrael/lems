@@ -55,9 +55,10 @@ export const SearchSection = () => {
         <Stack spacing={3}>
           <Typography
             variant="h5"
-            fontWeight="bold"
-            sx={{ fontSize: { xs: '1.25rem', sm: '1.5rem' } }}
-          >
+            sx={{
+              fontWeight: "bold",
+              fontSize: { xs: '1.25rem', sm: '1.5rem' }
+            }}>
             {t('title')}
           </Typography>
 
@@ -84,6 +85,12 @@ export const SearchSection = () => {
                       </Fade>
                     </InputAdornment>
                   )
+                },
+
+                htmlInput: {
+                  style: {
+                    color: theme.palette.text.primary
+                  }
                 }
               }}
               sx={{
@@ -92,13 +99,7 @@ export const SearchSection = () => {
                 '& .MuiOutlinedInput-root': {
                   paddingRight: 1
                 }
-              }}
-              inputProps={{
-                style: {
-                  color: theme.palette.text.primary
-                }
-              }}
-            />
+              }} />
 
             <Popper
               open={!!query && (isValid || isSearching)}
@@ -117,7 +118,9 @@ export const SearchSection = () => {
               >
                 {isSearching && (
                   <MenuItem disabled>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('searching')}...
                     </Typography>
                   </MenuItem>
@@ -133,7 +136,9 @@ export const SearchSection = () => {
 
                 {noResults && (
                   <MenuItem disabled>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t('no-results')}
                     </Typography>
                   </MenuItem>
@@ -142,8 +147,12 @@ export const SearchSection = () => {
                 {!noResults && (
                   <>
                     <MenuItem disabled sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
-                      <Stack direction="row" spacing={1} alignItems="center">
-                        <Typography variant="caption" color="text.secondary">
+                      <Stack direction="row" spacing={1} sx={{
+                        alignItems: "center"
+                      }}>
+                        <Typography variant="caption" sx={{
+                          color: "text.secondary"
+                        }}>
                           {t('results-count', { count: searchStats.total })}
                         </Typography>
                         {searchStats.teams > 0 && (
@@ -178,17 +187,24 @@ export const SearchSection = () => {
                         <Stack
                           direction="row"
                           spacing={2}
-                          alignItems="center"
-                          sx={{ width: '100%' }}
-                        >
+                          sx={{
+                            alignItems: "center",
+                            width: '100%'
+                          }}>
                           <SearchResultAvatar resultType={result.type} src={result.logoUrl} />
                           <Box sx={{ flex: 1, minWidth: 0 }}>
-                            <Typography variant="body2" fontWeight="medium" noWrap>
+                            <Typography variant="body2" noWrap sx={{
+                              fontWeight: "medium"
+                            }}>
                               {highlightText(result.title, query, theme)}
                             </Typography>
-                            <Stack direction="row" alignItems="center" spacing={0.5}>
+                            <Stack direction="row" spacing={0.5} sx={{
+                              alignItems: "center"
+                            }}>
                               <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                              <Typography variant="caption" color="text.secondary" noWrap>
+                              <Typography variant="caption" noWrap sx={{
+                                color: "text.secondary"
+                              }}>
                                 {highlightText(result.location, query, theme)}
                               </Typography>
                               <Flag region={result.region} size={20} />
@@ -207,7 +223,9 @@ export const SearchSection = () => {
 
                     {searchResults.length > 8 && (
                       <MenuItem disabled sx={{ justifyContent: 'center' }}>
-                        <Typography variant="caption" color="text.secondary">
+                        <Typography variant="caption" sx={{
+                          color: "text.secondary"
+                        }}>
                           {t('more-results', { count: searchResults.length - 8 })}
                         </Typography>
                       </MenuItem>

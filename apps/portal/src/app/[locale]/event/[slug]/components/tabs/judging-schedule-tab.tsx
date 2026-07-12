@@ -60,7 +60,6 @@ export const JudgingScheduleTab = () => {
           {t('quick-links.judging-schedule')}
         </Typography>
       </Box>
-
       {groupedSessions.length > 0 && (
         <Paper sx={{ p: 0, mt: 2, bgcolor: 'white' }}>
           <TableContainer sx={{ overflowX: 'auto' }}>
@@ -75,13 +74,21 @@ export const JudgingScheduleTab = () => {
               <TableHead>
                 <TableRow sx={{ bgcolor: 'grey.100' }}>
                   <TableCell width={80} align="center">
-                    <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {t('judging-schedule.start-time')}
                     </Typography>
                   </TableCell>
                   {rooms.map(room => (
                     <TableCell key={room.id} width={80} align="center">
-                      <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {room.name}
                       </Typography>
                     </TableCell>
@@ -93,10 +100,11 @@ export const JudgingScheduleTab = () => {
                   <TableRow key={sessionIndex} sx={{ bgcolor: 'white' }}>
                     <TableCell align="center">
                       <Typography
-                        fontFamily="monospace"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
-                      >
+                        sx={{
+                          fontFamily: "monospace",
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {dayjs(session.time).format('HH:mm')}
                       </Typography>
                     </TableCell>
@@ -124,9 +132,10 @@ export const JudgingScheduleTab = () => {
                             </Tooltip>
                           ) : (
                             <Typography
-                              color="text.disabled"
-                              fontSize={isMobile ? '0.75rem' : '1rem'}
-                            >
+                              sx={{
+                                color: "text.disabled",
+                                fontSize: isMobile ? '0.75rem' : '1rem'
+                              }}>
                               -
                             </Typography>
                           )}
@@ -140,10 +149,18 @@ export const JudgingScheduleTab = () => {
           </TableContainer>
         </Paper>
       )}
-
       {groupedSessions.length === 0 && (
-        <Box display="flex" alignItems="center" justifyContent="center" py={4} sx={{ px: 3 }}>
-          <Typography variant="body1" color="text.secondary">
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            py: 4,
+            px: 3
+          }}>
+          <Typography variant="body1" sx={{
+            color: "text.secondary"
+          }}>
             {t('judging-schedule.no-data')}
           </Typography>
         </Box>

@@ -24,32 +24,65 @@ export function ScoreSummary({ team }: ScoreSummaryProps) {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="subtitle1" fontWeight={600} sx={{ fontSize: '1.1rem' }}>
+      <Typography
+        variant="subtitle1"
+        sx={{
+          fontWeight: 600,
+          fontSize: '1.1rem'
+        }}>
         {t('field-comparison')}
       </Typography>
-
-      <Stack direction="row" spacing={2} justifyContent="space-around">
-        <Box textAlign="center">
-          <Typography variant="h5" color="success.main" fontWeight={600}>
+      <Stack direction="row" spacing={2} sx={{
+        justifyContent: "space-around"
+      }}>
+        <Box sx={{
+          textAlign: "center"
+        }}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: "success.main",
+              fontWeight: 600
+            }}>
             {comparison.wins}
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography variant="h5" sx={{
+            color: "text.secondary"
+          }}>
             {t('wins')}
           </Typography>
         </Box>
-        <Box textAlign="center">
-          <Typography variant="h5" color="warning.main" fontWeight={600}>
+        <Box sx={{
+          textAlign: "center"
+        }}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: "warning.main",
+              fontWeight: 600
+            }}>
             {comparison.ties}
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography variant="h5" sx={{
+            color: "text.secondary"
+          }}>
             {t('ties')}
           </Typography>
         </Box>
-        <Box textAlign="center">
-          <Typography variant="h5" color="error.main" fontWeight={600}>
+        <Box sx={{
+          textAlign: "center"
+        }}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: "error.main",
+              fontWeight: 600
+            }}>
             {comparison.losses}
           </Typography>
-          <Typography variant="h5" color="text.secondary">
+          <Typography variant="h5" sx={{
+            color: "text.secondary"
+          }}>
             {t('losses')}
           </Typography>
         </Box>

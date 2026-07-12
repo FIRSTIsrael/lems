@@ -23,7 +23,7 @@ router.get('/teams', async (req: SchedulerRequest, res) => {
 
 router.get('/team/:teamSlug', async (req: SchedulerRequest, res) => {
   const { teamSlug } = req.params;
-  if (!teamSlug) {
+  if (!teamSlug || typeof teamSlug !== 'string') {
     res.status(400).json({ error: 'Team slug is required' });
     return;
   }

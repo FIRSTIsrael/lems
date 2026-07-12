@@ -11,6 +11,7 @@ export interface EventsTable {
   location: string;
   region: string; // ISO 3166 alpha-2 country code (e.g., 'IL', 'US')
   coordinates: string | null; // PostGIS point stored as string
+  timezone: string; // IANA timezone identifier (e.g., 'Europe/Warsaw', 'Asia/Jerusalem')
   season_id: string; // UUID foreign key to seasons.id
 }
 
@@ -27,6 +28,7 @@ export interface EventSummary {
   date: string;
   location: string;
   region: string;
+  timezone: string;
   coordinates: string | null;
   team_count: number;
   divisions: {
@@ -38,6 +40,7 @@ export interface EventSummary {
   visible: boolean;
   published: boolean;
   completed: boolean;
+  official: boolean;
   is_fully_set_up: boolean;
   assigned_admin_ids: string[];
 }
@@ -50,9 +53,11 @@ export interface EventDetails {
   end_date: Date;
   location: string;
   region: string;
+  timezone: string;
   coordinates: string | null;
   season_id: string;
   divisions: DivisionSummary[];
   season_name: string;
   season_slug: string;
+  official: boolean;
 }

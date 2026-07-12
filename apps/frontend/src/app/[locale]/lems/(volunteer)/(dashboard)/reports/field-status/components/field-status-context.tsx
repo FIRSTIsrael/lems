@@ -44,24 +44,18 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
 
     const queuedMatches = matches.filter(m => m.called && m.status === 'not-started');
 
-    const currentStage = field.currentStage;
-
     const notStartedMatches = matches
-      .filter(m => m.status === 'not-started')
+      .filter(m => m.status === 'not-started' && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)));
 
-    const futureStageMatches = notStartedMatches.filter(
-      m => dayjs(m.scheduledTime).isAfter(now) && m.stage === currentStage
-    );
-    const stageMatches = notStartedMatches.filter(m => m.stage === currentStage);
-
-    const upcomingMatches = (
-      futureStageMatches.length > 0
-        ? futureStageMatches
-        : stageMatches.length > 0
-          ? stageMatches
-          : notStartedMatches
-    ).slice(0, 10);
+    // Show matches within 30 minutes from now
+    const upcomingMatches = notStartedMatches
+      .filter(m => {
+        const scheduledTime = dayjs(m.scheduledTime);
+        const minutesFromNow = scheduledTime.diff(now, 'minute', true);
+        return minutesFromNow <= 30;
+      })
+      .slice(0, 10);
 
     const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
 

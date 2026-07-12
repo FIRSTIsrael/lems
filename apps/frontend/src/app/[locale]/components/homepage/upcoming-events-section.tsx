@@ -38,7 +38,9 @@ export const UpcomingEventsSection: React.FC = () => {
       endDate: new Date(event.endDate),
       coordinates: null,
       location: '', // Not fetched anymore
+      timezone: '',
       region: event.region,
+      official: event.official,
       seasonId: '' // Placeholder - not available from current query
     })) || [];
 
@@ -49,7 +51,13 @@ export const UpcomingEventsSection: React.FC = () => {
   if (upcomingEvents.length === 0) {
     return (
       <Box>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: "center",
+            mb: 3
+          }}>
           <CalendarIcon
             sx={{
               color: 'primary.main',
@@ -58,18 +66,18 @@ export const UpcomingEventsSection: React.FC = () => {
           />
           <Typography
             variant="h4"
-            fontWeight="700"
             sx={{
+              fontWeight: "700",
               fontSize: { xs: '1.75rem', md: '2.125rem' }
-            }}
-          >
+            }}>
             {t('upcoming-events-title')}
           </Typography>
         </Stack>
-
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5, mb: 2 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+          <Typography variant="h6" gutterBottom sx={{
+            color: "text.secondary"
+          }}>
             {t('no-upcoming-events')}
           </Typography>
           <Button variant="contained" onClick={() => router.push('/events')} sx={{ mt: 3 }}>
@@ -82,7 +90,13 @@ export const UpcomingEventsSection: React.FC = () => {
 
   return (
     <Box>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          mb: 3
+        }}>
         <CalendarIcon
           sx={{
             color: 'primary.main',
@@ -91,25 +105,27 @@ export const UpcomingEventsSection: React.FC = () => {
         />
         <Typography
           variant="h4"
-          fontWeight="700"
           sx={{
+            fontWeight: "700",
             fontSize: { xs: '1.75rem', md: '2.125rem' }
-          }}
-        >
+          }}>
           {t('upcoming-events-title')}
         </Typography>
       </Stack>
-
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, fontSize: '1.125rem' }}>
+      <Typography
+        variant="body1"
+        sx={{
+          color: "text.secondary",
+          mb: 3,
+          fontSize: '1.125rem'
+        }}>
         {t('upcoming-events-subtitle')}
       </Typography>
-
       <Stack spacing={3}>
         {upcomingEvents.map(event => (
           <EventCard key={event.id} event={event} variant="upcoming" />
         ))}
       </Stack>
-
       <Box sx={{ mt: 4, textAlign: 'center' }}>
         <Button variant="outlined" onClick={() => router.push('/events')}>
           {t('view-all')}

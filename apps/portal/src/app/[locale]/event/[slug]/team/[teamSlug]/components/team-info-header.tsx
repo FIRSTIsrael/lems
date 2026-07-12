@@ -24,7 +24,13 @@ export const TeamInfoHeader: React.FC = () => {
         flexDirection: 'column'
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          mb: 2
+        }}>
         <Button
           component={Link}
           href={`/event/${event.slug}`}
@@ -34,27 +40,50 @@ export const TeamInfoHeader: React.FC = () => {
         >
           {t('header.back-to-event')}
         </Button>
-        <Typography variant="body2" color="text.secondary">
+        <Typography variant="body2" sx={{
+          color: "text.secondary"
+        }}>
           {event.name} {division.name && `• ${division.name}`}
         </Typography>
       </Stack>
-
-      <Stack direction="row" alignItems="center" spacing={3}>
+      <Stack
+        direction="row"
+        spacing={3}
+        component={Link}
+        href={`/teams/${team.slug}`}
+        sx={{
+          alignItems: "center",
+          textDecoration: 'none',
+          color: 'inherit'
+        }}>
         <Avatar
           variant="square"
           src={team.logoUrl ?? '/assets/default-avatar.svg'}
           sx={{ width: 80, height: 80, objectFit: 'cover' }}
         />
         <Box sx={{ flex: 1 }}>
-          <Typography variant="h4" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography
+            variant="h4"
+            sx={{
+              fontWeight: "bold",
+              mb: 1
+            }}>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {team.name} #{team.number}
               <Flag region={team.region} size={24} />
             </Box>
           </Typography>
-          <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 1 }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: "center",
+              mt: 1
+            }}>
             <LocationIcon fontSize="small" color="action" />
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant="body1" sx={{
+              color: "text.secondary"
+            }}>
               {team.city} • {team.affiliation}
             </Typography>
           </Stack>

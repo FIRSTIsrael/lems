@@ -11,8 +11,7 @@ import {
   TableRow,
   Paper,
   Typography,
-  Box,
-  Tooltip
+  Box
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../../lib/time/hooks';
@@ -33,19 +32,20 @@ const TeamsCell = ({ participants }: TeamsCellProps) => {
         flexWrap: 'wrap'
       }}
     >
-      {participants.map((participant, idx) => {
-        const { team, table } = participant;
-        const teamNumber = team?.number ? `#${team.number}` : '—';
+      {[...participants]
+        .sort((a, b) => a.table.name.localeCompare(b.table.name, undefined, { numeric: true }))
+        .map((participant, idx) => {
+          const { team, table } = participant;
+          const teamDisplay = team ? `#${team.number} ${team.name}` : '—';
 
-        return (
-          <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
-            <Typography
-              variant="body2"
-              sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
-            >
-              {table?.name || 'Unknown'}
-            </Typography>
-            <Tooltip title={team ? `${team.name}` : ''} arrow>
+          return (
+            <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+              <Typography
+                variant="body2"
+                sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
+              >
+                {table?.name || 'Unknown'}
+              </Typography>
               <Typography
                 variant="body2"
                 sx={{
@@ -55,12 +55,11 @@ const TeamsCell = ({ participants }: TeamsCellProps) => {
                   fontSize: '1.1rem'
                 }}
               >
-                {teamNumber}
+                {teamDisplay}
               </Typography>
-            </Tooltip>
-          </Box>
-        );
-      })}
+            </Box>
+          );
+        })}
     </Box>
   );
 };

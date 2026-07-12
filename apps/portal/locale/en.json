@@ -20,8 +20,10 @@
         "view-event": "View Event",
         "view-results": "View Results",
         "view-details": "View Details",
+        "more-events": "And {count} more {variant} events...",
         "status-completed": "Completed",
-        "status-upcoming": "Upcoming"
+        "status-upcoming": "Upcoming",
+        "unofficial-event": "Unofficial Event"
       },
       "search": {
         "title": "Search Teams & Events",
@@ -113,10 +115,13 @@
         "match-results": "Match Results",
         "match-number": "Match {number}",
         "robot-game-rank": "Robot Game Rank",
+        "award": "Award",
         "event-performance": "Event results",
         "view-details": "View Details",
         "event-in-progress": "Event in Progress",
-        "view-live-data": "View Live Data"
+        "view-live-data": "View Live Data",
+        "view-event-details": "View Event Details",
+        "view-event-results": "View Event Results"
       }
     },
     "teams": {
@@ -222,6 +227,7 @@
         "highest-score": "Highest Score",
         "robot-rank": "Robot Game Rank",
         "robot-game-rank": "Robot Game Rank",
+        "award": "Award",
         "no-scores": "No scores available yet",
         "no-data": "No performance data available yet"
       },
@@ -240,7 +246,7 @@
         "field-matches": "Field Matches",
         "judging-sessions": "Judging Session",
         "match-type": "{stage} Match #{number} - Table {table}",
-        "judging-session": "Judging Session #{number} - {room}",
+        "judging-session": "Judging Session - Room {room}",
         "no-matches": "No matches scheduled",
         "no-judging": "No judging sessions scheduled",
         "no-schedule": "No schedule available"

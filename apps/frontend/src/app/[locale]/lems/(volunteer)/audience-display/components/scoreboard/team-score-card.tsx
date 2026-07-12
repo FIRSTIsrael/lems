@@ -45,7 +45,12 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
         transition: 'all 0.3s ease'
       }}
     >
-      <Stack alignItems="flex-start" justifyContent="center" spacing={1}>
+      <Stack
+        spacing={1}
+        sx={{
+          alignItems: "flex-start",
+          justifyContent: "center"
+        }}>
         <Typography
           sx={{
             fontSize: { xs: '0.9rem', md: '1rem', lg: '1.15rem' },
@@ -69,7 +74,6 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
           {teamName}
         </Typography>
       </Stack>
-
       <Typography
         sx={{
           fontSize: escalated

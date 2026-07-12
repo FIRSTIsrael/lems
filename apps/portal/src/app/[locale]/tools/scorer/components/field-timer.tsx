@@ -138,7 +138,6 @@ export const FieldTimer = () => {
           <TimerIcon />
         </Fab>
       )}
-
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
           ref={paperRef}
@@ -191,10 +190,13 @@ export const FieldTimer = () => {
           </IconButton>
 
           <Stack
-            sx={{ px: 3, py: 2, textAlign: 'center' }}
-            alignItems="center"
-            justifyContent="center"
-          >
+            sx={{
+              alignItems: "center",
+              justifyContent: "center",
+              px: 3,
+              py: 2,
+              textAlign: 'center'
+            }}>
             <Typography
               variant="h2"
               sx={{
@@ -209,7 +211,13 @@ export const FieldTimer = () => {
               {formatTime(timeRemaining)}
             </Typography>
 
-            <Stack direction="row" spacing={1} justifyContent="center" sx={{ p: 1.5 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                justifyContent: "center",
+                p: 1.5
+              }}>
               <IconButton
                 onClick={handlePlayPause}
                 disabled={isFinished || justStarted}

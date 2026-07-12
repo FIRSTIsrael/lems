@@ -122,7 +122,6 @@ export function OptionalAwardsDataGrid() {
         field: 'room',
         headerName: t('table-room'),
         width: 80,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
@@ -132,7 +131,6 @@ export function OptionalAwardsDataGrid() {
         field: 'teamDisplay',
         headerName: t('table-team'),
         width: 110,
-        sortable: false,
         filterable: false,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
@@ -158,7 +156,6 @@ export function OptionalAwardsDataGrid() {
         field: 'coreValuesScore',
         headerName: t('table-core-values'),
         width: 100,
-        sortable: false,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
@@ -166,19 +163,19 @@ export function OptionalAwardsDataGrid() {
       },
       ...Object.keys(teams[0]?.rubricsFields?.['core-values']).map(
         label =>
-          ({
+          (({
             field: label,
             headerName: label,
             width: FIELD_COLUMN_WIDTH,
-            sortable: false,
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
+
             renderCell: params => {
               const value = params.row.rubricsFields['core-values'][label];
               return value !== null ? value : '-';
             }
-          }) as GridColDef<EnrichedTeam>
+          }) as GridColDef<EnrichedTeam>)
       ),
 
       // GP score columns (only shown for core-values category)
@@ -190,25 +187,24 @@ export function OptionalAwardsDataGrid() {
         })
         .map(
           gpKey =>
-            ({
+            (({
               field: gpKey,
               headerName: gpKey,
               width: FIELD_COLUMN_WIDTH,
-              sortable: false,
               filterable: false,
               headerAlign: 'center' as const,
               align: 'center' as const,
+
               renderCell: params => {
                 const value = params.row.gpScores[gpKey];
                 return value !== null ? value : '-';
               }
-            }) as GridColDef<EnrichedTeam>
+            }) as GridColDef<EnrichedTeam>)
         ),
       {
         field: 'nominations',
         headerName: t('table-nominations'),
         width: 200,
-        sortable: false,
         filterable: false,
         align: 'left',
         headerAlign: 'center',

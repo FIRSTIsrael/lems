@@ -77,14 +77,13 @@ export const ScoreboardDisplay = () => {
         }}
       >
         <Stack
-          maxWidth="80vw"
           spacing={2}
           sx={{
+            maxWidth: "80vw",
+            height: "90%",
+            width: "100%",
             animation: 'fadeIn 0.6s ease-out'
-          }}
-          height="90%"
-          width="100%"
-        >
+          }}>
           {(scoreboardSettings?.showActiveMatch as boolean) && <ActiveMatch />}
           {(scoreboardSettings?.showPreviousMatch as boolean) && <PreviousMatch />}
           <ScoresTable />

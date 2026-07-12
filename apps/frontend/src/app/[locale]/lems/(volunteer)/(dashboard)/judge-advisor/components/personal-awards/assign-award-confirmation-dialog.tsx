@@ -13,6 +13,7 @@ import {
   alpha
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useAwardTranslations } from '@lems/localization';
 import WarningIcon from '@mui/icons-material/Warning';
 
 interface AssignAwardConfirmationDialogProps {
@@ -33,6 +34,7 @@ export function AssignAwardConfirmationDialog({
   onCancel
 }: AssignAwardConfirmationDialogProps) {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
+  const { getName } = useAwardTranslations();
   const theme = useTheme();
 
   return (
@@ -47,7 +49,9 @@ export function AssignAwardConfirmationDialog({
       </DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {t('confirm-assignment-message')}
           </Typography>
           <Box
@@ -60,15 +64,19 @@ export function AssignAwardConfirmationDialog({
           >
             <Stack spacing={1}>
               <Box>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('award-label')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  {awardName}
+                  {awardName ? getName(awardName) : ''}
                 </Typography>
               </Box>
               <Box>
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('winner-label')}
                 </Typography>
                 <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
@@ -77,7 +85,9 @@ export function AssignAwardConfirmationDialog({
               </Box>
             </Stack>
           </Box>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{
+            color: "text.secondary"
+          }}>
             {t('confirm-assignment-warning')}
           </Typography>
         </Stack>

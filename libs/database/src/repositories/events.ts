@@ -313,6 +313,7 @@ class EventsSelector {
           'events.location',
           'events.region',
           'events.coordinates',
+          'events.timezone',
           'events.season_id'
         ])
         .distinctOn('events.id')
@@ -349,6 +350,7 @@ class EventsSelector {
         'events.location',
         'events.region',
         'events.season_id',
+        'events.timezone',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -357,7 +359,8 @@ class EventsSelector {
         'divisions.has_schedule',
         'event_settings.visible',
         'event_settings.published',
-        'event_settings.completed'
+        'event_settings.completed',
+        'event_settings.official'
       ])
       .select(eb => [
         eb.fn.count('team_divisions.team_id').as('team_count'),
@@ -385,6 +388,7 @@ class EventsSelector {
         'events.location',
         'events.region',
         'events.season_id',
+        'events.timezone',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -392,10 +396,12 @@ class EventsSelector {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published', 
-        'event_settings.completed'
+        'event_settings.published',
+        'event_settings.completed',
+        'event_settings.official'
       ])
-      .groupBy(sql`events.coordinates::text`);
+      .groupBy(sql`events.coordinates::text`)
+      .orderBy('events.start_date', 'asc');
 
     const result = await query.execute();
 
@@ -441,12 +447,14 @@ class EventsSelector {
           slug: row.slug,
           date: row.start_date.toISOString(),
           location: row.location,
+          timezone: row.timezone,
           region: row.region,
           team_count: 0,
           divisions: [],
           visible: row.visible,
           published: row.published,
           completed: row.completed,
+          official: row.official,
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
           season_id: row.season_id
         });
@@ -581,6 +589,7 @@ export class EventsRepository {
         'events.location',
         'events.region',
         'events.season_id',
+        'events.timezone',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -602,6 +611,7 @@ export class EventsRepository {
         'events.location',
         'events.region',
         'events.season_id',
+        'events.timezone',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -611,7 +621,8 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .groupBy(sql`events.coordinates::text`);
+      .groupBy(sql`events.coordinates::text`)
+      .orderBy('events.start_date', 'asc');
 
     const eventRows = await query.execute();
 
@@ -640,6 +651,7 @@ export class EventsRepository {
           name: row.name,
           slug: row.slug,
           date: row.start_date.toISOString(),
+          timezone: row.timezone,
           location: row.location,
           region: row.region,
           visible: row.visible,

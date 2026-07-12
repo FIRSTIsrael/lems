@@ -50,7 +50,13 @@ export const ScoresheetIncompleteAlert: React.FC<ScoresheetIncompleteAlertProps>
     >
       <AlertTitle>{t('incomplete-title')}</AlertTitle>
       <Typography variant="body2">{message}</Typography>
-      <Box mt={1} color="inherit" fontSize="0.875rem" fontWeight={500}>
+      <Box
+        sx={{
+          mt: 1,
+          color: "inherit",
+          fontSize: "0.875rem",
+          fontWeight: 500
+        }}>
         {t('incomplete-action')}
       </Box>
     </Alert>

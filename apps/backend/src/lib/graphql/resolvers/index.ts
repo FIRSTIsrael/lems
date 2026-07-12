@@ -19,6 +19,7 @@ import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingAdvancementPercentageResolver } from './divisions/judging/judging-advancement-percentage';
+import { judgingOpenRubricsDuringSessionResolver } from './divisions/judging/judging-open-rubrics-during-session';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
@@ -35,6 +36,7 @@ import {
   scoresheetResolvers
 } from './field/scoresheet';
 import { teamArrivalResolver } from './divisions/team-arrival';
+import { teamProfileDocumentUrlResolver } from './divisions/team-profile-document-url';
 import { teamRubricsResolver } from './divisions/team-rubrics';
 import { teamJudgingSessionResolver } from './divisions/team-judging-session';
 import { teamScoresheetsResolver } from './divisions/team-scoresheets';
@@ -121,6 +123,7 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     advancementPercentage: judgingAdvancementPercentageResolver,
+    openRubricsDuringSession: judgingOpenRubricsDuringSessionResolver,
     rubrics: judgingRubricsResolver,
     deliberation: judgingDeliberationResolver,
     finalDeliberation: judgingFinalDeliberationResolver,
@@ -151,6 +154,7 @@ export const resolvers = {
   },
   Team: {
     arrived: teamArrivalResolver,
+    profileDocumentUrl: teamProfileDocumentUrlResolver,
     rubrics: teamRubricsResolver,
     judgingSession: teamJudgingSessionResolver,
     scoresheets: teamScoresheetsResolver,

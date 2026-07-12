@@ -11,10 +11,11 @@ export function validateOptionalAwardsStage(
   optionalAwards: FinalDeliberationAwards['optionalAwards'],
   divisionAwards: Award[]
 ): Promise<void> {
-  const divisionOptionalAwards = divisionAwards.filter(award =>
-    (OPTIONAL_AWARDS as readonly string[])
-      .filter(name => name !== 'excellence-in-engineering')
-      .includes(award.name)
+  const divisionOptionalAwards = divisionAwards.filter(
+    award =>
+      (OPTIONAL_AWARDS as readonly string[])
+        .filter(name => name !== 'excellence-in-engineering')
+        .includes(award.name) && award.type === 'TEAM'
   );
   for (const award of divisionOptionalAwards) {
     if (!optionalAwards[award.name] || optionalAwards[award.name].length === 0) {

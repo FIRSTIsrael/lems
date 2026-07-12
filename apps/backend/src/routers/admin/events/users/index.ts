@@ -32,6 +32,11 @@ router.delete(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminEventRequest, res) => {
     const { adminId } = req.params;
+    if (!adminId || typeof adminId !== 'string') {
+      res.status(400).json({ error: 'Admin ID is required' });
+      return;
+    }
+
     if (adminId === req.userId) {
       res.status(400).json({ error: 'CANNOT_REMOVE_SELF' });
       return;

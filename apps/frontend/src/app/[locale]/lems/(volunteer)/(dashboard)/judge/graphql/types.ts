@@ -16,6 +16,7 @@ export interface Team {
   logoUrl?: string | null;
   arrived: boolean;
   location?: string;
+  profileDocumentUrl?: string | null;
 }
 
 export interface CategorizedRubrics extends Record<
@@ -44,6 +45,7 @@ export interface Judging {
   sessions: JudgingSession[];
   rooms: string[];
   sessionLength: number;
+  openRubricsDuringSession: boolean;
 }
 
 export interface QueryData {

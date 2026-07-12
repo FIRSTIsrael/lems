@@ -106,10 +106,16 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
 
   return (
     <Paper sx={{ p: 4, mt: 2, borderRadius: 2 }}>
-      <Typography variant="h2" fontSize="1.5rem" fontWeight={500} pb={4} textAlign="center">
+      <Typography
+        variant="h2"
+        sx={{
+          fontSize: "1.5rem",
+          fontWeight: 500,
+          pb: 4,
+          textAlign: "center"
+        }}>
         {t('title')}
       </Typography>
-
       <TableContainer
         sx={{ borderRadius: 2, border: '1px solid rgba(0,0,0,0.2)', overflow: 'hidden' }}
       >
@@ -130,7 +136,11 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
                     ...(index === columns.length - 1 && { borderTopRightRadius: 8 })
                   }}
                 >
-                  <Typography fontSize="1em" fontWeight={700}>
+                  <Typography
+                    sx={{
+                      fontSize: "1em",
+                      fontWeight: 700
+                    }}>
                     {t(`level-${column.value}`)}
                   </Typography>
                 </TableCell>
@@ -218,7 +228,6 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
           </TableBody>
         </Table>
       </TableContainer>
-
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
         <Button
           variant="contained"

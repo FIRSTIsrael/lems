@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useUser } from '../../../../../../components/user-context';
+import { useUser } from '../../../../../components/user-context';
 import type { ScoresheetItem } from './graphql';
 import { validateScoresheet, type ScoresheetValidationResult } from './scoresheet-validation';
 

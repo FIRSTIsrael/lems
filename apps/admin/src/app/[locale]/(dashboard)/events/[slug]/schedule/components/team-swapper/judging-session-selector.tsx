@@ -34,7 +34,12 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
           height: '100%'
         }}
       >
-        <Typography variant="body1" color="text.secondary" textAlign="center">
+        <Typography
+          variant="body1"
+          sx={{
+            color: "text.secondary",
+            textAlign: "center"
+          }}>
           {t('select-team-to-continue')}
         </Typography>
       </Box>
@@ -46,7 +51,6 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
       <Typography variant="h6" gutterBottom>
         {t('select-judging-time')}
       </Typography>
-
       {isLoading ? (
         <Box sx={{ textAlign: 'center', py: 2 }}>
           <CircularProgress size={24} />
@@ -94,11 +98,20 @@ export const JudgingSessionSelector: React.FC<JudgingSessionSelectorProps> = ({
                       }}
                     >
                       <CardContent sx={{ py: 1.5, '&:last-child': { pb: 1.5 } }}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="body2" fontWeight={500}>
+                        <Stack
+                          direction="row"
+                          sx={{
+                            justifyContent: "space-between",
+                            alignItems: "center"
+                          }}>
+                          <Typography variant="body2" sx={{
+                            fontWeight: 500
+                          }}>
                             {room.name}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary">
+                          <Typography variant="body2" sx={{
+                            color: "text.secondary"
+                          }}>
                             {isEmpty
                               ? t('empty')
                               : isCurrentTeam

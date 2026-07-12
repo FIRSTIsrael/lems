@@ -2,7 +2,8 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Chip, Avatar } from '@mui/material';
+import { Box, Typography, Chip, Avatar, IconButton, Tooltip } from '@mui/material';
+import { Description } from '@mui/icons-material';
 import type { Team, RubricFieldValue } from '../graphql/types';
 
 interface TeamInfoProps {
@@ -36,14 +37,29 @@ export function TeamInfo({ team }: TeamInfoProps) {
 
   return (
     <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1 }}>
-      <Typography variant="h6" fontWeight={600}>
-        {team.name} - #{team.number}
-      </Typography>
-      <Typography variant="h6" color="text.secondary">
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <Typography variant="h6" sx={{
+          fontWeight: 600
+        }}>
+          {team.name} - #{team.number}
+        </Typography>
+        {team.profileDocumentUrl && (
+          <Tooltip title={t('view-profile-document')}>
+            <IconButton href={team.profileDocumentUrl} target="_blank" size="small" color="primary">
+              <Description fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
+      <Typography variant="h6" sx={{
+        color: "text.secondary"
+      }}>
         {team.affiliation}
       </Typography>
       {team.judgingSession?.room && (
-        <Typography variant="h6" color="text.secondary">
+        <Typography variant="h6" sx={{
+          color: "text.secondary"
+        }}>
           {t('judging-room')}: {team.judgingSession.room.name}
         </Typography>
       )}

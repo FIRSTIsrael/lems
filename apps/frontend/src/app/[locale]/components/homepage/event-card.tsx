@@ -10,10 +10,17 @@ import {
   Stack,
   Box,
   Typography,
+  Chip,
   alpha,
   useTheme
 } from '@mui/material';
-import { CalendarToday as CalendarIcon, ArrowForward as ArrowIcon } from '@mui/icons-material';
+import {
+  CalendarToday as CalendarIcon,
+  ArrowForward as ArrowForwardIcon,
+  ArrowBack as ArrowBackIcon,
+  Celebration as CelebrationIcon
+} from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 import { Flag } from '@lems/shared';
 import { Event } from '@lems/types/api/lems';
 
@@ -64,17 +71,31 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
       sx={{
         cursor: 'pointer',
         transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
         ...cardStyles
       }}
     >
-      <CardActionArea onClick={handleClick}>
-        <CardContent sx={{ p: { xs: 2.5, md: 3 }, position: 'relative' }}>
+      <CardActionArea
+        onClick={handleClick}
+        sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+      >
+        <CardContent
+          sx={{
+            p: { xs: 2, md: 2.5 },
+            position: 'relative',
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
           {isLive && (
             <Box
-              position="absolute"
-              top={16}
-              right={16}
               sx={{
+                position: "absolute",
+                top: 16,
+                right: 16,
                 display: 'flex',
                 alignItems: 'center',
                 gap: 1,
@@ -85,8 +106,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 borderRadius: 1,
                 fontSize: '0.875rem',
                 fontWeight: 600
-              }}
-            >
+              }}>
               <Box
                 component="span"
                 sx={{
@@ -105,26 +125,44 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
             </Box>
           )}
 
-          <Stack spacing={2.5}>
+          <Stack spacing={1.5}>
             {/* Event Name */}
             <Box sx={{ pr: isLive ? 10 : 0 }}>
-              <Typography
-                variant="h5"
-                fontWeight="700"
-                gutterBottom
-                sx={{
-                  fontSize: { xs: '1.25rem', md: '1.5rem' }
-                }}
-              >
-                {event.name}
-              </Typography>
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    fontWeight: "700",
+                    fontSize: { xs: '1.25rem', md: '1.5rem' }
+                  }}>
+                  {event.name}
+                </Typography>
+                {!event.official && (
+                  <Chip
+                    icon={<CelebrationIcon />}
+                    label={t('unofficial-event')}
+                    size="small"
+                    variant="outlined"
+                    sx={{ fontWeight: 'medium' }}
+                  />
+                )}
+              </Stack>
             </Box>
 
             {/* Event Details */}
-            <Stack spacing={1.5}>
-              <Stack direction="row" alignItems="center" spacing={1.5}>
+            <Stack spacing={1}>
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <CalendarIcon fontSize="small" sx={{ color: 'text.secondary' }} />
-                <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "0.95rem"
+                  }}>
                   {new Date(event.startDate).toLocaleDateString(locale, {
                     weekday: 'long',
                     year: 'numeric',
@@ -134,9 +172,16 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 </Typography>
               </Stack>
 
-              <Stack direction="row" alignItems="center" spacing={1.5}>
+              <Stack direction="row" spacing={1} sx={{
+                alignItems: "center"
+              }}>
                 <Flag region={event.region} size={18} />
-                <Typography variant="body2" color="text.secondary" fontSize="0.95rem">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "0.95rem"
+                  }}>
                   {event.region}
                 </Typography>
               </Stack>
@@ -145,18 +190,19 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
             {/* Action indicator */}
             <Stack
               direction="row"
-              alignItems="center"
               spacing={1}
               sx={{
+                alignItems: "center",
                 color: isLive ? 'error.main' : 'primary.main',
                 fontWeight: 600,
                 fontSize: '0.95rem'
-              }}
-            >
-              <Typography variant="body2" fontWeight="600">
+              }}>
+              <Typography variant="body2" sx={{
+                fontWeight: "600"
+              }}>
                 {isLive ? t('view-event') : t('view-details')}
               </Typography>
-              <ArrowIcon fontSize="small" />
+              <DirectionalIcon ltr={ArrowForwardIcon} rtl={ArrowBackIcon} fontSize="small" />
             </Stack>
           </Stack>
         </CardContent>

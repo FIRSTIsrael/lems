@@ -36,7 +36,9 @@ export const AwardsValidation = () => {
     <Paper sx={{ p: 3, mb: 3 }}>
       <Stack spacing={3}>
         {/* Header */}
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{
+          alignItems: "center"
+        }}>
           <Box sx={{ color: `${validationColor}.main` }}>{validationIcon}</Box>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {t('title')}
@@ -61,14 +63,17 @@ export const AwardsValidation = () => {
           <Box>
             <Stack
               direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ mb: 1 }}
-            >
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1
+              }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 {t('minimum.title')}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {minimumAwards} {t('awards')} ({minimumPercentage}%)
               </Typography>
             </Stack>
@@ -86,7 +91,13 @@ export const AwardsValidation = () => {
                 }
               }}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                mt: 0.5,
+                display: 'block'
+              }}>
               {t('minimum.description')}
             </Typography>
           </Box>
@@ -95,14 +106,17 @@ export const AwardsValidation = () => {
           <Box>
             <Stack
               direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ mb: 1 }}
-            >
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 1
+              }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                 {t('maximum.title')}
               </Typography>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {maximumAwards} {t('awards')} ({maximumPercentage}%)
               </Typography>
             </Stack>
@@ -120,7 +134,13 @@ export const AwardsValidation = () => {
                 }
               }}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                mt: 0.5,
+                display: 'block'
+              }}>
               {t('maximum.description')}
             </Typography>
           </Box>
@@ -139,13 +159,19 @@ export const AwardsValidation = () => {
             {t('rules.title')}
           </Typography>
           <Stack spacing={0.5}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               • {t('rules.teams-count')}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               • {t('rules.minimum-requirement')}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               • {t('rules.maximum-requirement')}
             </Typography>
           </Stack>

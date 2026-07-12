@@ -2,18 +2,22 @@
 
 import dayjs from 'dayjs';
 import Link from 'next/link';
-import { Box, Typography, Stack } from '@mui/material';
-import { CalendarToday, LocationOn } from '@mui/icons-material';
+import { useTranslations } from 'next-intl';
+import { Box, Typography, Stack, Chip } from '@mui/material';
+import { CalendarToday, LocationOn, Celebration as CelebrationIcon } from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
 interface EventHeaderProps {
   eventData: EventDetails;
 }
 
 export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
-  const { seasonName, seasonSlug, name: eventName, startDate, location } = eventData;
+  const { seasonName, seasonSlug, name: eventName, startDate, location, official } = eventData;
+  const t = useTranslations('pages.index.events');
 
   return (
-    <Stack spacing={1} mb={3}>
+    <Stack spacing={1} sx={{
+      mb: 3
+    }}>
       <Link href={`/events?seasonSlug=${seasonSlug}`} style={{ textDecoration: 'none' }}>
         <Typography
           variant="body2"
@@ -22,22 +26,49 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
           {seasonName}
         </Typography>
       </Link>
-      <Typography variant="h2">{eventName}</Typography>
-
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center"
+      }}>
+        <Typography variant="h2">{eventName}</Typography>
+        {!official && (
+          <Chip
+            icon={<CelebrationIcon />}
+            label={t('unofficial-event')}
+            variant="outlined"
+            sx={{ fontWeight: 'medium' }}
+          />
+        )}
+      </Stack>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         spacing={{ xs: 1, md: 3 }}
-        alignItems="flex-start"
+        sx={{
+          alignItems: "flex-start"
+        }}
       >
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1
+          }}>
           <CalendarToday fontSize="small" color="primary" />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {dayjs(startDate).format('MMMM DD, YYYY')}
           </Typography>
         </Box>
-        <Box display="flex" alignItems="center" gap={1}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1
+          }}>
           <LocationOn fontSize="small" color="primary" />
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {location}
           </Typography>
         </Box>

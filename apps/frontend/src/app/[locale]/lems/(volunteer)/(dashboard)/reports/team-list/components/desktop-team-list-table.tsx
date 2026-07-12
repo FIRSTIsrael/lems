@@ -80,7 +80,9 @@ export const DesktopTeamListTable: React.FC<DesktopTeamListTableProps> = ({ team
               {sortedTeams.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={COLUMN_DEFINITIONS.length} align="center" sx={{ py: 4 }}>
-                    <Typography color="text.secondary">{t('no-teams')}</Typography>
+                    <Typography sx={{
+                      color: "text.secondary"
+                    }}>{t('no-teams')}</Typography>
                   </TableCell>
                 </TableRow>
               ) : (

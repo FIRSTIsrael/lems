@@ -50,7 +50,13 @@ export function DivisionStep() {
       >
         {t('steps.division')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          mb: 3,
+          lineHeight: 1.6
+        }}>
         {t('instructions.division')}
       </Typography>
       <Autocomplete
@@ -109,20 +115,22 @@ export function DivisionStep() {
           </Box>
         )}
         disabled={isSubmitting}
-        PaperComponent={({ children, ...props }) => (
-          <Paper
-            {...props}
-            elevation={8}
-            sx={{
-              mt: 1,
-              borderRadius: 2,
-              overflow: 'hidden'
-            }}
-          >
-            {children}
-          </Paper>
-        )}
         sx={{ mb: 3 }}
+        slots={{
+          paper: ({ children, ...props }) => (
+            <Paper
+              {...props}
+              elevation={8}
+              sx={{
+                mt: 1,
+                borderRadius: 2,
+                overflow: 'hidden'
+              }}
+            >
+              {children}
+            </Paper>
+          )
+        }}
       />
       <NextStepButton onClick={handleNext} />
     </Box>

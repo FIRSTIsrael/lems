@@ -24,8 +24,16 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
 
   if (sortedData.length === 0) {
     return (
-      <Box display="flex" alignItems="center" justifyContent="center" py={8}>
-        <Typography variant="body1" color="text.secondary">
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          py: 8
+        }}>
+        <Typography variant="body1" sx={{
+          color: "text.secondary"
+        }}>
           {t('scoreboard.no-data')}
         </Typography>
       </Box>
@@ -109,30 +117,51 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 >
                   {entry.team.name}
                 </Typography>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{
+                  color: "text.secondary"
+                }}>
                   #{entry.team.number}
                 </Typography>
               </Box>
 
               <Box sx={{ textAlign: 'right', mr: 1 }}>
-                <Typography variant="body2" color="text.secondary" fontSize="0.75rem">
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    fontSize: "0.75rem"
+                  }}>
                   {t('scoreboard.best-score')}
                 </Typography>
-                <Typography variant="h6" fontWeight={600} color="primary.main">
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: 600,
+                    color: "primary.main"
+                  }}>
                   {entry.maxScore ?? '-'}
                 </Typography>
               </Box>
 
               <IconButton size="small">{isExpanded ? <ExpandLess /> : <ExpandMore />}</IconButton>
             </Box>
-
             <Collapse in={isExpanded}>
               <Divider />
               <Box sx={{ p: 2, pt: 1 }}>
-                <Typography variant="body2" color="text.secondary" mb={1}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: "text.secondary",
+                    mb: 1
+                  }}>
                   {t('scoreboard.match-scores')}
                 </Typography>
-                <Box display="flex" flexWrap="wrap" gap={1}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    gap: 1
+                  }}>
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores?.[index];
                     return (
@@ -149,10 +178,17 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                           borderColor: score === entry.maxScore ? 'primary.main' : 'transparent'
                         }}
                       >
-                        <Typography variant="caption" display="block" fontSize="0.7rem">
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            display: "block",
+                            fontSize: "0.7rem"
+                          }}>
                           {t('scoreboard.match')} {index + 1}
                         </Typography>
-                        <Typography variant="body2" fontWeight={600}>
+                        <Typography variant="body2" sx={{
+                          fontWeight: 600
+                        }}>
                           {score ?? '-'}
                         </Typography>
                       </Box>

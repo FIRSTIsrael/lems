@@ -58,7 +58,12 @@ export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) 
 
   if (data.length === 0) {
     return (
-      <Typography variant="body2" color="text.secondary" textAlign="center">
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          textAlign: "center"
+        }}>
         {t('no-rubric-data')}
       </Typography>
     );

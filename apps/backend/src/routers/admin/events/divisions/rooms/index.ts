@@ -44,6 +44,11 @@ router.put(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     const { roomId } = req.params;
+    if (!roomId || typeof roomId !== 'string') {
+      res.status(400).json({ error: 'ROOM_ID_REQUIRED' });
+      return;
+    }
+
     const { name } = req.body;
 
     if (!name) {
@@ -62,6 +67,11 @@ router.delete(
   requirePermission('MANAGE_EVENT_DETAILS'),
   async (req: AdminDivisionRequest, res) => {
     const { roomId } = req.params;
+    if (!roomId || typeof roomId !== 'string') {
+      res.status(400).json({ error: 'ROOM_ID_REQUIRED' });
+      return;
+    }
+
     await db.rooms.byId(roomId).delete();
 
     const roomEventUser = await db.eventUsers.byRoleInfo('roomId', roomId).get();

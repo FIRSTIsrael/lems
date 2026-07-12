@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Stack, Button, CircularProgress } from '@mui/material';
 import { useScoresheet } from '../scoresheet-context';
-import { useUser } from '../../../../../../../components/user-context';
+import { useUser } from '../../../../../../components/user-context';
 
 interface ScoresheetActionButtonsProps {
   isSigned: boolean;
@@ -45,7 +45,9 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
   const submitButtonHandler = shouldSwitchToGP ? onSwitchToGP : onSubmit;
 
   return (
-    <Stack direction="row" spacing={2} justifyContent="flex-end">
+    <Stack direction="row" spacing={2} sx={{
+      justifyContent: "flex-end"
+    }}>
       {showEscalateButton && (
         <Button
           variant={isEscalated && isHeadReferee ? 'outlined' : 'contained'}
@@ -59,7 +61,12 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           }}
         >
           {isLoading ? (
-            <Stack direction="row" alignItems="center" gap={1}>
+            <Stack
+              direction="row"
+              sx={{
+                alignItems: "center",
+                gap: 1
+              }}>
               <CircularProgress size={20} color="inherit" />
               {t('processing')}
             </Stack>
@@ -70,7 +77,6 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           )}
         </Button>
       )}
-
       {showResetButton && (
         <Button
           variant="outlined"
@@ -84,7 +90,12 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           }}
         >
           {isLoading ? (
-            <Stack direction="row" alignItems="center" gap={1}>
+            <Stack
+              direction="row"
+              sx={{
+                alignItems: "center",
+                gap: 1
+              }}>
               <CircularProgress size={20} color="inherit" />
               {t('processing')}
             </Stack>
@@ -93,7 +104,6 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           )}
         </Button>
       )}
-
       <Button
         variant="contained"
         size="large"
@@ -101,7 +111,7 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
           isLoading ||
           (!hasSignature && !isSigned) ||
           (hasSignature && !shouldSwitchToGP) ||
-          !forceEdit
+          (isSubmitted && !forceEdit)
         }
         onClick={submitButtonHandler}
         sx={{
@@ -113,7 +123,12 @@ export const ScoresheetActionButtons: React.FC<ScoresheetActionButtonsProps> = (
         }}
       >
         {isLoading ? (
-          <Stack direction="row" alignItems="center" gap={1}>
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              gap: 1
+            }}>
             <CircularProgress size={20} color="inherit" />
             {t('submitting')}
           </Stack>

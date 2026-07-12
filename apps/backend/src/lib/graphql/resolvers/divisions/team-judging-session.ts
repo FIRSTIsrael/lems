@@ -34,6 +34,7 @@ export const teamJudgingSessionResolver: GraphQLFieldResolver<
       scheduledTime: session.scheduled_time.toISOString(),
       status: state?.status || 'not-started',
       called: !!state?.called,
+      queued: !!state?.queued,
       roomId: session.room_id,
       teamId: session.team_id,
       startTime: state?.startTime ? new Date(state.startTime).toISOString() : undefined,

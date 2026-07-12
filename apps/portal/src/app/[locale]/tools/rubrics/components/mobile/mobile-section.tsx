@@ -48,7 +48,12 @@ export const MobileSection: React.FC<MobileSectionProps> = ({
     >
       <CardHeader
         title={
-          <Typography variant="h6" fontWeight={700} sx={{ color: color }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 700,
+              color: color
+            }}>
             {getSectionTitle(sectionId)}
           </Typography>
         }

@@ -45,7 +45,13 @@ export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
           {t('steps.password')}
         </Typography>
       </Box>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          mb: 3,
+          lineHeight: 1.6
+        }}>
         {t('instructions.password')}
       </Typography>
       <FormikTextField
@@ -102,7 +108,12 @@ export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
           }
         }}
       />
-      <Box display="flex" justifyContent="center" width="100%">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          width: "100%"
+        }}>
         <Button
           type="submit"
           variant="contained"

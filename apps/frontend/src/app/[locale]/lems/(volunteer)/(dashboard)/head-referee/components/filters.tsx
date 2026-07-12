@@ -40,19 +40,21 @@ export function Filters() {
         <Stack
           direction="row"
           spacing={2}
-          alignItems="center"
-          flexWrap="wrap"
           useFlexGap
-          justifyContent="space-between"
-        >
+          sx={{
+            alignItems: "center",
+            flexWrap: "wrap",
+            justifyContent: "space-between"
+          }}>
           <Stack
             direction="row"
             spacing={2}
-            alignItems="center"
-            flexWrap="wrap"
             useFlexGap
-            sx={{ flex: 1 }}
-          >
+            sx={{
+              alignItems: "center",
+              flexWrap: "wrap",
+              flex: 1
+            }}>
             <TextField
               label={t('filters.search-label')}
               placeholder={t('filters.search-placeholder')}
@@ -71,11 +73,13 @@ export function Filters() {
               size="small"
               variant="outlined"
               sx={{ minWidth: 200 }}
-              SelectProps={{
-                multiple: true,
-                renderValue: (selected: any) => {
-                  if ((selected as string[]).length === 0) return t('filters.all-statuses');
-                  return (selected as string[]).map(s => t(`scoresheet-status.${s}`)).join(', ');
+              slotProps={{
+                select: {
+                  multiple: true,
+                  renderValue: (selected: any) => {
+                    if ((selected as string[]).length === 0) return t('filters.all-statuses');
+                    return (selected as string[]).map(s => t(`scoresheet-status.${s}`)).join(', ');
+                  }
                 }
               }}
             >

@@ -6,6 +6,7 @@ import { TrendingUp as ScoreIcon, EmojiEvents, SmartToy as RobotIcon } from '@mu
 import { useTranslations } from 'next-intl';
 import { TeamEventResult } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
+import { useAwardTranslations } from '@lems/localization';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
 import { UnpublishedEventCard } from './unpublished-event-card';
@@ -16,6 +17,7 @@ interface TeamEventResultCardProps {
 
 export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
+  const { getName } = useAwardTranslations();
   const team = useTeam();
 
   const getAwardIcon = (award: { name: string; place: number | null }) => {
@@ -56,9 +58,22 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
         }}
       >
         <CardContent>
-          <Stack direction="row" alignItems="center" justifyContent="space-between" mb={2}>
-            <Stack direction="row" alignItems="center" gap={1}>
-              <Typography variant="h4" fontWeight="600" color="primary">
+          <Stack
+            direction="row"
+            sx={{
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 2
+            }}>
+            <Stack
+              direction="row"
+              sx={{
+                alignItems: "center",
+                gap: 1
+              }}>
+              <Typography variant="h4" color="primary" sx={{
+                fontWeight: "600"
+              }}>
                 {eventResult.eventName}
               </Typography>
               <Typography variant="h5" sx={{ opacity: 0.7 }}>
@@ -71,8 +86,15 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
           </Stack>
 
           {/* Awards Section */}
-          <Box mb={2}>
-            <Typography variant="h6" fontWeight="700" mb={1}>
+          <Box sx={{
+            mb: 2
+          }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: "700",
+                mb: 1
+              }}>
               {t('event-summary')}
             </Typography>
             <Grid container spacing={2}>
@@ -86,7 +108,7 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: 1,
+                        gap: 0.5,
                         p: 2,
                         bgcolor: 'grey.50',
                         borderRadius: 2,
@@ -94,9 +116,16 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                         borderColor: 'grey.200'
                       }}
                     >
-                      <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+                      {award.place !== null && (
+                        <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />
+                      )}
+                      {award.place === null && (
+                        <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                          {t('award')}
+                        </Typography>
+                      )}
                       <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                        {award.name}
+                        {getName(award.name)}
                       </Typography>
                     </Grid>
                   );
@@ -115,13 +144,19 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     borderColor: 'grey.200'
                   }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <ScoreIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
-                    <Typography variant="body1" fontWeight="600">
+                    <Typography variant="body1" sx={{
+                      fontWeight: "600"
+                    }}>
                       {t('highest-score')}
                     </Typography>
                   </Stack>
-                  <Typography variant="h6" fontWeight="600" color="primary">
+                  <Typography variant="h6" color="primary" sx={{
+                    fontWeight: "600"
+                  }}>
                     {Math.max(...matches.map(m => m.score))}
                   </Typography>
                 </Grid>
@@ -140,13 +175,19 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                     borderColor: 'grey.200'
                   }}
                 >
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                  <Stack direction="row" spacing={1} sx={{
+                    alignItems: "center"
+                  }}>
                     <RobotIcon sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
-                    <Typography variant="body1" fontWeight="600">
+                    <Typography variant="body1" sx={{
+                      fontWeight: "600"
+                    }}>
                       {t('robot-game-rank')}
                     </Typography>
                   </Stack>
-                  <Typography variant="h6" fontWeight="600" color="primary">
+                  <Typography variant="h6" color="primary" sx={{
+                    fontWeight: "600"
+                  }}>
                     {robotGameRank}
                   </Typography>
                 </Grid>
@@ -159,7 +200,12 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
             <>
               <Divider sx={{ my: 2 }} />
               <Box>
-                <Typography variant="h6" fontWeight="700" mb={1}>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontWeight: "700",
+                    mb: 1
+                  }}>
                   {t('match-results')}
                 </Typography>
                 <Grid container spacing={2}>
@@ -178,10 +224,14 @@ export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventR
                         borderColor: 'grey.200'
                       }}
                     >
-                      <Typography variant="body1" fontWeight="600">
+                      <Typography variant="body1" sx={{
+                        fontWeight: "600"
+                      }}>
                         {t('match-number', { number: match.number })}
                       </Typography>
-                      <Typography variant="h6" fontWeight="600" color="primary">
+                      <Typography variant="h6" color="primary" sx={{
+                        fontWeight: "600"
+                      }}>
                         {match.score}
                       </Typography>
                     </Grid>

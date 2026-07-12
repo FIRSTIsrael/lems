@@ -5,9 +5,12 @@ export interface JwtTokenData extends JwtPayload {
   userType: 'admin' | 'event-user';
 }
 
-export interface DashboardTokenData extends JwtPayload {
+export interface FirstIsraelDashboardTokenData extends JwtPayload {
+  teamSlug: string;
+}
+
+export interface FirstIsraelDashboardTokenDataWithEvent extends FirstIsraelDashboardTokenData {
   eventSalesforceId: string;
-  teamNumber: number;
 }
 
 export interface RecaptchaResponse {

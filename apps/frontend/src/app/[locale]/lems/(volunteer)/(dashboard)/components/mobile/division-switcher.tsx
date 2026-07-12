@@ -97,7 +97,6 @@ export const DivisionSwitcher = () => {
           />
         )}
       </Box>
-
       {event.canSwitchDivisions && (
         <Menu
           anchorEl={anchorEl}
@@ -132,7 +131,9 @@ export const DivisionSwitcher = () => {
                   flexShrink: 0
                 }}
               />
-              <Typography variant="body2" textOverflow="ellipsis" noWrap>
+              <Typography variant="body2" noWrap sx={{
+                textOverflow: "ellipsis"
+              }}>
                 {division.name}
               </Typography>
             </MenuItem>

@@ -36,10 +36,17 @@ export const EventsListSection: React.FC<EventsListSectionProps> = ({
     return (
       <Paper sx={{ p: 6, textAlign: 'center' }}>
         <CalendarIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
-        <Typography variant="h5" gutterBottom color="text.secondary">
+        <Typography variant="h5" gutterBottom sx={{
+          color: "text.secondary"
+        }}>
           {t('no-events.title')}
         </Typography>
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            color: "text.secondary",
+            mb: 3
+          }}>
           {searchValue ? t('no-events.search-message') : t('no-events.filter-message')}
         </Typography>
       </Paper>

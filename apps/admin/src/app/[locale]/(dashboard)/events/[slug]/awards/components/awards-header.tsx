@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Box,
@@ -23,6 +23,7 @@ import {
 import { OPTIONAL_AWARDS } from '../types';
 import { useAwards } from './awards-context';
 import { AddAwardDialog } from './add-award-dialog';
+import { OverrideValidationDialog } from './override-validation-dialog';
 
 export const AwardsHeader = () => {
   const theme = useTheme();
@@ -30,23 +31,44 @@ export const AwardsHeader = () => {
   const { awards, addAward, saveSchema, resetChanges, isLoading, isDirty, isNew, validation } =
     useAwards();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
+  const [overrideDialogOpen, setOverrideDialogOpen] = useState(false);
 
   const availableAwards = OPTIONAL_AWARDS.filter(award => !awards.includes(award));
+
+  const handleSaveClick = useCallback(() => {
+    if (!validation.isValid) {
+      setOverrideDialogOpen(true);
+    } else {
+      saveSchema();
+    }
+  }, [validation.isValid, setOverrideDialogOpen, saveSchema]);
+
+  const isSaveDisabled = (!isDirty && !isNew) || isLoading;
+  const saveButtonColor = !validation.isValid ? 'error' : 'primary';
 
   return (
     <>
       <Paper sx={{ p: 3, mb: 3 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           <Box>
             <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
               {t('title')}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {t('subtitle')}
             </Typography>
           </Box>
 
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Tooltip
               title={isNew ? t('status.new-awards-tooltip') : t('status.existing-awards-tooltip')}
               arrow
@@ -82,9 +104,10 @@ export const AwardsHeader = () => {
 
             <Button
               variant="contained"
+              color={saveButtonColor}
               startIcon={<SaveIcon />}
-              onClick={saveSchema}
-              disabled={!validation.isValid || (!isDirty && !isNew) || isLoading}
+              onClick={handleSaveClick}
+              disabled={isSaveDisabled}
             >
               {isLoading ? t('saving') : t('save-changes')}
             </Button>
@@ -101,21 +124,31 @@ export const AwardsHeader = () => {
               border: `1px solid ${alpha(theme.palette.warning.main, 0.3)}`
             }}
           >
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Chip label={t('unsaved-changes')} color="warning" variant="outlined" size="small" />
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{
+                color: "text.secondary"
+              }}>
                 {t('unsaved-warning')}
               </Typography>
             </Stack>
           </Box>
         )}
       </Paper>
-
       <AddAwardDialog
         open={addDialogOpen}
         options={availableAwards}
         onAdd={addAward}
         onClose={() => setAddDialogOpen(false)}
+      />
+      <OverrideValidationDialog
+        open={overrideDialogOpen}
+        validation={validation}
+        isLoading={isLoading}
+        onClose={() => setOverrideDialogOpen(false)}
+        onConfirm={saveSchema}
       />
     </>
   );

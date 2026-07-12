@@ -40,12 +40,11 @@ export function MatchInfo({ match, isDesktop }: MatchInfoProps) {
     >
       <Typography
         variant={isDesktop ? 'h3' : 'h5'}
-        fontWeight={700}
         sx={{
+          fontWeight: 700,
           color: theme => theme.palette.text.primary,
           letterSpacing: '0.5px'
-        }}
-      >
+        }}>
         {getMatchLabel()}
       </Typography>
     </Paper>

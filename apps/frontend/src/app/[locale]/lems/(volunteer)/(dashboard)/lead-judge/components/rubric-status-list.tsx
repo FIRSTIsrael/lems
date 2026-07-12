@@ -5,25 +5,22 @@ import { range } from '@lems/shared/utils';
 import { Paper, Box, Typography, useTheme, Stack } from '@mui/material';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
 import { useLeadJudge } from './lead-judge-context';
+import { useFilters } from './filters-context';
 import { TeamSessionCard } from './team-session-card';
 
-interface RubricStatusListProps {
-  teamFilter: string;
-  statusFilter: string[];
-}
-
-export const RubricStatusList: React.FC<RubricStatusListProps> = ({
-  teamFilter = '',
-  statusFilter = []
-}) => {
+export const RubricStatusList: React.FC = () => {
   const t = useTranslations('pages.lead-judge.list');
   const theme = useTheme();
 
   const { sessions, category, loading } = useLeadJudge();
+  const { teamFilter, statusFilter, roomFilter, sessionNumberFilter, sortBy } = useFilters();
 
   const filteredSessions = useFilteredSessions(sessions, {
     teamFilter,
-    statusFilter
+    statusFilter,
+    roomFilter,
+    sessionNumberFilter,
+    sortBy
   });
 
   if (loading) {

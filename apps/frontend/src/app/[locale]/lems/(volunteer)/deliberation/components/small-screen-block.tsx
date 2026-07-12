@@ -32,9 +32,11 @@ export const SmallScreenBlock = () => {
           </Typography>
           <Typography
             variant="caption"
-            display="block"
-            sx={{ color: theme.palette.text.disabled, mt: 3 }}
-          >
+            sx={{
+              display: "block",
+              color: theme.palette.text.disabled,
+              mt: 3
+            }}>
             {t('minimum-width')}
           </Typography>
         </Paper>

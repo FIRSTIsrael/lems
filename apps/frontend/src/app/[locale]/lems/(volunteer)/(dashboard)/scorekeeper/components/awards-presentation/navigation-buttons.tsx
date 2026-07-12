@@ -113,7 +113,13 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({ deckRef, t
   }, [totalSlides, handlePresentationStateChange]);
 
   return (
-    <Stack direction="row" spacing={1.5} flexWrap="wrap" justifyContent="center">
+    <Stack
+      direction="row"
+      spacing={1.5}
+      sx={{
+        flexWrap: "wrap",
+        justifyContent: "center"
+      }}>
       <Button
         size="small"
         variant="outlined"

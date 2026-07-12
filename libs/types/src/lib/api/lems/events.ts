@@ -8,8 +8,10 @@ export const LemsEventResponseSchema = z.object({
   endDate: z.coerce.date(),
   location: z.string(),
   region: z.string(),
+  timezone: z.string(),
   coordinates: z.string().nullish(),
-  seasonId: z.string()
+  seasonId: z.string(),
+  official: z.boolean()
 });
 
 export type Event = z.infer<typeof LemsEventResponseSchema>;

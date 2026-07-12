@@ -36,36 +36,52 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
 
   const [expanded, setExpanded] = React.useState(defaultExpanded);
 
-  const displayedEvents = maxDisplayed ? events.slice(0, maxDisplayed) : events;
+  const sortedEvents = React.useMemo(() => {
+    return [...events].sort((a, b) => {
+      if (variant === 'past') {
+        return b.startDate.getTime() - a.startDate.getTime();
+      } else {
+        return a.startDate.getTime() - b.startDate.getTime();
+      }
+    });
+  }, [events, variant]);
+
+  const displayedEvents = maxDisplayed ? sortedEvents.slice(0, maxDisplayed) : sortedEvents;
   const hasMoreEvents = maxDisplayed && events.length > maxDisplayed;
 
   return (
     <>
       <Stack
         direction="row"
-        alignItems="center"
         spacing={2}
-        sx={{ mt: variant === 'active' ? 0 : 4, mb: 2, cursor: 'pointer' }}
         onClick={() => setExpanded(!expanded)}
-      >
+        sx={{
+          alignItems: "center",
+          mt: variant === 'active' ? 0 : 4,
+          mb: 2,
+          cursor: 'pointer'
+        }}>
         {showIcon}
         <Typography
           variant={variant === 'active' ? 'h5' : 'h6'}
-          fontWeight="bold"
           sx={{
+            fontWeight: "bold",
             fontSize: variant === 'active' ? { xs: '1.25rem', sm: '1.5rem' } : undefined,
             flex: 1
-          }}
-        >
+          }}>
           {title}
         </Typography>
         <Chip label={events.length} color={chipColor} size="small" sx={{ fontWeight: 600 }} />
         <IconButton size="small">{expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}</IconButton>
       </Stack>
-
       <Collapse in={expanded}>
         {events.length === 0 ? (
-          <Box textAlign="center" py={6} color="text.secondary">
+          <Box
+            sx={{
+              textAlign: "center",
+              py: 6,
+              color: "text.secondary"
+            }}>
             <CalendarIcon sx={{ fontSize: 64, mb: 2, opacity: 0.5 }} />
             <Typography variant="h6" gutterBottom>
               {emptyMessage || t('no-events')}
@@ -80,8 +96,14 @@ export const EventsSection: React.FC<EventsSectionProps> = ({
         )}
 
         {hasMoreEvents && (
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 2, textAlign: 'center' }}>
-            And {events.length - maxDisplayed!} more {variant} events...
+          <Typography
+            variant="body2"
+            sx={{
+              color: "text.secondary",
+              mt: 2,
+              textAlign: 'center'
+            }}>
+            {t('more-events', { count: events.length - maxDisplayed!, variant })}
           </Typography>
         )}
       </Collapse>

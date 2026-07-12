@@ -81,9 +81,10 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
       <Typography variant="h6" gutterBottom>
         {t('title')}
       </Typography>
-
       <Stack spacing={2}>
-        <Stack direction="row" spacing={2} alignItems="flex-end">
+        <Stack direction="row" spacing={2} sx={{
+          alignItems: "flex-end"
+        }}>
           <Box sx={{ maxWidth: 300 }}>
             <FileUpload
               label={t('upload-button')}
@@ -133,13 +134,14 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
 
         {!division.pitMapUrl && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {t('no-map')}
             </Typography>
           </Box>
         )}
       </Stack>
-
       <UploadPitMapDialog
         open={uploadDialogOpen}
         onClose={() => !uploading && setUploadDialogOpen(false)}
@@ -149,14 +151,12 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         onSuccess={handleUploadSuccess}
         onError={handleUploadError}
       />
-
       <ViewPitMapDialog
         open={viewMapOpen}
         onClose={() => setViewMapOpen(false)}
         division={division}
         onDelete={() => setDeleteDialogOpen(true)}
       />
-
       <DeletePitMapDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

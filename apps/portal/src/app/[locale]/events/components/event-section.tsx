@@ -20,10 +20,14 @@ export const EventSection: React.FC<EventSectionProps> = ({ events, variant }) =
     <Paper sx={{ p: 3 }}>
       <Typography
         variant="h5"
-        fontWeight="bold"
-        sx={{ mb: 3, display: 'flex', alignItems: 'center', gap: 1 }}
-      >
-        {t(`filters.${variant}`, { count: events.length })}
+        sx={{
+          fontWeight: "bold",
+          mb: 3,
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}>
+        {t(`filters.${variant}`, { count: filteredEvents.length })}
       </Typography>
       <Stack spacing={1}>
         {filteredEvents.map(event => (

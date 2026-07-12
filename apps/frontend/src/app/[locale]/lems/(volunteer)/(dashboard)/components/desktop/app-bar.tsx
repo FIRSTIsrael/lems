@@ -31,14 +31,16 @@ export const DesktopAppBar = () => {
       >
         <Stack
           spacing={2}
-          alignItems="center"
-          justifyContent="center"
           sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
             p: 2,
+
             background:
               theme.palette.mode === 'dark'
                 ? `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`
                 : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+
             color: 'white'
           }}
         >
@@ -61,9 +63,13 @@ export const DesktopAppBar = () => {
 
         <Stack
           spacing={2}
-          alignItems="center"
-          justifyContent="center"
-          sx={{ p: 2, display: 'flex', justifyContent: 'center', mb: 1 }}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 2,
+            display: 'flex',
+            mb: 1
+          }}
         >
           <LanguageSwitcher />
 

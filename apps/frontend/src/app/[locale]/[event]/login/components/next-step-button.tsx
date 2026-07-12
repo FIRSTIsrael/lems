@@ -30,7 +30,12 @@ export function NextStepButton({ type, onClick }: NextStepButtonProps) {
   };
 
   return (
-    <Box display="flex" justifyContent="center" width="100%">
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%"
+      }}>
       <Button
         type={type}
         variant="contained"

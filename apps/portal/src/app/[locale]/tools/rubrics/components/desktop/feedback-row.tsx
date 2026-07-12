@@ -61,15 +61,15 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) 
               }
             }}
           >
-            <Typography fontWeight={600}>{getFeedbackTitle(field)}...</Typography>
+            <Typography sx={{
+              fontWeight: 600
+            }}>{getFeedbackTitle(field)}...</Typography>
           </TableCell>
         ))}
       </TableRow>
-
       <TableRow
         sx={{
           '& .MuiTableCell-root': {
-            padding: '0px',
             '&:first-of-type': {
               borderRadius: '0 0 0 12px'
             },
@@ -102,7 +102,6 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) 
               value={rubric.values.feedback?.[field] ?? ''}
               onChange={e => handleFeedbackUpdate(field, e.target.value)}
               sx={{
-                p: 1,
                 borderRadius: '12px',
                 '& .MuiInput-root': {
                   '&::before': {

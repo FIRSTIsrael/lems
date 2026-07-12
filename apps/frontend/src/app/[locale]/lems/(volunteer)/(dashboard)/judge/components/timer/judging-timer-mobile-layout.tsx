@@ -7,13 +7,9 @@ import { Box, Button, Stack, Paper, Typography, LinearProgress } from '@mui/mate
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
 import { AbortSessionDialog } from './abort-session-dialog';
-import {
-  formatTime,
-  getStageColor,
-  JUDGING_STAGES,
-  useJudgingSessionTimer
-} from './hooks/use-judging-timer';
+import { formatTime, getStageColor, useJudgingSessionTimer } from './hooks/use-judging-timer';
 import { useSession } from './judging-session-context';
+import { RubricButton } from './rubric-button';
 
 interface JudgingTimerMobileLayoutProps {
   onAbortSession: (sessionId: string) => void;
@@ -26,12 +22,12 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
 
   const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
-  const { session, sessionLength } = useSession();
+  const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const { judgingStages, timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
-  const currentStage = JUDGING_STAGES[currentStageIndex];
+  const currentStage = judgingStages[currentStageIndex];
   const stageColor = getStageColor(currentStage.id);
 
   // Calculate stage progress for the main progress bar
@@ -68,7 +64,9 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           borderRadius: 3
         }}
       >
-        <Box p={2}>
+        <Box sx={{
+          p: 2
+        }}>
           <Typography
             variant="overline"
             sx={{
@@ -82,7 +80,13 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           >
             {t('current-stage')}
           </Typography>
-          <Stack direction="row" spacing={1.5} alignItems="center" mt={1}>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            sx={{
+              alignItems: "center",
+              mt: 1
+            }}>
             <Box
               sx={{
                 width: 5,
@@ -104,7 +108,9 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Stack>
         </Box>
 
-        <Box textAlign="center">
+        <Box sx={{
+          textAlign: "center"
+        }}>
           <Typography
             sx={{
               fontSize: '7rem',
@@ -199,6 +205,26 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
             </Typography>
           </Box>
 
+          {openRubricsDuringSession && session.team?.slug && (
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                flexWrap: "wrap",
+                justifyContent: "center"
+              }}>
+              <RubricButton team={session.team} category="innovation-project" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="robot-design" fontSize="0.7rem" />
+              <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
+                •
+              </Typography>
+              <RubricButton team={session.team} category="core-values" fontSize="0.7rem" />
+            </Stack>
+          )}
+
           <Button
             variant="outlined"
             color="error"
@@ -220,7 +246,6 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Button>
         </Stack>
       </Stack>
-
       <AbortSessionDialog
         open={abortDialogOpen}
         onClose={() => setAbortDialogOpen(false)}

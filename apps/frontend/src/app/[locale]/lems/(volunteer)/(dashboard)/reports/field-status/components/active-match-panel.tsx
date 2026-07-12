@@ -3,9 +3,17 @@
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
+import {
+  PlayCircleFilled,
+  HelpOutlined,
+  HourglassEmpty,
+  PersonPin,
+  CheckCircle
+} from '@mui/icons-material';
+import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
+
+type TeamReadinessStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
 interface Participant {
   id: string;
@@ -13,6 +21,7 @@ interface Participant {
     id: string;
     number: number;
     name: string;
+    arrived: boolean;
   } | null;
   table: {
     id: string;
@@ -41,6 +50,51 @@ interface ActiveMatchPanelProps {
   matchLength?: number;
 }
 
+function getParticipantStatus(participant: Participant): TeamReadinessStatus {
+  if (!participant.team) return 'missing';
+  if (!participant.team.arrived) return 'no-show';
+  if (participant.ready) return 'ready';
+  if (participant.present) return 'present';
+  if (participant.queued) return 'queued';
+  return 'missing';
+}
+
+function getStatusBorderColor(status: TeamReadinessStatus): string {
+  switch (status) {
+    case 'ready':
+      return 'success.main';
+    case 'present':
+      return 'warning.main';
+    case 'queued':
+      return 'info.main';
+    case 'no-show':
+      return 'error.main';
+    case 'missing':
+      return 'grey.400';
+    default:
+      return 'grey.400';
+  }
+}
+
+function getStatusIcon(status: TeamReadinessStatus) {
+  const iconProps = { sx: { fontSize: '1.5rem' } };
+
+  switch (status) {
+    case 'ready':
+      return <CheckCircle {...iconProps} color="success" />;
+    case 'present':
+      return <PersonPin {...iconProps} color="warning" />;
+    case 'queued':
+      return <HourglassEmpty {...iconProps} color="info" />;
+    case 'no-show':
+      return <BlockIcon {...iconProps} color="error" />;
+    case 'missing':
+      return <HelpOutlined {...iconProps} color="disabled" />;
+    default:
+      return null;
+  }
+}
+
 /**
  * Display panel for currently active match
  * Shows match info, participants, and progress
@@ -48,15 +102,27 @@ interface ActiveMatchPanelProps {
 export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   const t = useTranslations('pages.reports.field-status');
   const { getStage } = useMatchTranslations();
+  const iconProps = { sx: { fontSize: '1.5rem' } };
 
   if (!match) {
     return (
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight={600}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600
+            }}
+          >
             {t('active-match.title')}
           </Typography>
-          <Typography color="text.secondary">{t('active-match.no-match')}</Typography>
+          <Typography
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
+            {t('active-match.no-match')}
+          </Typography>
         </Stack>
       </Paper>
     );
@@ -84,31 +150,62 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
-        <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-          <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.35rem'
+            }}
+          >
             {getStage(match.stage)} #{match.number}
           </Typography>
           <Chip
             label={getStatusText()}
             color={getStatusColor()}
-            icon={match.status === 'in-progress' ? <PlayCircleFilledIcon /> : <CheckCircleIcon />}
+            icon={
+              match.status === 'in-progress' ? (
+                <PlayCircleFilled {...iconProps} />
+              ) : (
+                <CheckCircle {...iconProps} />
+              )
+            }
           />
         </Stack>
 
         {match.startTime && (
-          <Stack direction="row" spacing={3} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{
+              flexWrap: 'wrap'
+            }}
+          >
             <Typography
               variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+              sx={{
+                color: 'text.secondary',
+                fontSize: '1.05rem',
+                fontWeight: 700
+              }}
             >
               {t('active-match.started-at')}: {dayjs(match.startTime).format('HH:mm:ss')}
             </Typography>
             {match.scheduledTime && (
               <Typography
                 variant="body2"
-                color="text.secondary"
-                sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '1.05rem',
+                  fontWeight: 700
+                }}
               >
                 {t('active-match.scheduled-at')}: {dayjs(match.scheduledTime).format('HH:mm:ss')}
               </Typography>
@@ -128,9 +225,9 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
         <Box>
           <Typography
             variant="subtitle2"
-            color="text.secondary"
             gutterBottom
             sx={{
+              color: 'text.secondary',
               fontSize: '0.95rem',
               fontWeight: 700,
               textTransform: 'uppercase',
@@ -146,39 +243,59 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               gap: 1
             }}
           >
-            {match.participants
+            {[...match.participants]
               .filter(p => p.team)
-              .map(participant => (
-                <Stack
-                  key={participant.id}
-                  direction="row"
-                  spacing={0.5}
-                  alignItems="center"
-                  sx={{
-                    py: 1,
-                    px: 2,
-                    borderRadius: 1,
-                    border: '2px solid',
-                    borderColor: participant.ready ? 'success.main' : 'grey.400'
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    fontWeight={700}
-                    sx={{ minWidth: 80, fontSize: '1.05rem' }}
+              .sort((a, b) =>
+                a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
+              )
+              .map(participant => {
+                const status = getParticipantStatus(participant);
+                return (
+                  <Stack
+                    key={participant.id}
+                    direction="row"
+                    spacing={0.5}
+                    sx={{
+                      alignItems: 'center',
+                      py: 1,
+                      px: 2,
+                      borderRadius: 1,
+                      border: '2px solid',
+                      borderColor: getStatusBorderColor(status)
+                    }}
                   >
-                    {participant.table.name}:
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
-                  >
-                    {t('active-match.team-label')} {participant.team?.number} -{' '}
-                    {participant.team?.name}
-                  </Typography>
-                  {participant.ready && <CheckCircleIcon fontSize="small" color="success" />}
-                </Stack>
-              ))}
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        fontWeight: 700,
+                        minWidth: 80,
+                        fontSize: '1.05rem'
+                      }}
+                    >
+                      {participant.table.name}:
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
+                    >
+                      {t('active-match.team-label')} {participant.team?.number} -{' '}
+                      {participant.team?.name}
+                    </Typography>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minWidth: 32,
+                        width: 32,
+                        height: 32
+                      }}
+                    >
+                      {getStatusIcon(status)}
+                    </Box>
+                  </Stack>
+                );
+              })}
           </Box>
         </Box>
       </Stack>

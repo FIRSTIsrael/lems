@@ -24,7 +24,9 @@ export const DangerZoneSection = () => {
         </Typography>
 
         <Box sx={{ mt: 3 }}>
-          <Stack direction="row" spacing={2} alignItems="center">
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Button
               variant="outlined"
               color="error"
@@ -37,7 +39,9 @@ export const DangerZoneSection = () => {
               <Typography variant="body2">
                 {t("delete-event-description")}
               </Typography>
-              <Typography variant="caption" color="text.secondary">
+              <Typography variant="caption" sx={{
+                color: "text.secondary"
+              }}>
                 {t("delete-disabled")}
               </Typography>
             </Box>

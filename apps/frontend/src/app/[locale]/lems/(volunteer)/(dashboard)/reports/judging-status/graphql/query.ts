@@ -18,6 +18,7 @@ export const GET_JUDGING_STATUS: TypedDocumentNode<QueryData, QueryVars> = gql`
           scheduledTime
           status
           called
+          queued
           room {
             id
             name

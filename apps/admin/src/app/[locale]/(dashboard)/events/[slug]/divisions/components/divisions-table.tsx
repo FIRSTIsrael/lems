@@ -141,7 +141,12 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                 </TableCell>
                 <TableCell>
                   {editingDivision === division.id ? (
-                    <Box display="flex" alignItems="center" gap={2}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 2
+                      }}>
                       <ColorPicker
                         value={editForm.color}
                         onChange={color => setEditForm(prev => ({ ...prev, color }))}
@@ -167,7 +172,12 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                       </Typography>
                     </Box>
                   ) : (
-                    <Stack direction="row" alignItems="center" gap={2}>
+                    <Stack
+                      direction="row"
+                      sx={{
+                        alignItems: "center",
+                        gap: 2
+                      }}>
                       <Box
                         sx={{
                           width: 32,
@@ -186,7 +196,9 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                 </TableCell>
                 <TableCell align="right">
                   {editingDivision === division.id ? (
-                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                    <Stack direction="row" spacing={1} sx={{
+                      justifyContent: "flex-end"
+                    }}>
                       <IconButton
                         onClick={() => handleEditSave(division)}
                         color="primary"
@@ -199,7 +211,9 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                       </IconButton>
                     </Stack>
                   ) : (
-                    <Stack direction="row" spacing={1} justifyContent="flex-end">
+                    <Stack direction="row" spacing={1} sx={{
+                      justifyContent: "flex-end"
+                    }}>
                       <IconButton
                         onClick={() => handleEditStart(division)}
                         color="primary"
@@ -218,7 +232,9 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
           {!hasMultipleDivisions && (
             <TableRow>
               <TableCell colSpan={3} align="center" sx={{ py: 4 }}>
-                <Typography variant="body2" color="text.secondary">
+                <Typography variant="body2" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('list.alerts.not-enough-divisions')}
                 </Typography>
               </TableCell>

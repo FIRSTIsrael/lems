@@ -22,9 +22,9 @@ import {
   Sports,
   SportsScore,
   Event,
-  WatchLater
+  WatchLater,
+  Public
 } from '@mui/icons-material';
-import { TimeZonePicker } from '@lems/shared';
 import { useSchedule } from './schedule-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -52,8 +52,7 @@ export const ScheduleSettings: React.FC = () => {
     fieldStart,
     matchesPerRound,
     allowStagger,
-    timezone,
-    setTimezone
+    timezone
   } = useSchedule();
 
   const totalMatches = React.useMemo(() => {
@@ -78,28 +77,43 @@ export const ScheduleSettings: React.FC = () => {
       }}
     >
       <Stack spacing={3}>
-        <Typography variant="h6" component="h2" fontWeight={600}>
+        <Typography variant="h6" component="h2" sx={{
+          fontWeight: 600
+        }}>
           {t('title')}
         </Typography>
 
         <Box>
-          <Typography variant="subtitle2" color="text.secondary" mb={2}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "text.secondary",
+              mb: 2
+            }}>
             {t('information.title')}
           </Typography>
-          <Stack direction="row" spacing={4} alignItems="center">
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={4} sx={{
+            alignItems: "center"
+          }}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Group color="primary" />
               <Typography variant="body2">
                 {t('information.teams')}: {teamsCount}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <LocationOn color="primary" />
               <Typography variant="body2">
                 {t('information.rooms')}: {roomsCount}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <TableRestaurant color="primary" />
               <Typography variant="body2">
                 {t('information.tables')}: {tablesCount}
@@ -109,14 +123,20 @@ export const ScheduleSettings: React.FC = () => {
         </Box>
 
         <Box>
-          <Stack direction="row" spacing={4} alignItems="center">
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={4} sx={{
+            alignItems: "center"
+          }}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Sports color="primary" />
               <Typography variant="body2">
                 {t('information.total-matches')}: {totalMatches}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <Event color="primary" />
               <Typography variant="body2">
                 {t('information.total-sessions')}: {totalSessions}
@@ -126,20 +146,28 @@ export const ScheduleSettings: React.FC = () => {
         </Box>
 
         <Box>
-          <Stack direction="row" spacing={4} alignItems="center">
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={4} sx={{
+            alignItems: "center"
+          }}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.practice-rounds')}: {practiceRounds}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.ranking-rounds')}: {rankingRounds}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <SportsScore color="primary" />
               <Typography variant="body2">
                 {t('information.matches-per-round')}: {matchesPerRound}
@@ -149,17 +177,31 @@ export const ScheduleSettings: React.FC = () => {
         </Box>
 
         <Box>
-          <Stack direction="row" spacing={4} alignItems="center">
-            <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" spacing={4} sx={{
+            alignItems: "center"
+          }}>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <WatchLater color="primary" />
               <Typography variant="body2">
                 {t('information.judging-start')}: {judgingStart.format('HH:mm')}
               </Typography>
             </Stack>
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
               <WatchLater color="primary" />
               <Typography variant="body2">
                 {t('information.field-start')}: {fieldStart.format('HH:mm')}
+              </Typography>
+            </Stack>
+            <Stack direction="row" spacing={1} sx={{
+              alignItems: "center"
+            }}>
+              <Public color="primary" />
+              <Typography variant="body2">
+                {t('settings.timezone')}: {timezone}
               </Typography>
             </Stack>
           </Stack>
@@ -168,11 +210,18 @@ export const ScheduleSettings: React.FC = () => {
         <Divider />
 
         <Box>
-          <Typography variant="subtitle2" color="text.secondary" mb={2}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "text.secondary",
+              mb: 2
+            }}>
             {t('settings.title')}
           </Typography>
 
-          <Stack spacing={2}>
+          <Stack spacing={2} direction="row" sx={{
+            alignItems: "center"
+          }}>
             <FormControlLabel
               control={
                 <Switch
@@ -183,13 +232,6 @@ export const ScheduleSettings: React.FC = () => {
                 />
               }
               label={t('settings.stagger-matches')}
-            />
-
-            <TimeZonePicker
-              value={timezone}
-              onChange={setTimezone}
-              label={t('settings.timezone')}
-              disableClearable
             />
           </Stack>
         </Box>

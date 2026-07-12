@@ -16,14 +16,10 @@ import {
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
 import { AbortSessionDialog } from './abort-session-dialog';
-import {
-  formatTime,
-  getStageColor,
-  JUDGING_STAGES,
-  useJudgingSessionTimer
-} from './hooks/use-judging-timer';
+import { formatTime, getStageColor, useJudgingSessionTimer } from './hooks/use-judging-timer';
 import { StageTimeline } from './stage-timeline';
 import { useSession } from './judging-session-context';
+import { RubricButton } from './rubric-button';
 
 interface JudgingTimerDesktopLayoutProps {
   onAbortSession: (sessionId: string) => void;
@@ -38,12 +34,12 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
 
   const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
-  const { session, sessionLength } = useSession();
+  const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const { judgingStages, timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
-  const currentStage = JUDGING_STAGES[currentStageIndex];
+  const currentStage = judgingStages[currentStageIndex];
   const stageColor = getStageColor(currentStage.id);
 
   // Calculate stage progress for the main progress bar
@@ -71,7 +67,6 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           <StageTimeline timerState={timerState} />
         </Grid>
       )}
-
       <Grid
         size={{ md: 12, lg: 8 }}
         sx={{
@@ -86,8 +81,15 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           width: '100%'
         }}
       >
-        <Stack spacing={4} height="100%" justifyContent="space-between">
-          <Box p={2.5}>
+        <Stack
+          spacing={4}
+          sx={{
+            height: "100%",
+            justifyContent: "space-between"
+          }}>
+          <Box sx={{
+            p: 2.5
+          }}>
             <Typography
               variant="overline"
               sx={{
@@ -100,7 +102,13 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
             >
               {t('current-stage')}
             </Typography>
-            <Stack direction="row" spacing={2} alignItems="center" mt={1}>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                alignItems: "center",
+                mt: 1
+              }}>
               <Box
                 sx={{
                   width: 6,
@@ -122,7 +130,9 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
             </Stack>
           </Box>
 
-          <Box textAlign="center">
+          <Box sx={{
+            textAlign: "center"
+          }}>
             <Typography
               sx={{
                 fontSize: isTablet ? '10rem' : '14rem',
@@ -180,7 +190,9 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
               </Box>
             </Box>
 
-            <Stack direction="row" spacing={2} alignItems="flex-end">
+            <Stack direction="row" spacing={2} sx={{
+              alignItems: "flex-end"
+            }}>
               <Box
                 sx={{
                   flex: 1,
@@ -188,35 +200,75 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
                   bgcolor: 'grey.50',
                   border: '1px solid',
                   borderColor: 'grey.200',
-                  borderRadius: 2
+                  borderRadius: 2,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
                 }}
               >
-                <Typography
-                  variant="overline"
+                <Stack
+                  direction="row"
+                  spacing={2}
                   sx={{
-                    fontWeight: 600,
-                    color: 'text.secondary',
-                    fontSize: '0.75rem',
-                    letterSpacing: 1.2,
-                    textTransform: 'uppercase',
-                    mb: 1,
-                    display: 'block'
-                  }}
-                >
-                  {t('session-ends-in-label')}
-                </Typography>
-                <Typography
-                  variant="h5"
-                  sx={{
-                    fontWeight: 600,
-                    fontSize: isTablet ? '1.5rem' : '2rem',
-                    fontFamily: 'monospace',
-                    color: 'text.primary',
-                    pl: 0.5
-                  }}
-                >
-                  {formatTime(totalTimeRemaining)}
-                </Typography>
+                    alignItems: "flex-end",
+                    justifyContent: "space-between"
+                  }}>
+                  <Box>
+                    <Typography
+                      variant="overline"
+                      sx={{
+                        fontWeight: 600,
+                        color: 'text.secondary',
+                        fontSize: '0.75rem',
+                        letterSpacing: 1.2,
+                        textTransform: 'uppercase',
+                        mb: 1,
+                        display: 'block'
+                      }}
+                    >
+                      {t('session-ends-in-label')}
+                    </Typography>
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontWeight: 600,
+                        fontSize: isTablet ? '1.5rem' : '2rem',
+                        fontFamily: 'monospace',
+                        color: 'text.primary',
+                        pl: 0.5
+                      }}
+                    >
+                      {formatTime(totalTimeRemaining)}
+                    </Typography>
+                  </Box>
+
+                  {openRubricsDuringSession && session.team?.slug && (
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        flexWrap: "wrap",
+                        alignItems: "flex-start",
+                        mt: 2
+                      }}>
+                      <RubricButton team={session.team} category="innovation-project" />
+                      <Typography
+                        variant="caption"
+                        sx={{ fontSize: '0.75rem', color: 'text.secondary' }}
+                      >
+                        •
+                      </Typography>
+                      <RubricButton team={session.team} category="robot-design" />
+                      <Typography
+                        variant="caption"
+                        sx={{ fontSize: '0.75rem', color: 'text.secondary' }}
+                      >
+                        •
+                      </Typography>
+                      <RubricButton team={session.team} category="core-values" />
+                    </Stack>
+                  )}
+                </Stack>
               </Box>
 
               <Button
@@ -242,7 +294,6 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
           </Stack>
         </Stack>
       </Grid>
-
       <AbortSessionDialog
         open={abortDialogOpen}
         onClose={() => setAbortDialogOpen(false)}

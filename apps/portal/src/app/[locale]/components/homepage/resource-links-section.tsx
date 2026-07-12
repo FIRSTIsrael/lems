@@ -22,38 +22,45 @@ import {
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 
-const RESOURCES = [
-  {
-    title: 'fll-website',
-    description: 'fll-website-description',
-    icon: MapIcon,
-    href: 'fll-website-link',
-    color: 'primary' as const,
-    external: true
-  },
-  {
-    title: 'github',
-    description: 'github-description',
-    icon: GitHubIcon,
-    href: 'https://github.com/FIRSTIsrael/lems',
-    color: 'primary' as const,
-    external: true
-  }
-];
-
 export const ResourceLinksSection = () => {
   const theme = useTheme();
   const t = useTranslations('pages.index.resources');
 
+  const RESOURCES = [
+    {
+      title: 'fll-website',
+      description: 'fll-website-description',
+      icon: MapIcon,
+      href: t('fll-website-link'),
+      color: 'primary' as const,
+      external: true
+    },
+    {
+      title: 'github',
+      description: 'github-description',
+      icon: GitHubIcon,
+      href: 'https://github.com/FIRSTIsrael/lems',
+      color: 'primary' as const,
+      external: true
+    }
+  ];
+
   return (
     <Paper sx={{ p: { xs: 2, sm: 3 } }}>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: "center",
+          mb: 3
+        }}>
         <WebsiteIcon color="primary" />
-        <Typography variant="h6" fontWeight="bold">
+        <Typography variant="h6" sx={{
+          fontWeight: "bold"
+        }}>
           {t('title')}
         </Typography>
       </Stack>
-
       <Stack spacing={2}>
         {RESOURCES.map(resource => {
           const IconComponent = resource.icon;
@@ -78,7 +85,9 @@ export const ResourceLinksSection = () => {
               }}
             >
               <CardContent>
-                <Stack direction="row" alignItems="center" spacing={2}>
+                <Stack direction="row" spacing={2} sx={{
+                  alignItems: "center"
+                }}>
                   <Box
                     sx={{
                       p: 1.5,
@@ -92,10 +101,14 @@ export const ResourceLinksSection = () => {
                     <IconComponent />
                   </Box>
                   <Box sx={{ flex: 1 }}>
-                    <Typography variant="subtitle1" fontWeight="bold">
+                    <Typography variant="subtitle1" sx={{
+                      fontWeight: "bold"
+                    }}>
                       {t(resource.title)}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography variant="body2" sx={{
+                      color: "text.secondary"
+                    }}>
                       {t(resource.description)}
                     </Typography>
                   </Box>

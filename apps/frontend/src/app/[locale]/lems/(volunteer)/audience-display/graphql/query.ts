@@ -34,6 +34,7 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
                 number
                 city
                 affiliation
+                logoUrl
               }
             }
             ... on PersonalWinner {

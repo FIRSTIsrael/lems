@@ -78,7 +78,7 @@ export function createTeamDisqualifiedSubscription(
     return updateJudgingSessions(prev, sessions =>
       updateInArray(
         sessions,
-        session => session.team.id === teamId,
+        session => session.team?.id === teamId,
         session => merge(session, { team: { disqualified: true } })
       )
     );

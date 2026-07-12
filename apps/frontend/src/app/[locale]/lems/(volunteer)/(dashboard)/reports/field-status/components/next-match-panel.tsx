@@ -5,7 +5,8 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Box, Chip } from '@mui/material';
 import { WarningAmberRounded } from '@mui/icons-material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../../lib/time/hooks';
@@ -55,10 +56,14 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
     return (
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight={600}>
+          <Typography variant="h5" sx={{
+            fontWeight: 600
+          }}>
             {t('next-match.title')}
           </Typography>
-          <Typography color="text.secondary">{t('next-match.no-match')}</Typography>
+          <Typography sx={{
+            color: "text.secondary"
+          }}>{t('next-match.no-match')}</Typography>
         </Stack>
       </Paper>
     );
@@ -76,15 +81,17 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
   };
 
   const getStatusIcon = (status: string) => {
+    const iconProps = { sx: { fontSize: '1.5rem' } };
+
     switch (status) {
       case 'ready':
-        return <CheckCircleIcon fontSize="small" color="success" />;
+        return <CheckCircleIcon {...iconProps} color="success" />;
       case 'present':
-        return <AccessTimeIcon fontSize="small" color="warning" />;
+        return <PersonPinIcon {...iconProps} color="warning" />;
       case 'queued':
-        return <AccessTimeIcon fontSize="small" color="info" />;
+        return <HourglassEmptyIcon {...iconProps} color="info" />;
       default:
-        return <CancelIcon fontSize="small" color="error" />;
+        return <CancelIcon {...iconProps} color="error" />;
     }
   };
 
@@ -94,18 +101,26 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
         <Stack
           direction="row"
           spacing={2}
-          alignItems="center"
-          justifyContent="space-between"
-          flexWrap="wrap"
-        >
-          <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
+          sx={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap"
+          }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.35rem'
+            }}>
             {getStage(match.stage)} #{match.number}
           </Typography>
           <Typography
             variant="body2"
-            color="text.secondary"
-            sx={{ fontSize: '1.05rem', fontWeight: 700 }}
-          >
+            sx={{
+              color: "text.secondary",
+              fontSize: '1.05rem',
+              fontWeight: 700
+            }}>
             {currentTime
               .set('hour', dayjs(match.scheduledTime).hour())
               .set('minute', dayjs(match.scheduledTime).minute())
@@ -113,8 +128,15 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
           </Typography>
         </Stack>
 
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Typography variant="subtitle1" fontWeight={700} sx={{ fontSize: '1.05rem' }}>
+        <Stack direction="row" spacing={1} sx={{
+          alignItems: "center"
+        }}>
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.05rem'
+            }}>
             {t('next-match.tables-ready')}:
           </Typography>
           <Chip
@@ -133,56 +155,75 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
             gap: 1
           }}
         >
-          {participants.map(participant => {
-            const status = getParticipantStatus(participant);
+          {[...participants]
+            .sort((a, b) => a.table.name.localeCompare(b.table.name, undefined, { numeric: true }))
+            .map(participant => {
+              const status = getParticipantStatus(participant);
 
-            return (
-              <Stack
-                key={participant.id}
-                direction="row"
-                spacing={0.5}
-                alignItems="center"
-                sx={{
-                  py: 0.75,
-                  px: 2,
-                  borderRadius: 1,
-                  border: '2px solid',
-                  borderColor:
-                    status === 'ready'
-                      ? 'success.main'
-                      : status === 'present'
-                        ? 'warning.main'
-                        : status === 'queued'
-                          ? 'info.main'
-                          : 'error.main'
-                }}
-              >
-                <Typography
-                  variant="body2"
-                  fontWeight={500}
-                  sx={{ minWidth: 80, fontSize: '1.05rem' }}
-                >
-                  {participant.table.name}:
-                </Typography>
-                <Typography variant="body2" sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}>
-                  {participant.team
-                    ? t('next-match.team-number', { number: participant.team.number })
-                    : '—'}
-                </Typography>
-                <Box sx={{ ml: 0.5 }}>{getStatusIcon(status)}</Box>
-                {participant.team?.arrived === false && (
-                  <Chip
-                    icon={<WarningAmberRounded />}
-                    label={t('next-match.status.not-arrived')}
-                    color="warning"
-                    variant="outlined"
-                    size="small"
-                    sx={{ ml: 1 }}
-                  />
-                )}
-              </Stack>
-            );
-          })}
+              return (
+                <Stack
+                  key={participant.id}
+                  direction="row"
+                  spacing={0.5}
+                  sx={{
+                    alignItems: "center",
+                    py: 0.75,
+                    px: 2,
+                    borderRadius: 1,
+                    border: '2px solid',
+
+                    borderColor:
+                      status === 'ready'
+                        ? 'success.main'
+                        : status === 'present'
+                          ? 'warning.main'
+                          : status === 'queued'
+                            ? 'info.main'
+                            : 'error.main'
+                  }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500,
+                      minWidth: 80,
+                      fontSize: '1.05rem'
+                    }}>
+                    {participant.table.name}:
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 500 }}
+                  >
+                    {participant.team
+                      ? `${t('next-match.team-number', { number: participant.team.number })} ${participant.team.name}`
+                      : '—'}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minWidth: 32,
+                      width: 32,
+                      height: 32,
+                      ml: 0.5
+                    }}
+                  >
+                    {getStatusIcon(status)}
+                  </Box>
+                  {participant.team?.arrived === false && (
+                    <Chip
+                      icon={<WarningAmberRounded />}
+                      label={t('next-match.status.not-arrived')}
+                      color="warning"
+                      variant="outlined"
+                      size="small"
+                      sx={{ ml: 1 }}
+                    />
+                  )}
+                </Stack>
+              );
+            })}
         </Box>
       </Stack>
     </Paper>

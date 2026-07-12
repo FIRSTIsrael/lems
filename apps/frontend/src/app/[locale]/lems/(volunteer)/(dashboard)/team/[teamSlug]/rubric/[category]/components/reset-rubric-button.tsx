@@ -16,9 +16,9 @@ import { toast } from 'react-hot-toast';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { useRubric } from '../rubric-context';
 import { RESET_RUBRIC_MUTATION } from '../graphql/mutations/reset';
-import { useUser } from '../../../../../../../components/user-context';
+import { useUser } from '../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
-import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
+import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 
 interface ResetRubricButtonProps {
   disabled?: boolean;

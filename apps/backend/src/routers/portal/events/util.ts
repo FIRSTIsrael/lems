@@ -27,7 +27,8 @@ export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event 
     location: event.location,
     coordinates: event.coordinates,
     seasonId: event.season_id,
-    region: event.region
+    region: event.region,
+    timezone: event.timezone
   };
 };
 
@@ -48,10 +49,12 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     endDate: new Date(event.date),
     location: event.location,
     region: event.region,
+    timezone: event.timezone,
     seasonId: event.season_id,
     teamsRegistered: event.team_count,
     status: eventStatus,
-    completed: event.completed
+    completed: event.completed,
+    official: event.official
   };
 };
 
@@ -63,6 +66,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   endDate: event.end_date,
   location: event.location,
   region: event.region,
+  timezone: event.timezone,
   seasonId: event.season_id,
   divisions: event.divisions.map(division => ({
     id: division.id,
@@ -71,5 +75,6 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
     teamCount: division.team_count
   })),
   seasonName: event.season_name,
-  seasonSlug: event.season_slug
+  seasonSlug: event.season_slug,
+  official: event.official
 });

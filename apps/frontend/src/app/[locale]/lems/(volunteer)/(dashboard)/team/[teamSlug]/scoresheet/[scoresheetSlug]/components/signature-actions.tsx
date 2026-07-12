@@ -13,7 +13,14 @@ export const SignatureActions: React.FC<SignatureActionsProps> = ({ isSigned, on
   const t = useTranslations('pages.scoresheet');
 
   return (
-    <Stack direction="row" spacing={2} alignItems="center" justifyContent="space-between" mt={2}>
+    <Stack
+      direction="row"
+      spacing={2}
+      sx={{
+        alignItems: "center",
+        justifyContent: "space-between",
+        mt: 2
+      }}>
       {isSigned && (
         <Button
           variant="outlined"

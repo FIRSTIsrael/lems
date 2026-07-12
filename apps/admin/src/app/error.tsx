@@ -25,10 +25,17 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
       }}
     >
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h2" fontWeight={600} gutterBottom>
+        <Typography variant="h2" gutterBottom sx={{
+          fontWeight: 600
+        }}>
           Oops! Something went wrong, please try again.
         </Typography>
-        <Typography variant="body1" sx={{ color: '#666' }} fontSize="1.25rem">
+        <Typography
+          variant="body1"
+          sx={{
+            fontSize: "1.25rem",
+            color: '#666'
+          }}>
           {error.message || 'Unknown error occurred'}
         </Typography>
         <button

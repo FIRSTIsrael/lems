@@ -86,7 +86,6 @@ export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistrib
       >
         {t('room-scores-distribution')}
       </Typography>
-
       {chartData.length === 0 ? (
         <Box
           sx={{
@@ -96,7 +95,9 @@ export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistrib
             justifyContent: 'center'
           }}
         >
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {t('no-data-available')}
           </Typography>
         </Box>

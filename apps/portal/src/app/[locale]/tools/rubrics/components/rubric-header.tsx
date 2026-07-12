@@ -9,8 +9,15 @@ export const RubricHeader = () => {
   const { resetRubric, loading } = useRubricContext();
 
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Stack direction="row" alignItems="center" spacing={3}>
+    <Stack
+      direction="row"
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+      <Stack direction="row" spacing={3} sx={{
+        alignItems: "center"
+      }}>
         <Typography variant="h2" gutterBottom sx={{ my: 2 }}>
           {t('title')}
         </Typography>

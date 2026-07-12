@@ -22,9 +22,10 @@ export default function HomePage() {
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       <Hero season={latestSeason} />
-
       <Container maxWidth="lg">
-        <Grid container my={3} spacing={{ xs: 2, sm: 3 }}>
+        <Grid container spacing={{ xs: 2, sm: 3 }} sx={{
+          my: 3
+        }}>
           <Grid size={12}>
             <SearchSection />
           </Grid>

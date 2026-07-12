@@ -110,12 +110,13 @@ export function ConnectionIndicator({ compact = false }: ConnectionIndicatorProp
         }}
       />
       <Typography
-        flex={1}
-        textAlign="center"
         variant="body2"
         component="span"
-        sx={{ userSelect: 'none' }}
-      >
+        sx={{
+          flex: 1,
+          textAlign: "center",
+          userSelect: 'none'
+        }}>
         {t(state)}
       </Typography>
     </Box>

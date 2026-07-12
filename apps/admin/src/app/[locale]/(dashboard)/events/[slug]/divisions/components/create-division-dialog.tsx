@@ -110,7 +110,9 @@ export const CreateDivisionDialog: React.FC<CreateDivisionModalProps> = ({
                   />
 
                   <Stack spacing={1}>
-                    <Stack direction="row" alignItems="center" spacing={2}>
+                    <Stack direction="row" spacing={2} sx={{
+                      alignItems: "center"
+                    }}>
                       <ColorPicker
                         value={values.color}
                         onChange={color => setFieldValue('color', color)}

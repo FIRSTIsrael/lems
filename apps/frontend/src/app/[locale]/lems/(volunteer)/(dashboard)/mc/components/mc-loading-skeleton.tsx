@@ -8,7 +8,12 @@ export const McLoadingSkeleton: React.FC = () => {
       {/* Current Match Hero Skeleton */}
       <Paper sx={{ p: 4 }}>
         <Stack spacing={3}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: "space-between",
+              alignItems: "center"
+            }}>
             <Skeleton variant="text" width={200} height={50} />
             <Skeleton variant="rounded" width={100} height={32} />
           </Stack>
@@ -18,7 +23,6 @@ export const McLoadingSkeleton: React.FC = () => {
           </Stack>
         </Stack>
       </Paper>
-
       {/* Schedule Table Skeleton */}
       <Paper>
         <Box sx={{ p: 2 }}>
@@ -28,10 +32,11 @@ export const McLoadingSkeleton: React.FC = () => {
           <Skeleton variant="rectangular" width="100%" height={300} />
         </Box>
       </Paper>
-
       {/* Awards Placeholder Skeleton */}
       <Paper sx={{ p: 4 }}>
-        <Stack spacing={2} alignItems="center">
+        <Stack spacing={2} sx={{
+          alignItems: "center"
+        }}>
           <Skeleton variant="circular" width={80} height={80} />
           <Skeleton variant="text" width={250} height={32} />
           <Skeleton variant="text" width={400} height={20} />

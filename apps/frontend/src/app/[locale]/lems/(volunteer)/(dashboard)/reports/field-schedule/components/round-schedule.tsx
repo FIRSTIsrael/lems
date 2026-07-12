@@ -46,30 +46,51 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
         <TableHead>
           <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell colSpan={tables.length + 3}>
-              <Typography variant="h6" fontWeight={600} fontSize={isMobile ? '0.875rem' : '1rem'}>
+              <Typography
+                variant="h6"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: isMobile ? '0.875rem' : '1rem'
+                }}>
                 {roundTitle}
               </Typography>
             </TableCell>
           </TableRow>
           <TableRow sx={{ bgcolor: 'grey.100' }}>
             <TableCell align="center">
-              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: isMobile ? '0.75rem' : '1rem'
+                }}>
                 {t('columns.match')}
               </Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: isMobile ? '0.75rem' : '1rem'
+                }}>
                 {t('columns.start-time')}
               </Typography>
             </TableCell>
             <TableCell align="center">
-              <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+              <Typography
+                sx={{
+                  fontWeight: 600,
+                  fontSize: isMobile ? '0.75rem' : '1rem'
+                }}>
                 {t('columns.end-time')}
               </Typography>
             </TableCell>
             {tables.map(table => (
               <TableCell key={table.id} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {table.name}
                 </Typography>
               </TableCell>

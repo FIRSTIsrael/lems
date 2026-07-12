@@ -24,8 +24,9 @@ export default async function proxy(request: NextRequest) {
 
   // Check if this is a LEMS route (starts with /lems)
   const isLemsRoute = segments[0] === 'lems';
+  const isExportsRoute = segments[1] === 'export';
 
-  if (isLemsRoute) {
+  if (isLemsRoute && !isExportsRoute) {
     const backendUrl = process.env.LOCAL_BASE_URL || 'http://localhost:3333';
 
     try {

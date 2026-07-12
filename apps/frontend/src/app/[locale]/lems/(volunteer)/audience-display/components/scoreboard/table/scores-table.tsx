@@ -8,7 +8,7 @@ import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
 import { ScoresTableHeader } from './scores-table-header';
 import { ScoresTableRow } from './scores-table-row';
 
-const SCROLL_DURATION = 45;
+const SCROLL_DURATION = 70;
 
 export const ScoresTable = () => {
   const { matches, scoresheets, currentStage } = useScoreboard();

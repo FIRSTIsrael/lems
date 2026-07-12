@@ -17,19 +17,21 @@ import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
 import { OPTIONAL_AWARDS } from '@lems/shared';
 import { ArrowBack } from '@mui/icons-material';
-import router from 'next/router';
+import { useRouter } from 'next/navigation';
 import { useFinalDeliberation } from '../final-deliberation-context';
 import { ChampionsStage } from './champions/champions-stage';
 import { CoreAwardsStage } from './core-awards/core-awards-stage';
 import { OptionalAwardsStage } from './optional-awards/optional-awards-stage';
 import { ReviewStage } from './review/review-stage';
+import { AnomalyAlert } from './anomaly-alert';
 
 const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-awards', 'review'];
 
 export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
-  const { awardCounts, deliberation } = useFinalDeliberation();
+  const router = useRouter();
+  const { awardCounts, deliberation, anomalies } = useFinalDeliberation();
 
   // Determine visible stages based on whether optional awards exist
   const visibleStages = useMemo(() => {
@@ -65,7 +67,12 @@ export const FinalDeliberationGrid: React.FC = () => {
         }}
       >
         <Toolbar sx={{ minHeight: 56, gap: 1 }}>
-          <IconButton edge="start" color="inherit" onClick={() => router.back()} sx={{ mr: 1 }}>
+          <IconButton
+            edge="start"
+            color="primary"
+            onClick={() => router.push('/lems')}
+            sx={{ mr: 1 }}
+          >
             <ArrowBack />
           </IconButton>
           <Typography variant="h6" sx={{ flex: 1, color: 'text.primary' }}>
@@ -81,7 +88,10 @@ export const FinalDeliberationGrid: React.FC = () => {
           backgroundColor: alpha(theme.palette.primary.light, 0.1),
           borderBottom: `1px solid ${theme.palette.divider}`,
           py: 2,
-          px: 4
+          px: 4,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 2
         }}
       >
         <Stepper
@@ -103,6 +113,7 @@ export const FinalDeliberationGrid: React.FC = () => {
             </Step>
           ))}
         </Stepper>
+        <AnomalyAlert anomalies={anomalies} />
       </Box>
 
       {/* Main Content - Flex grow to fill remaining space */}

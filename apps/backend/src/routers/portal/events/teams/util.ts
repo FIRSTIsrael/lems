@@ -22,7 +22,6 @@ export const makePortalTeamJudgingSessionResponse = (
 
   return {
     id: session.id,
-    number: session.number,
     scheduledTime: session.scheduled_time,
     room: { id: room.id, name: room.name }
   };

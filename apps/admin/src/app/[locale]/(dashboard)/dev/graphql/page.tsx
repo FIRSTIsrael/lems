@@ -35,7 +35,12 @@ export default function GraphQLSchemaPage() {
         <Typography variant="h5" component="h1">
           GraphQL Schema
         </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            mt: 0.5
+          }}>
           Explore and interact with the GraphQL schema for the LEMS application.
         </Typography>
       </Box>

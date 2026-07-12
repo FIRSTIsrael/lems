@@ -6,6 +6,8 @@ export function useFilteredSessions(
   options: {
     teamFilter?: string;
     statusFilter?: string[];
+    roomFilter?: string[];
+    sessionNumberFilter?: number[];
     sortBy?: 'room' | 'session';
   }
 ): JudgingSession[] {
@@ -25,6 +27,14 @@ export function useFilteredSessions(
 
     if (options.statusFilter && options.statusFilter.length > 0) {
       filtered = filtered.filter(session => options.statusFilter!.includes(session.status));
+    }
+
+    if (options.roomFilter && options.roomFilter.length > 0) {
+      filtered = filtered.filter(session => options.roomFilter!.includes(session.room.name));
+    }
+
+    if (options.sessionNumberFilter && options.sessionNumberFilter.length > 0) {
+      filtered = filtered.filter(session => options.sessionNumberFilter!.includes(session.number));
     }
 
     if (options.sortBy === 'room') {

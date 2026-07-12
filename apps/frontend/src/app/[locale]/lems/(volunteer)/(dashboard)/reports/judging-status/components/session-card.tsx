@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
-import { Card, CardContent, Stack, Typography } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import { JudgingSession, Room } from '../graphql';
 import { TeamInfo } from '../../../components/team-info';
 import { SessionStatusChip } from './session-status-chip';
@@ -28,12 +28,20 @@ export const SessionCard: React.FC<SessionCardProps> = ({
       key={`${room.id}-${session.id}`}
       sx={{
         mb: 2,
-        bgcolor: isCurrentRound ? 'primary.50' : 'background.paper'
+        bgcolor: isCurrentRound ? 'primary.50' : 'background.paper',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column'
       }}
     >
-      <CardContent>
-        <Stack spacing={1.5}>
-          <Typography variant="subtitle2" color="text.secondary" sx={{ fontWeight: 600 }}>
+      <CardContent sx={{ display: 'flex', flexDirection: 'column', flex: 1, pb: 2 }}>
+        <Stack spacing={1.5} sx={{ flex: 1 }}>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              color: "text.secondary",
+              fontWeight: 600
+            }}>
             {t('table.room', { name: room.name })}
           </Typography>
 
@@ -41,12 +49,27 @@ export const SessionCard: React.FC<SessionCardProps> = ({
             <>
               <TeamInfo team={team} size="sm" />
 
-              <Stack direction="row" spacing={0.5} alignItems="center" flexWrap="wrap">
-                <SessionStatusChip status={session.status} arrived={team.arrived} />
+              <Box sx={{ flex: 1 }} />
+
+              <Stack
+                direction="row"
+                spacing={0.5}
+                sx={{
+                  alignItems: "center",
+                  flexWrap: "wrap"
+                }}>
+                <SessionStatusChip
+                  status={session.status}
+                  called={session.called}
+                  arrived={team.arrived}
+                  isQueued={session.queued}
+                />
               </Stack>
 
               {session.startTime && session.startDelta !== undefined && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('table.started-at', {
                     time: dayjs(session.startTime).format('HH:mm')
                   })}
@@ -65,7 +88,9 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               )}
 
               {session.status === 'in-progress' && session.startTime && (
-                <Typography variant="caption" color="text.secondary">
+                <Typography variant="caption" sx={{
+                  color: "text.secondary"
+                }}>
                   {t('table.ends-at', {
                     time: dayjs(session.startTime).add(sessionLength, 'seconds').format('HH:mm')
                   })}
@@ -73,7 +98,9 @@ export const SessionCard: React.FC<SessionCardProps> = ({
               )}
             </>
           ) : (
-            <Typography variant="body2" color="text.disabled">
+            <Typography variant="body2" sx={{
+              color: "text.disabled"
+            }}>
               {t('empty-state.no-team')}
             </Typography>
           )}

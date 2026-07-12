@@ -17,6 +17,11 @@ router.get('/latest', async (req: Request, res: Response) => {
 
 router.get('/:seasonSlug', async (req: Request, res: Response) => {
   const { seasonSlug } = req.params;
+  if (!seasonSlug || typeof seasonSlug !== 'string') {
+    res.status(400).json({ error: 'Season slug is required' });
+    return;
+  }
+
   const season = await db.seasons.bySlug(seasonSlug).get();
   if (season) {
     res.status(200).json(makePortalSeasonResponse(season));

@@ -77,11 +77,22 @@ export function RoleAssignmentSection({
     <Card variant="outlined">
       <CardHeader
         title={getRole(role)}
-        titleTypographyProps={{ variant: 'h6' }}
         sx={{ flexWrap: 'wrap' }}
         action={
-          <Stack direction="row" spacing={1} alignItems="center" sx={{ minWidth: 0 }}>
-            <Typography variant="body2" color="text.secondary">
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center',
+              minWidth: 0
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {slots.length} {slots.length === 1 ? t('slot') : t('slots')}
             </Typography>
             <Button variant="outlined" startIcon={<AddIcon />} onClick={handleAddSlot} size="small">
@@ -107,11 +118,20 @@ export function RoleAssignmentSection({
             )}
           </Stack>
         }
+        slotProps={{
+          title: { variant: 'h6' }
+        }}
       />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={{ pt: 0 }}>
           {slots.length === 0 ? (
-            <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary',
+                fontStyle: 'italic'
+              }}
+            >
               {t('no-slots-assigned')}
             </Typography>
           ) : (
@@ -120,12 +140,20 @@ export function RoleAssignmentSection({
                 <Stack
                   key={slot.id}
                   direction="row"
-                  justifyContent="space-between"
-                  alignItems="flex-start"
                   spacing={2}
-                  sx={{ minWidth: 0 }}
+                  sx={{
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    minWidth: 0
+                  }}
                 >
-                  <Stack spacing={2} flex={1} minWidth={0}>
+                  <Stack
+                    spacing={2}
+                    sx={{
+                      flex: 1,
+                      minWidth: 0
+                    }}
+                  >
                     {!singleDivision && (
                       <FormControl size="small" fullWidth>
                         <InputLabel>{t('divisions')}</InputLabel>
@@ -135,10 +163,12 @@ export function RoleAssignmentSection({
                           onChange={e => handleDivisionChange(slot.id, e.target.value as string[])}
                           input={<OutlinedInput label={t('divisions')} />}
                           MenuProps={{
-                            PaperProps: {
-                              style: {
-                                maxHeight: 300,
-                                overflow: 'auto'
+                            slotProps: {
+                              paper: {
+                                sx: {
+                                  maxHeight: 300,
+                                  overflow: 'auto'
+                                }
                               }
                             }
                           }}

@@ -10,7 +10,9 @@ export function ScorekeeperLoadingSkeleton() {
         <Grid container spacing={3}>
           {/* Audience Display Control */}
           <Grid size={{ lg: 12, xl: 6 }}>
-            <Stack spacing={2} height="100%">
+            <Stack spacing={2} sx={{
+              height: "100%"
+            }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                 <Skeleton variant="text" width="40%" />
               </Typography>
@@ -22,7 +24,9 @@ export function ScorekeeperLoadingSkeleton() {
 
           {/* Control Buttons */}
           <Grid size={{ lg: 12, xl: 6 }}>
-            <Stack spacing={2} height="100%">
+            <Stack spacing={2} sx={{
+              height: "100%"
+            }}>
               <Typography variant="subtitle2" sx={{ fontWeight: 600, px: 0.5 }}>
                 <Skeleton variant="text" width="40%" />
               </Typography>

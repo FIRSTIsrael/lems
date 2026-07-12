@@ -33,10 +33,15 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
       <Typography variant="h6">{t('select-team')}</Typography>
-      <Typography variant="body2" fontSize="small" color="text.secondary" gutterBottom>
+      <Typography
+        variant="body2"
+        gutterBottom
+        sx={{
+          fontSize: "small",
+          color: "text.secondary"
+        }}>
         {t('description')}
       </Typography>
-
       <TextField
         placeholder={t('placeholder')}
         size="small"
@@ -47,9 +52,14 @@ export const TeamSelector: React.FC<TeamSelectorProps> = ({
         }}
         sx={{ mb: 2 }}
       />
-
       {filteredTeams.length === 0 ? (
-        <Typography variant="body2" color="text.secondary" textAlign="center" py={4}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: "text.secondary",
+            textAlign: "center",
+            py: 4
+          }}>
           {searchQuery ? t('no-teams-found') : t('no-teams')}
         </Typography>
       ) : (

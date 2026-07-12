@@ -30,6 +30,7 @@ export const PortalTeamSummariesResponseSchema = z.array(PortalTeamSummaryRespon
 export const PortalTeamEventResultSchema = z.object({
   eventName: z.string(),
   eventSlug: z.string(),
+  eventDate: z.string(),
   published: z.boolean(),
   results: z
     .object({
@@ -82,7 +83,6 @@ export type AgendaEvent = z.infer<typeof AgendaEventSchema>;
 
 export const TeamJudgingSessionSchema = z.object({
   id: z.string(),
-  number: z.number(),
   scheduledTime: z.coerce.date(),
   room: z.object({
     id: z.string(),

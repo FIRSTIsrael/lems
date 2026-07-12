@@ -23,11 +23,17 @@ type Event {
   "Region where the event is held"
   region: String!
 
+  "IANA timezone identifier for the event (e.g., 'Europe/Warsaw', 'Asia/Jerusalem')"
+  timezone: String!
+
   "Location where the event is held"
   location: String!
 
   "Whether all divisions have awards, users, and schedules configured"
   isFullySetUp: Boolean!
+
+  "Whether this is an official FIRST LEGO League event"
+  official: Boolean!
 
   "All divisions participating in this event"
   divisions: [Division!]!

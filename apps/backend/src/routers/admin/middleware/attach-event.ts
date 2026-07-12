@@ -11,8 +11,7 @@ export const attachEvent = () => {
   return async (req: AdminRequest, res: Response, next: NextFunction) => {
     try {
       const eventId = req.params.eventId;
-
-      if (!eventId) {
+      if (!eventId || typeof eventId !== 'string') {
         res.status(400).json({ error: 'EVENT_ID_REQUIRED' });
         return;
       }

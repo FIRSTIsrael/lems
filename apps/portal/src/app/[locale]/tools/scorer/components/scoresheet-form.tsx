@@ -11,7 +11,12 @@ export const ScoresheetForm: React.FC = () => {
   const { errors } = useScoresheetValidator();
 
   return (
-    <Stack spacing={4} mt={4} mb={16}>
+    <Stack
+      spacing={4}
+      sx={{
+        mt: 4,
+        mb: 16
+      }}>
       {scoresheet.missions.map((mission, index) => (
         <ScoresheetMission
           key={mission.id}
@@ -21,7 +26,9 @@ export const ScoresheetForm: React.FC = () => {
         />
       ))}
       {errors.map((error, index) => (
-        <Typography key={index} color="error" fontWeight={600}>
+        <Typography key={index} color="error" sx={{
+          fontWeight: 600
+        }}>
           {getError(error.id)}
         </Typography>
       ))}

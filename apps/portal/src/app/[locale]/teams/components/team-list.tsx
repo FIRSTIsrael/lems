@@ -12,7 +12,7 @@ import { TeamPagination } from './team-pagination';
 export const TeamList: React.FC = () => {
   const t = useTranslations('pages.teams');
   const searchParams = useSearchParams();
-  const pageNumber = Number(searchParams.get('division')) || 1;
+  const pageNumber = Number(searchParams.get('page')) || 1;
 
   const { data, isLoading } = useSWR<{ teams: Team[]; numberOfPages: number }>(
     `/portal/teams?page=${pageNumber}`,
@@ -33,10 +33,14 @@ export const TeamList: React.FC = () => {
     return (
       <Paper sx={{ p: 6, textAlign: 'center' }}>
         <GroupsIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
-        <Typography variant="h5" gutterBottom color="text.secondary">
+        <Typography variant="h5" gutterBottom sx={{
+          color: "text.secondary"
+        }}>
           {t('no-teams.title')}
         </Typography>
-        <Typography variant="body1" color="text.secondary">
+        <Typography variant="body1" sx={{
+          color: "text.secondary"
+        }}>
           {t('no-teams.message')}
         </Typography>
       </Paper>

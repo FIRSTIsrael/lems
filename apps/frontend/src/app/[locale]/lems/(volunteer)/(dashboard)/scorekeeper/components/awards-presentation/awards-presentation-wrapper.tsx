@@ -13,26 +13,54 @@ export function AwardsPresentationWrapper() {
 
   const mappedAwards = useMemo<PresentationAward[]>(() => {
     return (data.judging?.awards ?? [])
-      .filter(award => award.type === 'TEAM' && award.winner && 'team' in award.winner)
+      .filter(award => award.winner !== null && award.winner !== undefined)
       .map(award => {
-        const winner = award.winner as TeamWinner;
+        if (!award.winner) return undefined;
 
-        return {
+        const baseAward = {
           id: award.id,
           name: award.name,
           index: award.index,
           place: award.place,
           type: award.type,
-          isOptional: award.isOptional,
-          winner: {
-            id: winner.team.id,
-            name: winner.team.name,
-            number: winner.team.number,
-            city: winner.team.city,
-            affiliation: winner.team.affiliation
-          }
+          isOptional: award.isOptional
         };
-      });
+
+        // Handle TEAM awards
+        if (award.type === 'TEAM' && 'team' in award.winner) {
+          const winner = award.winner as TeamWinner;
+          const teamData = winner.team;
+
+          // Ensure team data is valid before accessing properties
+          if (!teamData || !teamData.id || !teamData.name) {
+            return undefined;
+          }
+
+          return {
+            ...baseAward,
+            winner: {
+              id: teamData.id,
+              name: teamData.name,
+              number: teamData.number ? String(teamData.number) : '',
+              city: teamData.city || '',
+              affiliation: teamData.affiliation || ''
+            }
+          } as PresentationAward;
+        }
+
+        // Handle PERSONAL awards
+        if (award.type === 'PERSONAL' && 'name' in award.winner) {
+          return {
+            ...baseAward,
+            winner: {
+              name: award.winner.name
+            }
+          } as PresentationAward;
+        }
+
+        return undefined;
+      })
+      .filter((award): award is PresentationAward => award !== undefined);
   }, [data.judging?.awards]);
 
   return (

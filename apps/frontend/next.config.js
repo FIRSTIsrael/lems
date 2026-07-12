@@ -29,6 +29,10 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'emojicdn.elk.sh'
+      },
+      {
+        protocol: 'https',
+        hostname: '**.digitaloceanspaces.com'
       }
     ],
     localPatterns: [

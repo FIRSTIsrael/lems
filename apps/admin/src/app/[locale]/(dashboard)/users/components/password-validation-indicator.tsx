@@ -39,7 +39,12 @@ export const PasswordRequirements: React.FC<{
 
   return (
     <Box sx={{ mt: 1 }}>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: "text.secondary",
+          mb: 1
+        }}>
         {t('title')}
       </Typography>
       <List dense sx={{ py: 0 }}>

@@ -6,14 +6,18 @@ import { useJudgingSounds } from '@lems/shared';
 import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
 
 // Judging stages with durations in seconds
-export const JUDGING_STAGES = [
-  { id: 'setup', duration: 240 }, // 4 min - Welcome
+const FIXED_JUDGING_STAGES = [
+  { id: 'setup', duration: 120 }, // 2 min - Welcome
   { id: 'innovation-presentation', duration: 300 }, // 5 min
   { id: 'innovation-questions', duration: 300 }, // 5 min
   { id: 'robot-presentation', duration: 300 }, // 5 min
   { id: 'robot-questions', duration: 300 } // 5 min
-  // Additional final-thoughts stage added dynamically based on session length
 ];
+
+const FIXED_SESSION_LENGTH = FIXED_JUDGING_STAGES.reduce(
+  (total, stage) => total + stage.duration,
+  0
+);
 
 export interface JudgingSessionTimerState {
   currentStageIndex: number;
@@ -26,25 +30,25 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
     dayjs(startTime).add(sessionLength, 'second').toDate()
   );
 
-  const adjustedStages = useMemo(() => {
-    const fixedStageDuration = JUDGING_STAGES.reduce((sum, stage) => sum + stage.duration, 0);
-
-    const finalThoughtsDuration = Math.max(0, sessionLength - fixedStageDuration);
-
-    return [...JUDGING_STAGES, { id: 'final-thoughts', duration: finalThoughtsDuration }];
-  }, [sessionLength]);
+  const judgingStages = useMemo(
+    () => [
+      ...FIXED_JUDGING_STAGES,
+      { id: 'final-thoughts', duration: sessionLength - FIXED_SESSION_LENGTH }
+    ],
+    [sessionLength]
+  );
 
   const { currentStageIndex, stageTimeRemaining } = useMemo(() => {
     let result: { currentStageIndex: number; stageTimeRemaining: number } = {
-      currentStageIndex: adjustedStages.length - 1,
+      currentStageIndex: judgingStages.length - 1,
       stageTimeRemaining: 0
     };
 
     let elapsedTime = sessionLength - (minutes * 60 + seconds);
 
-    for (let i = 0; i < adjustedStages.length; i++) {
-      if (elapsedTime >= adjustedStages[i].duration) {
-        elapsedTime -= adjustedStages[i].duration;
+    for (let i = 0; i < judgingStages.length; i++) {
+      if (elapsedTime >= judgingStages[i].duration) {
+        elapsedTime -= judgingStages[i].duration;
         continue;
       }
 
@@ -53,13 +57,13 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
       // where if a memo returns an object it can only have one return statement
       result = {
         currentStageIndex: i,
-        stageTimeRemaining: adjustedStages[i].duration - elapsedTime
+        stageTimeRemaining: judgingStages[i].duration - elapsedTime
       };
       break;
     }
 
     return result;
-  }, [minutes, seconds, sessionLength, adjustedStages]);
+  }, [judgingStages, minutes, seconds, sessionLength]);
 
   const { playSound } = useJudgingSounds();
   const previousStageRef = useRef(currentStageIndex);
@@ -78,6 +82,7 @@ export const useJudgingSessionTimer = (startTime: string, sessionLength: number)
   }, [currentStageIndex, playSound]);
 
   return {
+    judgingStages,
     timerState: {
       currentStageIndex,
       stageTimeRemaining,

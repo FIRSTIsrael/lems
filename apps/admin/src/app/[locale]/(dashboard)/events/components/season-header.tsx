@@ -23,8 +23,15 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
   const t = useTranslations('pages.events');
 
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Stack direction="row" alignItems="center" spacing={2}>
+    <Stack
+      direction="row"
+      sx={{
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+      <Stack direction="row" spacing={2} sx={{
+        alignItems: "center"
+      }}>
         <Avatar
           variant="rounded"
           sx={{ width: 64, height: 64 }}
@@ -35,7 +42,9 @@ export const SeasonHeader: React.FC<SeasonHeaderProps> = ({
             {seasonName}
           </Typography>
           {numberOfEvents > 0 && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{
+              color: "text.secondary"
+            }}>
               {numberOfEvents} {numberOfEvents === 1 ? 'event' : 'events'}
             </Typography>
           )}

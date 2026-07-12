@@ -20,6 +20,7 @@ import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
 import { RubricStatusGlossary } from './rubric-status-glossary';
+import { ProfileDocumentButton } from './profile-document-button';
 
 interface RoomScheduleTableProps {
   onStartSession: (sessionId: string) => Promise<void>;
@@ -172,7 +173,6 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     #{session.number}
                   </Box>
                 </TableCell>
-
                 <TableCell align="center" sx={{ py: 2.5 }}>
                   <Typography
                     variant="h6"
@@ -187,17 +187,25 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     {formattedTime}
                   </Typography>
                 </TableCell>
-
                 <TableCell sx={{ py: 2.5 }}>
                   <TeamInfoCell team={session.team} />
                 </TableCell>
-
                 <TableCell align="center" sx={{ py: 2.5 }}>
-                  <StartSessionButton session={session} onStartSession={onStartSession} />
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      justifyContent: "center",
+                      alignItems: "center"
+                    }}>
+                    <StartSessionButton session={session} onStartSession={onStartSession} />
+                    <ProfileDocumentButton profileDocumentUrl={session.team.profileDocumentUrl} />
+                  </Stack>
                 </TableCell>
-
                 <TableCell sx={{ py: 2.5 }}>
-                  <Stack direction="row" spacing={1.5} justifyContent="center">
+                  <Stack direction="row" spacing={1.5} sx={{
+                    justifyContent: "center"
+                  }}>
                     <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovation_project?.status}

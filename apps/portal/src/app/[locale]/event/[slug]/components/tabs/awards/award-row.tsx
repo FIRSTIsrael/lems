@@ -32,7 +32,6 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
       >
         {getName(awardName)}
       </Typography>
-
       <Grid container spacing={2}>
         {awardList.map(award => {
           if (!award.winner) {
@@ -67,32 +66,30 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
                   }}
                 />
               )}
-
               {team ? (
                 <Typography
                   component={NextLink}
                   href={`/event/${eventSlug}/team/${team.slug}`}
                   variant="body1"
-                  fontWeight={600}
                   sx={{
+                    fontWeight: 600,
                     textDecoration: 'none',
                     color: 'text.primary',
+
                     '&:hover': {
                       textDecoration: 'underline',
                       color: 'primary.main'
                     }
-                  }}
-                >
+                  }}>
                   {winnerText}
                 </Typography>
               ) : (
                 <Typography
                   variant="body1"
-                  fontWeight={600}
                   sx={{
+                    fontWeight: 600,
                     color: 'text.primary'
-                  }}
-                >
+                  }}>
                   {winnerText}
                 </Typography>
               )}

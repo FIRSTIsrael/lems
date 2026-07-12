@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import useSWR, { KeyedMutator, mutate } from 'swr';
 import { useTranslations } from 'next-intl';
 import {
@@ -15,7 +15,7 @@ import {
   FormControlLabel,
   Switch
 } from '@mui/material';
-import { EventSettings } from '@lems/types/api/admin';
+import { EventSettings, TeamWithDivision } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
@@ -33,7 +33,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   const t = useTranslations('pages.events.settings');
   const event = useEvent();
 
-  const { data: teams = [] } = useSWR(`/admin/events/${event.id}/teams`, {
+  const { data: allTeams = [] } = useSWR<TeamWithDivision[]>(`/admin/events/${event.id}/teams`, {
     suspense: false,
     fallbackData: []
   });
@@ -46,15 +46,33 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
 
   const [visible, setVisible] = useState<boolean>(settings.visible || false);
   const [official, setOfficial] = useState<boolean>(settings.official || true);
+  const [openRubricsDuringSession, setOpenRubricsDuringSession] = useState<boolean>(
+    settings.openRubricsDuringSession || false
+  );
 
-  const totalTeams = teams.length;
-  const advancingTeams = Math.round((totalTeams * advancementPercent) / 100);
+  const { advancingTeams, totalTeams } = useMemo(() => {
+    const total = allTeams.length;
+    let advancing = 0;
+
+    const teamsByDivision: Record<string, number> = {};
+    allTeams.forEach(team => {
+      teamsByDivision[team.division.id] ??= 0;
+      teamsByDivision[team.division.id] += 1;
+    });
+
+    Object.values(teamsByDivision).forEach(divisionTeamCount => {
+      advancing += Math.round((divisionTeamCount * advancementPercent) / 100);
+    });
+
+    return { advancingTeams: advancing, totalTeams: total };
+  }, [allTeams, advancementPercent]);
 
   useEffect(() => {
     if (settings) {
       setAdvancementPercent(settings.advancementPercent);
       setVisible(settings.visible);
       setOfficial(settings.official);
+      setOpenRubricsDuringSession(settings.openRubricsDuringSession);
     }
   }, [settings]);
 
@@ -72,7 +90,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           ...settings,
           advancementPercent,
           visible,
-          official
+          official,
+          openRubricsDuringSession
         })
       });
 
@@ -109,7 +128,12 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               }
               label={t('event-settings.visible')}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
               {t('event-settings.visible-description')}
             </Typography>
             <FormControlLabel
@@ -123,13 +147,46 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               sx={{ mt: 2 }}
               label={t('event-settings.official')}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
               {t('event-settings.official-description')}
+            </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={openRubricsDuringSession}
+                  onChange={(_, checked) => setOpenRubricsDuringSession(checked)}
+                  color="primary"
+                />
+              }
+              sx={{ mt: 2 }}
+              label={t('event-settings.open-rubrics-during-session')}
+            />
+            <Typography
+              variant="caption"
+              sx={{
+                color: "text.secondary",
+                display: 'block'
+              }}>
+              {t('event-settings.open-rubrics-during-session-description')}
             </Typography>
           </Grid>
 
-          <Grid size={4} spacing={3} sx={{ mt: 1, mb: 4 }} alignItems="center">
-            <Typography variant="body2" color="text.secondary" gutterBottom>
+          <Grid
+            size={4}
+            spacing={3}
+            sx={{
+              alignItems: "center",
+              mt: 1,
+              mb: 4
+            }}>
+            <Typography variant="body2" gutterBottom sx={{
+              color: "text.secondary"
+            }}>
               {t('event-settings.advancement-percent')}
               {totalTeams > 0 && (
                 <Typography component="span" variant="body2" color="primary" sx={{ ml: 1 }}>
@@ -137,7 +194,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
                 </Typography>
               )}
             </Typography>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{
+              color: "text.secondary"
+            }}>
               {t('event-settings.advancement-percent-description')}
             </Typography>
             <Box sx={{ px: 2, mt: 5 }}>
@@ -169,7 +228,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               isSaving ||
               (advancementPercent === settings.advancementPercent &&
                 visible === settings.visible &&
-                official === settings.official)
+                official === settings.official &&
+                openRubricsDuringSession === settings.openRubricsDuringSession)
             }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >

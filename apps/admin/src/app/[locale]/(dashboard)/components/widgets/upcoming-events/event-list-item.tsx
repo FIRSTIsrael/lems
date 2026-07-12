@@ -26,7 +26,13 @@ export default function EventListItem({ event }: EventListItemProps) {
             }
           }}
         >
-          <Box display="flex" alignItems="center" width="100%" gap={2}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              gap: 2
+            }}>
             <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
               <Typography
                 variant="body2"
@@ -41,28 +47,26 @@ export default function EventListItem({ event }: EventListItemProps) {
               </Typography>
               <Typography
                 variant="caption"
-                color="text.secondary"
                 sx={{
+                  color: "text.secondary",
                   lineHeight: 1.2,
                   wordBreak: 'break-word',
                   fontSize: '0.8rem'
-                }}
-              >
+                }}>
                 {event.location}
               </Typography>
             </Stack>
 
             <Box
-              display="flex"
-              alignItems="center"
-              gap={1}
               sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
                 bgcolor: 'action.hover',
                 borderRadius: 1.5,
                 px: 1.5,
                 py: 0.75
-              }}
-            >
+              }}>
               <CalendarToday
                 sx={{
                   fontSize: 16,

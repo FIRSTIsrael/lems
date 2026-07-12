@@ -39,28 +39,31 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
     <TableRow sx={rowSx}>
       <TableCell align="center">
         <Typography
-          fontFamily="monospace"
-          fontWeight={500}
-          fontSize={isMobile ? '0.75rem' : '1rem'}
-        >
+          sx={{
+            fontFamily: "monospace",
+            fontWeight: 500,
+            fontSize: isMobile ? '0.75rem' : '1rem'
+          }}>
           {match.number}
         </Typography>
       </TableCell>
       <TableCell align="center">
         <Typography
-          fontFamily="monospace"
-          fontWeight={500}
-          fontSize={isMobile ? '0.75rem' : '1rem'}
-        >
+          sx={{
+            fontFamily: "monospace",
+            fontWeight: 500,
+            fontSize: isMobile ? '0.75rem' : '1rem'
+          }}>
           {startTime.format('HH:mm')}
         </Typography>
       </TableCell>
       <TableCell align="center">
         <Typography
-          fontFamily="monospace"
-          fontWeight={500}
-          fontSize={isMobile ? '0.75rem' : '1rem'}
-        >
+          sx={{
+            fontFamily: "monospace",
+            fontWeight: 500,
+            fontSize: isMobile ? '0.75rem' : '1rem'
+          }}>
           {endTime.format('HH:mm')}
         </Typography>
       </TableCell>
@@ -71,7 +74,7 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
         return (
           <TableCell key={table.id} align="center">
             {team ? (
-              <Tooltip title={`${team.name} ${team.arrived ? '' : `(${t('not-arrived')})`}`} arrow>
+              <Tooltip title={team.arrived ? '' : t('not-arrived')} arrow>
                 <Box
                   sx={{
                     display: 'inline-flex',
@@ -94,12 +97,14 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
                       fontSize: isMobile ? '0.75rem' : '1rem'
                     }}
                   >
-                    #{team.number}
+                    #{team.number} {team.name}
                   </Typography>
                 </Box>
               </Tooltip>
             ) : (
-              <Typography fontSize={isMobile ? '0.75rem' : '1rem'}>-</Typography>
+              <Typography sx={{
+                fontSize: isMobile ? '0.75rem' : '1rem'
+              }}>-</Typography>
             )}
           </TableCell>
         );

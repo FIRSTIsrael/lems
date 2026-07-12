@@ -66,7 +66,9 @@ export function AwardItem({ award, index }: AwardItemProps) {
             }
           }}
         >
-          <Stack direction="row" alignItems="center" spacing={2}>
+          <Stack direction="row" spacing={2} sx={{
+            alignItems: "center"
+          }}>
             <Box
               {...provided.dragHandleProps}
               sx={{
@@ -86,7 +88,12 @@ export function AwardItem({ award, index }: AwardItemProps) {
               <Typography variant="h6" sx={{ fontWeight: 600, mb: 0.5 }}>
                 {getName(award)}
               </Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ overflow: 'hidden' }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  color: "text.secondary",
+                  overflow: 'hidden'
+                }}>
                 {getDescription(award)}
               </Typography>
             </Box>

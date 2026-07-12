@@ -54,7 +54,12 @@ export default async function UpcomingEventsWidget() {
               mx: 2
             }}
           >
-            <Typography variant="body2" color="text.secondary" fontWeight={500}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: "text.secondary",
+                fontWeight: 500
+              }}>
               {t('no-events')}
             </Typography>
           </Box>

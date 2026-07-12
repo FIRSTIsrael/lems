@@ -11,8 +11,7 @@ import {
   TextField,
   Button,
   CircularProgress,
-  useTheme,
-  useMediaQuery
+  useTheme
 } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { Flag } from '@lems/shared';
@@ -34,7 +33,6 @@ export function TeamArrivalInput({
   const t = useTranslations('pages.pit-admin.team-input');
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -78,7 +76,12 @@ export function TeamArrivalInput({
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             {t('title')}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('subtitle')}
           </Typography>
         </Stack>
@@ -86,10 +89,12 @@ export function TeamArrivalInput({
         <Stack
           direction={{ xs: 'column', md: 'row' }}
           spacing={2}
-          alignItems={{ xs: 'stretch', d: 'flex-end' }}
+          sx={{
+            alignItems: { xs: 'stretch', md: 'flex-end' }
+          }}
         >
           <Autocomplete
-            fullWidth={isMobile}
+            fullWidth
             sx={{
               flex: { xs: undefined, md: 1 },
               '& .MuiOutlinedInput-root': {
@@ -116,12 +121,14 @@ export function TeamArrivalInput({
                 label={t('search-label')}
                 placeholder={t('search-placeholder')}
                 slotProps={{
+                  ...params.slotProps,
+
                   input: {
-                    ...params.InputProps,
+                    ...params.slotProps.input,
                     endAdornment: (
                       <>
                         {submitting && <CircularProgress color="inherit" size={20} />}
-                        {params.InputProps.endAdornment}
+                        {params.slotProps.input.endAdornment}
                       </>
                     )
                   }
@@ -130,17 +137,44 @@ export function TeamArrivalInput({
             )}
             renderOption={(props, team) => (
               <Box component="li" {...props} key={team.id}>
-                <Stack spacing={0.5} width="100%">
-                  <Stack direction="row" alignItems="center" spacing={1}>
+                <Stack
+                  spacing={0.5}
+                  sx={{
+                    width: '100%'
+                  }}
+                >
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      alignItems: 'center'
+                    }}
+                  >
                     <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
                       {t('team')} {team.number}
                     </Typography>
-                    <Typography variant="body2" color="text.secondary">
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {team.name}
                     </Typography>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <Typography variant="caption" color="text.secondary">
+                  <Stack
+                    direction="row"
+                    spacing={0.5}
+                    sx={{
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {team.affiliation} • {team.city}
                     </Typography>
                     <Flag region={team.region} size={14} />
@@ -178,12 +212,24 @@ export function TeamArrivalInput({
             }}
           >
             {submitting ? (
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <CircularProgress size={20} color="inherit" />
                 <span>{t('submitting')}</span>
               </Stack>
             ) : (
-              <Stack direction="row" alignItems="center" spacing={1}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <CheckCircleIcon sx={{ fontSize: '1.2rem' }} />
                 <span>{t('button')}</span>
               </Stack>
@@ -204,7 +250,13 @@ export function TeamArrivalInput({
             }}
           >
             <CheckCircleIcon color="success" sx={{ flexShrink: 0 }} />
-            <Typography variant="body2" color="success.dark" sx={{ fontWeight: 500 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'success.dark',
+                fontWeight: 500
+              }}
+            >
               {t('all-arrived-message')}
             </Typography>
           </Stack>

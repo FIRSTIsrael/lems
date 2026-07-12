@@ -7,6 +7,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
       id
       judging {
         divisionId
+        openRubricsDuringSession
         sessions(roomId: $roomId) {
           id
           number
@@ -28,6 +29,7 @@ export const GET_ROOM_JUDGING_SESSIONS: TypedDocumentNode<QueryData, QueryVars> 
             logoUrl
             arrived
             location
+            profileDocumentUrl
           }
           rubrics {
             innovation_project {

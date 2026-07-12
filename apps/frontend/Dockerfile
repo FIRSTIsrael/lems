@@ -1,5 +1,5 @@
 # Builder stage
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
@@ -16,7 +16,7 @@ COPY dist/apps/frontend/.next ./dist/apps/frontend/.next
 COPY apps/frontend/public ./apps/frontend/public
 
 # Runtime stage
-FROM node:22-alpine AS runner
+FROM node:24-alpine AS runner
 
 ENV NODE_ENV=production
 ENV PORT=4200

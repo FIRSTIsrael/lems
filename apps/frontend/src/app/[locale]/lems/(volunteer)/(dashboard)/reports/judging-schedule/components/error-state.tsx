@@ -10,7 +10,9 @@ export function ErrorState() {
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
       <ErrorIcon sx={{ fontSize: 48, color: 'error.main', mb: 2 }} />
-      <Typography variant="h6" color="error.main">
+      <Typography variant="h6" sx={{
+        color: "error.main"
+      }}>
         {t('error-loading')}
       </Typography>
     </Box>

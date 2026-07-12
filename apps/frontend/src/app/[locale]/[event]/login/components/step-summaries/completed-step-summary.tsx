@@ -40,7 +40,9 @@ export function CompletedStepSummary({
           }
         }}
       >
-        <Stack direction="row" alignItems="center" spacing={2}>
+        <Stack direction="row" spacing={2} sx={{
+          alignItems: "center"
+        }}>
           <CheckCircle
             sx={{
               color: 'primary.main',
@@ -60,7 +62,13 @@ export function CompletedStepSummary({
             >
               {label}
             </Typography>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                mt: 0.5
+              }}>
               {color && (
                 <Box
                   sx={{

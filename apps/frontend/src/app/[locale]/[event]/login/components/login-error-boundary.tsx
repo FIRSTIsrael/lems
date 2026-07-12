@@ -92,7 +92,12 @@ function LoginErrorFallback({ error, onReset }: LoginErrorFallbackProps) {
             <Typography variant="h4" sx={{ fontWeight: 700, mb: 1 }}>
               {t('errors.title')}
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: "text.secondary",
+                mb: 3
+              }}>
               {t('errors.description')}
             </Typography>
           </Box>
@@ -111,7 +116,13 @@ function LoginErrorFallback({ error, onReset }: LoginErrorFallbackProps) {
             {error?.message || t('errors.unknown')}
           </Alert>
 
-          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mb: 3 }}>
+          <Typography
+            variant="caption"
+            sx={{
+              color: "text.secondary",
+              display: 'block',
+              mb: 3
+            }}>
             {t('errors.support-text')}
           </Typography>
 

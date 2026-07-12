@@ -1,14 +1,17 @@
 'use client';
 
-import { Paper, Typography, useTheme, Box } from '@mui/material';
+import { Paper, Typography, useTheme, Box, IconButton } from '@mui/material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
+import { DirectionalIcon } from '@lems/localization';
 
 interface PageHeaderProps {
   title: string;
   subtitle?: string;
   children?: React.ReactNode;
+  onBack?: () => void;
 }
 
-export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, children }) => {
+export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, children, onBack }) => {
   const theme = useTheme();
 
   return (
@@ -27,32 +30,49 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, childre
           alignItems: { xs: 'flex-start', md: 'center' }
         }}
       >
-        <Box>
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 700,
-              background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
-            }}
-          >
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography
-              variant="body2"
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          {onBack && (
+            <IconButton
+              onClick={onBack}
               sx={{
-                color: 'text.secondary',
-                mt: 0.5,
-                fontSize: '0.875rem'
+                color: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.light',
+                  color: 'primary.dark'
+                }
+              }}
+              aria-label="Go back"
+            >
+              <DirectionalIcon ltr={ArrowBack} rtl={ArrowForward} />
+            </IconButton>
+          )}
+          <Box>
+            <Typography
+              variant="h4"
+              sx={{
+                fontWeight: 700,
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem' }
               }}
             >
-              {subtitle}
+              {title}
             </Typography>
-          )}
+            {subtitle && (
+              <Typography
+                variant="body2"
+                sx={{
+                  color: 'text.secondary',
+                  mt: 0.5,
+                  fontSize: '0.875rem'
+                }}
+              >
+                {subtitle}
+              </Typography>
+            )}
+          </Box>
         </Box>
         <Box>{children}</Box>
       </Box>

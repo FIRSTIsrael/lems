@@ -54,18 +54,30 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('table.start-time')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}>
                   {t('table.end-time')}
                 </Typography>
               </TableCell>
               {rooms.map(room => (
                 <TableCell key={room.id} align="center">
-                  <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '1rem'
+                    }}>
                     {room.name}
                   </Typography>
                 </TableCell>
@@ -91,34 +103,35 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   >
                     <TableCell align="center">
                       <Typography
-                        fontFamily="monospace"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
-                      >
+                        sx={{
+                          fontFamily: "monospace",
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {dayjs(row.time).format('HH:mm')}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography
-                        fontFamily="monospace"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
-                      >
+                        sx={{
+                          fontFamily: "monospace",
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}>
                         {endTime.format('HH:mm')}
                       </Typography>
                     </TableCell>
                     <TableCell colSpan={roomCount} align="center">
                       <Typography
                         component="div"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
                         sx={{
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: 1
-                        }}
-                      >
+                        }}>
                         {event.title}
                         <Chip
                           size="small"
@@ -155,29 +168,28 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                 >
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {sessionTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
-                    >
+                      sx={{
+                        fontFamily: "monospace",
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}>
                       {sessionEndTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   {row.rooms?.map(room => (
                     <TableCell key={room.id} align="center">
                       {room.team ? (
-                        <Tooltip
-                          title={`${room.team.name} ${room.team.arrived ? '' : `(${t('not-arrived')})`}`}
-                          arrow
-                        >
+                        <Tooltip title={room.team.arrived ? '' : t('not-arrived')} arrow>
                           <Box
                             sx={{
                               display: 'inline-flex',
@@ -200,12 +212,16 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                                 fontSize: isMobile ? '0.75rem' : '1rem'
                               }}
                             >
-                              #{room.team.number}
+                              #{room.team.number} {room.team.name}
                             </Typography>
                           </Box>
                         </Tooltip>
                       ) : (
-                        <Typography color="text.disabled" fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        <Typography
+                          sx={{
+                            color: "text.disabled",
+                            fontSize: isMobile ? '0.75rem' : '1rem'
+                          }}>
                           -
                         </Typography>
                       )}

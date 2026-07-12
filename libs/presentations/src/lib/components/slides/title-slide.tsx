@@ -3,7 +3,6 @@
 import React from 'react';
 import { Stack, Typography, Paper } from '@mui/material';
 import { Slide } from '../slide';
-import { LogoStack } from '../logo-stack';
 
 interface TitleSlideProps {
   primary: string;
@@ -17,17 +16,16 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
     <Slide>
       <Stack
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         spacing={6}
         sx={{
+          alignItems: "center",
+          justifyContent: "center",
           height: '100%',
           width: '100%',
           px: 4,
           textAlign: 'center',
           position: 'relative'
-        }}
-      >
+        }}>
         <Paper
           elevation={8}
           sx={{
@@ -71,8 +69,6 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
             )}
           </Stack>
         </Paper>
-
-        <LogoStack color={divisionColor} />
       </Stack>
     </Slide>
   );

@@ -18,6 +18,32 @@ export function validateChampionsStage(deliberation: { awards: FinalDeliberation
 }
 
 /**
+ * Fetches team eligibility status (arrived, disqualified) for a list of teams
+ */
+async function getTeamEligibility(
+  divisionId: string,
+  teamIds: string[]
+): Promise<Record<string, { arrived: boolean; disqualified: boolean }>> {
+  const eligibility = await db.raw.sql
+    .selectFrom('team_divisions')
+    .select(['team_id', 'arrived', 'disqualified'])
+    .where('division_id', '=', divisionId)
+    .where('team_id', 'in', teamIds)
+    .execute();
+
+  return eligibility.reduce(
+    (acc, row) => {
+      acc[row.team_id] = {
+        arrived: row.arrived,
+        disqualified: row.disqualified
+      };
+      return acc;
+    },
+    {} as Record<string, { arrived: boolean; disqualified: boolean }>
+  );
+}
+
+/**
  * Handles advancement award creation when leaving champions stage
  */
 export async function handleChampionsStageCompletion(
@@ -29,18 +55,42 @@ export async function handleChampionsStageCompletion(
     return;
   }
 
+  // Fetch team eligibility status (arrived, disqualified)
+  const teamEligibility = await getTeamEligibility(
+    divisionId,
+    teams.map(t => t.id)
+  );
+
   await assignChampionsToTeams(divisionId, champions);
 
-  const teamScores = await calculateAllTeamScores(divisionId, teams);
-  const teamsWithRanks = await rankTeams(teamScores, divisionId);
+  const allTeamScores = await calculateAllTeamScores(divisionId, teams);
+  const allTeamsWithRanks = await rankTeams(allTeamScores, divisionId);
 
+  // Assign robot performance awards based on field performance (not affected by disqualification)
   const robotPerformanceAwards = await db.awards.byDivisionId(divisionId).get('robot-performance');
-  const robotPerformanceWinners = teamsWithRanks
-    .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
-    .slice(0, robotPerformanceAwards.length)
-    .map(t => t.teamId);
+  if (robotPerformanceAwards.length > 0) {
+    const robotPerformanceWinners = allTeamsWithRanks
+      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
+      .slice(0, robotPerformanceAwards.length)
+      .map(t => t.teamId);
+    await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);
+  }
 
-  await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);
+  // Filter to eligible teams for judging-based awards
+  const eligibleTeams = teams.filter(t => {
+    const status = teamEligibility[t.id];
+    return status && status.arrived && !status.disqualified;
+  });
+
+  if (eligibleTeams.length === 0) {
+    await updateFinalDeliberationAwards(divisionId);
+    return;
+  }
+
+  // Rank eligible teams for advancement and other judging-based awards
+  const teamsWithRanks = allTeamsWithRanks.filter(t =>
+    eligibleTeams.some(et => et.id === t.teamId)
+  );
 
   const advancementConfig = await getAdvancementConfig(divisionId);
   if (!advancementConfig) {
@@ -51,7 +101,8 @@ export async function handleChampionsStageCompletion(
   const advancingTeamIds = selectAdvancingTeams(
     teamsWithRanks,
     Object.values(champions),
-    advancementConfig.advancement_percent
+    advancementConfig.advancement_percent,
+    teams.length
   );
 
   if (advancingTeamIds.length === 0) {
@@ -132,8 +183,8 @@ async function createAdvancementAwards(
   divisionId: string,
   advancingTeamIds: string[]
 ): Promise<void> {
-  const adavncementAwards = await db.awards.byDivisionId(divisionId).get('advancement');
-  if (adavncementAwards.length > 0) {
+  const _advancementAwards = await db.awards.byDivisionId(divisionId).get('advancement');
+  if (_advancementAwards.length > 0) {
     // Advancement awards already exist
     return;
   }

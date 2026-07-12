@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
-import { OpenInNew, Add, CheckCircleOutline } from '@mui/icons-material';
+import { OpenInNew, Add, CheckCircleOutlined, Description } from '@mui/icons-material';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/database';
 import { useCategoryDeliberation } from '../deliberation-context';
@@ -38,7 +38,7 @@ export function DeliberationTable() {
       {
         field: 'addToPicklist',
         headerName: '',
-        width: 40,
+        width: 50,
         sortable: false,
         filterable: false,
         renderCell: params => {
@@ -53,18 +53,32 @@ export function DeliberationTable() {
                 height: '100%'
               }}
             >
-              <CheckCircleOutline fontSize="small" color="success" />
+              <CheckCircleOutlined fontSize="small" color="success" />
             </Box>
           ) : (
             <Tooltip title={t('add-to-picklist')}>
-              <IconButton
-                size="small"
-                disabled={deliberation?.status !== 'in-progress'}
-                onClick={() => addToPicklist(team.id)}
-                color="success"
-              >
-                <Add fontSize="small" />
-              </IconButton>
+              <span>
+                <IconButton
+                  size="small"
+                  disabled={deliberation?.status !== 'in-progress'}
+                  onClick={() => addToPicklist(team.id)}
+                  sx={{
+                    bgcolor: theme.palette.success.light,
+                    color: 'white',
+                    width: 28,
+                    height: 28,
+                    '&:hover': {
+                      bgcolor: theme.palette.success.main
+                    },
+                    '&:disabled': {
+                      bgcolor: theme.palette.action.disabledBackground,
+                      color: theme.palette.action.disabled
+                    }
+                  }}
+                >
+                  <Add fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
           );
         }
@@ -73,27 +87,26 @@ export function DeliberationTable() {
         field: 'rank',
         headerName: t('rank'),
         width: 100,
-        sortable: true,
         filterable: false,
-
+        valueGetter: (value, row) => row.rank || 0,
         renderCell: params => params.row.rank || '-'
       },
       {
         field: 'room',
         headerName: t('room'),
         width: 60,
-        sortable: true,
         filterable: false,
         headerAlign: 'center',
         align: 'center',
+        valueGetter: (value, row) => row.room?.name || '',
         renderCell: params => params.row.room?.name || '-'
       },
       {
         field: 'teamDisplay',
         headerName: t('team'),
         width: 100,
-        sortable: false,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           return (
@@ -108,19 +121,20 @@ export function DeliberationTable() {
       // Rubric field columns
       ...(fieldDisplayLabels || []).map(
         label =>
-          ({
+          (({
             field: label,
             headerName: label,
             width: FIELD_COLUMN_WIDTH,
-            sortable: false,
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
+            valueGetter: (value, row) => row.rubricFields[label] ?? 0,
+
             renderCell: params => {
               const value = params.row.rubricFields[label];
               return value !== null ? value : '-';
             }
-          }) as GridColDef<EnrichedTeam>
+          }) as GridColDef<EnrichedTeam>)
       ),
 
       // GP score columns (only shown for core-values category)
@@ -133,51 +147,53 @@ export function DeliberationTable() {
             })
             .map(
               gpKey =>
-                ({
+                (({
                   field: gpKey,
                   headerName: gpKey,
                   width: FIELD_COLUMN_WIDTH,
-                  sortable: false,
                   filterable: false,
                   headerAlign: 'center' as const,
                   align: 'center' as const,
+                  valueGetter: (value, row) => row.gpScores[gpKey] ?? 3,
+
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
                     return value ?? 3; // Default GP score is 3 if not set
                   }
-                }) as GridColDef<EnrichedTeam>
+                }) as GridColDef<EnrichedTeam>)
             )
         : []),
       {
         field: 'totalScore',
         headerName: t('total'),
         width: 100,
-        sortable: true,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
         cellClassName: 'total-score-cell',
+        valueGetter: (value, row) => row.scores[hypenatedCategory],
         renderCell: params => params.row.scores[hypenatedCategory].toFixed(2)
       },
       {
         field: 'normalizedScore',
         headerName: t('normalized'),
         width: 100,
-        sortable: true,
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.normalizedScores[hypenatedCategory],
         renderCell: params => params.row.normalizedScores[hypenatedCategory].toFixed(2)
       },
       {
         field: 'actions',
         type: 'actions',
         headerName: t('actions'),
-        width: 80,
+        width: 100,
         getActions: params => {
           const team = params.row as EnrichedTeam;
+          const hasProfileDoc = !!team.profileDocumentUrl;
 
-          return (
+          const actions = [
             <Tooltip key="view-rubric" title={t('view-rubric')}>
               <IconButton
                 href={`/lems/team/${team.slug}/rubric/${hypenatedCategory}`}
@@ -187,13 +203,37 @@ export function DeliberationTable() {
               >
                 <OpenInNew fontSize="small" />
               </IconButton>
+            </Tooltip>,
+            <Tooltip
+              key="view-profile-document"
+              title={hasProfileDoc ? t('view-profile-document') : t('no-profile-document')}
+            >
+              <span>
+                <IconButton
+                  {...(hasProfileDoc && { href: team.profileDocumentUrl!, target: '_blank' })}
+                  size="small"
+                  color={hasProfileDoc ? 'primary' : 'default'}
+                  disabled={!hasProfileDoc}
+                  sx={{
+                    ...(!hasProfileDoc && {
+                      color: 'action.disabled',
+                      cursor: 'not-allowed'
+                    })
+                  }}
+                >
+                  <Description fontSize="small" />
+                </IconButton>
+              </span>
             </Tooltip>
-          );
+          ];
+
+          return actions;
         }
       }
     ],
     [
       t,
+      theme,
       fieldDisplayLabels,
       hypenatedCategory,
       teams,

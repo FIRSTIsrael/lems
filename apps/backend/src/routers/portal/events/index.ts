@@ -33,6 +33,7 @@ router.get('/', async (req: Request, res: Response) => {
       visible: settings.visible,
       published: settings.published,
       completed: settings.completed,
+      official: settings.official,
       is_fully_set_up: false,
       assigned_admin_ids: []
     };
@@ -79,12 +80,14 @@ router.get('/:slug', async (req: PortalEventRequest, res: Response) => {
   const event = await db.events.byId(req.eventId).get();
   const divisions = await db.divisions.byEventId(event.id).getAllSummaries();
   const season = await db.seasons.byId(event.season_id).get();
+  const settings = await db.events.byId(event.id).getSettings();
 
   const eventSummary: EventDetails = {
     ...event,
     divisions,
     season_name: season.name,
-    season_slug: season.slug
+    season_slug: season.slug,
+    official: settings.official
   };
 
   res.json(makePortalEventDetailsResponse(eventSummary));

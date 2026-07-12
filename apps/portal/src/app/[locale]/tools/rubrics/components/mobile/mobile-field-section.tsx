@@ -84,7 +84,9 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
     <Card sx={{ mb: 2 }}>
       <CardHeader
         title={
-          <Typography variant="subtitle1" fontWeight={600}>
+          <Typography variant="subtitle1" sx={{
+            fontWeight: 600
+          }}>
             {getCurrentLevelLabel()}
           </Typography>
         }

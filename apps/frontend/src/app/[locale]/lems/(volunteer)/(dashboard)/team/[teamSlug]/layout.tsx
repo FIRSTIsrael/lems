@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useSuspenseQuery } from '@apollo/client/react';
 import { redirect, useParams } from 'next/navigation';
 import { useEvent } from '../../../components/event-context';
-import { useUser } from '../../../../components/user-context';
+import { useUser } from '../../../components/user-context';
 import { TeamProvider } from './components/team-context';
 import { GET_TEAM_DATA_QUERY } from './graphql';
 
@@ -29,7 +29,7 @@ export default function TeamLayout({ children }: TeamLayoutProps) {
     throw new Error(error.message);
   }
 
-  if (!data.division?.teams || data.division.teams.length === 0) {
+  if (!data?.division?.teams || data.division.teams.length === 0) {
     toast.error(t('error-not-found'));
     redirect(`/lems/${role}`);
   }

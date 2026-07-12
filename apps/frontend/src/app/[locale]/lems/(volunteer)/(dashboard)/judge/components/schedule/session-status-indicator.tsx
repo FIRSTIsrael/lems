@@ -61,11 +61,18 @@ export const SessionStatusIndicator: React.FC<SessionStatusIndicatorProps> = ({
   const { color, icon, label } = getStatusConfig(status, tStatus);
 
   return (
-    <Stack spacing={0.5} alignItems="center" sx={{ textAlign: 'center' }}>
+    <Stack
+      spacing={0.5}
+      sx={{
+        alignItems: "center",
+        textAlign: 'center'
+      }}>
       <Typography variant="body2" sx={{ fontWeight: 600 }}>
         {tSchedule('session-label', { number: sessionNumber })}
       </Typography>
-      <Typography variant="caption" color="text.secondary">
+      <Typography variant="caption" sx={{
+        color: "text.secondary"
+      }}>
         {scheduledTime}
       </Typography>
       <Chip

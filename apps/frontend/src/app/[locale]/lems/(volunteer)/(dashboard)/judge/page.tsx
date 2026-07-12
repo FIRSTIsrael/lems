@@ -7,7 +7,7 @@ import { Box, Button } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { ResponsiveComponent, useJudgingSounds } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-import { useUser } from '../../../components/user-context';
+import { useUser } from '../../components/user-context';
 import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import { SoundTestDialog } from '../components/sound-test-dialog';
@@ -77,6 +77,7 @@ export default function JudgePage() {
   const sessions = data?.division?.judging.sessions ?? null;
   const sessionInProgress = sessions?.find(session => session.status === 'in-progress');
   const judgingSessionLength = data?.division?.judging.sessionLength;
+  const openRubricsDuringSession = data?.division?.judging.openRubricsDuringSession ?? false;
 
   const handleStartSession = useCallback(
     async (sessionId: string) => {
@@ -98,7 +99,11 @@ export default function JudgePage() {
 
   if (sessionInProgress) {
     return (
-      <JudgingSessionProvider session={sessionInProgress} sessionLength={judgingSessionLength ?? 0}>
+      <JudgingSessionProvider
+        session={sessionInProgress}
+        sessionLength={judgingSessionLength ?? 0}
+        openRubricsDuringSession={openRubricsDuringSession}
+      >
         <ResponsiveComponent
           mobile={<JudgingTimerMobileLayout onAbortSession={handleAbortSession} />}
           desktop={<JudgingTimerDesktopLayout onAbortSession={handleAbortSession} />}

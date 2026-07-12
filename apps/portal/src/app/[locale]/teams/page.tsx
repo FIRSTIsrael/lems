@@ -12,12 +12,11 @@ export default async function TeamsPage() {
         <Typography
           variant="h3"
           component="h1"
-          fontWeight="bold"
           sx={{
+            fontWeight: "bold",
             mb: 4,
             fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.75rem' }
-          }}
-        >
+          }}>
           {<RichText>{tags => t.rich('title', tags)}</RichText>}
         </Typography>
 

@@ -39,10 +39,20 @@ export function VolunteerUsersSection() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
-        <Stack alignItems="center" spacing={2}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: 400
+        }}>
+        <Stack spacing={2} sx={{
+          alignItems: "center"
+        }}>
           <CircularProgress size={48} />
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{
+            color: "text.secondary"
+          }}>
             {t('loading')}
           </Typography>
         </Stack>
@@ -52,12 +62,22 @@ export function VolunteerUsersSection() {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={3} sx={{ flexWrap: 'wrap', gap: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 3,
+          flexWrap: 'wrap',
+          gap: 2
+        }}>
         <Box>
           <Typography variant="h5" gutterBottom>
             {t('title')}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{
+            color: "text.secondary"
+          }}>
             {t('description')}
           </Typography>
         </Box>
@@ -100,19 +120,16 @@ export function VolunteerUsersSection() {
           </Button>
         </Stack>
       </Box>
-
       {saveResult === 'success' && (
         <Alert severity="success" sx={{ mb: 3 }}>
           {t('save-success')}
         </Alert>
       )}
-
       {saveResult === 'error' && (
         <Alert severity="error" sx={{ mb: 3 }}>
           {t('save-error')}
         </Alert>
       )}
-
       {validationErrors.length > 0 && (
         <Alert severity="error" sx={{ mb: 3 }}>
           <Typography variant="subtitle2" gutterBottom>
@@ -125,8 +142,9 @@ export function VolunteerUsersSection() {
           </ul>
         </Alert>
       )}
-
-      <Stack direction={{ sm: 'column', lg: 'row' }} spacing={3} alignItems="flex-start">
+      <Stack direction={{ sm: 'column', lg: 'row' }} spacing={3} sx={{
+        alignItems: "flex-start"
+      }}>
         <ManagedRolesSection />
         <MandatoryRolesSection />
         <OptionalRolesSection />

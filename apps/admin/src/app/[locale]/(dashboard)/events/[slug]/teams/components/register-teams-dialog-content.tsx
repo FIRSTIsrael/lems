@@ -21,6 +21,7 @@ import {
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Team, Division, TeamWithDivision } from '@lems/types/api/admin';
+import { Flag } from '@lems/shared';
 
 interface RegisterTeamsDialogContentProps {
   teams: Team[];
@@ -95,9 +96,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                 onChange={e => setSelectedDivisionId(e.target.value)}
               >
                 <MenuItem value="random" key="random">
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    {t('random')}
-                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{t('random')}</Box>
                 </MenuItem>
                 {divisions.map(division => (
                   <MenuItem key={division.id} value={division.id} disabled={division.hasSchedule}>
@@ -145,6 +144,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                     }
                   >
                     <ListItemText primary={`#${team.number}`} secondary={team.name} />
+                    <Flag region={team.region} size={16} />
                   </ListItem>
                 ))}
                 {availableTeams.length === 0 && (
@@ -190,6 +190,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                           }}
                         />
                         {`#${registeredTeam.number}`}
+                        <Flag region={registeredTeam.region} size={16} />
                         {divisions.length > 1 && ` - ${registeredTeam.division.name}`}
                       </Box>
                     }
@@ -200,9 +201,11 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                 {registeredTeams.length === 0 && (
                   <Typography
                     variant="body2"
-                    color="text.secondary"
-                    sx={{ textAlign: 'center', mt: 2 }}
-                  >
+                    sx={{
+                      color: "text.secondary",
+                      textAlign: 'center',
+                      mt: 2
+                    }}>
                     {t('no-teams-selected')}
                   </Typography>
                 )}
@@ -211,7 +214,6 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
           </Grid>
         </Grid>{' '}
       </DialogContent>
-
       <DialogActions sx={{ my: 1 }}>
         <Button onClick={onClose}>{t('actions.cancel')}</Button>
         <Button

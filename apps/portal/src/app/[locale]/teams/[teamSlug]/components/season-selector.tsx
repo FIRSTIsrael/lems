@@ -31,7 +31,9 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason })
   };
 
   return (
-    <Box p={2}>
+    <Box sx={{
+      p: 2
+    }}>
       <FormControl size="small" fullWidth>
         <Select
           value={currentSeason === 'latest' ? seasons[0].slug : currentSeason}

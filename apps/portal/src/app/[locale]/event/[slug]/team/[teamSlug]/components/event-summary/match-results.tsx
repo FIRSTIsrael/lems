@@ -15,7 +15,12 @@ export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
     <>
       <Divider sx={{ my: 3 }} />
       <Box>
-        <Typography variant="h6" fontWeight="700" mb={1}>
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: "700",
+            mb: 1
+          }}>
           {t('performance.match-results')}
         </Typography>
         <Grid container spacing={2}>
@@ -34,10 +39,14 @@ export const MatchResults: React.FC<MatchResultsProps> = ({ scores }) => {
                 borderColor: 'grey.200'
               }}
             >
-              <Typography variant="body2" fontWeight="600">
+              <Typography variant="body2" sx={{
+                fontWeight: "600"
+              }}>
                 {t('performance.match-number', { number: index + 1 })}
               </Typography>
-              <Typography variant="body1" fontWeight="600" color="primary">
+              <Typography variant="body1" color="primary" sx={{
+                fontWeight: "600"
+              }}>
                 {score ?? '-'}
               </Typography>
             </Grid>

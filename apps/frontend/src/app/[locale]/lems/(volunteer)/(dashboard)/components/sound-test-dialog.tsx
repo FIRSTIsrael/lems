@@ -32,9 +32,17 @@ export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen 
       <DialogTitle id="sound-test-title">{t('title')}</DialogTitle>
       <DialogContent>
         <DialogContentText id="delete-data-description">{t('description')}</DialogContentText>
-        <Stack justifyContent="space-evenly" width="100%" direction="row" mt={2}>
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: "space-evenly",
+            width: "100%",
+            mt: 2
+          }}>
           {['start', 'change', 'end'].map(key => (
-            <Stack key={key} alignItems="center">
+            <Stack key={key} sx={{
+              alignItems: "center"
+            }}>
               <IconButton
                 onClick={() => playSound(key as 'start' | 'change' | 'end')}
                 sx={{ width: 36, height: 36 }}
@@ -42,7 +50,12 @@ export const SoundTestDialog: React.FC<SoundTestDialogProps> = ({ open, setOpen 
               >
                 <VolumeUpRoundedIcon />
               </IconButton>
-              <Typography fontSize="0.75rem" color="textSecondary" textAlign="center">
+              <Typography
+                color="textSecondary"
+                sx={{
+                  fontSize: "0.75rem",
+                  textAlign: "center"
+                }}>
                 {t(`sounds.${key}`)}
               </Typography>
             </Stack>

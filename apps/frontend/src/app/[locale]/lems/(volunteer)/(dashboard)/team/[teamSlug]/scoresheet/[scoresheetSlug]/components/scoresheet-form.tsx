@@ -18,7 +18,12 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
   const { getError } = useScoresheetTranslations();
 
   return (
-    <Stack spacing={4} mt={4} mb={16}>
+    <Stack
+      spacing={4}
+      sx={{
+        mt: 4,
+        mb: 16
+      }}>
       {scoresheet.missions.map((mission, index) => (
         <ScoresheetMission
           key={mission.id}
@@ -29,21 +34,19 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
           disabled={disabled}
         />
       ))}
-
       {validation.validatorErrors.length > 0 && (
         <Stack spacing={2}>
           {validation.validatorErrors.map(errorId => (
             <Alert key={errorId} severity="error">
-              <Typography fontSize="0.875rem">{getError(errorId)}</Typography>
+              <Typography sx={{
+                fontSize: "0.875rem"
+              }}>{getError(errorId)}</Typography>
             </Alert>
           ))}
         </Stack>
       )}
-
       <ScoresheetIncompleteAlert validation={validation} />
-
       <ScoresheetSubmission />
-
       <ScoreFloater score={validation.score} />
     </Stack>
   );

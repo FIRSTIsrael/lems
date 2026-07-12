@@ -22,8 +22,7 @@ export function UpcomingMatches({ matches, loadedMatchId, maxDisplay = 10 }: Upc
 
   const upcoming = useMemo(() => {
     return matches
-      .filter(m => m.status === 'not-started')
-      .filter(m => m.id !== loadedMatchId)
+      .filter(m => m.status === 'not-started' && m.id !== loadedMatchId && m.stage !== 'TEST')
       .sort((a, b) => dayjs(a.scheduledTime).diff(dayjs(b.scheduledTime)))
       .slice(0, maxDisplay);
   }, [matches, loadedMatchId, maxDisplay]);
@@ -31,11 +30,12 @@ export function UpcomingMatches({ matches, loadedMatchId, maxDisplay = 10 }: Upc
   return (
     <Paper sx={{ p: 0 }}>
       <Stack spacing={2} sx={{ p: 3, pb: 0 }}>
-        <Typography variant="h6" fontWeight={600}>
+        <Typography variant="h6" sx={{
+          fontWeight: 600
+        }}>
           {t('upcoming-matches.title')}
         </Typography>
       </Stack>
-
       <UpcomingMatchesTable matches={upcoming} loadedMatchId={loadedMatchId} />
     </Paper>
   );

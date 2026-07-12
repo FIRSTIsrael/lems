@@ -5,6 +5,10 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
   query GetRefereeData($divisionId: String!, $tableId: String!) {
     division(id: $divisionId) {
       id
+      tables {
+        id
+        name
+      }
       field {
         divisionId
         matches {
@@ -54,5 +58,5 @@ export const GET_REFEREE_DATA: TypedDocumentNode<RefereeData, RefereeVars> = gql
 `;
 
 export function parseRefereeData(data: RefereeData) {
-  return data.division.field;
+  return data.division;
 }

@@ -9,9 +9,9 @@ import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
 import { useRubric } from '../rubric-context';
 import { UPDATE_RUBRIC_STATUS_MUTATION } from '../graphql';
-import { useUser } from '../../../../../../../components/user-context';
+import { useUser } from '../../../../../../components/user-context';
 import { useEvent } from '../../../../../../components/event-context';
-import { RoleAuthorizer } from '../../../../../../../components/role-authorizer';
+import { RoleAuthorizer } from '../../../../../../components/role-authorizer';
 
 interface LockUnlockRubricButtonProps {
   disabled?: boolean;

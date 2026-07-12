@@ -24,6 +24,7 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       isFullySetUp
       region
       seasonName
+      official
     }
   }
 `;

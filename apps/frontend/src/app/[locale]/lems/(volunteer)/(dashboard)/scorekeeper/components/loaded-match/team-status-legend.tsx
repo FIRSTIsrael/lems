@@ -6,8 +6,9 @@ import { getStatusIcon, type TeamReadinessStatus } from './utils';
 
 const ALL_STATUSES: TeamReadinessStatus[] = [
   'ready',
-  'no-show',
+  'present',
   'queued',
+  'no-show',
   'conflict',
   'missing',
   'empty'
@@ -94,9 +95,10 @@ export const TeamStatusLegend: React.FC<TeamStatusLegendProps> = ({ open, anchor
               key={status}
               direction="row"
               spacing={1.5}
-              alignItems="flex-start"
-              sx={{ py: 0.5 }}
-            >
+              sx={{
+                alignItems: "flex-start",
+                py: 0.5
+              }}>
               <Box
                 sx={{
                   display: 'flex',

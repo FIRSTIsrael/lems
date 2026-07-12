@@ -16,24 +16,13 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { useLeadJudge } from './lead-judge-context';
+import { useFilters } from './filters-context';
 import { getRubricStatusStats } from './utils';
 import { SessionFilters } from './session-filters';
 import { LeadJudgeDeliberationCard } from './lead-judge-deliberation-card';
 import { RubricStatusGlossary } from './rubric-status-glossary';
 
-interface RubricStatusSummaryProps {
-  teamFilter: string;
-  setTeamFilter: (value: string) => void;
-  statusFilter: string[];
-  setStatusFilter: (value: string[]) => void;
-}
-
-export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
-  teamFilter,
-  setTeamFilter,
-  statusFilter,
-  setStatusFilter
-}) => {
+export const RubricStatusSummary: React.FC = () => {
   const t = useTranslations('pages.lead-judge.summary');
   const { getCategory } = useJudgingCategoryTranslations();
   const theme = useTheme();
@@ -145,10 +134,11 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
 
             <Stack
               direction="row"
-              justifyContent="space-between"
-              alignItems="center"
-              sx={{ mt: 1.5 }}
-            >
+              sx={{
+                justifyContent: "space-between",
+                alignItems: "center",
+                mt: 1.5
+              }}>
               <Typography variant="caption" color="textSecondary" sx={{ mt: 1 }}>
                 {t('status.approved')}
               </Typography>
@@ -173,12 +163,7 @@ export const RubricStatusSummary: React.FC<RubricStatusSummaryProps> = ({
             />
           </CardContent>
         </Card>
-        <SessionFilters
-          teamFilter={teamFilter}
-          setTeamFilter={setTeamFilter}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-        />
+        <SessionFilters />
         <LeadJudgeDeliberationCard />
       </Box>
     </Paper>

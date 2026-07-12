@@ -26,10 +26,7 @@ export async function calculateAllTeamScores(
   teams: TeamData[]
 ): Promise<TeamScoreData[]> {
   const rubrics = await db.rubrics.byDivision(divisionId).getAll();
-  const scoresheets = await db.raw.mongo
-    .collection<Scoresheet>('scoresheets')
-    .find({ divisionId })
-    .toArray();
+  const scoresheets = await db.scoresheets.byDivision(divisionId).getAll();
 
   return teams.map(team => ({
     teamId: team.id,
@@ -37,7 +34,7 @@ export async function calculateAllTeamScores(
     rubricScores: calculateRubricScores(team.id, rubrics),
     gpScore: calculateGPScore(team.id, scoresheets),
     robotGameScores: scoresheets
-      .filter(s => s.teamId === team.id && s.stage === 'RANKING')
+      .filter(s => s.teamId === team.id && s.stage === 'RANKING' && s.status === 'submitted')
       .map(s => s.data?.score || 0)
   }));
 }
@@ -159,14 +156,14 @@ async function fetchPicklists(
   const picklists: Partial<Record<JudgingCategory, string[]>> = {};
 
   for (const category of categories) {
-    const deliberation = await db.raw.mongo
-      .collection('judging_deliberations')
-      .findOne({ divisionId, category });
+    const deliberation = await db.judgingDeliberations
+      .byDivision(divisionId)
+      .getByCategory(category);
 
     if (deliberation && Array.isArray(deliberation.picklist)) {
       picklists[category] = deliberation.picklist;
     } else {
-      picklists[category] = [];
+      throw new Error(`Missing picklist for category ${category} in division ${divisionId}`);
     }
   }
 
