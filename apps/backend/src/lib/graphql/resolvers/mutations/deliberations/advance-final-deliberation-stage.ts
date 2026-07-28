@@ -115,8 +115,8 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
     stage: nextStage,
     status: 'not-started',
-    stageData: {
-      ...deliberation.stageData,
+    stage_data: {
+      ...deliberation.stage_data,
       [nextStage]: {}
     }
   });
@@ -134,7 +134,7 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
     pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
       divisionId,
       stage: updated.stage,
-      stageData: updated.stageData
+      stageData: updated.stage_data
     }),
     pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
       divisionId,

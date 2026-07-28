@@ -30,7 +30,7 @@ export * from './tables/team-division-notifications';
 // States
 export * from './documents/rubric';
 export * from './documents/scoresheet';
-export * from './documents/final-deliberation';
 
 export * from './tables/judging-deliberation';
+export * from './tables/final-deliberation';
 export * from './tables/awards';
