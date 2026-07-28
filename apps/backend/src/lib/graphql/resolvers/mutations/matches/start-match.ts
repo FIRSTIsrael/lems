@@ -2,7 +2,6 @@ import dayjs from 'dayjs';
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -45,13 +44,11 @@ export const startMatchResolver: GraphQLFieldResolver<
       );
     }
 
-    const divisionState = await db.raw.mongo
-      .collection<DivisionState>('division_states')
-      .findOne({ divisionId });
+    const divisionState = division.state;
 
     // Advance stage if this is the first ranking match being started
     const shouldAdvanceStage =
-      match.stage === 'RANKING' && divisionState?.field?.currentStage === 'PRACTICE';
+      match.stage === 'RANKING' && divisionState.field.currentStage === 'PRACTICE';
 
     const startTime = dayjs();
     const scheduledTime = dayjs(match.scheduled_time);
@@ -72,18 +69,12 @@ export const startMatchResolver: GraphQLFieldResolver<
     }
 
     // Update division state with active match
-    const divisionUpdateResult = await db.raw.mongo
-      .collection<DivisionState>('division_states')
-      .findOneAndUpdate(
-        { divisionId },
-        {
-          $set: {
-            'field.activeMatch': matchId,
-            ...(shouldAdvanceStage && { 'field.currentStage': 'RANKING' })
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const divisionUpdateResult = await db.divisions.byId(divisionId).updateState({
+      field: {
+        activeMatch: matchId,
+        ...(shouldAdvanceStage && { currentStage: 'RANKING' })
+      }
+    });
 
     if (!divisionUpdateResult) {
       throw new MutationError(
@@ -107,13 +98,9 @@ export const startMatchResolver: GraphQLFieldResolver<
       try {
         const autoLoadedMatchId = await getAutoLoadMatch(divisionId, currentStage, matchId);
         if (autoLoadedMatchId) {
-          await db.raw.mongo
-            .collection<DivisionState>('division_states')
-            .findOneAndUpdate(
-              { divisionId },
-              { $set: { 'field.loadedMatch': autoLoadedMatchId } },
-              { returnDocument: 'after' }
-            );
+          await db.divisions.byId(divisionId).updateState({
+            field: { loadedMatch: autoLoadedMatchId }
+          });
           console.log(
             `[StartMatch] Auto-loaded match ${autoLoadedMatchId} for division ${divisionId}`
           );

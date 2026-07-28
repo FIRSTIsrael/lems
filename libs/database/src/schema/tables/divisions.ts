@@ -19,7 +19,7 @@ export interface AwardsPresentation {
 
 export interface AudienceDisplay {
   activeDisplay: AudienceDisplayScreen;
-  awardsPresentation?: AwardsPresentation;
+  awardsPresentation: AwardsPresentation;
   settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
 }
 
