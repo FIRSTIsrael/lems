@@ -131,7 +131,7 @@ export class Database {
     this.integrations = new EventIntegrationsRepository(this.kysely);
 
     this.rooms = new RoomsRepository(this.kysely);
-    this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
+    this.judgingSessions = new JudgingSessionsRepository(this.kysely);
     this.judgingDeliberations = new JudgingDeliberationsRepository(this.kysely);
     this.finalDeliberations = new FinalDeliberationsRepository(this.mongoDb);
     this.rubrics = new RubricsRepository(this.kysely, this.mongoDb);

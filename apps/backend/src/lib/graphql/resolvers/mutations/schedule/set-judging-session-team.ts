@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -76,11 +75,7 @@ export const setJudgingSessionTeamResolver: GraphQLFieldResolver<
     }
 
     // Check 2: Session must be in not-started status
-    const sessionState = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOne({ sessionId });
-
-    if (!sessionState || sessionState.status !== 'not-started') {
+    if (session.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Session must be in not-started status to change teams'
