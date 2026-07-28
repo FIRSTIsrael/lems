@@ -45,7 +45,7 @@
     "cors": "^2.8.6",
     "csv-parse": "^7.0.1",
     "dayjs": "^1.11.21",
-    "dompurify": "^3.4.11",
+    "dompurify": "^3.4.12",
     "express": "^5.2.1",
     "express-fileupload": "^1.5.2",
     "express-rate-limit": "^8.5.2",
