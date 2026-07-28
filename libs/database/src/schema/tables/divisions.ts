@@ -9,6 +9,27 @@ export interface DivisionScheduleSettings {
   timezone?: string; // IANA timezone identifier (e.g., 'Europe/Warsaw')
 }
 
+export type AudienceDisplayScreen =
+  'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
+
+export interface AwardsPresentation {
+  slideIndex: number;
+  stepIndex: number;
+}
+
+export interface DivisionState {
+  field?: {
+    loadedMatch: string | null;
+    activeMatch: string | null;
+    currentStage: 'PRACTICE' | 'RANKING';
+  };
+  audienceDisplay?: {
+    activeDisplay: AudienceDisplayScreen;
+    awardsPresentation?: AwardsPresentation;
+    settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
+  };
+}
+
 export interface DivisionsTable {
   pk: ColumnType<number, never, never>; // Serial primary key
   id: ColumnType<string, never, never>; // UUID, generated
@@ -21,6 +42,7 @@ export interface DivisionsTable {
   has_users: Generated<boolean>; // Default false
   awards_assigned: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
+  state: Generated<DivisionState>;
 }
 
 export type Division = Selectable<DivisionsTable>;
