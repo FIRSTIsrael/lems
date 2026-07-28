@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, RobotGameMatchState } from '@lems/database';
+import { DivisionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -58,19 +58,11 @@ export const startMatchResolver: GraphQLFieldResolver<
     const startDelta = startTime.diff(scheduledTime, 'seconds');
 
     // Update match state
-    const result = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOneAndUpdate(
-        { matchId },
-        {
-          $set: {
-            status: 'in-progress',
-            startTime: startTime.toDate(),
-            startDelta
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.robotGameMatches.byId(matchId).update({
+      status: 'in-progress',
+      start_time: startTime.toDate(),
+      start_delta: startDelta
+    });
 
     if (!result) {
       throw new MutationError(
@@ -201,20 +193,17 @@ export const startMatchResolver: GraphQLFieldResolver<
  */
 const checkMatchCanBeStarted = async (matchId: string): Promise<void> => {
   // Check 1: Match must be in not-started status
-  const matchState = await db.raw.mongo
-    .collection<RobotGameMatchState>('robot_game_match_states')
-    .findOne({ matchId });
-
-  if (!matchState || matchState.status !== 'not-started') {
-    throw new MutationError(MutationErrorCode.CONFLICT, 'Match is not in not-started status');
-  }
-
-  // Check 2: Match must start 5 minutes or less from now
   const match = await db.robotGameMatches.byId(matchId).get();
+
   if (!match) {
     throw new MutationError(MutationErrorCode.NOT_FOUND, 'Match not found');
   }
 
+  if (match.status !== 'not-started') {
+    throw new MutationError(MutationErrorCode.CONFLICT, 'Match is not in not-started status');
+  }
+
+  // Check 2: Match must start 5 minutes or less from now
   const scheduledTime = dayjs(match.scheduled_time);
   const now = dayjs();
   const minutesUntilStart = scheduledTime.diff(now, 'minutes', true);

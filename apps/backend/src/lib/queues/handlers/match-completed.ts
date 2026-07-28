@@ -1,5 +1,4 @@
 import { Job } from 'bullmq';
-import { RobotGameMatchState } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../redis/redis-pubsub';
 import db from '../../database';
@@ -25,34 +24,15 @@ export async function handleMatchCompleted(job: Job<ScheduledEvent>): Promise<vo
     }
 
     // Idempotency check: verify match is still in-progress
-    const matchState = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId });
-
-    if (!matchState) {
+    if (match.status !== 'in-progress') {
       console.warn(
-        `[MatchCompletionHandler] Match state not found for ${matchId}, marking as completed`
-      );
-      return; // Job already processed or match was deleted
-    }
-
-    if (matchState.status !== 'in-progress') {
-      console.warn(
-        `[MatchCompletionHandler] Match ${matchId} is not in-progress (status: ${matchState.status}), cannot complete`
+        `[MatchCompletionHandler] Match ${matchId} is not in-progress (status: ${match.status}), cannot complete`
       );
       return;
     }
 
     const newStatus = match.stage === 'TEST' ? 'not-started' : 'completed';
-    const result = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOneAndUpdate(
-        { matchId },
-        {
-          $set: { status: newStatus }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.robotGameMatches.byId(matchId).update({ status: newStatus });
 
     if (!result) {
       throw new Error(`Failed to update match state for ${matchId}`);

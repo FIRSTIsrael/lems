@@ -137,7 +137,7 @@ export class Database {
     this.rubrics = new RubricsRepository(this.kysely, this.mongoDb);
 
     this.tables = new TablesRepository(this.kysely);
-    this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
+    this.robotGameMatches = new RobotGameMatchesRepository(this.kysely);
     this.scoresheets = new ScoresheetsRepository(this.kysely, this.mongoDb);
 
     this.awards = new AwardsRepository(this.kysely);

@@ -1,5 +1,4 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   InsertableRobotGameMatch,
@@ -11,37 +10,15 @@ import {
   InsertableRobotGameMatchParticipant,
   RobotGameMatchParticipant
 } from '../schema/tables/robot-game-match-participants';
-import {
-  RobotGameMatchParticipantState,
-  RobotGameMatchState
-} from '../schema/documents/robot-game-match-state';
-
-export class RobotGameMatchStateSelector {
-  constructor(
-    private db: MongoDb,
-    private id: string
-  ) {}
-
-  async get(): Promise<WithId<RobotGameMatchState> | null> {
-    return await this.db
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId: this.id });
-  }
-}
 
 export class RobotGameMatchSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb,
     private id: string
   ) {}
 
   private getMatchQuery() {
     return this.db.selectFrom('robot_game_matches').selectAll().where('id', '=', this.id);
-  }
-
-  state() {
-    return new RobotGameMatchStateSelector(this.mongo, this.id);
   }
 
   async get() {
@@ -70,7 +47,6 @@ export class RobotGameMatchSelector {
 class RobotGameMatchesSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb,
     private divisionId: string
   ) {}
 
@@ -149,10 +125,6 @@ class RobotGameMatchesSelector {
     const matchIds = matches.map(match => match.id);
 
     if (matchIds.length > 0) {
-      await this.mongo
-        .collection<RobotGameMatchState>('robot_game_match_states')
-        .deleteMany({ matchId: { $in: matchIds } });
-
       await this.db
         .deleteFrom('robot_game_match_participants')
         .where('match_id', 'in', matchIds)
@@ -169,41 +141,14 @@ class RobotGameMatchesSelector {
 }
 
 export class RobotGameMatchesRepository {
-  constructor(
-    private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb
-  ) {}
-
-  private getEmptyState(
-    id: string,
-    participants: RobotGameMatchParticipant[] = []
-  ): RobotGameMatchState {
-    const participantStates: Record<string, RobotGameMatchParticipantState> = {};
-
-    participants.forEach(participant => {
-      participantStates[participant.table_id] = {
-        queued: null,
-        present: null,
-        ready: null
-      };
-    });
-
-    return {
-      matchId: id,
-      status: 'not-started',
-      called: null,
-      startTime: null,
-      startDelta: null,
-      participants: participantStates
-    };
-  }
+  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byId(id: string): RobotGameMatchSelector {
-    return new RobotGameMatchSelector(this.db, this.mongo, id);
+    return new RobotGameMatchSelector(this.db, id);
   }
 
   byDivision(divisionId: string): RobotGameMatchesSelector {
-    return new RobotGameMatchesSelector(this.db, this.mongo, divisionId);
+    return new RobotGameMatchesSelector(this.db, divisionId);
   }
 
   async getAll() {
@@ -254,10 +199,6 @@ export class RobotGameMatchesRepository {
         .execute();
     }
 
-    await this.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .insertOne(this.getEmptyState(dbMatch.id, dbParticipants));
-
     return { match: dbMatch, participants: dbParticipants };
   }
 
@@ -284,11 +225,8 @@ export class RobotGameMatchesRepository {
         .selectFrom('robot_game_match_participants')
         .selectAll()
         .where('team_id', '=', teamId1)
-        .where('match_id', 'in', (eb) =>
-          eb
-            .selectFrom('robot_game_matches')
-            .select('id')
-            .where('division_id', '=', divisionId)
+        .where('match_id', 'in', eb =>
+          eb.selectFrom('robot_game_matches').select('id').where('division_id', '=', divisionId)
         )
         .execute();
 
@@ -296,11 +234,8 @@ export class RobotGameMatchesRepository {
         .selectFrom('robot_game_match_participants')
         .selectAll()
         .where('team_id', '=', teamId2)
-        .where('match_id', 'in', (eb) =>
-          eb
-            .selectFrom('robot_game_matches')
-            .select('id')
-            .where('division_id', '=', divisionId)
+        .where('match_id', 'in', eb =>
+          eb.selectFrom('robot_game_matches').select('id').where('division_id', '=', divisionId)
         )
         .execute();
 
