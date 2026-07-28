@@ -1,5 +1,4 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { JudgingSessionState } from '@lems/database';
 import db from '../../../../database';
 
 export interface JudgingSessionGraphQL {
@@ -69,36 +68,19 @@ export const judgingSessionsResolver: GraphQLFieldResolver<
       sessions = sessions.filter(session => session.scheduled_time > afterTime);
     }
 
-    // Fetch state data from MongoDB for all sessions
-    const mongo = db.raw.mongo;
-    const sessionIds = sessions.map(s => s.id);
-    const states = await mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .find({ sessionId: { $in: sessionIds } })
-      .toArray();
-
-    // Create a map of sessionId to state for quick lookup
-    const stateMap = new Map(states.map(state => [state.sessionId, state]));
-
     // Build result with combined data
     return sessions.map(session => {
-      const state = stateMap.get(session.id);
-
-      if (!state) {
-        throw new Error(`State for judging session ID ${session.id} not found`);
-      }
-
       return {
         id: session.id,
         number: session.number,
         scheduledTime: session.scheduled_time.toISOString(),
-        status: state.status,
-        called: !!state.called,
-        queued: !!state.queued,
+        status: session.status,
+        called: !!session.called,
+        queued: !!session.queued,
         roomId: session.room_id,
         teamId: session.team_id,
-        startTime: state.startTime ? state.startTime.toISOString() : undefined,
-        startDelta: state.startDelta ?? undefined,
+        startTime: session.start_time ? session.start_time.toISOString() : undefined,
+        startDelta: session.start_delta ?? undefined,
         divisionId: judging.divisionId
       };
     });

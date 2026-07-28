@@ -1,30 +1,14 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb, WithId } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
   InsertableJudgingSession,
   JudgingSession,
   UpdateableJudgingSession
 } from '../schema/tables/judging-sessions';
-import { JudgingSessionState } from '../schema/documents/judging-session-state';
-
-export class JudgingSessionStateSelector {
-  constructor(
-    private db: MongoDb,
-    private id: string
-  ) {}
-
-  async get(): Promise<WithId<JudgingSessionState> | null> {
-    return this.db
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOne({ sessionId: this.id });
-  }
-}
 
 export class JudgingSessionSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb,
     private id: string
   ) {}
 
@@ -35,10 +19,6 @@ export class JudgingSessionSelector {
   async get() {
     const session = await this.getSessionQuery().executeTakeFirst();
     return session || null;
-  }
-
-  state() {
-    return new JudgingSessionStateSelector(this.mongo, this.id);
   }
 
   update(updates: UpdateableJudgingSession) {
@@ -54,7 +34,6 @@ export class JudgingSessionSelector {
 class JudgingSessionsSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb,
     private divisionId: string
   ) {}
 
@@ -88,10 +67,6 @@ class JudgingSessionsSelector {
     const sessionIds = sessions.map(session => session.id);
 
     if (sessionIds.length > 0) {
-      await this.mongo
-        .collection<JudgingSessionState>('judging_session_states')
-        .deleteMany({ sessionId: { $in: sessionIds } });
-
       await this.db
         .deleteFrom('judging_sessions')
         .where('division_id', '=', this.divisionId)
@@ -103,28 +78,14 @@ class JudgingSessionsSelector {
 }
 
 export class JudgingSessionsRepository {
-  constructor(
-    private db: Kysely<KyselyDatabaseSchema>,
-    private mongo: MongoDb
-  ) {}
-
-  private getEmptyState(id: string): JudgingSessionState {
-    return {
-      sessionId: id,
-      status: 'not-started',
-      called: null,
-      queued: null,
-      startTime: null,
-      startDelta: null
-    };
-  }
+  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byId(id: string): JudgingSessionSelector {
-    return new JudgingSessionSelector(this.db, this.mongo, id);
+    return new JudgingSessionSelector(this.db, id);
   }
 
   byDivision(divisionId: string): JudgingSessionsSelector {
-    return new JudgingSessionsSelector(this.db, this.mongo, divisionId);
+    return new JudgingSessionsSelector(this.db, divisionId);
   }
 
   async getAll() {
@@ -141,27 +102,11 @@ export class JudgingSessionsRepository {
       throw new Error('Failed to create judging session');
     }
 
-    await this.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .insertOne(this.getEmptyState(dbSession.id));
-
     return dbSession;
   }
 
   async createMany(sessions: InsertableJudgingSession[]): Promise<JudgingSession[]> {
-    const dbSessions = await this.db
-      .insertInto('judging_sessions')
-      .values(sessions)
-      .returningAll()
-      .execute();
-
-    const states = dbSessions.map(session => this.getEmptyState(session.id));
-
-    if (states.length > 0) {
-      await this.mongo.collection<JudgingSessionState>('judging_session_states').insertMany(states);
-    }
-
-    return dbSessions;
+    return await this.db.insertInto('judging_sessions').values(sessions).returningAll().execute();
   }
 
   async swapTeams(teamId1: string, teamId2: string, divisionId: string): Promise<void> {
