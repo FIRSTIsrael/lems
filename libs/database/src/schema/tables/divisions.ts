@@ -17,17 +17,19 @@ export interface AwardsPresentation {
   stepIndex: number;
 }
 
+export interface AudienceDisplay {
+  activeDisplay: AudienceDisplayScreen;
+  awardsPresentation?: AwardsPresentation;
+  settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
+}
+
 export interface DivisionState {
   field?: {
     loadedMatch: string | null;
     activeMatch: string | null;
     currentStage: 'PRACTICE' | 'RANKING';
   };
-  audienceDisplay?: {
-    activeDisplay: AudienceDisplayScreen;
-    awardsPresentation?: AwardsPresentation;
-    settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
-  };
+  audienceDisplay?: AudienceDisplay;
 }
 
 export interface DivisionsTable {
