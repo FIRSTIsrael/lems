@@ -29,7 +29,6 @@ export * from './tables/team-division-notifications';
 
 // States
 export * from './documents/division-state';
-export * from './documents/judging-session-state';
 export * from './documents/robot-game-match-state';
 export * from './documents/rubric';
 export * from './documents/scoresheet';
