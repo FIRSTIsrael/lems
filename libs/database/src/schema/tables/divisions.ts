@@ -24,12 +24,12 @@ export interface AudienceDisplay {
 }
 
 export interface DivisionState {
-  field?: {
+  field: {
     loadedMatch: string | null;
     activeMatch: string | null;
     currentStage: 'PRACTICE' | 'RANKING';
   };
-  audienceDisplay?: AudienceDisplay;
+  audienceDisplay: AudienceDisplay;
 }
 
 export interface DivisionsTable {
