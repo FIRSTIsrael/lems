@@ -3,7 +3,7 @@ import { Kysely, sql } from 'kysely';
 import { MongoClient } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://root:root@localhost:27017';
-const DB_NAME = process.env.DB_NAME || 'lems-local';
+const MONGO_DB_NAME = process.env.MONGO_DB_NAME || 'lems-local';
 
 const MONGO_COLLECTION = 'final_deliberations';
 
@@ -67,7 +67,7 @@ export async function up(db: Kysely<any>): Promise<void> {
 
   try {
     await mongoClient.connect();
-    const mongoDb = mongoClient.db(DB_NAME);
+    const mongoDb = mongoClient.db(MONGO_DB_NAME);
     const collections = await mongoDb.listCollections({ name: MONGO_COLLECTION }).toArray();
 
     if (collections.length > 0) {

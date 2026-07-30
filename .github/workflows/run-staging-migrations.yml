@@ -36,6 +36,8 @@ jobs:
           PG_USER: ${{ secrets.PG_USER }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          MONGO_DB_NAME: ${{ vars.DB_NAME }}
         run: |
           echo "🔄 Running database migrations..."
           echo "Connecting to PostgreSQL at $PG_HOST:$PG_PORT"
