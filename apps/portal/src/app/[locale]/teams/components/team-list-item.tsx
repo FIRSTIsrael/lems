@@ -16,9 +16,14 @@ import NextLink from 'next/link';
 
 export const TeamListItem: React.FC<{ team: Team }> = ({ team }) => {
   return (
-    <Grid component={Card} variant="outlined" size={{ xs: 12, sm: 6, md: 4 }} sx={{
-      height: "100%"
-    }}>
+    <Grid
+      component={Card}
+      variant="outlined"
+      size={{ xs: 12, sm: 6, md: 4 }}
+      sx={{
+        height: '100%'
+      }}
+    >
       <Link
         component={NextLink}
         href={`/teams/${team.slug}`}

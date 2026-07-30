@@ -33,9 +33,13 @@ function NoteItem({
 }) {
   return (
     <Box sx={{ p: 0.5 }}>
-      <Typography variant="caption" color="primary" sx={{
-        fontWeight: 600
-      }}>
+      <Typography
+        variant="caption"
+        color="primary"
+        sx={{
+          fontWeight: 600
+        }}
+      >
         <SectionName category={category} fieldId={note.fieldId} />
       </Typography>
       <Typography variant="body2" sx={{ mt: 0.5 }}>
@@ -80,9 +84,12 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="subtitle2" sx={{
-        fontWeight: 600
-      }}>
+      <Typography
+        variant="subtitle2"
+        sx={{
+          fontWeight: 600
+        }}
+      >
         {t('exceeding-notes')}
       </Typography>
       {category ? (

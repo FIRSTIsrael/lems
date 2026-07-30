@@ -4,16 +4,16 @@ A volunteer registered to help run an event
 type Volunteer {
   "Unique identifier for the volunteer"
   id: String!
-  
+
   "Role the volunteer is assigned (e.g., 'judge', 'referee', 'queuer')"
   role: String!
-  
+
   "Additional context about the volunteer's role assignment"
   roleInfo: RoleInfo
-  
+
   "Optional identifier or badge number for the volunteer"
   identifier: String
-  
+
   "Divisions this volunteer is assigned to"
   divisions: [Division!]!
 }

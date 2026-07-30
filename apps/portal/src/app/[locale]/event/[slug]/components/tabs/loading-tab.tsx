@@ -11,9 +11,12 @@ export const LoadingTab = () => {
       <Box sx={{ p: 3, pb: 0 }}>
         <Skeleton variant="text" width="30%" height={40} />
       </Box>
-      <Stack spacing={3} sx={{
-        mt: 2
-      }}>
+      <Stack
+        spacing={3}
+        sx={{
+          mt: 2
+        }}
+      >
         <Paper sx={{ p: 0, bgcolor: 'white' }}>
           <Box sx={{ p: 2 }}>
             {/* Header skeleton */}

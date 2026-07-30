@@ -11,7 +11,12 @@ router.get('/latest', async (req: Request, res: Response) => {
     return;
   }
 
-  const latestSeason = await db.seasons.getAll()[0];
+  const allSeasons = await db.seasons.getAll();
+  const latestSeason = allSeasons[0];
+  if (!latestSeason) {
+    res.status(404).json({ message: 'No seasons found' });
+    return;
+  }
   res.status(200).json(makePortalSeasonResponse(latestSeason));
 });
 

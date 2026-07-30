@@ -71,9 +71,12 @@ export const CompleteDeliberationModal: React.FC<CompleteDeliberationModalProps>
       <DialogTitle sx={{ fontWeight: 700, fontSize: '1.25rem', pb: 1 }}>{t('title')}</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ pt: 1 }}>
-          <Typography variant="body1" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('description')}
           </Typography>
 

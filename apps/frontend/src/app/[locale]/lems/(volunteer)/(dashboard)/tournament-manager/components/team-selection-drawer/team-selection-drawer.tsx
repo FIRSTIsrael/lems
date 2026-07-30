@@ -99,9 +99,10 @@ export function TeamSelectionDrawer({
               <Typography
                 variant="body2"
                 sx={{
-                  color: "text.secondary",
-                  textAlign: "center"
-                }}>
+                  color: 'text.secondary',
+                  textAlign: 'center'
+                }}
+              >
                 {t('slots.select-second-team-instruction')}
               </Typography>
             </Box>

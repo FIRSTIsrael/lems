@@ -28,9 +28,10 @@ export const TeamInfoHeader: React.FC = () => {
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           mb: 2
-        }}>
+        }}
+      >
         <Button
           component={Link}
           href={`/event/${event.slug}`}
@@ -40,9 +41,12 @@ export const TeamInfoHeader: React.FC = () => {
         >
           {t('header.back-to-event')}
         </Button>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {event.name} {division.name && `• ${division.name}`}
         </Typography>
       </Stack>
@@ -52,10 +56,11 @@ export const TeamInfoHeader: React.FC = () => {
         component={Link}
         href={`/teams/${team.slug}`}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           textDecoration: 'none',
           color: 'inherit'
-        }}>
+        }}
+      >
         <Avatar
           variant="square"
           src={team.logoUrl ?? '/assets/default-avatar.svg'}
@@ -65,9 +70,10 @@ export const TeamInfoHeader: React.FC = () => {
           <Typography
             variant="h4"
             sx={{
-              fontWeight: "bold",
+              fontWeight: 'bold',
               mb: 1
-            }}>
+            }}
+          >
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
               {team.name} #{team.number}
               <Flag region={team.region} size={24} />
@@ -77,13 +83,17 @@ export const TeamInfoHeader: React.FC = () => {
             direction="row"
             spacing={1}
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
               mt: 1
-            }}>
+            }}
+          >
             <LocationIcon fontSize="small" color="action" />
-            <Typography variant="body1" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {team.city} • {team.affiliation}
             </Typography>
           </Stack>

@@ -18,7 +18,9 @@ export const SeasonsGrid: React.FC<SeasonsGridProps> = ({ seasons: initialSeason
   return (
     <Grid container spacing={2}>
       <CreateSeasonCard />
-      {seasons?.map(season => <SeasonCard key={season.id} season={season} />)}
+      {seasons?.map(season => (
+        <SeasonCard key={season.id} season={season} />
+      ))}
     </Grid>
   );
 };

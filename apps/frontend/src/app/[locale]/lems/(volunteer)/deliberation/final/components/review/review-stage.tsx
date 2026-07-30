@@ -82,10 +82,11 @@ export const ReviewStage: React.FC = () => {
         <Typography
           variant="h2"
           sx={{
-            textAlign: "center",
+            textAlign: 'center',
             fontWeight: 700,
             fontSize: '1.75rem'
-          }}>
+          }}
+        >
           {t('title')}
         </Typography>
       </Paper>

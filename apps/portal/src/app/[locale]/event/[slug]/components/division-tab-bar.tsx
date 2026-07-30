@@ -48,9 +48,11 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
           <Tab label={t('quick-links.agenda')} />
         </Tabs>
       </Paper>
-      <Box sx={{
-        width: "100%"
-      }}>
+      <Box
+        sx={{
+          width: '100%'
+        }}
+      >
         {activeTab === 0 && (
           <Suspense fallback={<LoadingTab />}>
             <TeamsTab />

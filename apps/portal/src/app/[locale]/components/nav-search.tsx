@@ -59,11 +59,15 @@ export const NavSearch = () => {
     <ClickAwayListener onClickAway={clearSearch}>
       <Box
         ref={setAnchorEl}
-        sx={[{
-          flexShrink: 1,
-          display: "flex",
-          alignItems: "center"
-        }, ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle])]}>
+        sx={[
+          {
+            flexShrink: 1,
+            display: 'flex',
+            alignItems: 'center'
+          },
+          ...(Array.isArray(containerStyle) ? containerStyle : [containerStyle])
+        ]}
+      >
         <TextField
           fullWidth
           size="small"
@@ -115,9 +119,12 @@ export const NavSearch = () => {
           >
             {isSearching && (
               <MenuItem disabled>
-                <Typography variant="body2" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {t('searching')}...
                 </Typography>
               </MenuItem>
@@ -133,9 +140,12 @@ export const NavSearch = () => {
 
             {noResults && (
               <MenuItem disabled>
-                <Typography variant="body2" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {t('no-results')}
                 </Typography>
               </MenuItem>
@@ -144,12 +154,19 @@ export const NavSearch = () => {
             {!noResults && (
               <>
                 <MenuItem disabled sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
-                  <Stack direction="row" spacing={1} sx={{
-                    alignItems: "center"
-                  }}>
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                  <Stack
+                    direction="row"
+                    spacing={1}
+                    sx={{
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('results-count', { count: searchStats.total })}
                     </Typography>
                     {searchStats.teams > 0 && (
@@ -186,27 +203,44 @@ export const NavSearch = () => {
                       direction="row"
                       spacing={2}
                       sx={{
-                        alignItems: "center",
+                        alignItems: 'center',
                         width: '100%'
-                      }}>
+                      }}
+                    >
                       <SearchResultAvatar resultType={result.type} src={result.logoUrl} />
                       <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Stack direction="row" spacing={0.5} sx={{
-                          alignItems: "center"
-                        }}>
-                          <Typography variant="body2" noWrap sx={{
-                            fontWeight: "medium"
-                          }}>
+                        <Stack
+                          direction="row"
+                          spacing={0.5}
+                          sx={{
+                            alignItems: 'center'
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            noWrap
+                            sx={{
+                              fontWeight: 'medium'
+                            }}
+                          >
                             {highlightText(result.title, query, theme)}
                           </Typography>
                         </Stack>
-                        <Stack direction="row" spacing={0.5} sx={{
-                          alignItems: "center"
-                        }}>
+                        <Stack
+                          direction="row"
+                          spacing={0.5}
+                          sx={{
+                            alignItems: 'center'
+                          }}
+                        >
                           <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                          <Typography variant="caption" noWrap sx={{
-                            color: "text.secondary"
-                          }}>
+                          <Typography
+                            variant="caption"
+                            noWrap
+                            sx={{
+                              color: 'text.secondary'
+                            }}
+                          >
                             {highlightText(result.location, query, theme)}
                           </Typography>
                           <Flag region={result.region} size={20} />
@@ -225,9 +259,12 @@ export const NavSearch = () => {
 
                 {searchResults.length > 8 && (
                   <MenuItem disabled sx={{ justifyContent: 'center' }}>
-                    <Typography variant="caption" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {t('more-results', { count: searchResults.length - 8 })}
                     </Typography>
                   </MenuItem>

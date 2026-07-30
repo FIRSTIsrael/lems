@@ -93,7 +93,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
           {isLive && (
             <Box
               sx={{
-                position: "absolute",
+                position: 'absolute',
                 top: 16,
                 right: 16,
                 display: 'flex',
@@ -106,7 +106,8 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 borderRadius: 1,
                 fontSize: '0.875rem',
                 fontWeight: 600
-              }}>
+              }}
+            >
               <Box
                 component="span"
                 sx={{
@@ -128,15 +129,20 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
           <Stack spacing={1.5}>
             {/* Event Name */}
             <Box sx={{ pr: isLive ? 10 : 0 }}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Typography
                   variant="h5"
                   sx={{
-                    fontWeight: "700",
+                    fontWeight: '700',
                     fontSize: { xs: '1.25rem', md: '1.5rem' }
-                  }}>
+                  }}
+                >
                   {event.name}
                 </Typography>
                 {!event.official && (
@@ -153,16 +159,21 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
 
             {/* Event Details */}
             <Stack spacing={1}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <CalendarIcon fontSize="small" sx={{ color: 'text.secondary' }} />
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
-                    fontSize: "0.95rem"
-                  }}>
+                    color: 'text.secondary',
+                    fontSize: '0.95rem'
+                  }}
+                >
                   {new Date(event.startDate).toLocaleDateString(locale, {
                     weekday: 'long',
                     year: 'numeric',
@@ -172,16 +183,21 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 </Typography>
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 <Flag region={event.region} size={18} />
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
-                    fontSize: "0.95rem"
-                  }}>
+                    color: 'text.secondary',
+                    fontSize: '0.95rem'
+                  }}
+                >
                   {event.region}
                 </Typography>
               </Stack>
@@ -192,14 +208,18 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
               direction="row"
               spacing={1}
               sx={{
-                alignItems: "center",
+                alignItems: 'center',
                 color: isLive ? 'error.main' : 'primary.main',
                 fontWeight: 600,
                 fontSize: '0.95rem'
-              }}>
-              <Typography variant="body2" sx={{
-                fontWeight: "600"
-              }}>
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: '600'
+                }}
+              >
                 {isLive ? t('view-event') : t('view-details')}
               </Typography>
               <DirectionalIcon ltr={ArrowForwardIcon} rtl={ArrowBackIcon} fontSize="small" />

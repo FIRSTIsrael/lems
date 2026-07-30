@@ -62,11 +62,12 @@ const DesktopAppBar: React.FC = () => {
         sx={{
           display: { xs: 'none', md: 'flex' },
           mr: 1,
-          height: "44px",
-          width: "164px",
-          position: "relative",
+          height: '44px',
+          width: '164px',
+          position: 'relative',
           cursor: 'pointer'
-        }}>
+        }}
+      >
         <Image
           src="/assets/first-horizontal-reverse.svg"
           alt=""
@@ -149,21 +150,23 @@ const MobileAppBar: React.FC = () => {
       </Box>
       <Box
         sx={{
-          width: "100%",
+          width: '100%',
           display: { xs: 'flex', md: 'none' },
-          justifyContent: "center",
-          alignItems: "center"
-        }}>
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}
+      >
         <Box
           component={Link}
           href="/"
           sx={{
             mr: 1,
-            height: "44px",
-            width: "164px",
-            position: "relative",
+            height: '44px',
+            width: '164px',
+            position: 'relative',
             cursor: 'pointer'
-          }}>
+          }}
+        >
           <Image
             src="/assets/first-horizontal-reverse.svg"
             alt=""

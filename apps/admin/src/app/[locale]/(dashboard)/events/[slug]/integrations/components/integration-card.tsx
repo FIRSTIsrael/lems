@@ -58,10 +58,11 @@ export const IntegrationCard: React.FC<IntegrationCardProps> = ({
         <Stack
           spacing={2}
           sx={{
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: 'center',
+            justifyContent: 'center',
             height: '100%'
-          }}>
+          }}
+        >
           <Box
             sx={{
               display: 'flex',

@@ -62,10 +62,11 @@ export function MatchCountdown({
         <Typography
           variant="h4"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             fontSize: '1.3rem',
             fontWeight: 700
-          }}>
+          }}
+        >
           {t('countdown.no-match')}
         </Typography>
       </Paper>

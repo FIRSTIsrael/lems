@@ -128,17 +128,21 @@ export function JudgingSchedule({
   if (availableSessionGroups.length === 0) {
     return (
       <Paper sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('no-sessions')}
         </Typography>
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             mt: 1
-          }}>
+          }}
+        >
           {t('no-sessions-description')}
         </Typography>
       </Paper>
@@ -149,9 +153,12 @@ export function JudgingSchedule({
     <TableContainer component={Paper}>
       <Box sx={{ p: 2, borderBottom: 1, borderColor: 'divider' }}>
         <Typography variant="h6">{t('title')}</Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('subtitle')}
         </Typography>
       </Box>
@@ -185,9 +192,12 @@ export function JudgingSchedule({
                   <Chip label={firstSession.number} size="small" color="primary" />
                 </TableCell>
                 <TableCell>
-                  <Typography variant="body2" sx={{
-                    fontWeight: 500
-                  }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      fontWeight: 500
+                    }}
+                  >
                     {dayjs(firstSession.scheduledTime).format('HH:mm')}
                   </Typography>
                 </TableCell>
@@ -201,9 +211,10 @@ export function JudgingSchedule({
                       <Stack
                         spacing={1}
                         sx={{
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}>
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
                         {team && (
                           <Tooltip title={`${team.number} - ${team.name}`} arrow>
                             <Chip

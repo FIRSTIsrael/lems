@@ -24,9 +24,7 @@ export interface AudioPlayerOptions {
  * // Safe to call even if audio isn't ready
  * playSound('start');
  */
-export const useAudioPlayer = <T extends string>(
-  options: AudioPlayerOptions
-) => {
+export const useAudioPlayer = <T extends string>(options: AudioPlayerOptions) => {
   const { sounds, preload = 'auto' } = options;
   const soundRefs = useRef<Record<T, HTMLAudioElement | null>>(
     {} as Record<T, HTMLAudioElement | null>
@@ -52,7 +50,7 @@ export const useAudioPlayer = <T extends string>(
         audio.preload = preload;
         soundRefs.current[key as T] = audio;
       });
-      setIsReady(true);
+      queueMicrotask(() => setIsReady(true));
     } catch (error) {
       console.error('Failed to initialize audio:', error);
     }
@@ -66,7 +64,7 @@ export const useAudioPlayer = <T extends string>(
         }
       });
       soundRefs.current = {} as Record<T, HTMLAudioElement | null>;
-      setIsReady(false);
+      queueMicrotask(() => setIsReady(false));
     };
   }, [sounds, preload]);
 

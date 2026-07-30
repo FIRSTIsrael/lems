@@ -108,13 +108,20 @@ export function CurrentSessionsDisplay({
         }}
       >
         <Stack spacing={2}>
-          <Stack direction="row" spacing={1} sx={{
-            alignItems: "center"
-          }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             <PlayArrowIcon />
-            <Typography variant="h6" sx={{
-              fontWeight: 600
-            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600
+              }}
+            >
               {t('current-sessions')}
             </Typography>
           </Stack>
@@ -126,12 +133,13 @@ export function CurrentSessionsDisplay({
                   direction="row"
                   spacing={1}
                   sx={{
-                    alignItems: "center",
-                    flexWrap: "wrap",
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
                     p: 1,
                     borderRadius: 1,
                     bgcolor: 'rgba(255,255,255,0.08)'
-                  }}>
+                  }}
+                >
                   <Chip
                     label={`${t('session')} ${session.number}`}
                     size="small"
@@ -187,13 +195,20 @@ export function CurrentSessionsDisplay({
         }}
       >
         <Stack spacing={2}>
-          <Stack direction="row" spacing={1} sx={{
-            alignItems: "center"
-          }}>
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{
+              alignItems: 'center'
+            }}
+          >
             <ScheduleIcon />
-            <Typography variant="h6" sx={{
-              fontWeight: 600
-            }}>
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 600
+              }}
+            >
               {t('upcoming-sessions')}
             </Typography>
           </Stack>
@@ -203,17 +218,19 @@ export function CurrentSessionsDisplay({
                 direction="row"
                 spacing={1}
                 sx={{
-                  alignItems: "center",
-                  flexWrap: "wrap",
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
                   justifyContent: 'space-between'
-                }}>
+                }}
+              >
                 <Stack
                   direction="row"
                   spacing={1}
                   sx={{
-                    alignItems: "center",
-                    flexWrap: "wrap"
-                  }}>
+                    alignItems: 'center',
+                    flexWrap: 'wrap'
+                  }}
+                >
                   <Chip
                     label={dayjs(nextTimeSlot.scheduledTime).format('HH:mm')}
                     size="medium"
@@ -269,11 +286,12 @@ export function CurrentSessionsDisplay({
                           direction="row"
                           spacing={1}
                           sx={{
-                            alignItems: "center",
+                            alignItems: 'center',
                             p: 1,
                             borderRadius: 1,
                             bgcolor: 'rgba(255,255,255,0.08)'
-                          }}>
+                          }}
+                        >
                           <Chip
                             label={roomName}
                             size="small"

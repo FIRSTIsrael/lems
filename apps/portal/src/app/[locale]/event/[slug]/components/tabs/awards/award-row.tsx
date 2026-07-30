@@ -80,7 +80,8 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
                       textDecoration: 'underline',
                       color: 'primary.main'
                     }
-                  }}>
+                  }}
+                >
                   {winnerText}
                 </Typography>
               ) : (
@@ -89,7 +90,8 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
                   sx={{
                     fontWeight: 600,
                     color: 'text.primary'
-                  }}>
+                  }}
+                >
                   {winnerText}
                 </Typography>
               )}

@@ -8,9 +8,13 @@ export function LoadingState() {
 
   return (
     <Box sx={{ textAlign: 'center', py: 4 }}>
-      <Typography sx={{
-        color: "text.secondary"
-      }}>{t('loading')}</Typography>
+      <Typography
+        sx={{
+          color: 'text.secondary'
+        }}
+      >
+        {t('loading')}
+      </Typography>
     </Box>
   );
 }

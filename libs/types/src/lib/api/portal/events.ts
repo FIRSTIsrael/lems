@@ -9,7 +9,7 @@ export const PortalEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   timezone: z.string(),
-  coordinates: z.string().optional(),
+  coordinates: z.string().nullable().optional(),
   seasonId: z.string()
 });
 

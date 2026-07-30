@@ -35,12 +35,18 @@ export const ScoreFloater: React.FC<ScoreFloaterProps> = ({ score }) => {
       }}
       elevation={0}
     >
-      <Stack spacing={1.5} sx={{
-        alignItems: "center"
-      }}>
-        <Stack spacing={0.5} sx={{
-          alignItems: "center"
-        }}>
+      <Stack
+        spacing={1.5}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
+        <Stack
+          spacing={0.5}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <Box
             sx={{
               position: 'relative',

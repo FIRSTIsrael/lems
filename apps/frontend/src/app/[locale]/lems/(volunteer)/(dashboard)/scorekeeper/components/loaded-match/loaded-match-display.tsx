@@ -56,10 +56,11 @@ export const LoadedMatchDisplay = () => {
       <Stack
         direction="row"
         sx={{
-          justifyContent: "space-between",
-          alignItems: "flex-start",
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
           mb: 2
-        }}>
+        }}
+      >
         <Stack spacing={0}>
           <Typography
             variant="subtitle2"
@@ -82,8 +83,9 @@ export const LoadedMatchDisplay = () => {
           direction="row"
           sx={{
             gap: 0.75,
-            alignItems: "center"
-          }}>
+            alignItems: 'center'
+          }}
+        >
           <LoadedMatchDelay />
 
           <Tooltip title={t('legend.title')}>

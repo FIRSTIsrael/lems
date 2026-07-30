@@ -135,24 +135,31 @@ export function parseFieldScheduleData(data: QueryData) {
       const roundRows: typeof rows = [];
 
       // Get time boundaries for this round
-      const lastMatchTime = dayjs(currentRoundMatches[currentRoundMatches.length - 1].scheduledTime);
-      
+      const lastMatchTime = dayjs(
+        currentRoundMatches[currentRoundMatches.length - 1].scheduledTime
+      );
+
       // Get the start boundary (before first match of this round)
-      const startBoundary = roundIndex > 0 
-        ? dayjs(roundMatches[sortedRoundKeys[roundIndex - 1]][roundMatches[sortedRoundKeys[roundIndex - 1]].length - 1].scheduledTime)
-        : dayjs(0);
-      
+      const startBoundary =
+        roundIndex > 0
+          ? dayjs(
+              roundMatches[sortedRoundKeys[roundIndex - 1]][
+                roundMatches[sortedRoundKeys[roundIndex - 1]].length - 1
+              ].scheduledTime
+            )
+          : dayjs(0);
+
       // Get the end boundary (before first match of next round, or infinity for last round)
-      const endBoundary = roundIndex < sortedRoundKeys.length - 1
-        ? dayjs(roundMatches[sortedRoundKeys[roundIndex + 1]][0].scheduledTime)
-        : dayjs('9999-12-31');
+      const endBoundary =
+        roundIndex < sortedRoundKeys.length - 1
+          ? dayjs(roundMatches[sortedRoundKeys[roundIndex + 1]][0].scheduledTime)
+          : dayjs('9999-12-31');
 
       // Add matches and events for this round in chronological order
       currentRoundMatches.forEach((match, matchIndex) => {
         const matchTime = dayjs(match.scheduledTime);
-        const previousMatchTime = matchIndex > 0 
-          ? dayjs(currentRoundMatches[matchIndex - 1].scheduledTime)
-          : startBoundary;
+        const previousMatchTime =
+          matchIndex > 0 ? dayjs(currentRoundMatches[matchIndex - 1].scheduledTime) : startBoundary;
 
         // Add agenda events that fall between previous match and this match
         agenda.forEach(event => {

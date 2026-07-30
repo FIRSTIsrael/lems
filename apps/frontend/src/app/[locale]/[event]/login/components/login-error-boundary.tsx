@@ -95,9 +95,10 @@ function LoginErrorFallback({ error, onReset }: LoginErrorFallbackProps) {
             <Typography
               variant="body1"
               sx={{
-                color: "text.secondary",
+                color: 'text.secondary',
                 mb: 3
-              }}>
+              }}
+            >
               {t('errors.description')}
             </Typography>
           </Box>
@@ -119,10 +120,11 @@ function LoginErrorFallback({ error, onReset }: LoginErrorFallbackProps) {
           <Typography
             variant="caption"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               display: 'block',
               mb: 3
-            }}>
+            }}
+          >
             {t('errors.support-text')}
           </Typography>
 

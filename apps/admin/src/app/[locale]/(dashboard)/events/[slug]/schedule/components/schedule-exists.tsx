@@ -57,9 +57,12 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
 
   return (
     <>
-      <Stack spacing={2} sx={{
-        height: "100%"
-      }}>
+      <Stack
+        spacing={2}
+        sx={{
+          height: '100%'
+        }}
+      >
         <Alert
           severity="success"
           icon={<CheckCircle />}

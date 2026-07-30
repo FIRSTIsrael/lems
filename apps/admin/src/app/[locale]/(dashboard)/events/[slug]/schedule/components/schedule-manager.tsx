@@ -27,9 +27,12 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
 
   if (teamsCount === 0 || roomsCount === 0 || tablesCount === 0) {
     return (
-      <Stack spacing={2} sx={{
-        height: "100%"
-      }}>
+      <Stack
+        spacing={2}
+        sx={{
+          height: '100%'
+        }}
+      >
         <Alert severity="warning" icon={<Warning />} sx={{ py: 0.5 }}>
           {t('alerts.missing-details')}
         </Alert>

@@ -71,7 +71,7 @@ export const GET_FIELD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gq
 
 export function parseFieldQueuerData(queryData: QueryData): FieldQueuerData {
   const division = queryData.division;
-  
+
   if (!division) {
     return {
       matches: [],

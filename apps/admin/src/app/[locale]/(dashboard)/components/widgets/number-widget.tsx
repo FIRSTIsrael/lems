@@ -13,11 +13,12 @@ export default function NumberWidget({ value, description, icon }: NumberWidgetP
       <CardContent sx={{ height: '100%', display: 'flex', alignItems: 'center' }}>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 3,
-            width: "100%"
-          }}>
+            width: '100%'
+          }}
+        >
           {icon && (
             <Box
               sx={{
@@ -66,12 +67,13 @@ export default function NumberWidget({ value, description, icon }: NumberWidgetP
             <Typography
               variant="body1"
               sx={{
-                color: "text.secondary",
+                color: 'text.secondary',
                 fontSize: '0.95rem',
                 lineHeight: 1.3,
                 wordBreak: 'break-word',
                 fontWeight: 500
-              }}>
+              }}
+            >
               {description}
             </Typography>
           </Stack>

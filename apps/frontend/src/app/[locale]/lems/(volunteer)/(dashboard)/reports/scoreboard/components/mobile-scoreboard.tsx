@@ -19,14 +19,18 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
     return (
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           py: 8
-        }}>
-        <Typography variant="body1" sx={{
-          color: "text.secondary"
-        }}>
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('no-data')}
         </Typography>
       </Box>
@@ -107,9 +111,12 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                 >
                   {entry.name}
                 </Typography>
-                <Typography variant="body2" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   #{entry.number}
                 </Typography>
               </Box>
@@ -118,17 +125,19 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
-                    fontSize: "0.75rem"
-                  }}>
+                    color: 'text.secondary',
+                    fontSize: '0.75rem'
+                  }}
+                >
                   {t('best-score')}
                 </Typography>
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    color: "primary.main"
-                  }}>
+                    color: 'primary.main'
+                  }}
+                >
                   {entry.maxScore ?? '-'}
                 </Typography>
               </Box>
@@ -141,17 +150,19 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
+                    color: 'text.secondary',
                     mb: 1
-                  }}>
+                  }}
+                >
                   {t('match-scores')}
                 </Typography>
                 <Box
                   sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
+                    display: 'flex',
+                    flexWrap: 'wrap',
                     gap: 1
-                  }}>
+                  }}
+                >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores[index];
                     return (
@@ -174,14 +185,18 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                         <Typography
                           variant="caption"
                           sx={{
-                            display: "block",
-                            fontSize: "0.7rem"
-                          }}>
+                            display: 'block',
+                            fontSize: '0.7rem'
+                          }}
+                        >
                           {t('match')} {index + 1}
                         </Typography>
-                        <Typography variant="body2" sx={{
-                          fontWeight: 600
-                        }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600
+                          }}
+                        >
                           {score ?? '-'}
                         </Typography>
                       </Box>

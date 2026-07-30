@@ -20,22 +20,24 @@ const HeroContainer = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
       sx={{
-        position: "relative",
-        overflow: "hidden",
+        position: 'relative',
+        overflow: 'hidden',
         py: 8,
-        color: "white",
+        color: 'white',
         backgroundImage: backgroundGradient
-      }}>
+      }}
+    >
       <Box
         sx={{
-          position: "absolute",
+          position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
           opacity: 0.1,
           backgroundImage: backgroundPattern
-        }} />
+        }}
+      />
       <Container maxWidth="lg">{children}</Container>
     </Box>
   );
@@ -60,13 +62,15 @@ export const Hero: React.FC<HeroProps> = ({ season }) => {
         sx={{
           alignItems: { xs: 'center', sm: 'flex-start' },
           textAlign: { xs: 'center', sm: 'left' }
-        }}>
+        }}
+      >
         <Typography
           variant="h1"
           sx={{
-            fontWeight: "bold",
+            fontWeight: 'bold',
             fontSize: { xs: '2rem', sm: '2.5rem', md: '3rem' }
-          }}>
+          }}
+        >
           {t('title')}
         </Typography>
         <Typography
@@ -75,7 +79,8 @@ export const Hero: React.FC<HeroProps> = ({ season }) => {
             maxWidth: 600,
             fontSize: { xs: '1.1rem', sm: '1.25rem', md: '1.5rem' },
             opacity: 0.9
-          }}>
+          }}
+        >
           <RichText>{tags => t.rich('subtitle', tags)}</RichText>
         </Typography>
 

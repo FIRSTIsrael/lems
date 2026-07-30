@@ -13,13 +13,13 @@ export const LiveIcon: React.FC = () => {
     <Box
       component="span"
       sx={{
-        display: "inline-block",
-        position: "relative",
-        bgcolor: "red",
+        display: 'inline-block',
+        position: 'relative',
+        bgcolor: 'red',
         width: 12,
         height: 12,
-        border: "1px solid rgba(0, 0, 0, 0.1)",
-        borderRadius: "50%",
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        borderRadius: '50%',
         zIndex: 1,
 
         '::before': {
@@ -33,6 +33,7 @@ export const LiveIcon: React.FC = () => {
           animation: `${liveAnimation} 2s ease-in-out infinite`,
           zIndex: -1
         }
-      }} />
+      }}
+    />
   );
 };

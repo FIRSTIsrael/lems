@@ -15,9 +15,12 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
   const t = useTranslations('pages.index.events');
 
   return (
-    <Stack spacing={1} sx={{
-      mb: 3
-    }}>
+    <Stack
+      spacing={1}
+      sx={{
+        mb: 3
+      }}
+    >
       <Link href={`/events?seasonSlug=${seasonSlug}`} style={{ textDecoration: 'none' }}>
         <Typography
           variant="body2"
@@ -26,9 +29,13 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
           {seasonName}
         </Typography>
       </Link>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <Typography variant="h2">{eventName}</Typography>
         {!official && (
           <Chip
@@ -43,32 +50,40 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
         direction={{ xs: 'column', sm: 'row' }}
         spacing={{ xs: 1, md: 3 }}
         sx={{
-          alignItems: "flex-start"
+          alignItems: 'flex-start'
         }}
       >
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 1
-          }}>
+          }}
+        >
           <CalendarToday fontSize="small" color="primary" />
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {dayjs(startDate).format('MMMM DD, YYYY')}
           </Typography>
         </Box>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 1
-          }}>
+          }}
+        >
           <LocationOn fontSize="small" color="primary" />
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {location}
           </Typography>
         </Box>

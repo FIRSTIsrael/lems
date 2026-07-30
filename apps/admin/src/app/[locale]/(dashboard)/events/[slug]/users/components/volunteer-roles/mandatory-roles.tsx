@@ -16,10 +16,11 @@ export const MandatoryRolesSection: React.FC = () => {
           <Typography
             variant="caption"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               mb: 2,
               display: 'block'
-            }}>
+            }}
+          >
             {t('mandatory-roles.description')}
           </Typography>
           <Stack spacing={2}>

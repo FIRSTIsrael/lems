@@ -170,7 +170,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('match-schedule.columns.match-number')}
                 </Typography>
               </TableCell>
@@ -179,7 +180,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('match-schedule.columns.start-time')}
                 </Typography>
               </TableCell>
@@ -188,7 +190,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('match-schedule.columns.end-time')}
                 </Typography>
               </TableCell>
@@ -197,7 +200,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('match-schedule.columns.status')}
                 </Typography>
               </TableCell>
@@ -207,7 +211,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                     sx={{
                       fontWeight: 600,
                       fontSize: isMobile ? '0.75rem' : '1rem'
-                    }}>
+                    }}
+                  >
                     {table.name}
                   </Typography>
                 </TableCell>
@@ -225,30 +230,33 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                   <TableCell align="center">
                     <Typography
                       sx={{
-                        fontFamily: "monospace",
+                        fontFamily: 'monospace',
                         fontWeight: 500,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {match.number}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
                       sx={{
-                        fontFamily: "monospace",
+                        fontFamily: 'monospace',
                         fontWeight: 500,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {matchTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
                       sx={{
-                        fontFamily: "monospace",
+                        fontFamily: 'monospace',
                         fontWeight: 500,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {endTime.format('HH:mm')}
                     </Typography>
                   </TableCell>

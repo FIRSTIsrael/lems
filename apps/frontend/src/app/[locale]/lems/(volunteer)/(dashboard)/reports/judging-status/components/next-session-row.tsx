@@ -20,11 +20,12 @@ export const NextSessionRow: React.FC<NextSessionRowProps> = ({ session }) => {
         <Stack
           spacing={1}
           sx={{
-            alignItems: "center",
-            justifyContent: "center",
+            alignItems: 'center',
+            justifyContent: 'center',
             height: '100%',
             minHeight: 150
-          }}>
+          }}
+        >
           <TeamInfo team={team} size="sm" textAlign="center" />
           {!team.arrived && (
             <Chip
@@ -37,9 +38,12 @@ export const NextSessionRow: React.FC<NextSessionRowProps> = ({ session }) => {
           )}
         </Stack>
       ) : (
-        <Typography variant="body2" sx={{
-          color: "text.disabled"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.disabled'
+          }}
+        >
           —
         </Typography>
       )}

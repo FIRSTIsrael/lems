@@ -127,9 +127,7 @@ export default function AudienceDisplayPage() {
             awards={data.awards}
             awardWinnerSlideStyle={
               (data.displayState.settings?.awards?.awardWinnerSlideStyle as
-                | 'chroma'
-                | 'full'
-                | 'both') || 'both'
+                'chroma' | 'full' | 'both') || 'both'
             }
           />
         )}

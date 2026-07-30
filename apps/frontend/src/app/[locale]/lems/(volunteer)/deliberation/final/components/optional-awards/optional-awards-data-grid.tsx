@@ -163,7 +163,7 @@ export function OptionalAwardsDataGrid() {
       },
       ...Object.keys(teams[0]?.rubricsFields?.['core-values']).map(
         label =>
-          (({
+          ({
             field: label,
             headerName: label,
             width: FIELD_COLUMN_WIDTH,
@@ -175,7 +175,7 @@ export function OptionalAwardsDataGrid() {
               const value = params.row.rubricsFields['core-values'][label];
               return value !== null ? value : '-';
             }
-          }) as GridColDef<EnrichedTeam>)
+          }) as GridColDef<EnrichedTeam>
       ),
 
       // GP score columns (only shown for core-values category)
@@ -187,7 +187,7 @@ export function OptionalAwardsDataGrid() {
         })
         .map(
           gpKey =>
-            (({
+            ({
               field: gpKey,
               headerName: gpKey,
               width: FIELD_COLUMN_WIDTH,
@@ -199,7 +199,7 @@ export function OptionalAwardsDataGrid() {
                 const value = params.row.gpScores[gpKey];
                 return value !== null ? value : '-';
               }
-            }) as GridColDef<EnrichedTeam>)
+            }) as GridColDef<EnrichedTeam>
         ),
       {
         field: 'nominations',

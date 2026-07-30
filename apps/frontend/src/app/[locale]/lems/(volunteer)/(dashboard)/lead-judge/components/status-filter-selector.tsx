@@ -79,9 +79,13 @@ export const StatusFilterSelector: React.FC<StatusFilterSelectorProps> = ({
           borderColor: 'rgba(0, 0, 0, 0.25)'
         }}
       >
-        <Typography sx={{
-          color: "text.secondary"
-        }}>{displayLabel}</Typography>
+        <Typography
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
+          {displayLabel}
+        </Typography>
       </Button>
       <Menu
         anchorEl={anchorEl}

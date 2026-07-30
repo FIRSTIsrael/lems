@@ -86,7 +86,7 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ division }) => {
             </Box>
           }
         >
-          {t('message', { divisionName: division.name }) }
+          {t('message', { divisionName: division.name })}
         </Alert>
       </Box>
 

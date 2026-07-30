@@ -27,9 +27,12 @@ export function EscalatedScoresheetsPanel() {
       <CardHeader
         avatar={<WarningIcon sx={{ color: 'warning.main' }} />}
         title={
-          <Typography variant="h6" sx={{
-            fontWeight: 600
-          }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600
+            }}
+          >
             {t('escalated-panel.title', { count: escalatedScoresheets.length })}
           </Typography>
         }

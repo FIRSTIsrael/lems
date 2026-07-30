@@ -114,9 +114,12 @@ export const AwardsView: React.FC = () => {
           borderColor: 'error.main'
         }}
       >
-        <Stack spacing={2} sx={{
-          alignItems: "center"
-        }}>
+        <Stack
+          spacing={2}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <Box sx={{ opacity: 0.6, color: 'error.main' }}>
             <LockRounded sx={{ fontSize: 80 }} />
           </Box>
@@ -142,9 +145,12 @@ export const AwardsView: React.FC = () => {
           borderColor: 'divider'
         }}
       >
-        <Stack spacing={2} sx={{
-          alignItems: "center"
-        }}>
+        <Stack
+          spacing={2}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <Box sx={{ opacity: 0.3 }}>
             <EmojiEvents sx={{ fontSize: 80 }} />
           </Box>

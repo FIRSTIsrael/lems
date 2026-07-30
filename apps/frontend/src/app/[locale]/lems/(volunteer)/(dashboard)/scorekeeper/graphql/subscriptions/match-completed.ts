@@ -40,7 +40,9 @@ export function createMatchCompletedSubscription(divisionId: string) {
           field: {
             activeMatch: null,
             matches: prev.division.field.matches.map(match =>
-              match.id === completedMatchId ? { ...match, status: 'completed' as MatchStatus } : match
+              match.id === completedMatchId
+                ? { ...match, status: 'completed' as MatchStatus }
+                : match
             )
           }
         }

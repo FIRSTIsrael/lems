@@ -1,10 +1,7 @@
 import { Dayjs } from 'dayjs';
 
 export type ScheduleBlockType =
-  | 'practice-round'
-  | 'ranking-round'
-  | 'judging-session'
-  | 'agenda-event';
+  'practice-round' | 'ranking-round' | 'judging-session' | 'agenda-event';
 export type ScheduleColumn = 'judging' | 'field' | 'agenda';
 export type AgendaBlockVisibility = 'public' | 'field' | 'judging' | 'teams';
 

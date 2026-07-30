@@ -67,9 +67,12 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSuccess, onError }) =>
         disabled={isSubmitting}
         placeholder={t('fields.file.placeholder')}
       />
-      <Stack direction="row" sx={{
-        justifyContent: "center"
-      }}>
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'center'
+        }}
+      >
         <Button
           onClick={handleSubmit}
           variant="contained"

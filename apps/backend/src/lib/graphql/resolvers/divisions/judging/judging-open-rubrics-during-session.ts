@@ -25,7 +25,11 @@ export const judgingOpenRubricsDuringSessionResolver: GraphQLFieldResolver<
     const eventSettings = await db.events.byId(division.event_id).getSettings();
     return eventSettings?.open_rubrics_during_session ?? false;
   } catch (error) {
-    console.error('Error resolving openRubricsDuringSession for division:', judging.divisionId, error);
+    console.error(
+      'Error resolving openRubricsDuringSession for division:',
+      judging.divisionId,
+      error
+    );
     throw error;
   }
 };

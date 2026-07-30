@@ -62,7 +62,8 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center'
-              }}>
+              }}
+            >
               {item.icon}
             </Box>
             <Typography
@@ -72,7 +73,8 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
               sx={{
                 fontWeight: item.active ? 700 : 600,
                 transition: 'all 0.15s ease-in-out'
-              }}>
+              }}
+            >
               {t(item.label)}
             </Typography>
           </Box>

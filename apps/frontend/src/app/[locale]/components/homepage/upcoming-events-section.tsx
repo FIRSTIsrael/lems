@@ -55,9 +55,10 @@ export const UpcomingEventsSection: React.FC = () => {
           direction="row"
           spacing={2}
           sx={{
-            alignItems: "center",
+            alignItems: 'center',
             mb: 3
-          }}>
+          }}
+        >
           <CalendarIcon
             sx={{
               color: 'primary.main',
@@ -67,17 +68,22 @@ export const UpcomingEventsSection: React.FC = () => {
           <Typography
             variant="h4"
             sx={{
-              fontWeight: "700",
+              fontWeight: '700',
               fontSize: { xs: '1.75rem', md: '2.125rem' }
-            }}>
+            }}
+          >
             {t('upcoming-events-title')}
           </Typography>
         </Stack>
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5, mb: 2 }} />
-          <Typography variant="h6" gutterBottom sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('no-upcoming-events')}
           </Typography>
           <Button variant="contained" onClick={() => router.push('/events')} sx={{ mt: 3 }}>
@@ -94,9 +100,10 @@ export const UpcomingEventsSection: React.FC = () => {
         direction="row"
         spacing={2}
         sx={{
-          alignItems: "center",
+          alignItems: 'center',
           mb: 3
-        }}>
+        }}
+      >
         <CalendarIcon
           sx={{
             color: 'primary.main',
@@ -106,19 +113,21 @@ export const UpcomingEventsSection: React.FC = () => {
         <Typography
           variant="h4"
           sx={{
-            fontWeight: "700",
+            fontWeight: '700',
             fontSize: { xs: '1.75rem', md: '2.125rem' }
-          }}>
+          }}
+        >
           {t('upcoming-events-title')}
         </Typography>
       </Stack>
       <Typography
         variant="body1"
         sx={{
-          color: "text.secondary",
+          color: 'text.secondary',
           mb: 3,
           fontSize: '1.125rem'
-        }}>
+        }}
+      >
         {t('upcoming-events-subtitle')}
       </Typography>
       <Stack spacing={3}>

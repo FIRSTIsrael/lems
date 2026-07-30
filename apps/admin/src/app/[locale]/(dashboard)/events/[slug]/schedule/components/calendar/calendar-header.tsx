@@ -159,9 +159,13 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
 
   return (
     <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
-      <Stack direction="row" spacing={2} sx={{
-        alignItems: "center"
-      }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <Button size="small" variant="outlined" startIcon={<Add />} onClick={addPracticeRound}>
           {t('field.add-practice-round')}
         </Button>

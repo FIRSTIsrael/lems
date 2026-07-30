@@ -31,7 +31,7 @@ export const SignatureCanvas = forwardRef<SignatureCanvasHandle, SignatureCanvas
       getSignature: () => {
         const svgElement = signaturePadRef.current?.svg;
         if (!svgElement) return '';
-        
+
         const svgString = new XMLSerializer().serializeToString(svgElement);
         return `data:image/svg+xml;base64,${btoa(svgString)}`;
       }

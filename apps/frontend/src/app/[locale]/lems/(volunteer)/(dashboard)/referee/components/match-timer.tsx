@@ -142,9 +142,12 @@ export const RefereeMatchTimer = () => {
                           <Typography variant="h6" sx={{ fontWeight: 700 }}>
                             {participant.team.name} #{participant.team.number}
                           </Typography>
-                          <Typography variant="body2" sx={{
-                            color: "text.secondary"
-                          }}>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              color: 'text.secondary'
+                            }}
+                          >
                             {participant.team.affiliation}, {participant.team.city}
                           </Typography>
                         </Box>
@@ -164,9 +167,10 @@ export const RefereeMatchTimer = () => {
                     <Typography
                       variant="body2"
                       sx={{
-                        color: "text.secondary",
-                        textAlign: "center"
-                      }}>
+                        color: 'text.secondary',
+                        textAlign: 'center'
+                      }}
+                    >
                       {t('team-not-available')}
                     </Typography>
                   )}

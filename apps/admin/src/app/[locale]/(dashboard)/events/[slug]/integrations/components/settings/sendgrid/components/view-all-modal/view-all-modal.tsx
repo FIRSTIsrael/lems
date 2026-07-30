@@ -57,9 +57,12 @@ export const ViewAllModal: React.FC<ViewAllModalProps> = ({ isOpen, onClose }) =
       <DialogTitle>{t('view-all-contacts-modal-title')}</DialogTitle>
       <DialogContent sx={{ minHeight: 400 }}>
         <Stack spacing={2}>
-          <Typography variant="body2" sx={{
-            color: "text.secondary"
-          }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('view-all-contacts-count', { count: contacts.length })}
           </Typography>
 

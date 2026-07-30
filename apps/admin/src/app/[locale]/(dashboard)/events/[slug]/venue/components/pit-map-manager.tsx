@@ -82,9 +82,13 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         {t('title')}
       </Typography>
       <Stack spacing={2}>
-        <Stack direction="row" spacing={2} sx={{
-          alignItems: "flex-end"
-        }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'flex-end'
+          }}
+        >
           <Box sx={{ maxWidth: 300 }}>
             <FileUpload
               label={t('upload-button')}
@@ -134,9 +138,12 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
 
         {!division.pitMapUrl && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-map')}
             </Typography>
           </Box>

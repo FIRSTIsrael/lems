@@ -59,15 +59,21 @@ export function RefereeSchedule() {
               }}
             >
               <TableCell sx={{ textAlign: 'center' }}>
-                <Stack spacing={0.25} sx={{
-                  alignItems: "center"
-                }}>
+                <Stack
+                  spacing={0.25}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
                   <Typography variant="body1" sx={{ fontWeight: 600 }}>
                     {getStage(match.stage)} #{match.number}
                   </Typography>
-                  <Typography variant="body2" sx={{
-                    color: "text.secondary"
-                  }}>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     {t('round')} {match.round}
                   </Typography>
                 </Stack>
@@ -78,16 +84,23 @@ export function RefereeSchedule() {
                 </Typography>
               </TableCell>
               <TableCell sx={{ textAlign: 'center' }}>
-                <Stack spacing={1.5} sx={{
-                  alignItems: "center"
-                }}>
+                <Stack
+                  spacing={1.5}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
                   {match.participants.map(p =>
                     p.team ? (
                       <TeamInfo key={p.team.id} team={p.team} size="sm" />
                     ) : (
-                      <Typography key="empty" variant="body2" sx={{
-                        color: "text.secondary"
-                      }}>
+                      <Typography
+                        key="empty"
+                        variant="body2"
+                        sx={{
+                          color: 'text.secondary'
+                        }}
+                      >
                         -
                       </Typography>
                     )

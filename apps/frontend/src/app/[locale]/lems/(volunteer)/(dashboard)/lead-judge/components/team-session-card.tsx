@@ -88,9 +88,12 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
       }}
     >
       <CardContent sx={{ pb: 1, '&:last-child': { pb: 1 } }}>
-        <Stack direction="row" sx={{
-          justifyContent: "space-between"
-        }}>
+        <Stack
+          direction="row"
+          sx={{
+            justifyContent: 'space-between'
+          }}
+        >
           <Stack
             direction="row"
             spacing={3}

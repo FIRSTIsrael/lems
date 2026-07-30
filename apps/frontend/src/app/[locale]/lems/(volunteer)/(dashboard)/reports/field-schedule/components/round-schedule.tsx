@@ -51,7 +51,8 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
                 sx={{
                   fontWeight: 600,
                   fontSize: isMobile ? '0.875rem' : '1rem'
-                }}>
+                }}
+              >
                 {roundTitle}
               </Typography>
             </TableCell>
@@ -62,7 +63,8 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
                 sx={{
                   fontWeight: 600,
                   fontSize: isMobile ? '0.75rem' : '1rem'
-                }}>
+                }}
+              >
                 {t('columns.match')}
               </Typography>
             </TableCell>
@@ -71,7 +73,8 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
                 sx={{
                   fontWeight: 600,
                   fontSize: isMobile ? '0.75rem' : '1rem'
-                }}>
+                }}
+              >
                 {t('columns.start-time')}
               </Typography>
             </TableCell>
@@ -80,7 +83,8 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
                 sx={{
                   fontWeight: 600,
                   fontSize: isMobile ? '0.75rem' : '1rem'
-                }}>
+                }}
+              >
                 {t('columns.end-time')}
               </Typography>
             </TableCell>
@@ -90,7 +94,8 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {table.name}
                 </Typography>
               </TableCell>

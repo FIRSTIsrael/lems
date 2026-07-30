@@ -6,7 +6,7 @@ import { useFormikContext } from 'formik';
 import { FormikTextField } from '@lems/shared';
 import { LoginFormValues } from '../../types';
 
-export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
+export function PasswordStep({ disableLogin }: { disableLogin: boolean }) {
   const t = useTranslations('pages.login');
   const [showPassword, setShowPassword] = useState(false);
   const { isSubmitting, isValid } = useFormikContext<LoginFormValues>();
@@ -48,10 +48,11 @@ export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
+          color: 'text.secondary',
           mb: 3,
           lineHeight: 1.6
-        }}>
+        }}
+      >
         {t('instructions.password')}
       </Typography>
       <FormikTextField
@@ -60,7 +61,7 @@ export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
         type={showPassword ? 'text' : 'password'}
         label={t('fields.password')}
         helperText={t('fields.password-helper')}
-        disabled={isSubmitting }
+        disabled={isSubmitting}
         autoComplete="off"
         required
         slotProps={{
@@ -110,10 +111,11 @@ export function PasswordStep({disableLogin}: {disableLogin: boolean}) {
       />
       <Box
         sx={{
-          display: "flex",
-          justifyContent: "center",
-          width: "100%"
-        }}>
+          display: 'flex',
+          justifyContent: 'center',
+          width: '100%'
+        }}
+      >
         <Button
           type="submit"
           variant="contained"

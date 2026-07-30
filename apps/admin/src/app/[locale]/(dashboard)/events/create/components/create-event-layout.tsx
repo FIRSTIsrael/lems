@@ -192,10 +192,11 @@ export const CreateEventLayout = () => {
             <>
               <Box
                 sx={{
-                  display: "flex",
-                  alignItems: "center",
+                  display: 'flex',
+                  alignItems: 'center',
                   gap: 2
-                }}>
+                }}
+              >
                 <Typography variant="h2" gutterBottom>
                   {t('sections.event-details')}
                 </Typography>
@@ -286,9 +287,11 @@ export const CreateEventLayout = () => {
                   </Grid>
 
                   {isMultipleDivisions && (
-                    <Box sx={{
-                      mt: 4
-                    }}>
+                    <Box
+                      sx={{
+                        mt: 4
+                      }}
+                    >
                       <Typography variant="h2" gutterBottom>
                         {t('sections.divisions')}
                       </Typography>
@@ -308,9 +311,13 @@ export const CreateEventLayout = () => {
                     </Box>
                   )}
 
-                  <Stack direction="row" spacing={2} sx={{
-                    mt: 2
-                  }}>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                      mt: 2
+                    }}
+                  >
                     <Button
                       startIcon={<AddIcon />}
                       onClick={addDivision}

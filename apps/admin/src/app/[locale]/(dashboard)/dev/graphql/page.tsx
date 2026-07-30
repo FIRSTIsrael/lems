@@ -38,9 +38,10 @@ export default function GraphQLSchemaPage() {
         <Typography
           variant="body2"
           sx={{
-            color: "text.secondary",
+            color: 'text.secondary',
             mt: 0.5
-          }}>
+          }}
+        >
           Explore and interact with the GraphQL schema for the LEMS application.
         </Typography>
       </Box>

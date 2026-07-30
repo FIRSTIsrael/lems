@@ -69,9 +69,12 @@ export const JudgingStatusTable: React.FC = () => {
   if (currentSessions.length === 0 && nextSessions.length === 0) {
     return (
       <Paper sx={{ p: 6, textAlign: 'center' }}>
-        <Typography variant="h6" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('empty-state.message')}
         </Typography>
       </Paper>
@@ -115,9 +118,12 @@ export const JudgingStatusTable: React.FC = () => {
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {t('table.current-round')}
                   </Typography>
-                  <Typography variant="caption" sx={{
-                    color: "text.secondary"
-                  }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     {dayjs(currentSessions[0].scheduledTime).format('HH:mm')}
                   </Typography>
                 </Stack>
@@ -142,9 +148,12 @@ export const JudgingStatusTable: React.FC = () => {
                   <Typography variant="body2" sx={{ fontWeight: 600 }}>
                     {t('table.next-round')}
                   </Typography>
-                  <Typography variant="caption" sx={{
-                    color: "text.secondary"
-                  }}>
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
                     {dayjs(nextSessions[0].scheduledTime).format('HH:mm')}
                   </Typography>
                 </Stack>

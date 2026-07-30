@@ -112,9 +112,10 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                 >
                   <Typography
                     sx={{
-                      fontSize: "1.3em",
+                      fontSize: '1.3em',
                       fontWeight: 700
-                    }}>
+                    }}
+                  >
                     {getColumnTitle(column)}
                   </Typography>
                 </TableCell>
@@ -137,16 +138,21 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                       fontWeight: 500
                     }}
                   >
-                    <Stack direction="row" spacing={0.6} sx={{
-                      alignItems: "center"
-                    }}>
+                    <Stack
+                      direction="row"
+                      spacing={0.6}
+                      sx={{
+                        alignItems: 'center'
+                      }}
+                    >
                       <Typography
                         component="span"
                         sx={{
-                          fontSize: "1em",
+                          fontSize: '1em',
                           fontWeight: 700,
                           flexShrink: 0
-                        }}>
+                        }}
+                      >
                         {getSectionTitle(section.id)}
                       </Typography>
                       <Box sx={{ whiteSpace: 'pre' }}> - </Box>
@@ -191,7 +197,8 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                                 sx={{
                                   alignItems: levelText ? 'flex-start' : 'center',
                                   justifyContent: levelText ? 'flex-start' : 'center'
-                                }}>
+                                }}
+                              >
                                 {field.coreValues ? (
                                   isChecked ? (
                                     <CoreValuesFieldCheckedIcon
@@ -226,9 +233,13 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                                   />
                                 )}
                                 {levelText && (
-                                  <Typography sx={{
-                                    fontSize: "0.85em"
-                                  }}>{levelText}</Typography>
+                                  <Typography
+                                    sx={{
+                                      fontSize: '0.85em'
+                                    }}
+                                  >
+                                    {levelText}
+                                  </Typography>
                                 )}
                               </Stack>
                             </TableCell>

@@ -57,16 +57,25 @@ export const UnpublishedEventCard: React.FC<UnpublishedEventCardProps> = ({ even
             <Stack
               direction="row"
               sx={{
-                alignItems: "center",
-                justifyContent: "space-between",
+                alignItems: 'center',
+                justifyContent: 'space-between',
                 mb: 2
-              }}>
-              <Stack direction="row" spacing={1.5} sx={{
-                alignItems: "center"
-              }}>
-                <Typography variant="h4" color="primary" sx={{
-                  fontWeight: "600"
-                }}>
+              }}
+            >
+              <Stack
+                direction="row"
+                spacing={1.5}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
+                <Typography
+                  variant="h4"
+                  color="primary"
+                  sx={{
+                    fontWeight: '600'
+                  }}
+                >
                   {eventResult.eventName}
                 </Typography>
                 {isDuringEvent && (
@@ -91,9 +100,12 @@ export const UnpublishedEventCard: React.FC<UnpublishedEventCardProps> = ({ even
               </Stack>
               <Button variant="text">{getButtonText()}</Button>
             </Stack>
-            <Typography variant="body1" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {getStatusText()}
             </Typography>
           </CardContent>

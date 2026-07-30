@@ -79,9 +79,10 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award }
                   direction="row"
                   spacing={2}
                   sx={{
-                    alignItems: "center",
-                    justifyContent: "center"
-                  }}>
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
                   <Box
                     sx={{
                       flexShrink: 0,

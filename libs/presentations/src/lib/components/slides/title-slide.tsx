@@ -18,14 +18,15 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
         direction="column"
         spacing={6}
         sx={{
-          alignItems: "center",
-          justifyContent: "center",
+          alignItems: 'center',
+          justifyContent: 'center',
           height: '100%',
           width: '100%',
           px: 4,
           textAlign: 'center',
           position: 'relative'
-        }}>
+        }}
+      >
         <Paper
           elevation={8}
           sx={{

@@ -78,7 +78,8 @@ export const JudgingScheduleTab = () => {
                       sx={{
                         fontWeight: 600,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {t('judging-schedule.start-time')}
                     </Typography>
                   </TableCell>
@@ -88,7 +89,8 @@ export const JudgingScheduleTab = () => {
                         sx={{
                           fontWeight: 600,
                           fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}>
+                        }}
+                      >
                         {room.name}
                       </Typography>
                     </TableCell>
@@ -101,10 +103,11 @@ export const JudgingScheduleTab = () => {
                     <TableCell align="center">
                       <Typography
                         sx={{
-                          fontFamily: "monospace",
+                          fontFamily: 'monospace',
                           fontWeight: 500,
                           fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}>
+                        }}
+                      >
                         {dayjs(session.time).format('HH:mm')}
                       </Typography>
                     </TableCell>
@@ -133,9 +136,10 @@ export const JudgingScheduleTab = () => {
                           ) : (
                             <Typography
                               sx={{
-                                color: "text.disabled",
+                                color: 'text.disabled',
                                 fontSize: isMobile ? '0.75rem' : '1rem'
-                              }}>
+                              }}
+                            >
                               -
                             </Typography>
                           )}
@@ -152,15 +156,19 @@ export const JudgingScheduleTab = () => {
       {groupedSessions.length === 0 && (
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             py: 4,
             px: 3
-          }}>
-          <Typography variant="body1" sx={{
-            color: "text.secondary"
-          }}>
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('judging-schedule.no-data')}
           </Typography>
         </Box>

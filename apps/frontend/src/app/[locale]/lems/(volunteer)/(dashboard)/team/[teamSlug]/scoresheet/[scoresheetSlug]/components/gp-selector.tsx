@@ -109,11 +109,12 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
       <Typography
         variant="h2"
         sx={{
-          fontSize: "1.5rem",
+          fontSize: '1.5rem',
           fontWeight: 500,
           pb: 4,
-          textAlign: "center"
-        }}>
+          textAlign: 'center'
+        }}
+      >
         {t('title')}
       </Typography>
       <TableContainer
@@ -138,9 +139,10 @@ export const GPSelector: React.FC<GPSelectorProps> = ({ disabled = false }) => {
                 >
                   <Typography
                     sx={{
-                      fontSize: "1em",
+                      fontSize: '1em',
                       fontWeight: 700
-                    }}>
+                    }}
+                  >
                     {t(`level-${column.value}`)}
                   </Typography>
                 </TableCell>

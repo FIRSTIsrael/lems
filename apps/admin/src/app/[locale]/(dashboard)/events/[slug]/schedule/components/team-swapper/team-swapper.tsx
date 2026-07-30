@@ -135,9 +135,10 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
       <Stack
         spacing={2}
         sx={{
-          height: "100vh",
+          height: '100vh',
           overflow: 'hidden'
-        }}>
+        }}
+      >
         <Box sx={{ display: 'flex', gap: 2, flex: 1, minHeight: 0 }}>
           <Paper
             sx={{ m: 1, flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}
@@ -146,10 +147,11 @@ export const TeamSwapper: React.FC<TeamSwapperProps> = ({ division }) => {
               sx={{
                 p: 3,
                 flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                overflow: "hidden"
-              }}>
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'
+              }}
+            >
               <Box
                 sx={{
                   flex: selectedTeamId ? '0 0 40%' : '1',

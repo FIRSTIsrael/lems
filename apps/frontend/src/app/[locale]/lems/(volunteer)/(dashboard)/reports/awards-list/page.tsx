@@ -63,9 +63,12 @@ export default function AwardsListPage() {
           }}
         >
           <Stack spacing={3}>
-            <Typography variant="body1" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('description')}
             </Typography>
 

@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as path from 'path';
-import express from 'express';
+import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import favicon from 'serve-favicon';
 import cookies from 'cookie-parser';
@@ -8,7 +8,7 @@ import cors from 'cors';
 import { expressMiddleware } from '@as-integrations/express5';
 import timesyncServer from 'timesync/server';
 import { WebSocketServer } from 'ws';
-import { useServer } from 'graphql-ws/use/ws';
+import { useServer as createGraphqlWsServer } from 'graphql-ws/use/ws';
 import './lib/dayjs';
 import './lib/database';
 import { logger } from './lib/logger';
@@ -98,7 +98,7 @@ const wsServer = new WebSocketServer({
   path: '/lems/graphql'
 });
 
-const serverCleanup = useServer(
+const serverCleanup = createGraphqlWsServer(
   {
     schema,
     context: async (ctx): Promise<GraphQLContext> => {
@@ -156,7 +156,7 @@ app.use((req, res) => {
 
 // Error handler
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err, req, res, next) => {
+app.use(((err: Error, req: Request, res: Response, _next: NextFunction) => {
   logger.error(
     {
       component: 'http',
@@ -168,7 +168,7 @@ app.use((err, req, res, next) => {
     'Unhandled error'
   );
   res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
-});
+}) as ErrorRequestHandler);
 
 logger.info('Starting server...');
 const port = 3333;

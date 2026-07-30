@@ -121,7 +121,7 @@ export function DeliberationTable() {
       // Rubric field columns
       ...(fieldDisplayLabels || []).map(
         label =>
-          (({
+          ({
             field: label,
             headerName: label,
             width: FIELD_COLUMN_WIDTH,
@@ -134,7 +134,7 @@ export function DeliberationTable() {
               const value = params.row.rubricFields[label];
               return value !== null ? value : '-';
             }
-          }) as GridColDef<EnrichedTeam>)
+          }) as GridColDef<EnrichedTeam>
       ),
 
       // GP score columns (only shown for core-values category)
@@ -147,7 +147,7 @@ export function DeliberationTable() {
             })
             .map(
               gpKey =>
-                (({
+                ({
                   field: gpKey,
                   headerName: gpKey,
                   width: FIELD_COLUMN_WIDTH,
@@ -160,7 +160,7 @@ export function DeliberationTable() {
                     const value = params.row.gpScores[gpKey];
                     return value ?? 3; // Default GP score is 3 if not set
                   }
-                }) as GridColDef<EnrichedTeam>)
+                }) as GridColDef<EnrichedTeam>
             )
         : []),
       {

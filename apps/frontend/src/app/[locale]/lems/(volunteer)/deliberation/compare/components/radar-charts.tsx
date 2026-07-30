@@ -61,9 +61,10 @@ export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) 
       <Typography
         variant="body2"
         sx={{
-          color: "text.secondary",
-          textAlign: "center"
-        }}>
+          color: 'text.secondary',
+          textAlign: 'center'
+        }}
+      >
         {t('no-rubric-data')}
       </Typography>
     );

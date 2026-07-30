@@ -58,7 +58,8 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('table.start-time')}
                 </Typography>
               </TableCell>
@@ -67,7 +68,8 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   sx={{
                     fontWeight: 600,
                     fontSize: isMobile ? '0.75rem' : '1rem'
-                  }}>
+                  }}
+                >
                   {t('table.end-time')}
                 </Typography>
               </TableCell>
@@ -77,7 +79,8 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                     sx={{
                       fontWeight: 600,
                       fontSize: isMobile ? '0.75rem' : '1rem'
-                    }}>
+                    }}
+                  >
                     {room.name}
                   </Typography>
                 </TableCell>
@@ -104,20 +107,22 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                     <TableCell align="center">
                       <Typography
                         sx={{
-                          fontFamily: "monospace",
+                          fontFamily: 'monospace',
                           fontWeight: 500,
                           fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}>
+                        }}
+                      >
                         {dayjs(row.time).format('HH:mm')}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography
                         sx={{
-                          fontFamily: "monospace",
+                          fontFamily: 'monospace',
                           fontWeight: 500,
                           fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}>
+                        }}
+                      >
                         {endTime.format('HH:mm')}
                       </Typography>
                     </TableCell>
@@ -131,7 +136,8 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                           alignItems: 'center',
                           justifyContent: 'center',
                           gap: 1
-                        }}>
+                        }}
+                      >
                         {event.title}
                         <Chip
                           size="small"
@@ -169,20 +175,22 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   <TableCell align="center">
                     <Typography
                       sx={{
-                        fontFamily: "monospace",
+                        fontFamily: 'monospace',
                         fontWeight: 500,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {sessionTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
                       sx={{
-                        fontFamily: "monospace",
+                        fontFamily: 'monospace',
                         fontWeight: 500,
                         fontSize: isMobile ? '0.75rem' : '1rem'
-                      }}>
+                      }}
+                    >
                       {sessionEndTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
@@ -219,9 +227,10 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                       ) : (
                         <Typography
                           sx={{
-                            color: "text.disabled",
+                            color: 'text.disabled',
                             fontSize: isMobile ? '0.75rem' : '1rem'
-                          }}>
+                          }}
+                        >
                           -
                         </Typography>
                       )}

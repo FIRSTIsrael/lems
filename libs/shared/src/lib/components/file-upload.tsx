@@ -48,9 +48,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             component="span"
             variant="body2"
             sx={{
-              color: "text.secondary",
+              color: 'text.secondary',
               ml: 1
-            }}>
+            }}
+          >
             ({description})
           </Typography>
         )}

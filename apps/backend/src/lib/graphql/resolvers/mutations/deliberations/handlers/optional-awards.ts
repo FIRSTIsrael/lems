@@ -11,6 +11,7 @@ export function validateOptionalAwardsStage(
   optionalAwards: FinalDeliberationAwards['optionalAwards'],
   divisionAwards: Award[]
 ): Promise<void> {
+  const resolvedOptionalAwards = optionalAwards ?? {};
   const divisionOptionalAwards = divisionAwards.filter(
     award =>
       (OPTIONAL_AWARDS as readonly string[])
@@ -18,12 +19,13 @@ export function validateOptionalAwardsStage(
         .includes(award.name) && award.type === 'TEAM'
   );
   for (const award of divisionOptionalAwards) {
-    if (!optionalAwards[award.name] || optionalAwards[award.name].length === 0) {
+    if (!resolvedOptionalAwards[award.name] || resolvedOptionalAwards[award.name].length === 0) {
       return Promise.reject(
         new Error(`Optional award "${award.name}" must have at least one team assigned.`)
       );
     }
   }
+  return Promise.resolve();
 }
 
 /**
@@ -51,9 +53,9 @@ async function validateOptionalAwardsAssignment(
   const awards = (await db.awards.byDivisionId(divisionId).getAll()).filter(
     award => award.name !== 'robot-performance'
   );
-  for (const [awardName, winners] of Object.entries(optionalAwards)) {
+  for (const [awardName, winners] of Object.entries(optionalAwards ?? {})) {
     for (const award of awards) {
-      if (winners.includes(award.winner_id)) {
+      if (award.winner_id && winners.includes(award.winner_id)) {
         throw new MutationError(
           MutationErrorCode.FORBIDDEN,
           `Award ${awardName} has a winner that was already assigned an award`
@@ -70,7 +72,7 @@ async function assignOptionalAwardsToTeams(
   divisionId: string,
   optionalAwards: FinalDeliberationAwards['optionalAwards']
 ): Promise<void> {
-  for (const [awardName, teamIds] of Object.entries(optionalAwards)) {
+  for (const [awardName, teamIds] of Object.entries(optionalAwards ?? {})) {
     const awards = await db.awards.byDivisionId(divisionId).get(awardName);
     if (awards.length !== teamIds.length) {
       throw new MutationError(

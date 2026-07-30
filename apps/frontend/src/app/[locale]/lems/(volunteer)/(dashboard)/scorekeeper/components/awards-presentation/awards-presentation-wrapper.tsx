@@ -69,9 +69,7 @@ export function AwardsPresentationWrapper() {
       awardsAssigned={data.awardsAssigned}
       awardWinnerSlideStyle={
         (data.field?.audienceDisplay?.settings?.awards?.awardWinnerSlideStyle as
-          | 'chroma'
-          | 'full'
-          | 'both') || 'both'
+          'chroma' | 'full' | 'both') || 'both'
       }
       presentationState={
         data.field?.audienceDisplay?.awardsPresentation != null

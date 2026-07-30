@@ -53,7 +53,8 @@ export const MobileSection: React.FC<MobileSectionProps> = ({
             sx={{
               fontWeight: 700,
               color: color
-            }}>
+            }}
+          >
             {getSectionTitle(sectionId)}
           </Typography>
         }

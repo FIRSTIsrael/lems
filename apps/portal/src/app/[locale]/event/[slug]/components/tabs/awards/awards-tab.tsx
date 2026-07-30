@@ -69,14 +69,18 @@ export const AwardsTab: React.FC = () => {
         </Typography>
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             py: 8
-          }}>
-          <Typography variant="h6" sx={{
-            color: "text.secondary"
-          }}>
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('awards.no-data')}
           </Typography>
         </Box>

@@ -131,7 +131,7 @@ const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
 export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => {
   const locale = useLocale();
   const { playSound } = useJudgingSounds();
-  
+
   const JUDGING_STAGES = useMemo(() => getJudgingStages(locale), [locale]);
   const timerReducer = useMemo(() => createTimerReducer(JUDGING_STAGES), [JUDGING_STAGES]);
 

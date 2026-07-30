@@ -15,11 +15,12 @@ export const SeasonCard: React.FC<SeasonCardProps> = ({ season }) => {
       variant="outlined"
       sx={{
         pt: 3,
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column"
-      }}>
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexDirection: 'column'
+      }}
+    >
       <CardMedia
         sx={{ height: 140, objectFit: 'contain' }}
         src={season.logoUrl || getAsset('FIRST-Logo.svg')}

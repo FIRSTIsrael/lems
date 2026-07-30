@@ -208,9 +208,13 @@ export const TeamForm: React.FC<TeamFormProps> = ({
 
               {status && <Alert severity="error">{t(`errors.${status}`)}</Alert>}
 
-              <Stack direction="row" spacing={2} sx={{
-                justifyContent: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  justifyContent: 'center'
+                }}
+              >
                 <Button
                   type="submit"
                   variant="contained"

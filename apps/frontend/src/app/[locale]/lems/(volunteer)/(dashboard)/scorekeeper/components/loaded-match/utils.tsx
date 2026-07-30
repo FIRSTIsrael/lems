@@ -10,13 +10,7 @@ import {
 import { Match } from '../../graphql';
 
 export type TeamReadinessStatus =
-  | 'ready'
-  | 'present'
-  | 'queued'
-  | 'no-show'
-  | 'conflict'
-  | 'missing'
-  | 'empty';
+  'ready' | 'present' | 'queued' | 'no-show' | 'conflict' | 'missing' | 'empty';
 
 export const getStatusIcon = (status: TeamReadinessStatus) => {
   const iconProps = { sx: { fontSize: '1.5rem' } };

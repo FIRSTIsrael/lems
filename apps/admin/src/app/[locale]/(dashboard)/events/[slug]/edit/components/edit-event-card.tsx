@@ -48,9 +48,10 @@ const EditEventCard: React.FC<EditEventCardProps> = ({ icon, title, href, sx }) 
         <Typography
           variant="h6"
           sx={{
-            textAlign: "center",
+            textAlign: 'center',
             fontWeight: 500
-          }}>
+          }}
+        >
           {t(title)}
         </Typography>
       </Paper>

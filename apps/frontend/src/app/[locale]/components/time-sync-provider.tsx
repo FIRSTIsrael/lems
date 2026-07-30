@@ -21,20 +21,20 @@ interface TimeSyncProviderProps {
 /**
  * Provider component for server time synchronization
  * Synchronizes client clock with server time using SNTP-based algorithm
- * 
+ *
  * Usage:
  * ```tsx
  * <TimeSyncProvider>
  *   <App />
  * </TimeSyncProvider>
  * ```
- * 
+ *
  * Then use `useTimeSync()` hook to access the time offset in child components
  */
 export const TimeSyncProvider: React.FC<TimeSyncProviderProps> = ({
   children,
   serverUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/timesync`,
-  syncInterval = 30 * 1000, // 30 seconds
+  syncInterval = 30 * 1000 // 30 seconds
 }) => {
   const [offset, setOffset] = useState<number>(0);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -49,7 +49,7 @@ export const TimeSyncProvider: React.FC<TimeSyncProviderProps> = ({
           server: serverUrl,
           interval: syncInterval,
           timeout: 10000,
-          delay: 1000,
+          delay: 1000
         });
 
         const handleOffsetChange = (newOffset: number) => {
@@ -90,7 +90,7 @@ export const TimeSyncProvider: React.FC<TimeSyncProviderProps> = ({
 
     return () => {
       isMounted = false;
-      cleanup?.then((fn) => fn?.());
+      cleanup?.then(fn => fn?.());
       if (timesync) {
         timesync.destroy();
       }

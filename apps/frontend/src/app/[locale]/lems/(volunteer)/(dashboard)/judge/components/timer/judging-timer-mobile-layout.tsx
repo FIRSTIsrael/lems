@@ -64,9 +64,11 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           borderRadius: 3
         }}
       >
-        <Box sx={{
-          p: 2
-        }}>
+        <Box
+          sx={{
+            p: 2
+          }}
+        >
           <Typography
             variant="overline"
             sx={{
@@ -84,9 +86,10 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
             direction="row"
             spacing={1.5}
             sx={{
-              alignItems: "center",
+              alignItems: 'center',
               mt: 1
-            }}>
+            }}
+          >
             <Box
               sx={{
                 width: 5,
@@ -108,9 +111,11 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
           </Stack>
         </Box>
 
-        <Box sx={{
-          textAlign: "center"
-        }}>
+        <Box
+          sx={{
+            textAlign: 'center'
+          }}
+        >
           <Typography
             sx={{
               fontSize: '7rem',
@@ -210,9 +215,10 @@ export const JudgingTimerMobileLayout: React.FC<JudgingTimerMobileLayoutProps> =
               direction="row"
               spacing={1}
               sx={{
-                flexWrap: "wrap",
-                justifyContent: "center"
-              }}>
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+              }}
+            >
               <RubricButton team={session.team} category="innovation-project" fontSize="0.7rem" />
               <Typography variant="caption" sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>
                 •

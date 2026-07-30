@@ -15,9 +15,13 @@ export const ArrivalStats: React.FC<ArrivalStatsProps> = ({ teams }) => {
   const registeredCount = teams.filter(t => t.arrived).length;
 
   return (
-    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{
-      display: { xs: 'none', md: 'flex' }
-    }}>
+    <Stack
+      direction={{ xs: 'column', sm: 'row' }}
+      spacing={2}
+      sx={{
+        display: { xs: 'none', md: 'flex' }
+      }}
+    >
       <Paper
         sx={{
           flex: 1,
@@ -35,9 +39,12 @@ export const ArrivalStats: React.FC<ArrivalStatsProps> = ({ teams }) => {
         <Typography variant="h4" sx={{ fontWeight: 700, color: theme.palette.primary.main }}>
           {teams.length}
         </Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('total-teams')}
         </Typography>
       </Paper>
@@ -64,9 +71,12 @@ export const ArrivalStats: React.FC<ArrivalStatsProps> = ({ teams }) => {
         >
           {registeredCount}
         </Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('arrived-teams')}
         </Typography>
       </Paper>
@@ -96,9 +106,12 @@ export const ArrivalStats: React.FC<ArrivalStatsProps> = ({ teams }) => {
         >
           {teams.length - registeredCount}
         </Typography>
-        <Typography variant="body2" sx={{
-          color: "text.secondary"
-        }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('pending-teams')}
         </Typography>
       </Paper>

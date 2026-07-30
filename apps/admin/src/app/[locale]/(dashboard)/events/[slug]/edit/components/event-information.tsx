@@ -33,29 +33,40 @@ export const EventInformation = () => {
 
   return (
     <Paper variant="outlined" sx={{ p: 3, mb: 3, backgroundColor: 'grey.50' }}>
-      <Stack direction="row" spacing={4} sx={{
-        alignItems: "center"
-      }}>
+      <Stack
+        direction="row"
+        spacing={4}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         {singleDivision && (
           <DivisionColorEditor division={singleDivision} onChange={handleChangeColor} />
         )}
 
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 1
-          }}>
+          }}
+        >
           <CalendarToday color="primary" />
           <Stack>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('date')}
             </Typography>
-            <Typography variant="body1" sx={{
-              fontWeight: 500
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 500
+              }}
+            >
               {dayjs(event.startDate).format('MMM D, YYYY')}
             </Typography>
           </Stack>
@@ -63,20 +74,27 @@ export const EventInformation = () => {
 
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 1
-          }}>
+          }}
+        >
           <LocationOn color="primary" />
           <Stack>
-            <Typography variant="body2" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('location')}
             </Typography>
-            <Typography variant="body1" sx={{
-              fontWeight: 500
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 500
+              }}
+            >
               {event.location || 'Not specified'}
             </Typography>
           </Stack>

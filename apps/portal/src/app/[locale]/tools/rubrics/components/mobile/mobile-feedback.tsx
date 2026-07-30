@@ -63,7 +63,8 @@ export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabl
             sx={{
               fontWeight: 700,
               color
-            }}>
+            }}
+          >
             {t('mobile-feedback')}
           </Typography>
         }

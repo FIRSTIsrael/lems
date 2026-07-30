@@ -23,7 +23,7 @@ export const StartSessionButton: React.FC<StartSessionButtonProps> = ({
 }) => {
   const t = useTranslations('pages.judge.schedule');
   const [loading, setLoading] = useState(false);
-  const currentTime = useTime({interval: 1000});
+  const currentTime = useTime({ interval: 1000 });
 
   const isStartable = useMemo(() => {
     if (session.status !== 'not-started') return false;

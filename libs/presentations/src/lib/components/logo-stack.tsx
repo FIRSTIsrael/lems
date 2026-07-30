@@ -13,8 +13,8 @@ export const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
     <Stack
       direction="row"
       sx={{
-        justifyContent: "space-around",
-        alignItems: "center",
+        justifyContent: 'space-around',
+        alignItems: 'center',
         position: 'absolute',
         bottom: 0,
         left: 0,
@@ -22,7 +22,8 @@ export const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
         height: '100px',
         bgcolor: '#f7f8f9',
         borderTop: `10px solid ${color || 'transparent'}`
-      }}>
+      }}
+    >
       <Box sx={{ position: 'relative', height: '100%', width: '200px', padding: 2 }}>
         <Image
           src="/assets/audience-display/sponsors/first-horizontal.svg"

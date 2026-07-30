@@ -29,6 +29,10 @@ export async function calculateRobotGameRankings(
   }
   const divisionState = division.state;
 
+  if (!divisionState?.field?.currentStage) {
+    return new Map<string, RankingData>();
+  }
+
   const scoresheets = await db.scoresheets
     .byDivision(divisionId)
     .byStage(divisionState.field.currentStage)
@@ -46,7 +50,7 @@ export async function calculateRobotGameRankings(
     }
     teamScores.get(scoresheet.teamId)!.push({
       round: scoresheet.round,
-      score: scoresheet.data.score
+      score: scoresheet.data!.score
     });
   }
 

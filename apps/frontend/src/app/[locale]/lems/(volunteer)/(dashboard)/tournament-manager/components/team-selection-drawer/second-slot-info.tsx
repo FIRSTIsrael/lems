@@ -30,31 +30,46 @@ export function SecondSlotInfo({
     <>
       <Divider />
       <Box>
-        <Typography variant="subtitle2" gutterBottom sx={{
-          fontWeight: 600
-        }}>
+        <Typography
+          variant="subtitle2"
+          gutterBottom
+          sx={{
+            fontWeight: 600
+          }}
+        >
           {t('slots.second-team-selected')}
         </Typography>
         <Paper sx={{ p: 1.5, bgcolor: 'rgba(25, 118, 210, 0.3)' }}>
           {secondSlot.team ? (
             <>
-              <Typography variant="body1" noWrap sx={{
-                fontWeight: 700
-              }}>
+              <Typography
+                variant="body1"
+                noWrap
+                sx={{
+                  fontWeight: 700
+                }}
+              >
                 #{secondSlot.team.number} {secondSlot.team.name}
               </Typography>
               {(secondSlot?.team?.affiliation || secondSlot?.team?.city) && (
-                <Typography variant="body2" noWrap sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="body2"
+                  noWrap
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {[secondSlot.team.affiliation, secondSlot.team.city].filter(Boolean).join(' • ')}
                 </Typography>
               )}
             </>
           ) : (
-            <Typography variant="body1" sx={{
-              color: "text.secondary"
-            }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('labels.no-team')}
             </Typography>
           )}

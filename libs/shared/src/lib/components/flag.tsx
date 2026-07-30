@@ -1,8 +1,10 @@
 import Image from 'next/image';
 import { getRegionFlagUrl } from '../utils';
 
-interface FlagProps
-  extends Omit<React.ComponentProps<typeof Image>, 'src' | 'alt' | 'width' | 'height' | 'fill'> {
+interface FlagProps extends Omit<
+  React.ComponentProps<typeof Image>,
+  'src' | 'alt' | 'width' | 'height' | 'fill'
+> {
   region: string;
   size: number;
 }

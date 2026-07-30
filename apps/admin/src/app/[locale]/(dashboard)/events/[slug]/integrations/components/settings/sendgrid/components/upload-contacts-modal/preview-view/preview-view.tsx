@@ -17,16 +17,25 @@ export const PreviewView: React.FC<PreviewViewProps> = ({ result, onConfirm, onC
   const t = useTranslations('pages.events.integrations.detail-panel.settings.sendgrid');
 
   return (
-    <Stack spacing={3} sx={{
-      alignItems: "center"
-    }}>
-      <Stack spacing={1} sx={{
-        alignItems: "center"
-      }}>
+    <Stack
+      spacing={3}
+      sx={{
+        alignItems: 'center'
+      }}
+    >
+      <Stack
+        spacing={1}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
         <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-        <Typography variant="h6" sx={{
-          textAlign: "center"
-        }}>
+        <Typography
+          variant="h6"
+          sx={{
+            textAlign: 'center'
+          }}
+        >
           {t('csv-success-title')}
         </Typography>
       </Stack>

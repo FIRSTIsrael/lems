@@ -11,7 +11,7 @@ export const AdminAwardResponseSchema = z.object({
   automaticAssignment: z.boolean(),
   place: z.number(),
   index: z.number(),
-  winner: z.string().optional()
+  winner: z.string().nullable().optional()
 });
 
 export type Award = z.infer<typeof AdminAwardResponseSchema>;

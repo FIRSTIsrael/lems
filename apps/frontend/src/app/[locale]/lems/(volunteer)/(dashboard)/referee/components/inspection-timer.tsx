@@ -44,16 +44,26 @@ export const InspectionTimer: React.FC<InspectionTimerProps> = ({ inspectionStar
         borderRadius: 2
       }}
     >
-      <Stack spacing={1} sx={{
-        alignItems: "center"
-      }}>
-        <Stack direction="row" spacing={1} sx={{
-          alignItems: "center"
-        }}>
+      <Stack
+        spacing={1}
+        sx={{
+          alignItems: 'center'
+        }}
+      >
+        <Stack
+          direction="row"
+          spacing={1}
+          sx={{
+            alignItems: 'center'
+          }}
+        >
           <Timer sx={{ fontSize: '1.5rem', color: 'primary.main' }} />
-          <Typography variant="h6" sx={{
-            fontWeight: 600
-          }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600
+            }}
+          >
             {t('inspection-timer')}
           </Typography>
         </Stack>

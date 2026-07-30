@@ -50,21 +50,25 @@ export const AwardsPresentationDisplay: React.FC<AwardsPresentationDisplayProps>
   const showPreview = !isOnFinalSlide;
 
   return (
-    <Stack spacing={3} sx={{
-      height: "100%"
-    }}>
+    <Stack
+      spacing={3}
+      sx={{
+        height: '100%'
+      }}
+    >
       {/* Display Area - Current and Next Slide */}
       <Stack
         direction="row"
         spacing={3}
         sx={{
-          justifyContent: "center",
-          alignItems: "center",
+          justifyContent: 'center',
+          alignItems: 'center',
           px: 3,
           py: 2,
           flex: 1,
           minHeight: 0
-        }}>
+        }}
+      >
         {/* Current Slide */}
         <SlideDisplay
           label={currentSlideLabel}

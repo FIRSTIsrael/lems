@@ -332,8 +332,7 @@
           }
         }
       }
-    }
-    ,
+    },
     "errors": {
       "e1": {
         "description": "Pędzel nie może znajdować się jednocześnie w forum (M14) i dotykać stanowiska wykopalisk (M01)."

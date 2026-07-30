@@ -17,10 +17,11 @@ export const SignatureActions: React.FC<SignatureActionsProps> = ({ isSigned, on
       direction="row"
       spacing={2}
       sx={{
-        alignItems: "center",
-        justifyContent: "space-between",
+        alignItems: 'center',
+        justifyContent: 'space-between',
         mt: 2
-      }}>
+      }}
+    >
       {isSigned && (
         <Button
           variant="outlined"

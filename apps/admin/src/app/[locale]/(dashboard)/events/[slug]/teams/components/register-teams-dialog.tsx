@@ -62,12 +62,13 @@ export const RegisterTeamsDialog = ({ open, onClose, event }: RegisterTeamsDialo
       {isLoading ? (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100%",
-            minHeight: "400px"
-          }}>
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            minHeight: '400px'
+          }}
+        >
           <CircularProgress size={60} />
         </Box>
       ) : (

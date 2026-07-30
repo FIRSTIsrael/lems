@@ -4,24 +4,31 @@ import db from '../../../../lib/database';
 import { requirePermission } from '../../middleware/require-permission';
 import { AdminEventRequest } from '../../../../types/express';
 import { makeAdminTeamResponse, makeAdminTeamWithDivisionResponse } from '../../teams/util';
+import { asHandler } from '../../../../types/express-handlers';
 import { isTeamsRegistration, parseTeamCSVRegistration } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminEventRequest, res) => {
-  const teams = await db.events.byId(req.eventId).getRegisteredTeams();
-  res.json(teams.map(team => makeAdminTeamWithDivisionResponse(team)));
-});
+router.get(
+  '/',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const teams = await db.events.byId(req.eventId).getRegisteredTeams();
+    res.json(teams.map(team => makeAdminTeamWithDivisionResponse(team)));
+  })
+);
 
-router.get('/available', async (req: AdminEventRequest, res) => {
-  const teams = await db.events.byId(req.eventId).getAvailableTeams();
-  res.json(teams.map(team => makeAdminTeamResponse(team)));
-});
+router.get(
+  '/available',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const teams = await db.events.byId(req.eventId).getAvailableTeams();
+    res.json(teams.map(team => makeAdminTeamResponse(team)));
+  })
+);
 
 router.post(
   '/register',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const registration = req.body;
 
     if (!registration || !isTeamsRegistration(registration)) {
@@ -32,13 +39,13 @@ router.post(
     await db.events.byId(req.eventId).registerTeams(registration);
 
     res.status(200).end();
-  }
+  })
 );
 
 router.delete(
   '/remove',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const teamsToRemove = req.body;
 
     if (!teamsToRemove || !Array.isArray(teamsToRemove)) {
@@ -49,13 +56,13 @@ router.delete(
     await db.events.byId(req.eventId).removeTeams(teamsToRemove);
 
     res.status(200).end();
-  }
+  })
 );
 
 router.put(
   '/:teamId/division',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     const { teamId } = req.params;
     const { divisionId } = req.body;
 
@@ -76,13 +83,13 @@ router.put(
       console.error('Error changing team division:', error);
       res.status(500).json({ error: 'Failed to change team division' });
     }
-  }
+  })
 );
 
 router.post(
   '/register-from-csv',
   [requirePermission('MANAGE_EVENT_DETAILS'), fileUpload()],
-  async (req: AdminEventRequest, res) => {
+  asHandler<AdminEventRequest>(async (req, res) => {
     if (!req.files || !req.files.file) {
       res.status(400).json({ error: 'No file uploaded' });
       return;
@@ -145,7 +152,7 @@ router.post(
     // TODO: Split DB operations into another function
     //  console.error('Error registering teams from CSV:', error);
     //  res.status(500).json({ error: 'Failed to register teams from CSV' });
-  }
+  })
 );
 
 export default router;

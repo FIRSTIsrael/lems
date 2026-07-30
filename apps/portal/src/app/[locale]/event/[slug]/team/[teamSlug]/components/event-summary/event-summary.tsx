@@ -40,9 +40,10 @@ export const EventSummary: React.FC = () => {
         <Typography
           variant="h6"
           sx={{
-            fontWeight: "700",
+            fontWeight: '700',
             mb: 1
-          }}>
+          }}
+        >
           {t('performance.event-summary')}
         </Typography>
         <Grid container spacing={2}>

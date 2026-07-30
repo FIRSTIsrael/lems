@@ -215,24 +215,30 @@ export const JudgingTimer = () => {
             <Typography
               variant="h6"
               sx={{
-                color: "text.secondary",
+                color: 'text.secondary',
                 fontFamily: 'monospace',
                 fontSize: { xs: '1rem', sm: '1.2rem' }
-              }}>
+              }}
+            >
               {formatTime(totalTimeRemaining)}
             </Typography>
           </Box>
 
           <Box
             sx={{
-              width: "100%",
-              px: "15%",
+              width: '100%',
+              px: '15%',
               mb: 2
-            }}>
+            }}
+          >
             <Box sx={{ px: 2, pb: 1 }}>
-              <Stack direction="row" spacing={1} sx={{
-                alignItems: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  alignItems: 'center'
+                }}
+              >
                 {JUDGING_STAGES.map((stage: { id: string; duration: number }, index: number) => {
                   let progressPercentage = 0;
 
@@ -281,10 +287,11 @@ export const JudgingTimer = () => {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   mt: 0.5,
                   display: 'block'
-                }}>
+                }}
+              >
                 {getStage(JUDGING_STAGES[currentStage].id)}
               </Typography>
             </Box>
@@ -293,12 +300,16 @@ export const JudgingTimer = () => {
               direction={{ xs: 'column', md: 'row' }}
               spacing={1}
               sx={{
-                justifyContent: "space-between"
+                justifyContent: 'space-between'
               }}
             >
-              <Stack direction="row" spacing={1} sx={{
-                justifyContent: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  justifyContent: 'center'
+                }}
+              >
                 <IconButton
                   disabled={currentStage === 0}
                   onClick={() => back()}
@@ -339,9 +350,13 @@ export const JudgingTimer = () => {
                 </IconButton>
               </Stack>
 
-              <Stack direction="row" spacing={1} sx={{
-                justifyContent: "center"
-              }}>
+              <Stack
+                direction="row"
+                spacing={1}
+                sx={{
+                  justifyContent: 'center'
+                }}
+              >
                 <IconButton
                   onClick={stop}
                   disabled={isFinished || !isRunning}

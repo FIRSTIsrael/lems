@@ -4,6 +4,10 @@ import { extractToken } from '../../../lib/security/auth';
 
 const schedulerJwtSecret = process.env.SCHEDULER_JWT_SECRET;
 
+if (!schedulerJwtSecret) {
+  throw new Error('SCHEDULER_JWT_SECRET environment variable is required');
+}
+
 export const authMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const token = extractToken(req);

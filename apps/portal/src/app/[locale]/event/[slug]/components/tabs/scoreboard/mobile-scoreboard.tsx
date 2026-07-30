@@ -26,14 +26,18 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
     return (
       <Box
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           py: 8
-        }}>
-        <Typography variant="body1" sx={{
-          color: "text.secondary"
-        }}>
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            color: 'text.secondary'
+          }}
+        >
           {t('scoreboard.no-data')}
         </Typography>
       </Box>
@@ -117,9 +121,12 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 >
                   {entry.team.name}
                 </Typography>
-                <Typography variant="body2" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   #{entry.team.number}
                 </Typography>
               </Box>
@@ -128,17 +135,19 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
-                    fontSize: "0.75rem"
-                  }}>
+                    color: 'text.secondary',
+                    fontSize: '0.75rem'
+                  }}
+                >
                   {t('scoreboard.best-score')}
                 </Typography>
                 <Typography
                   variant="h6"
                   sx={{
                     fontWeight: 600,
-                    color: "primary.main"
-                  }}>
+                    color: 'primary.main'
+                  }}
+                >
                   {entry.maxScore ?? '-'}
                 </Typography>
               </Box>
@@ -151,17 +160,19 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 <Typography
                   variant="body2"
                   sx={{
-                    color: "text.secondary",
+                    color: 'text.secondary',
                     mb: 1
-                  }}>
+                  }}
+                >
                   {t('scoreboard.match-scores')}
                 </Typography>
                 <Box
                   sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
+                    display: 'flex',
+                    flexWrap: 'wrap',
                     gap: 1
-                  }}>
+                  }}
+                >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores?.[index];
                     return (
@@ -181,14 +192,18 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                         <Typography
                           variant="caption"
                           sx={{
-                            display: "block",
-                            fontSize: "0.7rem"
-                          }}>
+                            display: 'block',
+                            fontSize: '0.7rem'
+                          }}
+                        >
                           {t('scoreboard.match')} {index + 1}
                         </Typography>
-                        <Typography variant="body2" sx={{
-                          fontWeight: 600
-                        }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 600
+                          }}
+                        >
                           {score ?? '-'}
                         </Typography>
                       </Box>

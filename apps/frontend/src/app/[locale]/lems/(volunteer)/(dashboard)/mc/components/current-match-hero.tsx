@@ -81,9 +81,10 @@ export const CurrentMatchHero: React.FC = () => {
         <Stack
           direction="row"
           sx={{
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}>
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}
+        >
           <Typography
             variant="h3"
             sx={{
@@ -127,9 +128,10 @@ export const CurrentMatchHero: React.FC = () => {
                     direction="row"
                     spacing={1.5}
                     sx={{
-                      alignItems: "center",
-                      justifyContent: "space-between"
-                    }}>
+                      alignItems: 'center',
+                      justifyContent: 'space-between'
+                    }}
+                  >
                     <Typography
                       variant="h5"
                       sx={{

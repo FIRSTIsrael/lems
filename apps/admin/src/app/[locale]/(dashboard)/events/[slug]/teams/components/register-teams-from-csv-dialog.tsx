@@ -113,12 +113,15 @@ const RegisterForm: React.FC<{
           direction="row"
           spacing={2}
           sx={{
-            alignItems: "flex-start",
+            alignItems: 'flex-start',
             mb: 1
-          }}>
-          <Box sx={{
-            pt: 0.33
-          }}>
+          }}
+        >
+          <Box
+            sx={{
+              pt: 0.33
+            }}
+          >
             <InfoIcon color="primary" />
           </Box>
           <Box>
@@ -128,9 +131,10 @@ const RegisterForm: React.FC<{
             <Typography
               variant="body2"
               sx={{
-                color: "text.secondary",
-                marginBottom: "16px"
-              }}>
+                color: 'text.secondary',
+                marginBottom: '16px'
+              }}
+            >
               {t('instructions.description')}
             </Typography>
           </Box>
@@ -234,9 +238,12 @@ const RegisterForm: React.FC<{
         placeholder={t('fields.file.placeholder')}
       />
       {error && <Alert severity="error">{t(`errors.${error}`)}</Alert>}
-      <Stack direction="row" sx={{
-        justifyContent: "center"
-      }}>
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'center'
+        }}
+      >
         <Button
           onClick={handleSubmit}
           variant="contained"
@@ -259,13 +266,19 @@ const SuccessView: React.FC<{
   const t = useTranslations('pages.events.teams.register-from-csv-dialog.success');
 
   return (
-    <Stack spacing={3} sx={{
-      alignItems: "center"
-    }}>
+    <Stack
+      spacing={3}
+      sx={{
+        alignItems: 'center'
+      }}
+    >
       <CheckCircleIcon color="success" sx={{ fontSize: 64 }} />
-      <Typography variant="h6" sx={{
-        textAlign: "center"
-      }}>
+      <Typography
+        variant="h6"
+        sx={{
+          textAlign: 'center'
+        }}
+      >
         {t('title')}
       </Typography>
       {result.registered.length > 0 && (
@@ -317,9 +330,14 @@ const SuccessView: React.FC<{
               <ListItem key={team.number} disablePadding>
                 <ListItemText
                   primary={
-                    <Stack direction="row" spacing={1} component="span" sx={{
-                      alignItems: "center"
-                    }}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      component="span"
+                      sx={{
+                        alignItems: 'center'
+                      }}
+                    >
                       <Typography variant="body2">
                         #{team.number} - {team.name}
                       </Typography>
@@ -376,11 +394,12 @@ export const RegisterTeamsFromCSVDialog: React.FC<RegisterTeamsFromCSVDialogProp
         {divisionsLoading ? (
           <Box
             sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              minHeight: "300px"
-            }}>
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: '300px'
+            }}
+          >
             <CircularProgress size={60} />
           </Box>
         ) : result ? (

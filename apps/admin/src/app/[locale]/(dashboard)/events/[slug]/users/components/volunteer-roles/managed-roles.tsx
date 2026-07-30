@@ -44,17 +44,21 @@ export const ManagedRolesSection: React.FC = () => {
                   bgcolor: 'grey.50'
                 }}
               >
-                <Typography variant="subtitle2" sx={{
-                  color: "text.secondary"
-                }}>
+                <Typography
+                  variant="subtitle2"
+                  sx={{
+                    color: 'text.secondary'
+                  }}
+                >
                   {getRole(role)}
                 </Typography>
                 <Typography
                   variant="caption"
                   sx={{
-                    color: "text.secondary",
+                    color: 'text.secondary',
                     fontStyle: 'italic'
-                  }}>
+                  }}
+                >
                   {t('system-managed-roles.role-description')}
                 </Typography>
               </Box>
@@ -74,21 +78,26 @@ export const ManagedRolesSection: React.FC = () => {
                 <Stack
                   direction="row"
                   sx={{
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}>
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                  }}
+                >
                   <Box sx={{ flex: 1, mr: 1 }}>
-                    <Typography variant="subtitle2" sx={{
-                      color: "text.secondary"
-                    }}>
+                    <Typography
+                      variant="subtitle2"
+                      sx={{
+                        color: 'text.secondary'
+                      }}
+                    >
                       {getRole(role)}
                     </Typography>
                     <Typography
                       variant="caption"
                       sx={{
-                        color: "text.secondary",
+                        color: 'text.secondary',
                         fontStyle: 'italic'
-                      }}>
+                      }}
+                    >
                       {t('system-managed-roles.toggleable-role-description')}
                     </Typography>
                   </Box>
@@ -107,10 +116,11 @@ export const ManagedRolesSection: React.FC = () => {
                 <Typography
                   variant="caption"
                   sx={{
-                    color: "text.secondary",
+                    color: 'text.secondary',
                     display: 'block',
                     mt: 0.5
-                  }}>
+                  }}
+                >
                   {toggledSystemRoles.has(role)
                     ? t('system-managed-roles.enabled')
                     : t('system-managed-roles.disabled')}

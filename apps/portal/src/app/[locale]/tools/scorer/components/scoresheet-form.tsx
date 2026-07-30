@@ -16,7 +16,8 @@ export const ScoresheetForm: React.FC = () => {
       sx={{
         mt: 4,
         mb: 16
-      }}>
+      }}
+    >
       {scoresheet.missions.map((mission, index) => (
         <ScoresheetMission
           key={mission.id}
@@ -26,9 +27,13 @@ export const ScoresheetForm: React.FC = () => {
         />
       ))}
       {errors.map((error, index) => (
-        <Typography key={index} color="error" sx={{
-          fontWeight: 600
-        }}>
+        <Typography
+          key={index}
+          color="error"
+          sx={{
+            fontWeight: 600
+          }}
+        >
           {getError(error.id)}
         </Typography>
       ))}

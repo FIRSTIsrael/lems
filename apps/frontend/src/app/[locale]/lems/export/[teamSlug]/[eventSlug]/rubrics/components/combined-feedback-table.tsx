@@ -89,7 +89,8 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                     lineHeight: '12px',
                     height: '12px'
                   }
-                }}>
+                }}
+              >
                 {getFeedbackTitle('thinkAbout')}
               </Typography>
             </TableCell>
@@ -120,7 +121,8 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                     lineHeight: '12px',
                     height: '12px'
                   }
-                }}>
+                }}
+              >
                 {getFeedbackTitle('greatJob')}
               </Typography>
             </TableCell>

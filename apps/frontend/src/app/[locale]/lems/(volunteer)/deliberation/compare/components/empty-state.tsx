@@ -11,17 +11,22 @@ export function EmptyState() {
   return (
     <Box sx={{ textAlign: 'center', py: 8 }}>
       <CompareArrows sx={{ fontSize: 64, color: 'text.secondary', mb: 3 }} />
-      <Typography variant="h5" gutterBottom sx={{
-        color: "text.secondary"
-      }}>
+      <Typography
+        variant="h5"
+        gutterBottom
+        sx={{
+          color: 'text.secondary'
+        }}
+      >
         {t('no-teams-selected')}
       </Typography>
       <Typography
         variant="body1"
         sx={{
-          color: "text.secondary",
+          color: 'text.secondary',
           mb: 4
-        }}>
+        }}
+      >
         {t('no-teams-description')}
       </Typography>
       <Button component={Link} href="../deliberation" variant="contained" color="primary">

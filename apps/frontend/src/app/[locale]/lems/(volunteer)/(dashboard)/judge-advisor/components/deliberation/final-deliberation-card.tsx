@@ -80,11 +80,12 @@ export function FinalDeliberationCard() {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   display: 'block',
                   mb: 0.75,
                   fontWeight: 500
-                }}>
+                }}
+              >
                 {t('stage')}
               </Typography>
               <Chip
@@ -108,11 +109,12 @@ export function FinalDeliberationCard() {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   display: 'block',
                   mb: 0.75,
                   fontWeight: 500
-                }}>
+                }}
+              >
                 {t('status')}
               </Typography>
               <Chip
@@ -136,11 +138,12 @@ export function FinalDeliberationCard() {
               <Typography
                 variant="caption"
                 sx={{
-                  color: "text.secondary",
+                  color: 'text.secondary',
                   display: 'block',
                   mb: 0.75,
                   fontWeight: 500
-                }}>
+                }}
+              >
                 {t('start-time')}
               </Typography>
               <Typography variant="body2" sx={{ fontWeight: 400 }}>

@@ -195,17 +195,22 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     direction="row"
                     spacing={1}
                     sx={{
-                      justifyContent: "center",
-                      alignItems: "center"
-                    }}>
+                      justifyContent: 'center',
+                      alignItems: 'center'
+                    }}
+                  >
                     <StartSessionButton session={session} onStartSession={onStartSession} />
                     <ProfileDocumentButton profileDocumentUrl={session.team.profileDocumentUrl} />
                   </Stack>
                 </TableCell>
                 <TableCell sx={{ py: 2.5 }}>
-                  <Stack direction="row" spacing={1.5} sx={{
-                    justifyContent: "center"
-                  }}>
+                  <Stack
+                    direction="row"
+                    spacing={1.5}
+                    sx={{
+                      justifyContent: 'center'
+                    }}
+                  >
                     <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovation_project?.status}

@@ -33,13 +33,11 @@ export const makeAdminRobotGameMatchResponse = (match: DbMatchWithParticipants):
     number: match.number,
     stage: match.stage as RobotGameMatchStage,
     scheduledTime: match.scheduled_time,
-    participants: match.participants.map(
-      (participant): MatchParticipant => ({
-        id: participant.id,
-        teamId: participant.team_id,
-        tableId: participant.table_id,
-        matchId: participant.match_id
-      })
-    )
+    participants: match.participants.map((participant): MatchParticipant => ({
+      id: participant.id,
+      teamId: participant.team_id,
+      tableId: participant.table_id,
+      matchId: participant.match_id
+    }))
   };
 };

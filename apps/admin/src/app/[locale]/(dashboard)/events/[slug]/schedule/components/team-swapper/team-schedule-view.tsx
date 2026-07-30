@@ -53,9 +53,12 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
 
           {teamSchedule.matches.length > 0 && (
             <>
-              <Typography variant="subtitle2" sx={{
-                color: "text.secondary"
-              }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  color: 'text.secondary'
+                }}
+              >
                 {t('matches')}
               </Typography>
               {teamSchedule.matches.map(match => (
@@ -64,9 +67,10 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
                     <Stack
                       direction="row"
                       sx={{
-                        justifyContent: "space-between",
-                        alignItems: "center"
-                      }}>
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
                       <Typography variant="body2">
                         {t('match', {
                           round: match.round,
@@ -74,9 +78,12 @@ export const TeamScheduleView: React.FC<TeamScheduleViewProps> = ({ teamSchedule
                           stage: getStage(match.stage)
                         })}
                       </Typography>
-                      <Typography variant="body2" sx={{
-                        color: "text.secondary"
-                      }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: 'text.secondary'
+                        }}
+                      >
                         {dayjs(match.scheduledTime).format('HH:mm')}
                       </Typography>
                     </Stack>

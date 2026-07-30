@@ -48,9 +48,10 @@ export const TeamScoreCard: React.FC<TeamScoreCardProps> = ({
       <Stack
         spacing={1}
         sx={{
-          alignItems: "flex-start",
-          justifyContent: "center"
-        }}>
+          alignItems: 'flex-start',
+          justifyContent: 'center'
+        }}
+      >
         <Typography
           sx={{
             fontSize: { xs: '0.9rem', md: '1rem', lg: '1.15rem' },

@@ -73,9 +73,10 @@ export function StepIndicator({ currentStep, completedSteps, availableSteps }: S
       <Stack
         direction="row"
         sx={{
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}>
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
         {visibleSteps.map((step, index) => {
           const isCompleted = completedSteps.includes(step);
           const isCurrent = step === currentStep;
