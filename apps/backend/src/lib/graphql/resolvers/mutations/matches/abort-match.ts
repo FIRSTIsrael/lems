@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -60,18 +59,12 @@ export const abortMatchResolver: GraphQLFieldResolver<
       // The dequeue failure should be monitored separately
     }
 
-    const divisionStateResult = await db.raw.mongo
-      .collection<DivisionState>('division_states')
-      .findOneAndUpdate(
-        { divisionId },
-        {
-          $set: {
-            'field.activeMatch': null,
-            'field.loadedMatch': match.stage === 'TEST' ? null : matchId
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const divisionStateResult = await db.divisions.byId(divisionId).updateState({
+      field: {
+        activeMatch: null,
+        loadedMatch: match.stage === 'TEST' ? null : matchId
+      }
+    });
 
     if (!divisionStateResult) {
       throw new MutationError(

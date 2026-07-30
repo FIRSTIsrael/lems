@@ -41,13 +41,9 @@ export async function handleMatchCompleted(job: Job<ScheduledEvent>): Promise<vo
     console.log(`[MatchCompletionHandler] Updated match ${matchId} status to completed`);
 
     // Update division state: clear active match
-    await db.raw.mongo
-      .collection('division_states')
-      .findOneAndUpdate(
-        { divisionId },
-        { $set: { 'field.activeMatch': null } },
-        { returnDocument: 'after' }
-      );
+    await db.divisions.byId(divisionId).updateState({
+      field: { activeMatch: null }
+    });
 
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.MATCH_COMPLETED, {

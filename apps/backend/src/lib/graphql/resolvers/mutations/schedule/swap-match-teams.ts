@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -87,11 +86,10 @@ export const swapMatchTeamsResolver: GraphQLFieldResolver<
     }
 
     // Check 3: Match must not be currently loaded
-    const divisionState = await db.raw.mongo
-      .collection<DivisionState>('division_states')
-      .findOne({ divisionId });
+    const division = await db.divisions.byId(divisionId).get();
+    const divisionState = division?.state;
 
-    if (divisionState?.field?.loadedMatch === matchId) {
+    if (divisionState?.field.loadedMatch === matchId) {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Cannot swap teams in currently loaded match'

@@ -1,13 +1,13 @@
 import { Kysely } from 'kysely';
-import { Db as MongoDb } from 'mongodb';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { ObjectStorage } from '../object-storage';
-import { DivisionState } from '../schema/documents/division-state';
+import { deepMerge, DeepPartial } from '../utils/deep-merge';
 import {
   InsertableDivision,
   Division,
   UpdateableDivision,
-  DivisionSummary
+  DivisionSummary,
+  DivisionState
 } from '../schema/tables/divisions';
 import {
   AgendaEvent,
@@ -94,7 +94,6 @@ class DivisionSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
     private space: ObjectStorage,
-    private mongo: MongoDb,
     private selector: { type: 'id'; value: string }
   ) {}
 
@@ -117,16 +116,27 @@ class DivisionSelector {
   }
 
   async delete(): Promise<boolean | null> {
-    // Delete division state from MongoDB
-    await this.mongo
-      .collection<DivisionState>('division_states')
-      .deleteOne({ divisionId: this.selector.value });
-
     const result = await this.db
       .deleteFrom('divisions')
       .where(this.selector.type, '=', this.selector.value)
       .execute();
     return result.length > 0;
+  }
+
+  async updateState(patch: DeepPartial<DivisionState>): Promise<DivisionState | null> {
+    const division = await this.get();
+    if (!division) return null;
+
+    const mergedState = deepMerge(division.state, patch);
+
+    const updatedDivision = await this.db
+      .updateTable('divisions')
+      .set({ state: mergedState })
+      .where(this.selector.type, '=', this.selector.value)
+      .returningAll()
+      .executeTakeFirst();
+
+    return updatedDivision?.state ?? null;
   }
 
   async updatePitMap(pitMap: Buffer): Promise<Division | null> {
@@ -203,12 +213,11 @@ class DivisionsSelector {
 export class DivisionsRepository {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
-    private space: ObjectStorage,
-    private mongo: MongoDb
+    private space: ObjectStorage
   ) {}
 
   byId(id: string): DivisionSelector {
-    return new DivisionSelector(this.db, this.space, this.mongo, { type: 'id', value: id });
+    return new DivisionSelector(this.db, this.space, { type: 'id', value: id });
   }
 
   byEventId(eventId: string): DivisionsSelector {
@@ -218,26 +227,9 @@ export class DivisionsRepository {
   async create(division: InsertableDivision): Promise<Division> {
     const [createdDivision] = await this.db
       .insertInto('divisions')
-      .values(division)
+      .values({ ...division, state: DEFAULT_DIVISION_STATE })
       .returningAll()
       .execute();
-
-    // Create division state in MongoDB with default audience display
-    await this.mongo.collection<DivisionState>('division_states').insertOne({
-      divisionId: createdDivision.id,
-      field: {
-        loadedMatch: null,
-        activeMatch: null,
-        currentStage: 'PRACTICE'
-      },
-      audienceDisplay: {
-        activeDisplay: 'logo',
-        awardsPresentation: {
-          slideIndex: 0,
-          stepIndex: 0
-        }
-      }
-    });
 
     return createdDivision;
   }
@@ -249,31 +241,25 @@ export class DivisionsRepository {
 
     const createdDivisions = await this.db
       .insertInto('divisions')
-      .values(divisions)
+      .values(divisions.map(division => ({ ...division, state: DEFAULT_DIVISION_STATE })))
       .returningAll()
       .execute();
-
-    // Create division states in MongoDB for each division with default audience display
-    const divisionStates: DivisionState[] = createdDivisions.map(division => ({
-      divisionId: division.id,
-      field: {
-        loadedMatch: null,
-        activeMatch: null,
-        currentStage: 'PRACTICE'
-      },
-      audienceDisplay: {
-        activeDisplay: 'logo',
-        awardsPresentation: {
-          slideIndex: 0,
-          stepIndex: 0
-        }
-      }
-    }));
-
-    if (divisionStates.length > 0) {
-      await this.mongo.collection<DivisionState>('division_states').insertMany(divisionStates);
-    }
 
     return createdDivisions;
   }
 }
+
+const DEFAULT_DIVISION_STATE: DivisionState = {
+  field: {
+    loadedMatch: null,
+    activeMatch: null,
+    currentStage: 'PRACTICE'
+  },
+  audienceDisplay: {
+    activeDisplay: 'logo',
+    awardsPresentation: {
+      slideIndex: 0,
+      stepIndex: 0
+    }
+  }
+};
