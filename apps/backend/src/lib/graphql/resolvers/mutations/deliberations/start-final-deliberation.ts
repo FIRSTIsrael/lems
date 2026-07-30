@@ -66,7 +66,7 @@ export const startFinalDeliberationResolver: GraphQLFieldResolver<
   const now = new Date();
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
     status: 'in-progress',
-    startTime: now
+    start_time: now
   });
 
   if (!updated) {
@@ -83,7 +83,7 @@ export const startFinalDeliberationResolver: GraphQLFieldResolver<
       divisionId,
       status: updated.status,
       stage: updated.stage,
-      startTime: updated.startTime
+      startTime: updated.start_time
     }),
     pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_STATUS_CHANGED, {
       divisionId,
@@ -95,6 +95,6 @@ export const startFinalDeliberationResolver: GraphQLFieldResolver<
   return {
     status: updated.status,
     stage: updated.stage,
-    startTime: updated.startTime?.toISOString() || now.toISOString()
+    startTime: updated.start_time?.toISOString() || now.toISOString()
   };
 };
