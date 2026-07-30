@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, AwardsPresentation } from '@lems/database';
+import { AwardsPresentation } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -41,19 +41,15 @@ export const updatePresentationResolver: GraphQLFieldResolver<
       }
     }
 
-    // Update the division's active display in MongoDB
-    const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
-      { divisionId },
-      {
-        $set: {
-          'audienceDisplay.awardsPresentation': {
-            slideIndex,
-            stepIndex
-          }
+    // Update the division's awards presentation
+    const result = await db.divisions.byId(divisionId).updateState({
+      audienceDisplay: {
+        awardsPresentation: {
+          slideIndex,
+          stepIndex
         }
-      },
-      { returnDocument: 'after' }
-    );
+      }
+    });
 
     if (!result?.audienceDisplay?.awardsPresentation) {
       throw new MutationError(

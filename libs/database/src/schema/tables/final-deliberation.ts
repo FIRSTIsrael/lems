@@ -1,3 +1,5 @@
+import type { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
+
 export type FinalDeliberationStage = 'champions' | 'core-awards' | 'optional-awards' | 'review';
 export type FinalDeliberationStatus = 'not-started' | 'in-progress' | 'completed';
 
@@ -49,16 +51,18 @@ export interface FinalDeliberationStageData {
   };
 }
 
-/**
- * MongoDB document for final deliberation.
- * Stores the state of the final deliberation process for a division.
- */
-export interface FinalDeliberation {
-  divisionId: string; // UUID of division from divisions table
-  stage: FinalDeliberationStage; // Current deliberation stage
-  status: FinalDeliberationStatus; // Overall deliberation status
-  startTime: Date | null; // When deliberation was started
-  completionTime: Date | null; // When deliberation was completed
-  awards: FinalDeliberationAwards; // Award assignments
-  stageData: FinalDeliberationStageData; // Per-stage configuration
+export interface FinalDeliberationsTable {
+  pk: ColumnType<number, never, never>; // Serial primary key
+  id: ColumnType<string, never, never>; // UUID, generated
+  division_id: string; // UUID foreign key to divisions.id
+  stage: Generated<FinalDeliberationStage>;
+  status: Generated<FinalDeliberationStatus>;
+  start_time: Date | null;
+  completion_time: Date | null;
+  awards: Generated<FinalDeliberationAwards>;
+  stage_data: Generated<FinalDeliberationStageData>;
 }
+
+export type FinalDeliberation = Selectable<FinalDeliberationsTable>;
+export type NewFinalDeliberation = Insertable<FinalDeliberationsTable>;
+export type FinalDeliberationUpdate = Updateable<FinalDeliberationsTable>;

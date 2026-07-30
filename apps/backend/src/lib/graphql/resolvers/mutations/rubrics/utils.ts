@@ -76,8 +76,6 @@ export async function authorizeRubricAccess(
     );
   }
 
-  const sessionState = await db.judgingSessions.byId(session.id).state().get();
-
   const division = await db.divisions.byId(divisionId).get();
   if (!division) {
     throw new MutationError(MutationErrorCode.FORBIDDEN, 'Division not found');
@@ -86,8 +84,8 @@ export async function authorizeRubricAccess(
   const eventSettings = await db.events.byId(division.event_id).getSettings();
   const canOpenDuringSession = eventSettings?.open_rubrics_during_session === true;
 
-  const isSessionCompleted = sessionState?.status === 'completed';
-  const isSessionInProgress = sessionState?.status === 'in-progress';
+  const isSessionCompleted = session.status === 'completed';
+  const isSessionInProgress = session.status === 'in-progress';
   const canAccess = isSessionCompleted || (canOpenDuringSession && isSessionInProgress);
 
   if (!canAccess) {

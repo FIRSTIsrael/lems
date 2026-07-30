@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 import { compareScoreArrays } from '@lems/shared/utils';
-import { DivisionState, Scoresheet } from '@lems/database';
+import { Scoresheet } from '@lems/database';
 import db from '../../../lib/database';
 
 export interface RankingData {
@@ -23,9 +23,11 @@ export interface RankingData {
 export async function calculateRobotGameRankings(
   divisionId: string
 ): Promise<Map<string, RankingData>> {
-  const divisionState = await db.raw.mongo
-    .collection<DivisionState>('division_states')
-    .findOne({ divisionId });
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    throw new Error(`Division not found: ${divisionId}`);
+  }
+  const divisionState = division.state;
 
   if (!divisionState?.field?.currentStage) {
     return new Map<string, RankingData>();

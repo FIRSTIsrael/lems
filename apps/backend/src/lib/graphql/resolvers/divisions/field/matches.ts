@@ -1,5 +1,4 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { RobotGameMatchState } from '@lems/database';
 import db from '../../../../database';
 
 export interface MatchGraphQL {
@@ -71,25 +70,8 @@ export const matchesResolver: GraphQLFieldResolver<
       );
     }
 
-    // Fetch state data from MongoDB for all matches
-    const mongo = db.raw.mongo;
-    const matchIds = matches.map(m => m.id);
-    const states = await mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .find({ matchId: { $in: matchIds } })
-      .toArray();
-
-    // Create a map of matchId to state for quick lookup
-    const stateMap = new Map(states.map(state => [state.matchId, state]));
-
     // Build result with combined data
     return matches.map(match => {
-      const state = stateMap.get(match.id);
-
-      if (!state) {
-        throw new Error(`State for robot game match ID ${match.id} not found`);
-      }
-
       const slug = `R${match.round}M${match.number}`;
 
       return {
@@ -99,10 +81,10 @@ export const matchesResolver: GraphQLFieldResolver<
         round: match.round,
         number: match.number,
         scheduledTime: match.scheduled_time.toISOString(),
-        status: state.status,
-        called: !!state.called,
-        startTime: state.startTime ? state.startTime.toISOString() : undefined,
-        startDelta: state.startDelta ?? undefined,
+        status: match.status,
+        called: !!match.called,
+        startTime: match.start_time ? match.start_time.toISOString() : undefined,
+        startDelta: match.start_delta ?? undefined,
         divisionId: field.divisionId
       };
     });
