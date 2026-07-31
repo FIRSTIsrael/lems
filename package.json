@@ -97,7 +97,7 @@
     "@nx/eslint-plugin": "23.0.1",
     "@nx/express": "23.0.1",
     "@nx/js": "23.0.1",
-    "@nx/next": "23.0.1",
+    "@nx/next": "23.1.0",
     "@nx/node": "23.0.1",
     "@nx/react": "23.0.1",
     "@nx/webpack": "23.0.1",
