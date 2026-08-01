@@ -45,6 +45,7 @@ export interface DivisionsTable {
   awards_assigned: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
   state: Generated<DivisionState>;
+  future_edition: Generated<boolean>; // Default false
 }
 
 export type Division = Selectable<DivisionsTable>;

@@ -26,14 +26,19 @@ router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminEventRequest>(async (req, res) => {
-    const { name, color } = req.body;
+    const { name, color, futureEdition } = req.body;
 
     if (!name || !color) {
       res.status(400).json({ error: 'Name and color are required' });
       return;
     }
 
-    const division = await db.divisions.create({ name, color, event_id: req.eventId });
+    const division = await db.divisions.create({
+      name,
+      color,
+      event_id: req.eventId,
+      future_edition: futureEdition ?? false
+    });
 
     res.status(201).json(makeAdminDivisionResponse(division));
   })
@@ -52,7 +57,7 @@ router.put(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    const { name, color } = req.body;
+    const { name, color } = req.body; // Only these properties can be updated
 
     // Name can be empty, but has to exist
     if (name === null || name === undefined || !color) {
