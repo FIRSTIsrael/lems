@@ -33,11 +33,11 @@ router.post(
       return;
     }
 
-    const division = await db.divisions.create({ 
-      name, 
-      color, 
+    const division = await db.divisions.create({
+      name,
+      color,
       event_id: req.eventId,
-      ...(futureEdition !== undefined && { future_edition: futureEdition })
+      future_edition: futureEdition ?? false
     });
 
     res.status(201).json(makeAdminDivisionResponse(division));
@@ -57,7 +57,7 @@ router.put(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    const { name, color, futureEdition } = req.body;
+    const { name, color } = req.body; // Only these properties can be updated
 
     // Name can be empty, but has to exist
     if (name === null || name === undefined || !color) {
@@ -65,12 +65,7 @@ router.put(
       return;
     }
 
-    const updateData: Record<string, unknown> = { name, color };
-    if (futureEdition !== undefined) {
-      updateData.future_edition = futureEdition;
-    }
-
-    await db.divisions.byId(req.divisionId).update(updateData);
+    await db.divisions.byId(req.divisionId).update({ name, color });
 
     res.status(200).end();
   })
