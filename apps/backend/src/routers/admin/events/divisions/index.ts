@@ -26,14 +26,19 @@ router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminEventRequest>(async (req, res) => {
-    const { name, color } = req.body;
+    const { name, color, futureEdition } = req.body;
 
     if (!name || !color) {
       res.status(400).json({ error: 'Name and color are required' });
       return;
     }
 
-    const division = await db.divisions.create({ name, color, event_id: req.eventId });
+    const division = await db.divisions.create({ 
+      name, 
+      color, 
+      event_id: req.eventId,
+      ...(futureEdition !== undefined && { future_edition: futureEdition })
+    });
 
     res.status(201).json(makeAdminDivisionResponse(division));
   })
@@ -52,7 +57,7 @@ router.put(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    const { name, color } = req.body;
+    const { name, color, futureEdition } = req.body;
 
     // Name can be empty, but has to exist
     if (name === null || name === undefined || !color) {
@@ -60,7 +65,12 @@ router.put(
       return;
     }
 
-    await db.divisions.byId(req.divisionId).update({ name, color });
+    const updateData: Record<string, unknown> = { name, color };
+    if (futureEdition !== undefined) {
+      updateData.future_edition = futureEdition;
+    }
+
+    await db.divisions.byId(req.divisionId).update(updateData);
 
     res.status(200).end();
   })

@@ -9,6 +9,7 @@ export const AdminDivisionResponseSchema = z.object({
   hasSchedule: z.boolean(),
   hasAwards: z.boolean(),
   hasUsers: z.boolean(),
+  futureEdition: z.boolean(),
   scheduleSettings: z
     .object({
       matchLength: z.number(),
