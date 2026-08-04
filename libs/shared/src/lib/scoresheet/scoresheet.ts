@@ -1,8 +1,7 @@
-import { ensureArray } from '../utils/arrays';
 import { ScoresheetSchema, ScoresheetError } from './types';
 
 export const scoresheet: ScoresheetSchema = {
-  _version: '2025-11-23',
+  _version: '2026-08-04',
   missions: [
     {
       id: 'eib',
@@ -12,14 +11,15 @@ export const scoresheet: ScoresheetSchema = {
     {
       id: 'm01',
       clauses: [
-        { type: 'enum', options: ['0', '1', '2'], default: '0' },
+        { type: 'boolean', default: false },
         { type: 'boolean', default: false }
       ],
       calculation: (clause1, clause2) => {
-        let points = 0;
-        points += Number(clause1) * 10;
-        if (clause2) points += 10;
-        return points;
+        if (clause2) {
+          if (!clause1) throw new ScoresheetError('m01-e1');
+          return 30;
+        }
+        return clause1 ? 20 : 0;
       },
       noEquipment: true
     },
@@ -37,62 +37,93 @@ export const scoresheet: ScoresheetSchema = {
       calculation: (clause1, clause2) => {
         if (clause2) {
           if (!clause1) throw new ScoresheetError('m03-e1');
-          return 40;
+          return 30;
         }
-        return clause1 ? 30 : 0;
+        return clause1 ? 20 : 0;
       }
     },
     {
       id: 'm04',
       clauses: [
-        { type: 'boolean', default: false },
+        { type: 'enum', options: ['0', '1', '2'], default: '0' },
+        { type: 'boolean', default: true },
         { type: 'boolean', default: true }
       ],
-      calculation: (clause1, clause2) => {
-        let points = 0;
-        if (clause1) points += 30;
-        if (clause2) points += 10;
-        return points;
+      calculation: (clause1, clause2, clause3) => {
+        if (!clause2) {
+          if (clause3) throw new ScoresheetError('m04-e1');
+          return 0;
+        }
+        if (clause3 && Number(clause1) === 2) return 30;
+        return Number(clause1) > 0 ? 10 : 0;
       },
       noEquipment: true
     },
     {
       id: 'm05',
-      clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 30 : 0),
+      clauses: [
+        { type: 'enum', options: ['none', 'partially-extended', 'fully-extended'], default: 'none' }
+      ],
+      calculation: clause1 => {
+        switch (clause1) {
+          case 'partially-extended':
+            return 20;
+          case 'fully-extended':
+            return 30;
+          default:
+            return 0;
+        }
+      },
       noEquipment: true
     },
     {
       id: 'm06',
-      clauses: [{ type: 'enum', options: ['0', '1', '2', '3'], default: '0' }],
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'enum', options: ['0', '1', '2', '3', '4'], default: '0' }
+      ],
       calculation: clause1 => Number(clause1) * 10
     },
     {
       id: 'm07',
-      clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 30 : 0)
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'enum', options: ['0', '1', '2'], default: '0' }
+      ],
+      calculation: (clause1, clause2) => {
+        let points = 0;
+        const _clause2 = Number(clause2);
+        if (clause1) points += 20;
+        if (_clause2 > 0) {
+          if (!clause1) throw new ScoresheetError('m07-e1');
+          points += _clause2 * 10;
+        }
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'm08',
       clauses: [
         {
-          type: 'enum',
-          options: ['0', '1', '2', '3'],
-          default: '0'
+          type: 'boolean',
+          default: false
         }
       ],
-      calculation: clause1 => Number(clause1) * 10
+      calculation: clause1 => (clause1 ? 30 : 0)
     },
     {
       id: 'm09',
       clauses: [
         { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
         { type: 'boolean', default: false }
       ],
-      calculation: (clause1, clause2) => {
+      calculation: (clause1, clause2, clause3) => {
         let points = 0;
-        if (clause1) points += 20;
+        if (clause1) points += 10;
         if (clause2) points += 10;
+        if (clause3) points += 10;
         return points;
       },
       noEquipment: true
@@ -100,30 +131,21 @@ export const scoresheet: ScoresheetSchema = {
     {
       id: 'm10',
       clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false }
+        { type: 'boolean', default: true },
+        { type: 'boolean', default: true }
       ],
       calculation: (clause1, clause2) => {
         let points = 0;
-        if (clause1) points += 20;
+        if (clause1) points += 10;
         if (clause2) points += 10;
         return points;
-      }
+      },
+      noEquipment: true
     },
     {
       id: 'm11',
-      clauses: [
-        { type: 'boolean', default: false },
-        { type: 'boolean', default: false }
-      ],
-      calculation: (clause1, clause2) => {
-        if (clause2) {
-          if (!clause1) throw new ScoresheetError('m11-e1');
-          return 30;
-        }
-        return clause1 ? 20 : 0;
-      },
-      noEquipment: true
+      clauses: [{ type: 'boolean', default: false }],
+      calculation: clause1 => (clause1 ? 20 : 0)
     },
     {
       id: 'm12',
@@ -142,44 +164,37 @@ export const scoresheet: ScoresheetSchema = {
     {
       id: 'm13',
       clauses: [{ type: 'boolean', default: false }],
-      calculation: clause1 => (clause1 ? 30 : 0),
-      noEquipment: true
+      calculation: clause1 => (clause1 ? 30 : 0)
     },
     {
       id: 'm14',
       clauses: [
-        {
-          type: 'enum',
-          options: [
-            'none',
-            'brush',
-            'minecart',
-            'scale-pan',
-            'topsoil',
-            'ore-with-fossilized-artifact',
-            'precious-artifact',
-            'millstone'
-          ],
-          default: 'none',
-          multiSelect: true
-        }
+        { type: 'enum', options: ['0', '1', '2', '3', '4'], default: '0' },
+        { type: 'enum', options: ['0', '1', '2', '3', '4'], default: '0' }
       ],
-      calculation: clause1 => {
-        const _clause1 = ensureArray(clause1);
-        if (_clause1.includes('none')) {
-          if (_clause1.length > 1) throw new ScoresheetError('m14-e1');
-          return 0;
-        }
-        return _clause1.length * 5;
-      },
-      noEquipment: true
+      calculation: (clause1, clause2) => {
+        const _clause1 = Number(clause1);
+        const _clause2 = Number(clause2);
+        if (_clause2 > _clause1) throw new ScoresheetError('m14-e1');
+        return (_clause1 + _clause2) * 5;
+      }
     },
     {
       id: 'm15',
-      clauses: [{ type: 'enum', options: ['0', '1', '2', '3'], default: '0' }],
-      calculation: clause1 => {
-        return Number(clause1) * 10;
-      }
+      clauses: [
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
+        { type: 'boolean', default: false },
+        { type: 'enum', options: ['mine', 'city', 'farm'], default: 'mine' }
+      ],
+      calculation: (clause1, clause2, clause3, clause4) => {
+        let points = 0;
+        if (clause1) points += clause4 === 'mine' ? 20 : 10;
+        if (clause2) points += clause4 === 'city' ? 20 : 10;
+        if (clause3) points += clause4 === 'farm' ? 20 : 10;
+        return points;
+      },
+      noEquipment: true
     },
     {
       id: 'pt',
@@ -202,26 +217,5 @@ export const scoresheet: ScoresheetSchema = {
       }
     }
   ],
-  validators: [
-    missions => {
-      const brushInForum = ensureArray(missions['m14'][0]).includes('brush');
-      if (brushInForum && missions['m01'][1] === false) throw new ScoresheetError('e1');
-    },
-    missions => {
-      const scalePanInForum = ensureArray(missions['m14'][0]).includes('scale-pan');
-      if (scalePanInForum && missions['m10'][1] === false) throw new ScoresheetError('e3');
-    },
-    missions => {
-      const oreInForum = ensureArray(missions['m14'][0]).includes('ore-with-fossilized-artifact');
-      if (oreInForum && Number(missions['m06'][0]) === 0) throw new ScoresheetError('e4');
-    },
-    missions => {
-      const millstoneInForum = ensureArray(missions['m14'][0]).includes('millstone');
-      if (millstoneInForum && missions['m07'][0] === false) throw new ScoresheetError('e5');
-    },
-    missions => {
-      const preciousArtifactInForum = ensureArray(missions['m14'][0]).includes('precious-artifact');
-      if (preciousArtifactInForum && missions['m04'][0] === false) throw new ScoresheetError('e6');
-    }
-  ]
+  validators: []
 };
