@@ -55,7 +55,7 @@
     "graphql-http": "^1.22.4",
     "graphql-ws": "^6.0.8",
     "idb": "^8.0.3",
-    "ioredis": "^5.10.1",
+    "ioredis": "^6.0.0",
     "jsonwebtoken": "^9.0.3",
     "kysely": "^0.28.17",
     "mongodb": "^7.4.0",
