@@ -250,133 +250,133 @@
             "description": "The vine is touching the mat:"
           }
         }
-      }
-    },
-    "m09": {
-      "title": "RESEARCH PLATFORM",
-      "clauses": {
-        "0": {
-          "description": "The research platform is raised:"
-        },
-        "1": {
-          "description": "The camera trap is deployed:"
-        },
-        "2": {
-          "description": "The seed is no longer touching the tree:"
-        }
-      }
-    },
-    "m10": {
-      "title": "FRAGILE MICROHABITATS",
-      "clauses": {
-        "0": {
-          "description": "The spider habitat is in its original starting position:"
-        },
-        "1": {
-          "description": "The snail habitat is in its original starting position:"
-        }
-      }
-    },
-    "m11": {
-      "title": "WINDOW TO THE PAST",
-      "clauses": {
-        "0": {
-          "description": "The root cover is down, touching the mat:"
-        }
-      }
-    },
-    "m12": {
-      "title": "FOREST ELDER",
-      "clauses": {
-        "0": {
-          "description": "The cane is completely raised, touching the tree:"
-        },
-        "1": {
-          "description": "The support tie is around the post:"
-        }
-      }
-    },
-    "m13": {
-      "title": "KEYSTONE SPECIES",
-      "clauses": {
-        "0": {
-          "description": "Your keystone species is on the restoration platform, and the young trees are raised:"
-        }
-      }
-    },
-    "m14": {
-      "title": "SEEDS OF RENEWAL",
-      "clauses": {
-        "0": {
-          "description": "Number of seeds contained within the replantation station:",
-          "labels": {
-            "0": "0",
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4"
-          }
-        },
-        "1": {
-          "description": "<b>Bonus</b>: Number of seeds touching the mat:",
-          "labels": {
-            "0": "0",
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4"
+      },
+      "m09": {
+        "title": "RESEARCH PLATFORM",
+        "clauses": {
+          "0": {
+            "description": "The research platform is raised:"
+          },
+          "1": {
+            "description": "The camera trap is deployed:"
+          },
+          "2": {
+            "description": "The seed is no longer touching the tree:"
           }
         }
       },
-      "errors": {
-        "m14-e1": {
-          "description": "There cannot be more seeds touching the mat than there are seeds contained within the replantation station."
+      "m10": {
+        "title": "FRAGILE MICROHABITATS",
+        "clauses": {
+          "0": {
+            "description": "The spider habitat is in its original starting position:"
+          },
+          "1": {
+            "description": "The snail habitat is in its original starting position:"
+          }
         }
-      }
-    },
-    "m15": {
-      "title": "BIOCENTRIC ARCHITECTURE",
-      "clauses": {
-        "0": {
-          "description": "The nesting canopy is raised:"
+      },
+      "m11": {
+        "title": "WINDOW TO THE PAST",
+        "clauses": {
+          "0": {
+            "description": "The root cover is down, touching the mat:"
+          }
+        }
+      },
+      "m12": {
+        "title": "FOREST ELDER",
+        "clauses": {
+          "0": {
+            "description": "The cane is completely raised, touching the tree:"
+          },
+          "1": {
+            "description": "The support tie is around the post:"
+          }
+        }
+      },
+      "m13": {
+        "title": "KEYSTONE SPECIES",
+        "clauses": {
+          "0": {
+            "description": "Your keystone species is on the restoration platform, and the young trees are raised:"
+          }
+        }
+      },
+      "m14": {
+        "title": "SEEDS OF RENEWAL",
+        "clauses": {
+          "0": {
+            "description": "Number of seeds contained within the replantation station:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4"
+            }
+          },
+          "1": {
+            "description": "<b>Bonus</b>: Number of seeds touching the mat:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4"
+            }
+          }
         },
-        "1": {
-          "description": "The garden skylight is completely in:"
-        },
-        "2": {
-          "description": "The compost hatch is completely opened, touching the mat:"
-        },
-        "3": {
-          "description": "Dock location:",
-          "labels": {
-            "mine": "Mine",
-            "city": "City",
-            "farm": "Farm"
+        "errors": {
+          "m14-e1": {
+            "description": "There cannot be more seeds touching the mat than there are seeds contained within the replantation station."
+          }
+        }
+      },
+      "m15": {
+        "title": "BIOCENTRIC ARCHITECTURE",
+        "clauses": {
+          "0": {
+            "description": "The nesting canopy is raised:"
+          },
+          "1": {
+            "description": "The garden skylight is completely in:"
+          },
+          "2": {
+            "description": "The compost hatch is completely opened, touching the mat:"
+          },
+          "3": {
+            "description": "Dock location:",
+            "labels": {
+              "mine": "Mine",
+              "city": "City",
+              "farm": "Farm"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "PRECISION TOKENS",
+        "clauses": {
+          "0": {
+            "description": "Number of precision tokens remaining:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6"
+            }
           }
         }
       }
     },
-    "pt": {
-      "title": "PRECISION TOKENS",
-      "clauses": {
-        "0": {
-          "description": "Number of precision tokens remaining:",
-          "labels": {
-            "0": "0",
-            "1": "1",
-            "2": "2",
-            "3": "3",
-            "4": "4",
-            "5": "5",
-            "6": "6"
-          }
-        }
-      }
+    "general": {
+      "yes": "Yes",
+      "no": "No"
     }
-  },
-  "general": {
-    "yes": "Yes",
-    "no": "No"
   },
   "roles": {
     "pit-admin": {
