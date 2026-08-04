@@ -9,6 +9,26 @@ export const scoresheet: ScoresheetSchema = {
       calculation: clause1 => (clause1 ? 20 : 0)
     },
     {
+      id: 'pt',
+      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6'], default: '6' }],
+      calculation: clause1 => {
+        switch (Number(clause1)) {
+          case 0:
+            return 0;
+          case 1:
+            return 10;
+          case 2:
+            return 15;
+          case 3:
+            return 25;
+          case 4:
+            return 35;
+          default:
+            return 50;
+        }
+      }
+    },
+    {
       id: 'm01',
       clauses: [
         { type: 'boolean', default: false },
@@ -55,7 +75,7 @@ export const scoresheet: ScoresheetSchema = {
           return 0;
         }
         if (clause3 && Number(clause1) === 2) return 30;
-        return Number(clause1) > 0 ? 10 : 0;
+        return Number(clause1) === 0 ? 0 : 10;
       },
       noEquipment: true
     },
@@ -195,26 +215,6 @@ export const scoresheet: ScoresheetSchema = {
         return points;
       },
       noEquipment: true
-    },
-    {
-      id: 'pt',
-      clauses: [{ type: 'enum', options: ['0', '1', '2', '3', '4', '5', '6'], default: '6' }],
-      calculation: clause1 => {
-        switch (Number(clause1)) {
-          case 0:
-            return 0;
-          case 1:
-            return 10;
-          case 2:
-            return 15;
-          case 3:
-            return 25;
-          case 4:
-            return 35;
-          default:
-            return 50;
-        }
-      }
     }
   ],
   validators: []
