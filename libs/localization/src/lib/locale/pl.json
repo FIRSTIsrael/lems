@@ -373,6 +373,11 @@
         }
       }
     },
+    "errors": {
+      "e1": {
+        "description": ""
+      }
+    },
     "general": {
       "yes": "Tak",
       "no": "Nie"

@@ -217,5 +217,12 @@ export const scoresheet: ScoresheetSchema = {
       noEquipment: true
     }
   ],
-  validators: []
+  validators: [
+    missions => {
+      let supply = 2; // Two seeds aren't tracked by missions.
+      if (Number(missions['m02'][0]) > 0) supply += 1; // The actual seed isn't tracked by the mission, but any being released will count as an available seed.
+      if (missions['m09'][2]) supply += 1;
+      if (supply < Number(missions['m14'][0])) throw new ScoresheetError('e1');
+    }
+  ]
 };

@@ -373,6 +373,11 @@
         }
       }
     },
+    "errors": {
+      "e1": {
+        "description": "More seeds were marked in M14 than there are available seeds."
+      }
+    },
     "general": {
       "yes": "Yes",
       "no": "No"
