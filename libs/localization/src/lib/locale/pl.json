@@ -113,26 +113,26 @@
         }
       },
       "m01": {
-        "title": "SZCZOTKOWANIE POWIERZCHNI",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Osady ziemi całkowicie usunięte, dotykające maty:",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2"
-            }
+            "description": ""
           },
           "1": {
-            "description": "Pędzel archeologa nie dotyka stanowiska pracy:"
+            "description": ""
+          }
+        },
+        "errors": {
+          "m01-e1": {
+            "description": ""
           }
         }
       },
       "m02": {
-        "title": "ODSŁONIĘCIE MAPY",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Warstwy gleby całkowicie usunięte:",
+            "description": "",
             "labels": {
               "0": "0",
               "1": "1",
@@ -143,174 +143,214 @@
         }
       },
       "m03": {
-        "title": "EKSPEDYCJA DO SZYBU",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Wózek wydobywczy Waszej drużyny znajduje się na polu drużyny przeciwnej:"
+            "description": ""
           },
           "1": {
-            "description": "<b>Premia</b>: I wózek drużyny przeciwnej znajduje się na polu Waszej drużyny:"
+            "description": ""
           }
         },
         "errors": {
           "m03-e1": {
-            "description": "Premia jest możliwa tylko wtedy, gdy wózek Waszej drużyny znajduje się na polu drużyny przeciwnej."
+            "description": ""
           }
-        },
-        "remarks": {
-          "0": "Wózek Waszej drużyny musi całkowicie przejechać przez wejście do szybu, aby zdobyć punkty za tę misję.",
-          "1": "Nie można zdobyć premii, jeśli nie ma drużyny przeciwnej lub w zawodach zdalnych."
         }
       },
       "m04": {
-        "title": "OSTROŻNE WYDOBYCIE",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Cenny artefakt nie dotyka ścian szybu:"
+            "description": "",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2"
+            }
           },
           "1": {
-            "description": "Obie konstrukcje wspierające stoją:"
+            "description": ""
+          },
+          "2": {
+            "description": ""
           }
+        },
+        "errors": {
+          "m04-e1": {
+            "description": ""
+          }
+        },
+        "remarks": {
+          "0": "",
+          "1": "",
+          "2": ""
         }
       },
       "m05": {
-        "title": "KTO TU MIESZKAŁ?",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Podłoga konstrukcji jest całkowicie ustawiona pionowo:"
+            "description": "",
+            "labels": {
+              "none": "",
+              "partially-extended": "",
+              "fully-extended": ""
+            }
           }
         }
       },
       "m06": {
-        "title": "KUŹNIA",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Bloki rudy nie dotykają kuźni:",
+            "description": ""
+          },
+          "1": {
+            "description": "",
             "labels": {
               "0": "0",
               "1": "1",
               "2": "2",
-              "3": "3"
+              "3": "3",
+              "4": "4"
             }
           }
         }
       },
       "m07": {
-        "title": "CIĘŻKIE PODNOSZENIE",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Kamień młyński nie dotyka już swojej podstawy:"
-          }
-        }
-      },
-      "m08": {
-        "title": "SILOS",
-        "clauses": {
-          "0": {
-            "description": "Zachowane elementy znajdują się poza silosem:",
+            "description": ""
+          },
+          "1": {
+            "description": "",
             "labels": {
               "0": "0",
               "1": "1",
-              "2": "2",
-              "3": "3"
+              "2": "2"
             }
+          }
+        },
+        "errors": {
+          "m07-e1": {
+            "description": ""
+          }
+        },
+        "remarks": {
+          "0": "",
+          "1": ""
+        }
+      },
+      "m08": {
+        "title": "",
+        "clauses": {
+          "0": {
+            "description": ""
           }
         }
       },
       "m09": {
-        "title": "CO JEST NA SPRZEDAŻ?",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Dach jest całkowicie podniesiony:"
+            "description": ""
           },
           "1": {
-            "description": "Towary na rynku są podniesione:"
+            "description": ""
+          },
+          "2": {
+            "description": ""
           }
         }
       },
       "m10": {
-        "title": "PRZECHYŁ WAGI",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Waga jest przechylona i dotyka maty:"
+            "description": ""
           },
           "1": {
-            "description": "Talerz wagi został całkowicie usunięty:"
+            "description": ""
           }
         }
       },
-
       "m11": {
-        "title": "ARTEFAKTY Z WĘDKI",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Artefakty są uniesione ponad warstwę gruntu:"
-          },
-          "1": {
-            "description": "<b>Premia</b>: I flaga żurawia jest co najmniej częściowo opuszczona:"
-          }
-        },
-        "errors": {
-          "m11-e1": {
-            "description": "Premia jest możliwa tylko wtedy, gdy artefakty są uniesione ponad warstwę gruntu."
+            "description": ""
           }
         }
       },
       "m12": {
-        "title": "OPERACJA RATUNKOWA",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Piasek całkowicie usunięty:"
+            "description": ""
           },
           "1": {
-            "description": "Statek całkowicie podniesiony:"
+            "description": ""
           }
-        },
-        "remarks": {
-          "0": "Piasek uznaje się za całkowicie usunięty, gdy aktywator pociągowy znajduje się za linią na macie."
         }
       },
       "m13": {
-        "title": "ODTWORZENIE POSĄGU",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Posąg jest całkowicie podniesiony:"
+            "description": ""
           }
         }
       },
       "m14": {
-        "title": "FORUM",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Zaznacz wszystkie artefakty dotykające maty i przynajmniej częściowo znajdujące się w forum:",
+            "description": "",
             "labels": {
-              "none": "Brak",
-              "brush": "Pędzel",
-              "minecart": "Wózek drużyny przeciwnej",
-              "scale-pan": "Talerz wagi",
-              "topsoil": "Warstwa gleby",
-              "ore-with-fossilized-artifact": "Ruda z utrwalonym artefaktem",
-              "precious-artifact": "Cenny artefakt",
-              "millstone": "Kamień młyński"
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4"
+            }
+          },
+          "1": {
+            "description": "",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4"
             }
           }
         },
         "errors": {
           "m14-e1": {
-            "description": "Nie można wybrać „Brak”, jeśli zaznaczono więcej niż jedną opcję."
+            "description": ""
           }
         }
       },
       "m15": {
-        "title": "OZNACZENIE STANOWISKA",
+        "title": "",
         "clauses": {
           "0": {
-            "description": "Stanowiska z flagą co najmniej częściowo wewnątrz i dotykającą maty:",
+            "description": ""
+          },
+          "1": {
+            "description": ""
+          },
+          "2": {
+            "description": ""
+          },
+          "3": {
+            "description": "",
             "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3"
+              "mine": "",
+              "city": "",
+              "farm": ""
             }
           }
         }
@@ -335,19 +375,7 @@
     },
     "errors": {
       "e1": {
-        "description": "Pędzel nie może znajdować się jednocześnie w forum (M14) i dotykać stanowiska wykopalisk (M01)."
-      },
-      "e3": {
-        "description": "Talerz wagi nie może znaleźć się w forum (M14), jeśli nie został całkowicie usunięty (M10)."
-      },
-      "e4": {
-        "description": "Ruda z utrwalonym artefaktem nie może znaleźć się w forum (M14), jeśli żadna ruda nie została usunięta ze stanowiska wykopalisk (M06)."
-      },
-      "e5": {
-        "description": "Kamień młyński nie może znajdować się w forum (M14), jeśli nadal dotyka swojej podstawy (M07)."
-      },
-      "e6": {
-        "description": "Cenny artefakt nie może znajdować się w forum (M14), jeśli dotyka szybu (M04)."
+        "description": ""
       }
     },
     "general": {
