@@ -103,7 +103,6 @@ export const scoresheet: ScoresheetSchema = {
         { type: 'enum', options: ['0', '1', '2', '3', '4'], default: '0' }
       ],
       calculation: (clause1, clause2) => {
-        if (Number(clause2) > 0 && !clause1) throw new ScoresheetError('m06-e1');
         return clause1 ? Number(clause2) * 10 : 0;
       }
     },
