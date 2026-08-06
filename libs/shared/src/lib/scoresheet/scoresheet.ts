@@ -87,9 +87,9 @@ export const scoresheet: ScoresheetSchema = {
       calculation: clause1 => {
         switch (clause1) {
           case 'partially-extended':
-            return 20;
+            return 10;
           case 'fully-extended':
-            return 30;
+            return 20;
           default:
             return 0;
         }
@@ -102,7 +102,10 @@ export const scoresheet: ScoresheetSchema = {
         { type: 'boolean', default: false },
         { type: 'enum', options: ['0', '1', '2', '3', '4'], default: '0' }
       ],
-      calculation: clause1 => Number(clause1) * 10
+      calculation: (clause1, clause2) => {
+        if (Number(clause2) > 0 && !clause1) throw new ScoresheetError('m06-e1');
+        return clause1 ? Number(clause2) * 10 : 0;
+      }
     },
     {
       id: 'm07',
