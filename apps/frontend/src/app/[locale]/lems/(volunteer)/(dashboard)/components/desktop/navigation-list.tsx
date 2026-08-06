@@ -74,11 +74,11 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
             </Box>
             <Typography
               className="navigation-text"
-              color={item.active ? theme.palette.primary.main : 'text.secondary'}
               align="center"
               variant="body2"
               sx={{
                 mt: 1,
+                color: item.active ? 'primary.main' : 'text.secondary',
                 fontWeight: item.active ? 700 : 600,
                 transition: 'color 0.15s, font-weight 0.15s'
               }}

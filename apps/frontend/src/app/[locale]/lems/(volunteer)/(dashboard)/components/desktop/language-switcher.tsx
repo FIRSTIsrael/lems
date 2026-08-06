@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl';
 import {
   MenuItem,
   Menu,
+  Box,
   ListItemIcon,
   ListItemText,
   Typography,
@@ -40,7 +41,7 @@ const LanguageSubmenu: React.FC<LanguageSubmenuProps> = ({ anchorEl, onClose, on
         horizontal: direction === 'ltr' ? 'right' : 'left'
       }}
       transformOrigin={{
-        vertical: 60,
+        vertical: 95,
         horizontal: direction === 'ltr' ? 'left' : 'right'
       }}
       slotProps={{
@@ -130,7 +131,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
 
   return (
     <>
-      <MenuItem
+      <Box
         sx={{
           p: 0,
           borderRadius: 1,
@@ -178,7 +179,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
             sx={{ ml: 1, color: 'text.secondary' }}
           />
         </button>
-      </MenuItem>
+      </Box>
 
       <LanguageSubmenu
         anchorEl={submenuOpen ? anchorEl : null}

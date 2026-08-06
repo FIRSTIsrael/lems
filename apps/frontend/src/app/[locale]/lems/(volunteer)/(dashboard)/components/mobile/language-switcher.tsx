@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from 'react';
 import { useLocale } from 'next-intl';
-import { Typography, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Typography, Menu, MenuItem, Box, ListItemIcon, ListItemText } from '@mui/material';
 import { alpha, lighten, useTheme } from '@mui/material/styles';
 import { Language, ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { DirectionalIcon, Locale, Locales } from '@lems/localization';
@@ -40,7 +40,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
 
   return (
     <>
-      <MenuItem
+      <Box
         onClick={handleClick}
         sx={{
           p: 0,
@@ -86,7 +86,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
             sx={{ ml: 1, color: 'text.secondary' }}
           />
         </button>
-      </MenuItem>
+      </Box>
 
       <Menu
         id="language-switcher-submenu"
@@ -95,11 +95,12 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
         onClose={handleClose}
         disableScrollLock
         anchorOrigin={{
-          vertical: 'bottom',
+          // Anchors to the trigger's top edge so the offset below is independent of its rendered height
+          vertical: 'top',
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
         transformOrigin={{
-          vertical: 135,
+          vertical: 'bottom',
           horizontal: direction === 'ltr' ? 'right' : 'left'
         }}
         slotProps={{
@@ -111,8 +112,8 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onClose }) =
               borderRadius: 1,
               minWidth: 150,
               py: 0.5,
-              // ...margin,
-              mt: -6,
+              // Gap between the menu and the trigger, independent of the trigger's height
+              mt: -1.5,
               '& .MuiMenuItem-root': {
                 py: 1
               },

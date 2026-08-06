@@ -1,8 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { sql } from 'kysely';
 import dayjs from 'dayjs';
-import { Event } from '@lems/database';
-import { PortalEventResponseSchema } from '@lems/types/api/portal';
 import db from '../../../database';
 
 export interface EventGraphQL {
@@ -28,6 +26,18 @@ interface EventsArgs {
   startBefore?: string;
   endAfter?: string;
   endBefore?: string;
+}
+
+interface EventRow {
+  id: string;
+  name: string;
+  slug: string;
+  start_date: Date;
+  end_date: Date;
+  region: string;
+  timezone: string;
+  is_fully_set_up?: boolean;
+  official?: boolean | null;
 }
 
 export const eventResolvers = {
@@ -125,20 +135,15 @@ function buildEventQuery(args: EventsArgs) {
  * Converts database date format to ISO strings for GraphQL.
  * Optionally includes isFullySetUp if provided (e.g., from aggregated queries).
  */
-function buildResult(
-  event: Partial<Event> & { is_fully_set_up?: boolean; official?: boolean | null }
-): EventGraphQL {
-  // Validate with zod schema
-  const validatedEvent = PortalEventResponseSchema.parse(event);
-
+function buildResult(event: EventRow): EventGraphQL {
   return {
-    id: validatedEvent.id,
-    slug: validatedEvent.slug,
-    name: validatedEvent.name,
-    startDate: validatedEvent.startDate.toISOString(),
-    endDate: validatedEvent.endDate.toISOString(),
-    region: validatedEvent.region,
-    timezone: validatedEvent.timezone,
+    id: event.id,
+    slug: event.slug,
+    name: event.name,
+    startDate: dayjs(event.start_date).toISOString(),
+    endDate: dayjs(event.end_date).toISOString(),
+    region: event.region,
+    timezone: event.timezone,
     isFullySetUp: event.is_fully_set_up,
     official: event.official ?? true
   };
