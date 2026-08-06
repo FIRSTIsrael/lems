@@ -25,6 +25,7 @@ import adminRouter from './routers/admin';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler';
 import intergrationsRouter from './routers/integrations';
+import aiRouter from './routers/ai';
 
 logger.info({ component: 'server' }, 'Backend server initializing');
 
@@ -34,8 +35,16 @@ const server = http.createServer(app);
 app.use(cookies());
 app.use(morgan('tiny'));
 
+const isProduction = process.env.NODE_ENV === 'production';
+const origins = [/\.firstisrael\.org.il$/];
+
+// Allow localhost origins in development
+if (!isProduction) {
+  origins.push(/localhost:\d+$/);
+}
+
 const corsOptions = {
-  origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],
+  origin: origins,
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -139,6 +148,7 @@ app.use(
 );
 
 // Application routers
+app.use('/ai', aiRouter);
 app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
