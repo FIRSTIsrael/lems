@@ -1,0 +1,12 @@
+{
+  "_source": "hebrew_founders_rgr_verbatim.md, פרק 10: תהליך התכנון ההנדסי (Engineering Design Process)",
+  "_note": "רשימת השלבים היא ציטוט מילולי (verbatim) מהמדריך. המדריך אינו כולל תיאור מפורט מעבר לשמות השלבים.",
+  "title": "תהליך התכנון ההנדסי (Engineering Design Process)",
+  "steps": [
+    { "index": 1, "nameHe": "זיהוי (Identify)" },
+    { "index": 2, "nameHe": "תכנון (Design)" },
+    { "index": 3, "nameHe": "יצירה (Create)" },
+    { "index": 4, "nameHe": "חזרה ושינוי (Iterate)" },
+    { "index": 5, "nameHe": "שיתוף (Share)" }
+  ]
+}

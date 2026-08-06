@@ -1,0 +1,16 @@
+{
+  "_source": "אין מקור עדיין — לא פורסמו עדכוני משחק הרובוט הרשמיים לעונת BIOGLOW נכון למועד הקמת המאגר.",
+  "_note": "קובץ זה הוא placeholder. יש לעדכן אותו ברגע שיפורסמו עדכוני משחק הרובוט הרשמיים (Robot Game Season Updates) של FIRST עבור עונה זו. כל עדכון עתידי גובר על התוכן במדריך משחק הרובוט (missions.he.json / rules.he.json) לגבי אירועים שיתרחשו לאחר פרסומו.",
+  "updates": [
+    {
+      "id": "no-updates-placeholder",
+      "name": "אין עדכונים רשמיים כרגע",
+      "date": null,
+      "contents": "לא פורסמו עדכוני משחק הרובוט הרשמיים לעונת BIOGLOW נכון למועד הקמת המאגר. עמוד זה ישמש למאגר עדכוני העונה ברגע שיפורסמו.",
+      "clauses": [],
+      "blueText": null,
+      "appliesTo": [],
+      "pageInUpdatesFile": null
+    }
+  ]
+}
