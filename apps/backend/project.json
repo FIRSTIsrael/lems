@@ -47,6 +47,18 @@
         }
       }
     },
+    "build-embed-game-rules": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/backend-embed-game-rules",
+        "main": "apps/backend/src/lib/ai/agents/game-rules/embed-game-rules-corpus.ts",
+        "tsConfig": "apps/backend/tsconfig.app.json",
+        "webpackConfig": "apps/backend/webpack.config.js"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "outputs": ["{options.outputFile}"]
