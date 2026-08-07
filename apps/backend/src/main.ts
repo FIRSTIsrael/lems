@@ -17,6 +17,7 @@ import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/a
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
+import { getCheckpointer, closeCheckpointer } from './lib/ai/checkpointer';
 import { getWorkerManager } from './lib/queues/worker-manager';
 import { handleSessionCompleted } from './lib/queues/handlers/session-completed';
 import { handleMatchCompleted } from './lib/queues/handlers/match-completed';
@@ -69,6 +70,18 @@ try {
     'Failed to initialize Redis'
   );
   throw new Error('Redis initialization failed');
+}
+
+// AI checkpointer: Initialize Postgres-backed LangGraph checkpoint tables
+try {
+  await getCheckpointer().setup();
+  logger.info({ component: 'ai-checkpointer' }, 'AI checkpointer initialized');
+} catch (error) {
+  logger.error(
+    { component: 'ai-checkpointer', error: error instanceof Error ? error.message : String(error) },
+    'Failed to initialize AI checkpointer'
+  );
+  throw new Error('AI checkpointer initialization failed');
 }
 
 // Worker Manager: Initialize and register event handlers
@@ -203,6 +216,7 @@ process.on('SIGTERM', async () => {
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
+    await closeCheckpointer();
     logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });
@@ -218,6 +232,7 @@ process.on('SIGINT', async () => {
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
+    await closeCheckpointer();
     logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });

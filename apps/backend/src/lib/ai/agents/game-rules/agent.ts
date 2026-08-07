@@ -1,10 +1,12 @@
 import { createAgent } from 'langchain';
-import { Command, MemorySaver } from '@langchain/langgraph';
+import { Command } from '@langchain/langgraph';
 import { CallbackHandler } from '@langfuse/langchain';
 import { ChatOpenAI } from '@langchain/openai';
+import { getCheckpointer } from '../../checkpointer';
 import { toAgentStreamEvents, type AgentStreamEvent } from '../../streaming';
 import { gameRulesTools } from './tools';
 import { GAME_RULES_SYSTEM_PROMPT } from './prompt';
+import { endOnFormulateAnswerMiddleware } from './middleware/end-on-formulate-answer';
 import type { ClarifyingAnswer } from './tools/ask-clarifying-question';
 
 export interface GameRulesChatMessage {
@@ -13,10 +15,6 @@ export interface GameRulesChatMessage {
 }
 
 let agent: ReturnType<typeof createAgent> | undefined;
-
-// In-memory checkpointer: fine for a single backend instance/MVP. Swap for a durable
-// (e.g. Postgres/Redis) checkpointer before running multiple instances or surviving restarts.
-const checkpointer = new MemorySaver();
 
 const model = new ChatOpenAI({
   model: 'gpt-5.6-terra', // Ensure the chosen model supports reasoning parameters
@@ -38,7 +36,8 @@ function getAgent() {
       model,
       tools: gameRulesTools,
       systemPrompt: GAME_RULES_SYSTEM_PROMPT,
-      checkpointer
+      middleware: [endOnFormulateAnswerMiddleware],
+      checkpointer: getCheckpointer()
     });
   }
   return agent;
