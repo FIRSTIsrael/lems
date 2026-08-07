@@ -14,6 +14,12 @@ import {
 } from './reference-docs';
 
 export const gameRulesTools = [
+  getGlossaryTerms,
+  readGlossaryTerm,
+  readFieldSetup,
+  readChallengeKit,
+  readGraciousProfessionalism,
+  readTableInstructions,
   getMissions,
   readMission,
   getRules,
@@ -22,13 +28,7 @@ export const gameRulesTools = [
   readUpdate,
   evaluateScore,
   askClarifyingQuestion,
-  semanticSearch,
-  getGlossaryTerms,
-  readGlossaryTerm,
-  readChallengeKit,
-  readFieldSetup,
-  readGraciousProfessionalism,
-  readTableInstructions
+  semanticSearch
 ];
 
 export * from './missions';

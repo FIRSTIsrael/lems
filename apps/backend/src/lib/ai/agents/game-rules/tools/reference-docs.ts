@@ -12,7 +12,7 @@ import {
 export const getGlossaryTerms = tool(async () => listGlossaryTerms(), {
   name: 'get_glossary_terms',
   description:
-    'List all glossary term ids and their Hebrew term names. Use to find a term id before read_glossary_term.',
+    'List all glossary term ids and their Hebrew term names. Use this early whenever the user wording may be informal, mixed up, or ambiguous so you can map it to the official term before reading rules.',
   schema: z.object({})
 });
 
@@ -24,7 +24,8 @@ export const readGlossaryTerm = tool(
   },
   {
     name: 'read_glossary_term',
-    description: 'Read the full verbatim definition of one rulebook glossary term.',
+    description:
+      'Read the full verbatim definition of one rulebook glossary term. Use this before applying rules when the user wording needs a term-level interpretation.',
     schema: z.object({ termId: z.string().min(1) })
   }
 );
