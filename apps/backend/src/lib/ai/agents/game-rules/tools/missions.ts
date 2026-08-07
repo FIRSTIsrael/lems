@@ -17,7 +17,7 @@ export const readMission = tool(
   {
     name: 'read_mission',
     description:
-      'Read the full verbatim text of one mission: description, scoring text, clauses, errors, remarks, and RGR page. Requires a mission id from get_missions or semantic_search.',
+      'Read the full verbatim text of one mission: description, scoring text, clauses, errors, remarks, and RGR page. May also include unofficialNotes - non-verbatim supplementary context (never RGR text) that must not be quoted as official rule/mission text. Requires a mission id from get_missions or semantic_search.',
     schema: z.object({ missionId: z.string().min(1) })
   }
 );

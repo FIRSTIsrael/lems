@@ -23,6 +23,8 @@ export interface Mission {
   clauses: MissionClause[];
   errors: MissionError[];
   remarks: string[];
+  /** Non-verbatim supplementary context (e.g. field-observed facts not in the RGR text) - never quote as official rule text. */
+  unofficialNotes?: string[];
   videoClarifications?: string[];
   relatedRuleIds?: string[];
 }

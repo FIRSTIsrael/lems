@@ -47,7 +47,9 @@ function buildCorpusDocs(): CorpusDoc[] {
       content: [
         mission.description,
         mission.scoringText,
-        ...mission.clauses.map(clause => clause.description)
+        ...mission.clauses.map(clause => clause.description),
+        ...mission.remarks,
+        ...(mission.unofficialNotes ?? [])
       ].join('\n')
     };
   });
