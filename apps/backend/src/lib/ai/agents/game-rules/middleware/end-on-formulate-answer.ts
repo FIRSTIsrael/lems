@@ -1,45 +1,29 @@
 import { createMiddleware } from 'langchain';
 import { AIMessage, ToolMessage } from '@langchain/core/messages';
-import { Command, END, isCommand } from '@langchain/langgraph';
 
 type FormulateAnswerResult =
-  | { ok: true; text: string }
-  | { ok: false; reason: string; fallbackText: string };
+  { ok: true; text: string } | { ok: false; reason: string; fallbackText: string };
 
 /**
- * Without this, formulate_answer's ToolMessage goes back through another full model
- * call whose only job is to relay it verbatim - that extra roundtrip (plus reasoning
- * overhead) is what causes the multi-second gap between the tool succeeding and the
- * reply actually being sent. This ends the turn directly with the tool's own output.
+ * Without this, formulate_answer's ToolMessage goes back through another full model call
+ * whose only job is to relay it verbatim - that extra roundtrip (plus reasoning overhead)
+ * is what causes the delay between the tool succeeding and the reply actually being sent.
+ * `beforeModel` + `jumpTo: "end"` is the officially wired short-circuit mechanism (same one
+ * `toolCallLimitMiddleware` uses); a `wrapToolCall`-returned `Command` does NOT skip the
+ * static tools -> model edge in this graph, so don't go back to that approach.
  */
 export const endOnFormulateAnswerMiddleware = createMiddleware({
   name: 'EndOnFormulateAnswerMiddleware',
-  wrapToolCall: async (request, handler) => {
-    try {
-      const result = await handler(request);
-      if (
-        request.toolCall.name !== 'formulate_answer' ||
-        isCommand(result) ||
-        !ToolMessage.isInstance(result)
-      ) {
-        return result;
-      }
+  beforeModel: {
+    canJumpTo: ['end'],
+    hook: state => {
+      const lastMessage = state.messages.at(-1);
+      if (!ToolMessage.isInstance(lastMessage) || lastMessage.name !== 'formulate_answer') return;
 
-      const parsed = JSON.parse(result.content as string) as FormulateAnswerResult;
+      const parsed = JSON.parse(lastMessage.content as string) as FormulateAnswerResult;
       const finalText = parsed.ok ? parsed.text : parsed.fallbackText;
 
-      return new Command({
-        goto: END,
-        update: { messages: [result, new AIMessage(finalText)] }
-      });
-    } catch (error) {
-      // Match the ToolNode's default error handling, which wrapToolCall's presence would
-      // otherwise bypass, so tool failures still come back as a retryable ToolMessage.
-      return new ToolMessage({
-        name: request.toolCall.name,
-        content: `${error}\n Please fix your mistakes.`,
-        tool_call_id: request.toolCall.id ?? ''
-      });
+      return { jumpTo: 'end' as const, messages: [new AIMessage(finalText)] };
     }
   }
 });
