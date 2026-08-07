@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
 
   postgres:
-    image: postgres:17
+    image: pgvector/pgvector:pg17
     container_name: lems-local-sql
     ports:
       - '5432:5432'

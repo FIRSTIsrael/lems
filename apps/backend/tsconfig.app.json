@@ -5,6 +5,7 @@
     "target": "es2017",
     "module": "esnext",
     "strict": true,
+    "resolveJsonModule": true,
     "types": ["node", "express"]
   },
   "exclude": ["src/**/*.spec.ts", "src/**/*.test.ts"],

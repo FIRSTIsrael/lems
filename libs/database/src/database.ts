@@ -19,6 +19,7 @@ import { ScoresheetsRepository } from './repositories/scoresheets';
 import { JudgingDeliberationsRepository } from './repositories/judging-deliberations';
 import { FinalDeliberationsRepository } from './repositories/final-deliberations';
 import { EventIntegrationsRepository } from './repositories/integrations';
+import { EmbeddingsRepository } from './repositories/embeddings';
 
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
@@ -74,6 +75,8 @@ export class Database {
   public scoresheets: ScoresheetsRepository;
 
   public awards: AwardsRepository;
+
+  public embeddings: EmbeddingsRepository;
 
   /**
    * Direct access to low-level database connections for advanced queries.
@@ -141,6 +144,8 @@ export class Database {
     this.scoresheets = new ScoresheetsRepository(this.kysely, this.mongoDb);
 
     this.awards = new AwardsRepository(this.kysely);
+
+    this.embeddings = new EmbeddingsRepository(this.kysely);
   }
 
   async connect(): Promise<void> {
