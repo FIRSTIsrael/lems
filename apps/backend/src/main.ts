@@ -1,3 +1,4 @@
+import './lib/ai/tracing';
 import * as http from 'http';
 import * as path from 'path';
 import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
