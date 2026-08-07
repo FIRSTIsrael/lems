@@ -3,6 +3,7 @@ import { getRules, readRule } from './rules';
 import { getUpdates, readUpdate } from './updates';
 import { evaluateScore } from './evaluate-score';
 import { askClarifyingQuestion } from './ask-clarifying-question';
+import { formulateAnswer } from './formulate-answer';
 import { semanticSearch } from './semantic-search';
 import {
   getGlossaryTerms,
@@ -28,6 +29,7 @@ export const gameRulesTools = [
   readUpdate,
   evaluateScore,
   askClarifyingQuestion,
+  formulateAnswer,
   semanticSearch
 ];
 
@@ -36,5 +38,6 @@ export * from './rules';
 export * from './updates';
 export * from './evaluate-score';
 export * from './ask-clarifying-question';
+export * from './formulate-answer';
 export * from './semantic-search';
 export * from './reference-docs';
