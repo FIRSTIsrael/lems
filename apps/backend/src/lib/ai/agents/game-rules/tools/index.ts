@@ -9,6 +9,7 @@ import {
   getGlossaryTerms,
   readChallengeKit,
   readFieldSetup,
+  readGeneralNotes,
   readGlossaryTerm,
   readGraciousProfessionalism,
   readTableInstructions
@@ -21,6 +22,7 @@ export const gameRulesTools = [
   readChallengeKit,
   readGraciousProfessionalism,
   readTableInstructions,
+  readGeneralNotes,
   getMissions,
   readMission,
   getRules,

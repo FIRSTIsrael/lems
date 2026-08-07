@@ -61,3 +61,25 @@ export interface GlossaryTerm {
   termHe: string;
   definition: string;
 }
+
+/** A cross-mission/cross-rule note, cross-referenced by mission and rule ids for easy lookup. */
+export interface NoEquipmentContactRule {
+  title: string;
+  text: string;
+  appliesToMissions: string[];
+  relatedRuleIds?: string[];
+  /** Non-verbatim supplementary context - never quote as official rule text. */
+  unofficialClarification?: string[];
+}
+
+export interface DockingStationNote {
+  title: string;
+  text: string;
+  appliesToMissions: string[];
+  relatedRuleIds?: string[];
+}
+
+export interface GeneralNotes {
+  noEquipmentContactRule: NoEquipmentContactRule;
+  dockingStationNote: DockingStationNote;
+}

@@ -10,12 +10,13 @@ import {
   tableInstructionsData,
   updatesData
 } from '../../corpus/game-rules';
-import { GlossaryTerm, Mission, Rule, RuleSection, Update } from './types';
+import { GlossaryTerm, Mission, Rule, RuleSection, Update, GeneralNotes } from './types';
 
 const missions = missionsData.missions as Mission[];
 const sections = rulesData.sections as RuleSection[];
 const rules = rulesData.rules as Rule[];
 const updates = updatesData.updates as Update[];
+const generalNotes = missionsData.generalNotes as GeneralNotes;
 
 const sectionsById = new Map(sections.map(section => [section.id, section]));
 
@@ -25,6 +26,11 @@ export function listMissions(): Array<Pick<Mission, 'id' | 'nameHe' | 'nameEn'>>
 
 export function getMission(id: string): Mission | undefined {
   return missions.find(mission => mission.id === id);
+}
+
+/** Cross-mission notes referenced by `noEquipmentContact`/`dockingStation` flags - not per-mission. */
+export function getGeneralNotes(): GeneralNotes {
+  return generalNotes;
 }
 
 export function listRules(): Array<Pick<Rule, 'id' | 'ruleNumber' | 'sectionId'>> {

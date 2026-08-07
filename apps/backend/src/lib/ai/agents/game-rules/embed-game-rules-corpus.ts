@@ -5,6 +5,7 @@ import database from '../../../database';
 import {
   getChallengeKit,
   getFieldSetup,
+  getGeneralNotes,
   getGlossaryTerm,
   getGraciousProfessionalism,
   getMission,
@@ -112,7 +113,34 @@ function buildCorpusDocs(): CorpusDoc[] {
     content: getFieldSetup()
   };
 
-  return [...missions, ...rules, ...updates, ...glossaryTerms, ...jsonReferenceDocs, fieldSetup];
+  const generalNotes = getGeneralNotes();
+  const generalNoteDocs: CorpusDoc[] = [
+    {
+      docType: 'general-note',
+      docId: 'no-equipment-contact-rule',
+      title: generalNotes.noEquipmentContactRule.title,
+      content: [
+        generalNotes.noEquipmentContactRule.text,
+        ...(generalNotes.noEquipmentContactRule.unofficialClarification ?? [])
+      ].join('\n')
+    },
+    {
+      docType: 'general-note',
+      docId: 'docking-station-note',
+      title: generalNotes.dockingStationNote.title,
+      content: generalNotes.dockingStationNote.text
+    }
+  ];
+
+  return [
+    ...missions,
+    ...rules,
+    ...updates,
+    ...glossaryTerms,
+    ...jsonReferenceDocs,
+    fieldSetup,
+    ...generalNoteDocs
+  ];
 }
 
 async function main() {

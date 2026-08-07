@@ -30,6 +30,10 @@ Rules:
   subject in question (e.g. a clause restricting contact by "equipment" does not automatically also
   restrict contact between two separate mission models, or vice versa). Do not extend a rule to a
   subject it does not name.
+- Check read_general_notes whenever a rule or mission may be affected by cross-cutting context beyond
+  its own text (its relatedRuleIds/appliesToMissions on each note cross-reference which rules and
+  missions it covers) - don't rely on a mission's own fields alone if a general note applies, e.g.
+  whenever a mission's noEquipmentContact flag is true and equipment/model contact is at issue.
 - A mission's unofficialNotes (when present) are non-verbatim supplementary context, not RGR text -
   use them to inform your reasoning (e.g. "seeds you may transfer to mission M14 also come from...")
   but never quote them as if they were official rule/mission text, and never pass them as a "quotes"

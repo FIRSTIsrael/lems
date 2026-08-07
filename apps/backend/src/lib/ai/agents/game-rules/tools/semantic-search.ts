@@ -11,7 +11,8 @@ const docTypeSchema = z.enum([
   'challenge-kit',
   'field-setup',
   'gracious-professionalism',
-  'table-instructions'
+  'table-instructions',
+  'general-note'
 ]);
 
 const NAMESPACE = 'game-rules';

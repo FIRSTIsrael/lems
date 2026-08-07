@@ -3,6 +3,7 @@ import { z } from 'zod';
 import {
   getChallengeKit,
   getFieldSetup,
+  getGeneralNotes,
   getGlossaryTerm,
   getGraciousProfessionalism,
   getTableInstructions,
@@ -55,5 +56,16 @@ export const readTableInstructions = tool(async () => getTableInstructions(), {
   name: 'read_table_instructions',
   description:
     'Read the verbatim official competition table build instructions: dimensions, parts, and tournament arrangement.',
+  schema: z.object({})
+});
+
+export const readGeneralNotes = tool(async () => getGeneralNotes(), {
+  name: 'read_general_notes',
+  description:
+    'Read the cross-mission general notes: the verbatim "no equipment contact" rule text (with the ' +
+    'list of missions it applies to, relatedRuleIds, and a non-verbatim unofficialClarification on what ' +
+    'counts as a separate mission model for that rule - never quote unofficialClarification as official ' +
+    'rule text), and the docking-station note for missions 13-15. Call this whenever a mission has ' +
+    'noEquipmentContact: true and equipment/model contact is at issue.',
   schema: z.object({})
 });
