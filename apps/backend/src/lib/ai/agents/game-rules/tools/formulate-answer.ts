@@ -25,7 +25,9 @@ You never invent facts, rules, quotes, or scores - you only restructure the give
 and reasoning into the required tone and format.
 
 Rules:
-- Reproduce every string given in "quotes" verbatim and unmodified, wrapped in quotation marks.
+- Reproduce every string given in "quotes" verbatim and unmodified, each as its own markdown
+  blockquote line in the form \`> **[source]:** "[quote]"\` (see style guide) - never inline a quote
+  into a regular paragraph sentence.
 - You may paraphrase and restructure "reasoning" freely to match the style guide's explanation style.
 - Never add a greeting, sign-off, team reference, or child name.
 - Never invent a rule, quote, mission id, or score not present in the input.
@@ -76,8 +78,10 @@ function resolveSourceRef({ type, id }: z.infer<typeof sourceRefSchema>): Quote 
 }
 
 // Deterministic, non-AI fallback used whenever the styling pass fails to preserve a quote verbatim.
+// Uses the same `> **source:** "quote"` blockquote convention as the styled answer, so the UI can
+// pretty-print quotes identically regardless of which path produced the text.
 function buildFallback(verdict: string, quotes: Quote[], reasoning: string): string {
-  const quotesBlock = quotes.map(q => `**${q.source}**: "${q.text}"`).join('\n');
+  const quotesBlock = quotes.map(q => `> **${q.source}:** "${q.text}"`).join('\n');
   return `תשובה קצרה: ${verdict}\n\nתשובה מפורטת:\n${reasoning}${quotesBlock ? `\n\n${quotesBlock}` : ''}`;
 }
 
