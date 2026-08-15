@@ -48,7 +48,8 @@ type TimerAction =
   | 'TICK'
   | 'FORWARD'
   | 'BACK'
-  | { type: 'STAGE_COMPLETE'; nextStage: number };
+  | { type: 'STAGE_COMPLETE'; nextStage: number }
+  | { type: 'TICK_BY'; count: number };
 
 const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
   return (state: TimerState, action: TimerAction): TimerState => {
@@ -58,6 +59,27 @@ const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
         stageTimeRemaining: stages[action.nextStage].duration,
         isRunning: false
       };
+    }
+
+    if (typeof action === 'object' && action.type === 'TICK_BY') {
+      const { count } = action;
+      let { currentStage, stageTimeRemaining } = state;
+      let remaining = count;
+
+      while (remaining > 0) {
+        if (stageTimeRemaining > remaining) {
+          stageTimeRemaining -= remaining;
+          remaining = 0;
+        } else if (currentStage < stages.length - 1) {
+          remaining -= stageTimeRemaining;
+          currentStage++;
+          stageTimeRemaining = stages[currentStage].duration;
+        } else {
+          return { currentStage, stageTimeRemaining: 0, isRunning: false };
+        }
+      }
+
+      return { ...state, currentStage, stageTimeRemaining };
     }
 
     switch (action) {
@@ -143,6 +165,7 @@ export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => 
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const previousStageRef = useRef(state.currentStage);
+  const lastTickAtRef = useRef<number | null>(null);
 
   const start = useCallback(() => {
     dispatch('START');
@@ -174,11 +197,20 @@ export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => 
   }, []);
 
   useEffect(() => {
-    if (state.isRunning && state.stageTimeRemaining > 0) {
+    if (state.isRunning) {
+      lastTickAtRef.current = Date.now();
       intervalRef.current = setInterval(() => {
-        dispatch('TICK');
-      }, 1000);
+        if (lastTickAtRef.current === null) return;
+        const now = Date.now();
+        const elapsedMs = now - lastTickAtRef.current;
+        const elapsedTicks = Math.floor(elapsedMs / 1000);
+        if (elapsedTicks > 0) {
+          lastTickAtRef.current += elapsedTicks * 1000;
+          dispatch({ type: 'TICK_BY', count: elapsedTicks });
+        }
+      }, 500);
     } else {
+      lastTickAtRef.current = null;
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
@@ -190,7 +222,7 @@ export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => 
         clearInterval(intervalRef.current);
       }
     };
-  }, [state.isRunning, state.stageTimeRemaining]);
+  }, [state.isRunning]);
 
   // Handle stage progression sound
   useEffect(() => {
