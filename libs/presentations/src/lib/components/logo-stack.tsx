@@ -17,7 +17,7 @@ export const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
         alignItems: 'center',
         position: 'absolute',
         bottom: 0,
-        left: 0,
+        insetInlineStart: 0,
         width: '100%',
         height: '100px',
         bgcolor: '#f7f8f9',
