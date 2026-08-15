@@ -79,8 +79,7 @@ export const MatchPreviewDisplay = () => {
           maxWidth: '1800px',
           p: 6,
           bgcolor: theme => alpha(theme.palette.background.paper, 0.98),
-          borderRadius: 2,
-          animation: 'fadeInScale 0.6s ease-out'
+          borderRadius: 2
         }}
       >
         <Stack
@@ -180,7 +179,6 @@ export const MatchPreviewDisplay = () => {
             spacing={2}
             columns={columns}
             sx={{
-              animation: 'fadeIn 0.8s ease-out',
               justifyContent: 'center'
             }}
           >
@@ -190,27 +188,6 @@ export const MatchPreviewDisplay = () => {
           </Grid>
         </Stack>
       </Box>
-      <style>{`
-        @keyframes fadeInScale {
-          0% {
-            opacity: 0;
-            transform: scale(0.98);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </Box>
   );
 };
