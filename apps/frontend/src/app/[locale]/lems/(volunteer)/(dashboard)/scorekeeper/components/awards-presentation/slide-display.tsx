@@ -57,7 +57,16 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
           transition: 'box-shadow 0.3s ease'
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
           <Deck ref={deckRef} initialState={initialState} enableReinitialize={true}>
             {awardSlides}
           </Deck>

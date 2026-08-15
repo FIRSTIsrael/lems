@@ -129,8 +129,8 @@ export const Slide: React.FC<SlideProps> = ({
               style={{
                 display: isActive ? 'unset' : 'none',
                 position: 'absolute',
+                insetInlineStart: 0,
                 top: 0,
-                left: 0,
                 height: '100%',
                 width: '100%',
                 backgroundImage: chromaKey

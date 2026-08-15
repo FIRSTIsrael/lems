@@ -14,18 +14,29 @@ export const SlideScaler: React.FC<SlideScalerProps> = ({ children, ...props }) 
 
   const ref = useRef(null);
   const { width, height } = useDimensions(ref);
+  const scale = Math.min(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT) || 0;
 
   return (
-    <Box ref={ref} {...props} sx={{ width: '100%', height: '100%' }}>
+    <Box
+      ref={ref}
+      {...props}
+      sx={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: 'hidden',
+        ...props.sx
+      }}
+    >
       <div
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: DEFAULT_HEIGHT,
           width: DEFAULT_WIDTH,
-          transform: `scale(${Math.max(width / DEFAULT_WIDTH, height / DEFAULT_HEIGHT)})`,
-          transformOrigin: 'top left'
+          height: DEFAULT_HEIGHT,
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          flexShrink: 0
         }}
       >
         {children}
