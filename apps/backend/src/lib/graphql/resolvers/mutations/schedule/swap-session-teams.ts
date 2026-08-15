@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -91,20 +90,7 @@ export const swapSessionTeamsResolver: GraphQLFieldResolver<
     }
 
     // Check 3: Both sessions must be in not-started status
-    const sessionStates = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .find({ sessionId: { $in: [sessionId1, sessionId2] } })
-      .toArray();
-
-    const session1State = sessionStates.find(s => s.sessionId === sessionId1);
-    const session2State = sessionStates.find(s => s.sessionId === sessionId2);
-
-    if (
-      !session1State ||
-      !session2State ||
-      session1State.status !== 'not-started' ||
-      session2State.status !== 'not-started'
-    ) {
+    if (session1.status !== 'not-started' || session2.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Both sessions must be in not-started status to swap teams'

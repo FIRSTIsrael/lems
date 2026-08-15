@@ -23,7 +23,14 @@ export const DivisionItem: React.FC<DivisionItemProps> = ({
 
   return (
     <Paper variant="outlined" sx={{ p: 2, backgroundColor: 'grey.50' }}>
-      <Box display="flex" alignItems="center" gap={2} mb={2}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2,
+          mb: 2
+        }}
+      >
         <ColorPicker
           value={division.color}
           onChange={(hsvaColor: HsvaColor) => updateDivisionField(index, 'color', hsvaColor)}
@@ -44,7 +51,12 @@ export const DivisionItem: React.FC<DivisionItemProps> = ({
           />
         </ColorPicker>
 
-        <Typography variant="h6" flexGrow={1}>
+        <Typography
+          variant="h6"
+          sx={{
+            flexGrow: 1
+          }}
+        >
           {t('title', { number: index + 1 })}
         </Typography>
 
@@ -59,7 +71,6 @@ export const DivisionItem: React.FC<DivisionItemProps> = ({
           </IconButton>
         )}
       </Box>
-
       <FormikTextField
         name={`divisions.${index}.name`}
         label={t('name.label')}

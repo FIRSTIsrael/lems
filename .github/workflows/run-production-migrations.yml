@@ -38,7 +38,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v6.1.0
         with:
-          node-version: 24
+          node-version-file: '.nvmrc'
           cache: npm
       
       - name: Install dependencies
@@ -55,6 +55,8 @@ jobs:
           PG_USER: ${{ secrets.PG_USER }}
           PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
           PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          MONGO_DB_NAME: ${{ vars.DB_NAME }}
         run: |
           echo "⚠️  PRODUCTION MIGRATION IN PROGRESS"
           echo "🔄 Running database migrations..."

@@ -45,8 +45,8 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
     redirect(`/lems/${user.role}`);
   }
 
-  const teamSession = data.division?.judging?.sessions?.[0];
-  const openRubricsDuringSession = data.division?.judging?.openRubricsDuringSession ?? false;
+  const teamSession = data?.division?.judging?.sessions?.[0];
+  const openRubricsDuringSession = data?.division?.judging?.openRubricsDuringSession ?? false;
 
   const canAccessRubric =
     teamSession?.status === 'completed' ||
@@ -58,7 +58,7 @@ export default function RubricLayout({ children }: RubricLayoutProps) {
   }
 
   const room = user.roleInfo?.['roomId'];
-  if (room && room !== data.division?.judging?.sessions?.[0]?.room.id) {
+  if (room && room !== data?.division?.judging?.sessions?.[0]?.room.id) {
     toast.error(t('error-not-authorized'));
     redirect(`/lems/${user.role}/rooms/${room}`);
   }

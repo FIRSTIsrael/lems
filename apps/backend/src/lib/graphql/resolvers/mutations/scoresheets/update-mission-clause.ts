@@ -24,6 +24,8 @@ interface UpdateScoresheetMissionClauseArgs {
   value: ScoresheetClauseValue;
 }
 
+type MissionData = Record<string, Record<number, ScoresheetClauseValue>>;
+
 /**
  * Resolver for Mutation.updateScoresheetMissionClause
  * Updates a single mission clause value in a scoresheet
@@ -62,17 +64,16 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   validateClauseValue(clause, value);
 
   // Calculate points
-  const { data = {} } = dbScoresheet;
-  data['missions'] ??= {};
-  data['missions'][missionId] ??= {};
-  data['missions'][missionId][clauseIndex] = value;
-  const points = calculateScore(data['missions']);
+  const data = (dbScoresheet.data ?? {}) as { missions?: MissionData };
+  data.missions ??= {};
+  data.missions[missionId] ??= {};
+  data.missions[missionId][clauseIndex] = value;
+  const points = calculateScore(data.missions);
 
   // Determine new status based on completion criteria
   // Don't change status if already submitted or in gp status (locked states)
-  const newStatus = (status === 'submitted' || status === 'gp') 
-    ? status 
-    : determineScoresheetCompletionStatus(data);
+  const newStatus =
+    status === 'submitted' || status === 'gp' ? status : determineScoresheetCompletionStatus(data);
 
   const updateFields: Record<string, unknown> = {
     [`data.missions.${missionId}.${clauseIndex}`]: value,

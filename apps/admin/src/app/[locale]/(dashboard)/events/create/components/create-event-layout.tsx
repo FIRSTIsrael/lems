@@ -190,7 +190,13 @@ export const CreateEventLayout = () => {
 
           return (
             <>
-              <Box display="flex" alignItems="center" gap={2}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 2
+                }}
+              >
                 <Typography variant="h2" gutterBottom>
                   {t('sections.event-details')}
                 </Typography>
@@ -217,7 +223,6 @@ export const CreateEventLayout = () => {
                   </ColorPicker>
                 )}
               </Box>
-
               <Form>
                 <Stack spacing={3}>
                   {status && typeof status === 'string' && (
@@ -282,7 +287,11 @@ export const CreateEventLayout = () => {
                   </Grid>
 
                   {isMultipleDivisions && (
-                    <Box mt={4}>
+                    <Box
+                      sx={{
+                        mt: 4
+                      }}
+                    >
                       <Typography variant="h2" gutterBottom>
                         {t('sections.divisions')}
                       </Typography>
@@ -302,7 +311,13 @@ export const CreateEventLayout = () => {
                     </Box>
                   )}
 
-                  <Stack direction="row" spacing={2} mt={2}>
+                  <Stack
+                    direction="row"
+                    spacing={2}
+                    sx={{
+                      mt: 2
+                    }}
+                  >
                     <Button
                       startIcon={<AddIcon />}
                       onClick={addDivision}

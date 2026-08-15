@@ -11,7 +11,10 @@ interface RegisterTeamsFromCSVButtonProps {
   divisions: Division[];
 }
 
-export const RegisterTeamsFromCSVButton: React.FC<RegisterTeamsFromCSVButtonProps> = ({ event, divisions }) => {
+export const RegisterTeamsFromCSVButton: React.FC<RegisterTeamsFromCSVButtonProps> = ({
+  event,
+  divisions
+}) => {
   const t = useTranslations('pages.events.teams.registration-button');
   const { showDialog } = useDialog();
 
@@ -19,16 +22,11 @@ export const RegisterTeamsFromCSVButton: React.FC<RegisterTeamsFromCSVButtonProp
   const disabled = divisions.length > 0 && divisionsWithSchedule.length === divisions.length;
 
   const handleOpenCSVDialog = () => {
-    showDialog((props) => <RegisterTeamsFromCSVDialog {...props} eventId={event.id} />);
+    showDialog(props => <RegisterTeamsFromCSVDialog {...props} eventId={event.id} />);
   };
 
   return (
-    <Button
-      variant="outlined"
-      size="large"
-      onClick={handleOpenCSVDialog}
-      disabled={disabled}
-    >
+    <Button variant="outlined" size="large" onClick={handleOpenCSVDialog} disabled={disabled}>
       {t('csv-title')}
     </Button>
   );

@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   lighten
 } from '@mui/material';
-import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
+import { ErrorOutlined } from '@mui/icons-material';
 import HomeIcon from '@mui/icons-material/Home';
 
 const isProduction = process.env.NODE_ENV === 'production';
@@ -47,9 +47,9 @@ export default function LemsError({ error, reset }: ErrorProps) {
       <Container maxWidth="sm">
         <Stack
           spacing={4}
-          alignItems="center"
-          textAlign="center"
           sx={{
+            alignItems: 'center',
+            textAlign: 'center',
             py: { xs: 4, md: 6 }
           }}
         >
@@ -74,7 +74,7 @@ export default function LemsError({ error, reset }: ErrorProps) {
               }
             }}
           >
-            <ErrorOutlineIcon
+            <ErrorOutlined
               sx={{
                 fontSize: 56,
                 color: 'error.main'
@@ -87,8 +87,8 @@ export default function LemsError({ error, reset }: ErrorProps) {
             <Typography
               variant="h3"
               component="h1"
-              fontWeight="800"
               sx={{
+                fontWeight: '800',
                 fontSize: { xs: '1.75rem', sm: '2.25rem' },
                 color: 'text.primary'
               }}
@@ -169,9 +169,12 @@ export default function LemsError({ error, reset }: ErrorProps) {
           {/* Action Buttons */}
           <Stack
             direction={{ xs: 'column', sm: 'row' }}
-            justifyContent="center"
             spacing={2}
-            sx={{ width: '100%', pt: 2 }}
+            sx={{
+              justifyContent: 'center',
+              width: '100%',
+              pt: 2
+            }}
           >
             <Button
               variant="contained"

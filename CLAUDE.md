@@ -29,6 +29,8 @@ All TypeScript path aliases are configured in `tsconfig.base.json`.
 ## Development Commands
 
 ### Setup
+Requires **Node.js 26** (see `.nvmrc`).
+
 ```bash
 # Install dependencies
 npm install

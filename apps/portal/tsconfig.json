@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "preserve",
     "strict": true,
+    "types": ["node", "@types/grecaptcha"],
     "noEmit": true,
     "emitDeclarationOnly": false,
     "esModuleInterop": true,
@@ -12,7 +13,6 @@
     "isolatedModules": true,
     "lib": [
       "dom",
-      "dom.iterable",
       "esnext"
     ],
     "allowJs": true,

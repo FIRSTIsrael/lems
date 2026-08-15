@@ -109,7 +109,13 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       : undefined;
 
   return (
-    <Stack width="33.33%" ref={columnRef} onMouseDown={handleMouseDown}>
+    <Stack
+      ref={columnRef}
+      onMouseDown={handleMouseDown}
+      sx={{
+        width: '33.33%'
+      }}
+    >
       <Box
         sx={{
           height: HEADER_HEIGHT,
@@ -133,8 +139,8 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       >
         {dragState?.mode === 'create' && (
           <Box
-            display={dragPreviewHeight ? 'block' : 'none'}
             sx={{
+              display: dragPreviewHeight ? 'block' : 'none',
               position: 'absolute',
               top: dragPreviewTop,
               left: 8,

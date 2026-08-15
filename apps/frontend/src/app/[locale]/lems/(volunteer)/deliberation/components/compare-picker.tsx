@@ -66,15 +66,21 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
   return (
     <Stack
       component={Paper}
-      p={2.5}
-      justifyContent="space-between"
       sx={{
+        p: 2.5,
+        justifyContent: 'space-between',
         flex: 1,
         border: theme => `1px solid ${theme.palette.divider}`,
         borderRadius: 1.5
       }}
     >
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
         <Typography
           variant="subtitle2"
           sx={{
@@ -90,7 +96,6 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
           <CompareArrows />
         </IconButton>
       </Stack>
-
       <Autocomplete
         options={teamOptions}
         value={teamOptions.find(o => o.value === selectedTeam1) || null}
@@ -102,8 +107,10 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
             size="small"
             variant="outlined"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 sx: {
                   fontSize: '0.875rem'
                 }
@@ -126,8 +133,10 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
             size="small"
             variant="outlined"
             slotProps={{
+              ...params.slotProps,
+
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 sx: {
                   fontSize: '0.875rem'
                 }
@@ -139,7 +148,6 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
         fullWidth
         noOptionsText={t('no-data-available')}
       />
-
       <Button
         variant="contained"
         color="primary"
@@ -154,7 +162,6 @@ export function CompareTeamsPicker({ teams, category, onCompare }: CompareTeamsP
       >
         {t('compare')}
       </Button>
-
       {selectedTeam1 && selectedTeam2 && selectedTeamSlugs[0] && selectedTeamSlugs[1] && (
         <TeamComparisonDialog
           open={dialogOpen}

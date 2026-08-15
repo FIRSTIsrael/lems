@@ -100,7 +100,7 @@ export async function handleChampionsStageCompletion(
 
   const advancingTeamIds = selectAdvancingTeams(
     teamsWithRanks,
-    Object.values(champions),
+    Object.values(champions ?? {}),
     advancementConfig.advancement_percent,
     teams.length
   );
@@ -142,7 +142,8 @@ const assignChampionsToTeams = async (
 ): Promise<void> => {
   const championsAwards = await db.awards.byDivisionId(divisionId).get('champions');
   for (const award of championsAwards) {
-    const teamId = champions[award.place];
+    const placeKey = String(award.place) as '1' | '2' | '3' | '4';
+    const teamId = champions?.[placeKey];
     if (!teamId) {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,

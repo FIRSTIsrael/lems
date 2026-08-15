@@ -46,7 +46,7 @@ function formReducer(state: FormState, action: FormAction): FormState {
         ...state,
         formValues: {
           ...state.formValues,
-          [action.field]: action.field === 'language' ? action.value : (action.value || null)
+          [action.field]: action.field === 'language' ? action.value : action.value || null
         },
         errors: {
           ...state.errors,

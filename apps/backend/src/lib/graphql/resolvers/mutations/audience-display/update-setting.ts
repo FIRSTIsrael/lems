@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, AudienceDisplayScreen } from '@lems/database';
+import { AudienceDisplayScreen } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -33,16 +33,16 @@ export const updateAudienceDisplaySettingResolver: GraphQLFieldResolver<
   try {
     await authorizeAudienceDisplayAccess(context, divisionId);
 
-    // Update the division's settings in MongoDB
-    const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
-      { divisionId },
-      {
-        $set: {
-          [`audienceDisplay.settings.${display}.${settingKey}`]: settingValue
+    // Update the division's audience display settings
+    const result = await db.divisions.byId(divisionId).updateState({
+      audienceDisplay: {
+        settings: {
+          [display]: {
+            [settingKey]: settingValue
+          }
         }
-      },
-      { returnDocument: 'after' }
-    );
+      }
+    });
 
     if (!result) {
       throw new MutationError(

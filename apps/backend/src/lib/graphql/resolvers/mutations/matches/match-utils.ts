@@ -1,5 +1,4 @@
 import dayjs from 'dayjs';
-import { RobotGameMatchState } from '@lems/database';
 import { MATCH_LOAD_THRESHOLD } from '@lems/shared/consts';
 import db from '../../../../database';
 
@@ -23,11 +22,7 @@ export async function getAutoLoadMatch(
     .sort((a, b) => new Date(a.scheduled_time).getTime() - new Date(b.scheduled_time).getTime());
 
   for (const candidateMatch of divisionMatches) {
-    const candidateState = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId: candidateMatch.id });
-
-    if (candidateState?.status === 'not-started') {
+    if (candidateMatch.status === 'not-started') {
       const scheduledTime = dayjs(candidateMatch.scheduled_time);
       const minutesUntilStart = scheduledTime.diff(dayjs(), 'minute', true);
 
