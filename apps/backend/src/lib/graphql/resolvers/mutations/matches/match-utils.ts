@@ -26,7 +26,7 @@ export async function getAutoLoadMatch(
       const scheduledTime = dayjs(candidateMatch.scheduled_time);
       const minutesUntilStart = scheduledTime.diff(dayjs(), 'minute', true);
 
-      if (minutesUntilStart <= MATCH_LOAD_THRESHOLD) {
+      if (minutesUntilStart <= MATCH_LOAD_THRESHOLD && candidateMatch.id !== currentMatch) {
         return candidateMatch.id;
       }
     }
