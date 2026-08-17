@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
