@@ -48,14 +48,14 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
         <TableCell
           key={`score-${team.teamId}-${scoreIndex}`}
           align="center"
-          sx={{ py: 1.25, fontSize: '1.25rem', fontWeight: 500 }}
+          sx={{ py: 1.25, fontSize: '2.5rem', fontWeight: 600 }}
         >
           <ScoreCell score={score} />
         </TableCell>
       ))}
       <TableCell
         align="center"
-        sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.35rem' }}
+        sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '2.5rem' }}
       >
         {team.maxScore}
       </TableCell>

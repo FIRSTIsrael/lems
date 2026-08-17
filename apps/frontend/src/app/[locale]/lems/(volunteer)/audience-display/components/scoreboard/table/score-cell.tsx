@@ -6,7 +6,18 @@ interface ScoreCellProps {
 
 export const ScoreCell = ({ score }: ScoreCellProps) => {
   if (score === undefined) {
-    return <Typography sx={{ color: 'text.secondary', fontStyle: 'italic' }}>—</Typography>;
+    return (
+      <Typography
+        sx={{
+          color: 'text.secondary',
+          fontStyle: 'italic',
+          fontSize: 'inherit',
+          fontWeight: 'inherit'
+        }}
+      >
+        —
+      </Typography>
+    );
   }
-  return <Typography>{score}</Typography>;
+  return <Typography sx={{ fontSize: 'inherit', fontWeight: 'inherit' }}>{score}</Typography>;
 };
