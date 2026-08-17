@@ -15,7 +15,7 @@ export const schema = makeExecutableSchema({ typeDefs, resolvers });
  * Used for dependency injection (auth, dataloaders, etc.)
  */
 export interface GraphQLContext {
-  user?: VolunteerUser;
+  user: VolunteerUser | null;
 }
 
 /**

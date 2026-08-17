@@ -6,6 +6,7 @@ import { Box, Container, Typography, Stack, Button } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, CalendarToday as CalendarIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { Event } from '@lems/types/api/lems';
+import { RichText } from '@lems/localization';
 import { EventCard } from '../components/homepage/event-card';
 import { GET_EVENTS_QUERY, HomepageEvent } from '../components/homepage/graphql';
 
@@ -27,6 +28,7 @@ export default function BrowseEventsPage() {
       startDate: new Date(event.startDate),
       endDate: new Date(event.endDate),
       location: '', // Not fetched
+      timezone: '',
       region: event.region,
       coordinates: null,
       seasonId: '', // Placeholder - not available from current query
@@ -37,7 +39,14 @@ export default function BrowseEventsPage() {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', py: { xs: 2, md: 3 } }}>
       <Container maxWidth="lg">
         {/* Header */}
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center',
+            mb: 2
+          }}
+        >
           <Button startIcon={<ArrowBackIcon />} onClick={() => router.back()} variant="text">
             {t('back')}
           </Button>
@@ -46,9 +55,9 @@ export default function BrowseEventsPage() {
         <Box sx={{ mb: 3 }}>
           <Typography
             variant="h3"
-            fontWeight="700"
             gutterBottom
             sx={{
+              fontWeight: '700',
               fontSize: { xs: '2rem', md: '2.5rem' }
             }}
           >
@@ -56,20 +65,26 @@ export default function BrowseEventsPage() {
           </Typography>
           <Typography
             variant="body1"
-            color="text.secondary"
             sx={{
+              color: 'text.secondary',
               fontSize: { xs: '1rem', md: '1.125rem' },
               maxWidth: '600px'
             }}
           >
-            {t('description')}
+            <RichText>{tags => t.rich('description', tags)}</RichText>
           </Typography>
         </Box>
 
         {/* Events Grid */}
         {loading ? (
           <Box sx={{ textAlign: 'center', py: 4 }}>
-            <Typography color="text.secondary">{t('loading')}</Typography>
+            <Typography
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
+              {t('loading')}
+            </Typography>
           </Box>
         ) : error ? (
           <Box sx={{ textAlign: 'center', py: 4 }}>
@@ -78,10 +93,22 @@ export default function BrowseEventsPage() {
         ) : allEvents.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 6 }}>
             <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5, mb: 2 }} />
-            <Typography variant="h5" color="text.secondary" gutterBottom>
+            <Typography
+              variant="h5"
+              gutterBottom
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-events')}
             </Typography>
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 3 }}>
+            <Typography
+              variant="body1"
+              sx={{
+                color: 'text.secondary',
+                mb: 3
+              }}
+            >
               {t('no-events-description')}
             </Typography>
             <Button variant="contained" onClick={() => router.push('/')}>

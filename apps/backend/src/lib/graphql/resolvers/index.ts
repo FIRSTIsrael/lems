@@ -1,4 +1,4 @@
-import { GraphQLScalarType, Kind } from 'graphql';
+import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import db from '../../database';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
@@ -19,6 +19,7 @@ import { judgingSessionsResolver } from './divisions/judging/judging-sessions';
 import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingAdvancementPercentageResolver } from './divisions/judging/judging-advancement-percentage';
+import { judgingOpenRubricsDuringSessionResolver } from './divisions/judging/judging-open-rubrics-during-session';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
@@ -59,31 +60,33 @@ import {
 } from './subscriptions/deliberations';
 
 // JSON scalar resolver - passes through any valid JSON value
+function parseJsonLiteral(ast: ValueNode): unknown {
+  switch (ast.kind) {
+    case Kind.STRING:
+    case Kind.BOOLEAN:
+      return ast.value;
+    case Kind.INT:
+    case Kind.FLOAT:
+      return parseFloat(ast.value);
+    case Kind.OBJECT:
+      return Object.fromEntries(
+        ast.fields.map(field => [field.name.value, parseJsonLiteral(field.value)])
+      );
+    case Kind.LIST:
+      return ast.values.map(value => parseJsonLiteral(value));
+    case Kind.NULL:
+      return null;
+    default:
+      return null;
+  }
+}
+
 const JSONScalar = new GraphQLScalarType({
   name: 'JSON',
   description: 'Arbitrary JSON value',
   serialize: (value: unknown) => value,
   parseValue: (value: unknown) => value,
-  parseLiteral: ast => {
-    switch (ast.kind) {
-      case Kind.STRING:
-      case Kind.BOOLEAN:
-        return ast.value;
-      case Kind.INT:
-      case Kind.FLOAT:
-        return parseFloat(ast.value);
-      case Kind.OBJECT:
-        return Object.fromEntries(
-          ast.fields.map(field => [field.name.value, JSONScalar.parseLiteral(field.value)])
-        );
-      case Kind.LIST:
-        return ast.values.map(value => JSONScalar.parseLiteral(value));
-      case Kind.NULL:
-        return null;
-      default:
-        return null;
-    }
-  }
+  parseLiteral: parseJsonLiteral
 });
 
 export const resolvers = {
@@ -97,7 +100,7 @@ export const resolvers = {
   Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
-    seasonName: async event => {
+    seasonName: async (event: { id: string }) => {
       const dbEvent = await db.events.byId(event.id).get();
       if (!dbEvent) {
         return null;
@@ -122,6 +125,7 @@ export const resolvers = {
     rooms: judgingRoomsResolver,
     sessionLength: judgingSessionLengthResolver,
     advancementPercentage: judgingAdvancementPercentageResolver,
+    openRubricsDuringSession: judgingOpenRubricsDuringSessionResolver,
     rubrics: judgingRubricsResolver,
     deliberation: judgingDeliberationResolver,
     finalDeliberation: judgingFinalDeliberationResolver,

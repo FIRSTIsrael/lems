@@ -17,7 +17,6 @@ export function getRubricStatusStats(
   sessions: JudgingSession[],
   category: JudgingCategory
 ): RubricStatusStat {
-
   const arrivedSessions = sessions.filter(session => session.team.arrived);
 
   const statuses = arrivedSessions

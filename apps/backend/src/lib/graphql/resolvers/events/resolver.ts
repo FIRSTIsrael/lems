@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { sql } from 'kysely';
 import dayjs from 'dayjs';
-import { Event } from '@lems/database';
 import db from '../../../database';
 
 export interface EventGraphQL {
@@ -11,6 +10,7 @@ export interface EventGraphQL {
   startDate: string;
   endDate: string;
   region: string;
+  timezone: string;
   isFullySetUp?: boolean;
   official: boolean;
 }
@@ -26,6 +26,18 @@ interface EventsArgs {
   startBefore?: string;
   endAfter?: string;
   endBefore?: string;
+}
+
+interface EventRow {
+  id: string;
+  name: string;
+  slug: string;
+  start_date: Date;
+  end_date: Date;
+  region: string;
+  timezone: string;
+  is_fully_set_up?: boolean;
+  official?: boolean | null;
 }
 
 export const eventResolvers = {
@@ -67,14 +79,31 @@ function buildEventQuery(args: EventsArgs) {
     .selectFrom('events')
     .leftJoin('divisions', 'divisions.event_id', 'events.id')
     .leftJoin('event_settings', 'event_settings.event_id', 'events.id')
-    .select(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region'])
+    .select([
+      'events.id',
+      'events.slug',
+      'events.name',
+      'events.start_date',
+      'events.end_date',
+      'events.region',
+      'events.timezone'
+    ])
     .select(
       sql<boolean>`COALESCE(BOOL_AND(divisions.has_awards AND divisions.has_users AND divisions.has_schedule), false)`.as(
         'is_fully_set_up'
       )
     )
     .select('event_settings.official')
-    .groupBy(['events.id', 'events.slug', 'events.name', 'events.start_date', 'events.end_date', 'events.region', 'event_settings.official']);
+    .groupBy([
+      'events.id',
+      'events.slug',
+      'events.name',
+      'events.start_date',
+      'events.end_date',
+      'events.region',
+      'events.timezone',
+      'event_settings.official'
+    ]);
 
   // Apply date filters
   if (args.startAfter) {
@@ -106,14 +135,15 @@ function buildEventQuery(args: EventsArgs) {
  * Converts database date format to ISO strings for GraphQL.
  * Optionally includes isFullySetUp if provided (e.g., from aggregated queries).
  */
-function buildResult(event: Partial<Event> & { is_fully_set_up?: boolean; official?: boolean }): EventGraphQL {
+function buildResult(event: EventRow): EventGraphQL {
   return {
     id: event.id,
     slug: event.slug,
     name: event.name,
-    startDate: event.start_date.toISOString(),
-    endDate: event.end_date.toISOString(),
+    startDate: dayjs(event.start_date).toISOString(),
+    endDate: dayjs(event.end_date).toISOString(),
     region: event.region,
+    timezone: event.timezone,
     isFullySetUp: event.is_fully_set_up,
     official: event.official ?? true
   };

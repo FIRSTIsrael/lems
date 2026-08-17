@@ -17,6 +17,9 @@ type Division {
   "Indicates whether awards have been officially assigned to winners in this division"
   awardsAssigned: Boolean!
 
+  "Indicates whether this division is for a future edition"
+  futureEdition: Boolean!
+
   "Competition tables assigned to this division"
   tables: [Table!]!
 

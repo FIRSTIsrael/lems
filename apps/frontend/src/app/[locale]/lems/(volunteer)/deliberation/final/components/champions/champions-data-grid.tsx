@@ -33,6 +33,7 @@ export function ChampionsDataGrid() {
         headerName: t('table-team'),
         width: 100,
         filterable: false,
+        valueGetter: (value, row) => parseInt(row.number, 10) || 0,
         renderCell: params => {
           const team = params.row as EnrichedTeam;
           return (
@@ -51,6 +52,7 @@ export function ChampionsDataGrid() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['innovation-project'] || 0,
         renderCell: params => params.row.ranks['innovation-project']
       },
       {
@@ -60,6 +62,7 @@ export function ChampionsDataGrid() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['robot-design'] || 0,
         renderCell: params => params.row.ranks['robot-design']
       },
       {
@@ -69,6 +72,7 @@ export function ChampionsDataGrid() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['core-values'] || 0,
         renderCell: params => params.row.ranks['core-values']
       },
       {
@@ -78,6 +82,7 @@ export function ChampionsDataGrid() {
         filterable: false,
         align: 'center',
         headerAlign: 'center',
+        valueGetter: (value, row) => row.ranks['robot-game'] || 0,
         renderCell: params => params.row.ranks['robot-game']
       },
       {
@@ -88,6 +93,7 @@ export function ChampionsDataGrid() {
         align: 'center',
         headerAlign: 'center',
         cellClassName: 'total-rank-cell',
+        valueGetter: (value, row) => row.ranks.total || 0,
         renderCell: params => params.row.ranks.total
       }
     ],

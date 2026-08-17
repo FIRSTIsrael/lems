@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -48,14 +47,13 @@ async function authorizeTournamentManagerAccess(
  * 1. User has tournament-manager role and access to division
  * 2. Session exists in the division
  * 3. Session is in not-started status
- * 4. Session has not been called yet
- * 5. If teamId is provided, team exists in the division
+ * 4. If teamId is provided, team exists in the division
  */
 export const setJudgingSessionTeamResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
   SetJudgingSessionTeamArgs,
-  Promise<any>
+  Promise<{ id: string }>
 > = async (_root, { divisionId, sessionId, teamId }, context) => {
   try {
     // Authorization
@@ -77,26 +75,14 @@ export const setJudgingSessionTeamResolver: GraphQLFieldResolver<
     }
 
     // Check 2: Session must be in not-started status
-    const sessionState = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOne({ sessionId });
-
-    if (!sessionState || sessionState.status !== 'not-started') {
+    if (session.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Session must be in not-started status to change teams'
       );
     }
 
-    // Check 3: Session must not have been called
-    if (sessionState.called) {
-      throw new MutationError(
-        MutationErrorCode.CONFLICT,
-        'Cannot change teams in a session that has been called'
-      );
-    }
-
-    // Check 4: If teamId is provided, team must exist in the division
+    // Check 3: If teamId is provided, team must exist in the division
     if (teamId) {
       const teams = await db.teams.byDivisionId(divisionId).getAll();
       const teamExists = teams.some(t => t.id === teamId);

@@ -59,10 +59,7 @@ const finalDeliberationUpdatedReconciler: Reconciler<FinalDeliberationData, Subs
             ...(value as Record<string, string[]>)
           } as Record<string, string[]>;
         const camelCaseKey = kebabCaseToCamelCase(key) as
-          | 'robot-performance'
-          | 'innovation-project'
-          | 'robot-design'
-          | 'core-values';
+          'robot-performance' | 'innovation-project' | 'robot-design' | 'core-values';
         awardsUpdate[camelCaseKey] = value as string[];
       }
     } catch {

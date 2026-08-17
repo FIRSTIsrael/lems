@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { RobotGameMatchState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -93,19 +92,8 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    // Check 6: Get current match state
-    const matchState = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId });
-
-    if (!matchState) {
-      throw new MutationError(
-        MutationErrorCode.INTERNAL_ERROR,
-        `Match state not found for ${matchId}`
-      );
-    }
-
-    if (!present && matchState.status !== 'not-started') {
+    // Check 6: Get current match status
+    if (!present && match.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Cannot update participant status to NOT PRESENT for match that is not in not-started status'
@@ -113,20 +101,19 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     }
 
     // Prepare update object - set to current time if true, null if false
-    // Tech debt: Participants in mongo are keyed by table ID
     const now = new Date();
-    const updateData: Partial<Record<string, Date | null>> = {};
+    const updateData: Partial<Record<'queued' | 'present' | 'ready', Date | null>> = {};
 
     if (queued !== undefined && queued !== null) {
-      updateData[`participants.${participant.table_id}.queued`] = queued ? now : null;
+      updateData.queued = queued ? now : null;
     }
 
     if (present !== undefined && present !== null) {
-      updateData[`participants.${participant.table_id}.present`] = present ? now : null;
+      updateData.present = present ? now : null;
     }
 
     if (ready !== undefined && ready !== null) {
-      updateData[`participants.${participant.table_id}.ready`] = ready ? now : null;
+      updateData.ready = ready ? now : null;
     }
 
     if (Object.keys(updateData).length === 0) {
@@ -136,15 +123,13 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
       );
     }
 
-    const result = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOneAndUpdate(
-        { matchId },
-        {
-          $set: updateData
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.raw.sql
+      .updateTable('robot_game_match_participants')
+      .set(updateData)
+      .where('id', '=', participantId)
+      .where('match_id', '=', matchId)
+      .returningAll()
+      .executeTakeFirst();
 
     if (!result) {
       throw new MutationError(
@@ -154,27 +139,21 @@ export const updateParticipantStatusResolver: GraphQLFieldResolver<
     }
 
     // Publish event to notify subscribers
-    const participantState = result.participants?.[participant.table_id] || {
-      queued: null,
-      present: null,
-      ready: null
-    };
-
     const pubSub = getRedisPubSub();
     await pubSub.publish(divisionId, RedisEventTypes.PARTICIPANT_STATUS_UPDATED, {
       matchId,
       teamId: participant.team_id,
       participantId,
-      queued: participantState.queued,
-      present: participantState.present,
-      ready: participantState.ready
+      queued: result.queued,
+      present: result.present,
+      ready: result.ready
     });
 
     return {
       participantId,
-      queued: participantState.queued || null,
-      present: participantState.present || null,
-      ready: participantState.ready || null
+      queued: result.queued || null,
+      present: result.present || null,
+      ready: result.ready || null
     };
   } catch (error) {
     console.error(

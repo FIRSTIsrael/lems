@@ -3,9 +3,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { RubricItem } from './graphql';
 
 export type ValidationError =
-  | 'missing-field-value'
-  | 'missing-notes-for-level-4'
-  | 'missing-feedback';
+  'missing-field-value' | 'missing-notes-for-level-4' | 'missing-feedback';
 
 export interface ValidationResult {
   isValid: boolean;

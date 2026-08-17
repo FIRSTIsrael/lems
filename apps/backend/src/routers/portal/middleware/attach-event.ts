@@ -11,17 +11,21 @@ export const attachEvent = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const eventSlug = req.params.slug;
-
-      if (!eventSlug) {
+      if (!eventSlug || typeof eventSlug !== 'string') {
         res.status(400).json({ error: 'EVENT_SLUG_REQUIRED' });
         return;
       }
 
-      let settings: EventSettings;
+      let settings: EventSettings | null = null;
 
       try {
         settings = await database.events.bySlug(eventSlug).getSettings();
       } catch {
+        res.status(404).json({ error: 'EVENT_NOT_FOUND' });
+        return;
+      }
+
+      if (!settings) {
         res.status(404).json({ error: 'EVENT_NOT_FOUND' });
         return;
       }

@@ -6,6 +6,30 @@ export interface DivisionScheduleSettings {
   ranking_cycle_time: number;
   judging_session_length: number;
   judging_session_cycle_time: number;
+  timezone?: string; // IANA timezone identifier (e.g., 'Europe/Warsaw')
+}
+
+export type AudienceDisplayScreen =
+  'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
+
+export interface AwardsPresentation {
+  slideIndex: number;
+  stepIndex: number;
+}
+
+export interface AudienceDisplay {
+  activeDisplay: AudienceDisplayScreen;
+  awardsPresentation: AwardsPresentation;
+  settings?: Record<AudienceDisplayScreen, Record<string, unknown>>;
+}
+
+export interface DivisionState {
+  field: {
+    loadedMatch: string | null;
+    activeMatch: string | null;
+    currentStage: 'PRACTICE' | 'RANKING';
+  };
+  audienceDisplay: AudienceDisplay;
 }
 
 export interface DivisionsTable {
@@ -20,6 +44,8 @@ export interface DivisionsTable {
   has_users: Generated<boolean>; // Default false
   awards_assigned: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
+  state: Generated<DivisionState>;
+  future_edition: Generated<boolean>; // Default false
 }
 
 export type Division = Selectable<DivisionsTable>;

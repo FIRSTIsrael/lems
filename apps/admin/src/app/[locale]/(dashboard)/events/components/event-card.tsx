@@ -112,7 +112,12 @@ export const EventCard: React.FC<EventCardProps> = ({
         <Stack spacing={0.75} sx={{ mb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOn color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {location}
             </Typography>
             <Flag region={region} size={18} />
@@ -120,25 +125,37 @@ export const EventCard: React.FC<EventCardProps> = ({
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <CalendarMonth color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {dayjs(date).format('DD/MM/YYYY')}
             </Typography>
           </Box>
 
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Group color="action" fontSize="small" />
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {teamCount} {t('teams')}
             </Typography>
           </Box>
         </Stack>
 
         {divisions.length > 1 && (
-          <Box sx={{ mb: 1 }}>
+          <Box sx={{ mb: 2 }}>
             <Typography
-              variant="caption"
-              color="text.secondary"
-              sx={{ mb: 0.5, display: 'block', fontWeight: 500 }}
+              variant="subtitle2"
+              sx={{
+                color: 'text.secondary',
+                mb: 1
+              }}
             >
               {t('divisions')}:
             </Typography>
@@ -175,7 +192,6 @@ export const EventCard: React.FC<EventCardProps> = ({
           />
         </Box>
       </CardContent>
-
       {isAssigned && (
         <CardActions sx={{ justifyContent: 'flex-end', pt: 0, pb: 1, px: 2 }}>
           <Tooltip title={t('edit')}>

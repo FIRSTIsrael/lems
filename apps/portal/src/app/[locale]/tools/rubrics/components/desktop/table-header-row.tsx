@@ -38,7 +38,12 @@ export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
             }
           }}
         >
-          <Typography fontSize="1.4em" fontWeight={700}>
+          <Typography
+            sx={{
+              fontSize: '1.4em',
+              fontWeight: 700
+            }}
+          >
             {getColumnTitle(column)}
           </Typography>
         </TableCell>

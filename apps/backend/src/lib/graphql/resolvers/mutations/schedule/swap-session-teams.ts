@@ -1,6 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -49,7 +48,6 @@ async function authorizeTournamentManagerAccess(
  * 2. Both sessions exist in the division
  * 3. Sessions are different
  * 4. Both sessions are in not-started status
- * 5. Neither session is currently called/active
  */
 export const swapSessionTeamsResolver: GraphQLFieldResolver<
   unknown,
@@ -92,31 +90,10 @@ export const swapSessionTeamsResolver: GraphQLFieldResolver<
     }
 
     // Check 3: Both sessions must be in not-started status
-    const sessionStates = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .find({ sessionId: { $in: [sessionId1, sessionId2] } })
-      .toArray();
-
-    const session1State = sessionStates.find(s => s.sessionId === sessionId1);
-    const session2State = sessionStates.find(s => s.sessionId === sessionId2);
-
-    if (
-      !session1State ||
-      !session2State ||
-      session1State.status !== 'not-started' ||
-      session2State.status !== 'not-started'
-    ) {
+    if (session1.status !== 'not-started' || session2.status !== 'not-started') {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
         'Both sessions must be in not-started status to swap teams'
-      );
-    }
-
-    // Check 4: Neither session should be currently called
-    if (session1State.called || session2State.called) {
-      throw new MutationError(
-        MutationErrorCode.CONFLICT,
-        'Cannot swap teams in sessions that have been called'
       );
     }
 

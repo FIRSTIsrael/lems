@@ -8,6 +8,7 @@ export const AdminEventResponseSchema = z.object({
   endDate: z.coerce.date(),
   location: z.string(),
   region: z.string(),
+  timezone: z.string(),
   coordinates: z.string().nullable(),
   seasonId: z.string()
 });
@@ -33,7 +34,8 @@ export const AdminEventSettingsResponseSchema = z.object({
   official: z.boolean(),
   completed: z.boolean(),
   published: z.boolean(),
-  advancementPercent: z.number().min(0).max(100)
+  advancementPercent: z.number().min(0).max(100),
+  openRubricsDuringSession: z.boolean()
 });
 
 export type EventSettings = z.infer<typeof AdminEventSettingsResponseSchema>;

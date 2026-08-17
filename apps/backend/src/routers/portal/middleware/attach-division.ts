@@ -10,8 +10,7 @@ export const attachDivision = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const divisionId = req.params.divisionId;
-
-      if (!divisionId) {
+      if (!divisionId || typeof divisionId !== 'string') {
         res.status(400).json({ error: 'DIVISION_ID_REQUIRED' });
         return;
       }
@@ -25,7 +24,7 @@ export const attachDivision = () => {
 
       const eventSettings = await database.events.byId(division.event_id).getSettings();
 
-      if (!eventSettings.visible) {
+      if (!eventSettings?.visible) {
         res.status(404).json({ error: 'DIVISION_NOT_FOUND' });
         return;
       }
