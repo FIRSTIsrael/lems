@@ -41,12 +41,14 @@ export const TimeZonePicker: React.FC<TimeZonePickerProps<boolean>> = ({
           label={label}
           size={size}
           slotProps={{
+            ...params.slotProps,
+
             input: {
-              ...params.InputProps,
+              ...params.slotProps.input,
               startAdornment: (
                 <>
                   <Public sx={{ mr: 1, color: 'action.active' }} />
-                  {params.InputProps.startAdornment}
+                  {params.slotProps.input.startAdornment}
                 </>
               )
             }

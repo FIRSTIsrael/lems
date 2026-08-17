@@ -32,8 +32,12 @@ router.post('/login', loginRateLimiter, async (req: Request, res: Response, next
   const { captchaToken, ...loginDetails }: LoginRequest = req.body;
 
   if (process.env.RECAPTCHA === 'true') {
+    if (!captchaToken) {
+      res.status(400).json({ error: 'CAPTCHA_REQUIRED' });
+      return;
+    }
     const captcha: RecaptchaResponse = await getRecaptchaResponse(captchaToken);
-    if (!captcha.success || captcha['error-codes']?.length > 0) {
+    if (!captcha.success || (captcha['error-codes']?.length ?? 0) > 0) {
       logger.warn(
         {
           component: 'auth',

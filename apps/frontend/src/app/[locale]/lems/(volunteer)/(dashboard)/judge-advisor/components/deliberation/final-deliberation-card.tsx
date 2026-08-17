@@ -79,8 +79,12 @@ export function FinalDeliberationCard() {
             >
               <Typography
                 variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
+                sx={{
+                  color: 'text.secondary',
+                  display: 'block',
+                  mb: 0.75,
+                  fontWeight: 500
+                }}
               >
                 {t('stage')}
               </Typography>
@@ -104,8 +108,12 @@ export function FinalDeliberationCard() {
             >
               <Typography
                 variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
+                sx={{
+                  color: 'text.secondary',
+                  display: 'block',
+                  mb: 0.75,
+                  fontWeight: 500
+                }}
               >
                 {t('status')}
               </Typography>
@@ -129,8 +137,12 @@ export function FinalDeliberationCard() {
             >
               <Typography
                 variant="caption"
-                color="text.secondary"
-                sx={{ display: 'block', mb: 0.75, fontWeight: 500 }}
+                sx={{
+                  color: 'text.secondary',
+                  display: 'block',
+                  mb: 0.75,
+                  fontWeight: 500
+                }}
               >
                 {t('start-time')}
               </Typography>

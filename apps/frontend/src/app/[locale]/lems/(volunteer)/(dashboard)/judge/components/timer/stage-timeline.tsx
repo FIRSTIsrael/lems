@@ -46,9 +46,9 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
             >
               <Stack
                 direction="column"
-                justifyContent="space-between"
-                p={2}
                 sx={{
+                  justifyContent: 'space-between',
+                  p: 2,
                   borderLeft: `4px solid ${color}`,
                   backgroundColor: isActive ? `${color}12` : '#fafafa',
                   borderRadius: 1,
@@ -56,8 +56,20 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
                   position: 'relative'
                 }}
               >
-                <Stack direction="row" alignItems="center" justifyContent="space-between">
-                  <Stack spacing={0.5} flex={1} mr={1}>
+                <Stack
+                  direction="row"
+                  sx={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <Stack
+                    spacing={0.5}
+                    sx={{
+                      flex: 1,
+                      mr: 1
+                    }}
+                  >
                     <Typography
                       variant="body1"
                       sx={{
@@ -79,7 +91,12 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
                       {t('timer.minutes', { count: stage.duration / 60 })}
                     </Typography>
                   </Stack>
-                  <Stack spacing={0.5} alignItems="flex-end">
+                  <Stack
+                    spacing={0.5}
+                    sx={{
+                      alignItems: 'flex-end'
+                    }}
+                  >
                     <Typography
                       sx={{
                         fontSize: '1rem',

@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
@@ -11,6 +12,7 @@ import { useTeamAtEvent } from '../team-at-event-context';
 export const AwardsSection: React.FC = () => {
   const { event, team } = useTeamAtEvent();
   const { getName } = useAwardTranslations();
+  const t = useTranslations('pages.team-in-event');
 
   const { data: awards, isLoading } = useRealtimeData<Award[] | null>(
     `/portal/events/${event.slug}/teams/${team.slug}/awards`,
@@ -65,7 +67,7 @@ export const AwardsSection: React.FC = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              gap: 1,
+              gap: 0.5,
               p: 2,
               bgcolor: 'grey.50',
               borderRadius: 2,
@@ -74,6 +76,11 @@ export const AwardsSection: React.FC = () => {
             }}
           >
             {award.showPlaces && <EmojiEvents sx={{ color: trophyColor, fontSize: '1.5rem' }} />}
+            {!award.showPlaces && (
+              <Typography variant="body1" sx={{ fontWeight: 600 }}>
+                {t('performance.award')}
+              </Typography>
+            )}
             <Typography variant="body1" sx={{ fontWeight: 600 }}>
               {getName(award.name)}
             </Typography>

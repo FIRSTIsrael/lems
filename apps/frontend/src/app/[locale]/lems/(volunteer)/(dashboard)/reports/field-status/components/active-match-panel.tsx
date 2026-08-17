@@ -3,11 +3,13 @@
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
-import PlayCircleFilledIcon from '@mui/icons-material/PlayCircleFilled';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import {
+  PlayCircleFilled,
+  HelpOutlined,
+  HourglassEmpty,
+  PersonPin,
+  CheckCircle
+} from '@mui/icons-material';
 import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
 
@@ -79,15 +81,15 @@ function getStatusIcon(status: TeamReadinessStatus) {
 
   switch (status) {
     case 'ready':
-      return <CheckCircleIcon {...iconProps} color="success" />;
+      return <CheckCircle {...iconProps} color="success" />;
     case 'present':
-      return <PersonPinIcon {...iconProps} color="warning" />;
+      return <PersonPin {...iconProps} color="warning" />;
     case 'queued':
-      return <HourglassEmptyIcon {...iconProps} color="info" />;
+      return <HourglassEmpty {...iconProps} color="info" />;
     case 'no-show':
       return <BlockIcon {...iconProps} color="error" />;
     case 'missing':
-      return <HelpOutlineIcon {...iconProps} color="disabled" />;
+      return <HelpOutlined {...iconProps} color="disabled" />;
     default:
       return null;
   }
@@ -100,15 +102,27 @@ function getStatusIcon(status: TeamReadinessStatus) {
 export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   const t = useTranslations('pages.reports.field-status');
   const { getStage } = useMatchTranslations();
+  const iconProps = { sx: { fontSize: '1.5rem' } };
 
   if (!match) {
     return (
       <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
         <Stack spacing={2} sx={{ flex: 1 }}>
-          <Typography variant="h5" fontWeight={600}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600
+            }}
+          >
             {t('active-match.title')}
           </Typography>
-          <Typography color="text.secondary">{t('active-match.no-match')}</Typography>
+          <Typography
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
+            {t('active-match.no-match')}
+          </Typography>
         </Stack>
       </Paper>
     );
@@ -136,31 +150,62 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={2} sx={{ flex: 1 }}>
-        <Stack direction="row" spacing={2} alignItems="center" flexWrap="wrap">
-          <Typography variant="h5" fontWeight={700} sx={{ fontSize: '1.35rem' }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              fontSize: '1.35rem'
+            }}
+          >
             {getStage(match.stage)} #{match.number}
           </Typography>
           <Chip
             label={getStatusText()}
             color={getStatusColor()}
-            icon={match.status === 'in-progress' ? <PlayCircleFilledIcon /> : <CheckCircleIcon />}
+            icon={
+              match.status === 'in-progress' ? (
+                <PlayCircleFilled {...iconProps} />
+              ) : (
+                <CheckCircle {...iconProps} />
+              )
+            }
           />
         </Stack>
 
         {match.startTime && (
-          <Stack direction="row" spacing={3} flexWrap="wrap">
+          <Stack
+            direction="row"
+            spacing={3}
+            sx={{
+              flexWrap: 'wrap'
+            }}
+          >
             <Typography
               variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+              sx={{
+                color: 'text.secondary',
+                fontSize: '1.05rem',
+                fontWeight: 700
+              }}
             >
               {t('active-match.started-at')}: {dayjs(match.startTime).format('HH:mm:ss')}
             </Typography>
             {match.scheduledTime && (
               <Typography
                 variant="body2"
-                color="text.secondary"
-                sx={{ fontSize: '1.05rem', fontWeight: 700 }}
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '1.05rem',
+                  fontWeight: 700
+                }}
               >
                 {t('active-match.scheduled-at')}: {dayjs(match.scheduledTime).format('HH:mm:ss')}
               </Typography>
@@ -180,9 +225,9 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
         <Box>
           <Typography
             variant="subtitle2"
-            color="text.secondary"
             gutterBottom
             sx={{
+              color: 'text.secondary',
               fontSize: '0.95rem',
               fontWeight: 700,
               textTransform: 'uppercase',
@@ -210,8 +255,8 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                     key={participant.id}
                     direction="row"
                     spacing={0.5}
-                    alignItems="center"
                     sx={{
+                      alignItems: 'center',
                       py: 1,
                       px: 2,
                       borderRadius: 1,
@@ -221,8 +266,11 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
                   >
                     <Typography
                       variant="body2"
-                      fontWeight={700}
-                      sx={{ minWidth: 80, fontSize: '1.05rem' }}
+                      sx={{
+                        fontWeight: 700,
+                        minWidth: 80,
+                        fontSize: '1.05rem'
+                      }}
                     >
                       {participant.table.name}:
                     </Typography>

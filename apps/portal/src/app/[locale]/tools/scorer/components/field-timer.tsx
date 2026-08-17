@@ -1,7 +1,16 @@
 'use client';
 
 import { useState, useContext, useRef, useEffect } from 'react';
-import { Typography, Stack, Paper, IconButton, Slide, Fab, useTheme, useMediaQuery } from '@mui/material';
+import {
+  Typography,
+  Stack,
+  Paper,
+  IconButton,
+  Slide,
+  Fab,
+  useTheme,
+  useMediaQuery
+} from '@mui/material';
 import {
   Timer as TimerIcon,
   PlayArrow as PlayIcon,
@@ -73,9 +82,9 @@ export const FieldTimer = () => {
     if ((e.target as HTMLElement).closest('button')) {
       return;
     }
-    
+
     if (!paperRef.current) return;
-    
+
     const rect = paperRef.current.getBoundingClientRect();
     setDragState({
       isDragging: true,
@@ -138,7 +147,6 @@ export const FieldTimer = () => {
           <TimerIcon />
         </Fab>
       )}
-
       <Slide direction="up" in={isOpen} unmountOnExit>
         <Paper
           ref={paperRef}
@@ -191,9 +199,13 @@ export const FieldTimer = () => {
           </IconButton>
 
           <Stack
-            sx={{ px: 3, py: 2, textAlign: 'center' }}
-            alignItems="center"
-            justifyContent="center"
+            sx={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              px: 3,
+              py: 2,
+              textAlign: 'center'
+            }}
           >
             <Typography
               variant="h2"
@@ -209,7 +221,14 @@ export const FieldTimer = () => {
               {formatTime(timeRemaining)}
             </Typography>
 
-            <Stack direction="row" spacing={1} justifyContent="center" sx={{ p: 1.5 }}>
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                justifyContent: 'center',
+                p: 1.5
+              }}
+            >
               <IconButton
                 onClick={handlePlayPause}
                 disabled={isFinished || justStarted}

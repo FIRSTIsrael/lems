@@ -1633,7 +1633,7 @@
   "browse-events": {
     "page-title": "Browse Events",
     "title": "All Events",
-    "description": "Discover all available FIRST LEGO League events",
+    "description": "Discover all available <i>FIRST</i>  LEGO League events",
     "loading": "Loading events...",
     "no-events": "No events found",
     "no-events-description": "Try again later or contact support for more information",

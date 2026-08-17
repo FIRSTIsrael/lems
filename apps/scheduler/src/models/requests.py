@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Optional
 from datetime import datetime
 from pydantic import BaseModel
 
@@ -33,10 +33,10 @@ class SchedulerRequest(BaseModel):
 
 class CreateScheduleResponse(BaseModel):
     ok: bool = True
-    error: str = None
+    error: Optional[str] = None
 
 
 class ValidateScheduleResponse(BaseModel):
     is_valid: bool
-    data: list[ValidatorData] = None
-    error: str = None
+    data: Optional[list[ValidatorData]] = None
+    error: Optional[str] = None

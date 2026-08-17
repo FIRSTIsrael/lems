@@ -2,6 +2,7 @@
 
 #.env files
 **/.env.local
+next-env.d.ts
 
 # DataGrip queries
 queries
@@ -65,3 +66,7 @@ logs/
 .cursor/rules/nx-rules.mdc
 /.cursor/
 /WARP.md
+
+.nx/polygraph
+.nx/self-healing
+.nx/migrate-runs
