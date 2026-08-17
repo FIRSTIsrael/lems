@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSession, JudgingSessionState } from '@lems/database';
+import { JudgingSession } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -47,19 +47,11 @@ export const abortJudgingSessionResolver: GraphQLFieldResolver<
       // The dequeue failure should be monitored separately
     }
 
-    const result = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOneAndUpdate(
-        { sessionId },
-        {
-          $set: {
-            status: 'not-started',
-            startTime: null,
-            startDelta: null
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.judgingSessions.byId(sessionId).update({
+      status: 'not-started',
+      start_time: null,
+      start_delta: null
+    });
 
     if (!result) {
       throw new MutationError(
@@ -94,10 +86,7 @@ const checkSessionCanBeAborted = async (
   session: JudgingSession
 ): Promise<void> => {
   // Check 1: Session must be in not-started status
-  const sessionState = await db.raw.mongo
-    .collection<JudgingSessionState>('judging_session_states')
-    .findOne({ sessionId: session.id });
-  if (!sessionState || sessionState.status !== 'in-progress') {
+  if (!session || session.status !== 'in-progress') {
     throw new MutationError(MutationErrorCode.CONFLICT, `Session is not in in-progress status`);
   }
 

@@ -16,7 +16,8 @@ export async function up(db: Kysely<any>): Promise<void> {
     'motivate',
     'judges-award',
     'impact',
-    'excellence-in-engineering'
+    'excellence-in-engineering',
+    'advancement'
   ];
 
   // Automatically hide places for existing optional or personal awards

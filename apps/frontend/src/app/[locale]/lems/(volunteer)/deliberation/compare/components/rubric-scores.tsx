@@ -160,7 +160,13 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
 
   if (!hasAnyFields) {
     return (
-      <Typography variant="body2" color="text.secondary" textAlign="center">
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+          textAlign: 'center'
+        }}
+      >
         {t('no-rubric-data')}
       </Typography>
     );
@@ -168,10 +174,15 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
 
   return (
     <Stack spacing={2}>
-      <Typography variant="subtitle1" fontWeight={600} sx={{ fontSize: '1.1rem' }}>
+      <Typography
+        variant="subtitle1"
+        sx={{
+          fontWeight: 600,
+          fontSize: '1.1rem'
+        }}
+      >
         {t('rubric-scores')}
       </Typography>
-
       {category ? (
         <Paper
           sx={{

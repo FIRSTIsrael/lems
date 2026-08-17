@@ -11,6 +11,7 @@ export interface EnrichedTeam {
   arrived: boolean;
   disqualified: boolean;
   slug: string;
+  profileDocumentUrl?: string | null;
   room: Room | null;
 
   scores: MetricPerCategory;

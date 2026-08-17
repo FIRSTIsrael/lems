@@ -10,8 +10,7 @@ export const attachTeam = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
     try {
       const teamSlug = req.params.teamSlug;
-
-      if (!teamSlug) {
+      if (!teamSlug || typeof teamSlug !== 'string') {
         res.status(400).json({ error: 'TEAM_SLUG_REQUIRED' });
         return;
       }

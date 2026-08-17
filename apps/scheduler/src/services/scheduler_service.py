@@ -110,7 +110,11 @@ class SchedulerService:
         return matches
 
     def _use_constraints(self):
-        """Use the constraints from the validator to assign teams to matches."""
+        """Use the constraints from the validator to assign teams to matches.
+
+        Available matches are processed in reverse chronological order to maximize
+        the gap between team activities (judging sessions and robot matches).
+        """
 
         for entry in self.validator_data:
             overlapping_rounds = entry["overlapping_rounds"]
@@ -125,7 +129,10 @@ class SchedulerService:
             )
 
             for round in overlapping_rounds:
-                available_matches = round["available_matches"]
+                # Process matches in reverse order (last matches first) so that
+                # teams are assigned to later matches whenever possible, resulting
+                # in larger wait times between judging and robot game activities.
+                available_matches = list(reversed(round["available_matches"]))
                 round_teams = session_teams.copy()
 
                 for match in available_matches:

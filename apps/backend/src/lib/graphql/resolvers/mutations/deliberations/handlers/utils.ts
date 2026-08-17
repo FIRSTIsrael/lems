@@ -68,7 +68,7 @@ function calculateRubricScores(
   teamId: string,
   teamRubrics: Array<{
     teamId: string;
-    data?: { fields?: Record<string, { value?: number }> };
+    data?: { fields?: Record<string, { value?: number | null }> };
     category: JudgingCategory;
   }>
 ): Record<JudgingCategory, number> {

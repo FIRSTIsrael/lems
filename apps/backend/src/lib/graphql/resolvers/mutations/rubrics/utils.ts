@@ -76,9 +76,19 @@ export async function authorizeRubricAccess(
     );
   }
 
-  const sessionState = await db.judgingSessions.byId(session.id).state().get();
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) {
+    throw new MutationError(MutationErrorCode.FORBIDDEN, 'Division not found');
+  }
 
-  if (sessionState?.status !== 'completed') {
+  const eventSettings = await db.events.byId(division.event_id).getSettings();
+  const canOpenDuringSession = eventSettings?.open_rubrics_during_session === true;
+
+  const isSessionCompleted = session.status === 'completed';
+  const isSessionInProgress = session.status === 'in-progress';
+  const canAccess = isSessionCompleted || (canOpenDuringSession && isSessionInProgress);
+
+  if (!canAccess) {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
       'Cannot access rubric before the team session is completed'
@@ -154,8 +164,7 @@ export function determineRubricCompletionStatus(
   }
 
   const fields = rubricData.fields as
-    | Record<string, { value: number | null; notes?: string }>
-    | undefined;
+    Record<string, { value: number | null; notes?: string }> | undefined;
   const feedback = rubricData.feedback as { greatJob?: string; thinkAbout?: string } | undefined;
 
   let hasAnyValue = false;
@@ -213,8 +222,7 @@ export function isRubricComplete(
   }
 
   const fields = rubricData.fields as
-    | Record<string, { value: number | null; notes?: string }>
-    | undefined;
+    Record<string, { value: number | null; notes?: string }> | undefined;
   const feedback = rubricData.feedback as { greatJob?: string; thinkAbout?: string } | undefined;
 
   // Criterion 1: All fields must have non-null values

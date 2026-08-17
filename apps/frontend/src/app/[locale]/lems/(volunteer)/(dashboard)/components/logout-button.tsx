@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { MenuItem, ListItemIcon, ListItemText, Button } from '@mui/material';
+import { ListItemButton, ListItemIcon, ListItemText, Button } from '@mui/material';
 import { Logout } from '@mui/icons-material';
 import { apiFetch } from '@lems/shared';
 import { useRouter } from '../../../../../../i18n/navigation';
@@ -55,11 +55,11 @@ export const LogoutButton: React.FC<LogoutButtonProps> = ({ variant = 'menu-item
   }
 
   return (
-    <MenuItem onClick={handleLogout} disabled={isLoading}>
+    <ListItemButton onClick={handleLogout} disabled={isLoading}>
       <ListItemIcon>
         <Logout fontSize="small" />
       </ListItemIcon>
       <ListItemText>{t('logout')}</ListItemText>
-    </MenuItem>
+    </ListItemButton>
   );
 };

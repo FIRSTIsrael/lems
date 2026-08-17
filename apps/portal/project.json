@@ -25,8 +25,7 @@
       "options": {
         "buildTarget": "portal:build",
         "port": 3000,
-        "dev": true,
-        "turbo": true
+        "dev": true
       },
       "configurations": {
         "development": {

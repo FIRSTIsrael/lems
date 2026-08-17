@@ -49,26 +49,12 @@ export const MessageDisplay = () => {
             color: '#000',
             textShadow: '0 2px 8px rgba(255, 255, 255, 0.5)',
             lineHeight: 1.2,
-            wordWrap: 'break-word',
-            animation: 'fadeInScale 0.8s ease-out'
+            wordWrap: 'break-word'
           }}
         >
           {message}
         </Typography>
       </Box>
-
-      <style>{`
-        @keyframes fadeInScale {
-          0% {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </Box>
   );
 };

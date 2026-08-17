@@ -81,6 +81,9 @@ type Judging {
 
   "Advancement percentage for teams in this division, null if advancement is disabled"
   advancementPercentage: Int
+
+  "Whether judges can open rubrics while sessions are in progress"
+  openRubricsDuringSession: Boolean!
 }
 
 extend type Division {

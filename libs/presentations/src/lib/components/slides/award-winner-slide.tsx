@@ -56,10 +56,10 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award }) => 
     <Slide>
       <Stack
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         spacing={3}
         sx={{
+          alignItems: 'center',
+          justifyContent: 'center',
           height: '100%',
           width: '100%',
           px: 4,

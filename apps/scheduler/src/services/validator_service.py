@@ -3,6 +3,8 @@ import logging
 from typing import Iterable
 from datetime import timedelta
 
+import pandas as pd
+
 from models.validator import (
     ValidatorData,
     ValidatorMatch,
@@ -278,6 +280,83 @@ class ValidatorService:
 
         return data
 
+    def _calculate_minimum_time_overlap(self, session: ValidatorSession) -> dict:
+        """Calculates the minimum time difference between a session and CONFLICTING (unavailable) matches.
+        Returns a dict with minimum time difference in seconds and the events involved."""
+
+        min_diff_seconds = float('inf')
+        conflicting_events = []
+
+        # Get all overlapping round indices
+        overlapping_indices = self._get_potential_round_overlaps(session)
+
+        for round_index in overlapping_indices:
+            round_matches = self.matches[round_index]
+            round_obj = self.matches[round_index][0] if round_matches else None
+            
+            if not round_obj:
+                continue
+                
+            # Determine stage and round number
+            stage = "practice" if round_index < self.config.practice_rounds else "ranking"
+            round_number = (
+                round_index + 1 if stage == "practice" 
+                else round_index + 1 - self.config.practice_rounds
+            )
+            
+            for match in round_matches:
+                # A match is NOT available if it overlaps with the session (considering padding)
+                is_available = (
+                    match["start_time"] >= (session["end_time"] + self.padding) or
+                    match["end_time"] <= (session["start_time"] - self.padding)
+                )
+                
+                if is_available:
+                    continue  # Skip available matches, we want the problematic ones
+                
+                # This match overlaps with the session. Calculate the conflict distance.
+                if match["end_time"] <= session["start_time"]:
+                    # Match ends before session starts: gap to reach padding requirement
+                    time_diff = (session["start_time"] - match["end_time"]).total_seconds()
+                elif match["start_time"] >= session["end_time"]:
+                    # Match starts after session ends: gap to reach padding requirement
+                    time_diff = (match["start_time"] - session["end_time"]).total_seconds()
+                else:
+                    # There's a real overlap: calculate the overlap duration (negative)
+                    overlap_start = max(match["start_time"], session["start_time"])
+                    overlap_end = min(match["end_time"], session["end_time"])
+                    time_diff = -(overlap_end - overlap_start).total_seconds()
+                
+                if abs(time_diff) < abs(min_diff_seconds):
+                    min_diff_seconds = time_diff
+                    conflicting_events = [
+                        {
+                            "session": session["number"],
+                            "session_time": f"{session['start_time']} - {session['end_time']}",
+                            "match": match["number"],
+                            "match_time": f"{match['start_time']} - {match['end_time']}",
+                            "stage": stage,
+                            "round": round_number,
+                        }
+                    ]
+                elif abs(time_diff) == abs(min_diff_seconds) and len(conflicting_events) < 3:
+                    # Add equally critical conflicts (limit to 3)
+                    conflicting_events.append(
+                        {
+                            "session": session["number"],
+                            "session_time": f"{session['start_time']} - {session['end_time']}",
+                            "match": match["number"],
+                            "match_time": f"{match['start_time']} - {match['end_time']}",
+                            "stage": stage,
+                            "round": round_number,
+                        }
+                    )
+
+        return {
+            "min_time_diff_seconds": min_diff_seconds,
+            "conflicting_events": conflicting_events,
+        }
+
     def validate(self):
         data = self._create_validator_data()
         self._cross_reference_match_slots(data)  # Modifies in place
@@ -288,6 +367,17 @@ class ValidatorService:
                     match["slots"] for match in overlapping_round["available_matches"]
                 )
                 if slots < entry["session"]["slots"]:
+                    # Calculate minimum time overlap for logging
+                    overlap_info = self._calculate_minimum_time_overlap(entry["session"])
+                    min_diff_minutes = overlap_info["min_time_diff_seconds"] / 60
+                    
+                    logger.error(
+                        f"Session {entry['session']['number']} validation failed: "
+                        f"requires {entry['session']['slots']} slots but only {slots} available. "
+                        f"Minimum time gap to conflicting matches: {min_diff_minutes:.1f} minutes. "
+                        f"Conflicting events: {overlap_info['conflicting_events']}"
+                    )
+                    
                     raise ValidatorError(
                         f"Session {entry['session']['number']} does not have enough matches to fill all slots",
                         data,

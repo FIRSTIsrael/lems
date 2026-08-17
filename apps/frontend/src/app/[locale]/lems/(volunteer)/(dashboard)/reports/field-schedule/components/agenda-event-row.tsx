@@ -31,9 +31,11 @@ export const AgendaEventRow: React.FC<AgendaEventRowProps> = ({ event, tableCoun
     >
       <TableCell colSpan={3} align="center">
         <Typography
-          fontFamily="monospace"
-          fontWeight={500}
-          fontSize={isMobile ? '0.75rem' : '1rem'}
+          sx={{
+            fontFamily: 'monospace',
+            fontWeight: 500,
+            fontSize: isMobile ? '0.75rem' : '1rem'
+          }}
         >
           {startTime.format('HH:mm')} - {endTime.format('HH:mm')}
         </Typography>
@@ -41,9 +43,9 @@ export const AgendaEventRow: React.FC<AgendaEventRowProps> = ({ event, tableCoun
       <TableCell colSpan={tableCount} align="center">
         <Typography
           component="div"
-          fontWeight={500}
-          fontSize={isMobile ? '0.75rem' : '1rem'}
           sx={{
+            fontWeight: 500,
+            fontSize: isMobile ? '0.75rem' : '1rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',

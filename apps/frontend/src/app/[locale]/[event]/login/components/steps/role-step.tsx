@@ -70,7 +70,14 @@ export function RoleStep() {
       >
         {t('steps.role')}
       </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
+      <Typography
+        variant="body2"
+        sx={{
+          color: 'text.secondary',
+          mb: 3,
+          lineHeight: 1.6
+        }}
+      >
         {t('instructions.role')}
       </Typography>
       <Autocomplete
@@ -85,12 +92,13 @@ export function RoleStep() {
             required
             disabled={isSubmitting}
             slotProps={{
+              ...params.slotProps,
               input: {
-                ...params.InputProps,
+                ...params.slotProps.input,
                 endAdornment: (
                   <>
                     {isLoadingVolunteerData ? <CircularProgress color="inherit" size={20} /> : null}
-                    {params.InputProps.endAdornment}
+                    {params.slotProps.input.endAdornment}
                   </>
                 )
               }

@@ -47,6 +47,7 @@ export const GET_TEAM_SESSION_QUERY: TypedDocumentNode<
       id
       judging {
         divisionId
+        openRubricsDuringSession
         sessions(teamIds: [$teamId]) {
           id
           number

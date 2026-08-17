@@ -16,12 +16,11 @@ export const currentStageResolver: GraphQLFieldResolver<
   Promise<string>
 > = async (field: FieldWithDivisionId) => {
   try {
-    const divisionState = await db.raw.mongo
-      .collection('division_states')
-      .findOne({ divisionId: field.divisionId });
+    const division = await db.divisions.byId(field.divisionId).get();
+    const divisionState = division?.state;
 
-    if (!divisionState || !divisionState.field?.currentStage) {
-      // Default to PRACTICE if no current stage is set
+    if (!divisionState) {
+      // Default to PRACTICE if the division state is not found
       return 'PRACTICE';
     }
 

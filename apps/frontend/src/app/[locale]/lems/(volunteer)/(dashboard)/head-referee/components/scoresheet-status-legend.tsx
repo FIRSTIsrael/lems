@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { IconButton, Popover, Box, Typography, Stack, Divider, useTheme } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { InfoOutlined } from '@mui/icons-material';
 import type { ScoresheetStatus } from '../graphql/types';
 import { getScoresheetStatusIcon } from './scoresheet-status-button';
 
@@ -50,9 +50,8 @@ export function ScoresheetStatusLegend() {
         }}
         aria-label={t('legend.aria-label')}
       >
-        <InfoOutlinedIcon fontSize="small" />
+        <InfoOutlined fontSize="small" />
       </IconButton>
-
       <Popover
         open={open}
         anchorEl={anchorEl}
@@ -121,8 +120,10 @@ export function ScoresheetStatusLegend() {
                 key={status}
                 direction="row"
                 spacing={1.5}
-                alignItems="flex-start"
-                sx={{ py: 0.5 }}
+                sx={{
+                  alignItems: 'flex-start',
+                  py: 0.5
+                }}
               >
                 <Box
                   sx={{

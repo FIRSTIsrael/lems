@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { JudgingSessionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -80,7 +79,7 @@ export const updateJudgingSessionResolver: GraphQLFieldResolver<
     }
 
     const now = new Date();
-    const updateData: Partial<JudgingSessionState> = {};
+    const updateData: { called?: Date | null; queued?: Date | null } = {};
 
     if (called !== undefined && called !== null) {
       updateData.called = called ? now : null;
@@ -90,10 +89,8 @@ export const updateJudgingSessionResolver: GraphQLFieldResolver<
       updateData.queued = queued ? now : null;
     }
 
-    // Update session state in MongoDB
-    const result = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOneAndUpdate({ sessionId }, { $set: updateData }, { returnDocument: 'after' });
+    // Update session state in Postgres
+    const result = await db.judgingSessions.byId(sessionId).update(updateData);
 
     if (!result) {
       throw new MutationError(

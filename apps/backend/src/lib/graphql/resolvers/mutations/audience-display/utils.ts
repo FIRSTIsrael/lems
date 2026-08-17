@@ -34,9 +34,8 @@ export const authorizeAudienceDisplayAccess = async (
   }
 
   // Check 4: Division must have division state
-  const divisionState = await db.raw.mongo
-    .collection<DivisionState>('division_states')
-    .findOne({ divisionId });
+  const division = await db.divisions.byId(divisionId).get();
+  const divisionState = division?.state;
 
   if (!divisionState) {
     throw new MutationError(

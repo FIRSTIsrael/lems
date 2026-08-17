@@ -81,10 +81,8 @@ export const updateMatchResolver: GraphQLFieldResolver<
       called: called ? now : null
     };
 
-    // Update match state in MongoDB
-    const result = await db.raw.mongo
-      .collection('robot_game_match_states')
-      .findOneAndUpdate({ matchId }, { $set: updateData }, { returnDocument: 'after' });
+    // Update match called status
+    const result = await db.robotGameMatches.byId(matchId).update(updateData);
 
     if (!result) {
       throw new MutationError(
