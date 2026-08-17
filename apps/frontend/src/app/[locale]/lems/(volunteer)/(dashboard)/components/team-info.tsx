@@ -43,8 +43,8 @@ export const TeamInfo: React.FC<TeamInfoProps> = ({ team, size, textAlign = 'lef
         </Typography>
         <Typography
           variant={secondaryTypographyVariantMap[size] as 'caption' | 'body2' | 'h6'}
-          color="text.secondary"
           sx={{
+            color: 'text.secondary',
             overflow: 'hidden',
             display: 'flex',
             gap: 0.5,

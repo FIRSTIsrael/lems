@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, alpha, IconButton, Tooltip, Box } from '@mui/material';
-import { OpenInNew, Add, CheckCircleOutline, Description } from '@mui/icons-material';
+import { OpenInNew, Add, CheckCircleOutlined, Description } from '@mui/icons-material';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/database';
 import { useCategoryDeliberation } from '../deliberation-context';
@@ -53,7 +53,7 @@ export function DeliberationTable() {
                 height: '100%'
               }}
             >
-              <CheckCircleOutline fontSize="small" color="success" />
+              <CheckCircleOutlined fontSize="small" color="success" />
             </Box>
           ) : (
             <Tooltip title={t('add-to-picklist')}>
@@ -129,6 +129,7 @@ export function DeliberationTable() {
             headerAlign: 'center' as const,
             align: 'center' as const,
             valueGetter: (value, row) => row.rubricFields[label] ?? 0,
+
             renderCell: params => {
               const value = params.row.rubricFields[label];
               return value !== null ? value : '-';
@@ -154,6 +155,7 @@ export function DeliberationTable() {
                   headerAlign: 'center' as const,
                   align: 'center' as const,
                   valueGetter: (value, row) => row.gpScores[gpKey] ?? 3,
+
                   renderCell: params => {
                     const value = params.row.gpScores[gpKey];
                     return value ?? 3; // Default GP score is 3 if not set

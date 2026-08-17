@@ -6,6 +6,7 @@ export interface DivisionGraphQLForEvent {
   id: string;
   name: string;
   color: string;
+  futureEdition: boolean;
 }
 
 /**
@@ -20,7 +21,7 @@ export const eventDivisionsResolver: GraphQLFieldResolver<
 > = async (event: EventGraphQL) => {
   try {
     const divisions = await db.events.byId(event.id).getDivisions();
-    return divisions.map(d => ({ id: d.id, name: d.name, color: d.color }));
+    return divisions.map(d => ({ id: d.id, name: d.name, color: d.color, futureEdition: d.future_edition }));
   } catch (error) {
     console.error('Error fetching divisions for event:', event.id, error);
     throw error;

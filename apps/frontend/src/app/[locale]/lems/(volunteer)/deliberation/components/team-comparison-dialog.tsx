@@ -64,10 +64,12 @@ export function TeamComparisonDialog({
       onClose={onClose}
       maxWidth="lg"
       fullWidth
-      PaperProps={{
-        sx: {
-          height: '90vh',
-          maxHeight: '90vh'
+      slotProps={{
+        paper: {
+          sx: {
+            height: '90vh',
+            maxHeight: '90vh'
+          }
         }
       }}
     >
@@ -93,7 +95,6 @@ export function TeamComparisonDialog({
           </IconButton>
         </Box>
       </DialogTitle>
-
       <DialogContent sx={{ p: 3, overflow: 'auto' }}>
         {loading && (
           <Box

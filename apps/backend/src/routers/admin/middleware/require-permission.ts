@@ -1,7 +1,7 @@
-import { NextFunction, Response } from 'express';
 import { PermissionType } from '@lems/database';
 import { AdminRequest } from '../../../types/express';
 import db from '../../../lib/database';
+import { asMiddleware } from '../../../types/express-handlers';
 
 /**
  * Middleware factory that creates a middleware to check if the authenticated admin
@@ -11,7 +11,7 @@ import db from '../../../lib/database';
  * @returns Express middleware function
  */
 export const requirePermission = (permission: PermissionType) => {
-  return async (req: AdminRequest, res: Response, next: NextFunction) => {
+  return asMiddleware<AdminRequest>(async (req, res, next) => {
     try {
       const hasPermission = await db.admins.byId(req.userId).hasPermission(permission);
 
@@ -25,5 +25,5 @@ export const requirePermission = (permission: PermissionType) => {
       console.error('Error checking permission:', error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  };
+  });
 };

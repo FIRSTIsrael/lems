@@ -55,6 +55,13 @@ export const startDeliberationResolver: GraphQLFieldResolver<
     );
   }
 
+  if (!updated.start_time) {
+    throw new MutationError(
+      MutationErrorCode.INTERNAL_ERROR,
+      `Deliberation start time missing for division ${divisionId}`
+    );
+  }
+
   const pubSub = getRedisPubSub();
   await Promise.all([
     pubSub.publish(divisionId, RedisEventTypes.DELIBERATION_UPDATED, {

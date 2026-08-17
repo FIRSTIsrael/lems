@@ -77,30 +77,18 @@ export const ScoreboardDisplay = () => {
         }}
       >
         <Stack
-          maxWidth="80vw"
           spacing={2}
           sx={{
-            animation: 'fadeIn 0.6s ease-out'
+            maxWidth: '80vw',
+            height: '90%',
+            width: '100%'
           }}
-          height="90%"
-          width="100%"
         >
           {(scoreboardSettings?.showActiveMatch as boolean) && <ActiveMatch />}
           {(scoreboardSettings?.showPreviousMatch as boolean) && <PreviousMatch />}
           <ScoresTable />
           {(scoreboardSettings?.showSponsorsRow as boolean) && <SponsorsRow />}
         </Stack>
-
-        <style>{`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-      `}</style>
       </Box>
     </ScoreboardProvider>
   );

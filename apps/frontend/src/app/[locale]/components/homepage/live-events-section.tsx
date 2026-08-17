@@ -53,7 +53,14 @@ export const LiveEventsSection: React.FC = () => {
   if (liveEvents.length === 0) {
     return (
       <Box sx={{ mb: 6 }}>
-        <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            alignItems: 'center',
+            mb: 3
+          }}
+        >
           <LiveIcon
             sx={{
               color: 'error.main',
@@ -67,18 +74,23 @@ export const LiveEventsSection: React.FC = () => {
           />
           <Typography
             variant="h4"
-            fontWeight="700"
             sx={{
+              fontWeight: '700',
               fontSize: { xs: '1.75rem', md: '2.125rem' }
             }}
           >
             {t('live-events-title')}
           </Typography>
         </Stack>
-
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <CalendarIcon sx={{ fontSize: 64, color: 'text.secondary', opacity: 0.5, mb: 2 }} />
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+          <Typography
+            variant="h6"
+            gutterBottom
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('no-live-events')}
           </Typography>
           <Button variant="contained" onClick={() => router.push('/events')} sx={{ mt: 3 }}>
@@ -91,7 +103,14 @@ export const LiveEventsSection: React.FC = () => {
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 3 }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        sx={{
+          alignItems: 'center',
+          mb: 3
+        }}
+      >
         <LiveIcon
           sx={{
             color: 'error.main',
@@ -105,25 +124,29 @@ export const LiveEventsSection: React.FC = () => {
         />
         <Typography
           variant="h4"
-          fontWeight="700"
           sx={{
+            fontWeight: '700',
             fontSize: { xs: '1.75rem', md: '2.125rem' }
           }}
         >
           {t('live-events-title')}
         </Typography>
       </Stack>
-
-      <Typography variant="body1" color="text.secondary" sx={{ mb: 3, fontSize: '1.125rem' }}>
+      <Typography
+        variant="body1"
+        sx={{
+          color: 'text.secondary',
+          mb: 3,
+          fontSize: '1.125rem'
+        }}
+      >
         {t('live-events-subtitle')}
       </Typography>
-
       <Stack spacing={3}>
         {liveEvents.map(event => (
           <EventCard key={event.id} event={event} variant="live" />
         ))}
       </Stack>
-
       <Box sx={{ mt: 4, textAlign: 'center' }}>
         <Button variant="outlined" onClick={() => router.push('/events')}>
           {t('view-all')}

@@ -36,16 +36,12 @@ export function TeamInfo({ team }: TeamInfoProps) {
   }, [team.rubrics]);
 
   return (
-    <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1, minWidth: 0, maxWidth: '100%' }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+    <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography
           variant="h6"
-          fontWeight={600}
           sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-            minWidth: 0
+            fontWeight: 600
           }}
         >
           {team.name} - #{team.number}
@@ -60,11 +56,8 @@ export function TeamInfo({ team }: TeamInfoProps) {
       </Box>
       <Typography
         variant="h6"
-        color="text.secondary"
         sx={{
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          whiteSpace: 'nowrap'
+          color: 'text.secondary'
         }}
       >
         {team.affiliation}
@@ -72,11 +65,8 @@ export function TeamInfo({ team }: TeamInfoProps) {
       {team.judgingSession?.room && (
         <Typography
           variant="h6"
-          color="text.secondary"
           sx={{
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
+            color: 'text.secondary'
           }}
         >
           {t('judging-room')}: {team.judgingSession.room.name}

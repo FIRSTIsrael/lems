@@ -3,6 +3,7 @@ import db from '../../../../lib/database';
 import { AdminDivisionRequest, AdminEventRequest } from '../../../../types/express';
 import { attachDivision } from '../../middleware/attach-division';
 import { requirePermission } from '../../middleware/require-permission';
+import { asHandler } from '../../../../types/express-handlers';
 import { makeAdminDivisionResponse } from './util';
 import divisionRoomsRouter from './rooms';
 import divisionTablesRouter from './tables';
@@ -13,23 +14,35 @@ import divisionAwardsRouter from './awards';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminEventRequest, res) => {
-  const divisions = await db.divisions.byEventId(req.eventId).getAll();
-  res.json(divisions.map(division => makeAdminDivisionResponse(division)));
-});
+router.get(
+  '/',
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const divisions = await db.divisions.byEventId(req.eventId).getAll();
+    res.json(divisions.map(division => makeAdminDivisionResponse(division)));
+  })
+);
 
-router.post('/', requirePermission('MANAGE_EVENT_DETAILS'), async (req: AdminEventRequest, res) => {
-  const { name, color } = req.body;
+router.post(
+  '/',
+  requirePermission('MANAGE_EVENT_DETAILS'),
+  asHandler<AdminEventRequest>(async (req, res) => {
+    const { name, color, futureEdition } = req.body;
 
-  if (!name || !color) {
-    res.status(400).json({ error: 'Name and color are required' });
-    return;
-  }
+    if (!name || !color) {
+      res.status(400).json({ error: 'Name and color are required' });
+      return;
+    }
 
-  const division = await db.divisions.create({ name, color, event_id: req.eventId });
+    const division = await db.divisions.create({
+      name,
+      color,
+      event_id: req.eventId,
+      future_edition: futureEdition ?? false
+    });
 
-  res.status(201).json(makeAdminDivisionResponse(division));
-});
+    res.status(201).json(makeAdminDivisionResponse(division));
+  })
+);
 
 router.use('/:divisionId', attachDivision());
 
@@ -43,8 +56,8 @@ router.use('/:divisionId/schedule', divisionScheduleRouter);
 router.put(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
-    const { name, color } = req.body;
+  asHandler<AdminDivisionRequest>(async (req, res) => {
+    const { name, color } = req.body; // Only these properties can be updated
 
     // Name can be empty, but has to exist
     if (name === null || name === undefined || !color) {
@@ -55,13 +68,13 @@ router.put(
     await db.divisions.byId(req.divisionId).update({ name, color });
 
     res.status(200).end();
-  }
+  })
 );
 
 router.delete(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     const deleted = await db.divisions.byId(req.divisionId).delete();
 
     if (!deleted) {
@@ -70,7 +83,7 @@ router.delete(
     }
 
     res.status(204).end();
-  }
+  })
 );
 
 export default router;

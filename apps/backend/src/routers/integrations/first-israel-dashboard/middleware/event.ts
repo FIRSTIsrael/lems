@@ -7,6 +7,10 @@ import { FirstIsraelDashboardEventRequest } from '../../../../types/express';
 
 const firstIsraelDashboardSecret = process.env.FIRST_ISRAEL_DASHBOARD_SECRET;
 
+if (!firstIsraelDashboardSecret) {
+  throw new Error('FIRST_ISRAEL_DASHBOARD_SECRET environment variable is required');
+}
+
 export const firstIsraelDashboardEventMiddleware = async (
   req: Request,
   res: Response,
@@ -17,7 +21,7 @@ export const firstIsraelDashboardEventMiddleware = async (
     const tokenData = jwt.verify(
       token,
       firstIsraelDashboardSecret
-    ) as FirstIsraelDashboardTokenDataWithEvent;
+    ) as unknown as FirstIsraelDashboardTokenDataWithEvent;
 
     const eventIntegration = await db.integrations.bySettings({ sfid: tokenData.eventSfid }).get();
     if (!eventIntegration) throw new Error('Event integration not found');

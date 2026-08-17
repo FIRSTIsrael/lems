@@ -19,7 +19,12 @@ export function GpScores({ team }: GpScoresProps) {
 
   return (
     <Stack spacing={1}>
-      <Typography variant="subtitle2" fontWeight={600}>
+      <Typography
+        variant="subtitle2"
+        sx={{
+          fontWeight: 600
+        }}
+      >
         {t('gp-scores')}
       </Typography>
       <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, width: '100%' }}>
@@ -41,9 +46,11 @@ export function GpScores({ team }: GpScoresProps) {
             >
               <Typography
                 variant="caption"
-                color="primary.main"
-                fontWeight={700}
-                sx={{ fontSize: '0.75rem' }}
+                sx={{
+                  color: 'primary.main',
+                  fontWeight: 700,
+                  fontSize: '0.75rem'
+                }}
               >
                 {t('round')} {scoresheet.round}
               </Typography>
