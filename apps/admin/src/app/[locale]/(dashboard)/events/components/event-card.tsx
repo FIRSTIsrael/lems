@@ -57,7 +57,6 @@ export const EventCard: React.FC<EventCardProps> = ({
   const { user } = useSession();
   const router = useRouter();
   const t = useTranslations('pages.events.card');
-  const [showDetails, setShowDetails] = useState(false);
 
   const isAssigned = adminIds.includes(user.id);
 
@@ -85,9 +84,7 @@ export const EventCard: React.FC<EventCardProps> = ({
       <CardContent sx={{ flexGrow: 1, p: 2, pb: 1 }}>
         <Stack
           direction="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
-          sx={{ mb: 1 }}
+          sx={{ mb: 1, justifyContent: 'space-between', alignItems: 'flex-start' }}
         >
           <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', flexGrow: 1 }}>
             {name}
@@ -188,7 +185,6 @@ export const EventCard: React.FC<EventCardProps> = ({
           <EventMissingInfo
             divisions={detailedDivisions || divisions}
             isFullySetUp={isFullySetUp}
-            onShowDetails={() => setShowDetails(true)}
           />
         </Box>
       </CardContent>
