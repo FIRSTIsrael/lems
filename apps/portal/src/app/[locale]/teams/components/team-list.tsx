@@ -14,11 +14,13 @@ export const TeamList: React.FC = () => {
   const searchParams = useSearchParams();
   const pageNumber = Number(searchParams.get('page')) || 1;
   const region = searchParams.get('region') || '';
+  const search = searchParams.get('search') || '';
 
   const buildQuery = () => {
     const params = new URLSearchParams();
     params.set('page', pageNumber.toString());
     if (region) params.set('region', region);
+    if (search) params.set('search', search);
     return params.toString();
   };
 

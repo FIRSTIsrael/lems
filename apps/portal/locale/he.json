@@ -61,7 +61,7 @@
       "title": "קבוצות <i>FIRST</i> LEGO League Challenge",
       "search": {
         "title": "חיפוש וסינון קבוצות",
-        "placeholder": "חיפוש לפי שם קבוצה, מספר, עיר או שיוך...",
+        "placeholder": "חיפוש קבוצות...",
         "results-for": "מציג תוצאות עבור \"{query}\"",
         "results-with-filters": "מציג תוצאות עבור \"{query}\" ב{region}"
       },

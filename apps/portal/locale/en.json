@@ -29,7 +29,7 @@
         "title": "Search Teams & Events",
         "placeholder": "Search for teams, or events...",
         "start-typing": "Start typing to search",
-        "search-hint": "Search by team name, number, city, event name, or location",
+        "search-hint": "Search team...",
         "searching": "Searching...",
         "no-results": "No results found",
         "no-results-hint": "No results found for \"{query}\". Try different keywords.",
@@ -128,7 +128,7 @@
       "title": "<i>FIRST</i> LEGO League Challenge Teams",
       "search": {
         "title": "Search & Filter Teams",
-        "placeholder": "Search by team name, number, city, or affiliation...",
+        "placeholder": "Search team...",
         "results-for": "Showing results for \"{query}\"",
         "results-with-filters": "Showing results for \"{query}\" in {region}"
       },
