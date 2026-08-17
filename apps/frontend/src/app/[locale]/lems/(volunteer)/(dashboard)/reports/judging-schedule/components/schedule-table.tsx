@@ -54,18 +54,33 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
           <TableHead>
             <TableRow sx={{ bgcolor: 'grey.100' }}>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}
+                >
                   {t('table.start-time')}
                 </Typography>
               </TableCell>
               <TableCell width={80} align="center">
-                <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                <Typography
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: isMobile ? '0.75rem' : '1rem'
+                  }}
+                >
                   {t('table.end-time')}
                 </Typography>
               </TableCell>
               {rooms.map(room => (
                 <TableCell key={room.id} align="center">
-                  <Typography fontWeight={600} fontSize={isMobile ? '0.75rem' : '1rem'}>
+                  <Typography
+                    sx={{
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '1rem'
+                    }}
+                  >
                     {room.name}
                   </Typography>
                 </TableCell>
@@ -91,18 +106,22 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                   >
                     <TableCell align="center">
                       <Typography
-                        fontFamily="monospace"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
+                        sx={{
+                          fontFamily: 'monospace',
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}
                       >
                         {dayjs(row.time).format('HH:mm')}
                       </Typography>
                     </TableCell>
                     <TableCell align="center">
                       <Typography
-                        fontFamily="monospace"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
+                        sx={{
+                          fontFamily: 'monospace',
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem'
+                        }}
                       >
                         {endTime.format('HH:mm')}
                       </Typography>
@@ -110,9 +129,9 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                     <TableCell colSpan={roomCount} align="center">
                       <Typography
                         component="div"
-                        fontWeight={500}
-                        fontSize={isMobile ? '0.75rem' : '1rem'}
                         sx={{
+                          fontWeight: 500,
+                          fontSize: isMobile ? '0.75rem' : '1rem',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -155,18 +174,22 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                 >
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
+                      sx={{
+                        fontFamily: 'monospace',
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}
                     >
                       {sessionTime.format('HH:mm')}
                     </Typography>
                   </TableCell>
                   <TableCell align="center">
                     <Typography
-                      fontFamily="monospace"
-                      fontWeight={500}
-                      fontSize={isMobile ? '0.75rem' : '1rem'}
+                      sx={{
+                        fontFamily: 'monospace',
+                        fontWeight: 500,
+                        fontSize: isMobile ? '0.75rem' : '1rem'
+                      }}
                     >
                       {sessionEndTime.format('HH:mm')}
                     </Typography>
@@ -202,7 +225,12 @@ export function ScheduleTable({ rooms, rows, sessionLength }: ScheduleTableProps
                           </Box>
                         </Tooltip>
                       ) : (
-                        <Typography color="text.disabled" fontSize={isMobile ? '0.75rem' : '1rem'}>
+                        <Typography
+                          sx={{
+                            color: 'text.disabled',
+                            fontSize: isMobile ? '0.75rem' : '1rem'
+                          }}
+                        >
                           -
                         </Typography>
                       )}

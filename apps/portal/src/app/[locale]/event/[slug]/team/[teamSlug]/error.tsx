@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { Box, Button, Container, Typography, Stack } from '@mui/material';
-import { Groups as TeamIcon, ErrorOutline } from '@mui/icons-material';
+import { Groups as TeamIcon, ErrorOutlined } from '@mui/icons-material';
 
 interface TeamInEventErrorProps {
   error: Error & { digest?: string };
@@ -23,7 +23,7 @@ export default function TeamInEventError({ error, reset }: TeamInEventErrorProps
 
   const isNotFound = error.message?.includes('404') || error.message?.includes('not found');
   const translationKey = isNotFound ? 'not-found' : 'server-error';
-  const Icon = isNotFound ? TeamIcon : ErrorOutline;
+  const Icon = isNotFound ? TeamIcon : ErrorOutlined;
 
   return (
     <Box
@@ -37,7 +37,13 @@ export default function TeamInEventError({ error, reset }: TeamInEventErrorProps
       }}
     >
       <Container maxWidth="sm">
-        <Stack spacing={3} alignItems="center" textAlign="center">
+        <Stack
+          spacing={3}
+          sx={{
+            alignItems: 'center',
+            textAlign: 'center'
+          }}
+        >
           <Box
             sx={{
               display: 'flex',

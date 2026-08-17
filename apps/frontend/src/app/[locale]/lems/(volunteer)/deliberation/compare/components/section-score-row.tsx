@@ -20,7 +20,14 @@ export function SectionScoreRow({
   const { getSectionTitle } = useRubricsTranslations(category);
 
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
+    <Stack
+      direction="row"
+      spacing={1}
+      sx={{
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}
+    >
       {showSectionName && (
         <Typography
           variant="body2"
@@ -34,7 +41,6 @@ export function SectionScoreRow({
           {getSectionTitle(sectionId)}
         </Typography>
       )}
-
       <Stack
         direction="row"
         spacing={0.5}

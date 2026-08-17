@@ -36,8 +36,7 @@ class ScoresheetSelector {
 }
 
 type ScoresheetsSelectorType =
-  | { type: 'division'; divisionId: string }
-  | { type: 'table'; tableId: string };
+  { type: 'division'; divisionId: string } | { type: 'table'; tableId: string };
 
 class ScoresheetsSelector {
   constructor(

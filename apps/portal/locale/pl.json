@@ -115,6 +115,7 @@
         "match-results": "Wyniki meczów",
         "match-number": "Mecz {number}",
         "robot-game-rank": "Ranking Robot Game",
+        "award": "Nagroda",
         "event-performance": "Wyniki wydarzenia",
         "view-details": "Zobacz szczegóły",
         "event-in-progress": "Wydarzenie w toku",
@@ -226,6 +227,7 @@
         "highest-score": "Najwyższy wynik",
         "robot-rank": "Ranking Robot Game",
         "robot-game-rank": "Ranking Robot Game",
+        "award": "Nagroda",
         "no-scores": "Brak dostępnych wyników",
         "no-data": "Brak dostępnych danych o wydajności"
       },

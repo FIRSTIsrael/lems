@@ -19,9 +19,12 @@ export const NextSessionRow: React.FC<NextSessionRowProps> = ({ session }) => {
       {session && team ? (
         <Stack
           spacing={1}
-          alignItems="center"
-          sx={{ height: '100%', minHeight: 150 }}
-          justifyContent="center"
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            minHeight: 150
+          }}
         >
           <TeamInfo team={team} size="sm" textAlign="center" />
           {!team.arrived && (
@@ -35,7 +38,12 @@ export const NextSessionRow: React.FC<NextSessionRowProps> = ({ session }) => {
           )}
         </Stack>
       ) : (
-        <Typography variant="body2" color="text.disabled">
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.disabled'
+          }}
+        >
           —
         </Typography>
       )}

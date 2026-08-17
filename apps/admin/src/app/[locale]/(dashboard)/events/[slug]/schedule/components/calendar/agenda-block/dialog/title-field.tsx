@@ -23,8 +23,10 @@ export const TitleField: React.FC<TitleFieldProps> = ({ value, onChange, onKeyDo
       variant="outlined"
       size="small"
       placeholder={t('default-event-title')}
-      inputProps={{ maxLength: 100 }}
       sx={{ mt: 1 }}
+      slotProps={{
+        htmlInput: { maxLength: 100 }
+      }}
     />
   );
 };

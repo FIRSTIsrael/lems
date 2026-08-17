@@ -14,7 +14,7 @@ LEMS is fully open source and maintained by volunteers.
 
 ### Prerequisites
 
-- Node 22 LTS
+- Node 26
 - Docker
 
 ### DB Setup

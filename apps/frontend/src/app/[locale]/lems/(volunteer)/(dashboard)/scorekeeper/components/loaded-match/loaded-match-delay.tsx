@@ -16,7 +16,13 @@ export const LoadedMatchDelay: React.FC = () => {
   const isClose = dayjs(scheduledTime).diff(currentTime, 'minute') <= 2;
 
   return (
-    <Stack direction="row" gap={0.75} alignItems="center">
+    <Stack
+      direction="row"
+      sx={{
+        gap: 0.75,
+        alignItems: 'center'
+      }}
+    >
       <Chip
         label={dayjs(scheduledTime).format('HH:mm')}
         variant="outlined"
@@ -33,10 +39,12 @@ export const LoadedMatchDelay: React.FC = () => {
           <Countdown
             targetDate={new Date(scheduledTime)}
             allowNegativeValues={true}
-            fontSize="0.75rem"
-            fontFamily="monospace"
-            fontWeight={500}
             dir="ltr"
+            sx={{
+              fontSize: '0.75rem',
+              fontFamily: 'monospace',
+              fontWeight: 500
+            }}
           />
         }
         variant="filled"

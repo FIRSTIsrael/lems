@@ -175,7 +175,12 @@ export function PersonalAwardsSection() {
               borderLeft: `4px solid ${theme.palette.info.main}`
             }}
           >
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-awards')}
             </Typography>
           </Paper>
@@ -238,8 +243,11 @@ export function PersonalAwardsSection() {
                         <Typography
                           component="span"
                           variant="caption"
-                          color="text.secondary"
-                          sx={{ display: 'block', mt: 0.25 }}
+                          sx={{
+                            color: 'text.secondary',
+                            display: 'block',
+                            mt: 0.25
+                          }}
                         >
                           ({t('optional')})
                         </Typography>
@@ -292,12 +300,14 @@ export function PersonalAwardsSection() {
                                 onChange={e => handleAwardInputChange(award.id, e.target.value)}
                                 disabled={loading || mutationLoading}
                                 variant="outlined"
-                                inputProps={{
-                                  maxLength: 64
-                                }}
                                 sx={{
                                   '& .MuiOutlinedInput-root': {
                                     backgroundColor: 'background.paper'
+                                  }
+                                }}
+                                slotProps={{
+                                  htmlInput: {
+                                    maxLength: 64
                                   }
                                 }}
                               />
@@ -333,7 +343,6 @@ export function PersonalAwardsSection() {
           </Grid>
         </Stack>
       </CardContent>
-
       {/* Confirmation Dialog */}
       <AssignAwardConfirmationDialog
         open={confirmDialog.open}

@@ -148,7 +148,10 @@ export const Deck = forwardRef<DeckRef, DeckProps>(
           cancelTransition
         }}
       >
-        <div ref={setSlidePortalNode}></div>
+        <div
+          ref={setSlidePortalNode}
+          style={{ position: 'relative', width: '100%', height: '100%', flex: 1, minHeight: 0 }}
+        />
         <div ref={setPlaceholderContainer} style={{ display: 'none' }}>
           {children}
         </div>

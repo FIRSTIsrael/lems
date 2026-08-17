@@ -57,16 +57,21 @@ export const OverrideValidationDialog: React.FC<OverrideValidationDialogProps> =
       onClose={onClose}
       maxWidth="sm"
       fullWidth
-      disableEscapeKeyDown={isProcessing}
-      PaperProps={{
-        sx: { borderRadius: 1 }
+      slotProps={{
+        paper: {
+          sx: { borderRadius: 1 }
+        }
       }}
     >
       <DialogTitle sx={{ pb: 1 }}>{t('title')}</DialogTitle>
-
       <DialogContent sx={{ pt: 2 }}>
         <Stack spacing={2}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('description')}
           </Typography>
 
@@ -86,13 +91,17 @@ export const OverrideValidationDialog: React.FC<OverrideValidationDialogProps> =
           </Alert>
 
           <Box sx={{ p: 2, bgcolor: 'info.lighter', borderRadius: 1 }}>
-            <Typography variant="caption" color="info.dark">
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'info.dark'
+              }}
+            >
               {t('note')}
             </Typography>
           </Box>
         </Stack>
       </DialogContent>
-
       <DialogActions sx={{ p: 2, gap: 1 }}>
         <Button onClick={onClose} disabled={isProcessing}>
           {t('cancel')}

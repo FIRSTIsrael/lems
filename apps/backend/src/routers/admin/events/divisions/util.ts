@@ -14,5 +14,6 @@ export const makeAdminDivisionResponse = (division: DbDivision): Division => ({
   hasSchedule: division.has_schedule,
   hasAwards: division.has_awards,
   hasUsers: division.has_users,
+  futureEdition: division.future_edition,
   scheduleSettings: null
 });

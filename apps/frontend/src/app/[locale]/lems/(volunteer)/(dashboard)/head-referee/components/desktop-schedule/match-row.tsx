@@ -62,16 +62,24 @@ export function MatchRow({
       }}
     >
       <TableCell>
-        <Typography variant="body1" fontWeight={600} sx={{ fontSize: '1.25rem' }}>
+        <Typography
+          variant="body1"
+          sx={{
+            fontWeight: 600,
+            fontSize: '1.25rem'
+          }}
+        >
           #{match.number}
         </Typography>
       </TableCell>
       <TableCell sx={{ textAlign: 'center' }}>
         <Typography
-          fontFamily="monospace"
-          fontWeight={500}
           variant="body1"
-          sx={{ fontSize: '1.25rem' }}
+          sx={{
+            fontFamily: 'monospace',
+            fontWeight: 500,
+            fontSize: '1.25rem'
+          }}
         >
           {scheduledTime}
         </Typography>
@@ -81,7 +89,13 @@ export function MatchRow({
         if (!participant || !participant.team) {
           return (
             <TableCell key={table.id} align="center">
-              <Typography variant="body1" color="text.secondary" sx={{ fontSize: '1.25rem' }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                  fontSize: '1.25rem'
+                }}
+              >
                 -
               </Typography>
             </TableCell>
@@ -181,10 +195,12 @@ export function MatchRow({
             <Tooltip title={tooltipTitle}>
               <Stack
                 direction="row"
-                alignItems="center"
-                justifyContent="center"
                 spacing={0.5}
-                sx={{ width: '100%' }}
+                sx={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  width: '100%'
+                }}
               >
                 {showIcon && (
                   <Stack
@@ -207,14 +223,23 @@ export function MatchRow({
                     filter: isTeamFiltered ? 'none' : 'grayscale(0.7)'
                   }}
                 >
-                  <Typography variant="body2" fontWeight={700} noWrap sx={{ fontSize: '1.25rem' }}>
+                  <Typography
+                    variant="body2"
+                    noWrap
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: '1.25rem'
+                    }}
+                  >
                     #{participant.team.number}
                   </Typography>
                   <Typography
                     variant="caption"
-                    color="text.secondary"
                     noWrap
-                    sx={{ fontSize: '0.875rem' }}
+                    sx={{
+                      color: 'text.secondary',
+                      fontSize: '1rem'
+                    }}
                   >
                     {participant.team.name}
                   </Typography>

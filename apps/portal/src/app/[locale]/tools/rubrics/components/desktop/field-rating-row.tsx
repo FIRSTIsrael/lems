@@ -72,8 +72,10 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
             <Stack
               spacing={0.5}
               direction="row"
-              alignItems="center"
-              justifyContent={label ? 'flex-start' : 'center'}
+              sx={{
+                alignItems: 'center',
+                justifyContent: label ? 'flex-start' : 'center'
+              }}
             >
               <IconButton
                 disabled={disabled}
@@ -95,7 +97,12 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
                 />
               </IconButton>
               {label && (
-                <Typography fontSize="0.875em" sx={{ pt: '0.25em' }}>
+                <Typography
+                  sx={{
+                    fontSize: '0.875em',
+                    pt: '0.25em'
+                  }}
+                >
                   {label}
                 </Typography>
               )}

@@ -37,19 +37,14 @@ export const PasswordField: React.FC<PasswordFieldProps> = ({
         label={label}
         error={touched && !!error}
         helperText={
-          touched && error && error !== 'password-invalid'
-            ? t(`errors.${error}`)
-            : undefined
+          touched && error && error !== 'password-invalid' ? t(`errors.${error}`) : undefined
         }
         placeholder={placeholder}
         fullWidth
         disabled={disabled}
       />
       {showRequirements && (
-        <PasswordRequirements
-          validation={validatePassword(value)}
-          password={value}
-        />
+        <PasswordRequirements validation={validatePassword(value)} password={value} />
       )}
     </Box>
   );

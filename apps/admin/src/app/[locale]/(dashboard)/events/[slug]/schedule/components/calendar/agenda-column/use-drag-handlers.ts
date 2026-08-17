@@ -3,11 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { AgendaBlock, HEADER_HEIGHT, TIME_SLOT_HEIGHT } from '../calendar-types';
 import { snapToGrid, timeToPosition, positionToTime, MIN_SNAP_DURATION } from '../drag-utils';
-import {
-  AgendaDragState,
-  DEFAULT_EVENT_DURATION,
-  MIN_CREATE_DURATION
-} from './drag-types';
+import { AgendaDragState, DEFAULT_EVENT_DURATION, MIN_CREATE_DURATION } from './drag-types';
 
 interface UseDragHandlersProps {
   dragState: AgendaDragState | null;
@@ -24,7 +20,7 @@ export const useDragHandlers = ({
 }: UseDragHandlersProps) => {
   const t = useTranslations(`pages.events.schedule.calendar.agenda`);
   const handleMouseMove = useCallback(
-    (e: MouseEvent, columnRect: DOMRect) => {      
+    (e: MouseEvent, columnRect: DOMRect) => {
       if (!dragState) return;
 
       const yPos = e.clientY - columnRect.top;
@@ -68,7 +64,7 @@ export const useDragHandlers = ({
           MIN_SNAP_DURATION
         );
         const snappedDuration = Math.round(newDuration / MIN_SNAP_DURATION) * MIN_SNAP_DURATION;
-        
+
         // Ensure the end doesn't go past the column end time
         const proposedEnd = eventStart + (snappedDuration / 60) * TIME_SLOT_HEIGHT;
         const clampedEnd = Math.min(proposedEnd, endTimePosition);
@@ -98,13 +94,13 @@ export const useDragHandlers = ({
           MIN_SNAP_DURATION
         );
         const snappedDuration = Math.round(newDuration / MIN_SNAP_DURATION) * MIN_SNAP_DURATION;
-        
+
         // Calculate new start time
         let newStartTime = dayjs(dragState.originalStartTime).add(
           dragState.originalDuration - snappedDuration,
           'second'
         );
-        
+
         // Ensure the start doesn't go before the column start time
         let newStartPosition = timeToPosition(newStartTime, startTime);
         if (newStartPosition < startTimePosition) {
@@ -115,7 +111,10 @@ export const useDragHandlers = ({
         onDragStateChange({
           ...dragState,
           originalStartTime: newStartTime,
-          draggedPosition: Math.min(newStartPosition + (snappedDuration / 60) * TIME_SLOT_HEIGHT, originalEnd),
+          draggedPosition: Math.min(
+            newStartPosition + (snappedDuration / 60) * TIME_SLOT_HEIGHT,
+            originalEnd
+          ),
           originalDuration: snappedDuration
         });
       }
@@ -151,13 +150,10 @@ export const useDragHandlers = ({
         }
       } else if (dragState.mode === 'body' && dragState.blockId && dragState.originalStartTime) {
         const newStartTime = positionToTime(dragState.draggedPosition, startTime);
-        onUpdateEvent(
-          dragState.blockId,
-          {
-            startTime: newStartTime,
-            durationSeconds: dragState.originalDuration || DEFAULT_EVENT_DURATION
-          }
-        );
+        onUpdateEvent(dragState.blockId, {
+          startTime: newStartTime,
+          durationSeconds: dragState.originalDuration || DEFAULT_EVENT_DURATION
+        });
       } else if (
         dragState.mode === 'bottom-edge' &&
         dragState.blockId &&
@@ -166,7 +162,10 @@ export const useDragHandlers = ({
         const eventStart = dragState.originalStartTime;
         const eventEnd = positionToTime(dragState.draggedPosition, startTime);
         const newDuration = Math.round(eventEnd.diff(eventStart, 'second'));
-        onUpdateEvent(dragState.blockId, {startTime: eventStart, durationSeconds: Math.max(newDuration, MIN_SNAP_DURATION)});
+        onUpdateEvent(dragState.blockId, {
+          startTime: eventStart,
+          durationSeconds: Math.max(newDuration, MIN_SNAP_DURATION)
+        });
       } else if (
         dragState.mode === 'top-edge' &&
         dragState.blockId &&
@@ -174,7 +173,7 @@ export const useDragHandlers = ({
         dragState.originalDuration
       ) {
         onUpdateEvent(dragState.blockId, {
-          startTime: dragState.originalStartTime, 
+          startTime: dragState.originalStartTime,
           durationSeconds: dragState.originalDuration
         });
       }

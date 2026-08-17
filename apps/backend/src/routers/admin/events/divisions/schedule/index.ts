@@ -3,6 +3,7 @@ import { SchedulerRequest } from '@lems/types/api/scheduler';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../middleware/require-permission';
+import { asHandler } from '../../../../../types/express-handlers';
 import {
   makeAdminJudgingSessionResponse,
   makeAdminJudgingRoomResponse,
@@ -20,7 +21,7 @@ router.use('/agenda', agendaRouter);
 router.post(
   '/validate',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const settings: SchedulerRequest = req.body;
 
@@ -47,13 +48,13 @@ router.post(
       console.debug(error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  }
+  })
 );
 
 router.post(
   '/generate',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const settings: SchedulerRequest = req.body;
 
@@ -80,13 +81,13 @@ router.post(
       console.debug(error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  }
+  })
 );
 
 router.delete(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       await Promise.all([
         db.judgingSessions.byDivision(req.divisionId).deleteAll(),
@@ -107,13 +108,13 @@ router.delete(
       console.error('Error deleting division schedule:', error);
       res.status(500).json({ error: 'Failed to delete division schedule' });
     }
-  }
+  })
 );
 
 router.get(
   '/teams/:teamId',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const { teamId } = req.params;
       if (!teamId || typeof teamId !== 'string') {
@@ -146,13 +147,13 @@ router.get(
       console.error('Error fetching team schedule:', error);
       res.status(500).json({ error: 'Failed to fetch team schedule' });
     }
-  }
+  })
 );
 
 router.get(
   '/judging-sessions',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const sessions = await db.judgingSessions.byDivision(req.divisionId).getAll();
       const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
@@ -165,13 +166,13 @@ router.get(
       console.error('Error fetching judging sessions:', error);
       res.status(500).json({ error: 'Failed to fetch judging sessions' });
     }
-  }
+  })
 );
 
 router.put(
   '/swap',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     try {
       const { teamId1, teamId2 } = req.body;
 
@@ -208,7 +209,7 @@ router.put(
       console.error('Error swapping team schedules:', error);
       res.status(500).json({ error: 'Failed to swap team schedules' });
     }
-  }
+  })
 );
 
 export default router;

@@ -4,6 +4,8 @@ import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { extractToken } from '../../../lib/security/auth';
 import { logger } from '../../../lib/logger';
 import db from '../../../lib/database';
+import { ExportRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 
 const router = express.Router({ mergeParams: true });
 
@@ -64,6 +66,11 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
       throw new Error('Event not published');
     }
 
+    // Attach validated data to request for downstream handlers
+    (req as ExportRequest).team = team;
+    (req as ExportRequest).event = event;
+    (req as ExportRequest).divisionId = teamDivision;
+
     next();
     return;
   } catch {
@@ -73,146 +80,148 @@ router.use('/:teamSlug/:eventSlug', async (req: Request, res: Response, next: Ne
   res.status(401).json({ error: 'UNAUTHORIZED' });
 });
 
-router.get('/:teamSlug/:eventSlug/scoresheets', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
+router.get(
+  '/:teamSlug/:eventSlug/scoresheets',
+  asHandler<ExportRequest>(async (req, res: Response) => {
+    const { team, event, divisionId } = req;
 
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
-    return;
-  }
+    const division = await db.divisions.byId(divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
 
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
+    const season = await db.seasons.byId(event.season_id).get();
+    if (!season) {
+      res.status(404).json({ error: 'Season not found' });
+      return;
+    }
 
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
+    const scoresheets = (
+      await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
+    ).filter(s => s.stage === 'RANKING' && s.status === 'submitted');
 
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
+    res.json({
+      teamNumber: team.number,
+      teamName: team.name,
+      teamLogoUrl: team.logo_url,
+      eventName: event.name,
+      divisionName: division.name,
+      seasonName: season.name,
+      scoresheets: scoresheets.map(s => {
+        // Gracefully handle missing data object
+        if (!s.data) {
+          logger.warn(
+            { scoresheetId: s._id, teamId: team.id, round: s.round },
+            'Scoresheet missing data object during export'
+          );
+          return {
+            round: s.round,
+            missions: [],
+            score: 0
+          };
+        }
 
-  const season = await db.seasons.byId(event.season_id).get();
+        // Transform missions object to preserve mission IDs and convert clause values
+        const missions = s.data.missions || {};
+        const transformedMissions: Array<{
+          id: string;
+          clauses: Array<{ value: ScoresheetClauseValue }>;
+        }> = [];
 
-  const scoresheets = (
-    await db.scoresheets.byDivision(division.id).byTeamId(team.id).getAll()
-  ).filter(s => s.stage === 'RANKING' && s.status === 'submitted');
+        for (const [missionId, clauses] of Object.entries(missions)) {
+          const clausesArray: Array<{ value: ScoresheetClauseValue }> = [];
+          for (const [indexStr, value] of Object.entries(clauses)) {
+            const index = Number(indexStr);
+            // Fill any gaps with null placeholders to preserve clause positions
+            while (clausesArray.length < index) {
+              clausesArray.push({ value: null });
+            }
+            clausesArray[index] = { value };
+          }
+          transformedMissions.push({ id: missionId, clauses: clausesArray });
+        }
 
-  res.json({
-    teamNumber: team.number,
-    teamName: team.name,
-    teamLogoUrl: team.logo_url,
-    eventName: event.name,
-    divisionName: division.name,
-    seasonName: season.name,
-    scoresheets: scoresheets.map(s => {
-      // Gracefully handle missing data object
-      if (!s.data) {
-        logger.warn(
-          { scoresheetId: s._id, teamId: team.id, round: s.round },
-          'Scoresheet missing data object during export'
-        );
         return {
           round: s.round,
-          missions: [],
-          score: 0
+          missions: transformedMissions,
+          score: s.data.score ?? 0
         };
-      }
+      })
+    });
+  })
+);
 
-      // Transform missions object to use string keys for clause indices
-      const missions = s.data.missions || {};
-      const transformedMissions: { clauses: Array<{ value: ScoresheetClauseValue }> }[] = [];
+router.get(
+  '/:teamSlug/:eventSlug/rubrics',
+  asHandler<ExportRequest>(async (req, res: Response) => {
+    const { team, event, divisionId } = req;
 
-      for (const clauses of Object.values(missions)) {
-        const clausesObject: { clauses: Array<{ value: ScoresheetClauseValue }> } = { clauses: [] };
-        for (const value of Object.values(clauses)) {
-          clausesObject.clauses.push({ value });
+    const division = await db.divisions.byId(divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+
+    const season = await db.seasons.byId(event.season_id).get();
+    if (!season) {
+      res.status(404).json({ error: 'Season not found' });
+      return;
+    }
+
+    const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
+    const rubrics = allRubrics.filter(r => r.status === 'approved');
+
+    const optionalAwards = (await db.awards.byDivisionId(division.id).getAll()).filter(
+      a => a.allow_nominations
+    );
+    const coreValuesRubric = rubrics.find(r => r.category === 'core-values');
+
+    const awards = optionalAwards.reduce(
+      (acc, award) => {
+        acc[award.name] = coreValuesRubric?.data?.awards?.[award.name] ?? false;
+        return acc;
+      },
+      {} as Record<string, boolean>
+    );
+
+    // Log if core values rubric is missing or incomplete
+    if (!coreValuesRubric) {
+      logger.warn(
+        { teamId: team.id, divisionId: division.id },
+        'Core values rubric not found during export'
+      );
+    } else if (!coreValuesRubric.data) {
+      logger.warn(
+        { rubricId: coreValuesRubric._id, rubricCategory: coreValuesRubric.category },
+        'Core values rubric missing data object during export'
+      );
+    }
+
+    res.json({
+      teamNumber: team.number,
+      teamName: team.name,
+      teamLogoUrl: team.logo_url,
+      eventName: event.name,
+      divisionName: division.name,
+      seasonName: season.name,
+      rubrics: rubrics.map(r => {
+        if (!r.data) {
+          logger.warn(
+            { rubricId: r._id, category: r.category },
+            'Rubric missing data object during export'
+          );
         }
-        transformedMissions.push(clausesObject);
-      }
 
-      return {
-        round: s.round,
-        missions: transformedMissions,
-        score: s.data.score ?? 0
-      };
-    })
-  });
-});
-
-router.get('/:teamSlug/:eventSlug/rubrics', async (req: Request, res: Response) => {
-  const { teamSlug, eventSlug } = req.params;
-
-  if (!teamSlug || typeof teamSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid team slug' });
-    return;
-  }
-
-  if (!eventSlug || typeof eventSlug !== 'string') {
-    res.status(400).json({ error: 'Invalid event slug' });
-    return;
-  }
-
-  const team = await db.teams.bySlug(teamSlug).get();
-  const event = await db.events.bySlug(eventSlug).get();
-
-  const divisionId = await db.teams.bySlug(teamSlug).isInEvent(event.id);
-  const division = await db.divisions.byId(divisionId!).get();
-
-  const season = await db.seasons.byId(event.season_id).get();
-
-  const allRubrics = await db.rubrics.byDivision(division.id).byTeamId(team.id).getAll();
-  const rubrics = allRubrics.filter(r => r.status === 'approved');
-
-  const optionalAwards = (await db.awards.byDivisionId(division.id).getAll()).filter(
-    a => a.allow_nominations
-  );
-  const coreValuesRubric = rubrics.find(r => r.category === 'core-values');
-
-  const awards = optionalAwards.reduce(
-    (acc, award) => {
-      acc[award.name] = coreValuesRubric?.data?.awards?.[award.name] ?? false;
-      return acc;
-    },
-    {} as Record<string, boolean>
-  );
-
-  // Log if core values rubric is missing or incomplete
-  if (!coreValuesRubric) {
-    logger.warn(
-      { teamId: team.id, divisionId: division.id },
-      'Core values rubric not found during export'
-    );
-  } else if (!coreValuesRubric.data) {
-    logger.warn(
-      { rubricId: coreValuesRubric._id, rubricCategory: coreValuesRubric.category },
-      'Core values rubric missing data object during export'
-    );
-  }
-
-  res.json({
-    teamNumber: team.number,
-    teamName: team.name,
-    teamLogoUrl: team.logo_url,
-    eventName: event.name,
-    divisionName: division.name,
-    seasonName: season.name,
-    rubrics: rubrics.map(r => {
-      if (!r.data) {
-        logger.warn(
-          { rubricId: r._id, category: r.category },
-          'Rubric missing data object during export'
-        );
-      }
-
-      return {
-        id: r._id,
-        category: r.category,
-        data: r.data
-      };
-    }),
-    awards: awards
-  });
-});
+        return {
+          id: r._id,
+          category: r.category,
+          data: r.data
+        };
+      }),
+      awards: awards
+    });
+  })
+);
 
 export default router;

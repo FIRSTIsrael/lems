@@ -124,10 +124,15 @@ export const ChampionsControlsPanel: React.FC = () => {
           </Typography>
         </Box>
       )}
-
       {isInProgress && (
         <Stack spacing={1.25} sx={{ flex: 1 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
             <Typography
               variant="caption"
               sx={{
@@ -143,10 +148,10 @@ export const ChampionsControlsPanel: React.FC = () => {
             <Countdown
               variant="subtitle2"
               targetDate={timerValues.endTime || new Date()}
-              fontFamily="monospace"
-              fontWeight={700}
-              fontSize="1.1rem"
               sx={{
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                fontSize: '1.1rem',
                 color:
                   timerValues.progressPercent >= 20
                     ? theme.palette.primary.main
@@ -172,15 +177,19 @@ export const ChampionsControlsPanel: React.FC = () => {
           />
         </Stack>
       )}
-
       {isNotStarted && (
         <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              textAlign: 'center'
+            }}
+          >
             {t('not-started')}
           </Typography>
         </Box>
       )}
-
       <Box sx={{ display: 'flex', gap: 1, flexDirection: 'column' }}>
         {isNotStarted ? (
           <Button

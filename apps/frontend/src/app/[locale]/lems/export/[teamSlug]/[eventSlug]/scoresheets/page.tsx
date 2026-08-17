@@ -9,13 +9,8 @@ import { ExportScoresheetHeader } from './components/export-scoresheet-header';
 import { ExportScoresheetMission } from './components/export-scoresheet-mission';
 
 interface MissionData {
+  id: string;
   clauses: Array<{ value: ScoresheetClauseValue }>;
-}
-
-interface ScoresheetData {
-  round: number;
-  missions: MissionData[];
-  score: number;
 }
 
 interface ScoresData {
@@ -26,6 +21,12 @@ interface ScoresData {
   divisionName: string;
   seasonName: string;
   scoresheets: ScoresheetData[];
+}
+
+interface ScoresheetData {
+  round: number;
+  missions: MissionData[];
+  score: number;
 }
 
 export default function ScoresExportPage() {
@@ -81,8 +82,8 @@ export default function ScoresExportPage() {
 
           <Stack spacing={1.5}>
             {scoresheet.missions
-              .map((mission, index) => {
-                const missionData = scoresheetData.missions?.[index];
+              .map(mission => {
+                const missionData = scoresheetData.missions?.find(m => m.id === mission.id);
                 if (!missionData || !missionData.clauses || missionData.clauses.length === 0) {
                   return null;
                 }
@@ -117,7 +118,12 @@ export default function ScoresExportPage() {
                 }
               }}
             >
-              <Typography fontSize="1.5rem" fontWeight={700}>
+              <Typography
+                sx={{
+                  fontSize: '1.5rem',
+                  fontWeight: 700
+                }}
+              >
                 {t('total-points', { points: scoresheetData.score ?? 0 })}
               </Typography>
             </Box>

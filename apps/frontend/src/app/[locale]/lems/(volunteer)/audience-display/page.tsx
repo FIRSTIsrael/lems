@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { Box } from '@mui/material';
 import { useEvent } from '../components/event-context';
 import useKeyboardShortcut from '../hooks/use-keyboard-shortcut';
 import { usePageData } from '../hooks/use-page-data';
@@ -12,6 +13,7 @@ import { MatchPreviewDisplay } from './components/match-preview/match-preview-di
 import { ScoreboardDisplay } from './components/scoreboard/scoreboard-display';
 import { AwardsDisplay } from './components/awards/awards-display';
 import { SettingsModal } from './components/settings';
+import { DisplayModeTransition } from './components/display-mode-transition';
 import {
   createAudienceDisplaySettingUpdatedSubscription,
   createAudienceDisplaySwitchedSubscription,
@@ -117,22 +119,36 @@ export default function AudienceDisplayPage() {
         awards={data.awards}
         awardsAssigned={data.awardsAssigned}
       >
-        {activeDisplay === 'logo' && <LogoDisplay />}
-        {activeDisplay === 'message' && <MessageDisplay />}
-        {activeDisplay === 'sponsors' && <SponsorsDisplay />}
-        {activeDisplay === 'match_preview' && <MatchPreviewDisplay />}
-        {activeDisplay === 'scoreboard' && <ScoreboardDisplay />}
-        {activeDisplay === 'awards' && (
-          <AwardsDisplay
-            awards={data.awards}
-            awardWinnerSlideStyle={
-              (data.displayState.settings?.awards?.awardWinnerSlideStyle as
-                | 'chroma'
-                | 'full'
-                | 'both') || 'both'
-            }
-          />
-        )}
+        <Box sx={{ position: 'relative', width: '100%', height: '100%' }}>
+          <DisplayModeTransition activeDisplay={activeDisplay}>
+            {display => {
+              switch (display) {
+                case 'logo':
+                  return <LogoDisplay />;
+                case 'message':
+                  return <MessageDisplay />;
+                case 'sponsors':
+                  return <SponsorsDisplay />;
+                case 'match_preview':
+                  return <MatchPreviewDisplay />;
+                case 'scoreboard':
+                  return <ScoreboardDisplay />;
+                case 'awards':
+                  return (
+                    <AwardsDisplay
+                      awards={data.awards}
+                      awardWinnerSlideStyle={
+                        (data.displayState.settings?.awards?.awardWinnerSlideStyle as
+                          | 'chroma'
+                          | 'full'
+                          | 'both') || 'both'
+                      }
+                    />
+                  );
+              }
+            }}
+          </DisplayModeTransition>
+        </Box>
       </AudienceDisplayProvider>
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </>
