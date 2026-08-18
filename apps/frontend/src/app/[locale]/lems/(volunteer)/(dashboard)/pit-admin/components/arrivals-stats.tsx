@@ -1,30 +1,53 @@
 'use client';
 
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
-import { Box, Paper, Stack, Typography, LinearProgress, Chip, useTheme } from '@mui/material';
+import {
+  Box,
+  Paper,
+  Stack,
+  Typography,
+  LinearProgress,
+  Chip,
+  useTheme,
+  IconButton,
+  Collapse,
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  Avatar,
+  Tooltip
+} from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import GroupIcon from '@mui/icons-material/Group';
 import WarningIcon from '@mui/icons-material/Warning';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import CancelIcon from '@mui/icons-material/Cancel';
 import { Locale, Locales } from '@lems/localization';
-import { ResponsiveComponent } from '@lems/shared';
+import { ResponsiveComponent, Flag } from '@lems/shared';
 import type { Team } from '../graphql';
 
 interface ArrivalsStatsProps {
   teams: Team[];
+  onTeamNotArrival: (team: Team) => Promise<void>;
   loading?: boolean;
 }
 
-export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
+export function ArrivalsStats({ teams, onTeamNotArrival, loading = false }: ArrivalsStatsProps) {
   const theme = useTheme();
   const currentLocale = useLocale() as Locale;
   const direction = Locales[currentLocale].direction;
 
   const t = useTranslations('pages.pit-admin.stats');
+  const [showArrivedTeams, setShowArrivedTeams] = useState(false);
+  const [removingTeamId, setRemovingTeamId] = useState<string | null>(null);
 
   const stats = useMemo(() => {
     const total = teams.length;
-    const arrived = teams.filter(t => t.arrived).length;
+    const arrivedTeams = teams.filter(t => t.arrived);
+    const arrived = arrivedTeams.length;
     const pending = total - arrived;
     const percentage = total === 0 ? 0 : Math.round((arrived / total) * 100);
     const isHighArrival = percentage >= 70;
@@ -36,7 +59,8 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
       pending,
       percentage,
       isHighArrival,
-      missingTeams
+      missingTeams,
+      arrivedTeams
     };
   }, [teams]);
 
@@ -45,6 +69,15 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
     if (percentage >= 50) return 'warning';
     return 'error';
   }, []);
+
+  const handleRemoveTeam = useCallback(
+    async (team: Team) => {
+      setRemovingTeamId(team.id);
+      await onTeamNotArrival(team);
+      setRemovingTeamId(null);
+    },
+    [onTeamNotArrival]
+  );
 
   if (loading) {
     return (
@@ -220,6 +253,103 @@ export function ArrivalsStats({ teams, loading = false }: ArrivalsStatsProps) {
                 </Typography>
               </Stack>
             </Stack>
+          </Box>
+        )}
+
+        {stats.arrivedTeams.length > 0 && (
+          <Box
+            sx={{
+              bgcolor: 'rgba(255, 255, 255, 0.1)',
+              borderRadius: 1,
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+              overflow: 'hidden'
+            }}
+          >
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                p: 2,
+                cursor: 'pointer'
+              }}
+              onClick={() => setShowArrivedTeams(!showArrivedTeams)}
+            >
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <CheckCircleIcon sx={{ fontSize: '1.2rem' }} />
+                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                  {t('arrived-teams', { count: stats.arrivedTeams.length })}
+                </Typography>
+              </Stack>
+              <IconButton size="small" sx={{ color: 'white' }}>
+                {showArrivedTeams ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+              </IconButton>
+            </Stack>
+
+            <Collapse in={showArrivedTeams}>
+              <List
+                sx={{
+                  maxHeight: 300,
+                  overflow: 'auto',
+                  bgcolor: 'rgba(0, 0, 0, 0.2)',
+                  py: 0
+                }}
+              >
+                {stats.arrivedTeams.map(team => (
+                  <ListItem
+                    key={team.id}
+                    sx={{
+                      borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                      '&:last-child': {
+                        borderBottom: 'none'
+                      }
+                    }}
+                    secondaryAction={
+                      <Tooltip title={t('mark-not-arrived')}>
+                        <IconButton
+                          edge="end"
+                          onClick={() => handleRemoveTeam(team)}
+                          disabled={removingTeamId === team.id}
+                          sx={{
+                            color: 'white',
+                            '&:hover': {
+                              bgcolor: 'rgba(255, 255, 255, 0.1)',
+                              color: '#f44336'
+                            }
+                          }}
+                        >
+                          <CancelIcon />
+                        </IconButton>
+                      </Tooltip>
+                    }
+                  >
+                    <ListItemAvatar>
+                      <Avatar
+                        src={team.logoUrl ?? '/assets/default-avatar.svg'}
+                        sx={{ width: 40, height: 40 }}
+                      />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={
+                        <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                          <Flag region={team.region} size={20} />
+                          <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                            #{team.number} - {team.name}
+                          </Typography>
+                        </Stack>
+                      }
+                      secondary={
+                        <Typography variant="caption" sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                          {team.affiliation}, {team.city}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                ))}
+              </List>
+            </Collapse>
           </Box>
         )}
       </Stack>

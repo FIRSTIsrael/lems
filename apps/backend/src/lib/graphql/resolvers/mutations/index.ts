@@ -1,4 +1,5 @@
 import { teamArrivedResolver } from './team-arrived';
+import { teamNotArrivedResolver } from './team-not-arrived';
 import { disqualifyTeamResolver } from './disqualify-team';
 import { assignPersonalAwardResolver } from './assign-personal-award';
 import {
@@ -52,6 +53,7 @@ import {
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
+  teamNotArrived: teamNotArrivedResolver,
   disqualifyTeam: disqualifyTeamResolver,
   assignPersonalAward: assignPersonalAwardResolver,
   startJudgingSession: startJudgingSessionResolver,

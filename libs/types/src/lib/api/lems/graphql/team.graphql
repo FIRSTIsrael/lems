@@ -69,6 +69,17 @@ extend type Mutation {
   ): TeamEvent!
 
   """
+  Mark a team as not arrived in a specific division (reverses teamArrived).
+  """
+  teamNotArrived(
+    "The team ID to update"
+    teamId: String!
+
+    "Relevant division ID"
+    divisionId: String!
+  ): TeamEvent!
+
+  """
   Disqualify a team in a specific division. This action is irreversible.
   Only Judge Advisors can perform this action on their assigned divisions.
   """
