@@ -82,7 +82,7 @@ export function RefereePrestart() {
     if (isPresent === prevAnyPresentRef.current) return;
 
     prevAnyPresentRef.current = isPresent;
-     
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setInspectionStartTime(isPresent ? Date.now() : null);
   }, [participant?.present, loadedMatch, participant]);
 

@@ -19,9 +19,19 @@ router.get('/', async (req: Request, res: Response) => {
   const regionFilter = region ? String(region) : undefined;
 
   if (searchQuery) {
-    const teams = await db.teams.search(searchQuery, 200);
-    const filteredTeams = regionFilter ? teams.filter(team => team.region === regionFilter) : teams;
-    res.status(200).json({ teams: filteredTeams.map(makePortalTeamResponse), numberOfPages: 1 });
+    const pageNumber = page ? parseInt(page as string, 10) : undefined;
+
+    if (pageNumber !== undefined && (isNaN(pageNumber) || pageNumber < 1)) {
+      res.status(400).json({ error: 'Invalid page number' });
+      return;
+    }
+
+    const [teams, totalCount] = await Promise.all([
+      db.teams.search(searchQuery, pageNumber, regionFilter),
+      db.teams.searchCount(searchQuery, regionFilter)
+    ]);
+    const numberOfPages = Math.ceil(totalCount / 200);
+    res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
     return;
   }
 

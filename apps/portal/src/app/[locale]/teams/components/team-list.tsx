@@ -20,7 +20,7 @@ export const TeamList: React.FC = () => {
     const params = new URLSearchParams();
     params.set('page', pageNumber.toString());
     if (region) params.set('region', region);
-    if (search) params.set('search', search);
+    if (search && search.length >= 2) params.set('search', search);
     return params.toString();
   };
 

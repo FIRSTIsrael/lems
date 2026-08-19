@@ -52,19 +52,21 @@ export const TeamSearchInput: React.FC<TeamSearchInputProps> = ({
       defaultValue={initialValue}
       onChange={e => handleInput(e.target.value)}
       inputRef={inputRef}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        ),
-        endAdornment: showClearButton && (
-          <InputAdornment position="end">
-            <IconButton size="small" onClick={handleClear} edge="end">
-              <ClearIcon />
-            </IconButton>
-          </InputAdornment>
-        )
+      slotProps={{
+        input: {
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: showClearButton && (
+            <InputAdornment position="end">
+              <IconButton size="small" onClick={handleClear} edge="end">
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          )
+        }
       }}
     />
   );
