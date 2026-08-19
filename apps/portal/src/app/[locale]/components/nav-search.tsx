@@ -9,6 +9,7 @@ import {
   IconButton,
   InputAdornment,
   MenuItem,
+  MenuList,
   Paper,
   Popper,
   Stack,
@@ -117,160 +118,162 @@ export const NavSearch = () => {
               boxShadow: theme.shadows[8]
             }}
           >
-            {isSearching && (
-              <MenuItem disabled>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'text.secondary'
-                  }}
-                >
-                  {t('searching')}...
-                </Typography>
-              </MenuItem>
-            )}
-
-            {error && (
-              <MenuItem disabled>
-                <Typography variant="body2" color="error">
-                  {t('error', { error })}
-                </Typography>
-              </MenuItem>
-            )}
-
-            {noResults && (
-              <MenuItem disabled>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'text.secondary'
-                  }}
-                >
-                  {t('no-results')}
-                </Typography>
-              </MenuItem>
-            )}
-
-            {!noResults && (
-              <>
-                <MenuItem disabled sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
-                  <Stack
-                    direction="row"
-                    spacing={1}
+            <MenuList>
+              {isSearching && (
+                <MenuItem disabled>
+                  <Typography
+                    variant="body2"
                     sx={{
-                      alignItems: 'center'
+                      color: 'text.secondary'
                     }}
                   >
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: 'text.secondary'
-                      }}
-                    >
-                      {t('results-count', { count: searchStats.total })}
-                    </Typography>
-                    {searchStats.teams > 0 && (
-                      <Chip
-                        size="small"
-                        icon={<Group sx={{ pl: 0.3 }} />}
-                        label={searchStats.teams}
-                        variant="outlined"
-                        sx={{ height: 20, fontSize: '0.7rem' }}
-                      />
-                    )}
-                    {searchStats.events > 0 && (
-                      <Chip
-                        size="small"
-                        icon={<Event sx={{ pl: 0.3 }} />}
-                        label={searchStats.events}
-                        variant="outlined"
-                        sx={{ height: 20, fontSize: '0.7rem' }}
-                      />
-                    )}
-                  </Stack>
+                    {t('searching')}...
+                  </Typography>
                 </MenuItem>
+              )}
 
-                {searchResults.map(result => (
-                  <MenuItem
-                    key={result.id}
-                    onClick={() => {
-                      clearSearch();
-                      window.location.href = getUrl(result);
+              {error && (
+                <MenuItem disabled>
+                  <Typography variant="body2" color="error">
+                    {t('error', { error })}
+                  </Typography>
+                </MenuItem>
+              )}
+
+              {noResults && (
+                <MenuItem disabled>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
                     }}
-                    sx={{ py: 1.5, textDecoration: 'none', color: 'inherit' }}
                   >
+                    {t('no-results')}
+                  </Typography>
+                </MenuItem>
+              )}
+
+              {!noResults && (
+                <>
+                  <MenuItem disabled sx={{ borderBottom: `1px solid ${theme.palette.divider}` }}>
                     <Stack
                       direction="row"
-                      spacing={2}
+                      spacing={1}
                       sx={{
-                        alignItems: 'center',
-                        width: '100%'
+                        alignItems: 'center'
                       }}
                     >
-                      <SearchResultAvatar resultType={result.type} src={result.logoUrl} />
-                      <Box sx={{ flex: 1, minWidth: 0 }}>
-                        <Stack
-                          direction="row"
-                          spacing={0.5}
-                          sx={{
-                            alignItems: 'center'
-                          }}
-                        >
-                          <Typography
-                            variant="body2"
-                            noWrap
-                            sx={{
-                              fontWeight: 'medium'
-                            }}
-                          >
-                            {highlightText(result.title, query, theme)}
-                          </Typography>
-                        </Stack>
-                        <Stack
-                          direction="row"
-                          spacing={0.5}
-                          sx={{
-                            alignItems: 'center'
-                          }}
-                        >
-                          <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                          <Typography
-                            variant="caption"
-                            noWrap
-                            sx={{
-                              color: 'text.secondary'
-                            }}
-                          >
-                            {highlightText(result.location, query, theme)}
-                          </Typography>
-                          <Flag region={result.region} size={20} />
-                        </Stack>
-                      </Box>
-                      <Chip
-                        size="small"
-                        label={t(`type-${result.type}`)}
-                        variant="outlined"
-                        color={result.type === 'team' ? 'primary' : 'secondary'}
-                        sx={{ fontSize: '0.7rem' }}
-                      />
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary'
+                        }}
+                      >
+                        {t('results-count', { count: searchStats.total })}
+                      </Typography>
+                      {searchStats.teams > 0 && (
+                        <Chip
+                          size="small"
+                          icon={<Group sx={{ pl: 0.3 }} />}
+                          label={searchStats.teams}
+                          variant="outlined"
+                          sx={{ height: 20, fontSize: '0.7rem' }}
+                        />
+                      )}
+                      {searchStats.events > 0 && (
+                        <Chip
+                          size="small"
+                          icon={<Event sx={{ pl: 0.3 }} />}
+                          label={searchStats.events}
+                          variant="outlined"
+                          sx={{ height: 20, fontSize: '0.7rem' }}
+                        />
+                      )}
                     </Stack>
                   </MenuItem>
-                ))}
 
-                {searchResults.length > 8 && (
-                  <MenuItem disabled sx={{ justifyContent: 'center' }}>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        color: 'text.secondary'
+                  {searchResults.map(result => (
+                    <MenuItem
+                      key={result.id}
+                      onClick={() => {
+                        clearSearch();
+                        window.location.href = getUrl(result);
                       }}
+                      sx={{ py: 1.5, textDecoration: 'none', color: 'inherit' }}
                     >
-                      {t('more-results', { count: searchResults.length - 8 })}
-                    </Typography>
-                  </MenuItem>
-                )}
-              </>
-            )}
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{
+                          alignItems: 'center',
+                          width: '100%'
+                        }}
+                      >
+                        <SearchResultAvatar resultType={result.type} src={result.logoUrl} />
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Stack
+                            direction="row"
+                            spacing={0.5}
+                            sx={{
+                              alignItems: 'center'
+                            }}
+                          >
+                            <Typography
+                              variant="body2"
+                              noWrap
+                              sx={{
+                                fontWeight: 'medium'
+                              }}
+                            >
+                              {highlightText(result.title, query, theme)}
+                            </Typography>
+                          </Stack>
+                          <Stack
+                            direction="row"
+                            spacing={0.5}
+                            sx={{
+                              alignItems: 'center'
+                            }}
+                          >
+                            <LocationIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
+                            <Typography
+                              variant="caption"
+                              noWrap
+                              sx={{
+                                color: 'text.secondary'
+                              }}
+                            >
+                              {highlightText(result.location, query, theme)}
+                            </Typography>
+                            <Flag region={result.region} size={20} />
+                          </Stack>
+                        </Box>
+                        <Chip
+                          size="small"
+                          label={t(`type-${result.type}`)}
+                          variant="outlined"
+                          color={result.type === 'team' ? 'primary' : 'secondary'}
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      </Stack>
+                    </MenuItem>
+                  ))}
+
+                  {searchResults.length > 8 && (
+                    <MenuItem disabled sx={{ justifyContent: 'center' }}>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: 'text.secondary'
+                        }}
+                      >
+                        {t('more-results', { count: searchResults.length - 8 })}
+                      </Typography>
+                    </MenuItem>
+                  )}
+                </>
+              )}
+            </MenuList>
           </Paper>
         </Popper>
       </Box>
