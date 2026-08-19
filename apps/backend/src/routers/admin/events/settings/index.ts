@@ -58,6 +58,20 @@ router.put(
 router.post(
   '/complete',
   asHandler<AdminEventRequest>(async (req, res) => {
+    // Validate that all awards have been assigned
+    const divisions = await db.divisions.byEventId(req.eventId).getAll();
+
+    for (const division of divisions) {
+      const hasUnassigned = await db.awards.byDivisionId(division.id).hasUnassignedAwards();
+      if (hasUnassigned) {
+        res.status(400).json({
+          error: 'Cannot complete event: not all awards have been assigned',
+          code: 'AWARDS_NOT_ASSIGNED'
+        });
+        return;
+      }
+    }
+
     const updatedSettings = await db.events.byId(req.eventId).updateSettings({ completed: true });
     if (!updatedSettings) {
       throw new Error('Failed to complete event');
