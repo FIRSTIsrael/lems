@@ -679,6 +679,7 @@
           "save-error": "Nie udało się zapisać ustawień",
           "complete-success": "Wydarzenie zakończono pomyślnie",
           "complete-error": "Nie udało się zakończyć wydarzenia",
+          "complete-error-awards-not-assigned": "Nie można zakończyć wydarzenia: nie wszystkie nagrody zostały przyznane.",
           "publish-success": "Wydarzenie opublikowano pomyślnie",
           "publish-success-with-emails": "Wydarzenie opublikowano pomyślnie! Wysłano {emailsSent} wiadomości e-mail ({emailsFailed} nie powiodło się).",
           "publish-error": "Nie udało się opublikować wydarzenia",
