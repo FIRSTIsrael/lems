@@ -30,7 +30,7 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
   const [publishDialogOpen, setPublishDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
 
-  const handleCompleteEvent = async () => {
+  const handleCompleteEvent = async (): Promise<{ success: boolean; errorMessage?: string }> => {
     setAlert(null);
     try {
       const response = await apiFetch(`/admin/events/${event.id}/settings/complete`, {
@@ -39,13 +39,18 @@ export const EventActionsSection: React.FC<EventActionsSectionProps> = ({
 
       if (response.ok) {
         await mutateSettings();
-        setAlert({ type: 'success', message: t('messages.complete-success') });
         setCompleteDialogOpen(false);
+        return { success: true };
       } else {
-        setAlert({ type: 'error', message: t('messages.complete-error') });
+        const errorData = response.error as { error?: string; code?: string } | undefined;
+        const errorMessage =
+          errorData?.code === 'AWARDS_NOT_ASSIGNED'
+            ? t('messages.complete-error-awards-not-assigned')
+            : t('messages.complete-error');
+        return { success: false, errorMessage };
       }
     } catch {
-      setAlert({ type: 'error', message: t('messages.complete-error') });
+      return { success: false, errorMessage: t('messages.complete-error') };
     }
   };
 
