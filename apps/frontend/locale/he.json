@@ -705,7 +705,9 @@
           "session": "סבב #",
           "sessions": "סבבים",
           "results": "תוצאות",
-          "clear": "נקה מסננים"
+          "clear": "נקה מסננים",
+          "show-blocked": "הצג פסלות",
+          "hide-blocked": "הסתר פסלות"
         },
         "sort": {
           "room": "מיין לפי חדר",
@@ -1276,7 +1278,9 @@
           "session": "סבב #",
           "sessions": "סבבים",
           "results": "תוצאות",
-          "clear": "נקה מסננים"
+          "clear": "נקה מסננים",
+          "show-blocked": "הצג פסולות",
+          "hide-blocked": "הסתר פסולות"
         },
         "sort": {
           "room": "מיין לפי חדר",
