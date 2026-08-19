@@ -688,6 +688,7 @@
           "save-error": "שמירת ההגדרות נכשלה",
           "complete-success": "האירוע הושלם בהצלחה",
           "complete-error": "סיום האירוע נכשל",
+          "complete-error-awards-not-assigned": "לא ניתן לסיים את האירוע: לא כל הפרסים הוקצו.",
           "publish-success": "האירוע פורסם בהצלחה",
           "publish-success-with-emails": "האירוע פורסם בהצלחה! נשלחו {emailsSent} הודעות דוא\"ל ({emailsFailed} נכשלו).",
           "publish-error": "פרסום האירוע נכשל",

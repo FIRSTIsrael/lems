@@ -688,6 +688,7 @@
           "save-error": "Failed to save settings",
           "complete-success": "Event completed successfully",
           "complete-error": "Failed to complete event",
+          "complete-error-awards-not-assigned": "Cannot complete event: not all awards have been assigned.",
           "publish-success": "Event published successfully",
           "publish-success-with-emails": "Event published successfully! Sent {emailsSent} emails ({emailsFailed} failed).",
           "publish-error": "Failed to publish event",
