@@ -707,7 +707,9 @@
           "session": "Session #",
           "sessions": "Sessions",
           "results": "Results",
-          "clear": "Clear Filters"
+          "clear": "Clear Filters",
+          "show-blocked": "Show Blocked",
+          "hide-blocked": "Hide Blocked"
         },
         "sort": {
           "room": "Sort by Room",
@@ -1278,7 +1280,9 @@
           "session": "Session #",
           "sessions": "Sessions",
           "results": "Results",
-          "clear": "Clear Filters"
+          "clear": "Clear Filters",
+          "show-blocked": "Show Blocked",
+          "hide-blocked": "Hide Blocked"
         },
         "sort": {
           "room": "Sort by Room",

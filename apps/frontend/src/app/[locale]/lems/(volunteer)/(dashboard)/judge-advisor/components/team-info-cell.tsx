@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { Team } from '../graphql';
 import { TeamInfo } from '../../components/team-info';
 import { useJudgeAdvisor } from './judge-advisor-context';
+import { useFilters } from './filters-context';
 
 interface TeamInfoCellProps {
   team: Team;
@@ -15,12 +16,13 @@ interface TeamInfoCellProps {
 export const TeamInfoCell: React.FC<TeamInfoCellProps> = ({ team }) => {
   const t = useTranslations('pages.judge-advisor.team-info-cell');
   const { disqualifiedTeams } = useJudgeAdvisor();
+  const { showBlocked } = useFilters();
   const isDisqualified = disqualifiedTeams.has(team.id);
 
   return (
     <Stack spacing={1} sx={{ minWidth: 200 }}>
       <TeamInfo team={team} size="sm" />
-      {isDisqualified && (
+      {isDisqualified && showBlocked && (
         <Chip
           icon={<BlockIcon />}
           label={t('disqualified')}

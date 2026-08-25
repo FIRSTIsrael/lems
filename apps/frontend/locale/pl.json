@@ -707,7 +707,9 @@
           "session": "Sesja #",
           "sessions": "Sesje",
           "results": "Wyniki",
-          "clear": "Wyczyść filtry"
+          "clear": "Wyczyść filtry",
+          "show-blocked": "Pokaż zablokowane",
+          "hide-blocked": "Ukryj zablokowane"
         },
         "sort": {
           "room": "Sortuj wg sali",
@@ -1277,7 +1279,9 @@
           "session": "Sesja #",
           "sessions": "Sesje",
           "results": "Wyniki",
-          "clear": "Wyczyść filtry"
+          "clear": "Wyczyść filtry",
+          "show-blocked": "Pokaż zablokowane",
+          "hide-blocked": "Ukryj zablokowane"
         },
         "sort": {
           "room": "Sortuj wg sali",
