@@ -4,18 +4,17 @@ import { Box, FormControl, Select, MenuItem } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Season } from '@lems/types/api/portal';
-import { useTeam } from './team-context';
 
 interface SeasonSelectorProps {
   currentSeason: string;
 }
 
 export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason }) => {
-  const team = useTeam();
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const { data: seasons } = useSWR<Season[]>(() => `/portal/teams/${team.slug}/seasons`, {
+  // Fetch all seasons, not just the ones the team competed in
+  const { data: seasons } = useSWR<Season[]>('/portal/seasons', {
     suspense: true,
     fallbackData: []
   });

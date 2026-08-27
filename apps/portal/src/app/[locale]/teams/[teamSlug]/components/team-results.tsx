@@ -16,7 +16,7 @@ export const TeamResults: React.FC = () => {
 
   const searchParams = useSearchParams();
   const team = useTeam();
-  // Default to the team's last competed season, not 'latest'
+  // Default to the team's last competed season if they have one
   const season = searchParams.get('season') ?? team.lastCompetedSeason?.slug;
 
   const { data: eventResults } = useSWR<TeamEventResult[]>(
@@ -24,7 +24,7 @@ export const TeamResults: React.FC = () => {
     { suspense: true, fallbackData: [] }
   );
 
-  // Don't render anything if the team has never competed
+  // Don't render anything if the team has never competed and no season is selected
   if (!season) {
     return null;
   }
