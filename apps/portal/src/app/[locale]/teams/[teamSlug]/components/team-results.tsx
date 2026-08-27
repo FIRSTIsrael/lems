@@ -15,17 +15,18 @@ export const TeamResults: React.FC = () => {
   const t = useTranslations('pages.team.events');
 
   const searchParams = useSearchParams();
-  const season = searchParams.get('season') ?? 'latest';
-
   const team = useTeam();
+  // Default to the team's last competed season if they have one
+  const season = searchParams.get('season') ?? team.lastCompetedSeason?.slug;
 
   const { data: eventResults } = useSWR<TeamEventResult[]>(
-    () => `/portal/teams/${team.slug}/events/results?season=${season}`,
+    season ? () => `/portal/teams/${team.slug}/events/results?season=${season}` : null,
     { suspense: true, fallbackData: [] }
   );
 
-  if (!eventResults || eventResults.length === 0) {
-    return null; // Should be handled by suspense boudary
+  // Don't render anything if the team has never competed and no season is selected
+  if (!season) {
+    return null;
   }
 
   return (
@@ -37,22 +38,33 @@ export const TeamResults: React.FC = () => {
           </Typography>
         </Box>
       </Element>
-      <Stack spacing={3} sx={{ mt: 3 }}>
-        {eventResults.map(eventResult => {
-          if (!eventResult.results) {
+      {!eventResults || eventResults.length === 0 ? (
+        <Box sx={{ mt: 3, textAlign: 'center', py: 4 }}>
+          <Typography variant="body1" color="text.secondary">
+            {t('no-events-this-season')}
+          </Typography>
+        </Box>
+      ) : (
+        <Stack spacing={3} sx={{ mt: 3 }}>
+          {eventResults.map(eventResult => {
+            if (!eventResult.results) {
+              return (
+                <UnpublishedEventCard
+                  key={`event-${eventResult.eventSlug}`}
+                  eventResult={eventResult}
+                />
+              );
+            }
+
             return (
-              <UnpublishedEventCard
+              <TeamEventResultCard
                 key={`event-${eventResult.eventSlug}`}
                 eventResult={eventResult}
               />
             );
-          }
-
-          return (
-            <TeamEventResultCard key={`event-${eventResult.eventSlug}`} eventResult={eventResult} />
-          );
-        })}
-      </Stack>
+          })}
+        </Stack>
+      )}
     </Paper>
   );
 };

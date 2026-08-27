@@ -134,7 +134,8 @@
         "event-in-progress": "אירוע בעיצומו",
         "view-live-data": "צפייה בנתונים חיים",
         "view-event-details": "צפייה בפרטי האירוע",
-        "view-event-results": "לצפייה בתוצאות האירוע"
+        "view-event-results": "לצפייה בתוצאות האירוע",
+        "no-events-this-season": "הקבוצה עדיין לא התחרתה באירועים בעונה זו."
       }
     },
     "event": {
