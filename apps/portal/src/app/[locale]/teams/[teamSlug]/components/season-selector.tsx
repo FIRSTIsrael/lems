@@ -30,6 +30,9 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason })
     router.push(`?${params.toString()}`);
   };
 
+  // Use currentSeason if it exists, otherwise default to the first season
+  const selectedSeason = currentSeason ?? seasons[0]?.slug ?? '';
+
   return (
     <Box
       sx={{
@@ -38,7 +41,7 @@ export const SeasonSelector: React.FC<SeasonSelectorProps> = ({ currentSeason })
     >
       <FormControl size="small" fullWidth>
         <Select
-          value={currentSeason === 'latest' ? seasons[0].slug : currentSeason}
+          value={selectedSeason}
           onChange={e => handleSeasonChange(e.target.value)}
           displayEmpty
         >

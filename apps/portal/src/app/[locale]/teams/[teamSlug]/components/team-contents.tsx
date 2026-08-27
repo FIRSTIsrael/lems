@@ -15,7 +15,8 @@ export const TeamContents: React.FC = () => {
   const team = useTeam();
 
   const searchParams = useSearchParams();
-  const season = searchParams.get('season') ?? team.lastCompetedSeason?.slug ?? 'latest';
+  // Default to the team's last competed season, not 'latest'
+  const season = searchParams.get('season') ?? team.lastCompetedSeason?.slug;
 
   const [activeSection, setActiveSection] = useState('team-info');
 

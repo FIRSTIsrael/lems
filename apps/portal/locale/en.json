@@ -121,7 +121,8 @@
         "event-in-progress": "Event in Progress",
         "view-live-data": "View Live Data",
         "view-event-details": "View Event Details",
-        "view-event-results": "View Event Results"
+        "view-event-results": "View Event Results",
+        "no-events-this-season": "This team has not competed in any events this season yet."
       }
     },
     "teams": {
