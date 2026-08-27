@@ -30,7 +30,7 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
     params.set('tab', newTab.toString());
 
     startTransition(() => {
-      router.replace(`?${params.toString()}`, { scroll: false });
+      router.replace(`?${params.toString()}`);
     });
   };
 

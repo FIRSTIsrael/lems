@@ -24,7 +24,7 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
     params.set('division', divisionId);
 
     startTransition(() => {
-      router.replace(`?${params.toString()}`, { scroll: false });
+      router.replace(`?${params.toString()}`);
     });
   };
 

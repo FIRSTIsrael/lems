@@ -17,7 +17,7 @@ export const TeamPagination: React.FC<TeamPaginationProps> = ({ currentPage, tot
     params.set('page', value.toString());
 
     startTransition(() => {
-      router.replace(`?${params.toString()}`, { scroll: false });
+      router.replace(`?${params.toString()}`);
     });
   };
 
