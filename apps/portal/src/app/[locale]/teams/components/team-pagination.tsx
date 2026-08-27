@@ -1,6 +1,6 @@
 import { Grid, Pagination } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useTransition } from 'react';
 
 interface TeamPaginationProps {
   currentPage: number;
@@ -10,11 +10,15 @@ interface TeamPaginationProps {
 export const TeamPagination: React.FC<TeamPaginationProps> = ({ currentPage, totalPages }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
 
   const handlePaginationChange = (_event: ChangeEvent<unknown>, value: number) => {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     params.set('page', value.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
 
   return (

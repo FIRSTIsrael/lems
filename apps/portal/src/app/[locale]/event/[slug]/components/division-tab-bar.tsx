@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useTransition } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Paper, Tabs, Tab, Box } from '@mui/material';
@@ -21,13 +21,17 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
   const t = useTranslations('pages.event');
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
 
   const activeTab = parseInt(searchParams.get('tab') || '0', 10);
 
   const handleTabChange = (newTab: number) => {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     params.set('tab', newTab.toString());
-    router.replace(`?${params.toString()}`, { scroll: false });
+
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
 
   return (

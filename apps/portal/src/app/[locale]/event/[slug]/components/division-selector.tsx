@@ -3,6 +3,7 @@
 import { EventDetailsDivision } from '@lems/types/api/portal';
 import { Grid, Box, Typography, Chip, Button } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useTransition } from 'react';
 
 interface DivisionSelectorProps {
   divisions: EventDetailsDivision[];
@@ -11,6 +12,7 @@ interface DivisionSelectorProps {
 export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [, startTransition] = useTransition();
   const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
 
   if (divisions.length <= 1 || !selectedDivisionId) {
@@ -20,7 +22,10 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
   const handleDivisionChange = (divisionId: string) => {
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     params.set('division', divisionId);
-    router.replace(`?${params.toString()}`, { scroll: false });
+
+    startTransition(() => {
+      router.replace(`?${params.toString()}`, { scroll: false });
+    });
   };
 
   return (
