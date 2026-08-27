@@ -256,7 +256,7 @@ const DEFAULT_DIVISION_STATE: DivisionState = {
     currentStage: 'PRACTICE'
   },
   audienceDisplay: {
-    activeDisplay: 'logo',
+    activeDisplay: 'welcome',
     awardsPresentation: {
       slideIndex: 0,
       stepIndex: 0

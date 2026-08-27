@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 interface EventContextType {
   eventId: string;
   eventName: string;
+  eventLocation: string;
   currentDivision: { id: string; name: string; color: string };
   availableDivisions: { id: string; name: string; color: string }[];
   canSwitchDivisions: boolean;
@@ -17,11 +18,13 @@ export function EventProvider({
   children,
   eventId,
   eventName,
+  eventLocation,
   divisions
 }: {
   children: React.ReactNode;
   eventId: string;
   eventName: string;
+  eventLocation: string;
   divisions: { id: string; name: string; color: string }[];
 }) {
   const searchParams = useSearchParams();
@@ -44,6 +47,7 @@ export function EventProvider({
   const eventContext = {
     eventId,
     eventName,
+    eventLocation,
     currentDivision,
     availableDivisions: divisions,
     canSwitchDivisions: divisions.length > 1

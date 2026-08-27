@@ -967,7 +967,7 @@
           "scoreboard": "Tabela wyników",
           "match-preview": "Podgląd meczu",
           "sponsors": "Sponsorzy",
-          "logo": "Logo sezonu",
+          "welcome": "Powitanie",
           "message": "Wiadomość",
           "awards": "Nagrody"
         },
@@ -1184,6 +1184,11 @@
     },
     "audience-display": {
       "settings": "Ustawienia",
+      "welcome": {
+        "headline": "WITAMY DRUŻYNY!",
+        "teams-label": "Drużyny",
+        "event-supporters": "Sponsorzy wydarzenia:"
+      },
       "match-preview": {
         "round": "Runda",
         "match": "Mecz",

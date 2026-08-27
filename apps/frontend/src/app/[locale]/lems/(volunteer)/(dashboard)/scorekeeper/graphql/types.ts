@@ -3,7 +3,7 @@ import { AwardsPresentation } from '@lems/database';
 export type MatchStage = 'PRACTICE' | 'RANKING' | 'TEST';
 export type MatchStatus = 'not-started' | 'in-progress' | 'completed';
 export type AudienceDisplayScreen =
-  'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
+  'scoreboard' | 'match_preview' | 'sponsors' | 'welcome' | 'message' | 'awards';
 
 export interface TeamWinner {
   team: {

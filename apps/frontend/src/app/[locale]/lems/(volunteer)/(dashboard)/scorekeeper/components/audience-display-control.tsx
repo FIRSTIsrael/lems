@@ -120,10 +120,10 @@ export function AudienceDisplayControl() {
                 {t('modes.sponsors')}
               </Typography>
             </ToggleButton>
-            <ToggleButton value="logo" aria-label="logo">
+            <ToggleButton value="welcome" aria-label="welcome">
               <ImageRounded sx={{ fontSize: '1.15rem' }} />
               <Typography variant="caption" sx={{ fontWeight: 600 }}>
-                {t('modes.logo')}
+                {t('modes.welcome')}
               </Typography>
             </ToggleButton>
             <ToggleButton value="message" aria-label="message">

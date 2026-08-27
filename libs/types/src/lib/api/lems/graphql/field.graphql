@@ -5,7 +5,7 @@ enum AudienceDisplayScreen {
   scoreboard
   match_preview
   sponsors
-  logo
+  welcome
   message
   awards
 }

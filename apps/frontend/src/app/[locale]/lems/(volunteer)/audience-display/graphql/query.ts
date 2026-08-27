@@ -6,6 +6,9 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
     division(id: $divisionId) {
       id
       awardsAssigned
+      teams {
+        id
+      }
       field {
         divisionId
         audienceDisplay {
@@ -48,10 +51,16 @@ export const GET_AUDIENCE_DISPLAY_DATA = gql`
 `;
 
 export function parseAudienceDisplayData(data: AudienceDisplayData) {
-  return (
+  const audienceDisplay =
     data.division.field.audienceDisplay ??
     ({
-      activeDisplay: 'logo'
-    } as AudienceDisplayState)
-  );
+      activeDisplay: 'welcome'
+    } as AudienceDisplayState);
+
+  // Normalize legacy `logo` mode (pre-migration) to `welcome`
+  if ((audienceDisplay.activeDisplay as string) === 'logo') {
+    audienceDisplay.activeDisplay = 'welcome';
+  }
+
+  return audienceDisplay;
 }

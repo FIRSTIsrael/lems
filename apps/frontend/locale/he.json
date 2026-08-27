@@ -966,7 +966,7 @@
           "scoreboard": "לוח ניקוד",
           "match-preview": "תצוגה מוקדמת",
           "sponsors": "נותני חסות",
-          "logo": "לוגו עונה",
+          "welcome": "ברוכים הבאים",
           "message": "הודעה",
           "awards": "פרסים"
         },
@@ -1183,6 +1183,11 @@
     },
     "audience-display": {
       "settings": "הגדרות",
+      "welcome": {
+        "headline": "ברוכים הבאים קבוצות!",
+        "teams-label": "קבוצות",
+        "event-supporters": "תומכי האירוע:"
+      },
       "match-preview": {
         "round": "סבב",
         "match": "מקצה",

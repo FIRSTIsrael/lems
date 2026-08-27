@@ -968,7 +968,7 @@
           "scoreboard": "Scoreboard",
           "match-preview": "Match Preview",
           "sponsors": "Sponsors",
-          "logo": "Season Logo",
+          "welcome": "Welcome",
           "message": "Message",
           "awards": "Awards"
         },
@@ -1185,6 +1185,11 @@
     },
     "audience-display": {
       "settings": "Settings",
+      "welcome": {
+        "headline": "WELCOME TEAMS!",
+        "teams-label": "Teams",
+        "event-supporters": "Event Supporters:"
+      },
       "match-preview": {
         "round": "Round",
         "match": "Match",

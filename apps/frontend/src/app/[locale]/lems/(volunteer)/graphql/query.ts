@@ -9,6 +9,7 @@ export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
     event(id: $eventId) {
       id
       name
+      location
       volunteers(id: $userId) {
         divisions {
           id

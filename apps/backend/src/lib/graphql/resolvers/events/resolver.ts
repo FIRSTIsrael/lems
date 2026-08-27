@@ -10,6 +10,7 @@ export interface EventGraphQL {
   startDate: string;
   endDate: string;
   region: string;
+  location: string;
   timezone: string;
   isFullySetUp?: boolean;
   official: boolean;
@@ -35,6 +36,7 @@ interface EventRow {
   start_date: Date;
   end_date: Date;
   region: string;
+  location: string;
   timezone: string;
   is_fully_set_up?: boolean;
   official?: boolean | null;
@@ -86,6 +88,7 @@ function buildEventQuery(args: EventsArgs) {
       'events.start_date',
       'events.end_date',
       'events.region',
+      'events.location',
       'events.timezone'
     ])
     .select(
@@ -101,6 +104,7 @@ function buildEventQuery(args: EventsArgs) {
       'events.start_date',
       'events.end_date',
       'events.region',
+      'events.location',
       'events.timezone',
       'event_settings.official'
     ]);
@@ -143,6 +147,7 @@ function buildResult(event: EventRow): EventGraphQL {
     startDate: dayjs(event.start_date).toISOString(),
     endDate: dayjs(event.end_date).toISOString(),
     region: event.region,
+    location: event.location,
     timezone: event.timezone,
     isFullySetUp: event.is_fully_set_up,
     official: event.official ?? true

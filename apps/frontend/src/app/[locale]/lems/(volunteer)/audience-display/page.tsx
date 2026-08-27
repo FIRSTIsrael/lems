@@ -6,7 +6,7 @@ import { useEvent } from '../components/event-context';
 import useKeyboardShortcut from '../hooks/use-keyboard-shortcut';
 import { usePageData } from '../hooks/use-page-data';
 import { AudienceDisplayProvider } from './components/audience-display-context';
-import { LogoDisplay } from './components/logo-display';
+import { WelcomeDisplay } from './components/welcome-display';
 import { MessageDisplay } from './components/message-display';
 import { SponsorsDisplay } from './components/sponsors-display';
 import { MatchPreviewDisplay } from './components/match-preview/match-preview-display';
@@ -52,6 +52,7 @@ export default function AudienceDisplayPage() {
     rawData => {
       const displayState = parseAudienceDisplayData(rawData);
       const awardsAssigned = rawData.division.awardsAssigned;
+      const teamCount = rawData.division.teams?.length ?? 0;
 
       const awards = (rawData.division.judging?.awards ?? [])
         .filter(award => award.winner !== null && award.winner !== undefined)
@@ -97,7 +98,7 @@ export default function AudienceDisplayPage() {
         })
         .filter((award): award is NonNullable<typeof award> => award !== undefined);
 
-      return { displayState, awards, awardsAssigned };
+      return { displayState, awards, awardsAssigned, teamCount };
     },
     subscriptions
   );
@@ -123,8 +124,8 @@ export default function AudienceDisplayPage() {
           <DisplayModeTransition activeDisplay={activeDisplay}>
             {display => {
               switch (display) {
-                case 'logo':
-                  return <LogoDisplay />;
+                case 'welcome':
+                  return <WelcomeDisplay teamCount={data.teamCount} />;
                 case 'message':
                   return <MessageDisplay />;
                 case 'sponsors':
