@@ -4,7 +4,6 @@ import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
-import { useEvent } from '../../components/event-context';
 import sponsorImages from '../../../../../../../public/assets/audience-display/sponsors';
 import { AUDIENCE_THEME, firstTitleTags, SeasonBackground } from './theme';
 
@@ -27,12 +26,12 @@ export const SponsorsDisplay = () => {
   useEffect(() => {
     if (sponsorsData.length <= 1) return;
 
-    const timeout = setTimeout(() => {
+    const interval = setInterval(() => {
       setIndex(prevIndex => (prevIndex + 1) % sponsorsData.length);
     }, 5000);
 
-    return () => clearTimeout(timeout);
-  }, [index, sponsorsData.length]);
+    return () => clearInterval(interval);
+  }, [sponsorsData.length]);
 
   const currentSponsor = useMemo(() => {
     if (sponsorsData.length === 0) return null;
