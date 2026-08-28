@@ -13,9 +13,19 @@ export const TeamList: React.FC = () => {
   const t = useTranslations('pages.teams');
   const searchParams = useSearchParams();
   const pageNumber = Number(searchParams.get('page')) || 1;
+  const region = searchParams.get('region') || '';
+  const search = searchParams.get('search') || '';
+
+  const buildQuery = () => {
+    const params = new URLSearchParams();
+    params.set('page', pageNumber.toString());
+    if (region) params.set('region', region);
+    if (search && search.length >= 2) params.set('search', search);
+    return params.toString();
+  };
 
   const { data, isLoading } = useSWR<{ teams: Team[]; numberOfPages: number }>(
-    `/portal/teams?page=${pageNumber}`,
+    `/portal/teams?${buildQuery()}`,
     {
       suspense: true,
       fallbackData: { teams: [], numberOfPages: 0 }
