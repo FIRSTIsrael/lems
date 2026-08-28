@@ -1188,6 +1188,10 @@
         "teams-label": "קבוצות",
         "event-supporters": "תומכי האירוע:"
       },
+      "sponsors": {
+        "title": "<first>FIRST</first><reg>®</reg> LEGO<reg>®</reg> League - נותני חסות גלובליים",
+        "subtitle": "נותני חסות למסלול Challenge"
+      },
       "match-preview": {
         "round": "סבב",
         "match": "מקצה",

@@ -1189,6 +1189,10 @@
         "teams-label": "Drużyny",
         "event-supporters": "Sponsorzy wydarzenia:"
       },
+      "sponsors": {
+        "title": "Globalni sponsorzy <first>FIRST</first><reg>®</reg> LEGO<reg>®</reg> League",
+        "subtitle": "Sponsorzy dywizji Challenge"
+      },
       "match-preview": {
         "round": "Runda",
         "match": "Mecz",

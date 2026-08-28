@@ -1190,6 +1190,10 @@
         "teams-label": "Teams",
         "event-supporters": "Event Supporters:"
       },
+      "sponsors": {
+        "title": "<first>FIRST</first><reg>®</reg> LEGO<reg>®</reg> League Global Sponsors",
+        "subtitle": "Challenge division sponsors"
+      },
       "match-preview": {
         "round": "Round",
         "match": "Match",

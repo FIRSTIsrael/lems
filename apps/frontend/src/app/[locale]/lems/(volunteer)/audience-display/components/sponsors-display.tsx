@@ -1,17 +1,32 @@
 'use client';
 
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState } from 'react';
+import { useEvent } from '../../components/event-context';
 import sponsorImages from '../../../../../../../public/assets/audience-display/sponsors';
+import { AUDIENCE_THEME, firstTitleTags, SeasonBackground } from './theme';
+
+const copySx = {
+  m: 0,
+  fontFamily: 'inherit',
+  fontWeight: 700,
+  lineHeight: 1.25,
+  color: 'inherit',
+  textAlign: 'center'
+} as const;
 
 export const SponsorsDisplay = () => {
-  const [index, setIndex] = useState<number>(0);
+  const t = useTranslations('pages.audience-display.sponsors');
+  const { text, fontFamily } = AUDIENCE_THEME;
+  const [index, setIndex] = useState(0);
 
   const sponsorsData = Object.keys(sponsorImages);
 
-  // Cycle through sponsors every 5 seconds
   useEffect(() => {
+    if (sponsorsData.length <= 1) return;
+
     const timeout = setTimeout(() => {
       setIndex(prevIndex => (prevIndex + 1) % sponsorsData.length);
     }, 5000);
@@ -21,8 +36,7 @@ export const SponsorsDisplay = () => {
 
   const currentSponsor = useMemo(() => {
     if (sponsorsData.length === 0) return null;
-    const sponsorKey = sponsorsData[index];
-    return sponsorImages[sponsorKey] || null;
+    return sponsorImages[sponsorsData[index]] || null;
   }, [index, sponsorsData]);
 
   if (!currentSponsor) {
@@ -30,41 +44,51 @@ export const SponsorsDisplay = () => {
   }
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundImage: 'url(/assets/audience-display/audience-display-background.webp)',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-        overflow: 'hidden'
-      }}
-    >
+    <Box sx={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+      <SeasonBackground withTrees layout="sponsors" />
+
+      <Typography
+        sx={{
+          position: 'absolute',
+          left: '50%',
+          top: 176,
+          zIndex: 1,
+          width: 1435,
+          transform: 'translateX(-50%)',
+          color: text,
+          fontFamily,
+          fontSize: 64
+        }}
+      >
+        <Box component="p" sx={copySx}>
+          {t.rich('title', firstTitleTags)}
+        </Box>
+        <Box component="p" sx={copySx}>
+          {t('subtitle')}
+        </Box>
+      </Typography>
+
       <Box
         sx={{
-          position: 'relative',
+          position: 'absolute',
+          left: '50%',
+          top: 459,
           zIndex: 1,
+          width: 923,
+          height: 214,
+          transform: 'translateX(-50%)',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center',
-          width: '90%',
-          maxWidth: '1200px',
-          pt: '10vh',
-          height: '40vh'
+          justifyContent: 'center'
         }}
       >
         <Image
           key={`sponsor-${index}`}
           src={currentSponsor}
-          alt="Sponsor Logo"
+          alt=""
           style={{
-            maxHeight: '100%',
             maxWidth: '100%',
+            maxHeight: '100%',
             width: 'auto',
             height: 'auto',
             objectFit: 'contain'
