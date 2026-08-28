@@ -4,11 +4,13 @@ import type { Team } from '../graphql/types';
 export interface RadarChartDataPoint {
   field: string;
   score: number;
+  [key: string]: string | number;
 }
 
 export interface CategoryDataPoint {
   category: string;
   score: number;
+  [key: string]: string | number;
 }
 
 export const calculateAverage = (values: number[]) =>
