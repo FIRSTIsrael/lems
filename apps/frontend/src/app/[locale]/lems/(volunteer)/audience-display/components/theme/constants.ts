@@ -25,6 +25,8 @@ export const AUDIENCE_THEME = {
     legoEducation: `${THEME_BASE}/lego-education.png`,
     joshWeston: `${THEME_BASE}/josh-weston.svg`,
     ministryEducation: `${THEME_BASE}/ministry-education.svg`,
-    ministryScience: `${THEME_BASE}/ministry-science.svg`
+    ministryScience: `${THEME_BASE}/ministry-science.svg`,
+    messageExplorer: `${THEME_BASE}/message-explorer.png`,
+    messagePanel: `${THEME_BASE}/message-panel.svg`
   }
 } as const;
