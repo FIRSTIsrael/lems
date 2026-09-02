@@ -431,6 +431,9 @@
     },
     "tournament-manager": {
       "name": "מנהל תחרות"
+    },
+    "practice-tables-manager": {
+      "name": "מנהל שולחנות אימונים"
     }
   },
   "rubrics": {

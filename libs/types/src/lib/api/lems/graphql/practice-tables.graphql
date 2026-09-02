@@ -1,0 +1,149 @@
+"""
+Configuration for practice tables in a division
+"""
+type PracticeTablesConfig {
+  "Division ID this configuration belongs to"
+  divisionId: String!
+
+  "Number of practice tables available"
+  tableCount: Int!
+
+  "Duration of each practice slot in minutes"
+  slotDurationMinutes: Int!
+
+  "Start time for practice tables (HH:MM format, e.g., '07:00')"
+  startTime: String!
+
+  "End time for practice tables (HH:MM format, e.g., '19:00')"
+  endTime: String!
+
+  "Blocked time slots (e.g., lunch breaks)"
+  blockedTimeSlots: [BlockedTimeSlot!]!
+}
+
+"""
+A blocked time slot where practice tables are not available
+"""
+type BlockedTimeSlot {
+  "Start time (ISO 8601 time string, e.g., '12:00')"
+  start: String!
+
+  "End time (ISO 8601 time string, e.g., '12:30')"
+  end: String!
+
+  "Optional reason for blocking (e.g., 'Lunch break')"
+  reason: String
+}
+
+"""
+A scheduled practice table assignment for a team
+"""
+type PracticeTableAssignment {
+  "Unique identifier for the assignment"
+  id: String!
+
+  "Division ID"
+  divisionId: String!
+
+  "Team assigned to this slot"
+  team: Team!
+
+  "Table number (1-based)"
+  tableNumber: Int!
+
+  "Start time of the practice slot"
+  startTime: String!
+
+  "End time of the practice slot"
+  endTime: String!
+
+  "When this assignment was created"
+  createdAt: String!
+}
+
+"""
+Input for creating or updating practice tables configuration
+"""
+input PracticeTablesConfigInput {
+  "Division ID"
+  divisionId: String!
+
+  "Number of practice tables available"
+  tableCount: Int!
+
+  "Duration of each practice slot in minutes"
+  slotDurationMinutes: Int!
+
+  "Start time (HH:MM format)"
+  startTime: String!
+
+  "End time (HH:MM format)"
+  endTime: String!
+
+  "Blocked time slots"
+  blockedTimeSlots: [BlockedTimeSlotInput!]!
+}
+
+"""
+Input for a blocked time slot
+"""
+input BlockedTimeSlotInput {
+  "Start time (ISO 8601 time string)"
+  start: String!
+
+  "End time (ISO 8601 time string)"
+  end: String!
+
+  "Optional reason"
+  reason: String
+}
+
+"""
+Input for creating a practice table assignment
+"""
+input CreatePracticeTableAssignmentInput {
+  "Division ID"
+  divisionId: String!
+
+  "Team ID"
+  teamId: String!
+
+  "Table number"
+  tableNumber: Int!
+
+  "Start time (ISO 8601 datetime string)"
+  startTime: String!
+
+  "End time (ISO 8601 datetime string)"
+  endTime: String!
+}
+
+extend type Query {
+  "Get practice tables configuration for a division"
+  practiceTablesConfig(divisionId: String!): PracticeTablesConfig
+
+  "Get all practice table assignments for a division"
+  practiceTableAssignments(divisionId: String!): [PracticeTableAssignment!]!
+
+  "Get practice table assignments for a specific team"
+  teamPracticeTableAssignments(teamId: String!): [PracticeTableAssignment!]!
+}
+
+extend type Mutation {
+  "Create or update practice tables configuration"
+  updatePracticeTablesConfig(input: PracticeTablesConfigInput!): PracticeTablesConfig!
+
+  "Delete practice tables configuration for a division"
+  deletePracticeTablesConfig(divisionId: String!): Boolean!
+
+  "Create a new practice table assignment"
+  createPracticeTableAssignment(
+    input: CreatePracticeTableAssignmentInput!
+  ): PracticeTableAssignment!
+
+  "Delete a practice table assignment"
+  deletePracticeTableAssignment(assignmentId: String!): Boolean!
+
+  "Clear all practice table assignments for a division"
+  clearPracticeTableAssignments(divisionId: String!): Boolean!
+}

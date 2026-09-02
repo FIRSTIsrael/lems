@@ -1523,6 +1523,52 @@
           "robot-design": "Robot Design"
         }
       }
+    },
+    "practice-tables-manager": {
+      "page-title": "Practice Tables Manager",
+      "configuration": {
+        "title": "Configuration",
+        "table-count": "Number of Tables",
+        "slot-duration": "Slot Duration (minutes)",
+        "slot-duration-helper": "Duration of each practice slot in minutes",
+        "blocked-times": "Blocked Times",
+        "blocked-times-description": "Define times when tables are not available (e.g., lunch break)",
+        "add-blocked-time": "Add Blocked Time",
+        "save": "Save Configuration",
+        "not-configured": "Practice Tables Not Configured",
+        "no-blocked-times": "No blocked times",
+        "not-configured-description": "Practice tables have not been set up for this division yet. Please contact an event administrator to configure the practice tables schedule."
+      },
+      "schedule": {
+        "title": "Schedule",
+        "description": "Click on a cell to assign a team to a table at a specific time. Teams can only be assigned once at any given time.",
+        "empty-state": "Load configuration to start managing the schedule",
+        "clear-all": "Clear All",
+        "coming-soon": "Coming Soon",
+        "grid-placeholder": "Schedule grid will be available here",
+        "info": "Tables: {tables} | Slot Duration: {duration} minutes",
+        "time": "Time",
+        "table": "Table",
+        "blocked": "Blocked"
+      },
+      "team-selection": {
+        "title": "Select Team",
+        "search-placeholder": "Search by number, name, or affiliation...",
+        "no-teams": "No teams found",
+        "cancel": "Cancel"
+      },
+      "search": {
+        "placeholder": "Search teams by number, name, or affiliation...",
+        "assign": "Assign",
+        "selected-slot": "Selected: Table {table}, Time {time}",
+        "no-results": "No teams found",
+        "search-hint": "Select a time slot in the grid, then search for a team to assign",
+        "search-hint-with-selection": "Search for a team to assign to the selected slot"
+      },
+      "no-teams": {
+        "title": "No Teams Available",
+        "description": "There are no teams registered in this division yet. Teams must be registered before practice table assignments can be made."
+      }
     }
   },
   "components": {

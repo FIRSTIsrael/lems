@@ -1520,6 +1520,52 @@
           "robot-design": "עיצוב רובוט"
         }
       }
+    },
+    "practice-tables-manager": {
+      "page-title": "מנהל שולחנות אימונים",
+      "configuration": {
+        "title": "הגדרות",
+        "table-count": "מספר שולחנות",
+        "slot-duration": "משך סלוט (דקות)",
+        "slot-duration-helper": "משך כל סלוט אימון בדקות",
+        "blocked-times": "זמנים חסומים",
+        "blocked-times-description": "הגדר זמנים בהם השולחנות לא זמינים (למשל, הפסקת צהריים)",
+        "add-blocked-time": "הוסף זמן חסום",
+        "save": "שמור הגדרות",
+        "not-configured": "שולחנות אימון לא מוגדרים",
+        "no-blocked-times": "אין זמנים חסומים",
+        "not-configured-description": "שולחנות אימון עדיין לא הוגדרו עבור מחלקה זו. אנא פנה למנהל האירוע כדי להגדיר את לוח הזמנים של שולחנות האימון."
+      },
+      "schedule": {
+        "title": "לוח זמנים",
+        "description": "לחץ על תא כדי להקצות קבוצה לשולחן ולזמן מסוים. ניתן להקצות קבוצה פעם אחת בלבד בכל זמן נתון.",
+        "empty-state": "טען הגדרות כדי להתחיל לנהל את לוח הזמנים",
+        "clear-all": "נקה הכל",
+        "coming-soon": "בקרוב",
+        "grid-placeholder": "לוח הזמנים יהיה זמין כאן",
+        "info": "שולחנות: {tables} | משך סלוט: {duration} דקות",
+        "time": "שעה",
+        "table": "שולחן",
+        "blocked": "חסום"
+      },
+      "team-selection": {
+        "title": "בחר קבוצה",
+        "search-placeholder": "חפש לפי מספר, שם או שיוך...",
+        "no-teams": "לא נמצאו קבוצות",
+        "cancel": "ביטול"
+      },
+      "search": {
+        "placeholder": "חפש קבוצות לפי מספר, שם או שיוך...",
+        "assign": "הקצה",
+        "selected-slot": "נבחר: שולחן {table}, שעה {time}",
+        "no-results": "לא נמצאו קבוצות",
+        "search-hint": "בחר משבצת זמן ברשת, ואז חפש קבוצה להקצאה",
+        "search-hint-with-selection": "חפש קבוצה להקצאה למשבצת הנבחרת"
+      },
+      "no-teams": {
+        "title": "אין קבוצות זמינות",
+        "description": "אין עדיין קבוצות רשומות במחלקה זו. יש לרשום קבוצות לפני שניתן לבצע הקצאות לשולחנות אימון."
+      }
     }
   },
   "components": {

@@ -370,7 +370,8 @@
           "integrations": "אינטגרציות",
           "settings": "הגדרות",
           "users": "משתמשים",
-          "divisions": "בתים"
+          "divisions": "בתים",
+          "practice-tables": "שולחנות אימונים"
         },
         "color": "צבע"
       },
@@ -1095,6 +1096,57 @@
             "cancel": "ביטול",
             "add": "הוסף מתנדב"
           }
+        }
+      },
+      "practice-tables": {
+        "title": "הגדרות שולחנות אימונים",
+        "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "fields": {
+          "division": "בית",
+          "table-count": "מספר שולחנות אימונים",
+          "table-count-helper": "כמה שולחנות אימונים זמינים",
+          "slot-duration": "משך סלוט (דקות)",
+          "slot-duration-helper": "משך כל סלוט אימון",
+          "minutes": "דקות",
+          "start-time": "שעת התחלה",
+          "start-time-helper": "מתי שולחנות האימון נפתחים",
+          "end-time": "שעת סיום",
+          "end-time-helper": "מתי שולחנות האימון נסגרים"
+        },
+        "blocked-times": {
+          "title": "זמנים חסומים",
+          "description": "הגדר זמנים בהם שולחנות האימונים לא זמינים (למשל, הפסקת צהריים)",
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "reason": "סיבה (אופציונלי)",
+          "reason-placeholder": "למשל, הפסקת צהריים",
+          "add": "הוסף זמן חסום",
+          "none": "אין תקופות זמן חסומות",
+          "details": "תקופות זמן חסומות"
+        },
+        "actions": {
+          "edit-config": "ערוך הגדרות",
+          "delete-config": "מחק הגדרות",
+          "confirm-delete": "האם אתה בטוח שברצונך למחוק את ההגדרות? פעולה זו אינה ניתנת לביטול.",
+          "cancel": "ביטול",
+          "save": "שמור הגדרות",
+          "saving": "שומר..."
+        },
+        "messages": {
+          "save-success": "ההגדרות נשמרו בהצלחה!"
+        },
+        "errors": {
+          "select-division": "אנא בחר בית",
+          "save-failed": "שמירת ההגדרות נכשלה"
+        },
+        "status": {
+          "current-config": "הגדרות נוכחיות: {tables} שולחנות, סלוטים של {duration} דקות, {blockedSlots} תקופות חסומות",
+          "title": "הגדרות נוכחיות"
+        },
+        "no-config": {
+          "title": "לא נמצאה הגדרה",
+          "description": "למחלקה זו אין עדיין הגדרות שולחנות אימון. לחץ למטה ליצירת הגדרה חדשה.",
+          "create-button": "צור הגדרה"
         }
       }
     },

@@ -20,6 +20,8 @@ import { AwardsTable } from './tables/awards';
 import { AgendaEventsTable } from './tables/agenda-events';
 import { JudgingDeliberationsTable } from './tables/judging-deliberation';
 import { FinalDeliberationsTable } from './tables/final-deliberation';
+import { PracticeTablesConfigTable } from './tables/practice-tables-config';
+import { PracticeTablesScheduleTable } from './tables/practice-tables-schedule';
 
 export interface KyselyDatabaseSchema {
   admins: AdminsTable;
@@ -44,4 +46,6 @@ export interface KyselyDatabaseSchema {
   agenda_events: AgendaEventsTable;
   judging_deliberations: JudgingDeliberationsTable;
   final_deliberations: FinalDeliberationsTable;
+  practice_tables_config: PracticeTablesConfigTable;
+  practice_tables_schedule: PracticeTablesScheduleTable;
 }

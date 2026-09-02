@@ -21,6 +21,8 @@ export * from './tables/robot-game-tables';
 export * from './tables/robot-game-matches';
 export * from './tables/robot-game-match-participants';
 export * from './tables/agenda-events';
+export * from './tables/practice-tables-config';
+export * from './tables/practice-tables-schedule';
 
 // Teams
 export * from './tables/teams';

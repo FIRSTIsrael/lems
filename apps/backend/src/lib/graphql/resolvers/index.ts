@@ -58,6 +58,12 @@ import {
   DeliberationUpdatedEventResolver,
   FinalDeliberationUpdatedEventResolver
 } from './subscriptions/deliberations';
+import { practiceTablesConfigResolver } from './divisions/practice-tables-config';
+import {
+  practiceTableAssignmentsResolver,
+  teamPracticeTableAssignmentsResolver
+} from './divisions/practice-table-assignments';
+import { practiceTableAssignmentTeamResolver } from './divisions/practice-table-assignment-team';
 
 // JSON scalar resolver - passes through any valid JSON value
 function parseJsonLiteral(ast: ValueNode): unknown {
@@ -94,7 +100,10 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver
+    division: divisionResolver,
+    practiceTablesConfig: practiceTablesConfigResolver,
+    practiceTableAssignments: practiceTableAssignmentsResolver,
+    teamPracticeTableAssignments: teamPracticeTableAssignmentsResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
@@ -177,6 +186,9 @@ export const resolvers = {
     divisions: volunteerDivisionsResolver
   },
   RoleInfo: RoleInfoResolver,
+  PracticeTableAssignment: {
+    team: practiceTableAssignmentTeamResolver
+  },
   RubricUpdatedEvent: RubricUpdatedEventResolver,
   ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
   DeliberationUpdatedEvent: DeliberationUpdatedEventResolver,
