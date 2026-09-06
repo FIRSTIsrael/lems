@@ -1122,7 +1122,9 @@
           "reason-placeholder": "e.g., Lunch Break",
           "add": "Add Blocked Time",
           "none": "No blocked time periods",
-          "details": "Blocked Time Periods"
+          "details": "Blocked Time Periods",
+          "start": "Start Time",
+          "end": "End Time"
         },
         "actions": {
           "edit-config": "Edit Configuration",
@@ -1138,7 +1140,8 @@
         "errors": {
           "select-division": "Please select a division",
           "save-failed": "Failed to save configuration",
-          "delete-failed": "Failed to delete configuration"
+          "delete-failed": "Failed to delete configuration",
+          "load-failed": "Failed to load configuration"
         },
         "status": {
           "current-config": "Current configuration: {tables} tables, {duration} minute slots, {blockedSlots} blocked time periods",

@@ -1121,8 +1121,10 @@
           "reason": "סיבה (אופציונלי)",
           "reason-placeholder": "למשל, הפסקת צהריים",
           "add": "הוסף זמן חסום",
-          "none": "אין תקופות זמן חסומות",
-          "details": "תקופות זמן חסומות"
+          "none": "כל הזמנים זמינים",
+          "details": "שעות לא זמינות",
+          "start": "שעת התחלה",
+          "end": "שעת סיום"
         },
         "actions": {
           "edit-config": "ערוך הגדרות",
@@ -1138,7 +1140,8 @@
         "errors": {
           "select-division": "אנא בחר בית",
           "save-failed": "שמירת ההגדרות נכשלה",
-          "delete-failed": "מחיקת ההגדרות נכשלה"
+          "delete-failed": "מחיקת ההגדרות נכשלה",
+          "load-failed": "טעינת ההגדרות נכשלה"
         },
         "status": {
           "current-config": "הגדרות נוכחיות: {tables} שולחנות, סלוטים של {duration} דקות, {blockedSlots} תקופות חסומות",

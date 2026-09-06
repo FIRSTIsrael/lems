@@ -9,6 +9,8 @@ import { usePageData } from '../../hooks/use-page-data';
 import { GET_PRACTICE_TABLES_CONFIG } from './graphql';
 import { ScheduleGrid } from './components/schedule-grid';
 import { TeamSearchBar } from './components/team-search-bar';
+import { NoConfiguration } from './components/no-configuration';
+import { NoTeams } from './components/no-teams';
 
 interface Team {
   id: string;
@@ -98,10 +100,15 @@ export default function PracticeTablesManagerPage() {
     });
   };
 
-  if (loading) {
+  if (loading || teamsLoading) {
     return (
       <Box
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '400px' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '400px'
+        }}
       >
         <CircularProgress />
       </Box>
@@ -117,35 +124,11 @@ export default function PracticeTablesManagerPage() {
   }
 
   if (!config) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          {t('page-title')}
-        </Typography>
-        <Alert severity="info" sx={{ mt: 3 }}>
-          {t('configuration.not-configured')}
-        </Alert>
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          {t('configuration.not-configured-description')}
-        </Typography>
-      </Box>
-    );
+    return <NoConfiguration />;
   }
 
-  if (!teamsLoading && teams.length === 0) {
-    return (
-      <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          {t('page-title')}
-        </Typography>
-        <Alert severity="info" sx={{ mt: 3 }}>
-          {t('no-teams.title')}
-        </Alert>
-        <Typography variant="body1" sx={{ mt: 2 }}>
-          {t('no-teams.description')}
-        </Typography>
-      </Box>
-    );
+  if (teams.length === 0) {
+    return <NoTeams />;
   }
 
   return (
@@ -162,23 +145,17 @@ export default function PracticeTablesManagerPage() {
 
         {/* Schedule Grid */}
         <Grid size={{ xs: 12, md: 9 }}>
-          {teamsLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', p: 4 }}>
-              <CircularProgress />
-            </Box>
-          ) : (
-            <ScheduleGrid
-              tableCount={config.tableCount}
-              slotDurationMinutes={config.slotDurationMinutes}
-              startTime={config.startTime}
-              endTime={config.endTime}
-              blockedTimeSlots={config.blockedTimeSlots}
-              selectedCell={selectedCell}
-              onCellSelect={handleCellSelect}
-              assignments={assignments}
-              onClearAssignment={handleClearAssignment}
-            />
-          )}
+          <ScheduleGrid
+            tableCount={config.tableCount}
+            slotDurationMinutes={config.slotDurationMinutes}
+            startTime={config.startTime}
+            endTime={config.endTime}
+            blockedTimeSlots={config.blockedTimeSlots}
+            selectedCell={selectedCell}
+            onCellSelect={handleCellSelect}
+            assignments={assignments}
+            onClearAssignment={handleClearAssignment}
+          />
         </Grid>
       </Grid>
     </Box>
