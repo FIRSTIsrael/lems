@@ -11,25 +11,16 @@ import {
   IconButton,
   Divider,
   Alert,
-  CircularProgress,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails
+  CircularProgress
 } from '@mui/material';
 import { Grid } from '@mui/material';
-import {
-  Add as AddIcon,
-  Delete as DeleteIcon,
-  ExpandMore as ExpandMoreIcon
-} from '@mui/icons-material';
+import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import { AdminDivisionsResponseSchema, Division } from '@lems/types/api/admin';
+import { Division } from '@lems/types/api/admin';
 import { useEvent } from '../components/event-context';
+import { DivisionSelector } from '../components/division-selector';
 import { getApiBase } from '@lems/shared';
 
 interface BlockedTimeSlot {
@@ -41,8 +32,8 @@ interface BlockedTimeSlot {
 export default function PracticeTablesConfigPage() {
   const t = useTranslations('pages.events.practice-tables');
   const event = useEvent();
+  const searchParams = useSearchParams();
 
-  const [selectedDivisionId, setSelectedDivisionId] = useState<string>('');
   const [tableCount, setTableCount] = useState(4);
   const [slotDuration, setSlotDuration] = useState(15);
   const [startTime, setStartTime] = useState('07:00');
@@ -55,10 +46,12 @@ export default function PracticeTablesConfigPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   // Fetch divisions
-  const { data: divisions = [] } = useSWR<Division[]>(
-    [`/admin/events/${event.id}/divisions`, AdminDivisionsResponseSchema],
-    { suspense: false, fallbackData: [] }
-  );
+  const { data: divisions = [] } = useSWR<Division[]>(`/admin/events/${event.id}/divisions`, {
+    suspense: false,
+    fallbackData: []
+  });
+
+  const selectedDivisionId = searchParams.get('division') || divisions[0]?.id;
 
   // Auto-select first division when divisions load
   useEffect(() => {
@@ -213,6 +206,12 @@ export default function PracticeTablesConfigPage() {
         {t('description')}
       </Typography>
 
+      {divisions.length > 1 && (
+        <Box sx={{ mb: 3 }}>
+          <DivisionSelector divisions={divisions} />
+        </Box>
+      )}
+
       {message && (
         <Alert severity={message.type} sx={{ mb: 3 }} onClose={() => setMessage(null)}>
           {message.text}
@@ -354,31 +353,16 @@ export default function PracticeTablesConfigPage() {
         </Paper>
       )}
 
-      {(!hasExistingConfig || isEditing) && (
+      {(!hasExistingConfig || isEditing) && selectedDivisionId && (
         <Paper sx={{ p: 4 }}>
           <Stack spacing={4}>
-            <FormControl fullWidth>
-              <InputLabel>{t('fields.division')}</InputLabel>
-              <Select
-                value={selectedDivisionId}
-                onChange={e => setSelectedDivisionId(e.target.value)}
-                label={t('fields.division')}
-              >
-                {divisions.map(division => (
-                  <MenuItem key={division.id} value={division.id}>
-                    {division.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
             {loading && (
               <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
                 <CircularProgress />
               </Box>
             )}
 
-            {!loading && selectedDivisionId && isEditing && (
+            {!loading && isEditing && (
               <>
                 <Grid container spacing={3}>
                   <Grid size={{ xs: 12, md: 6 }}>
