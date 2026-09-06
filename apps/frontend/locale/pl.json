@@ -112,7 +112,9 @@
         "arrived": "Przybyli",
         "all-arrived": "Wszystkie drużyny przybyły! Świetna robota 🎉",
         "waiting-for": "Oczekiwanie na {count, plural, one {# drużynę} other {# drużyny}}",
-        "teams-pending": "{count, plural, one {# drużyna w oczekiwaniu} other {# drużyny w oczekiwaniu}}"
+        "teams-pending": "{count, plural, one {# drużyna w oczekiwaniu} other {# drużyny w oczekiwaniu}}",
+        "arrived-teams": "{count, plural, one {# drużyna przybyła} other {# drużyny przybyły}}",
+        "mark-not-arrived": "Oznacz jako nieprzybyłą"
       },
       "team-input": {
         "title": "Zarejestruj przybycie drużyny",

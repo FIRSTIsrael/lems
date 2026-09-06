@@ -11,10 +11,12 @@ import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_DIVISION_TEAMS,
   TEAM_ARRIVED_MUTATION,
+  TEAM_NOT_ARRIVED_MUTATION,
   type Team,
   parseDivisionTeams,
   createTeamArrivalSubscription,
-  createTeamArrivedCacheUpdate
+  createTeamArrivedCacheUpdate,
+  createTeamNotArrivedCacheUpdate
 } from './graphql';
 import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
@@ -24,6 +26,11 @@ export default function PitAdminPage() {
 
   const { currentDivision } = useEvent();
   const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION, {
+    onError: () => {
+      toast.error(t('error'));
+    }
+  });
+  const [teamNotArrivedMutation] = useMutation(TEAM_NOT_ARRIVED_MUTATION, {
     onError: () => {
       toast.error(t('error'));
     }
@@ -53,6 +60,16 @@ export default function PitAdminPage() {
     [teamArrivedMutation, currentDivision.id]
   );
 
+  const handleTeamNotArrival = useCallback(
+    async (team: Team) => {
+      await teamNotArrivedMutation({
+        variables: { teamId: team.id, divisionId: currentDivision.id },
+        update: createTeamNotArrivedCacheUpdate(team.id)
+      });
+    },
+    [teamNotArrivedMutation, currentDivision.id]
+  );
+
   return (
     <>
       <PageHeader title={t('page-title')} />
@@ -65,7 +82,7 @@ export default function PitAdminPage() {
           disabled={loading}
         />
 
-        <ArrivalsStats teams={teams} loading={loading} />
+        <ArrivalsStats teams={teams} onTeamNotArrival={handleTeamNotArrival} loading={loading} />
       </Stack>
     </>
   );
