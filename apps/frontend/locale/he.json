@@ -400,9 +400,19 @@
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
+        "practice-tables": "שולחנות אימון",
         "field-timer": "שעון זמן זירה",
         "judging-status": "מצב השיפוט",
         "scoreboard": "טבלת ניקוד"
+      },
+      "practice-tables": {
+        "page-title": "לוח זמנים שולחנות אימונים",
+        "time": "שעה",
+        "table": "שולחן {number}",
+        "blocked": "לא זמין",
+        "available": "פנוי",
+        "empty-state": "לא הוגדרו שולחנות אימונים",
+        "error-state": "טעינת שולחנות אימונים נכשלה"
       },
       "field-status": {
         "countdown": {

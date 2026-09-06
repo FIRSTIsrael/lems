@@ -171,12 +171,21 @@ export const PracticeTablesTab: React.FC = () => {
                               padding: '16px'
                             }}
                           >
-                            <Chip
-                              label={`#${assignment.team.number}`}
-                              size="small"
-                              color="primary"
-                              sx={{ fontWeight: 500 }}
-                            />
+                            <Box>
+                              <Chip
+                                label={`#${assignment.team.number}`}
+                                size="small"
+                                color="primary"
+                                sx={{ fontWeight: 500, mb: 0.5 }}
+                              />
+                              <Typography
+                                variant="caption"
+                                sx={{ display: 'block' }}
+                                color="#000000"
+                              >
+                                {assignment.team.name}
+                              </Typography>
+                            </Box>
                           </Link>
                         </TableCell>
                       );

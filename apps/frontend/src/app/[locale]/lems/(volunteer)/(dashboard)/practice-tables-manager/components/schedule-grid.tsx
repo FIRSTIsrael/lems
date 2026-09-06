@@ -12,7 +12,8 @@ import {
   Typography,
   Chip,
   IconButton,
-  Tooltip
+  Tooltip,
+  Box
 } from '@mui/material';
 import { Add as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
@@ -61,13 +62,13 @@ export function ScheduleGrid({
     const [endHour, endMinute] = endTime.split(':').map(Number);
     const startMinutes = startHour * 60 + startMinute;
     const endMinutes = endHour * 60 + endMinute;
-    
+
     for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDurationMinutes) {
       const hour = Math.floor(minutes / 60);
       const minute = minutes % 60;
       slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
     }
-    
+
     return slots;
   }, [slotDurationMinutes, startTime, endTime]);
 
@@ -94,9 +95,7 @@ export function ScheduleGrid({
       <Table stickyHeader size="small">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontWeight: 'bold', minWidth: 80 }}>
-              {t('time')}
-            </TableCell>
+            <TableCell sx={{ fontWeight: 'bold', minWidth: 80 }}>{t('time')}</TableCell>
             {Array.from({ length: tableCount }, (_, i) => (
               <TableCell key={i} align="center" sx={{ fontWeight: 'bold', minWidth: 120 }}>
                 {t('table')} {i + 1}
@@ -105,16 +104,16 @@ export function ScheduleGrid({
           </TableRow>
         </TableHead>
         <TableBody>
-          {timeSlots.map((time) => {
+          {timeSlots.map(time => {
             const blocked = isTimeBlocked(time);
-            
+
             return (
               <TableRow key={time} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
                 <TableCell sx={{ fontWeight: 'medium' }}>{time}</TableCell>
                 {Array.from({ length: tableCount }, (_, tableIndex) => {
                   const assignment = assignments[tableIndex]?.[time];
                   const isSelected = isCellSelected(tableIndex, time);
-                  
+
                   if (blocked) {
                     return (
                       <TableCell
@@ -132,7 +131,7 @@ export function ScheduleGrid({
                       </TableCell>
                     );
                   }
-                  
+
                   return (
                     <TableCell
                       key={tableIndex}
@@ -148,13 +147,19 @@ export function ScheduleGrid({
                       }}
                     >
                       {assignment ? (
-                        <Chip
-                          label={`#${assignment.number}`}
-                          size="small"
-                          onDelete={(e) => handleClearClick(tableIndex, time, e)}
-                          deleteIcon={<ClearIcon />}
-                          color="primary"
-                        />
+                        <Box>
+                          <Chip
+                            label={`#${assignment.number}`}
+                            size="small"
+                            onDelete={e => handleClearClick(tableIndex, time, e)}
+                            deleteIcon={<ClearIcon />}
+                            color="primary"
+                            sx={{ mb: 0.5 }}
+                          />
+                          <Typography variant="caption" sx={{ display: 'block' }} color="#000000">
+                            {assignment.name}
+                          </Typography>
+                        </Box>
                       ) : (
                         <IconButton size="small" sx={{ opacity: isSelected ? 0.8 : 0.3 }}>
                           <AddIcon fontSize="small" />

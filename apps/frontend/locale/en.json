@@ -403,8 +403,18 @@
         "field-timer": "Field Timer",
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
+        "practice-tables": "Practice Tables",
         "judging-status": "Judging Status",
         "scoreboard": "Scoreboard"
+      },
+      "practice-tables": {
+        "page-title": "Practice Tables Schedule",
+        "time": "Time",
+        "table": "Table {number}",
+        "blocked": "Blocked",
+        "available": "Available",
+        "empty-state": "No practice tables configured",
+        "error-state": "Failed to load practice tables"
       },
       "field-status": {
         "countdown": {
