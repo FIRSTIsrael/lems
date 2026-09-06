@@ -258,6 +258,8 @@
         "judging-sessions": "Judging Session",
         "match-type": "{stage} Match #{number} - Table {table}",
         "judging-session": "Judging Session - Room {room}",
+        "practice-table": "Practice Table {tableNumber}",
+        "practice-table-location": "Practice Table {tableNumber}",
         "no-matches": "No matches scheduled",
         "no-judging": "No judging sessions scheduled",
         "no-schedule": "No schedule available"

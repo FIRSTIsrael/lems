@@ -258,6 +258,8 @@
         "judging-sessions": "מפגש שיפוט",
         "match-type": "מקצה {stage} #{number} - שולחן {table}",
         "judging-session": "מפגש שיפוט - חדר {room}",
+        "practice-table": "שולחן אימון {tableNumber}",
+        "practice-table-location": "שולחן אימון {tableNumber}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"

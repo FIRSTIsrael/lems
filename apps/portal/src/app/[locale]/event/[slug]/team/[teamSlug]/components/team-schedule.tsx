@@ -16,6 +16,13 @@ interface ScheduleEntry {
   location: string;
 }
 
+interface PracticeTableAssignment {
+  id: string;
+  tableNumber: number;
+  startTime: string;
+  endTime: string;
+}
+
 export const TeamSchedule: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
@@ -27,6 +34,10 @@ export const TeamSchedule: React.FC = () => {
     suspense: true
   });
 
+  const { data: practiceAssignments } = useRealtimeData<PracticeTableAssignment[]>(
+    `/portal/teams/${team.slug}/practice-table-assignments`
+  );
+
   const t = useTranslations('pages.team-in-event');
   const { getStage } = useMatchTranslations();
 
@@ -35,6 +46,13 @@ export const TeamSchedule: React.FC = () => {
   }
 
   const { session: judgingSession, matches, agenda } = data;
+
+  // Get the event date from the first scheduled item (match or judging session)
+  const eventDate = matches?.[0]?.scheduledTime
+    ? new Date(matches[0].scheduledTime)
+    : judgingSession?.scheduledTime
+      ? new Date(judgingSession.scheduledTime)
+      : new Date(); // Fallback to today if no matches/sessions
 
   const scheduleEntries: ScheduleEntry[] = [
     ...(matches || []).map(match => ({
@@ -58,6 +76,22 @@ export const TeamSchedule: React.FC = () => {
           }
         ]
       : []),
+    ...(practiceAssignments || []).map(assignment => {
+      // Parse HH:MM time and combine with the event date
+      const [hours, minutes] = assignment.startTime.split(':').map(Number);
+      const time = new Date(eventDate);
+      time.setHours(hours, minutes, 0, 0);
+
+      return {
+        time,
+        description: t('schedule.practice-table', {
+          tableNumber: assignment.tableNumber
+        }),
+        location: t('schedule.practice-table-location', {
+          tableNumber: assignment.tableNumber
+        })
+      };
+    }),
     ...(agenda || []).map(agendaItem => ({
       time: new Date(agendaItem.startTime),
       description: agendaItem.title,

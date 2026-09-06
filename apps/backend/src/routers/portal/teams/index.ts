@@ -219,4 +219,44 @@ router.get(
   })
 );
 
+// Get practice table assignments for a specific team
+router.get(
+  '/:teamSlug/practice-table-assignments',
+  asHandler<PortalTeamRequest>(async (req, res) => {
+    try {
+      const assignments = await db.raw.sql
+        .selectFrom('practice_tables_schedule as pts')
+        .where('pts.team_id', '=', req.teamId)
+        .select([
+          'pts.id',
+          'pts.table_number as tableNumber',
+          'pts.start_time as startTime',
+          'pts.end_time as endTime'
+        ])
+        .orderBy('pts.start_time', 'asc')
+        .execute();
+
+      const formattedAssignments = assignments.map(a => {
+        // Convert timestamps to HH:MM format (use UTC to avoid timezone issues)
+        const startDate = new Date(a.startTime);
+        const endDate = new Date(a.endTime);
+        const startTimeStr = `${startDate.getUTCHours().toString().padStart(2, '0')}:${startDate.getUTCMinutes().toString().padStart(2, '0')}`;
+        const endTimeStr = `${endDate.getUTCHours().toString().padStart(2, '0')}:${endDate.getUTCMinutes().toString().padStart(2, '0')}`;
+
+        return {
+          id: a.id,
+          tableNumber: a.tableNumber,
+          startTime: startTimeStr,
+          endTime: endTimeStr
+        };
+      });
+
+      res.json(formattedAssignments);
+    } catch (error) {
+      console.error('Error fetching team practice table assignments:', error);
+      res.status(500).json({ error: 'Failed to fetch team practice table assignments' });
+    }
+  })
+);
+
 export default router;
