@@ -163,7 +163,8 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
         "agenda": "Agenda",
-        "general-schedule": "General Schedule"
+        "general-schedule": "General Schedule",
+        "practice-tables": "Practice Tables"
       },
       "scoreboard": {
         "rank": "Rank",
@@ -198,7 +199,16 @@
         }
       },
       "division-teams": "{divisionName} teams",
-      "region": "Region"
+      "region": "Region",
+      "practice-tables": {
+        "title": "Practice Tables",
+        "description": "{tables, plural, =1 {1 practice table} other {# practice tables}} available with {duration} minute slots",
+        "time": "Time",
+        "table": "Table",
+        "blocked": "Unavailable",
+        "available": "Available",
+        "not-configured": "Practice tables have not been configured for this division."
+      }
     },
     "team-in-event": {
       "not-found": {

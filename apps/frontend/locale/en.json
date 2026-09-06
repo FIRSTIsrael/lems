@@ -1568,6 +1568,11 @@
       "no-teams": {
         "title": "No Teams Available",
         "description": "There are no teams registered in this division yet. Teams must be registered before practice table assignments can be made."
+      },
+      "errors": {
+        "team-already-assigned": "This team already has a practice table assignment during this time slot. Please choose a different time or team.",
+        "assignment-failed": "Failed to create assignment",
+        "delete-failed": "Failed to delete assignment"
       }
     }
   },

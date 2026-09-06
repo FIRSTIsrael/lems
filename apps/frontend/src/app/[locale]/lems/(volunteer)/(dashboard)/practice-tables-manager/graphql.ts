@@ -21,6 +21,52 @@ interface PracticeTablesConfigVars {
   divisionId: string;
 }
 
+interface Team {
+  id: string;
+  number: number;
+  name: string;
+  affiliation?: string;
+}
+
+interface PracticeTableAssignment {
+  id: string;
+  divisionId: string;
+  team: Team;
+  tableNumber: number;
+  startTime: string;
+  endTime: string;
+}
+
+interface PracticeTableAssignmentsData {
+  practiceTableAssignments: PracticeTableAssignment[];
+}
+
+interface PracticeTableAssignmentsVars {
+  divisionId: string;
+}
+
+interface CreateAssignmentData {
+  createPracticeTableAssignment: PracticeTableAssignment;
+}
+
+interface CreateAssignmentVars {
+  input: {
+    divisionId: string;
+    teamId: string;
+    tableNumber: number;
+    startTime: string;
+    endTime: string;
+  };
+}
+
+interface DeleteAssignmentData {
+  deletePracticeTableAssignment: boolean;
+}
+
+interface DeleteAssignmentVars {
+  assignmentId: string;
+}
+
 export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
   PracticeTablesConfigData,
   PracticeTablesConfigVars
@@ -38,5 +84,56 @@ export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
         reason
       }
     }
+  }
+`;
+
+export const GET_PRACTICE_TABLE_ASSIGNMENTS: TypedDocumentNode<
+  PracticeTableAssignmentsData,
+  PracticeTableAssignmentsVars
+> = gql`
+  query GetPracticeTableAssignments($divisionId: String!) {
+    practiceTableAssignments(divisionId: $divisionId) {
+      id
+      divisionId
+      team {
+        id
+        number
+        name
+        affiliation
+      }
+      tableNumber
+      startTime
+      endTime
+    }
+  }
+`;
+
+export const CREATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
+  CreateAssignmentData,
+  CreateAssignmentVars
+> = gql`
+  mutation CreatePracticeTableAssignment($input: CreatePracticeTableAssignmentInput!) {
+    createPracticeTableAssignment(input: $input) {
+      id
+      divisionId
+      team {
+        id
+        number
+        name
+        affiliation
+      }
+      tableNumber
+      startTime
+      endTime
+    }
+  }
+`;
+
+export const DELETE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
+  DeleteAssignmentData,
+  DeleteAssignmentVars
+> = gql`
+  mutation DeletePracticeTableAssignment($assignmentId: String!) {
+    deletePracticeTableAssignment(assignmentId: $assignmentId)
   }
 `;
