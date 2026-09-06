@@ -286,14 +286,40 @@ export default function PracticeTablesConfigPage() {
                 color="error"
                 onClick={async () => {
                   if (confirm(t('actions.confirm-delete'))) {
-                    // TODO: Implement delete mutation
-                    setHasExistingConfig(false);
-                    setIsEditing(true);
-                    setTableCount(4);
-                    setSlotDuration(15);
-                    setBlockedSlots([]);
+                    try {
+                      setSaving(true);
+                      const response = await fetch(`${getApiBase()}/lems/graphql`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({
+                          query: `
+                            mutation DeletePracticeTablesConfig($divisionId: String!) {
+                              deletePracticeTablesConfig(divisionId: $divisionId)
+                            }
+                          `,
+                          variables: { divisionId: selectedDivisionId }
+                        })
+                      });
+
+                      const result = await response.json();
+
+                      if (result.errors) {
+                        throw new Error(result.errors[0].message);
+                      }
+
+                      setHasExistingConfig(false);
+                      setIsEditing(false);
+                      setMessage({ type: 'success', text: t('status.deleted') });
+                    } catch (error) {
+                      console.error('Failed to delete configuration:', error);
+                      setMessage({ type: 'error', text: t('errors.delete-failed') });
+                    } finally {
+                      setSaving(false);
+                    }
                   }
                 }}
+                disabled={saving}
               >
                 {t('actions.delete-config')}
               </Button>
@@ -304,7 +330,7 @@ export default function PracticeTablesConfigPage() {
 
       {!hasExistingConfig && !isEditing && selectedDivisionId && (
         <Paper sx={{ p: 4, textAlign: 'center' }}>
-          <Stack spacing={3} alignItems="center">
+          <Stack spacing={3} sx={{ alignItems: 'center' }}>
             <Typography variant="h6" color="text.secondary">
               {t('no-config.title')}
             </Typography>

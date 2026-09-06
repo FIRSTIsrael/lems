@@ -1137,11 +1137,13 @@
         },
         "errors": {
           "select-division": "Please select a division",
-          "save-failed": "Failed to save configuration"
+          "save-failed": "Failed to save configuration",
+          "delete-failed": "Failed to delete configuration"
         },
         "status": {
           "current-config": "Current configuration: {tables} tables, {duration} minute slots, {blockedSlots} blocked time periods",
-          "title": "Current Configuration"
+          "title": "Current Configuration",
+          "deleted": "Configuration deleted successfully"
         },
         "no-config": {
           "title": "No Configuration Found",
