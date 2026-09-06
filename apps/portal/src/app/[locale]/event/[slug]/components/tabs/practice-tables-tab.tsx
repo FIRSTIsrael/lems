@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import {
   Typography,
@@ -38,6 +40,7 @@ interface Team {
   number: number;
   name: string;
   affiliation?: string;
+  slug: string;
 }
 
 interface PracticeTableAssignment {
@@ -50,6 +53,8 @@ interface PracticeTableAssignment {
 
 export const PracticeTablesTab: React.FC = () => {
   const t = useTranslations('pages.event.practice-tables');
+  const params = useParams();
+  const eventSlug = params.slug as string;
   const division = useDivision();
 
   const { data: config, isLoading: configLoading } = useRealtimeData<PracticeTablesConfig>(
@@ -154,14 +159,25 @@ export const PracticeTablesTab: React.FC = () => {
                     }
 
                     if (assignment) {
+                      const href = `/event/${eventSlug}/team/${assignment.team.slug}`;
+
                       return (
-                        <TableCell key={tableIndex} align="center">
-                          <Chip
-                            label={`#${assignment.team.number}`}
-                            size="small"
-                            color="primary"
-                            sx={{ fontWeight: 500 }}
-                          />
+                        <TableCell key={tableIndex} align="center" sx={{ p: 0 }}>
+                          <Link
+                            href={href}
+                            style={{
+                              textDecoration: 'none',
+                              display: 'block',
+                              padding: '16px'
+                            }}
+                          >
+                            <Chip
+                              label={`#${assignment.team.number}`}
+                              size="small"
+                              color="primary"
+                              sx={{ fontWeight: 500 }}
+                            />
+                          </Link>
                         </TableCell>
                       );
                     }

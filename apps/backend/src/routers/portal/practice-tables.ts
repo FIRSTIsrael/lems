@@ -56,34 +56,36 @@ router.get('/divisions/:divisionId/practice-table-assignments', async (req, res)
       .innerJoin('teams as t', 't.id', 'pts.team_id')
       .where('pts.division_id', '=', divisionId)
       .select([
-        'pts.id',
-        'pts.table_number as tableNumber',
-        'pts.start_time as startTime',
-        'pts.end_time as endTime',
-        't.id as teamId',
-        't.number as teamNumber',
-        't.name as teamName',
-        't.affiliation as teamAffiliation'
+        'pts.id as pts_id',
+        'pts.table_number',
+        'pts.start_time',
+        'pts.end_time',
+        't.id as team_id',
+        't.number',
+        't.name',
+        't.affiliation',
+        't.region'
       ])
       .execute();
 
-    const formattedAssignments = assignments.map(a => {
+    const formattedAssignments = assignments.map((a: any) => {
       // Convert timestamps to HH:MM format (use UTC to avoid timezone issues)
-      const startDate = new Date(a.startTime);
-      const endDate = new Date(a.endTime);
+      const startDate = new Date(a.start_time);
+      const endDate = new Date(a.end_time);
       const startTimeStr = `${startDate.getUTCHours().toString().padStart(2, '0')}:${startDate.getUTCMinutes().toString().padStart(2, '0')}`;
       const endTimeStr = `${endDate.getUTCHours().toString().padStart(2, '0')}:${endDate.getUTCMinutes().toString().padStart(2, '0')}`;
 
       return {
-        id: a.id,
-        tableNumber: a.tableNumber,
+        id: a.pts_id,
+        tableNumber: a.table_number,
         startTime: startTimeStr,
         endTime: endTimeStr,
         team: {
-          id: a.teamId,
-          number: a.teamNumber,
-          name: a.teamName,
-          affiliation: a.teamAffiliation
+          id: a.team_id,
+          number: a.number,
+          name: a.name,
+          affiliation: a.affiliation,
+          slug: `${a.region}-${a.number}`.toUpperCase()
         }
       };
     });
