@@ -1,6 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../database';
 import type { GraphQLContext } from '../../../apollo-server';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub.js';
+import { practiceTableAssignmentsResolver } from '../../divisions/practice-table-assignments.js';
 
 interface CreatePracticeTableAssignmentInput {
   divisionId: string;
@@ -18,7 +21,7 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
   CreatePracticeTableAssignmentArgs
-> = async (_parent, { input }) => {
+> = async (_parent, { input }, context) => {
   const { divisionId, teamId, tableNumber, startTime, endTime } = input;
 
   // Check for conflicts - same team at the same time
@@ -67,7 +70,7 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
     ])
     .executeTakeFirstOrThrow();
 
-  return {
+  const assignment = {
     id: result.id,
     divisionId: result.division_id,
     teamId: result.team_id,
@@ -76,4 +79,22 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
     endTime: result.end_time.toISOString(),
     createdAt: result.created_at.toISOString()
   };
+
+  // Publish update to subscribers
+  const allAssignments = await practiceTableAssignmentsResolver(
+    { id: divisionId },
+    { divisionId },
+    context,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    {} as any
+  );
+
+  const pubSub = getRedisPubSub();
+  await pubSub.publish(
+    divisionId,
+    RedisEventTypes.PRACTICE_TABLE_ASSIGNMENTS_UPDATED,
+    allAssignments as Record<string, unknown>
+  );
+
+  return assignment;
 };

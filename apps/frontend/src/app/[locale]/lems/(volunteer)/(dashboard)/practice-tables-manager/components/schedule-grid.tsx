@@ -75,11 +75,6 @@ export function ScheduleGrid({
     return blockedTimeSlots.some(blocked => time >= blocked.start && time < blocked.end);
   };
 
-  const getBlockedReason = (time: string) => {
-    const blocked = blockedTimeSlots.find(b => time >= b.start && time < b.end);
-    return blocked?.reason;
-  };
-
   // Get the blocked slot info for a time, including rowSpan
   const getBlockedSlotInfo = (time: string) => {
     const blockedSlot = blockedTimeSlots.find(b => time >= b.start && time < b.end);

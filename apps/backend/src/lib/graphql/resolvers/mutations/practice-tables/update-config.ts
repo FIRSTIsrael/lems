@@ -1,7 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
+import { sql } from 'kysely';
+import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
-import { sql } from 'kysely';
+import { getRedisPubSub } from '../../../../redis/redis-pubsub.js';
 
 interface BlockedTimeSlotInput {
   start: string;
@@ -27,7 +29,8 @@ export const updatePracticeTablesConfigResolver: GraphQLFieldResolver<
   GraphQLContext,
   UpdatePracticeTablesConfigArgs
 > = async (_parent, { input }) => {
-  const { divisionId, tableCount, slotDurationMinutes, startTime, endTime, blockedTimeSlots } = input;
+  const { divisionId, tableCount, slotDurationMinutes, startTime, endTime, blockedTimeSlots } =
+    input;
 
   // Check if config exists
   const existingConfig = await db.raw.sql
@@ -35,9 +38,6 @@ export const updatePracticeTablesConfigResolver: GraphQLFieldResolver<
     .where('division_id', '=', divisionId)
     .selectAll()
     .executeTakeFirst();
-
-  // Convert blockedTimeSlots to JSON string for JSONB column
-  const blockedTimeSlotsJson = sql`${JSON.stringify(blockedTimeSlots)}::jsonb`;
 
   if (existingConfig) {
     // Update existing config
@@ -48,7 +48,7 @@ export const updatePracticeTablesConfigResolver: GraphQLFieldResolver<
         slot_duration_minutes: slotDurationMinutes,
         start_time: startTime,
         end_time: endTime,
-        blocked_time_slots: blockedTimeSlotsJson
+        blocked_time_slots: sql`${JSON.stringify(blockedTimeSlots)}::jsonb`
       })
       .where('division_id', '=', divisionId)
       .execute();
@@ -62,12 +62,12 @@ export const updatePracticeTablesConfigResolver: GraphQLFieldResolver<
         slot_duration_minutes: slotDurationMinutes,
         start_time: startTime,
         end_time: endTime,
-        blocked_time_slots: blockedTimeSlotsJson
+        blocked_time_slots: sql`${JSON.stringify(blockedTimeSlots)}::jsonb`
       })
       .execute();
   }
 
-  return {
+  const config = {
     divisionId,
     tableCount,
     slotDurationMinutes,
@@ -75,4 +75,14 @@ export const updatePracticeTablesConfigResolver: GraphQLFieldResolver<
     endTime,
     blockedTimeSlots
   };
+
+  // Publish update to subscribers
+  const pubSub = getRedisPubSub();
+  await pubSub.publish(
+    divisionId,
+    RedisEventTypes.PRACTICE_TABLES_CONFIG_UPDATED,
+    config as Record<string, unknown>
+  );
+
+  return config;
 };

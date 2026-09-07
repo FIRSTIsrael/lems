@@ -413,6 +413,7 @@
         "table": "Table {number}",
         "blocked": "Blocked",
         "available": "Available",
+        "unavailable": "Unavailable",
         "empty-state": "No practice tables configured",
         "error-state": "Failed to load practice tables"
       },

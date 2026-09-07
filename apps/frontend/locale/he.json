@@ -411,6 +411,7 @@
         "table": "שולחן {number}",
         "blocked": "לא זמין",
         "available": "פנוי",
+        "unavailable": "לא זמין",
         "empty-state": "לא הוגדרו שולחנות אימונים",
         "error-state": "טעינת שולחנות אימונים נכשלה"
       },

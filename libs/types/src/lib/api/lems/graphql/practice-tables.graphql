@@ -147,3 +147,11 @@ extend type Mutation {
   "Clear all practice table assignments for a division"
   clearPracticeTableAssignments(divisionId: String!): Boolean!
 }
+
+extend type Subscription {
+  "Subscribe to practice table assignment changes for a division"
+  practiceTableAssignmentsUpdated(divisionId: String!): [PracticeTableAssignment!]!
+
+  "Subscribe to practice tables configuration changes for a division"
+  practiceTablesConfigUpdated(divisionId: String!): PracticeTablesConfig
+}

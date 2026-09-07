@@ -13,6 +13,7 @@ import {
   CREATE_PRACTICE_TABLE_ASSIGNMENT,
   DELETE_PRACTICE_TABLE_ASSIGNMENT
 } from './graphql';
+import { createPracticeTableAssignmentsSubscription } from './graphql/subscriptions';
 import { ScheduleGrid } from './components/schedule-grid';
 import { TeamSearchBar } from './components/team-search-bar';
 import { NoConfiguration } from './components/no-configuration';
@@ -70,6 +71,11 @@ export default function PracticeTablesManagerPage() {
   const t = useTranslations('pages.practice-tables-manager');
   const { currentDivision, eventId } = useEvent();
 
+  const assignmentsSubscriptions = useMemo(
+    () => [createPracticeTableAssignmentsSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const { data, loading, error } = usePageData(
     GET_PRACTICE_TABLES_CONFIG,
     { divisionId: currentDivision.id },
@@ -80,7 +86,12 @@ export default function PracticeTablesManagerPage() {
     data: assignmentsData,
     loading: assignmentsLoading,
     refetch: refetchAssignments
-  } = usePageData(GET_PRACTICE_TABLE_ASSIGNMENTS, { divisionId: currentDivision.id }, data => data);
+  } = usePageData(
+    GET_PRACTICE_TABLE_ASSIGNMENTS,
+    { divisionId: currentDivision.id },
+    data => data,
+    assignmentsSubscriptions
+  );
 
   const { data: teamsData, loading: teamsLoading } = usePageData(
     GET_DIVISION_TEAMS,

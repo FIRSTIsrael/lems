@@ -30,6 +30,7 @@ import {
   finalDeliberationUpdatedResolver,
   finalDeliberationStatusChangedResolver
 } from './deliberations';
+import { practiceTableSubscriptions } from './practice-tables';
 
 /**
  * GraphQL Subscription resolvers
@@ -60,5 +61,7 @@ export const subscriptionResolvers = {
   deliberationUpdated: deliberationUpdatedResolver,
   deliberationStatusChanged: deliberationStatusChangedResolver,
   finalDeliberationUpdated: finalDeliberationUpdatedResolver,
-  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver
+  finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver,
+  practiceTableAssignmentsUpdated: practiceTableSubscriptions.practiceTableAssignmentsUpdated,
+  practiceTablesConfigUpdated: practiceTableSubscriptions.practiceTablesConfigUpdated
 };

@@ -1,11 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Container, Stack, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import { PageHeader } from '../../components/page-header';
 import { GET_PRACTICE_TABLES_REPORT } from './graphql';
+import { createPracticeTableAssignmentsSubscription } from './graphql/subscriptions';
 import { PracticeTablesSchedule } from './components/practice-tables-schedule';
 import { EmptyState } from './components/empty-state';
 import { ErrorState } from './components/error-state';
@@ -15,10 +17,16 @@ export default function PracticeTablesReportPage() {
   const t = useTranslations('pages.reports.practice-tables');
   const { currentDivision } = useEvent();
 
+  const subscriptions = useMemo(
+    () => [createPracticeTableAssignmentsSubscription(currentDivision.id)],
+    [currentDivision.id]
+  );
+
   const { data, loading, error } = usePageData(
     GET_PRACTICE_TABLES_REPORT,
     { divisionId: currentDivision.id },
-    data => data
+    data => data,
+    subscriptions
   );
 
   const hasData = data?.practiceTablesConfig && data?.practiceTableAssignments;
