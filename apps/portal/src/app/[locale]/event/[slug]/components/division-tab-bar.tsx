@@ -46,8 +46,8 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
           <Tab label={t('quick-links.awards')} />
           <Tab label={t('quick-links.field-schedule')} />
           <Tab label={t('quick-links.judging-schedule')} />
-          <Tab label={t('quick-links.agenda')} />
           <Tab label={t('quick-links.practice-tables')} />
+          <Tab label={t('quick-links.agenda')} />
         </Tabs>
       </Paper>
       <Box
@@ -87,13 +87,12 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
 
         {activeTab === 5 && (
           <Suspense fallback={<LoadingTab />}>
-            <AgendaTab />
+            <PracticeTablesTab />
           </Suspense>
         )}
-
         {activeTab === 6 && (
           <Suspense fallback={<LoadingTab />}>
-            <PracticeTablesTab />
+            <AgendaTab />
           </Suspense>
         )}
       </Box>

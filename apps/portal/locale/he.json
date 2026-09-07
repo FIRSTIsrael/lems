@@ -164,7 +164,7 @@
         "judging-schedule": "לוח זמנים שיפוט",
         "agenda": "סדר יום",
         "general-schedule": "לוח זמנים כללי",
-        "practice-tables": "שולחנות אימון"
+        "practice-tables": "שולחנות אימונים"
       },
       "scoreboard": {
         "rank": "דירוג",
@@ -201,14 +201,14 @@
       "division-teams": "קבוצות {divisionName}",
       "region": "מדינה",
       "practice-tables": {
-        "title": "שולחנות אימון",
-        "description": "{tables, plural, =1 {שולחן אימון אחד} other {# שולחנות אימון}} זמינים עם סלוטים של {duration} דקות",
+        "title": "שולחנות אימונים",
+        "description": "{tables, plural, =1 {שולחן אימון אחד} other {#שולחנות אימונים}} זמינים עם סלוטים של {duration} דקות",
         "time": "שעה",
         "table": "שולחן",
         "blocked": "לא זמין",
         "available": "זמין",
         "unavailable": "לא זמין",
-        "not-configured": "שולחנות אימון לא הוגדרו עבור מחלקה זו."
+        "not-configured": "שולחנות אימונים לא הוגדרו עבור בית זה."
       }
     },
     "team-in-event": {
