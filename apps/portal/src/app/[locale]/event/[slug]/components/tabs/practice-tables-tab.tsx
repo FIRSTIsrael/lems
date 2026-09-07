@@ -221,8 +221,10 @@ export const PracticeTablesTab: React.FC = () => {
                               />
                               <Typography
                                 variant="caption"
-                                sx={{ display: 'block' }}
-                                color="#000000"
+                                sx={{
+                                  display: 'block',
+                                  color: '#000000 !important'
+                                }}
                               >
                                 {assignment.team.name}
                               </Typography>
