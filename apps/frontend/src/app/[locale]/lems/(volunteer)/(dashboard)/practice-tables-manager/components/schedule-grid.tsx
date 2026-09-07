@@ -12,7 +12,6 @@ import {
   Typography,
   Chip,
   IconButton,
-  Tooltip,
   Box
 } from '@mui/material';
 import { Add as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
@@ -78,7 +77,27 @@ export function ScheduleGrid({
 
   const getBlockedReason = (time: string) => {
     const blocked = blockedTimeSlots.find(b => time >= b.start && time < b.end);
-    return blocked?.reason || t('blocked');
+    return blocked?.reason;
+  };
+
+  // Get the blocked slot info for a time, including rowSpan
+  const getBlockedSlotInfo = (time: string) => {
+    const blockedSlot = blockedTimeSlots.find(b => time >= b.start && time < b.end);
+    if (!blockedSlot) return null;
+
+    // Calculate how many time slots this blocked period spans
+    const slotsInRange = timeSlots.filter(
+      slot => slot >= blockedSlot.start && slot < blockedSlot.end
+    );
+
+    // Check if this is the first slot in the blocked range
+    const isFirstSlot = time === slotsInRange[0];
+
+    return {
+      reason: blockedSlot.reason,
+      rowSpan: slotsInRange.length,
+      isFirstSlot
+    };
   };
 
   const isCellSelected = (tableIndex: number, time: string) => {
@@ -107,29 +126,49 @@ export function ScheduleGrid({
           {timeSlots.map(time => {
             const blocked = isTimeBlocked(time);
 
+            const blockedInfo = blocked ? getBlockedSlotInfo(time) : null;
+            const isFirstBlockedSlot = blockedInfo?.isFirstSlot || false;
+
             return (
-              <TableRow key={time} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
-                <TableCell sx={{ fontWeight: 'medium' }}>{time}</TableCell>
+              <TableRow
+                key={time}
+                sx={{ '&:hover': { bgcolor: blocked ? undefined : 'action.hover' } }}
+              >
+                <TableCell
+                  sx={{
+                    fontWeight: 'medium',
+                    bgcolor: blocked ? 'action.disabledBackground' : undefined,
+                    color: blocked ? 'text.disabled' : undefined
+                  }}
+                >
+                  {time}
+                </TableCell>
                 {Array.from({ length: tableCount }, (_, tableIndex) => {
                   const assignment = assignments[tableIndex]?.[time];
                   const isSelected = isCellSelected(tableIndex, time);
 
-                  if (blocked) {
-                    return (
-                      <TableCell
-                        key={tableIndex}
-                        align="center"
-                        sx={{
-                          bgcolor: 'error.light',
-                          color: 'error.contrastText',
-                          opacity: 0.6
-                        }}
-                      >
-                        <Tooltip title={getBlockedReason(time)}>
-                          <Typography variant="caption">{t('blocked')}</Typography>
-                        </Tooltip>
-                      </TableCell>
-                    );
+                  if (blocked && blockedInfo) {
+                    // Only render the merged cell on the first table column and first time slot of the blocked range
+                    if (tableIndex === 0 && isFirstBlockedSlot) {
+                      return (
+                        <TableCell
+                          key={tableIndex}
+                          colSpan={tableCount}
+                          rowSpan={blockedInfo.rowSpan}
+                          align="center"
+                          sx={{
+                            bgcolor: 'action.disabledBackground',
+                            color: 'text.primary'
+                          }}
+                        >
+                          <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                            {blockedInfo.reason || t('unavailable')}
+                          </Typography>
+                        </TableCell>
+                      );
+                    }
+                    // Skip all other cells in the blocked range
+                    return null;
                   }
 
                   return (

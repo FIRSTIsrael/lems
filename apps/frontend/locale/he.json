@@ -1556,7 +1556,8 @@
         "info": "שולחנות: {tables} | משך סלוט: {duration} דקות",
         "time": "שעה",
         "table": "שולחן",
-        "blocked": "חסום"
+        "blocked": "חסום",
+        "unavailable": "לא זמין"
       },
       "team-selection": {
         "title": "בחר קבוצה",

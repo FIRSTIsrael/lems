@@ -207,6 +207,7 @@
         "table": "Table",
         "blocked": "Unavailable",
         "available": "Available",
+        "unavailable": "Unavailable",
         "not-configured": "Practice tables have not been configured for this division."
       }
     },

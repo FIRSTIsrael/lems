@@ -1559,7 +1559,8 @@
         "info": "Tables: {tables} | Slot Duration: {duration} minutes",
         "time": "Time",
         "table": "Table",
-        "blocked": "Blocked"
+        "blocked": "Blocked",
+        "unavailable": "Unavailable"
       },
       "team-selection": {
         "title": "Select Team",

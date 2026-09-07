@@ -99,6 +99,26 @@ export const PracticeTablesTab: React.FC = () => {
     return config.blockedTimeSlots.some(blocked => time >= blocked.start && time < blocked.end);
   };
 
+  // Get the blocked slot info for a time, including rowSpan
+  const getBlockedSlotInfo = (time: string) => {
+    const blockedSlot = config.blockedTimeSlots.find(b => time >= b.start && time < b.end);
+    if (!blockedSlot) return null;
+
+    // Calculate how many time slots this blocked period spans
+    const slotsInRange = timeSlots.filter(
+      slot => slot >= blockedSlot.start && slot < blockedSlot.end
+    );
+
+    // Check if this is the first slot in the blocked range
+    const isFirstSlot = time === slotsInRange[0];
+
+    return {
+      reason: blockedSlot.reason,
+      rowSpan: slotsInRange.length,
+      isFirstSlot
+    };
+  };
+
   // Get assignment for a specific table and time
   const getAssignment = (tableNumber: number, time: string) => {
     return assignments?.find(a => a.tableNumber === tableNumber && a.startTime === time);
@@ -134,28 +154,49 @@ export const PracticeTablesTab: React.FC = () => {
           <TableBody>
             {timeSlots.map(time => {
               const blocked = isTimeBlocked(time);
+              const blockedInfo = blocked ? getBlockedSlotInfo(time) : null;
+              const isFirstBlockedSlot = blockedInfo?.isFirstSlot || false;
 
               return (
-                <TableRow key={time} sx={{ '&:hover': { bgcolor: 'action.hover' } }}>
-                  <TableCell sx={{ fontWeight: 500 }}>{time}</TableCell>
+                <TableRow
+                  key={time}
+                  sx={{ '&:hover': { bgcolor: blocked ? undefined : 'action.hover' } }}
+                >
+                  <TableCell
+                    sx={{
+                      fontWeight: 500,
+                      bgcolor: blocked ? 'action.disabledBackground' : undefined,
+                      color: blocked ? 'text.disabled' : undefined
+                    }}
+                  >
+                    {time}
+                  </TableCell>
                   {Array.from({ length: config.tableCount }, (_, tableIndex) => {
                     const tableNumber = tableIndex + 1;
                     const assignment = getAssignment(tableNumber, time);
 
-                    if (blocked) {
-                      return (
-                        <TableCell
-                          key={tableIndex}
-                          align="center"
-                          sx={{
-                            bgcolor: 'error.light',
-                            color: 'error.contrastText',
-                            opacity: 0.6
-                          }}
-                        >
-                          <Typography variant="caption">{t('blocked')}</Typography>
-                        </TableCell>
-                      );
+                    if (blocked && blockedInfo) {
+                      // Only render the merged cell on the first table column and first time slot of the blocked range
+                      if (tableIndex === 0 && isFirstBlockedSlot) {
+                        return (
+                          <TableCell
+                            key={tableIndex}
+                            colSpan={config.tableCount}
+                            rowSpan={blockedInfo.rowSpan}
+                            align="center"
+                            sx={{
+                              bgcolor: 'action.disabledBackground',
+                              color: 'text.primary'
+                            }}
+                          >
+                            <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                              {blockedInfo.reason || t('unavailable')}
+                            </Typography>
+                          </TableCell>
+                        );
+                      }
+                      // Skip all other cells in the blocked range
+                      return null;
                     }
 
                     if (assignment) {

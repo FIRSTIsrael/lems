@@ -207,6 +207,7 @@
         "table": "שולחן",
         "blocked": "לא זמין",
         "available": "זמין",
+        "unavailable": "לא זמין",
         "not-configured": "שולחנות אימון לא הוגדרו עבור מחלקה זו."
       }
     },
