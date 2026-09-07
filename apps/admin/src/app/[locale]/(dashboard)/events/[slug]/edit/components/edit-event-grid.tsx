@@ -9,8 +9,7 @@ import {
   IntegrationInstructions,
   Settings,
   ManageAccounts,
-  AccountTree,
-  TableRestaurant
+  AccountTree
 } from '@mui/icons-material';
 import { useEvent } from '../../components/event-context';
 import EditEventCard from './edit-event-card';
@@ -67,13 +66,6 @@ export const EditEventGrid: React.FC = () => {
           icon={<Settings />}
           title="settings"
           href={`/events/${event.slug}/settings`}
-        />
-      </Grid>
-      <Grid size={cardSize}>
-        <EditEventCard
-          icon={<TableRestaurant />}
-          title="practice-tables"
-          href={`/events/${event.slug}/practice-tables`}
         />
       </Grid>
     </Grid>

@@ -2,13 +2,12 @@
 
 import {
   Box,
-  Paper,
   TextField,
   Button,
   Stack,
-  Divider,
   CircularProgress,
-  Grid
+  Grid,
+  InputAdornment
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { BlockedTimesEditor } from './blocked-times-editor';
@@ -31,10 +30,8 @@ interface ConfigurationFormProps {
   onEndTimeChange: (value: string) => void;
   onBlockedSlotsChange: (slots: BlockedTimeSlot[]) => void;
   onSave: () => void;
-  onCancel?: () => void;
   saving?: boolean;
   loading?: boolean;
-  showCancel?: boolean;
 }
 
 export function ConfigurationForm({
@@ -49,86 +46,80 @@ export function ConfigurationForm({
   onEndTimeChange,
   onBlockedSlotsChange,
   onSave,
-  onCancel,
   saving = false,
-  loading = false,
-  showCancel = false
+  loading = false
 }: ConfigurationFormProps) {
   const t = useTranslations('pages.events.practice-tables');
 
   if (loading) {
     return (
-      <Paper sx={{ p: 4 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
-          <CircularProgress />
-        </Box>
-      </Paper>
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+        <CircularProgress />
+      </Box>
     );
   }
 
   return (
-    <Paper sx={{ p: 4 }}>
-      <Stack spacing={4}>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6 }}>
+    <Box>
+      <Stack spacing={3}>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <TextField
               label={t('fields.table-count')}
               type="number"
               value={tableCount}
               onChange={e => onTableCountChange(parseInt(e.target.value) || 0)}
-              helperText={t('fields.table-count-helper')}
               fullWidth
+              size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <TextField
               label={t('fields.slot-duration')}
               type="number"
               value={slotDuration}
               onChange={e => onSlotDurationChange(parseInt(e.target.value) || 0)}
-              helperText={t('fields.slot-duration-helper')}
               fullWidth
+              size="small"
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">{t('fields.minutes')}</InputAdornment>
+                  )
+                }
+              }}
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <TextField
               label={t('fields.start-time')}
               type="time"
               value={startTime}
               onChange={e => onStartTimeChange(e.target.value)}
-              helperText={t('fields.start-time-helper')}
               fullWidth
+              size="small"
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          <Grid size={{ xs: 6, sm: 3 }}>
             <TextField
               label={t('fields.end-time')}
               type="time"
               value={endTime}
               onChange={e => onEndTimeChange(e.target.value)}
-              helperText={t('fields.end-time-helper')}
               fullWidth
+              size="small"
             />
           </Grid>
         </Grid>
 
-        <Divider />
-
         <BlockedTimesEditor blockedSlots={blockedSlots} onChange={onBlockedSlotsChange} />
 
-        <Divider />
-
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button variant="contained" onClick={onSave} disabled={saving}>
             {saving ? t('actions.saving') : t('actions.save')}
           </Button>
-          {showCancel && onCancel && (
-            <Button variant="outlined" onClick={onCancel}>
-              {t('actions.cancel')}
-            </Button>
-          )}
         </Box>
       </Stack>
-    </Paper>
+    </Box>
   );
 }

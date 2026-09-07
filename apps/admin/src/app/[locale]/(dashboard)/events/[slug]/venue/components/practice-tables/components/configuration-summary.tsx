@@ -31,9 +31,9 @@ export function ConfigurationSummary({
   const t = useTranslations('pages.events.practice-tables');
 
   return (
-    <Paper sx={{ p: 3, mb: 3 }}>
+    <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Stack spacing={3}>
-        <Typography variant="h6">{t('status.title')}</Typography>
+        <Typography variant="h6">{t('title')}</Typography>
 
         <Grid container spacing={3}>
           <Grid size={{ xs: 12, sm: 4 }}>
