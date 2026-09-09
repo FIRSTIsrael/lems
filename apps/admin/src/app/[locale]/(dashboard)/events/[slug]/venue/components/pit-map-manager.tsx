@@ -77,7 +77,7 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" gutterBottom>
         {t('title')}
       </Typography>

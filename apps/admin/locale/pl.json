@@ -370,7 +370,8 @@
           "integrations": "Integracje",
           "settings": "Ustawienia",
           "users": "Użytkownicy",
-          "divisions": "Dywizje"
+          "divisions": "Dywizje",
+          "practice-tables": "Stoły Treningowe"
         },
         "color": "Kolor"
       },
@@ -598,6 +599,51 @@
             "deleting": "Usuwanie..."
           },
           "upload-placeholder": "Wybierz plik"
+        },
+        "practice-tables": {
+          "title": "Konfiguracja Stołów Treningowych",
+          "description": "Skonfiguruj ustawienia stołów treningowych dla każdej dywizji",
+          "fields": {
+            "division": "Dywizja",
+            "table-count": "Liczba Stołów Treningowych",
+            "table-count-helper": "Ile stołów treningowych jest dostępnych",
+            "slot-duration": "Czas Trwania Slotu (minuty)",
+            "slot-duration-helper": "Czas trwania każdego slotu treningowego",
+            "minutes": "minut",
+            "start-time": "Godzina Rozpoczęcia",
+            "start-time-helper": "Kiedy stoły treningowe stają się dostępne",
+            "end-time": "Godzina Zakończenia",
+            "end-time-helper": "Kiedy stoły treningowe są zamykane"
+          },
+          "blocked-times": {
+            "title": "Zablokowane Przedziały Czasowe",
+            "description": "Określ czasy, kiedy stoły treningowe nie są dostępne (np. przerwy obiadowe)",
+            "start-time": "Godzina Rozpoczęcia",
+            "end-time": "Godzina Zakończenia",
+            "reason": "Powód (opcjonalnie)",
+            "reason-placeholder": "np. Przerwa obiadowa",
+            "add-button": "Dodaj Zablokowany Czas",
+            "delete-button": "Usuń",
+            "empty-state": "Brak zablokowanych czasów"
+          },
+          "actions": {
+            "save": "Zapisz Konfigurację",
+            "cancel": "Anuluj",
+            "delete": "Usuń Konfigurację",
+            "create": "Utwórz Konfigurację"
+          },
+          "messages": {
+            "save-success": "Konfiguracja zapisana pomyślnie",
+            "save-error": "Nie udało się zapisać konfiguracji",
+            "delete-success": "Konfiguracja usunięta pomyślnie",
+            "delete-error": "Nie udało się usunąć konfiguracji",
+            "load-error": "Nie udało się wczytać konfiguracji"
+          },
+          "no-config": {
+            "title": "Nie Znaleziono Konfiguracji",
+            "description": "Ta dywizja nie ma jeszcze skonfigurowanych stołów treningowych. Kliknij poniżej, aby utworzyć nową konfigurację.",
+            "create-button": "Utwórz Konfigurację"
+          }
         },
         "messages": {
           "save-success": "Zmiany zapisano pomyślnie",

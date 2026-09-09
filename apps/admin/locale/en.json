@@ -370,7 +370,8 @@
           "integrations": "Integrations",
           "settings": "Settings",
           "users": "Users",
-          "divisions": "Divisions"
+          "divisions": "Divisions",
+          "practice-tables": "Practice Tables"
         },
         "color": "Color"
       },
@@ -1095,6 +1096,62 @@
             "cancel": "Cancel",
             "add": "Add Volunteer"
           }
+        }
+      },
+      "practice-tables": {
+        "title": "Practice Tables Configuration",
+        "description": "Configure practice table settings for each division",
+        "fields": {
+          "division": "Division",
+          "table-count": "Number of Practice Tables",
+          "table-count-helper": "How many practice tables are available",
+          "slot-duration": "Slot Duration (minutes)",
+          "slot-duration-helper": "Duration of each practice slot",
+          "minutes": "minutes",
+          "start-time": "Start Time",
+          "start-time-helper": "When practice tables become available",
+          "end-time": "End Time",
+          "end-time-helper": "When practice tables close"
+        },
+        "blocked-times": {
+          "title": "Blocked Time Slots",
+          "description": "Define times when practice tables are not available (e.g., lunch breaks)",
+          "start-time": "Start Time",
+          "end-time": "End Time",
+          "reason": "Reason (optional)",
+          "reason-placeholder": "e.g., Lunch Break",
+          "add": "Add Blocked Time",
+          "none": "No blocked time periods",
+          "details": "Blocked Time Periods",
+          "start": "Start Time",
+          "end": "End Time"
+        },
+        "actions": {
+          "edit-config": "Edit Configuration",
+          "delete-config": "Delete Configuration",
+          "confirm-delete": "Are you sure you want to delete this configuration? This action cannot be undone.",
+          "cancel": "Cancel",
+          "save": "Save Configuration",
+          "saving": "Saving..."
+        },
+        "messages": {
+          "save-success": "Configuration saved successfully!"
+        },
+        "errors": {
+          "select-division": "Please select a division",
+          "save-failed": "Failed to save configuration",
+          "delete-failed": "Failed to delete configuration",
+          "load-failed": "Failed to load configuration"
+        },
+        "status": {
+          "current-config": "Current configuration: {tables} tables, {duration} minute slots, {blockedSlots} blocked time periods",
+          "title": "Current Configuration",
+          "deleted": "Configuration deleted successfully"
+        },
+        "no-config": {
+          "title": "No Configuration Found",
+          "description": "This division does not have practice tables configured yet. Click below to create a new configuration.",
+          "create-button": "Create Configuration"
         }
       }
     },

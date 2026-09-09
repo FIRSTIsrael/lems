@@ -49,6 +49,11 @@ import {
   setMatchParticipantTeamResolver,
   setJudgingSessionTeamResolver
 } from './schedule';
+import {
+  createPracticeTableAssignmentResolver,
+  deletePracticeTableAssignmentResolver,
+  clearPracticeTableAssignmentsResolver
+} from './practice-tables';
 
 export const mutationResolvers = {
   teamArrived: teamArrivedResolver,
@@ -87,5 +92,8 @@ export const mutationResolvers = {
   swapMatchTeams: swapMatchTeamsResolver,
   swapSessionTeams: swapSessionTeamsResolver,
   setMatchParticipantTeam: setMatchParticipantTeamResolver,
-  setJudgingSessionTeam: setJudgingSessionTeamResolver
+  setJudgingSessionTeam: setJudgingSessionTeamResolver,
+  createPracticeTableAssignment: createPracticeTableAssignmentResolver,
+  deletePracticeTableAssignment: deletePracticeTableAssignmentResolver,
+  clearPracticeTableAssignments: clearPracticeTableAssignmentsResolver
 };

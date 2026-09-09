@@ -40,7 +40,8 @@ export const OPTIONAL_ROLES = [
   'judging-queuer',
   'field-manager',
   'reports',
-  'mc'
+  'mc',
+  'practice-tables-manager'
 ] as const;
 export type OptionalRole = (typeof OPTIONAL_ROLES)[number];
 

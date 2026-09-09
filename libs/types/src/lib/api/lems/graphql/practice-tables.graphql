@@ -1,0 +1,69 @@
+"""
+A practice table slot that may or may not have a team assigned
+"""
+type PracticeTableSlot {
+  "Unique identifier for the slot"
+  id: String!
+
+  "Division ID"
+  divisionId: String!
+
+  "Team assigned to this slot (null if unassigned)"
+  team: Team
+
+  "Table number (1-based)"
+  tableNumber: Int!
+
+  "Start time of the practice slot"
+  startTime: String!
+
+  "End time of the practice slot"
+  endTime: String!
+
+  "When this slot was created"
+  createdAt: String!
+}
+
+"""
+Input for assigning a team to a practice table slot
+"""
+input AssignPracticeTableSlotInput {
+  "Division ID"
+  divisionId: String!
+
+  "Team ID to assign"
+  teamId: String!
+
+  "Table number"
+  tableNumber: Int!
+
+  "Start time (ISO 8601 datetime string)"
+  startTime: String!
+
+  "End time (ISO 8601 datetime string)"
+  endTime: String!
+}
+
+extend type Query {
+  "Get all assigned practice table slots for a division (excludes empty slots)"
+  practiceTableAssignments(divisionId: String!): [PracticeTableSlot!]!
+
+  "Get practice table slots assigned to a specific team"
+  teamPracticeTableAssignments(teamId: String!): [PracticeTableSlot!]!
+}
+
+extend type Mutation {
+  "Assign a team to a practice table slot. Returns the updated slot."
+  createPracticeTableAssignment(input: AssignPracticeTableSlotInput!): PracticeTableSlot!
+
+  "Clear a team assignment from a practice table slot. Returns the cleared slot with team set to null."
+  deletePracticeTableAssignment(slotId: String!): PracticeTableSlot!
+
+  "Clear all team assignments for a division. Returns true on success."
+  clearPracticeTableAssignments(divisionId: String!): Boolean!
+}
+
+extend type Subscription {
+  "Subscribe to practice table assignment changes for a division (only returns assigned slots)"
+  practiceTableAssignmentsUpdated(divisionId: String!): [PracticeTableSlot!]!
+}

@@ -400,9 +400,20 @@
         "event-agenda": "לו״ז אירוע",
         "field-schedule": "לו״ז זירה",
         "judging-schedule": "לו״ז שיפוט",
+        "practice-tables": "שולחנות אימונים",
         "field-timer": "שעון זמן זירה",
         "judging-status": "מצב השיפוט",
         "scoreboard": "טבלת ניקוד"
+      },
+      "practice-tables": {
+        "page-title": "לוח זמנים שולחנות אימונים",
+        "time": "שעה",
+        "table": "שולחן {number}",
+        "blocked": "לא זמין",
+        "available": "פנוי",
+        "unavailable": "לא זמין",
+        "empty-state": "לא הוגדרו שולחנות אימונים",
+        "error-state": "טעינת שולחנות אימונים נכשלה"
       },
       "field-status": {
         "countdown": {
@@ -1519,6 +1530,58 @@
           "innovation-project": "פרויקט חדשנות",
           "robot-design": "עיצוב רובוט"
         }
+      }
+    },
+    "practice-tables-manager": {
+      "page-title": "מנהל שולחנות אימונים",
+      "configuration": {
+        "title": "הגדרות",
+        "table-count": "מספר שולחנות",
+        "slot-duration": "משך סלוט (דקות)",
+        "slot-duration-helper": "משך כל סלוט אימון בדקות",
+        "blocked-times": "זמנים חסומים",
+        "blocked-times-description": "הגדר זמנים בהם השולחנות לא זמינים (למשל, הפסקת צהריים)",
+        "add-blocked-time": "הוסף זמן חסום",
+        "save": "שמור הגדרות",
+        "not-configured": "לא הוגדרו שולחנות אימונים",
+        "no-blocked-times": "אין זמנים חסומים",
+        "not-configured-description": "שולחנות אימונים עדיין לא הוגדרו עבור תחרות זו. אנא פנה למנהל האירוע כדי להגדיר את לוח הזמנים של שולחנות האימונים."
+      },
+      "schedule": {
+        "title": "לוח זמנים",
+        "description": "לחץ על תא כדי להקצות קבוצה לשולחן ולזמן מסוים. ניתן להקצות קבוצה פעם אחת בלבד בכל זמן נתון.",
+        "empty-state": "טען הגדרות כדי להתחיל לנהל את לוח הזמנים",
+        "clear-all": "נקה הכל",
+        "coming-soon": "בקרוב",
+        "grid-placeholder": "לוח הזמנים יהיה זמין כאן",
+        "info": "שולחנות: {tables} | משך סלוט: {duration} דקות",
+        "time": "שעה",
+        "table": "שולחן",
+        "blocked": "חסום",
+        "unavailable": "לא זמין"
+      },
+      "team-selection": {
+        "title": "בחר קבוצה",
+        "search-placeholder": "חפש לפי מספר, שם או שיוך...",
+        "no-teams": "לא נמצאו קבוצות",
+        "cancel": "ביטול"
+      },
+      "search": {
+        "placeholder": "חפש קבוצות לפי מספר, שם או שיוך...",
+        "assign": "הקצה",
+        "selected-slot": "נבחר: שולחן {table}, שעה {time}",
+        "no-results": "לא נמצאו קבוצות",
+        "search-hint": "בחר משבצת זמן ברשת, ואז חפש קבוצה להקצאה",
+        "search-hint-with-selection": "חפש קבוצה להקצאה למשבצת הנבחרת"
+      },
+      "no-teams": {
+        "title": "אין קבוצות זמינות",
+        "description": "אין עדיין קבוצות רשומות בבית זה. יש לרשום קבוצות לפני שניתן לבצע הקצאות לשולחנות אימונים ."
+      },
+      "errors": {
+        "team-already-assigned": "לקבוצה זו כבר יש הקצאה לשולחן אימון במשבצת זמן זו. אנא בחר זמן או קבוצה אחרת.",
+        "assignment-failed": "יצירת ההקצאה נכשלה",
+        "delete-failed": "מחיקת ההקצאה נכשלה"
       }
     }
   },

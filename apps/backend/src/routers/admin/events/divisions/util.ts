@@ -15,5 +15,14 @@ export const makeAdminDivisionResponse = (division: DbDivision): Division => ({
   hasAwards: division.has_awards,
   hasUsers: division.has_users,
   futureEdition: division.future_edition,
-  scheduleSettings: null
+  scheduleSettings: null,
+  practiceTablesSettings: division.practice_tables_settings
+    ? {
+        tableCount: division.practice_tables_settings.tableCount,
+        slotDurationMinutes: division.practice_tables_settings.slotDurationMinutes,
+        startTime: division.practice_tables_settings.startTime,
+        endTime: division.practice_tables_settings.endTime,
+        blockedTimeSlots: division.practice_tables_settings.blockedTimeSlots
+      }
+    : null
 });

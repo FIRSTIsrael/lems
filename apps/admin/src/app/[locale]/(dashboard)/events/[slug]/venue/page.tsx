@@ -11,6 +11,7 @@ import { DivisionSelector } from '../components/division-selector';
 import { PitMapManager } from './components/pit-map-manager';
 import { AssetManager } from './components/asset-manager';
 import { ScheduleExists } from './components/schedule-exists';
+import { PracticeTablesSection } from './components/practice-tables-section';
 
 const VenuePage: React.FC = () => {
   const t = useTranslations('pages.events.venue');
@@ -50,9 +51,19 @@ const VenuePage: React.FC = () => {
       )}
 
       {selectedDivision && (
-        <Box sx={{ mt: 3 }}>
-          <PitMapManager key="pit-map" division={selectedDivision} onDivisionUpdate={mutate} />
-        </Box>
+        <Grid container spacing={3} sx={{ mt: 3, alignItems: 'stretch' }}>
+          <Grid size={{ xs: 12, lg: 4 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <PitMapManager key="pit-map" division={selectedDivision} onDivisionUpdate={mutate} />
+          </Grid>
+          <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
+            <PracticeTablesSection
+              key={`practice-tables-${selectedDivision.id}`}
+              eventId={event.id}
+              division={selectedDivision}
+              onUpdate={mutate}
+            />
+          </Grid>
+        </Grid>
       )}
     </Box>
   );
