@@ -7,7 +7,8 @@ import {
   ReactNode,
   useMemo,
   useCallback,
-  useRef
+  useRef,
+  useEffect
 } from 'react';
 import { HttpLink, ApolloLink } from '@apollo/client';
 import { ApolloClient, ApolloNextAppProvider } from '@apollo/client-integration-nextjs';
@@ -31,15 +32,50 @@ interface ConnectionStateContextType {
 const ConnectionStateContext = createContext<ConnectionStateContextType | undefined>(undefined);
 
 /**
- * Creates an Apollo Client instance for client-side use
- * Integrates with the connection state context to track WebSocket status
+ * Module-level mutable references for WebSocket connection state callbacks.
+ *
+ * WHY this is needed:
+ * `@apollo/client-react-streaming` (used by ApolloNextAppProvider) stores the
+ * Apollo Client as a window-level singleton via `window[Symbol.for('ApolloClientSingleton')]`.
+ * This means `makeClient()` is only called ONCE per browser session (never re-called on
+ * component remount). The graphql-ws event handlers created in that first call capture
+ * the `setState` from the first component instance. If `ApolloClientProvider` ever remounts
+ * (e.g., on locale change or error-boundary recovery), the new component's `useState` starts
+ * at 'idle', but the event handlers still call the old (orphaned) `setState` — the new
+ * component's state is never updated, leaving the indicator stuck at 'idle' forever.
+ *
+ * By forwarding through these module-level refs, the event handlers always dispatch to
+ * whichever component instance is currently mounted, regardless of how many times the
+ * component has remounted.
+ *
+ * JavaScript is single-threaded so there are no concurrent-access race conditions.
+ * React 18 concurrent mode does not run effects or event callbacks concurrently — they
+ * are always serialised on the event loop.
  */
-function makeClient(
-  setConnectionState: (state: ConnectionState) => void,
-  setError: (error: Error | null) => void,
-  wsClientRef: { current: WsClient | null },
-  isResettingRef: { current: boolean }
-) {
+let wsConnectionStateCallback: (state: ConnectionState) => void = () => {};
+let wsErrorCallback: (error: Error | null) => void = () => {};
+
+// Track the last known state so a remounting component can immediately sync
+// via the useState lazy initializer.  Note: these are updated BEFORE the callback
+// is invoked, so events that fire in the brief gap between unmount and remount
+// (when the callbacks are no-ops) still advance lastKnownConnectionState, and
+// the next mount picks up the correct value at initialization time.
+let lastKnownConnectionState: ConnectionState = 'idle';
+let lastKnownError: Error | null = null;
+
+// Store the graphql-ws client at module level so that resetConnection() works
+// correctly even after a remount (when the per-instance wsClientRef is null).
+let globalWsClient: WsClient | null = null;
+
+// Tracks whether a connection reset is in progress (replaces the React ref so
+// it persists correctly across remounts alongside the singleton WS client).
+const wsIsResettingRef: { current: boolean } = { current: false };
+
+/**
+ * Creates an Apollo Client instance for client-side use.
+ * Integrates with the connection state context to track WebSocket status.
+ */
+function makeClient(wsClientRef: { current: WsClient | null }) {
   const apiBase = getApiBase() || 'http://localhost:3333';
 
   // HTTP link for queries and mutations
@@ -62,23 +98,30 @@ function makeClient(
       on: {
         connected: () => {
           console.log('[GraphQL WS] Connected');
-          setConnectionState('connected');
-          setError(null);
+          lastKnownConnectionState = 'connected';
+          lastKnownError = null;
+          wsConnectionStateCallback('connected');
+          wsErrorCallback(null);
         },
         connecting: () => {
           console.log('[GraphQL WS] Connecting...');
-          setConnectionState('reconnecting');
+          lastKnownConnectionState = 'reconnecting';
+          wsConnectionStateCallback('reconnecting');
         },
         error: (error: unknown) => {
           console.log('[GraphQL WS] Connection error:', error);
-          setConnectionState('error');
-          setError(error instanceof Error ? error : new Error(String(error)));
+          const err = error instanceof Error ? error : new Error(String(error));
+          lastKnownConnectionState = 'error';
+          lastKnownError = err;
+          wsConnectionStateCallback('error');
+          wsErrorCallback(err);
         },
         closed: () => {
           // Only set to 'disconnected' if we're not intentionally resetting
-          if (!isResettingRef.current) {
+          if (!wsIsResettingRef.current) {
             console.log('[GraphQL WS] Connection closed');
-            setConnectionState('disconnected');
+            lastKnownConnectionState = 'disconnected';
+            wsConnectionStateCallback('disconnected');
           } else {
             console.log('[GraphQL WS] Connection reset');
           }
@@ -87,12 +130,11 @@ function makeClient(
     })
   );
 
-  // Store the WS client for later disposal
-  // GraphQLWsLink exposes the underlying client but it's not in the public type
-  const linkWithClient = wsLink as GraphQLWsLink & { client?: WsClient };
-  if (linkWithClient.client) {
-    wsClientRef.current = linkWithClient.client;
-  }
+  // Store the WS client for later use (e.g. terminate() in resetConnection).
+  // GraphQLWsLink.client is a public readonly property.
+  // Also store at module level so resetConnection() can reach it after remounts.
+  wsClientRef.current = wsLink.client;
+  globalWsClient = wsLink.client;
 
   const errorLink = new ErrorLink(({ error, operation }) => {
     if (CombinedGraphQLErrors.is(error)) {
@@ -162,26 +204,20 @@ function makeClient(
 }
 
 export function ApolloClientProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<ConnectionState>('idle');
-  const [lastError, setLastError] = useState<Error | null>(null);
+  // Initialise from last known state so that a remounting component immediately
+  // reflects the correct indicator value without waiting for the next WS event.
+  const [state, setState] = useState<ConnectionState>(() => lastKnownConnectionState);
+  const [lastError, setLastError] = useState<Error | null>(() => lastKnownError);
 
   const wsClientRef = useRef<WsClient | null>(null);
   const clientRef = useRef<ApolloClient | null>(null);
-  const isResettingRef = useRef(false);
 
-  // Use callbacks to capture current setState functions
-  // These are called by WebSocket events and always get the latest setState
-  const setConnectionState = useCallback((newState: ConnectionState) => {
-    console.log('[Apollo] Setting connection state to:', newState);
-    setState(newState);
-  }, []);
-
-  const setError = useCallback((error: Error | null) => {
-    setLastError(error);
-  }, []);
-
-  // Create a stable makeClient function that uses the callbacks
-  // This function is called once by ApolloNextAppProvider
+  // Create a stable makeClient function.
+  // NOTE: ApolloNextAppProvider only calls this on first ever mount (it caches
+  // the result in window[Symbol.for('ApolloClientSingleton')]). On subsequent
+  // remounts of ApolloClientProvider the window singleton is reused, so this
+  // function is NOT called again. Connection state is handled via the module-level
+  // callback refs above instead.
   const makeClientWithState = useCallback(() => {
     console.log('[Apollo] makeClientWithState called');
 
@@ -200,35 +236,61 @@ export function ApolloClientProvider({ children }: { children: ReactNode }) {
       wsClientRef.current = null;
     }
 
-    // Create new client with stable callback functions
-    const client = makeClient(setConnectionState, setError, wsClientRef, isResettingRef);
+    const client = makeClient(wsClientRef);
     clientRef.current = client;
     return client;
-  }, [setConnectionState, setError]);
+  }, []);
 
-  // Stable reset function
+  // On every mount (including remounts) wire up the module-level callbacks to
+  // the current component's setState functions.  This is the key fix: because
+  // makeClient() is only called once (window singleton), the graphql-ws event
+  // handlers permanently forward through these module-level refs — re-pointing
+  // them here ensures the currently mounted component always receives state updates.
+  useEffect(() => {
+    wsConnectionStateCallback = (newState: ConnectionState) => {
+      console.log('[Apollo] Setting connection state to:', newState);
+      setState(newState);
+    };
+    wsErrorCallback = (error: Error | null) => {
+      setLastError(error);
+    };
+
+    return () => {
+      // On unmount reset to no-ops so events fired before the next mount
+      // don't attempt to call setState on an unmounted component.
+      wsConnectionStateCallback = () => {};
+      wsErrorCallback = () => {};
+    };
+  }, []); // Run once per mount / once per remount
+
   const resetConnection = useCallback(() => {
-    if (isResettingRef.current) {
+    if (wsIsResettingRef.current) {
       console.log('[Apollo] Reset already in progress, skipping duplicate');
       return;
     }
 
-    isResettingRef.current = true;
+    wsIsResettingRef.current = true;
     console.log('[Apollo] Resetting WebSocket connection');
 
-    if (wsClientRef.current) {
-      wsClientRef.current.terminate();
+    // Use the per-instance ref when available (first mount); fall back to the
+    // module-level client for remount scenarios where makeClientWithState was
+    // not re-invoked (Apollo window singleton reused).
+    const wsClient = wsClientRef.current ?? globalWsClient;
+    if (wsClient) {
+      wsClient.terminate();
       console.log('[Apollo] WebSocket terminated');
     }
 
-    setConnectionState('idle');
-    isResettingRef.current = false;
-    setError(null);
+    lastKnownConnectionState = 'idle';
+    lastKnownError = null;
+    setState('idle');
+    wsIsResettingRef.current = false;
+    setLastError(null);
 
     if (clientRef.current) {
       clientRef.current.cache.gc();
     }
-  }, [setConnectionState, setError]);
+  }, []);
 
   const value: ConnectionStateContextType = useMemo(
     () => ({
