@@ -29,7 +29,7 @@ export default function PracticeTablesReportPage() {
     subscriptions
   );
 
-  const hasData = data?.practiceTablesConfig && data?.practiceTableAssignments;
+  const hasData = data?.division?.practiceTablesConfig && data?.practiceTableAssignments;
 
   return (
     <Container maxWidth="xl" disableGutters>
@@ -48,9 +48,9 @@ export default function PracticeTablesReportPage() {
 
           {!error && !hasData && !loading && <EmptyState />}
 
-          {!error && !loading && hasData && data.practiceTablesConfig && (
+          {!error && !loading && hasData && data.division?.practiceTablesConfig && (
             <PracticeTablesSchedule
-              config={data.practiceTablesConfig}
+              config={data.division.practiceTablesConfig}
               assignments={data.practiceTableAssignments}
             />
           )}

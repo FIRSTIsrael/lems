@@ -20,6 +20,9 @@ type Division {
   "Indicates whether this division is for a future edition"
   futureEdition: Boolean!
 
+  "Practice tables configuration for this division"
+  practiceTablesConfig: PracticeTablesConfig
+
   "Competition tables assigned to this division"
   tables: [Table!]!
 
@@ -40,6 +43,43 @@ type Division {
     "Filter teams by their slugs (region-number format, e.g., 'IL-9909')"
     slugs: [String!]
   ): [Team!]!
+}
+
+"""
+Configuration for practice tables in a division
+"""
+type PracticeTablesConfig {
+  "Division ID this configuration belongs to"
+  divisionId: String!
+
+  "Number of practice tables available"
+  tableCount: Int!
+
+  "Duration of each practice slot in minutes"
+  slotDurationMinutes: Int!
+
+  "Start time for practice tables (HH:MM format, e.g., '07:00')"
+  startTime: String!
+
+  "End time for practice tables (HH:MM format, e.g., '19:00')"
+  endTime: String!
+
+  "Blocked time slots (e.g., lunch breaks)"
+  blockedTimeSlots: [BlockedTimeSlot!]!
+}
+
+"""
+A blocked time slot where practice tables are not available
+"""
+type BlockedTimeSlot {
+  "Start time (ISO 8601 time string, e.g., '12:00')"
+  start: String!
+
+  "End time (ISO 8601 time string, e.g., '12:30')"
+  end: String!
+
+  "Optional reason for blocking (e.g., 'Lunch break')"
+  reason: String
 }
 
 """

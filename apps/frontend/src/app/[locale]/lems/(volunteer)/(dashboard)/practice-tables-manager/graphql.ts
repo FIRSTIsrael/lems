@@ -14,7 +14,10 @@ interface PracticeTablesConfig {
 }
 
 interface PracticeTablesConfigData {
-  practiceTablesConfig: PracticeTablesConfig | null;
+  division: {
+    id: string;
+    practiceTablesConfig: PracticeTablesConfig | null;
+  } | null;
 }
 
 interface PracticeTablesConfigVars {
@@ -72,16 +75,19 @@ export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
   PracticeTablesConfigVars
 > = gql`
   query GetPracticeTablesConfig($divisionId: String!) {
-    practiceTablesConfig(divisionId: $divisionId) {
-      divisionId
-      tableCount
-      slotDurationMinutes
-      startTime
-      endTime
-      blockedTimeSlots {
-        start
-        end
-        reason
+    division(id: $divisionId) {
+      id
+      practiceTablesConfig {
+        divisionId
+        tableCount
+        slotDurationMinutes
+        startTime
+        endTime
+        blockedTimeSlots {
+          start
+          end
+          reason
+        }
       }
     }
   }

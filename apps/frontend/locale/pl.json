@@ -403,8 +403,19 @@
         "field-timer": "Timer pola",
         "field-schedule": "Harmonogram pola",
         "judging-schedule": "Harmonogram sędziowania",
+        "practice-tables": "Stoły Treningowe",
         "judging-status": "Status sędziowania",
         "scoreboard": "Tabela wyników"
+      },
+      "practice-tables": {
+        "page-title": "Harmonogram Stołów Treningowych",
+        "time": "Czas",
+        "table": "Stół {number}",
+        "blocked": "Zablokowane",
+        "available": "Dostępne",
+        "unavailable": "Niedostępne",
+        "empty-state": "Nie skonfigurowano stołów treningowych",
+        "error-state": "Nie udało się wczytać stołów treningowych"
       },
       "field-status": {
         "countdown": {
@@ -1521,6 +1532,51 @@
           "innovation-project": "Projekt Innowacyjny",
           "robot-design": "Projekt Robota"
         }
+      }
+    },
+    "practice-tables-manager": {
+      "page-title": "Menedżer Stołów Treningowych",
+      "configuration": {
+        "title": "Konfiguracja",
+        "table-count": "Liczba Stołów",
+        "slot-duration": "Czas Trwania Slotu",
+        "start-time": "Godzina Rozpoczęcia",
+        "end-time": "Godzina Zakończenia",
+        "blocked-times-description": "Określ czasy, kiedy stoły nie są dostępne (np. przerwa obiadowa)",
+        "add-blocked-time": "Dodaj Zablokowany Czas",
+        "save": "Zapisz Konfigurację",
+        "not-configured": "Stoły Treningowe Nie Skonfigurowane",
+        "no-blocked-times": "Brak zablokowanych czasów",
+        "not-configured-description": "Stoły treningowe nie zostały jeszcze skonfigurowane dla tej dywizji. Skontaktuj się z administratorem wydarzenia, aby skonfigurować harmonogram stołów treningowych."
+      },
+      "schedule": {
+        "title": "Harmonogram",
+        "time": "Czas",
+        "table": "Stół {number}",
+        "clear-all": "Wyczyść Wszystko",
+        "clear-all-confirm": "Czy na pewno chcesz usunąć wszystkie przypisania? Tej operacji nie można cofnąć.",
+        "blocked": "Zablokowane",
+        "available": "Dostępne"
+      },
+      "team-search": {
+        "placeholder": "Szukaj drużyny...",
+        "no-results": "Nie znaleziono drużyn",
+        "select-team": "Wybierz drużynę, aby przypisać do slotu",
+        "search-by": "Szukaj według numeru lub nazwy drużyny"
+      },
+      "assignment": {
+        "click-to-assign": "Kliknij, aby przypisać drużynę",
+        "assigned": "Przypisano",
+        "remove": "Usuń przypisanie"
+      },
+      "no-teams": {
+        "title": "Brak Dostępnych Drużyn",
+        "description": "W tej dywizji nie ma jeszcze zarejestrowanych drużyn. Drużyny muszą być zarejestrowane przed dokonaniem przypisań do stołów treningowych."
+      },
+      "errors": {
+        "team-already-assigned": "Ta drużyna ma już przypisany stół treningowy w tym czasie. Wybierz inny czas lub drużynę.",
+        "assignment-failed": "Nie udało się utworzyć przypisania",
+        "delete-failed": "Nie udało się usunąć przypisania"
       }
     }
   },

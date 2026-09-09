@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Typography, Alert, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
@@ -14,122 +14,62 @@ interface BlockedTimeSlot {
 }
 
 interface PracticeTablesSectionProps {
+  eventId: string;
   division: Division;
+  onUpdate?: () => void;
 }
 
-export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({ division }) => {
+export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
+  eventId,
+  division,
+  onUpdate
+}) => {
   const t = useTranslations('pages.events.practice-tables');
 
-  const [tableCount, setTableCount] = useState(4);
-  const [slotDuration, setSlotDuration] = useState(15);
-  const [startTime, setStartTime] = useState('07:00');
-  const [endTime, setEndTime] = useState('19:00');
-  const [blockedSlots, setBlockedSlots] = useState<BlockedTimeSlot[]>([]);
+  // Initialize state from division settings or defaults
+  const [tableCount, setTableCount] = useState(division.practiceTablesSettings?.tableCount ?? 4);
+  const [slotDuration, setSlotDuration] = useState(
+    division.practiceTablesSettings?.slotDurationMinutes ?? 15
+  );
+  const [startTime, setStartTime] = useState(division.practiceTablesSettings?.startTime ?? '07:00');
+  const [endTime, setEndTime] = useState(division.practiceTablesSettings?.endTime ?? '19:00');
+  const [blockedSlots, setBlockedSlots] = useState<BlockedTimeSlot[]>(
+    division.practiceTablesSettings?.blockedTimeSlots ?? []
+  );
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-
-  // Load configuration when division changes
-  useEffect(() => {
-    const loadConfiguration = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(`${getApiBase()}/lems/graphql`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            query: `
-              query GetPracticeTablesConfig($divisionId: String!) {
-                practiceTablesConfig(divisionId: $divisionId) {
-                  divisionId
-                  tableCount
-                  slotDurationMinutes
-                  startTime
-                  endTime
-                  blockedTimeSlots {
-                    start
-                    end
-                    reason
-                  }
-                }
-              }
-            `,
-            variables: { divisionId: division.id }
-          })
-        });
-
-        const result = await response.json();
-
-        if (result.errors) {
-          console.error('GraphQL errors:', result.errors);
-          throw new Error(result.errors[0].message);
-        }
-
-        if (result.data?.practiceTablesConfig) {
-          setTableCount(result.data.practiceTablesConfig.tableCount);
-          setSlotDuration(result.data.practiceTablesConfig.slotDurationMinutes);
-          setStartTime(result.data.practiceTablesConfig.startTime);
-          setEndTime(result.data.practiceTablesConfig.endTime);
-          setBlockedSlots(result.data.practiceTablesConfig.blockedTimeSlots || []);
-        }
-      } catch (error) {
-        console.error('Failed to load configuration:', error);
-        setMessage({ type: 'error', text: t('errors.load-failed') });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadConfiguration();
-  }, [division.id, t]);
 
   const handleSave = async () => {
     setSaving(true);
     setMessage(null);
 
     try {
-      const response = await fetch(`${getApiBase()}/lems/graphql`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          query: `
-            mutation UpdatePracticeTablesConfig($input: PracticeTablesConfigInput!) {
-              updatePracticeTablesConfig(input: $input) {
-                divisionId
-                tableCount
-                slotDurationMinutes
-                startTime
-                endTime
-                blockedTimeSlots {
-                  start
-                  end
-                  reason
-                }
-              }
-            }
-          `,
-          variables: {
-            input: {
-              divisionId: division.id,
-              tableCount,
-              slotDurationMinutes: slotDuration,
-              startTime,
-              endTime,
-              blockedTimeSlots: blockedSlots
-            }
-          }
-        })
-      });
+      const response = await fetch(
+        `${getApiBase()}/admin/events/${eventId}/divisions/${division.id}/practice-tables`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            tableCount,
+            slotDurationMinutes: slotDuration,
+            startTime,
+            endTime,
+            blockedTimeSlots: blockedSlots
+          })
+        }
+      );
 
-      const result = await response.json();
-
-      if (result.errors) {
-        throw new Error(result.errors[0].message);
+      if (!response.ok) {
+        throw new Error('Failed to save configuration');
       }
 
       setMessage({ type: 'success', text: t('messages.save-success') });
+
+      // Trigger parent to refetch divisions
+      if (onUpdate) {
+        onUpdate();
+      }
     } catch (error) {
       console.error('Failed to save configuration:', error);
       setMessage({ type: 'error', text: t('errors.save-failed') });
@@ -163,8 +103,6 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({ di
         onBlockedSlotsChange={setBlockedSlots}
         onSave={handleSave}
         saving={saving}
-        loading={loading}
-        showCancel={false}
       />
     </Paper>
   );

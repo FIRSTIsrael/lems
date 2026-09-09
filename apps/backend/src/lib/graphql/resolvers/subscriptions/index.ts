@@ -62,6 +62,5 @@ export const subscriptionResolvers = {
   deliberationStatusChanged: deliberationStatusChangedResolver,
   finalDeliberationUpdated: finalDeliberationUpdatedResolver,
   finalDeliberationStatusChanged: finalDeliberationStatusChangedResolver,
-  practiceTableAssignmentsUpdated: practiceTableSubscriptions.practiceTableAssignmentsUpdated,
-  practiceTablesConfigUpdated: practiceTableSubscriptions.practiceTablesConfigUpdated
+  practiceTableAssignmentsUpdated: practiceTableSubscriptions.practiceTableAssignmentsUpdated
 };

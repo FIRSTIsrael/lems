@@ -50,8 +50,6 @@ import {
   setJudgingSessionTeamResolver
 } from './schedule';
 import {
-  updatePracticeTablesConfigResolver,
-  deletePracticeTablesConfigResolver,
   createPracticeTableAssignmentResolver,
   deletePracticeTableAssignmentResolver,
   clearPracticeTableAssignmentsResolver
@@ -95,8 +93,6 @@ export const mutationResolvers = {
   swapSessionTeams: swapSessionTeamsResolver,
   setMatchParticipantTeam: setMatchParticipantTeamResolver,
   setJudgingSessionTeam: setJudgingSessionTeamResolver,
-  updatePracticeTablesConfig: updatePracticeTablesConfigResolver,
-  deletePracticeTablesConfig: deletePracticeTablesConfigResolver,
   createPracticeTableAssignment: createPracticeTableAssignmentResolver,
   deletePracticeTableAssignment: deletePracticeTableAssignmentResolver,
   clearPracticeTableAssignments: clearPracticeTableAssignmentsResolver

@@ -56,7 +56,12 @@ const VenuePage: React.FC = () => {
             <PitMapManager key="pit-map" division={selectedDivision} onDivisionUpdate={mutate} />
           </Grid>
           <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
-            <PracticeTablesSection key="practice-tables" division={selectedDivision} />
+            <PracticeTablesSection
+              key={`practice-tables-${selectedDivision.id}`}
+              eventId={event.id}
+              division={selectedDivision}
+              onUpdate={mutate}
+            />
           </Grid>
         </Grid>
       )}

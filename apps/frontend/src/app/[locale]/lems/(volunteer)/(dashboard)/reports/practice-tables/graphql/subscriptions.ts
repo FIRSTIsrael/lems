@@ -36,7 +36,9 @@ interface AssignmentsSubscriptionData {
 }
 
 interface QueryData {
-  practiceTablesConfig: PracticeTablesConfig | null;
+  division: {
+    practiceTablesConfig: PracticeTablesConfig | null;
+  } | null;
   practiceTableAssignments: PracticeTableAssignment[];
 }
 

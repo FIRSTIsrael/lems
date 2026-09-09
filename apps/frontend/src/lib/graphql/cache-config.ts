@@ -20,7 +20,9 @@ export function createApolloCache() {
       Rubric: { keyFields: ['id'] },
       Judging: { keyFields: ['divisionId'] },
       Field: { keyFields: ['divisionId'] },
-      MatchParticipant: { keyFields: ['id'] }
+      MatchParticipant: { keyFields: ['id'] },
+      PracticeTablesConfig: { keyFields: ['divisionId'] },
+      BlockedTimeSlot: { keyFields: false }
     }
   });
 }

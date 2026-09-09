@@ -105,7 +105,7 @@ export default function PracticeTablesManagerPage() {
     data => data
   );
 
-  const config = data?.practiceTablesConfig;
+  const config = data?.division?.practiceTablesConfig;
   const teams = teamsData?.division?.teams || [];
   const eventStartDate = eventData?.event?.startDate;
 

@@ -67,20 +67,3 @@ export function createPracticeTableAssignmentsSubscription(
     updateQuery: assignmentsReconciler
   } as SubscriptionConfig<unknown, AssignmentsQueryData, SubscriptionVars>;
 }
-
-export const PRACTICE_TABLES_CONFIG_SUBSCRIPTION = gql`
-  subscription PracticeTablesConfigUpdated($divisionId: String!) {
-    practiceTablesConfigUpdated(divisionId: $divisionId) {
-      divisionId
-      tableCount
-      slotDurationMinutes
-      startTime
-      endTime
-      blockedTimeSlots {
-        start
-        end
-        reason
-      }
-    }
-  }
-`;

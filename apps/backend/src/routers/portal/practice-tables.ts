@@ -8,37 +8,25 @@ router.get('/divisions/:divisionId/practice-tables-config', async (req, res) => 
   const { divisionId } = req.params;
 
   try {
-    const config = await db.raw.sql
-      .selectFrom('practice_tables_config')
-      .where('division_id', '=', divisionId)
-      .selectAll()
+    const division = await db.raw.sql
+      .selectFrom('divisions')
+      .where('id', '=', divisionId)
+      .select('practice_tables_settings')
       .executeTakeFirst();
 
-    if (!config) {
+    if (!division || !division.practice_tables_settings) {
       return res.json(null);
     }
 
-    // Parse blocked_time_slots
-    let blockedTimeSlots = [];
-    if (config.blocked_time_slots) {
-      if (typeof config.blocked_time_slots === 'string') {
-        try {
-          blockedTimeSlots = JSON.parse(config.blocked_time_slots);
-        } catch (e) {
-          console.error('Failed to parse blocked_time_slots:', e);
-        }
-      } else if (Array.isArray(config.blocked_time_slots)) {
-        blockedTimeSlots = config.blocked_time_slots;
-      }
-    }
+    const settings = division.practice_tables_settings as unknown as Record<string, unknown>;
 
     res.json({
-      divisionId: config.division_id,
-      tableCount: config.table_count,
-      slotDurationMinutes: config.slot_duration_minutes,
-      startTime: config.start_time,
-      endTime: config.end_time,
-      blockedTimeSlots
+      divisionId,
+      tableCount: settings.tableCount as number,
+      slotDurationMinutes: settings.slotDurationMinutes as number,
+      startTime: settings.startTime as string,
+      endTime: settings.endTime as string,
+      blockedTimeSlots: (settings.blockedTimeSlots as Array<Record<string, unknown>>) || []
     });
   } catch (error) {
     console.error('Error fetching practice tables config:', error);

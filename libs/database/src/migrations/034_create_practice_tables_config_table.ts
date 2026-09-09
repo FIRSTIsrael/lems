@@ -2,33 +2,10 @@
 import { Kysely, sql } from 'kysely';
 
 export async function up(db: Kysely<any>): Promise<void> {
-  // Create the practice_tables_config table
+  // Add practice_tables_settings JSON column to divisions table
   await db.schema
-    .createTable('practice_tables_config')
-    .addColumn('pk', 'serial', col => col.primaryKey())
-    .addColumn('division_id', 'uuid', col => col.notNull().unique())
-    .addColumn('table_count', 'integer', col => col.notNull().defaultTo(4))
-    .addColumn('slot_duration_minutes', 'integer', col => col.notNull().defaultTo(15))
-    .addColumn('blocked_time_slots', 'jsonb', col => col.notNull().defaultTo('[]'))
-    .execute();
-
-  // Create foreign key constraint for division_id
-  await db.schema
-    .alterTable('practice_tables_config')
-    .addForeignKeyConstraint(
-      'fk_practice_tables_config_division_id',
-      ['division_id'],
-      'divisions',
-      ['id']
-    )
-    .onDelete('cascade')
-    .execute();
-
-  // Create index
-  await db.schema
-    .createIndex('idx_practice_tables_config_division_id')
-    .on('practice_tables_config')
-    .column('division_id')
+    .alterTable('divisions')
+    .addColumn('practice_tables_settings', 'jsonb', col => col.defaultTo(null))
     .execute();
 
   // Create the practice_tables_schedule table to store team assignments
@@ -91,9 +68,6 @@ export async function down(db: Kysely<any>): Promise<void> {
   // Drop practice_tables_schedule table
   await db.schema.dropTable('practice_tables_schedule').ifExists().execute();
 
-  // Drop index for practice_tables_config
-  await db.schema.dropIndex('idx_practice_tables_config_division_id').ifExists().execute();
-
-  // Drop practice_tables_config table
-  await db.schema.dropTable('practice_tables_config').ifExists().execute();
+  // Drop practice_tables_settings column from divisions
+  await db.schema.alterTable('divisions').dropColumn('practice_tables_settings').execute();
 }
