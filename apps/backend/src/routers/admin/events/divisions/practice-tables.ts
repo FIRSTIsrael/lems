@@ -41,20 +41,82 @@ router.put(
       return;
     }
 
-    // Update the practice_tables_settings JSON column
-    await db.raw.sql
-      .updateTable('divisions')
-      .set({
-        practice_tables_settings: sql`${JSON.stringify({
-          tableCount,
-          slotDurationMinutes,
-          startTime,
-          endTime,
-          blockedTimeSlots
-        })}::jsonb`
-      })
-      .where('id', '=', req.divisionId)
-      .execute();
+    // Parse start and end times
+    const [startHour, startMinute] = startTime.split(':').map(Number);
+    const [endHour, endMinute] = endTime.split(':').map(Number);
+    const startMinutes = startHour * 60 + startMinute;
+    const endMinutes = endHour * 60 + endMinute;
+
+    // Generate all time slots
+    const slots: Array<{ tableNumber: number; startTime: Date; endTime: Date }> = [];
+    const baseDate = new Date('1970-01-01T00:00:00Z'); // Use epoch for time-only slots
+
+    for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDurationMinutes) {
+      const slotStartTime = new Date(baseDate);
+      slotStartTime.setUTCMinutes(minutes);
+
+      const slotEndTime = new Date(baseDate);
+      slotEndTime.setUTCMinutes(minutes + slotDurationMinutes);
+
+      // Check if this slot is blocked
+      const slotStartStr = `${Math.floor(minutes / 60)
+        .toString()
+        .padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`;
+      const isBlocked = blockedTimeSlots.some(
+        blocked => slotStartStr >= blocked.start && slotStartStr < blocked.end
+      );
+
+      // Only create slots that are not blocked
+      if (!isBlocked) {
+        for (let tableNum = 1; tableNum <= tableCount; tableNum++) {
+          slots.push({
+            tableNumber: tableNum,
+            startTime: slotStartTime,
+            endTime: slotEndTime
+          });
+        }
+      }
+    }
+
+    // Use a transaction to update config and recreate slots atomically
+    await db.raw.sql.transaction().execute(async trx => {
+      // Update the practice_tables_settings JSON column
+      await trx
+        .updateTable('divisions')
+        .set({
+          practice_tables_settings: sql`${JSON.stringify({
+            tableCount,
+            slotDurationMinutes,
+            startTime,
+            endTime,
+            blockedTimeSlots
+          })}::jsonb`
+        })
+        .where('id', '=', req.divisionId)
+        .execute();
+
+      // Clear all existing slots for this division
+      await trx
+        .deleteFrom('practice_tables_schedule')
+        .where('division_id', '=', req.divisionId)
+        .execute();
+
+      // Insert all new slots (with team_id as null)
+      if (slots.length > 0) {
+        await trx
+          .insertInto('practice_tables_schedule')
+          .values(
+            slots.map(slot => ({
+              division_id: req.divisionId,
+              team_id: null,
+              table_number: slot.tableNumber,
+              start_time: slot.startTime,
+              end_time: slot.endTime
+            }))
+          )
+          .execute();
+      }
+    });
 
     res.status(200).json({
       divisionId: req.divisionId,
@@ -62,7 +124,8 @@ router.put(
       slotDurationMinutes,
       startTime,
       endTime,
-      blockedTimeSlots
+      blockedTimeSlots,
+      slotsCreated: slots.length
     });
   })
 );
@@ -72,11 +135,21 @@ router.delete(
   '/practice-tables',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    await db.raw.sql
-      .updateTable('divisions')
-      .set({ practice_tables_settings: null })
-      .where('id', '=', req.divisionId)
-      .execute();
+    // Use a transaction to delete config and clear all slots atomically
+    await db.raw.sql.transaction().execute(async trx => {
+      // Clear the practice_tables_settings JSON column
+      await trx
+        .updateTable('divisions')
+        .set({ practice_tables_settings: null })
+        .where('id', '=', req.divisionId)
+        .execute();
+
+      // Delete all slots for this division
+      await trx
+        .deleteFrom('practice_tables_schedule')
+        .where('division_id', '=', req.divisionId)
+        .execute();
+    });
 
     res.status(204).end();
   })

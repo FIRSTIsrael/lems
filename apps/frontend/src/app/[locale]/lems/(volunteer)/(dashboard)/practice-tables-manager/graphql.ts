@@ -16,7 +16,7 @@ interface PracticeTablesConfig {
 interface PracticeTablesConfigData {
   division: {
     id: string;
-    practiceTablesConfig: PracticeTablesConfig | null;
+    practiceTables: PracticeTablesConfig | null;
   } | null;
 }
 
@@ -77,7 +77,7 @@ export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
   query GetPracticeTablesConfig($divisionId: String!) {
     division(id: $divisionId) {
       id
-      practiceTablesConfig {
+      practiceTables {
         divisionId
         tableCount
         slotDurationMinutes

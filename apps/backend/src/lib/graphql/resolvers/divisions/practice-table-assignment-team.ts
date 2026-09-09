@@ -2,18 +2,23 @@ import { GraphQLFieldResolver } from 'graphql';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
-interface PracticeTableAssignmentGraphQL {
-  teamId: string;
+interface PracticeTableSlotGraphQL {
+  teamId: string | null;
 }
 
 export const practiceTableAssignmentTeamResolver: GraphQLFieldResolver<
-  PracticeTableAssignmentGraphQL,
+  PracticeTableSlotGraphQL,
   GraphQLContext
-> = async assignment => {
-  const team = await db.teams.byId(assignment.teamId).get();
+> = async slot => {
+  // Return null if no team is assigned to this slot
+  if (!slot.teamId) {
+    return null;
+  }
+
+  const team = await db.teams.byId(slot.teamId).get();
 
   if (!team) {
-    throw new Error(`Team ${assignment.teamId} not found`);
+    throw new Error(`Team ${slot.teamId} not found`);
   }
 
   return {

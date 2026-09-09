@@ -25,7 +25,7 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
   const { divisionId, teamId, tableNumber, startTime, endTime } = input;
 
   // Check for conflicts - same team at the same time
-  const existingAssignment = await db.raw.sql
+  const existingTeamAssignment = await db.raw.sql
     .selectFrom('practice_tables_schedule')
     .where('division_id', '=', divisionId)
     .where('team_id', '=', teamId)
@@ -45,20 +45,30 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
     .selectAll()
     .executeTakeFirst();
 
-  if (existingAssignment) {
+  if (existingTeamAssignment) {
     throw new Error('Team already has a practice table assignment during this time slot');
   }
 
-  // Insert the assignment
+  // Find the existing empty slot for this table/time
+  const slot = await db.raw.sql
+    .selectFrom('practice_tables_schedule')
+    .where('division_id', '=', divisionId)
+    .where('table_number', '=', tableNumber)
+    .where('start_time', '=', new Date(startTime))
+    .where('end_time', '=', new Date(endTime))
+    .where('team_id', 'is', null)
+    .selectAll()
+    .executeTakeFirst();
+
+  if (!slot) {
+    throw new Error('No available slot found for this table and time');
+  }
+
+  // Update the slot with the team assignment
   const result = await db.raw.sql
-    .insertInto('practice_tables_schedule')
-    .values({
-      division_id: divisionId,
-      team_id: teamId,
-      table_number: tableNumber,
-      start_time: new Date(startTime),
-      end_time: new Date(endTime)
-    })
+    .updateTable('practice_tables_schedule')
+    .set({ team_id: teamId })
+    .where('id', '=', slot.id)
     .returning([
       'id',
       'division_id',
@@ -73,7 +83,7 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
   const assignment = {
     id: result.id,
     divisionId: result.division_id,
-    teamId: result.team_id,
+    teamId: result.team_id!,
     tableNumber: result.table_number,
     startTime: result.start_time.toISOString(),
     endTime: result.end_time.toISOString(),

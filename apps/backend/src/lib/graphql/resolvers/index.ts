@@ -127,7 +127,7 @@ export const resolvers = {
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
     agenda: divisionAgendaResolver,
-    practiceTablesConfig: divisionPracticeTablesConfigResolver
+    practiceTables: divisionPracticeTablesConfigResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,
@@ -186,7 +186,7 @@ export const resolvers = {
     divisions: volunteerDivisionsResolver
   },
   RoleInfo: RoleInfoResolver,
-  PracticeTableAssignment: {
+  PracticeTableSlot: {
     team: practiceTableAssignmentTeamResolver
   },
   RubricUpdatedEvent: RubricUpdatedEventResolver,

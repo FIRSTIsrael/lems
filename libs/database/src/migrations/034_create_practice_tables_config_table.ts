@@ -8,13 +8,13 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('practice_tables_settings', 'jsonb', col => col.defaultTo(null))
     .execute();
 
-  // Create the practice_tables_schedule table to store team assignments
+  // Create the practice_tables_schedule table to store slots (team_id nullable for unassigned slots)
   await db.schema
     .createTable('practice_tables_schedule')
     .addColumn('pk', 'serial', col => col.primaryKey())
     .addColumn('id', 'uuid', col => col.notNull().unique().defaultTo(db.fn('gen_random_uuid')))
     .addColumn('division_id', 'uuid', col => col.notNull())
-    .addColumn('team_id', 'uuid', col => col.notNull())
+    .addColumn('team_id', 'uuid') // Nullable - slot can be unassigned
     .addColumn('table_number', 'integer', col => col.notNull())
     .addColumn('start_time', 'timestamp', col => col.notNull())
     .addColumn('end_time', 'timestamp', col => col.notNull())

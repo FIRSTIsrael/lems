@@ -21,7 +21,7 @@ type Division {
   futureEdition: Boolean!
 
   "Practice tables configuration for this division"
-  practiceTablesConfig: PracticeTablesConfig
+  practiceTables: PracticeTablesConfig
 
   "Competition tables assigned to this division"
   tables: [Table!]!

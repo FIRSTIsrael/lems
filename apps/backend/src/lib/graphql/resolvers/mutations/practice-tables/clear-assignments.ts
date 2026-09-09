@@ -13,8 +13,10 @@ export const clearPracticeTableAssignmentsResolver: GraphQLFieldResolver<
   GraphQLContext,
   ClearPracticeTableAssignmentsArgs
 > = async (_parent, { divisionId }) => {
+  // Clear all team assignments (set team_id to null) instead of deleting slots
   await db.raw.sql
-    .deleteFrom('practice_tables_schedule')
+    .updateTable('practice_tables_schedule')
+    .set({ team_id: null })
     .where('division_id', '=', divisionId)
     .execute();
 

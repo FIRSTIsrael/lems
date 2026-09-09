@@ -50,20 +50,53 @@ router.get(
 router.get(
   '/:teamSlug/activities',
   asHandler<PortalTeamAtEventRequest>(async (req, res: Response) => {
-    const session = await db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId);
-    const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-    const matches = await db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId);
-    const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-    const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
-    const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
+    const [session, rooms, matches, tables, agendaPublic, agendaTeams, practiceAssignments] =
+      await Promise.all([
+        db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId),
+        db.rooms.byDivisionId(req.divisionId).getAll(),
+        db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId),
+        db.tables.byDivisionId(req.divisionId).getAll(),
+        db.divisions.byId(req.divisionId).agenda().getAll('public'),
+        db.divisions.byId(req.divisionId).agenda().getAll('teams'),
+        db.raw.sql
+          .selectFrom('practice_tables_schedule as pts')
+          .where('pts.team_id', '=', req.teamId)
+          .where('pts.division_id', '=', req.divisionId)
+          .select([
+            'pts.id',
+            'pts.table_number as tableNumber',
+            'pts.start_time as startTime',
+            'pts.end_time as endTime'
+          ])
+          .orderBy('pts.start_time', 'asc')
+          .execute()
+      ]);
+
     const agenda = [...agendaPublic, ...agendaTeams];
+
+    // Format practice table assignments
+    const formattedPracticeAssignments = practiceAssignments.map(a => {
+      // Convert timestamps to HH:MM format (use UTC to avoid timezone issues)
+      const startDate = new Date(a.startTime);
+      const endDate = new Date(a.endTime);
+      const startTimeStr = `${startDate.getUTCHours().toString().padStart(2, '0')}:${startDate.getUTCMinutes().toString().padStart(2, '0')}`;
+      const endTimeStr = `${endDate.getUTCHours().toString().padStart(2, '0')}:${endDate.getUTCMinutes().toString().padStart(2, '0')}`;
+
+      return {
+        id: a.id,
+        tableNumber: a.tableNumber,
+        startTime: startTimeStr,
+        endTime: endTimeStr
+      };
+    });
 
     res.json({
       session: session ? makePortalTeamJudgingSessionResponse(req.teamId, session, rooms) : null,
       matches: matches.map(match =>
         makePortalTeamRobotGameMatchResponse(req.teamId, match, tables)
       ),
-      agenda: agenda.map(a => makeAgendaResponse(a))
+      agenda: agenda.map(a => makeAgendaResponse(a)),
+      practiceAssignments: formattedPracticeAssignments
     });
   })
 );

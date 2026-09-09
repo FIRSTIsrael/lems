@@ -51,21 +51,22 @@ interface PracticeTableAssignment {
   endTime: string;
 }
 
+interface PracticeTablesData {
+  config: PracticeTablesConfig;
+  assignments: PracticeTableAssignment[];
+}
+
 export const PracticeTablesTab: React.FC = () => {
   const t = useTranslations('pages.event.practice-tables');
   const params = useParams();
   const eventSlug = params.slug as string;
   const division = useDivision();
 
-  const { data: config, isLoading: configLoading } = useRealtimeData<PracticeTablesConfig>(
-    `/portal/divisions/${division.id}/practice-tables-config`
+  const { data, isLoading } = useRealtimeData<PracticeTablesData | null>(
+    `/portal/divisions/${division.id}/practice-tables`
   );
 
-  const { data: assignments, isLoading: assignmentsLoading } = useRealtimeData<
-    PracticeTableAssignment[]
-  >(`/portal/divisions/${division.id}/practice-table-assignments`);
-
-  if (configLoading || assignmentsLoading) {
+  if (isLoading) {
     return (
       <Paper sx={{ p: 3, display: 'flex', justifyContent: 'center' }}>
         <CircularProgress />
@@ -73,13 +74,15 @@ export const PracticeTablesTab: React.FC = () => {
     );
   }
 
-  if (!config) {
+  if (!data) {
     return (
       <Paper sx={{ p: 3 }}>
         <Alert severity="info">{t('not-configured')}</Alert>
       </Paper>
     );
   }
+
+  const { config, assignments } = data;
 
   // Generate time slots
   const timeSlots: string[] = [];

@@ -30,13 +30,10 @@ export const TeamSchedule: React.FC = () => {
     session: TeamJudgingSession;
     matches: TeamRobotGameMatch[];
     agenda: AgendaEvent[];
+    practiceAssignments: PracticeTableAssignment[];
   } | null>(`/portal/events/${event.slug}/teams/${team.slug}/activities`, {
     suspense: true
   });
-
-  const { data: practiceAssignments } = useRealtimeData<PracticeTableAssignment[]>(
-    `/portal/teams/${team.slug}/practice-table-assignments`
-  );
 
   const t = useTranslations('pages.team-in-event');
   const { getStage } = useMatchTranslations();
@@ -45,7 +42,7 @@ export const TeamSchedule: React.FC = () => {
     return null; // Should be handled by suspense
   }
 
-  const { session: judgingSession, matches, agenda } = data;
+  const { session: judgingSession, matches, agenda, practiceAssignments } = data;
 
   // Get the event date from the first scheduled item (match or judging session)
   const eventDate = matches?.[0]?.scheduledTime

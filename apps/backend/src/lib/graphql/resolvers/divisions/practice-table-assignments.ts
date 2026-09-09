@@ -14,6 +14,7 @@ export const practiceTableAssignmentsResolver: GraphQLFieldResolver<
   const assignments = await db.raw.sql
     .selectFrom('practice_tables_schedule')
     .where('division_id', '=', divisionId)
+    .where('team_id', 'is not', null) // Only return assigned slots
     .selectAll()
     .orderBy('start_time', 'asc')
     .execute();
@@ -21,7 +22,7 @@ export const practiceTableAssignmentsResolver: GraphQLFieldResolver<
   return assignments.map(assignment => ({
     id: assignment.id,
     divisionId: assignment.division_id,
-    teamId: assignment.team_id,
+    teamId: assignment.team_id!,
     tableNumber: assignment.table_number,
     startTime: assignment.start_time.toISOString(),
     endTime: assignment.end_time.toISOString(),

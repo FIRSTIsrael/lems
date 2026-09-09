@@ -33,7 +33,7 @@ interface PracticeTablesConfig {
 interface QueryData {
   division: {
     id: string;
-    practiceTablesConfig: PracticeTablesConfig | null;
+    practiceTables: PracticeTablesConfig | null;
   } | null;
   practiceTableAssignments: PracticeTableAssignment[];
 }
@@ -46,7 +46,7 @@ export const GET_PRACTICE_TABLES_REPORT: TypedDocumentNode<QueryData, QueryVars>
   query GetPracticeTablesReport($divisionId: String!) {
     division(id: $divisionId) {
       id
-      practiceTablesConfig {
+      practiceTables {
         divisionId
         tableCount
         slotDurationMinutes
