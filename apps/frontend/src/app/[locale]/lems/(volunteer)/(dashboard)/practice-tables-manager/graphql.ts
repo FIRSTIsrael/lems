@@ -63,11 +63,11 @@ interface CreateAssignmentVars {
 }
 
 interface DeleteAssignmentData {
-  deletePracticeTableAssignment: boolean;
+  deletePracticeTableAssignment: PracticeTableAssignment;
 }
 
 interface DeleteAssignmentVars {
-  assignmentId: string;
+  slotId: string;
 }
 
 export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
@@ -118,7 +118,7 @@ export const CREATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
   CreateAssignmentData,
   CreateAssignmentVars
 > = gql`
-  mutation CreatePracticeTableAssignment($input: CreatePracticeTableAssignmentInput!) {
+  mutation CreatePracticeTableAssignment($input: AssignPracticeTableSlotInput!) {
     createPracticeTableAssignment(input: $input) {
       id
       divisionId
@@ -139,7 +139,19 @@ export const DELETE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
   DeleteAssignmentData,
   DeleteAssignmentVars
 > = gql`
-  mutation DeletePracticeTableAssignment($assignmentId: String!) {
-    deletePracticeTableAssignment(assignmentId: $assignmentId)
+  mutation DeletePracticeTableAssignment($slotId: String!) {
+    deletePracticeTableAssignment(slotId: $slotId) {
+      id
+      divisionId
+      team {
+        id
+        number
+        name
+        affiliation
+      }
+      tableNumber
+      startTime
+      endTime
+    }
   }
 `;

@@ -49,16 +49,30 @@ export const createPracticeTableAssignmentResolver: GraphQLFieldResolver<
     throw new Error('Team already has a practice table assignment during this time slot');
   }
 
-  // Find the existing empty slot for this table/time
-  const slot = await db.raw.sql
+  // Find the existing empty slot by matching time components (hour/minute)
+  // Slots are stored with epoch date but we need to match on time only
+  const requestedStart = new Date(startTime);
+  const requestedEnd = new Date(endTime);
+
+  const allSlots = await db.raw.sql
     .selectFrom('practice_tables_schedule')
     .where('division_id', '=', divisionId)
     .where('table_number', '=', tableNumber)
-    .where('start_time', '=', new Date(startTime))
-    .where('end_time', '=', new Date(endTime))
     .where('team_id', 'is', null)
     .selectAll()
-    .executeTakeFirst();
+    .execute();
+
+  // Find slot by matching hour and minute components
+  const slot = allSlots.find(s => {
+    const slotStart = new Date(s.start_time);
+    const slotEnd = new Date(s.end_time);
+    return (
+      slotStart.getUTCHours() === requestedStart.getUTCHours() &&
+      slotStart.getUTCMinutes() === requestedStart.getUTCMinutes() &&
+      slotEnd.getUTCHours() === requestedEnd.getUTCHours() &&
+      slotEnd.getUTCMinutes() === requestedEnd.getUTCMinutes()
+    );
+  });
 
   if (!slot) {
     throw new Error('No available slot found for this table and time');

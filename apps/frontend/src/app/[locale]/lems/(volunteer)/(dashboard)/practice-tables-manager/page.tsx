@@ -255,7 +255,7 @@ export default function PracticeTablesManagerPage() {
       console.log('Deleting assignment:', assignment.id);
       await deleteAssignment({
         variables: {
-          assignmentId: assignment.id
+          slotId: assignment.id
         }
       });
 
