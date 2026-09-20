@@ -16,6 +16,7 @@ import {
   Skeleton
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { formatTimeOnly } from '@lems/shared/utils';
 
 interface Team {
   id: string;
@@ -71,7 +72,7 @@ export function TeamSearchBar({ teams, selectedCell, onAssign }: TeamSearchBarPr
             <Typography variant="caption" color="primary" sx={{ mt: 1, display: 'block' }}>
               {t('selected-slot', {
                 table: selectedCell.tableIndex + 1,
-                time: selectedCell.time
+                time: formatTimeOnly(selectedCell.time)
               })}
             </Typography>
           )}

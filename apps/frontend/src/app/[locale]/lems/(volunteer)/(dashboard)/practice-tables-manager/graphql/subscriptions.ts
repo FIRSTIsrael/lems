@@ -23,6 +23,7 @@ interface AssignmentsQueryData {
   division: {
     id: string;
     practiceTables: {
+      divisionId: string;
       schedule: PracticeTableAssignment[];
     };
   } | null;
@@ -62,6 +63,7 @@ const assignmentsReconciler = (
     division: {
       ...prev.division,
       practiceTables: {
+        divisionId: prev.division.practiceTables.divisionId,
         schedule: data.practiceTableAssignmentsUpdated
       }
     }

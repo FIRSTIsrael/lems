@@ -39,6 +39,7 @@ interface QueryData {
   division: {
     id: string;
     practiceTables: {
+      divisionId: string;
       config: PracticeTablesConfig | null;
       schedule: PracticeTableAssignment[];
     };
@@ -78,7 +79,8 @@ const assignmentsReconciler = (
     division: {
       ...prev.division,
       practiceTables: {
-        ...prev.division.practiceTables,
+        divisionId: prev.division.practiceTables.divisionId,
+        config: prev.division.practiceTables.config,
         schedule: data.practiceTableAssignmentsUpdated
       }
     }

@@ -34,6 +34,7 @@ interface QueryData {
   division: {
     id: string;
     practiceTables: {
+      divisionId: string;
       config: PracticeTablesConfig | null;
       schedule: PracticeTableAssignment[];
     };
@@ -49,6 +50,7 @@ export const GET_PRACTICE_TABLES_REPORT: TypedDocumentNode<QueryData, QueryVars>
     division(id: $divisionId) {
       id
       practiceTables {
+        divisionId
         config {
           divisionId
           tableCount

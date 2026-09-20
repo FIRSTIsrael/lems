@@ -65,21 +65,13 @@ router.get(
 
     const agenda = [...agendaPublic, ...agendaTeams];
 
-    // Format practice table assignments
-    const formattedPracticeAssignments = practiceAssignments.map(a => {
-      // Convert timestamps to HH:MM format (use UTC to avoid timezone issues)
-      const startDate = new Date(a.start_time);
-      const endDate = new Date(a.end_time);
-      const startTimeStr = `${startDate.getUTCHours().toString().padStart(2, '0')}:${startDate.getUTCMinutes().toString().padStart(2, '0')}`;
-      const endTimeStr = `${endDate.getUTCHours().toString().padStart(2, '0')}:${endDate.getUTCMinutes().toString().padStart(2, '0')}`;
-
-      return {
-        id: a.id,
-        tableNumber: a.table_number,
-        startTime: startTimeStr,
-        endTime: endTimeStr
-      };
-    });
+    // Format practice table assignments with ISO datetime strings
+    const formattedPracticeAssignments = practiceAssignments.map(a => ({
+      id: a.id,
+      tableNumber: a.table_number,
+      startTime: a.start_time.toISOString(),
+      endTime: a.end_time.toISOString()
+    }));
 
     res.json({
       session: session ? makePortalTeamJudgingSessionResponse(req.teamId, session, rooms) : null,

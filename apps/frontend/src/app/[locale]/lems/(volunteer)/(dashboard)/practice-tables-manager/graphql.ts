@@ -17,6 +17,7 @@ interface PracticeTablesConfigData {
   division: {
     id: string;
     practiceTables: {
+      divisionId: string;
       config: PracticeTablesConfig | null;
     };
   } | null;
@@ -46,6 +47,7 @@ interface PracticeTableAssignmentsData {
   division: {
     id: string;
     practiceTables: {
+      divisionId: string;
       schedule: PracticeTableAssignment[];
     };
   } | null;
@@ -76,6 +78,7 @@ export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
     division(id: $divisionId) {
       id
       practiceTables {
+        divisionId
         config {
           divisionId
           tableCount
@@ -101,6 +104,7 @@ export const GET_PRACTICE_TABLE_ASSIGNMENTS: TypedDocumentNode<
     division(id: $divisionId) {
       id
       practiceTables {
+        divisionId
         schedule {
           id
           divisionId

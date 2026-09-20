@@ -35,14 +35,8 @@ export function PracticeTablesManagerContent() {
     if (!selectedCell || !eventStartDate) return;
 
     try {
-      // Use the event's start date to create proper timestamps
-      const eventDate = new Date(eventStartDate);
-      const year = eventDate.getFullYear();
-      const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = eventDate.getDate().toString().padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-
-      const startTime = `${dateStr}T${selectedCell.time}:00.000Z`;
+      // selectedCell.time is already an ISO datetime string
+      const startTime = selectedCell.time;
 
       console.log('Creating assignment with:', {
         divisionId,
@@ -79,13 +73,8 @@ export function PracticeTablesManagerContent() {
 
   const handleClearAssignment = async (tableIndex: number, time: string) => {
     try {
-      // Convert time to ISO string for the mutation
-      if (!eventStartDate) return;
-
-      const [hours, minutes] = time.split(':');
-      const date = new Date(eventStartDate);
-      date.setUTCHours(parseInt(hours), parseInt(minutes), 0, 0);
-      const startTime = date.toISOString();
+      // time is already an ISO datetime string
+      const startTime = time;
 
       console.log('Clearing assignment:', { tableIndex, time, startTime });
 
