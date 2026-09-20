@@ -35,7 +35,7 @@ interface PracticeTableAssignment {
   id: string;
   divisionId: string;
   team: Team;
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
 }
@@ -56,7 +56,7 @@ interface CreateAssignmentVars {
   input: {
     divisionId: string;
     teamId: string;
-    tableNumber: number;
+    tableIndex: number;
     startTime: string;
     endTime: string;
   };
@@ -107,7 +107,7 @@ export const GET_PRACTICE_TABLE_ASSIGNMENTS: TypedDocumentNode<
         name
         affiliation
       }
-      tableNumber
+      tableIndex
       startTime
       endTime
     }
@@ -128,7 +128,7 @@ export const CREATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
         name
         affiliation
       }
-      tableNumber
+      tableIndex
       startTime
       endTime
     }
@@ -149,7 +149,7 @@ export const DELETE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
         name
         affiliation
       }
-      tableNumber
+      tableIndex
       startTime
       endTime
     }

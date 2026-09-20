@@ -58,12 +58,10 @@ import {
   DeliberationUpdatedEventResolver,
   FinalDeliberationUpdatedEventResolver
 } from './subscriptions/deliberations';
-import {
-  practiceTableAssignmentsResolver,
-  teamPracticeTableAssignmentsResolver
-} from './divisions/practice-table-assignments';
+import { divisionPracticeTablesResolver } from './divisions/practice-tables';
+import { practiceTablesConfigResolver } from './practice-tables/config';
+import { practiceTablesScheduleResolver } from './practice-tables/schedule';
 import { practiceTableAssignmentTeamResolver } from './divisions/practice-table-assignment-team.js';
-import { divisionPracticeTablesConfigResolver } from './divisions/division-practice-tables-config.js';
 
 // JSON scalar resolver - passes through any valid JSON value
 function parseJsonLiteral(ast: ValueNode): unknown {
@@ -100,9 +98,7 @@ export const resolvers = {
   Query: {
     events: eventResolvers.Query.events,
     event: eventResolvers.Query.event,
-    division: divisionResolver,
-    practiceTableAssignments: practiceTableAssignmentsResolver,
-    teamPracticeTableAssignments: teamPracticeTableAssignmentsResolver
+    division: divisionResolver
   },
   Mutation: mutationResolvers,
   Subscription: subscriptionResolvers,
@@ -127,7 +123,11 @@ export const resolvers = {
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
     agenda: divisionAgendaResolver,
-    practiceTables: divisionPracticeTablesConfigResolver
+    practiceTables: divisionPracticeTablesResolver
+  },
+  PracticeTables: {
+    config: practiceTablesConfigResolver,
+    schedule: practiceTablesScheduleResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,

@@ -5,13 +5,7 @@ import { Typography, Alert, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
 import { getApiBase } from '@lems/shared';
-import { ConfigurationForm } from './practice-tables/components/configuration-form';
-
-interface BlockedTimeSlot {
-  start: string;
-  end: string;
-  reason?: string;
-}
+import { ConfigurationForm, PracticeTablesConfig } from './configuration-form';
 
 interface PracticeTablesSectionProps {
   eventId: string;
@@ -26,16 +20,14 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
 }) => {
   const t = useTranslations('pages.events.practice-tables');
 
-  // Initialize state from division settings or defaults
-  const [tableCount, setTableCount] = useState(division.practiceTablesSettings?.tableCount ?? 4);
-  const [slotDuration, setSlotDuration] = useState(
-    division.practiceTablesSettings?.slotDurationMinutes ?? 15
-  );
-  const [startTime, setStartTime] = useState(division.practiceTablesSettings?.startTime ?? '07:00');
-  const [endTime, setEndTime] = useState(division.practiceTablesSettings?.endTime ?? '19:00');
-  const [blockedSlots, setBlockedSlots] = useState<BlockedTimeSlot[]>(
-    division.practiceTablesSettings?.blockedTimeSlots ?? []
-  );
+  // Initialize config from division settings or defaults
+  const [config, setConfig] = useState<PracticeTablesConfig>({
+    tableCount: division.practiceTablesSettings?.tableCount ?? 4,
+    slotDuration: division.practiceTablesSettings?.slotDurationMinutes ?? 15,
+    startTime: division.practiceTablesSettings?.startTime ?? '07:00',
+    endTime: division.practiceTablesSettings?.endTime ?? '19:00',
+    blockedSlots: division.practiceTablesSettings?.blockedTimeSlots ?? []
+  });
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -51,11 +43,11 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            tableCount,
-            slotDurationMinutes: slotDuration,
-            startTime,
-            endTime,
-            blockedTimeSlots: blockedSlots
+            tableCount: config.tableCount,
+            slotDurationMinutes: config.slotDuration,
+            startTime: config.startTime,
+            endTime: config.endTime,
+            blockedTimeSlots: config.blockedSlots
           })
         }
       );
@@ -90,20 +82,7 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
         </Alert>
       )}
 
-      <ConfigurationForm
-        tableCount={tableCount}
-        slotDuration={slotDuration}
-        startTime={startTime}
-        endTime={endTime}
-        blockedSlots={blockedSlots}
-        onTableCountChange={setTableCount}
-        onSlotDurationChange={setSlotDuration}
-        onStartTimeChange={setStartTime}
-        onEndTimeChange={setEndTime}
-        onBlockedSlotsChange={setBlockedSlots}
-        onSave={handleSave}
-        saving={saving}
-      />
+      <ConfigurationForm config={config} onChange={setConfig} onSave={handleSave} saving={saving} />
     </Paper>
   );
 };

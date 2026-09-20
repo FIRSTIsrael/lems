@@ -82,35 +82,28 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         {t('title')}
       </Typography>
       <Stack spacing={2}>
-        <Stack
-          direction="row"
-          spacing={2}
-          sx={{
-            alignItems: 'flex-end'
-          }}
-        >
-          <Box sx={{ maxWidth: 300 }}>
-            <FileUpload
-              label={t('upload-button')}
-              placeholder={t('upload-placeholder')}
-              accept="image/jpeg,image/jpg,image/png"
-              selectedFile={selectedFile}
-              setSelectedFile={handleFileChange}
-              description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
-              disabled={uploading}
-            />
-          </Box>
+        <Box sx={{ maxWidth: 300 }}>
+          <FileUpload
+            label={t('upload-button')}
+            placeholder={t('upload-placeholder')}
+            accept="image/jpeg,image/jpg,image/png"
+            selectedFile={selectedFile}
+            setSelectedFile={handleFileChange}
+            description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
+            disabled={uploading}
+          />
+        </Box>
 
-          {division.pitMapUrl && (
-            <Button
-              variant="outlined"
-              startIcon={<Visibility />}
-              onClick={() => setViewMapOpen(true)}
-            >
-              {t('view-button')}
-            </Button>
-          )}
-        </Stack>
+        {division.pitMapUrl && (
+          <Button
+            variant="outlined"
+            startIcon={<Visibility />}
+            onClick={() => setViewMapOpen(true)}
+            sx={{ maxWidth: 300, width: '100%' }}
+          >
+            {t('view-button')}
+          </Button>
+        )}
 
         {selectedFile && (
           <Button

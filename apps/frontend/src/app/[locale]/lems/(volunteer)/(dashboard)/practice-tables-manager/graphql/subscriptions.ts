@@ -10,7 +10,7 @@ interface PracticeTableAssignment {
     name: string;
     affiliation?: string;
   };
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
 }
@@ -41,7 +41,7 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
         name
         affiliation
       }
-      tableNumber
+      tableIndex
       startTime
       endTime
     }

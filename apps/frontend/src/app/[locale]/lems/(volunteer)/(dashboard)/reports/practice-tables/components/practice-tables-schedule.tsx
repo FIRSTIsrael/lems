@@ -22,7 +22,7 @@ interface Team {
 
 interface PracticeTableAssignment {
   id: string;
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
   team: Team;
@@ -74,7 +74,7 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
     const map: Record<number, Record<string, Team>> = {};
 
     assignments.forEach(assignment => {
-      const tableIndex = assignment.tableNumber - 1;
+      const tableIndex = assignment.tableIndex; // Already 0-based from API
       if (!map[tableIndex]) {
         map[tableIndex] = {};
       }

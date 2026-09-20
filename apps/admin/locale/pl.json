@@ -622,22 +622,33 @@
             "end-time": "Godzina Zakończenia",
             "reason": "Powód (opcjonalnie)",
             "reason-placeholder": "np. Przerwa obiadowa",
-            "add-button": "Dodaj Zablokowany Czas",
-            "delete-button": "Usuń",
-            "empty-state": "Brak zablokowanych czasów"
+            "add": "Dodaj Zablokowany Czas",
+            "none": "Brak zablokowanych czasów",
+            "details": "Zablokowane Przedziały Czasowe",
+            "start": "Godzina Rozpoczęcia",
+            "end": "Godzina Zakończenia"
           },
           "actions": {
-            "save": "Zapisz Konfigurację",
+            "edit-config": "Edytuj Konfigurację",
+            "delete-config": "Usuń Konfigurację",
+            "confirm-delete": "Czy na pewno chcesz usunąć tę konfigurację? Tej operacji nie można cofnąć.",
             "cancel": "Anuluj",
-            "delete": "Usuń Konfigurację",
-            "create": "Utwórz Konfigurację"
+            "save": "Zapisz Konfigurację",
+            "saving": "Zapisywanie..."
           },
           "messages": {
-            "save-success": "Konfiguracja zapisana pomyślnie",
-            "save-error": "Nie udało się zapisać konfiguracji",
-            "delete-success": "Konfiguracja usunięta pomyślnie",
-            "delete-error": "Nie udało się usunąć konfiguracji",
-            "load-error": "Nie udało się wczytać konfiguracji"
+            "save-success": "Konfiguracja zapisana pomyślnie!"
+          },
+          "errors": {
+            "select-division": "Proszę wybrać dywizję",
+            "save-failed": "Nie udało się zapisać konfiguracji",
+            "delete-failed": "Nie udało się usunąć konfiguracji",
+            "load-failed": "Nie udało się wczytać konfiguracji"
+          },
+          "status": {
+            "current-config": "Aktualna konfiguracja: {tables} stołów, {duration} minutowe sloty, {blockedSlots} zablokowanych przedziałów czasowych",
+            "title": "Aktualna Konfiguracja",
+            "deleted": "Konfiguracja usunięta pomyślnie"
           },
           "no-config": {
             "title": "Nie Znaleziono Konfiguracji",

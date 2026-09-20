@@ -48,7 +48,7 @@ router.put(
     const endMinutes = endHour * 60 + endMinute;
 
     // Generate all time slots
-    const slots: Array<{ tableNumber: number; startTime: Date; endTime: Date }> = [];
+    const slots: Array<{ tableIndex: number; startTime: Date; endTime: Date }> = [];
     const baseDate = new Date('1970-01-01T00:00:00Z'); // Use epoch for time-only slots
 
     for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDurationMinutes) {
@@ -68,9 +68,9 @@ router.put(
 
       // Only create slots that are not blocked
       if (!isBlocked) {
-        for (let tableNum = 1; tableNum <= tableCount; tableNum++) {
+        for (let tableIdx = 0; tableIdx < tableCount; tableIdx++) {
           slots.push({
-            tableNumber: tableNum,
+            tableIndex: tableIdx,
             startTime: slotStartTime,
             endTime: slotEndTime
           });
@@ -109,7 +109,7 @@ router.put(
             slots.map(slot => ({
               division_id: req.divisionId,
               team_id: null,
-              table_number: slot.tableNumber,
+              table_number: slot.tableIndex,
               start_time: slot.startTime,
               end_time: slot.endTime
             }))

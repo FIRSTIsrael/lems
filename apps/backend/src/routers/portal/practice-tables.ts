@@ -63,7 +63,7 @@ router.get('/divisions/:divisionId/practice-tables', async (req, res) => {
 
           return {
             id: a.pts_id,
-            tableNumber: a.table_number,
+            tableIndex: a.table_number,
             startTime: startTimeStr,
             endTime: endTimeStr,
             team: {

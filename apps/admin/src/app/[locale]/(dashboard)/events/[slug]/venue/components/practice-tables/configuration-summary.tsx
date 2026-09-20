@@ -2,28 +2,17 @@
 
 import { Box, Paper, Typography, Stack, Divider, Button, Grid } from '@mui/material';
 import { useTranslations } from 'next-intl';
-
-interface BlockedTimeSlot {
-  start: string;
-  end: string;
-  reason?: string;
-}
+import { PracticeTablesConfig } from './configuration-form';
 
 interface ConfigurationSummaryProps {
-  tableCount: number;
-  slotDuration: number;
-  startTime: string;
-  endTime: string;
-  blockedSlots: BlockedTimeSlot[];
+  config: PracticeTablesConfig;
   onEdit: () => void;
   onDelete: () => void;
   deleting?: boolean;
 }
 
 export function ConfigurationSummary({
-  tableCount,
-  slotDuration,
-  blockedSlots,
+  config,
   onEdit,
   onDelete,
   deleting = false
@@ -40,7 +29,7 @@ export function ConfigurationSummary({
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               {t('fields.table-count')}
             </Typography>
-            <Typography variant="h5">{tableCount}</Typography>
+            <Typography variant="h5">{config.tableCount}</Typography>
           </Grid>
 
           <Grid size={{ xs: 12, sm: 4 }}>
@@ -48,7 +37,7 @@ export function ConfigurationSummary({
               {t('fields.slot-duration')}
             </Typography>
             <Typography variant="h5">
-              {slotDuration} {t('fields.minutes')}
+              {config.slotDuration} {t('fields.minutes')}
             </Typography>
           </Grid>
 
@@ -56,17 +45,17 @@ export function ConfigurationSummary({
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               {t('blocked-times.title')}
             </Typography>
-            <Typography variant="h5">{blockedSlots.length}</Typography>
+            <Typography variant="h5">{config.blockedSlots.length}</Typography>
           </Grid>
         </Grid>
 
-        {blockedSlots.length > 0 && (
+        {config.blockedSlots.length > 0 && (
           <Box>
             <Typography variant="subtitle2" gutterBottom>
               {t('blocked-times.details')}
             </Typography>
             <Stack spacing={1}>
-              {blockedSlots.map((slot, index) => (
+              {config.blockedSlots.map((slot, index) => (
                 <Paper key={index} variant="outlined" sx={{ p: 2 }}>
                   <Typography variant="body2">
                     <strong>

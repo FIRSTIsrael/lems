@@ -53,15 +53,15 @@ export async function up(db: Kysely<any>): Promise<void> {
     .execute();
 
   await db.schema
-    .createIndex('idx_practice_tables_schedule_time_range')
+    .createIndex('idx_practice_tables_schedule_start_time')
     .on('practice_tables_schedule')
-    .columns(['division_id', 'start_time', 'end_time'])
+    .column('start_time')
     .execute();
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
   // Drop indexes for practice_tables_schedule
-  await db.schema.dropIndex('idx_practice_tables_schedule_time_range').ifExists().execute();
+  await db.schema.dropIndex('idx_practice_tables_schedule_start_time').ifExists().execute();
   await db.schema.dropIndex('idx_practice_tables_schedule_team_id').ifExists().execute();
   await db.schema.dropIndex('idx_practice_tables_schedule_division_id').ifExists().execute();
 

@@ -2,17 +2,17 @@ import { GraphQLFieldResolver } from 'graphql';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
-interface Division {
-  id: string;
+interface PracticeTables {
+  divisionId: string;
 }
 
-export const divisionPracticeTablesConfigResolver: GraphQLFieldResolver<
-  Division,
+export const practiceTablesConfigResolver: GraphQLFieldResolver<
+  PracticeTables,
   GraphQLContext
 > = async parent => {
   const division = await db.raw.sql
     .selectFrom('divisions')
-    .where('id', '=', parent.id)
+    .where('id', '=', parent.divisionId)
     .select('practice_tables_settings')
     .executeTakeFirst();
 
@@ -23,7 +23,7 @@ export const divisionPracticeTablesConfigResolver: GraphQLFieldResolver<
   const settings = division.practice_tables_settings as unknown as Record<string, unknown>;
 
   return {
-    divisionId: parent.id,
+    divisionId: parent.divisionId,
     tableCount: settings.tableCount as number,
     slotDurationMinutes: settings.slotDurationMinutes as number,
     startTime: settings.startTime as string,

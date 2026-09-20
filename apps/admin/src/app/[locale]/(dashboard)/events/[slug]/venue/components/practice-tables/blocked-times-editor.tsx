@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Typography, Paper, TextField, IconButton, Button, Stack, Grid } from '@mui/material';
+import { Box, Typography, TextField, IconButton, Button, Stack, Grid } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
@@ -43,42 +43,40 @@ export function BlockedTimesEditor({ blockedSlots, onChange }: BlockedTimesEdito
 
       <Stack spacing={3}>
         {blockedSlots.map((slot, index) => (
-          <Paper key={index} variant="outlined" sx={{ p: 3 }}>
-            <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-              <Grid size={{ xs: 12, sm: 3 }}>
-                <TextField
-                  label={t('blocked-times.start')}
-                  type="time"
-                  value={slot.start}
-                  onChange={e => updateBlockedSlot(index, 'start', e.target.value)}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 3 }}>
-                <TextField
-                  label={t('blocked-times.end')}
-                  type="time"
-                  value={slot.end}
-                  onChange={e => updateBlockedSlot(index, 'end', e.target.value)}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 5 }}>
-                <TextField
-                  label={t('blocked-times.reason')}
-                  value={slot.reason || ''}
-                  onChange={e => updateBlockedSlot(index, 'reason', e.target.value)}
-                  placeholder={t('blocked-times.reason-placeholder')}
-                  fullWidth
-                />
-              </Grid>
-              <Grid size={{ xs: 12, sm: 1 }}>
-                <IconButton onClick={() => removeBlockedSlot(index)} color="error" size="large">
-                  <DeleteIcon />
-                </IconButton>
-              </Grid>
+          <Grid key={index} container spacing={2} sx={{ alignItems: 'center' }}>
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <TextField
+                label={t('blocked-times.start')}
+                type="time"
+                value={slot.start}
+                onChange={e => updateBlockedSlot(index, 'start', e.target.value)}
+                fullWidth
+              />
             </Grid>
-          </Paper>
+            <Grid size={{ xs: 12, sm: 3 }}>
+              <TextField
+                label={t('blocked-times.end')}
+                type="time"
+                value={slot.end}
+                onChange={e => updateBlockedSlot(index, 'end', e.target.value)}
+                fullWidth
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 5 }}>
+              <TextField
+                label={t('blocked-times.reason')}
+                value={slot.reason || ''}
+                onChange={e => updateBlockedSlot(index, 'reason', e.target.value)}
+                placeholder={t('blocked-times.reason-placeholder')}
+                fullWidth
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 1 }}>
+              <IconButton onClick={() => removeBlockedSlot(index)} color="error" size="large">
+                <DeleteIcon />
+              </IconButton>
+            </Grid>
+          </Grid>
         ))}
 
         <Button

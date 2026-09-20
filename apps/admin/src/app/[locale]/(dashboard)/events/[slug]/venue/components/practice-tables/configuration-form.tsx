@@ -18,33 +18,25 @@ interface BlockedTimeSlot {
   reason?: string;
 }
 
-interface ConfigurationFormProps {
+export interface PracticeTablesConfig {
   tableCount: number;
   slotDuration: number;
   startTime: string;
   endTime: string;
   blockedSlots: BlockedTimeSlot[];
-  onTableCountChange: (value: number) => void;
-  onSlotDurationChange: (value: number) => void;
-  onStartTimeChange: (value: string) => void;
-  onEndTimeChange: (value: string) => void;
-  onBlockedSlotsChange: (slots: BlockedTimeSlot[]) => void;
+}
+
+interface ConfigurationFormProps {
+  config: PracticeTablesConfig;
+  onChange: (config: PracticeTablesConfig) => void;
   onSave: () => void;
   saving?: boolean;
   loading?: boolean;
 }
 
 export function ConfigurationForm({
-  tableCount,
-  slotDuration,
-  startTime,
-  endTime,
-  blockedSlots,
-  onTableCountChange,
-  onSlotDurationChange,
-  onStartTimeChange,
-  onEndTimeChange,
-  onBlockedSlotsChange,
+  config,
+  onChange,
   onSave,
   saving = false,
   loading = false
@@ -59,6 +51,10 @@ export function ConfigurationForm({
     );
   }
 
+  const updateConfig = (updates: Partial<PracticeTablesConfig>) => {
+    onChange({ ...config, ...updates });
+  };
+
   return (
     <Box>
       <Stack spacing={3}>
@@ -67,8 +63,8 @@ export function ConfigurationForm({
             <TextField
               label={t('fields.table-count')}
               type="number"
-              value={tableCount}
-              onChange={e => onTableCountChange(parseInt(e.target.value) || 0)}
+              value={config.tableCount}
+              onChange={e => updateConfig({ tableCount: parseInt(e.target.value) || 0 })}
               fullWidth
               size="small"
             />
@@ -77,8 +73,8 @@ export function ConfigurationForm({
             <TextField
               label={t('fields.slot-duration')}
               type="number"
-              value={slotDuration}
-              onChange={e => onSlotDurationChange(parseInt(e.target.value) || 0)}
+              value={config.slotDuration}
+              onChange={e => updateConfig({ slotDuration: parseInt(e.target.value) || 0 })}
               fullWidth
               size="small"
               slotProps={{
@@ -94,8 +90,8 @@ export function ConfigurationForm({
             <TextField
               label={t('fields.start-time')}
               type="time"
-              value={startTime}
-              onChange={e => onStartTimeChange(e.target.value)}
+              value={config.startTime}
+              onChange={e => updateConfig({ startTime: e.target.value })}
               fullWidth
               size="small"
             />
@@ -104,15 +100,18 @@ export function ConfigurationForm({
             <TextField
               label={t('fields.end-time')}
               type="time"
-              value={endTime}
-              onChange={e => onEndTimeChange(e.target.value)}
+              value={config.endTime}
+              onChange={e => updateConfig({ endTime: e.target.value })}
               fullWidth
               size="small"
             />
           </Grid>
         </Grid>
 
-        <BlockedTimesEditor blockedSlots={blockedSlots} onChange={onBlockedSlotsChange} />
+        <BlockedTimesEditor
+          blockedSlots={config.blockedSlots}
+          onChange={blockedSlots => updateConfig({ blockedSlots })}
+        />
 
         <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button variant="contained" onClick={onSave} disabled={saving}>

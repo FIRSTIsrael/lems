@@ -46,7 +46,7 @@ interface Team {
 interface PracticeTableAssignment {
   id: string;
   team: Team;
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
 }
@@ -123,8 +123,8 @@ export const PracticeTablesTab: React.FC = () => {
   };
 
   // Get assignment for a specific table and time
-  const getAssignment = (tableNumber: number, time: string) => {
-    return assignments?.find(a => a.tableNumber === tableNumber && a.startTime === time);
+  const getAssignment = (tableIndex: number, time: string) => {
+    return assignments?.find(a => a.tableIndex === tableIndex && a.startTime === time);
   };
 
   return (
@@ -175,8 +175,7 @@ export const PracticeTablesTab: React.FC = () => {
                     {time}
                   </TableCell>
                   {Array.from({ length: config.tableCount }, (_, tableIndex) => {
-                    const tableNumber = tableIndex + 1;
-                    const assignment = getAssignment(tableNumber, time);
+                    const assignment = getAssignment(tableIndex, time);
 
                     if (blocked && blockedInfo) {
                       // Only render the merged cell on the first table column and first time slot of the blocked range

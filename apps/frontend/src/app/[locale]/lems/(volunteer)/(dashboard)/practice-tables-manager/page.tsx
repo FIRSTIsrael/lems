@@ -27,6 +27,15 @@ interface Team {
   logoUrl?: string;
 }
 
+interface PracticeTableAssignment {
+  id: string;
+  divisionId: string;
+  team: Team;
+  tableIndex: number;
+  startTime: string;
+  endTime: string;
+}
+
 interface QueryData {
   division?: { id: string; teams: Team[] } | null;
 }
@@ -128,7 +137,7 @@ export default function PracticeTablesManagerPage() {
   );
 
   // Memoize server assignments to prevent unnecessary recalculations
-  const serverAssignments = useMemo(
+  const serverAssignments: PracticeTableAssignment[] = useMemo(
     () => assignmentsData?.practiceTableAssignments || [],
     [assignmentsData?.practiceTableAssignments]
   );
@@ -137,7 +146,7 @@ export default function PracticeTablesManagerPage() {
   const assignments = useMemo(() => {
     const result: Record<string, Record<string, Team>> = {};
     serverAssignments.forEach(assignment => {
-      const tableIndex = assignment.tableNumber - 1; // Convert to 0-based
+      const tableIndex = assignment.tableIndex; // Already 0-based from API
       if (!result[tableIndex]) {
         result[tableIndex] = {};
       }
@@ -195,7 +204,7 @@ export default function PracticeTablesManagerPage() {
       console.log('Creating assignment with:', {
         divisionId: currentDivision.id,
         teamId: team.id,
-        tableNumber: selectedCell.tableIndex + 1,
+        tableIndex: selectedCell.tableIndex,
         startTime,
         endTime
       });
@@ -205,7 +214,7 @@ export default function PracticeTablesManagerPage() {
           input: {
             divisionId: currentDivision.id,
             teamId: team.id,
-            tableNumber: selectedCell.tableIndex + 1, // Convert to 1-based
+            tableIndex: selectedCell.tableIndex, // Already 0-based
             startTime,
             endTime
           }
@@ -234,9 +243,9 @@ export default function PracticeTablesManagerPage() {
   };
 
   const handleClearAssignment = async (tableIndex: number, time: string) => {
-    // Find the assignment ID by matching table number and converting ISO time to HH:MM
+    // Find the assignment ID by matching table index and converting ISO time to HH:MM
     const assignment = serverAssignments.find(a => {
-      if (a.tableNumber !== tableIndex + 1) return false;
+      if (a.tableIndex !== tableIndex) return false;
 
       const startDate = new Date(a.startTime);
       const hours = startDate.getUTCHours().toString().padStart(2, '0');

@@ -11,7 +11,7 @@ import { DivisionSelector } from '../components/division-selector';
 import { PitMapManager } from './components/pit-map-manager';
 import { AssetManager } from './components/asset-manager';
 import { ScheduleExists } from './components/schedule-exists';
-import { PracticeTablesSection } from './components/practice-tables-section';
+import { PracticeTablesSection } from './components/practice-tables';
 
 const VenuePage: React.FC = () => {
   const t = useTranslations('pages.events.venue');
