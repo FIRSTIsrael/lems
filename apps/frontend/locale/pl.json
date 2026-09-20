@@ -1537,6 +1537,7 @@
     "practice-tables-manager": {
       "page-title": "Menedżer Stołów Treningowych",
       "configuration": {
+        "page-title": "Menedżer Stołów Treningowych",
         "title": "Konfiguracja",
         "table-count": "Liczba Stołów",
         "slot-duration": "Czas Trwania Slotu (minuty)",

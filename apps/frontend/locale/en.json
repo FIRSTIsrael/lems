@@ -1538,6 +1538,7 @@
     "practice-tables-manager": {
       "page-title": "Practice Tables Manager",
       "configuration": {
+        "page-title": "Practice Tables Manager",
         "title": "Configuration",
         "table-count": "Number of Tables",
         "slot-duration": "Slot Duration (minutes)",

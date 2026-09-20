@@ -1535,6 +1535,7 @@
     "practice-tables-manager": {
       "page-title": "מנהל שולחנות אימונים",
       "configuration": {
+        "page-title": "מנהל שולחנות אימונים",
         "title": "הגדרות",
         "table-count": "מספר שולחנות",
         "slot-duration": "משך סלוט (דקות)",
