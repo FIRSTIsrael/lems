@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "משהו השתבש, אנא נסו שנית.",
         "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
-        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
+        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר.",
+        "Network error: Failed to fetch": "שגיאת רשת. אנא בדקו את החיבור לאינטרנט ונסו שוב."
       }
     },
     "seasons": {

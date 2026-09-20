@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "Server error, please try again.",
         "invalid-credentials": "Invalid username or password.",
-        "too-many-requests": "Access denied, please try again later."
+        "too-many-requests": "Access denied, please try again later.",
+        "Network error: Failed to fetch": "Network error. Please check your connection and try again."
       }
     },
     "seasons": {

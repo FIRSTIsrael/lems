@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "Błąd serwera, spróbuj ponownie.",
         "invalid-credentials": "Nieprawidłowa nazwa użytkownika lub hasło.",
-        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później."
+        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później.",
+        "Network error: Failed to fetch": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie."
       }
     },
     "seasons": {
