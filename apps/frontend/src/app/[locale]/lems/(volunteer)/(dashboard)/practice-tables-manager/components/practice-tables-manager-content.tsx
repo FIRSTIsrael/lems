@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
-import { UPDATE_PRACTICE_TABLE_ASSIGNMENT } from '../graphql';
+import { UPDATE_PRACTICE_TABLE_ASSIGNMENT, GET_PRACTICE_TABLE_ASSIGNMENTS } from '../graphql';
 import { usePracticeTablesManager } from './practice-tables-manager-context';
 import { ScheduleGrid } from './schedule-grid';
 import { TeamSearchBar } from './team-search-bar';
@@ -16,6 +16,13 @@ export function PracticeTablesManagerContent() {
   const { divisionId, eventStartDate, config, teams, assignmentsMap } = usePracticeTablesManager();
 
   const [updateAssignment] = useMutation(UPDATE_PRACTICE_TABLE_ASSIGNMENT, {
+    refetchQueries: [
+      {
+        query: GET_PRACTICE_TABLE_ASSIGNMENTS,
+        variables: { divisionId }
+      }
+    ],
+    awaitRefetchQueries: true,
     onError: error => {
       console.error('Failed to update assignment:', error);
       alert(`Failed to update assignment: ${error.message}`);
