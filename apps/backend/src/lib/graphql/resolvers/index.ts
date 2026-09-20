@@ -58,6 +58,10 @@ import {
   DeliberationUpdatedEventResolver,
   FinalDeliberationUpdatedEventResolver
 } from './subscriptions/deliberations';
+import { divisionPracticeTablesResolver } from './divisions/practice-tables';
+import { practiceTablesConfigResolver } from './practice-tables/config';
+import { practiceTablesScheduleResolver } from './practice-tables/schedule';
+import { practiceTableAssignmentTeamResolver } from './divisions/practice-table-assignment-team.js';
 
 // JSON scalar resolver - passes through any valid JSON value
 function parseJsonLiteral(ast: ValueNode): unknown {
@@ -118,7 +122,12 @@ export const resolvers = {
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
-    agenda: divisionAgendaResolver
+    agenda: divisionAgendaResolver,
+    practiceTables: divisionPracticeTablesResolver
+  },
+  PracticeTables: {
+    config: practiceTablesConfigResolver,
+    schedule: practiceTablesScheduleResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,
@@ -177,6 +186,9 @@ export const resolvers = {
     divisions: volunteerDivisionsResolver
   },
   RoleInfo: RoleInfoResolver,
+  PracticeTableSlot: {
+    team: practiceTableAssignmentTeamResolver
+  },
   RubricUpdatedEvent: RubricUpdatedEventResolver,
   ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
   DeliberationUpdatedEvent: DeliberationUpdatedEventResolver,

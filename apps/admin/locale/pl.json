@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "Błąd serwera, spróbuj ponownie.",
         "invalid-credentials": "Nieprawidłowa nazwa użytkownika lub hasło.",
-        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później."
+        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później.",
+        "Network error: Failed to fetch": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie."
       }
     },
     "seasons": {
@@ -370,7 +371,8 @@
           "integrations": "Integracje",
           "settings": "Ustawienia",
           "users": "Użytkownicy",
-          "divisions": "Dywizje"
+          "divisions": "Dywizje",
+          "practice-tables": "Stoły Treningowe"
         },
         "color": "Kolor"
       },
@@ -598,6 +600,62 @@
             "deleting": "Usuwanie..."
           },
           "upload-placeholder": "Wybierz plik"
+        },
+        "practice-tables": {
+          "title": "Konfiguracja Stołów Treningowych",
+          "description": "Skonfiguruj ustawienia stołów treningowych dla każdej dywizji",
+          "fields": {
+            "division": "Dywizja",
+            "table-count": "Liczba Stołów Treningowych",
+            "table-count-helper": "Ile stołów treningowych jest dostępnych",
+            "slot-duration": "Czas Trwania Slotu (minuty)",
+            "slot-duration-helper": "Czas trwania każdego slotu treningowego",
+            "minutes": "minut",
+            "start-time": "Godzina Rozpoczęcia",
+            "start-time-helper": "Kiedy stoły treningowe stają się dostępne",
+            "end-time": "Godzina Zakończenia",
+            "end-time-helper": "Kiedy stoły treningowe są zamykane"
+          },
+          "blocked-times": {
+            "title": "Zablokowane Przedziały Czasowe",
+            "description": "Określ czasy, kiedy stoły treningowe nie są dostępne (np. przerwy obiadowe)",
+            "start-time": "Godzina Rozpoczęcia",
+            "end-time": "Godzina Zakończenia",
+            "reason": "Powód (opcjonalnie)",
+            "reason-placeholder": "np. Przerwa obiadowa",
+            "add": "Dodaj Zablokowany Czas",
+            "none": "Brak zablokowanych czasów",
+            "details": "Zablokowane Przedziały Czasowe",
+            "start": "Godzina Rozpoczęcia",
+            "end": "Godzina Zakończenia"
+          },
+          "actions": {
+            "edit-config": "Edytuj Konfigurację",
+            "delete-config": "Usuń Konfigurację",
+            "confirm-delete": "Czy na pewno chcesz usunąć tę konfigurację? Tej operacji nie można cofnąć.",
+            "cancel": "Anuluj",
+            "save": "Zapisz Konfigurację",
+            "saving": "Zapisywanie..."
+          },
+          "messages": {
+            "save-success": "Konfiguracja zapisana pomyślnie!"
+          },
+          "errors": {
+            "select-division": "Proszę wybrać dywizję",
+            "save-failed": "Nie udało się zapisać konfiguracji",
+            "delete-failed": "Nie udało się usunąć konfiguracji",
+            "load-failed": "Nie udało się wczytać konfiguracji"
+          },
+          "status": {
+            "current-config": "Aktualna konfiguracja: {tables} stołów, {duration} minutowe sloty, {blockedSlots} zablokowanych przedziałów czasowych",
+            "title": "Aktualna Konfiguracja",
+            "deleted": "Konfiguracja usunięta pomyślnie"
+          },
+          "no-config": {
+            "title": "Nie Znaleziono Konfiguracji",
+            "description": "Ta dywizja nie ma jeszcze skonfigurowanych stołów treningowych. Kliknij poniżej, aby utworzyć nową konfigurację.",
+            "create-button": "Utwórz Konfigurację"
+          }
         },
         "messages": {
           "save-success": "Zmiany zapisano pomyślnie",

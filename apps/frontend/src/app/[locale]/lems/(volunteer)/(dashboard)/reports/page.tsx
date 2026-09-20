@@ -10,7 +10,8 @@ import {
   Stadium,
   Schedule,
   Timer,
-  Leaderboard
+  Leaderboard,
+  TableRestaurant
 } from '@mui/icons-material';
 import { PageHeader } from '../components/page-header';
 import { ReportMenuGrid } from './components/report-menu-grid';
@@ -26,6 +27,7 @@ export default function ReportsPage() {
     { path: 'event-agenda', label: t('menu.event-agenda'), icon: <EventNote /> },
     { path: 'field-schedule', label: t('menu.field-schedule'), icon: <Stadium /> },
     { path: 'judging-schedule', label: t('menu.judging-schedule'), icon: <Schedule /> },
+    { path: 'practice-tables', label: t('menu.practice-tables'), icon: <TableRestaurant /> },
     { path: 'field-timer', label: t('menu.field-timer'), icon: <Timer /> },
     { path: 'judging-status', label: t('menu.judging-status'), icon: <Schedule /> },
     { path: 'scoreboard', label: t('menu.scoreboard'), icon: <Leaderboard /> }
