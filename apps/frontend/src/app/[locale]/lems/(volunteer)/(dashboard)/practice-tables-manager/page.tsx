@@ -10,8 +10,7 @@ import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_PRACTICE_TABLES_CONFIG,
   GET_PRACTICE_TABLE_ASSIGNMENTS,
-  CREATE_PRACTICE_TABLE_ASSIGNMENT,
-  DELETE_PRACTICE_TABLE_ASSIGNMENT
+  UPDATE_PRACTICE_TABLE_ASSIGNMENT
 } from './graphql';
 import { createPracticeTableAssignmentsSubscription } from './graphql/subscriptions';
 import { ScheduleGrid } from './components/schedule-grid';
@@ -114,20 +113,14 @@ export default function PracticeTablesManagerPage() {
     data => data
   );
 
-  const config = data?.division?.practiceTables;
+  const config = data?.division?.practiceTables?.config;
   const teams = teamsData?.division?.teams || [];
   const eventStartDate = eventData?.event?.startDate;
 
-  const [createAssignment] = useMutation(CREATE_PRACTICE_TABLE_ASSIGNMENT, {
+  const [updateAssignment] = useMutation(UPDATE_PRACTICE_TABLE_ASSIGNMENT, {
     onError: error => {
-      console.error('Failed to create assignment:', error);
-      alert(`Failed to create assignment: ${error.message}`);
-    }
-  });
-  const [deleteAssignment] = useMutation(DELETE_PRACTICE_TABLE_ASSIGNMENT, {
-    onError: error => {
-      console.error('Failed to delete assignment:', error);
-      alert(`Failed to delete assignment: ${error.message}`);
+      console.error('Failed to update assignment:', error);
+      alert(`Failed to update assignment: ${error.message}`);
     }
   });
 
@@ -138,8 +131,8 @@ export default function PracticeTablesManagerPage() {
 
   // Memoize server assignments to prevent unnecessary recalculations
   const serverAssignments: PracticeTableAssignment[] = useMemo(
-    () => assignmentsData?.practiceTableAssignments || [],
-    [assignmentsData?.practiceTableAssignments]
+    () => assignmentsData?.division?.practiceTables?.schedule || [],
+    [assignmentsData?.division?.practiceTables?.schedule]
   );
 
   // Convert server assignments to grid format
@@ -183,14 +176,6 @@ export default function PracticeTablesManagerPage() {
     });
 
     try {
-      // Calculate end time based on slot duration
-      const [hours, minutes] = selectedCell.time.split(':').map(Number);
-      const startMinutes = hours * 60 + minutes;
-      const endMinutes = startMinutes + config.slotDurationMinutes;
-      const endHours = Math.floor(endMinutes / 60);
-      const endMins = endMinutes % 60;
-      const endTimeStr = `${endHours.toString().padStart(2, '0')}:${endMins.toString().padStart(2, '0')}`;
-
       // Use the event's start date to create proper timestamps
       const eventDate = new Date(eventStartDate);
       const year = eventDate.getFullYear();
@@ -199,24 +184,21 @@ export default function PracticeTablesManagerPage() {
       const dateStr = `${year}-${month}-${day}`;
 
       const startTime = `${dateStr}T${selectedCell.time}:00.000Z`;
-      const endTime = `${dateStr}T${endTimeStr}:00.000Z`;
 
       console.log('Creating assignment with:', {
         divisionId: currentDivision.id,
         teamId: team.id,
         tableIndex: selectedCell.tableIndex,
-        startTime,
-        endTime
+        startTime
       });
 
-      const result = await createAssignment({
+      const result = await updateAssignment({
         variables: {
           input: {
             divisionId: currentDivision.id,
             teamId: team.id,
             tableIndex: selectedCell.tableIndex, // Already 0-based
-            startTime,
-            endTime
+            startTime
           }
         }
       });
@@ -243,39 +225,36 @@ export default function PracticeTablesManagerPage() {
   };
 
   const handleClearAssignment = async (tableIndex: number, time: string) => {
-    // Find the assignment ID by matching table index and converting ISO time to HH:MM
-    const assignment = serverAssignments.find(a => {
-      if (a.tableIndex !== tableIndex) return false;
-
-      const startDate = new Date(a.startTime);
-      const hours = startDate.getUTCHours().toString().padStart(2, '0');
-      const minutes = startDate.getUTCMinutes().toString().padStart(2, '0');
-      const timeKey = `${hours}:${minutes}`;
-
-      return timeKey === time;
-    });
-
-    if (!assignment) {
-      console.log('No assignment found to delete', { tableIndex, time });
-      return;
-    }
-
     try {
-      console.log('Deleting assignment:', assignment.id);
-      await deleteAssignment({
+      // Convert time to ISO string for the mutation
+      if (!eventStartDate) return;
+
+      const [hours, minutes] = time.split(':');
+      const date = new Date(eventStartDate);
+      date.setUTCHours(parseInt(hours), parseInt(minutes), 0, 0);
+      const startTime = date.toISOString();
+
+      console.log('Clearing assignment:', { tableIndex, time, startTime });
+
+      await updateAssignment({
         variables: {
-          slotId: assignment.id
+          input: {
+            divisionId: currentDivision.id,
+            teamId: null, // Set to null to unassign
+            tableIndex,
+            startTime
+          }
         }
       });
 
       // Refetch assignments to update the grid
       await refetchAssignments();
-      console.log('Assignment deleted and refetched');
+      console.log('Assignment cleared and refetched');
 
       // Clear selection after successful deletion
       setSelectedCell(null);
     } catch (error) {
-      console.error('Failed to delete assignment:', error);
+      console.error('Failed to clear assignment:', error);
       alert(
         `${t('errors.delete-failed')}: ${error instanceof Error ? error.message : 'Unknown error'}`
       );

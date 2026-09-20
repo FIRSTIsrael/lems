@@ -9,7 +9,7 @@ interface Team {
 
 interface PracticeTableAssignment {
   id: string;
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
   team: Team;
@@ -33,9 +33,11 @@ interface PracticeTablesConfig {
 interface QueryData {
   division: {
     id: string;
-    practiceTables: PracticeTablesConfig | null;
+    practiceTables: {
+      config: PracticeTablesConfig | null;
+      schedule: PracticeTableAssignment[];
+    };
   } | null;
-  practiceTableAssignments: PracticeTableAssignment[];
 }
 
 interface QueryVars {
@@ -47,28 +49,30 @@ export const GET_PRACTICE_TABLES_REPORT: TypedDocumentNode<QueryData, QueryVars>
     division(id: $divisionId) {
       id
       practiceTables {
-        divisionId
-        tableCount
-        slotDurationMinutes
-        startTime
-        endTime
-        blockedTimeSlots {
-          start
-          end
-          reason
+        config {
+          divisionId
+          tableCount
+          slotDurationMinutes
+          startTime
+          endTime
+          blockedTimeSlots {
+            start
+            end
+            reason
+          }
         }
-      }
-    }
-    practiceTableAssignments(divisionId: $divisionId) {
-      id
-      tableNumber
-      startTime
-      endTime
-      team {
-        id
-        number
-        name
-        affiliation
+        schedule {
+          id
+          tableIndex
+          startTime
+          endTime
+          team {
+            id
+            number
+            name
+            affiliation
+          }
+        }
       }
     }
   }

@@ -10,7 +10,7 @@ interface Team {
 
 interface PracticeTableAssignment {
   id: string;
-  tableNumber: number;
+  tableIndex: number;
   startTime: string;
   endTime: string;
   team: Team;
@@ -37,9 +37,12 @@ interface AssignmentsSubscriptionData {
 
 interface QueryData {
   division: {
-    practiceTables: PracticeTablesConfig | null;
+    id: string;
+    practiceTables: {
+      config: PracticeTablesConfig | null;
+      schedule: PracticeTableAssignment[];
+    };
   } | null;
-  practiceTableAssignments: PracticeTableAssignment[];
 }
 
 interface SubscriptionVars {
@@ -53,7 +56,7 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
   subscription PracticeTableAssignmentsUpdated($divisionId: String!) {
     practiceTableAssignmentsUpdated(divisionId: $divisionId) {
       id
-      tableNumber
+      tableIndex
       startTime
       endTime
       team {
@@ -70,10 +73,15 @@ const assignmentsReconciler = (
   prev: QueryData,
   { data }: { data?: AssignmentsSubscriptionData }
 ): QueryData => {
-  if (!data) return prev;
+  if (!data || !prev.division) return prev;
   return {
-    ...prev,
-    practiceTableAssignments: data.practiceTableAssignmentsUpdated
+    division: {
+      ...prev.division,
+      practiceTables: {
+        ...prev.division.practiceTables,
+        schedule: data.practiceTableAssignmentsUpdated
+      }
+    }
   };
 };
 

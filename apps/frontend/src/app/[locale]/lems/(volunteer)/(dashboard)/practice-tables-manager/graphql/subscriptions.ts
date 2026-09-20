@@ -20,7 +20,12 @@ interface AssignmentsSubscriptionData {
 }
 
 interface AssignmentsQueryData {
-  practiceTableAssignments: PracticeTableAssignment[];
+  division: {
+    id: string;
+    practiceTables: {
+      schedule: PracticeTableAssignment[];
+    };
+  } | null;
 }
 
 interface SubscriptionVars {
@@ -49,12 +54,17 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
 `;
 
 const assignmentsReconciler = (
-  _prev: AssignmentsQueryData,
+  prev: AssignmentsQueryData,
   { data }: { data?: AssignmentsSubscriptionData }
 ): AssignmentsQueryData => {
-  if (!data) return _prev;
+  if (!data || !prev.division) return prev;
   return {
-    practiceTableAssignments: data.practiceTableAssignmentsUpdated
+    division: {
+      ...prev.division,
+      practiceTables: {
+        schedule: data.practiceTableAssignmentsUpdated
+      }
+    }
   };
 };
 

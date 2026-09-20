@@ -16,7 +16,9 @@ interface PracticeTablesConfig {
 interface PracticeTablesConfigData {
   division: {
     id: string;
-    practiceTables: PracticeTablesConfig | null;
+    practiceTables: {
+      config: PracticeTablesConfig | null;
+    };
   } | null;
 }
 
@@ -41,33 +43,29 @@ interface PracticeTableAssignment {
 }
 
 interface PracticeTableAssignmentsData {
-  practiceTableAssignments: PracticeTableAssignment[];
+  division: {
+    id: string;
+    practiceTables: {
+      schedule: PracticeTableAssignment[];
+    };
+  } | null;
 }
 
 interface PracticeTableAssignmentsVars {
   divisionId: string;
 }
 
-interface CreateAssignmentData {
-  createPracticeTableAssignment: PracticeTableAssignment;
+interface UpdateAssignmentData {
+  updatePracticeTableAssignment: PracticeTableAssignment;
 }
 
-interface CreateAssignmentVars {
+interface UpdateAssignmentVars {
   input: {
     divisionId: string;
-    teamId: string;
+    teamId: string | null;
     tableIndex: number;
     startTime: string;
-    endTime: string;
   };
-}
-
-interface DeleteAssignmentData {
-  deletePracticeTableAssignment: PracticeTableAssignment;
-}
-
-interface DeleteAssignmentVars {
-  slotId: string;
 }
 
 export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
@@ -78,15 +76,17 @@ export const GET_PRACTICE_TABLES_CONFIG: TypedDocumentNode<
     division(id: $divisionId) {
       id
       practiceTables {
-        divisionId
-        tableCount
-        slotDurationMinutes
-        startTime
-        endTime
-        blockedTimeSlots {
-          start
-          end
-          reason
+        config {
+          divisionId
+          tableCount
+          slotDurationMinutes
+          startTime
+          endTime
+          blockedTimeSlots {
+            start
+            end
+            reason
+          }
         }
       }
     }
@@ -98,49 +98,33 @@ export const GET_PRACTICE_TABLE_ASSIGNMENTS: TypedDocumentNode<
   PracticeTableAssignmentsVars
 > = gql`
   query GetPracticeTableAssignments($divisionId: String!) {
-    practiceTableAssignments(divisionId: $divisionId) {
+    division(id: $divisionId) {
       id
-      divisionId
-      team {
-        id
-        number
-        name
-        affiliation
+      practiceTables {
+        schedule {
+          id
+          divisionId
+          team {
+            id
+            number
+            name
+            affiliation
+          }
+          tableIndex
+          startTime
+          endTime
+        }
       }
-      tableIndex
-      startTime
-      endTime
     }
   }
 `;
 
-export const CREATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
-  CreateAssignmentData,
-  CreateAssignmentVars
+export const UPDATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
+  UpdateAssignmentData,
+  UpdateAssignmentVars
 > = gql`
-  mutation CreatePracticeTableAssignment($input: AssignPracticeTableSlotInput!) {
-    createPracticeTableAssignment(input: $input) {
-      id
-      divisionId
-      team {
-        id
-        number
-        name
-        affiliation
-      }
-      tableIndex
-      startTime
-      endTime
-    }
-  }
-`;
-
-export const DELETE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
-  DeleteAssignmentData,
-  DeleteAssignmentVars
-> = gql`
-  mutation DeletePracticeTableAssignment($slotId: String!) {
-    deletePracticeTableAssignment(slotId: $slotId) {
+  mutation UpdatePracticeTableAssignment($input: UpdatePracticeTableSlotInput!) {
+    updatePracticeTableAssignment(input: $input) {
       id
       divisionId
       team {
