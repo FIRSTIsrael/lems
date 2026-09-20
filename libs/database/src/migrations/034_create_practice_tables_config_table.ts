@@ -16,9 +16,9 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('division_id', 'uuid', col => col.notNull())
     .addColumn('team_id', 'uuid') // Nullable - slot can be unassigned
     .addColumn('table_number', 'integer', col => col.notNull())
-    .addColumn('start_time', 'timestamp', col => col.notNull())
-    .addColumn('end_time', 'timestamp', col => col.notNull())
-    .addColumn('created_at', 'timestamp', col => col.notNull().defaultTo(sql`now()`))
+    .addColumn('start_time', 'timestamptz', col => col.notNull())
+    .addColumn('end_time', 'timestamptz', col => col.notNull())
+    .addColumn('created_at', 'timestamptz', col => col.notNull().defaultTo(sql`now()`))
     .execute();
 
   // Create foreign key constraints

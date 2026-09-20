@@ -1,9 +1,12 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
+import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../../../database';
 import type { GraphQLContext } from '../../../apollo-server';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub.js';
 import { practiceTablesScheduleResolver } from '../../practice-tables/schedule.js';
+
+const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 interface UpdatePracticeTableSlotInput {
   divisionId: string;
@@ -24,32 +27,19 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
   const { divisionId, teamId, tableIndex, startTime } = input;
 
   // Find or create the slot
-  const existingSlot = await db.raw.sql
-    .selectFrom('practice_tables_schedule')
-    .where('division_id', '=', divisionId)
-    .where('table_number', '=', tableIndex)
-    .where('start_time', '=', new Date(startTime))
-    .selectAll()
-    .executeTakeFirst();
+  const startDate = new Date(startTime);
+  const existingSlot = await practiceTablesRepo.getAssignment(divisionId, tableIndex, startDate);
 
   let result;
 
   if (existingSlot) {
     // Update existing slot
-    result = await db.raw.sql
-      .updateTable('practice_tables_schedule')
-      .set({ team_id: teamId })
-      .where('id', '=', existingSlot.id)
-      .returning([
-        'id',
-        'division_id',
-        'team_id',
-        'table_number',
-        'start_time',
-        'end_time',
-        'created_at'
-      ])
-      .executeTakeFirstOrThrow();
+    result = await practiceTablesRepo.updateAssignment(divisionId, tableIndex, startDate, {
+      team_id: teamId
+    });
+    if (!result) {
+      throw new Error('Failed to update assignment');
+    }
   } else {
     // Create new slot (only if assigning a team)
     if (!teamId) {
@@ -57,37 +47,20 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
     }
 
     // Get slot duration from division settings
-    const division = await db.raw.sql
-      .selectFrom('divisions')
-      .where('id', '=', divisionId)
-      .select('practice_tables_settings')
-      .executeTakeFirstOrThrow();
+    const config = await practiceTablesRepo.getConfig(divisionId);
+    if (!config) {
+      throw new Error('Practice tables not configured for this division');
+    }
 
-    const settings = division.practice_tables_settings as unknown as Record<string, unknown>;
-    const slotDurationMinutes = settings.slotDurationMinutes as number;
+    const endDate = new Date(startDate.getTime() + config.slotDurationMinutes * 60 * 1000);
 
-    const startDate = new Date(startTime);
-    const endDate = new Date(startDate.getTime() + slotDurationMinutes * 60 * 1000);
-
-    result = await db.raw.sql
-      .insertInto('practice_tables_schedule')
-      .values({
-        division_id: divisionId,
-        team_id: teamId,
-        table_number: tableIndex,
-        start_time: startDate,
-        end_time: endDate
-      })
-      .returning([
-        'id',
-        'division_id',
-        'team_id',
-        'table_number',
-        'start_time',
-        'end_time',
-        'created_at'
-      ])
-      .executeTakeFirstOrThrow();
+    result = await practiceTablesRepo.createAssignment({
+      division_id: divisionId,
+      team_id: teamId,
+      table_number: tableIndex,
+      start_time: startDate,
+      end_time: endDate
+    });
   }
 
   const assignment = {

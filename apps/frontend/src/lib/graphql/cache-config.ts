@@ -21,7 +21,9 @@ export function createApolloCache() {
       Judging: { keyFields: ['divisionId'] },
       Field: { keyFields: ['divisionId'] },
       MatchParticipant: { keyFields: ['id'] },
+      PracticeTables: { keyFields: ['divisionId'] },
       PracticeTablesConfig: { keyFields: ['divisionId'] },
+      PracticeTableSlot: { keyFields: ['id'] },
       BlockedTimeSlot: { keyFields: false }
     }
   });

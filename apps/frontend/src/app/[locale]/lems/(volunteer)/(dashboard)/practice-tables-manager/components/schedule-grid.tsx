@@ -1,6 +1,5 @@
 'use client';
 
-import { useMemo } from 'react';
 import {
   Paper,
   Table,
@@ -16,6 +15,8 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { formatTimeOnly } from '@lems/shared/utils';
+import { usePracticeTablesSchedule } from '../../hooks/usePracticeTablesSchedule';
 
 interface Team {
   id: string;
@@ -34,8 +35,8 @@ interface ScheduleGridProps {
   tableCount: number;
   slotDurationMinutes: number;
   blockedTimeSlots: BlockedTimeSlot[];
-  startTime?: string;
-  endTime?: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
   selectedCell: { tableIndex: number; time: string } | null;
   onCellSelect: (tableIndex: number, time: string) => void;
   assignments: Record<string, Record<string, Team>>;
@@ -46,8 +47,8 @@ export function ScheduleGrid({
   tableCount,
   slotDurationMinutes,
   blockedTimeSlots,
-  startTime = '07:00',
-  endTime = '19:00',
+  startTime,
+  endTime,
   selectedCell,
   onCellSelect,
   assignments,
@@ -55,45 +56,18 @@ export function ScheduleGrid({
 }: ScheduleGridProps) {
   const t = useTranslations('pages.practice-tables-manager.schedule');
 
-  const timeSlots = useMemo(() => {
-    const slots: string[] = [];
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
-    const startMinutes = startHour * 60 + startMinute;
-    const endMinutes = endHour * 60 + endMinute;
-
-    for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDurationMinutes) {
-      const hour = Math.floor(minutes / 60);
-      const minute = minutes % 60;
-      slots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-    }
-
-    return slots;
-  }, [slotDurationMinutes, startTime, endTime]);
-
-  const isTimeBlocked = (time: string) => {
-    return blockedTimeSlots.some(blocked => time >= blocked.start && time < blocked.end);
-  };
-
-  // Get the blocked slot info for a time, including rowSpan
-  const getBlockedSlotInfo = (time: string) => {
-    const blockedSlot = blockedTimeSlots.find(b => time >= b.start && time < b.end);
-    if (!blockedSlot) return null;
-
-    // Calculate how many time slots this blocked period spans
-    const slotsInRange = timeSlots.filter(
-      slot => slot >= blockedSlot.start && slot < blockedSlot.end
-    );
-
-    // Check if this is the first slot in the blocked range
-    const isFirstSlot = time === slotsInRange[0];
-
-    return {
-      reason: blockedSlot.reason,
-      rowSpan: slotsInRange.length,
-      isFirstSlot
-    };
-  };
+  // Use shared hook to manage schedule logic
+  const { timeSlots, isBlocked, getBlockedSlotInfo } = usePracticeTablesSchedule(
+    {
+      divisionId: '', // Not needed for this use case
+      tableCount,
+      slotDurationMinutes,
+      startTime,
+      endTime,
+      blockedTimeSlots
+    },
+    [] // No assignments needed - we get them from props
+  );
 
   const isCellSelected = (tableIndex: number, time: string) => {
     return selectedCell?.tableIndex === tableIndex && selectedCell?.time === time;
@@ -119,7 +93,8 @@ export function ScheduleGrid({
         </TableHead>
         <TableBody>
           {timeSlots.map(time => {
-            const blocked = isTimeBlocked(time);
+            const blocked = isBlocked(time);
+            const displayTime = formatTimeOnly(time);
 
             const blockedInfo = blocked ? getBlockedSlotInfo(time) : null;
             const isFirstBlockedSlot = blockedInfo?.isFirstSlot || false;
@@ -136,7 +111,7 @@ export function ScheduleGrid({
                     color: blocked ? 'text.disabled' : undefined
                   }}
                 >
-                  {time}
+                  {displayTime}
                 </TableCell>
                 {Array.from({ length: tableCount }, (_, tableIndex) => {
                   const assignment = assignments[tableIndex]?.[time];

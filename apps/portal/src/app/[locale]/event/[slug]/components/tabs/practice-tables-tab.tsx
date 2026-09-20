@@ -17,12 +17,17 @@ import {
   Alert,
   CircularProgress
 } from '@mui/material';
+import {
+  generatePracticeTableTimeSlots,
+  isTimeSlotBlocked,
+  formatTimeOnly
+} from '@lems/shared/utils';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { useDivision } from '../division-data-context';
 
 interface BlockedTimeSlot {
-  start: string;
-  end: string;
+  start: string; // ISO 8601 datetime
+  end: string; // ISO 8601 datetime
   reason?: string;
 }
 
@@ -30,8 +35,8 @@ interface PracticeTablesConfig {
   divisionId: string;
   tableCount: number;
   slotDurationMinutes: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
   blockedTimeSlots: BlockedTimeSlot[];
 }
 
@@ -47,8 +52,8 @@ interface PracticeTableAssignment {
   id: string;
   team: Team;
   tableIndex: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
 }
 
 interface PracticeTablesData {
@@ -84,32 +89,28 @@ export const PracticeTablesTab: React.FC = () => {
 
   const { config, assignments } = data;
 
-  // Generate time slots
-  const timeSlots: string[] = [];
-  const [startHour, startMinute] = config.startTime.split(':').map(Number);
-  const [endHour, endMinute] = config.endTime.split(':').map(Number);
-  const startMinutes = startHour * 60 + startMinute;
-  const endMinutes = endHour * 60 + endMinute;
-
-  for (let minutes = startMinutes; minutes < endMinutes; minutes += config.slotDurationMinutes) {
-    const hour = Math.floor(minutes / 60);
-    const minute = minutes % 60;
-    timeSlots.push(`${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`);
-  }
+  // Generate time slots using shared utility
+  const timeSlots = generatePracticeTableTimeSlots(
+    config.startTime,
+    config.endTime,
+    config.slotDurationMinutes
+  );
 
   // Check if a time slot is blocked
   const isTimeBlocked = (time: string) => {
-    return config.blockedTimeSlots.some(blocked => time >= blocked.start && time < blocked.end);
+    return config.blockedTimeSlots.some(blocked =>
+      isTimeSlotBlocked(time, blocked.start, blocked.end)
+    );
   };
 
   // Get the blocked slot info for a time, including rowSpan
   const getBlockedSlotInfo = (time: string) => {
-    const blockedSlot = config.blockedTimeSlots.find(b => time >= b.start && time < b.end);
+    const blockedSlot = config.blockedTimeSlots.find(b => isTimeSlotBlocked(time, b.start, b.end));
     if (!blockedSlot) return null;
 
     // Calculate how many time slots this blocked period spans
-    const slotsInRange = timeSlots.filter(
-      slot => slot >= blockedSlot.start && slot < blockedSlot.end
+    const slotsInRange = timeSlots.filter(slot =>
+      isTimeSlotBlocked(slot, blockedSlot.start, blockedSlot.end)
     );
 
     // Check if this is the first slot in the blocked range
@@ -172,7 +173,7 @@ export const PracticeTablesTab: React.FC = () => {
                       color: blocked ? 'text.disabled' : undefined
                     }}
                   >
-                    {time}
+                    {formatTimeOnly(time)}
                   </TableCell>
                   {Array.from({ length: config.tableCount }, (_, tableIndex) => {
                     const assignment = getAssignment(tableIndex, time);

@@ -1,11 +1,13 @@
 import express from 'express';
 import { sql } from 'kysely';
+import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../../../lib/database.js';
 import { requirePermission } from '../../middleware/require-permission.js';
 import { AdminDivisionRequest } from '../../../../types/express.js';
 import { asHandler } from '../../../../types/express-handlers.js';
 
 const router = express.Router({ mergeParams: true });
+const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 interface BlockedTimeSlot {
   start: string;
@@ -95,11 +97,8 @@ router.put(
         .where('id', '=', req.divisionId)
         .execute();
 
-      // Clear all existing slots for this division
-      await trx
-        .deleteFrom('practice_tables_schedule')
-        .where('division_id', '=', req.divisionId)
-        .execute();
+      // Clear all existing slots for this division using repository method
+      await practiceTablesRepo.deleteAllAssignments(req.divisionId);
 
       // Insert all new slots (with team_id as null)
       if (slots.length > 0) {
@@ -144,11 +143,8 @@ router.delete(
         .where('id', '=', req.divisionId)
         .execute();
 
-      // Delete all slots for this division
-      await trx
-        .deleteFrom('practice_tables_schedule')
-        .where('division_id', '=', req.divisionId)
-        .execute();
+      // Delete all slots for this division using repository method
+      await practiceTablesRepo.deleteAllAssignments(req.divisionId);
     });
 
     res.status(204).end();

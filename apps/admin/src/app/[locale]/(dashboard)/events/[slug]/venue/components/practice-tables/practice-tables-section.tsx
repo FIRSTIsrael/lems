@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Typography, Alert, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
@@ -31,7 +31,7 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     setSaving(true);
     setMessage(null);
 
@@ -68,7 +68,7 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
     } finally {
       setSaving(false);
     }
-  };
+  }, [config, eventId, division.id, onUpdate, t]);
 
   return (
     <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>

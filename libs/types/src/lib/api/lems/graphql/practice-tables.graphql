@@ -25,10 +25,10 @@ type PracticeTablesConfig {
   "Duration of each practice slot in minutes"
   slotDurationMinutes: Int!
 
-  "Start time for practice tables (HH:MM format, e.g., '07:00')"
+  "Start time for practice tables (ISO 8601 datetime)"
   startTime: String!
 
-  "End time for practice tables (HH:MM format, e.g., '19:00')"
+  "End time for practice tables (ISO 8601 datetime)"
   endTime: String!
 
   "Blocked time slots (e.g., lunch breaks)"
@@ -39,10 +39,10 @@ type PracticeTablesConfig {
 A blocked time slot where practice tables are not available
 """
 type BlockedTimeSlot {
-  "Start time (ISO 8601 time string, e.g., '12:00')"
+  "Start time (ISO 8601 datetime)"
   start: String!
 
-  "End time (ISO 8601 time string, e.g., '12:30')"
+  "End time (ISO 8601 datetime)"
   end: String!
 
   "Optional reason for blocking (e.g., 'Lunch break')"
@@ -65,13 +65,13 @@ type PracticeTableSlot {
   "Table index (0-based)"
   tableIndex: Int!
 
-  "Start time of the practice slot"
+  "Start time of the practice slot (ISO 8601 datetime)"
   startTime: String!
 
-  "End time of the practice slot"
+  "End time of the practice slot (ISO 8601 datetime)"
   endTime: String!
 
-  "When this slot was created"
+  "When this slot was created (ISO 8601 datetime)"
   createdAt: String!
 }
 
@@ -88,7 +88,7 @@ input UpdatePracticeTableSlotInput {
   "Table index (0-based)"
   tableIndex: Int!
 
-  "Start time (ISO 8601 datetime string)"
+  "Start time (ISO 8601 datetime)"
   startTime: String!
 }
 

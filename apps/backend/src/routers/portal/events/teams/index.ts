@@ -1,4 +1,5 @@
 import express, { Response } from 'express';
+import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../../../lib/database';
 import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
@@ -13,6 +14,7 @@ import {
 } from './util';
 
 const router = express.Router({ mergeParams: true });
+const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 router.use('/:teamSlug', attachTeamAtEvent());
 
@@ -58,18 +60,7 @@ router.get(
         db.tables.byDivisionId(req.divisionId).getAll(),
         db.divisions.byId(req.divisionId).agenda().getAll('public'),
         db.divisions.byId(req.divisionId).agenda().getAll('teams'),
-        db.raw.sql
-          .selectFrom('practice_tables_schedule as pts')
-          .where('pts.team_id', '=', req.teamId)
-          .where('pts.division_id', '=', req.divisionId)
-          .select([
-            'pts.id',
-            'pts.table_number as tableNumber',
-            'pts.start_time as startTime',
-            'pts.end_time as endTime'
-          ])
-          .orderBy('pts.start_time', 'asc')
-          .execute()
+        practiceTablesRepo.getTeamAssignments(req.teamId)
       ]);
 
     const agenda = [...agendaPublic, ...agendaTeams];
@@ -77,14 +68,14 @@ router.get(
     // Format practice table assignments
     const formattedPracticeAssignments = practiceAssignments.map(a => {
       // Convert timestamps to HH:MM format (use UTC to avoid timezone issues)
-      const startDate = new Date(a.startTime);
-      const endDate = new Date(a.endTime);
+      const startDate = new Date(a.start_time);
+      const endDate = new Date(a.end_time);
       const startTimeStr = `${startDate.getUTCHours().toString().padStart(2, '0')}:${startDate.getUTCMinutes().toString().padStart(2, '0')}`;
       const endTimeStr = `${endDate.getUTCHours().toString().padStart(2, '0')}:${endDate.getUTCMinutes().toString().padStart(2, '0')}`;
 
       return {
         id: a.id,
-        tableNumber: a.tableNumber,
+        tableNumber: a.table_number,
         startTime: startTimeStr,
         endTime: endTimeStr
       };

@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   Paper,
@@ -12,6 +11,8 @@ import {
   Chip,
   Box
 } from '@mui/material';
+import { formatTimeOnly } from '@lems/shared/utils';
+import { usePracticeTablesSchedule } from '../../../hooks/usePracticeTablesSchedule';
 
 interface Team {
   id: string;
@@ -51,76 +52,11 @@ interface Props {
 export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments }) => {
   const t = useTranslations('pages.reports.practice-tables');
 
-  // Generate time slots
-  const timeSlots = useMemo(() => {
-    const slots: string[] = [];
-    const [startHour, startMin] = config.startTime.split(':').map(Number);
-    const [endHour, endMin] = config.endTime.split(':').map(Number);
-
-    const startMinutes = startHour * 60 + startMin;
-    const endMinutes = endHour * 60 + endMin;
-
-    for (let minutes = startMinutes; minutes < endMinutes; minutes += config.slotDurationMinutes) {
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-      slots.push(`${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`);
-    }
-
-    return slots;
-  }, [config]);
-
-  // Create assignments map
-  const assignmentsMap = useMemo(() => {
-    const map: Record<number, Record<string, Team>> = {};
-
-    assignments.forEach(assignment => {
-      const tableIndex = assignment.tableIndex; // Already 0-based from API
-      if (!map[tableIndex]) {
-        map[tableIndex] = {};
-      }
-
-      // Parse ISO timestamp and convert to HH:MM
-      const startDate = new Date(assignment.startTime);
-      const hours = startDate.getUTCHours().toString().padStart(2, '0');
-      const minutes = startDate.getUTCMinutes().toString().padStart(2, '0');
-      const timeKey = `${hours}:${minutes}`;
-
-      map[tableIndex][timeKey] = assignment.team;
-    });
-
-    return map;
-  }, [assignments]);
-
-  // Check if a time slot is blocked
-  const isBlocked = (time: string): boolean => {
-    return config.blockedTimeSlots.some(slot => {
-      return time >= slot.start && time < slot.end;
-    });
-  };
-
-  // Get the blocked slot info for a time, including rowSpan
-  const getBlockedSlotInfo = (time: string) => {
-    const blockedSlot = config.blockedTimeSlots.find(slot => time >= slot.start && time < slot.end);
-    if (!blockedSlot) return null;
-
-    // Calculate how many time slots this blocked period spans
-    const slotsInRange = timeSlots.filter(
-      slot => slot >= blockedSlot.start && slot < blockedSlot.end
-    );
-
-    // Check if this is the first slot in the blocked range
-    const isFirstSlot = time === slotsInRange[0];
-
-    return {
-      reason: blockedSlot.reason,
-      rowSpan: slotsInRange.length,
-      isFirstSlot
-    };
-  };
-
-  const getAssignment = (tableIndex: number, time: string): Team | null => {
-    return assignmentsMap[tableIndex]?.[time] || null;
-  };
+  // Use hook to manage schedule data and operations
+  const { timeSlots, isBlocked, getBlockedSlotInfo, getAssignment } = usePracticeTablesSchedule(
+    config,
+    assignments
+  );
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -151,7 +87,7 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
                       color: blocked ? 'text.disabled' : undefined
                     }}
                   >
-                    {time}
+                    {formatTimeOnly(time)}
                   </TableCell>
                   {Array.from({ length: config.tableCount }, (_, tableIndex) => {
                     const assignment = getAssignment(tableIndex, time);

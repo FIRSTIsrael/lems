@@ -1539,9 +1539,9 @@
       "configuration": {
         "title": "Konfiguracja",
         "table-count": "Liczba Stołów",
-        "slot-duration": "Czas Trwania Slotu",
-        "start-time": "Godzina Rozpoczęcia",
-        "end-time": "Godzina Zakończenia",
+        "slot-duration": "Czas Trwania Slotu (minuty)",
+        "slot-duration-helper": "Czas trwania każdego slotu treningowego w minutach",
+        "blocked-times": "Zablokowane Czasy",
         "blocked-times-description": "Określ czasy, kiedy stoły nie są dostępne (np. przerwa obiadowa)",
         "add-blocked-time": "Dodaj Zablokowany Czas",
         "save": "Zapisz Konfigurację",
@@ -1551,23 +1551,30 @@
       },
       "schedule": {
         "title": "Harmonogram",
-        "time": "Czas",
-        "table": "Stół {number}",
+        "description": "Kliknij komórkę, aby przypisać drużynę do stołu o określonym czasie. Drużyny mogą być przypisane tylko raz w danym czasie.",
+        "empty-state": "Załaduj konfigurację, aby rozpocząć zarządzanie harmonogramem",
         "clear-all": "Wyczyść Wszystko",
-        "clear-all-confirm": "Czy na pewno chcesz usunąć wszystkie przypisania? Tej operacji nie można cofnąć.",
+        "coming-soon": "Wkrótce",
+        "grid-placeholder": "Siatka harmonogramu będzie dostępna tutaj",
+        "info": "Stoły: {tables} | Czas Trwania Slotu: {duration} minut",
+        "time": "Czas",
+        "table": "Stół",
         "blocked": "Zablokowane",
-        "available": "Dostępne"
+        "unavailable": "Niedostępne"
       },
-      "team-search": {
-        "placeholder": "Szukaj drużyny...",
+      "team-selection": {
+        "title": "Wybierz Drużynę",
+        "search-placeholder": "Szukaj według numeru, nazwy lub przynależności...",
+        "no-teams": "Nie znaleziono drużyn",
+        "cancel": "Anuluj"
+      },
+      "search": {
+        "placeholder": "Szukaj drużyn według numeru, nazwy lub przynależności...",
+        "assign": "Przypisz",
+        "selected-slot": "Wybrano: Stół {table}, Czas {time}",
         "no-results": "Nie znaleziono drużyn",
-        "select-team": "Wybierz drużynę, aby przypisać do slotu",
-        "search-by": "Szukaj według numeru lub nazwy drużyny"
-      },
-      "assignment": {
-        "click-to-assign": "Kliknij, aby przypisać drużynę",
-        "assigned": "Przypisano",
-        "remove": "Usuń przypisanie"
+        "search-hint": "Wybierz slot czasowy w siatce, a następnie wyszukaj drużynę do przypisania",
+        "search-hint-with-selection": "Wyszukaj drużynę do przypisania do wybranego slotu"
       },
       "no-teams": {
         "title": "Brak Dostępnych Drużyn",

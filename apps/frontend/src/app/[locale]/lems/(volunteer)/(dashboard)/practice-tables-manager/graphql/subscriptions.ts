@@ -11,8 +11,8 @@ interface PracticeTableAssignment {
     affiliation?: string;
   };
   tableIndex: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
 }
 
 interface AssignmentsSubscriptionData {

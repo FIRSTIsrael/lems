@@ -1,22 +1,13 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { Box, Typography, Alert, CircularProgress, Grid } from '@mui/material';
+import { useMemo } from 'react';
+import { Box, Alert, CircularProgress } from '@mui/material';
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { useMutation } from '@apollo/client/react';
-import { useTranslations } from 'next-intl';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
-import {
-  GET_PRACTICE_TABLES_CONFIG,
-  GET_PRACTICE_TABLE_ASSIGNMENTS,
-  UPDATE_PRACTICE_TABLE_ASSIGNMENT
-} from './graphql';
+import { GET_PRACTICE_TABLES_CONFIG, GET_PRACTICE_TABLE_ASSIGNMENTS } from './graphql';
 import { createPracticeTableAssignmentsSubscription } from './graphql/subscriptions';
-import { ScheduleGrid } from './components/schedule-grid';
-import { TeamSearchBar } from './components/team-search-bar';
-import { NoConfiguration } from './components/no-configuration';
-import { NoTeams } from './components/no-teams';
+import { PracticeTablesManagerProvider, PracticeTablesManagerContent } from './components';
 
 interface Team {
   id: string;
@@ -25,16 +16,6 @@ interface Team {
   affiliation?: string;
   logoUrl?: string;
 }
-
-interface PracticeTableAssignment {
-  id: string;
-  divisionId: string;
-  team: Team;
-  tableIndex: number;
-  startTime: string;
-  endTime: string;
-}
-
 interface QueryData {
   division?: { id: string; teams: Team[] } | null;
 }
@@ -76,7 +57,6 @@ const GET_EVENT_DATE: TypedDocumentNode<EventQueryData, EventQueryVars> = gql`
 `;
 
 export default function PracticeTablesManagerPage() {
-  const t = useTranslations('pages.practice-tables-manager');
   const { currentDivision, eventId } = useEvent();
 
   const assignmentsSubscriptions = useMemo(
@@ -90,11 +70,7 @@ export default function PracticeTablesManagerPage() {
     data => data
   );
 
-  const {
-    data: assignmentsData,
-    loading: assignmentsLoading,
-    refetch: refetchAssignments
-  } = usePageData(
+  const { data: assignmentsData, loading: assignmentsLoading } = usePageData(
     GET_PRACTICE_TABLE_ASSIGNMENTS,
     { divisionId: currentDivision.id },
     data => data,
@@ -113,155 +89,14 @@ export default function PracticeTablesManagerPage() {
     data => data
   );
 
-  const config = data?.division?.practiceTables?.config;
+  const config = data?.division?.practiceTables?.config || null;
   const teams = teamsData?.division?.teams || [];
-  const eventStartDate = eventData?.event?.startDate;
+  const assignments = assignmentsData?.division?.practiceTables?.schedule || [];
+  const eventStartDate = eventData?.event?.startDate || null;
 
-  const [updateAssignment] = useMutation(UPDATE_PRACTICE_TABLE_ASSIGNMENT, {
-    onError: error => {
-      console.error('Failed to update assignment:', error);
-      alert(`Failed to update assignment: ${error.message}`);
-    }
-  });
+  const isLoading = loading || teamsLoading || assignmentsLoading || eventLoading;
 
-  // State for selected cell
-  const [selectedCell, setSelectedCell] = useState<{ tableIndex: number; time: string } | null>(
-    null
-  );
-
-  // Memoize server assignments to prevent unnecessary recalculations
-  const serverAssignments: PracticeTableAssignment[] = useMemo(
-    () => assignmentsData?.division?.practiceTables?.schedule || [],
-    [assignmentsData?.division?.practiceTables?.schedule]
-  );
-
-  // Convert server assignments to grid format
-  const assignments = useMemo(() => {
-    const result: Record<string, Record<string, Team>> = {};
-    serverAssignments.forEach(assignment => {
-      const tableIndex = assignment.tableIndex; // Already 0-based from API
-      if (!result[tableIndex]) {
-        result[tableIndex] = {};
-      }
-      // Convert ISO timestamp to HH:MM format for grid matching (use UTC to avoid timezone issues)
-      const startDate = new Date(assignment.startTime);
-      const hours = startDate.getUTCHours().toString().padStart(2, '0');
-      const minutes = startDate.getUTCMinutes().toString().padStart(2, '0');
-      const timeKey = `${hours}:${minutes}`;
-
-      result[tableIndex][timeKey] = assignment.team;
-    });
-    return result;
-  }, [serverAssignments]);
-
-  const handleCellSelect = (tableIndex: number, time: string) => {
-    // Toggle selection: if clicking the same cell, deselect it
-    if (selectedCell?.tableIndex === tableIndex && selectedCell?.time === time) {
-      setSelectedCell(null);
-    } else {
-      setSelectedCell({ tableIndex, time });
-    }
-  };
-
-  const handleAssign = async (team: Team) => {
-    if (!selectedCell || !config || !eventStartDate) {
-      console.log('Cannot assign: missing data', { selectedCell, config, eventStartDate });
-      return;
-    }
-
-    console.log('Assigning team:', {
-      team,
-      selectedCell,
-      divisionId: currentDivision.id
-    });
-
-    try {
-      // Use the event's start date to create proper timestamps
-      const eventDate = new Date(eventStartDate);
-      const year = eventDate.getFullYear();
-      const month = (eventDate.getMonth() + 1).toString().padStart(2, '0');
-      const day = eventDate.getDate().toString().padStart(2, '0');
-      const dateStr = `${year}-${month}-${day}`;
-
-      const startTime = `${dateStr}T${selectedCell.time}:00.000Z`;
-
-      console.log('Creating assignment with:', {
-        divisionId: currentDivision.id,
-        teamId: team.id,
-        tableIndex: selectedCell.tableIndex,
-        startTime
-      });
-
-      const result = await updateAssignment({
-        variables: {
-          input: {
-            divisionId: currentDivision.id,
-            teamId: team.id,
-            tableIndex: selectedCell.tableIndex, // Already 0-based
-            startTime
-          }
-        }
-      });
-
-      console.log('Assignment created successfully:', result);
-
-      // Refetch assignments to update the grid
-      await refetchAssignments();
-      console.log('Assignments refetched');
-
-      // Clear selection after successful assignment
-      setSelectedCell(null);
-    } catch (error) {
-      console.error('Failed to create assignment:', error);
-
-      // Show user-friendly error message
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      if (errorMessage.includes('already has a practice table assignment')) {
-        alert(t('errors.team-already-assigned'));
-      } else {
-        alert(`${t('errors.assignment-failed')}: ${errorMessage}`);
-      }
-    }
-  };
-
-  const handleClearAssignment = async (tableIndex: number, time: string) => {
-    try {
-      // Convert time to ISO string for the mutation
-      if (!eventStartDate) return;
-
-      const [hours, minutes] = time.split(':');
-      const date = new Date(eventStartDate);
-      date.setUTCHours(parseInt(hours), parseInt(minutes), 0, 0);
-      const startTime = date.toISOString();
-
-      console.log('Clearing assignment:', { tableIndex, time, startTime });
-
-      await updateAssignment({
-        variables: {
-          input: {
-            divisionId: currentDivision.id,
-            teamId: null, // Set to null to unassign
-            tableIndex,
-            startTime
-          }
-        }
-      });
-
-      // Refetch assignments to update the grid
-      await refetchAssignments();
-      console.log('Assignment cleared and refetched');
-
-      // Clear selection after successful deletion
-      setSelectedCell(null);
-    } catch (error) {
-      console.error('Failed to clear assignment:', error);
-      alert(
-        `${t('errors.delete-failed')}: ${error instanceof Error ? error.message : 'Unknown error'}`
-      );
-    }
-  };
-
-  if (loading || teamsLoading || assignmentsLoading || eventLoading) {
+  if (isLoading) {
     return (
       <Box
         sx={{
@@ -284,41 +119,17 @@ export default function PracticeTablesManagerPage() {
     );
   }
 
-  if (!config) {
-    return <NoConfiguration />;
-  }
-
-  if (teams.length === 0) {
-    return <NoTeams />;
-  }
-
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        {t('page-title')}
-      </Typography>
-
-      <Grid container spacing={3}>
-        {/* Team Search Sidebar */}
-        <Grid size={{ xs: 12, md: 3 }}>
-          <TeamSearchBar teams={teams} selectedCell={selectedCell} onAssign={handleAssign} />
-        </Grid>
-
-        {/* Schedule Grid */}
-        <Grid size={{ xs: 12, md: 9 }}>
-          <ScheduleGrid
-            tableCount={config.tableCount}
-            slotDurationMinutes={config.slotDurationMinutes}
-            startTime={config.startTime}
-            endTime={config.endTime}
-            blockedTimeSlots={config.blockedTimeSlots}
-            selectedCell={selectedCell}
-            onCellSelect={handleCellSelect}
-            assignments={assignments}
-            onClearAssignment={handleClearAssignment}
-          />
-        </Grid>
-      </Grid>
-    </Box>
+    <PracticeTablesManagerProvider
+      divisionId={currentDivision.id}
+      eventId={eventId}
+      eventStartDate={eventStartDate}
+      config={config}
+      teams={teams}
+      assignments={assignments}
+      loading={isLoading}
+    >
+      <PracticeTablesManagerContent />
+    </PracticeTablesManagerProvider>
   );
 }

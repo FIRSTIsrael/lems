@@ -11,14 +11,14 @@ interface Team {
 interface PracticeTableAssignment {
   id: string;
   tableIndex: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
   team: Team;
 }
 
 interface BlockedTimeSlot {
-  start: string;
-  end: string;
+  start: string; // ISO 8601 datetime
+  end: string; // ISO 8601 datetime
   reason?: string;
 }
 
@@ -26,8 +26,8 @@ interface PracticeTablesConfig {
   divisionId: string;
   tableCount: number;
   slotDurationMinutes: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
   blockedTimeSlots: BlockedTimeSlot[];
 }
 
