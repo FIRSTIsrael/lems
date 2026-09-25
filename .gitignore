@@ -56,6 +56,9 @@ logs/
 .nx/cache
 .nx/workspace-data
 
+# TypeScript build artifacts
+*.tsbuildinfo
+
 # Python
 *.pyc
 **/__pycache__/
