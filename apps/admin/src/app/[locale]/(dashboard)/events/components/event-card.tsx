@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -16,7 +15,16 @@ import {
   Stack,
   Tooltip
 } from '@mui/material';
-import { LocationOn, CalendarMonth, Group, Edit, Delete, ContentCopy } from '@mui/icons-material';
+import {
+  LocationOn,
+  CalendarMonth,
+  Group,
+  Edit,
+  Delete,
+  ContentCopy,
+  PushPin,
+  PushPinOutlined
+} from '@mui/icons-material';
 import { EventSummary, Division } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
 import { useSession } from '../../components/session-context';
@@ -25,6 +33,8 @@ import { EventMissingInfo } from './missing-info/event-missing-info';
 interface EventCardProps extends EventSummary {
   onDelete?: (id: string) => void;
   onCopy?: (id: string) => void;
+  isPinned?: boolean;
+  onTogglePin?: (id: string) => void;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({
@@ -39,12 +49,13 @@ export const EventCard: React.FC<EventCardProps> = ({
   isFullySetUp,
   adminIds,
   onDelete,
-  onCopy
+  onCopy,
+  isPinned = false,
+  onTogglePin
 }) => {
   const { user } = useSession();
   const router = useRouter();
   const t = useTranslations('pages.events.card');
-  const [showDetails, setShowDetails] = useState(false);
 
   const isAssigned = adminIds.includes(user.id);
 
@@ -62,17 +73,39 @@ export const EventCard: React.FC<EventCardProps> = ({
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
+        borderTop: isPinned ? 3 : 0,
+        borderColor: 'primary.main',
         '&:hover': {
           boxShadow: 4
         }
       }}
     >
-      <CardContent sx={{ flexGrow: 1, pb: 1 }}>
-        <Typography variant="h5" component="h2" gutterBottom sx={{ fontWeight: 'bold' }}>
-          {name}
-        </Typography>
+      <CardContent sx={{ flexGrow: 1, p: 2, pb: 1 }}>
+        <Stack
+          direction="row"
+          sx={{ mb: 1, justifyContent: 'space-between', alignItems: 'flex-start' }}
+        >
+          <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', flexGrow: 1 }}>
+            {name}
+          </Typography>
+          {isAssigned && (
+            <IconButton
+              size="small"
+              onClick={e => {
+                e.stopPropagation();
+                onTogglePin?.(id);
+              }}
+              sx={{
+                color: isPinned ? 'primary.main' : 'action.disabled',
+                ml: 1
+              }}
+            >
+              {isPinned ? <PushPin fontSize="small" /> : <PushPinOutlined fontSize="small" />}
+            </IconButton>
+          )}
+        </Stack>
 
-        <Stack spacing={1.5} sx={{ mb: 2 }}>
+        <Stack spacing={0.75} sx={{ mb: 1.5 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <LocationOn color="action" fontSize="small" />
             <Typography
@@ -151,12 +184,11 @@ export const EventCard: React.FC<EventCardProps> = ({
           <EventMissingInfo
             divisions={detailedDivisions || divisions}
             isFullySetUp={isFullySetUp}
-            onShowDetails={() => setShowDetails(true)}
           />
         </Box>
       </CardContent>
       {isAssigned && (
-        <CardActions sx={{ justifyContent: 'flex-end', pt: 1 }}>
+        <CardActions sx={{ justifyContent: 'flex-end', pt: 0, pb: 1, px: 2 }}>
           <Tooltip title={t('edit')}>
             <IconButton
               onClick={() => {

@@ -252,10 +252,19 @@
       },
       "create-button": "Utwórz",
       "grid": {
+        "search-placeholder": "Szukaj wydarzeń według nazwy, lokalizacji lub dywizji...",
+        "filter-by-region": "Filtruj według regionu",
+        "filtering-by-regions": "Filtrowanie według regionów",
+        "view-grid": "Widok siatki",
+        "view-list": "Widok listy",
+        "pinned-events": "Przypięte wydarzenia",
+        "all-events": "Wszystkie wydarzenia",
         "empty-state": {
           "no-events": "Nie znaleziono wydarzeń",
           "no-events-description": "Utwórz swoje pierwsze wydarzenie, aby rozpocząć",
-          "create-new-event": "Utwórz nowe wydarzenie"
+          "create-new-event": "Utwórz nowe wydarzenie",
+          "no-results": "Brak wydarzeń pasujących do wyszukiwania",
+          "no-results-description": "Spróbuj zmienić kryteria wyszukiwania"
         }
       },
       "card": {
