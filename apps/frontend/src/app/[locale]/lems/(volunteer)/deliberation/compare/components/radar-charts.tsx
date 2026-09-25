@@ -26,19 +26,44 @@ interface CategoryRadarChartProps {
   category: string;
 }
 
-const RadarChartContainer = ({
-  data,
-  dataKey,
-  color = '#64B5F6'
-}: {
-  data: any[];
+interface CustomTickProps {
+  payload?: { value: string };
+  x?: number;
+  y?: number;
+  cx?: number;
+  cy?: number;
+}
+
+const CustomTick = ({ payload, x = 0, y = 0, cx = 0, cy = 0 }: CustomTickProps) => {
+  const maxLength = 20;
+  const text = payload?.value || '';
+  const truncated = text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={x > cx ? 'start' : x < cx ? 'end' : 'middle'}
+      dominantBaseline={y > cy ? 'hanging' : y < cy ? 'auto' : 'middle'}
+      fontSize={11}
+      fill="currentColor"
+    >
+      {truncated}
+    </text>
+  );
+};
+
+interface RadarChartContainerProps {
+  data: Array<{ [key: string]: string | number }>;
   dataKey: string;
   color?: string;
-}) => (
+}
+
+const RadarChartContainer = ({ data, dataKey, color = '#64B5F6' }: RadarChartContainerProps) => (
   <ResponsiveContainer width="100%" height={250}>
-    <RadarChart data={data} margin={{ top: 5, right: 10, bottom: 5, left: 10 }}>
+    <RadarChart data={data} margin={{ top: 20, right: 30, bottom: 20, left: 30 }}>
       <PolarGrid />
-      <PolarAngleAxis dataKey={dataKey} tick={{ fontSize: 14 }} />
+      <PolarAngleAxis dataKey={dataKey} tick={<CustomTick />} />
       <PolarRadiusAxis angle={90} domain={[0, 4]} tick={{ fontSize: 12 }} />
       <Radar dataKey="score" stroke={color} fill={color} fillOpacity={0.6} />
     </RadarChart>
