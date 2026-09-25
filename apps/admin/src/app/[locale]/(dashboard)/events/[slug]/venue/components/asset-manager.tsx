@@ -37,7 +37,8 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
   const {
     data: assets = [] as T[],
     error,
-    isLoading
+    isLoading,
+    mutate: updateAssets
   } = useSWR<T[]>(
     division ? `/admin/events/${division.eventId}/divisions/${division.id}/${assetType}` : null,
     {
@@ -123,7 +124,11 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
           return rest;
         });
         showSuccess();
-        mutate(`/admin/events/${division.eventId}/divisions/${division.id}/${assetType}`);
+        // Update the asset name in-place to preserve list order
+        updateAssets(
+          currentAssets => currentAssets?.map(a => (a.id === asset.id ? { ...a, name } : a)) as T[],
+          { revalidate: false }
+        );
       } else {
         setErrors({ [asset.id]: t('messages.save-error') });
       }
