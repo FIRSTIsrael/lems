@@ -1,37 +1,10 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import type { SubscriptionConfig } from '../../../hooks/use-page-data';
-
-interface PracticeTableAssignment {
-  id: string;
-  divisionId: string;
-  team: {
-    id: string;
-    number: number;
-    name: string;
-    affiliation?: string;
-  };
-  tableIndex: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-}
-
-interface AssignmentsSubscriptionData {
-  practiceTableAssignmentsUpdated: PracticeTableAssignment[];
-}
-
-interface AssignmentsQueryData {
-  division: {
-    id: string;
-    practiceTables: {
-      divisionId: string;
-      schedule: PracticeTableAssignment[];
-    };
-  } | null;
-}
-
-interface SubscriptionVars {
-  divisionId: string;
-}
+import type {
+  AssignmentsSubscriptionData,
+  PracticeTableAssignmentsData,
+  SubscriptionVars
+} from './types';
 
 export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
   AssignmentsSubscriptionData,
@@ -55,9 +28,9 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
 `;
 
 const assignmentsReconciler = (
-  prev: AssignmentsQueryData,
+  prev: PracticeTableAssignmentsData,
   { data }: { data?: AssignmentsSubscriptionData }
-): AssignmentsQueryData => {
+): PracticeTableAssignmentsData => {
   if (!data || !prev.division) return prev;
   return {
     division: {
@@ -72,10 +45,10 @@ const assignmentsReconciler = (
 
 export function createPracticeTableAssignmentsSubscription(
   divisionId: string
-): SubscriptionConfig<unknown, AssignmentsQueryData, SubscriptionVars> {
+): SubscriptionConfig<unknown, PracticeTableAssignmentsData, SubscriptionVars> {
   return {
     subscription: PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
     updateQuery: assignmentsReconciler
-  } as SubscriptionConfig<unknown, AssignmentsQueryData, SubscriptionVars>;
+  } as SubscriptionConfig<unknown, PracticeTableAssignmentsData, SubscriptionVars>;
 }

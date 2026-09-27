@@ -5,8 +5,11 @@ import { Box, Alert, CircularProgress } from '@mui/material';
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { useEvent } from '../../components/event-context';
 import { usePageData } from '../../hooks/use-page-data';
-import { GET_PRACTICE_TABLES_CONFIG, GET_PRACTICE_TABLE_ASSIGNMENTS } from './graphql';
-import { createPracticeTableAssignmentsSubscription } from './graphql/subscriptions';
+import {
+  GET_PRACTICE_TABLES_CONFIG,
+  GET_PRACTICE_TABLE_ASSIGNMENTS,
+  createPracticeTableAssignmentsSubscription
+} from './graphql';
 import { PracticeTablesManagerProvider, PracticeTablesManagerContent } from './components';
 
 interface Team {
