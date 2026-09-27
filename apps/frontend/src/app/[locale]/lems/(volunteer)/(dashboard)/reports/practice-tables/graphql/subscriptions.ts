@@ -1,35 +1,9 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-}
-
-interface PracticeTableAssignment {
-  id: string;
-  tableIndex: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  team: Team;
-}
-
-interface BlockedTimeSlot {
-  start: string; // ISO 8601 datetime
-  end: string; // ISO 8601 datetime
-  reason?: string;
-}
-
-interface PracticeTablesConfig {
-  divisionId: string;
-  tableCount: number;
-  slotDurationMinutes: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  blockedTimeSlots: BlockedTimeSlot[];
-}
+import type {
+  PracticeTablesConfig,
+  PracticeTableAssignment
+} from '../../../practice-tables-manager/graphql/types';
 
 interface AssignmentsSubscriptionData {
   practiceTableAssignmentsUpdated: PracticeTableAssignment[];
@@ -57,6 +31,7 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
   subscription PracticeTableAssignmentsUpdated($divisionId: String!) {
     practiceTableAssignmentsUpdated(divisionId: $divisionId) {
       id
+      divisionId
       tableIndex
       startTime
       endTime

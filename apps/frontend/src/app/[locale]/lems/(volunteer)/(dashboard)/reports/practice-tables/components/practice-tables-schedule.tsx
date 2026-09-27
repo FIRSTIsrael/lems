@@ -12,37 +12,11 @@ import {
   Box
 } from '@mui/material';
 import { formatTimeOnly } from '@lems/shared/utils';
-import { usePracticeTablesSchedule } from '../../../../hooks/use-practice-tables-schedule';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-}
-
-interface PracticeTableAssignment {
-  id: string;
-  tableIndex: number;
-  startTime: string;
-  endTime: string;
-  team: Team;
-}
-
-interface BlockedTimeSlot {
-  start: string;
-  end: string;
-  reason?: string;
-}
-
-interface PracticeTablesConfig {
-  divisionId: string;
-  tableCount: number;
-  slotDurationMinutes: number;
-  startTime: string;
-  endTime: string;
-  blockedTimeSlots: BlockedTimeSlot[];
-}
+import { usePracticeTablesSchedule } from '../../../practice-tables-manager/hooks/use-practice-tables-schedule';
+import type {
+  PracticeTablesConfig,
+  PracticeTableAssignment
+} from '../../../practice-tables-manager/graphql/types';
 
 interface Props {
   config: PracticeTablesConfig;

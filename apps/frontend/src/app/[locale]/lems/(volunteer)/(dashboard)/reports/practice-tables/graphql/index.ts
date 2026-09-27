@@ -1,34 +1,8 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-}
-
-interface PracticeTableAssignment {
-  id: string;
-  tableIndex: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  team: Team;
-}
-
-interface BlockedTimeSlot {
-  start: string; // ISO 8601 datetime
-  end: string; // ISO 8601 datetime
-  reason?: string;
-}
-
-interface PracticeTablesConfig {
-  divisionId: string;
-  tableCount: number;
-  slotDurationMinutes: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  blockedTimeSlots: BlockedTimeSlot[];
-}
+import type {
+  PracticeTablesConfig,
+  PracticeTableAssignment
+} from '../../../practice-tables-manager/graphql/types';
 
 interface QueryData {
   division: {
@@ -65,6 +39,7 @@ export const GET_PRACTICE_TABLES_REPORT: TypedDocumentNode<QueryData, QueryVars>
         }
         schedule {
           id
+          divisionId
           tableIndex
           startTime
           endTime

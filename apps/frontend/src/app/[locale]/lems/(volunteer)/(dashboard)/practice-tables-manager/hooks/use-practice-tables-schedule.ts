@@ -3,11 +3,7 @@ import {
   generatePracticeTableTimeSlots,
   isTimeSlotBlocked as checkTimeSlotBlocked
 } from '@lems/shared/utils';
-import type {
-  Team,
-  PracticeTableAssignment,
-  PracticeTablesConfig
-} from '../practice-tables-manager/graphql/types';
+import type { Team, PracticeTableAssignment, PracticeTablesConfig } from '../graphql/types';
 
 export interface BlockedSlotInfo {
   reason?: string;
