@@ -10,16 +10,16 @@ export interface DivisionScheduleSettings {
 }
 
 export interface BlockedTimeSlot {
-  start: string; // ISO 8601 time string (e.g., "12:00")
-  end: string; // ISO 8601 time string (e.g., "12:30")
+  start: string; // ISO 8601 datetime string (e.g., "2024-01-15T12:00:00.000Z")
+  end: string; // ISO 8601 datetime string (e.g., "2024-01-15T12:30:00.000Z")
   reason?: string; // Optional reason (e.g., "Lunch break")
 }
 
 export interface PracticeTablesSettings {
   tableCount: number; // Number of practice tables available
   slotDurationMinutes: number; // Duration of each practice slot in minutes
-  startTime: string; // Start time in HH:MM format (e.g., "07:00")
-  endTime: string; // End time in HH:MM format (e.g., "19:00")
+  startTime: string; // ISO 8601 datetime string (e.g., "2024-01-15T07:00:00.000Z")
+  endTime: string; // ISO 8601 datetime string (e.g., "2024-01-15T19:00:00.000Z")
   blockedTimeSlots: BlockedTimeSlot[]; // Array of blocked time slots
 }
 

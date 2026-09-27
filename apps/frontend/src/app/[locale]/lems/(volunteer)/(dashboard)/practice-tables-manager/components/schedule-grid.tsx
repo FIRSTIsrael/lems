@@ -16,7 +16,7 @@ import {
 import { Add as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import { formatTimeOnly } from '@lems/shared/utils';
-import { usePracticeTablesSchedule } from '../../hooks/usePracticeTablesSchedule';
+import { usePracticeTablesSchedule } from '../../../hooks/use-practice-tables-schedule';
 
 interface Team {
   id: string;

@@ -11,7 +11,7 @@ import divisionPitMapRouter from './pit-map';
 import divisionTeamsRouter from './teams';
 import divisionScheduleRouter from './schedule';
 import divisionAwardsRouter from './awards';
-import divisionPracticeTablesRouter from './practice-tables.js';
+import divisionPracticeTablesRouter from './practice-tables/index.js';
 
 const router = express.Router({ mergeParams: true });
 

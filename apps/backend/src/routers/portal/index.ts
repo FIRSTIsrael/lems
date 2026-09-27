@@ -5,7 +5,6 @@ import eventsRouter from './events';
 import teamsRouter from './teams';
 import divisionsRouter from './divisions';
 import searchRouter from './search';
-import practiceTablesRouter from './practice-tables';
 
 const router = express.Router({ mergeParams: true });
 
@@ -16,6 +15,5 @@ router.use('/events', eventsRouter);
 router.use('/teams', teamsRouter);
 router.use('/divisions', divisionsRouter);
 router.use('/search', searchRouter);
-router.use('/', practiceTablesRouter);
 
 export default router;

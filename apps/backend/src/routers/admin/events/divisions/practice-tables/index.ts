@@ -1,22 +1,22 @@
 import express from 'express';
-import db from '../../../../lib/database.js';
-import { requirePermission } from '../../middleware/require-permission.js';
-import { AdminDivisionRequest } from '../../../../types/express.js';
-import { asHandler } from '../../../../types/express-handlers.js';
+import db from '../../../../../lib/database.js';
+import { requirePermission } from '../../../middleware/require-permission.js';
+import { AdminDivisionRequest } from '../../../../../types/express.js';
+import { asHandler } from '../../../../../types/express-handlers.js';
 
 const router = express.Router({ mergeParams: true });
 
 interface BlockedTimeSlot {
-  start: string;
-  end: string;
+  start: string; // ISO 8601 datetime
+  end: string; // ISO 8601 datetime
   reason?: string;
 }
 
 interface PracticeTablesConfigBody {
   tableCount: number;
   slotDurationMinutes: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
   blockedTimeSlots: BlockedTimeSlot[];
 }
 
@@ -40,41 +40,36 @@ router.put(
       return;
     }
 
-    // Parse start and end times
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const [endHour, endMinute] = endTime.split(':').map(Number);
-    const startMinutes = startHour * 60 + startMinute;
-    const endMinutes = endHour * 60 + endMinute;
+    // Parse ISO datetime strings
+    const startDate = new Date(startTime);
+    const endDate = new Date(endTime);
 
-    // Generate all time slots
+    // Generate all time slots using full ISO datetimes
     const slots: Array<{ tableIndex: number; startTime: Date; endTime: Date }> = [];
-    const baseDate = new Date('1970-01-01T00:00:00Z'); // Use epoch for time-only slots
 
-    for (let minutes = startMinutes; minutes < endMinutes; minutes += slotDurationMinutes) {
-      const slotStartTime = new Date(baseDate);
-      slotStartTime.setUTCMinutes(minutes);
-
-      const slotEndTime = new Date(baseDate);
-      slotEndTime.setUTCMinutes(minutes + slotDurationMinutes);
+    let currentSlotStart = new Date(startDate);
+    while (currentSlotStart < endDate) {
+      const currentSlotEnd = new Date(currentSlotStart.getTime() + slotDurationMinutes * 60 * 1000);
 
       // Check if this slot is blocked
-      const slotStartStr = `${Math.floor(minutes / 60)
-        .toString()
-        .padStart(2, '0')}:${(minutes % 60).toString().padStart(2, '0')}`;
-      const isBlocked = blockedTimeSlots.some(
-        blocked => slotStartStr >= blocked.start && slotStartStr < blocked.end
-      );
+      const isBlocked = blockedTimeSlots.some(blocked => {
+        const blockedStart = new Date(blocked.start);
+        const blockedEnd = new Date(blocked.end);
+        return currentSlotStart >= blockedStart && currentSlotStart < blockedEnd;
+      });
 
       // Only create slots that are not blocked
       if (!isBlocked) {
         for (let tableIdx = 0; tableIdx < tableCount; tableIdx++) {
           slots.push({
             tableIndex: tableIdx,
-            startTime: slotStartTime,
-            endTime: slotEndTime
+            startTime: new Date(currentSlotStart),
+            endTime: new Date(currentSlotEnd)
           });
         }
       }
+
+      currentSlotStart = currentSlotEnd;
     }
 
     const practiceTablesRepo = db.divisions.byId(req.divisionId).practiceTables();

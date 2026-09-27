@@ -12,7 +12,7 @@ import {
   Box
 } from '@mui/material';
 import { formatTimeOnly } from '@lems/shared/utils';
-import { usePracticeTablesSchedule } from '../../../hooks/usePracticeTablesSchedule';
+import { usePracticeTablesSchedule } from '../../../../hooks/use-practice-tables-schedule';
 
 interface Team {
   id: string;
