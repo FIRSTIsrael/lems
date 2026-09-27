@@ -3,44 +3,19 @@ import {
   generatePracticeTableTimeSlots,
   isTimeSlotBlocked as checkTimeSlotBlocked
 } from '@lems/shared/utils';
+import type {
+  Team,
+  PracticeTableAssignment,
+  PracticeTablesConfig
+} from '../practice-tables-manager/graphql/types';
 
-interface Team {
-  id: string;
-  number: number;
-  name: string;
-  affiliation: string;
-}
-
-interface PracticeTableAssignment {
-  id: string;
-  tableIndex: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  team: Team;
-}
-
-interface BlockedTimeSlot {
-  start: string; // ISO 8601 datetime
-  end: string; // ISO 8601 datetime
-  reason?: string;
-}
-
-interface PracticeTablesConfig {
-  divisionId: string;
-  tableCount: number;
-  slotDurationMinutes: number;
-  startTime: string; // ISO 8601 datetime
-  endTime: string; // ISO 8601 datetime
-  blockedTimeSlots: BlockedTimeSlot[];
-}
-
-interface BlockedSlotInfo {
+export interface BlockedSlotInfo {
   reason?: string;
   rowSpan: number;
   isFirstSlot: boolean;
 }
 
-interface UsePracticeTablesScheduleResult {
+export interface UsePracticeTablesScheduleResult {
   timeSlots: string[];
   assignmentsMap: Record<number, Record<string, Team>>;
   isBlocked: (time: string) => boolean;
@@ -119,9 +94,10 @@ export function usePracticeTablesSchedule(
 
   // Get assignment for a specific table and time
   const getAssignment = useMemo(
-    () => (tableIndex: number, time: string): Team | null => {
-      return assignmentsMap[tableIndex]?.[time] || null;
-    },
+    () =>
+      (tableIndex: number, time: string): Team | null => {
+        return assignmentsMap[tableIndex]?.[time] || null;
+      },
     [assignmentsMap]
   );
 
