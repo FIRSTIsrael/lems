@@ -5,32 +5,20 @@ import {
   PracticeTablesSchedule,
   UpdateablePracticeTablesSchedule
 } from '../schema/tables/practice-tables-schedule';
+import { PracticeTablesSettings } from '../schema/tables/divisions';
 
-interface PracticeTablesConfig {
-  divisionId: string;
-  tableCount: number;
-  slotDurationMinutes: number;
-  startTime: string;
-  endTime: string;
-  blockedTimeSlots: Array<{
-    start: string;
-    end: string;
-    reason?: string;
-  }>;
-}
-
-interface PracticeTableAssignmentWithTeam {
+export interface PracticeTableAssignmentWithTeam {
   id: string;
-  divisionId: string;
-  tableNumber: number;
-  startTime: Date;
-  endTime: Date;
-  createdAt: Date;
-  teamId: string;
-  teamNumber: number;
-  teamName: string;
-  teamAffiliation: string;
-  teamRegion: string;
+  division_id: string;
+  table_number: number;
+  start_time: Date;
+  end_time: Date;
+  created_at: Date;
+  team_id: string;
+  number: number;
+  name: string;
+  affiliation: string;
+  region: string;
 }
 
 export class PracticeTablesRepository {
@@ -38,32 +26,21 @@ export class PracticeTablesRepository {
 
   /**
    * Get practice tables configuration for a division
+   * Returns the raw practice_tables_settings JSON from the divisions table
    */
-  async getConfig(divisionId: string): Promise<PracticeTablesConfig | null> {
+  async getConfig(divisionId: string): Promise<PracticeTablesSettings | null> {
     const division = await this.db
       .selectFrom('divisions')
       .where('id', '=', divisionId)
       .select('practice_tables_settings')
       .executeTakeFirst();
 
-    if (!division || !division.practice_tables_settings) {
-      return null;
-    }
-
-    const settings = division.practice_tables_settings as unknown as Record<string, unknown>;
-
-    return {
-      divisionId,
-      tableCount: settings.tableCount as number,
-      slotDurationMinutes: settings.slotDurationMinutes as number,
-      startTime: settings.startTime as string,
-      endTime: settings.endTime as string,
-      blockedTimeSlots: (settings.blockedTimeSlots as Array<Record<string, unknown>>) || []
-    } as PracticeTablesConfig;
+    return division?.practice_tables_settings ?? null;
   }
 
   /**
-   * Get all practice table assignments for a division (only assigned slots)
+   * Get all practice table assignments for a division with team data (only assigned slots)
+   * Returns raw database columns without transformation
    */
   async getAssignments(divisionId: string): Promise<PracticeTableAssignmentWithTeam[]> {
     const assignments = await this.db
@@ -73,16 +50,16 @@ export class PracticeTablesRepository {
       .where('pts.team_id', 'is not', null)
       .select([
         'pts.id',
-        'pts.division_id as divisionId',
-        'pts.table_number as tableNumber',
-        'pts.start_time as startTime',
-        'pts.end_time as endTime',
-        'pts.created_at as createdAt',
-        't.id as teamId',
-        't.number as teamNumber',
-        't.name as teamName',
-        't.affiliation as teamAffiliation',
-        't.region as teamRegion'
+        'pts.division_id',
+        'pts.table_number',
+        'pts.start_time',
+        'pts.end_time',
+        'pts.created_at',
+        't.id as team_id',
+        't.number',
+        't.name',
+        't.affiliation',
+        't.region'
       ])
       .execute();
 

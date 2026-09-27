@@ -44,7 +44,7 @@ export const practiceTablesConfigResolver: GraphQLFieldResolver<
 
   // Convert HH:MM times to ISO 8601 datetime strings
   return {
-    divisionId: config.divisionId,
+    divisionId: parent.divisionId,
     tableCount: config.tableCount,
     slotDurationMinutes: config.slotDurationMinutes,
     startTime: timeToISO(config.startTime, eventDate),

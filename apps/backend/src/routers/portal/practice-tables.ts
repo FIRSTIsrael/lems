@@ -43,7 +43,7 @@ router.get('/divisions/:divisionId/practice-tables', async (req, res) => {
 
     // Convert config times to ISO 8601 datetime strings
     const configWithISOTimes = {
-      divisionId: config.divisionId,
+      divisionId,
       tableCount: config.tableCount,
       slotDurationMinutes: config.slotDurationMinutes,
       startTime: timeToISO(config.startTime, eventDate),
@@ -61,15 +61,15 @@ router.get('/divisions/:divisionId/practice-tables', async (req, res) => {
     // Format assignments with ISO datetime strings
     const assignments = assignmentsData.map(a => ({
       id: a.id,
-      tableIndex: a.tableNumber,
-      startTime: a.startTime.toISOString(),
-      endTime: a.endTime.toISOString(),
+      tableIndex: a.table_number,
+      startTime: a.start_time.toISOString(),
+      endTime: a.end_time.toISOString(),
       team: {
-        id: a.teamId,
-        number: a.teamNumber,
-        name: a.teamName,
-        affiliation: a.teamAffiliation,
-        slug: `${a.teamRegion}-${a.teamNumber}`.toUpperCase()
+        id: a.team_id,
+        number: a.number,
+        name: a.name,
+        affiliation: a.affiliation,
+        slug: `${a.region}-${a.number}`.toUpperCase()
       }
     }));
 

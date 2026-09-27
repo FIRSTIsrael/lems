@@ -17,11 +17,11 @@ export const practiceTablesScheduleResolver: GraphQLFieldResolver<
 
   return assignments.map(assignment => ({
     id: assignment.id,
-    divisionId: assignment.divisionId,
-    teamId: assignment.teamId,
-    tableIndex: assignment.tableNumber,
-    startTime: assignment.startTime.toISOString(),
-    endTime: assignment.endTime.toISOString(),
-    createdAt: assignment.createdAt.toISOString()
+    divisionId: assignment.division_id,
+    teamId: assignment.team_id,
+    tableIndex: assignment.table_number,
+    startTime: assignment.start_time.toISOString(),
+    endTime: assignment.end_time.toISOString(),
+    createdAt: assignment.created_at.toISOString()
   }));
 };
