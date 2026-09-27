@@ -118,6 +118,28 @@ export class DivisionPracticeTablesSelector {
   }
 
   /**
+   * Create multiple practice table assignments in this division
+   */
+  async createMany(
+    assignments: Array<Omit<InsertablePracticeTablesSchedule, 'division_id'>>
+  ): Promise<PracticeTablesSchedule[]> {
+    if (assignments.length === 0) {
+      return [];
+    }
+
+    const assignmentsWithDivision = assignments.map(assignment => ({
+      ...assignment,
+      division_id: this.divisionId
+    }));
+
+    return (await this.db
+      .insertInto('practice_tables_schedule')
+      .values(assignmentsWithDivision)
+      .returningAll()
+      .execute()) as PracticeTablesSchedule[];
+  }
+
+  /**
    * Update an existing practice table assignment in this division
    */
   async updateAssignment(

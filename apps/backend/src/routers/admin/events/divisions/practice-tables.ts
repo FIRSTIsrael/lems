@@ -1,5 +1,4 @@
 import express from 'express';
-import { sql } from 'kysely';
 import db from '../../../../lib/database.js';
 import { requirePermission } from '../../middleware/require-permission.js';
 import { AdminDivisionRequest } from '../../../../types/express.js';
@@ -78,43 +77,33 @@ router.put(
       }
     }
 
-    // Use a transaction to update config and recreate slots atomically
-    await db.raw.sql.transaction().execute(async trx => {
-      // Update the practice_tables_settings JSON column
-      await trx
-        .updateTable('divisions')
-        .set({
-          practice_tables_settings: sql`${JSON.stringify({
-            tableCount,
-            slotDurationMinutes,
-            startTime,
-            endTime,
-            blockedTimeSlots
-          })}::jsonb`
-        })
-        .where('id', '=', req.divisionId)
-        .execute();
+    const practiceTablesRepo = db.divisions.byId(req.divisionId).practiceTables();
 
-      // Clear all existing slots for this division
-      const practiceTablesRepo = db.divisions.byId(req.divisionId).practiceTables();
-      await practiceTablesRepo.deleteAllAssignments();
-
-      // Insert all new slots (with team_id as null)
-      if (slots.length > 0) {
-        await trx
-          .insertInto('practice_tables_schedule')
-          .values(
-            slots.map(slot => ({
-              division_id: req.divisionId,
-              team_id: null,
-              table_number: slot.tableIndex,
-              start_time: slot.startTime,
-              end_time: slot.endTime
-            }))
-          )
-          .execute();
+    // Update the practice_tables_settings JSON column
+    await db.divisions.byId(req.divisionId).update({
+      practice_tables_settings: {
+        tableCount,
+        slotDurationMinutes,
+        startTime,
+        endTime,
+        blockedTimeSlots
       }
     });
+
+    // Clear all existing slots for this division
+    await practiceTablesRepo.deleteAllAssignments();
+
+    // Insert all new slots (with team_id as null)
+    if (slots.length > 0) {
+      await practiceTablesRepo.createMany(
+        slots.map(slot => ({
+          team_id: null,
+          table_number: slot.tableIndex,
+          start_time: slot.startTime,
+          end_time: slot.endTime
+        }))
+      );
+    }
 
     res.status(200).json({
       divisionId: req.divisionId,
@@ -133,18 +122,13 @@ router.delete(
   '/practice-tables',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    // Use a transaction to delete config and clear all slots atomically
-    await db.raw.sql.transaction().execute(async trx => {
-      // Clear the practice_tables_settings JSON column
-      await trx
-        .updateTable('divisions')
-        .set({ practice_tables_settings: null })
-        .where('id', '=', req.divisionId)
-        .execute();
-
-      // Delete all slots for this division
-      await db.divisions.byId(req.divisionId).practiceTables().deleteAllAssignments();
+    // Clear the practice_tables_settings JSON column
+    await db.divisions.byId(req.divisionId).update({
+      practice_tables_settings: null
     });
+
+    // Delete all slots for this division
+    await db.divisions.byId(req.divisionId).practiceTables().deleteAllAssignments();
 
     res.status(204).end();
   })
