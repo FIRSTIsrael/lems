@@ -1,22 +1,27 @@
-import { Router } from 'express';
+import { Router, Response } from 'express';
 import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../lib/database';
+import { PortalDivisionRequest } from '../../types/express';
+import { asHandler } from '../../types/express-handlers';
+import { attachDivision } from './middleware/attach-division';
 
 const router = Router();
 const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
-// Get practice tables data for a division (config + assignments)
-router.get('/divisions/:divisionId/practice-tables', async (req, res) => {
-  const { divisionId } = req.params;
+router.use('/divisions/:divisionId/practice-tables', attachDivision());
 
-  try {
-    const config = await practiceTablesRepo.getConfig(divisionId);
+// Get practice tables data for a division (config + assignments)
+router.get(
+  '/divisions/:divisionId/practice-tables',
+  asHandler<PortalDivisionRequest>(async (req, res: Response) => {
+    const config = await practiceTablesRepo.getConfig(req.divisionId);
 
     if (!config) {
-      return res.json(null);
+      res.json(null);
+      return;
     }
 
-    const assignmentsData = await practiceTablesRepo.getAssignments(divisionId);
+    const assignmentsData = await practiceTablesRepo.getAssignments(req.divisionId);
 
     const assignments = assignmentsData.map(a => ({
       id: a.id,
@@ -35,13 +40,10 @@ router.get('/divisions/:divisionId/practice-tables', async (req, res) => {
     // Return config as-is from database (HH:MM format)
     // Frontend is responsible for converting to full datetimes if needed
     res.json({
-      config: { ...config, divisionId },
+      config: { ...config, divisionId: req.divisionId },
       assignments
     });
-  } catch (error) {
-    console.error('Error fetching practice tables data:', error);
-    res.status(500).json({ error: 'Failed to fetch practice tables data' });
-  }
-});
+  })
+);
 
 export default router;
