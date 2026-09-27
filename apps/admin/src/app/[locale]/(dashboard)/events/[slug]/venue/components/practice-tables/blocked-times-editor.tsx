@@ -5,8 +5,8 @@ import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 
 interface BlockedTimeSlot {
-  start: string;
-  end: string;
+  start: string; // HH:MM format
+  end: string; // HH:MM format
   reason?: string;
 }
 
@@ -19,7 +19,16 @@ export function BlockedTimesEditor({ blockedSlots, onChange }: BlockedTimesEdito
   const t = useTranslations('pages.events.practice-tables');
 
   const addBlockedSlot = () => {
-    onChange([...blockedSlots, { start: '12:00', end: '13:00', reason: '' }]);
+    // Default to noon-1pm on current date
+    const now = new Date();
+    const noon = new Date(now);
+    noon.setHours(12, 0, 0, 0);
+    const onePM = new Date(now);
+    onePM.setHours(13, 0, 0, 0);
+    onChange([
+      ...blockedSlots,
+      { start: noon.toISOString(), end: onePM.toISOString(), reason: '' }
+    ]);
   };
 
   const removeBlockedSlot = (index: number) => {

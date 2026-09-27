@@ -13,16 +13,16 @@ import { useTranslations } from 'next-intl';
 import { BlockedTimesEditor } from './blocked-times-editor';
 
 interface BlockedTimeSlot {
-  start: string;
-  end: string;
+  start: string; // HH:MM format
+  end: string; // HH:MM format
   reason?: string;
 }
 
 export interface PracticeTablesConfig {
   tableCount: number;
   slotDuration: number;
-  startTime: string;
-  endTime: string;
+  startTime: string; // HH:MM format
+  endTime: string; // HH:MM format
   blockedSlots: BlockedTimeSlot[];
 }
 
