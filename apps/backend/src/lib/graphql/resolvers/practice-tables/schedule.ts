@@ -1,5 +1,4 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { createPracticeTablesRepository } from '@lems/database';
 import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 
@@ -7,13 +6,11 @@ interface PracticeTables {
   divisionId: string;
 }
 
-const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
-
 export const practiceTablesScheduleResolver: GraphQLFieldResolver<
   PracticeTables,
   GraphQLContext
 > = async parent => {
-  const assignments = await practiceTablesRepo.getAssignments(parent.divisionId);
+  const assignments = await db.divisions.byId(parent.divisionId).practiceTables().getAssignments();
 
   return assignments.map(assignment => ({
     id: assignment.id,

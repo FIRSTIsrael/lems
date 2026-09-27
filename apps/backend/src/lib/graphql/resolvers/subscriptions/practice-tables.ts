@@ -7,6 +7,7 @@ interface PracticeTableAssignmentsUpdatedArgs {
 
 /**
  * Subscribe function for practiceTableAssignmentsUpdated
+ * Subscribes to ALL assignment updates for a division
  */
 const practiceTableAssignmentsUpdatedSubscribe = (
   _root: unknown,
@@ -19,11 +20,16 @@ const practiceTableAssignmentsUpdatedSubscribe = (
 
 /**
  * Resolve function for practiceTableAssignmentsUpdated
- * Returns the assignments array from the Redis event
+ * Returns the COMPLETE list of all assignments for the division
+ *
+ * Note: Unlike other subscriptions that return only changed items,
+ * this returns the full assignment list to ensure UI consistency.
+ * The mutation publishes all assignments via practiceTablesScheduleResolver.
  */
 const processPracticeTableAssignmentsEvent = async (
   event: Record<string, unknown>
 ): Promise<unknown[]> => {
+  // The event.data contains the full array of assignments from the mutation
   const assignments = (event.data as unknown[]) || [];
   return assignments;
 };

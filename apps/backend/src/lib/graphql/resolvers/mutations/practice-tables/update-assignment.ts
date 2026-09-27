@@ -1,12 +1,9 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../../../database';
 import type { GraphQLContext } from '../../../apollo-server';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub.js';
 import { practiceTablesScheduleResolver } from '../../practice-tables/schedule.js';
-
-const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 interface UpdatePracticeTableSlotInput {
   divisionId: string;
@@ -26,15 +23,17 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
 > = async (_parent, { input }, context) => {
   const { divisionId, teamId, tableIndex, startTime } = input;
 
+  const practiceTablesRepo = db.divisions.byId(divisionId).practiceTables();
+
   // Find or create the slot
   const startDate = new Date(startTime);
-  const existingSlot = await practiceTablesRepo.getAssignment(divisionId, tableIndex, startDate);
+  const existingSlot = await practiceTablesRepo.getAssignment(tableIndex, startDate);
 
   let result;
 
   if (existingSlot) {
     // Update existing slot
-    result = await practiceTablesRepo.updateAssignment(divisionId, tableIndex, startDate, {
+    result = await practiceTablesRepo.updateAssignment(tableIndex, startDate, {
       team_id: teamId
     });
     if (!result) {
@@ -47,7 +46,7 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
     }
 
     // Get slot duration from division settings
-    const config = await practiceTablesRepo.getConfig(divisionId);
+    const config = await practiceTablesRepo.getConfig();
     if (!config) {
       throw new Error('Practice tables not configured for this division');
     }
@@ -55,7 +54,6 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
     const endDate = new Date(startDate.getTime() + config.slotDurationMinutes * 60 * 1000);
 
     result = await practiceTablesRepo.createAssignment({
-      division_id: divisionId,
       team_id: teamId,
       table_number: tableIndex,
       start_time: startDate,
@@ -74,6 +72,8 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
   };
 
   // Publish update to subscribers
+  // Note: We publish ALL assignments (not just the changed one) to ensure
+  // subscribers have the complete current state of the schedule
   const allAssignments = await practiceTablesScheduleResolver(
     { divisionId },
     context,
