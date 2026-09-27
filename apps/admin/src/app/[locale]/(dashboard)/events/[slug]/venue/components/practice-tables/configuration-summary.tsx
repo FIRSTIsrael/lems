@@ -59,7 +59,7 @@ export function ConfigurationSummary({
                 <Paper key={index} variant="outlined" sx={{ p: 2 }}>
                   <Typography variant="body2">
                     <strong>
-                      {slot.start} - {slot.end}
+                      {slot.start.format('HH:mm')} - {slot.end.format('HH:mm')}
                     </strong>
                     {slot.reason && (
                       <>

@@ -44,6 +44,18 @@ router.put(
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
 
+    const isInvalid = (date: Date) => isNaN(date.getTime());
+    if (
+      isInvalid(startDate) ||
+      isInvalid(endDate) ||
+      blockedTimeSlots.some(
+        slot => isInvalid(new Date(slot.start)) || isInvalid(new Date(slot.end))
+      )
+    ) {
+      res.status(400).json({ error: 'Times must be ISO 8601 datetime strings' });
+      return;
+    }
+
     // Generate all time slots using full ISO datetimes
     const slots: Array<{ tableIndex: number; startTime: Date; endTime: Date }> = [];
 

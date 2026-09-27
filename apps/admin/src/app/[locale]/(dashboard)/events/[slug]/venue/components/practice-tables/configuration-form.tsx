@@ -9,20 +9,17 @@ import {
   Grid,
   InputAdornment
 } from '@mui/material';
+import { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
-import { BlockedTimesEditor } from './blocked-times-editor';
-
-interface BlockedTimeSlot {
-  start: string; // HH:MM format
-  end: string; // HH:MM format
-  reason?: string;
-}
+import { LocalizationProvider, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { BlockedTimesEditor, BlockedTimeSlot } from './blocked-times-editor';
 
 export interface PracticeTablesConfig {
   tableCount: number;
   slotDuration: number;
-  startTime: string; // HH:MM format
-  endTime: string; // HH:MM format
+  startTime: Dayjs;
+  endTime: Dayjs;
   blockedSlots: BlockedTimeSlot[];
 }
 
@@ -56,7 +53,7 @@ export function ConfigurationForm({
   };
 
   return (
-    <Box>
+    <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={3}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 6, sm: 3 }}>
@@ -87,29 +84,37 @@ export function ConfigurationForm({
             />
           </Grid>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <TextField
+            <TimePicker
               label={t('fields.start-time')}
-              type="time"
               value={config.startTime}
-              onChange={e => updateConfig({ startTime: e.target.value })}
-              fullWidth
-              size="small"
+              onChange={(value: Dayjs | null) => {
+                if (!value) return;
+                updateConfig({ startTime: value });
+              }}
+              ampm={false}
+              format="HH:mm"
+              slotProps={{ textField: { size: 'small', fullWidth: true } }}
             />
           </Grid>
           <Grid size={{ xs: 6, sm: 3 }}>
-            <TextField
+            <TimePicker
               label={t('fields.end-time')}
-              type="time"
               value={config.endTime}
-              onChange={e => updateConfig({ endTime: e.target.value })}
-              fullWidth
-              size="small"
+              onChange={(value: Dayjs | null) => {
+                if (!value) return;
+                updateConfig({ endTime: value });
+              }}
+              ampm={false}
+              format="HH:mm"
+              minTime={config.startTime}
+              slotProps={{ textField: { size: 'small', fullWidth: true } }}
             />
           </Grid>
         </Grid>
 
         <BlockedTimesEditor
           blockedSlots={config.blockedSlots}
+          defaultDate={config.startTime}
           onChange={blockedSlots => updateConfig({ blockedSlots })}
         />
 
@@ -119,6 +124,6 @@ export function ConfigurationForm({
           </Button>
         </Box>
       </Stack>
-    </Box>
+    </LocalizationProvider>
   );
 }

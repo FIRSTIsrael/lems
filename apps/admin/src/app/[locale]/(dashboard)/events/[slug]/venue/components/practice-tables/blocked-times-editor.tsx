@@ -1,43 +1,42 @@
 'use client';
 
+import { Dayjs } from 'dayjs';
 import { Box, Typography, TextField, IconButton, Button, Stack, Grid } from '@mui/material';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { TimePicker } from '@mui/x-date-pickers';
 import { useTranslations } from 'next-intl';
 
-interface BlockedTimeSlot {
-  start: string; // HH:MM format
-  end: string; // HH:MM format
+export interface BlockedTimeSlot {
+  start: Dayjs;
+  end: Dayjs;
   reason?: string;
 }
 
 interface BlockedTimesEditorProps {
   blockedSlots: BlockedTimeSlot[];
+  defaultDate: Dayjs;
   onChange: (slots: BlockedTimeSlot[]) => void;
 }
 
-export function BlockedTimesEditor({ blockedSlots, onChange }: BlockedTimesEditorProps) {
+export function BlockedTimesEditor({
+  blockedSlots,
+  defaultDate,
+  onChange
+}: BlockedTimesEditorProps) {
   const t = useTranslations('pages.events.practice-tables');
 
   const addBlockedSlot = () => {
-    // Default to noon-1pm on current date
-    const now = new Date();
-    const noon = new Date(now);
-    noon.setHours(12, 0, 0, 0);
-    const onePM = new Date(now);
-    onePM.setHours(13, 0, 0, 0);
-    onChange([
-      ...blockedSlots,
-      { start: noon.toISOString(), end: onePM.toISOString(), reason: '' }
-    ]);
+    const start = defaultDate.hour(12).minute(0).second(0);
+    onChange([...blockedSlots, { start, end: start.hour(13), reason: '' }]);
   };
 
   const removeBlockedSlot = (index: number) => {
     onChange(blockedSlots.filter((_, i) => i !== index));
   };
 
-  const updateBlockedSlot = (index: number, field: keyof BlockedTimeSlot, value: string) => {
+  const updateBlockedSlot = (index: number, updates: Partial<BlockedTimeSlot>) => {
     const updated = [...blockedSlots];
-    updated[index] = { ...updated[index], [field]: value };
+    updated[index] = { ...updated[index], ...updates };
     onChange(updated);
   };
 
@@ -54,28 +53,37 @@ export function BlockedTimesEditor({ blockedSlots, onChange }: BlockedTimesEdito
         {blockedSlots.map((slot, index) => (
           <Grid key={index} container spacing={2} sx={{ alignItems: 'center' }}>
             <Grid size={{ xs: 12, sm: 3 }}>
-              <TextField
+              <TimePicker
                 label={t('blocked-times.start')}
-                type="time"
                 value={slot.start}
-                onChange={e => updateBlockedSlot(index, 'start', e.target.value)}
-                fullWidth
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  updateBlockedSlot(index, { start: value });
+                }}
+                ampm={false}
+                format="HH:mm"
+                slotProps={{ textField: { fullWidth: true } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 3 }}>
-              <TextField
+              <TimePicker
                 label={t('blocked-times.end')}
-                type="time"
                 value={slot.end}
-                onChange={e => updateBlockedSlot(index, 'end', e.target.value)}
-                fullWidth
+                onChange={(value: Dayjs | null) => {
+                  if (!value) return;
+                  updateBlockedSlot(index, { end: value });
+                }}
+                ampm={false}
+                format="HH:mm"
+                minTime={slot.start}
+                slotProps={{ textField: { fullWidth: true } }}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 5 }}>
               <TextField
                 label={t('blocked-times.reason')}
                 value={slot.reason || ''}
-                onChange={e => updateBlockedSlot(index, 'reason', e.target.value)}
+                onChange={e => updateBlockedSlot(index, { reason: e.target.value })}
                 placeholder={t('blocked-times.reason-placeholder')}
                 fullWidth
               />

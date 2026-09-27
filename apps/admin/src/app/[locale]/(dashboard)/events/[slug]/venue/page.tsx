@@ -58,7 +58,6 @@ const VenuePage: React.FC = () => {
           <Grid size={{ xs: 12, lg: 8 }} sx={{ display: 'flex', flexDirection: 'column' }}>
             <PracticeTablesSection
               key={`practice-tables-${selectedDivision.id}`}
-              eventId={event.id}
               division={selectedDivision}
               onUpdate={mutate}
             />
