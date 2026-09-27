@@ -1,12 +1,11 @@
 import { Router, Response } from 'express';
-import { createPracticeTablesRepository } from '@lems/database';
+import { PracticeTableAssignmentWithTeam } from '@lems/database';
 import db from '../../lib/database';
 import { PortalDivisionRequest } from '../../types/express';
 import { asHandler } from '../../types/express-handlers';
 import { attachDivision } from './middleware/attach-division';
 
 const router = Router();
-const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 router.use('/divisions/:divisionId/practice-tables', attachDivision());
 
@@ -14,16 +13,18 @@ router.use('/divisions/:divisionId/practice-tables', attachDivision());
 router.get(
   '/divisions/:divisionId/practice-tables',
   asHandler<PortalDivisionRequest>(async (req, res: Response) => {
-    const config = await practiceTablesRepo.getConfig(req.divisionId);
+    const practiceTables = db.divisions.byId(req.divisionId).practiceTables();
+
+    const config = await practiceTables.getConfig();
 
     if (!config) {
       res.json(null);
       return;
     }
 
-    const assignmentsData = await practiceTablesRepo.getAssignments(req.divisionId);
+    const assignmentsData = await practiceTables.getAssignments();
 
-    const assignments = assignmentsData.map(a => ({
+    const assignments = assignmentsData.map((a: PracticeTableAssignmentWithTeam) => ({
       id: a.id,
       tableIndex: a.table_number,
       startTime: a.start_time.toISOString(),

@@ -14,6 +14,7 @@ import {
   InsertableAgendaEvent,
   UpdateableAgendaEvent
 } from '../schema/tables/agenda-events';
+import { DivisionPracticeTablesSelector } from './practice-tables';
 
 class DivisionAgendaSelector {
   constructor(
@@ -162,6 +163,10 @@ class DivisionSelector {
 
   agenda(): DivisionAgendaSelector {
     return new DivisionAgendaSelector(this.db, this.selector.value);
+  }
+
+  practiceTables(): DivisionPracticeTablesSelector {
+    return new DivisionPracticeTablesSelector(this.db, this.selector.value);
   }
 }
 

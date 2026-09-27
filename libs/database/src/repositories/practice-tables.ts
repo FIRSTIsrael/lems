@@ -21,17 +21,20 @@ export interface PracticeTableAssignmentWithTeam {
   region: string;
 }
 
-export class PracticeTablesRepository {
-  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
+export class DivisionPracticeTablesSelector {
+  constructor(
+    private db: Kysely<KyselyDatabaseSchema>,
+    private divisionId: string
+  ) {}
 
   /**
-   * Get practice tables configuration for a division
+   * Get practice tables configuration for this division
    * Returns the raw practice_tables_settings JSON from the divisions table
    */
-  async getConfig(divisionId: string): Promise<PracticeTablesSettings | null> {
+  async getConfig(): Promise<PracticeTablesSettings | null> {
     const division = await this.db
       .selectFrom('divisions')
-      .where('id', '=', divisionId)
+      .where('id', '=', this.divisionId)
       .select('practice_tables_settings')
       .executeTakeFirst();
 
@@ -39,14 +42,14 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Get all practice table assignments for a division with team data (only assigned slots)
+   * Get all practice table assignments for this division with team data (only assigned slots)
    * Returns raw database columns without transformation
    */
-  async getAssignments(divisionId: string): Promise<PracticeTableAssignmentWithTeam[]> {
+  async getAssignments(): Promise<PracticeTableAssignmentWithTeam[]> {
     const assignments = await this.db
       .selectFrom('practice_tables_schedule as pts')
       .innerJoin('teams as t', 't.id', 'pts.team_id')
-      .where('pts.division_id', '=', divisionId)
+      .where('pts.division_id', '=', this.divisionId)
       .where('pts.team_id', 'is not', null)
       .select([
         'pts.id',
@@ -67,30 +70,12 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Get a specific practice table assignment
-   */
-  async getAssignment(
-    divisionId: string,
-    tableIndex: number,
-    startTime: Date
-  ): Promise<PracticeTablesSchedule | undefined> {
-    const result = await this.db
-      .selectFrom('practice_tables_schedule')
-      .where('division_id', '=', divisionId)
-      .where('table_number', '=', tableIndex)
-      .where('start_time', '=', startTime)
-      .selectAll()
-      .executeTakeFirst();
-
-    return result as PracticeTablesSchedule | undefined;
-  }
-
-  /**
-   * Get all assignments for a specific team
+   * Get all assignments for a specific team in this division
    */
   async getTeamAssignments(teamId: string): Promise<PracticeTablesSchedule[]> {
     const results = await this.db
       .selectFrom('practice_tables_schedule')
+      .where('division_id', '=', this.divisionId)
       .where('team_id', '=', teamId)
       .selectAll()
       .orderBy('start_time', 'asc')
@@ -100,14 +85,32 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Create a new practice table assignment
+   * Get a specific practice table assignment in this division
+   */
+  async getAssignment(
+    tableIndex: number,
+    startTime: Date
+  ): Promise<PracticeTablesSchedule | undefined> {
+    const result = await this.db
+      .selectFrom('practice_tables_schedule')
+      .where('division_id', '=', this.divisionId)
+      .where('table_number', '=', tableIndex)
+      .where('start_time', '=', startTime)
+      .selectAll()
+      .executeTakeFirst();
+
+    return result as PracticeTablesSchedule | undefined;
+  }
+
+  /**
+   * Create a new practice table assignment in this division
    */
   async createAssignment(
-    assignment: InsertablePracticeTablesSchedule
+    assignment: Omit<InsertablePracticeTablesSchedule, 'division_id'>
   ): Promise<PracticeTablesSchedule> {
     const result = await this.db
       .insertInto('practice_tables_schedule')
-      .values(assignment)
+      .values({ ...assignment, division_id: this.divisionId })
       .returningAll()
       .executeTakeFirstOrThrow();
 
@@ -115,10 +118,9 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Update an existing practice table assignment
+   * Update an existing practice table assignment in this division
    */
   async updateAssignment(
-    divisionId: string,
     tableIndex: number,
     startTime: Date,
     updates: UpdateablePracticeTablesSchedule
@@ -126,7 +128,7 @@ export class PracticeTablesRepository {
     const result = await this.db
       .updateTable('practice_tables_schedule')
       .set(updates)
-      .where('division_id', '=', divisionId)
+      .where('division_id', '=', this.divisionId)
       .where('table_number', '=', tableIndex)
       .where('start_time', '=', startTime)
       .returningAll()
@@ -136,16 +138,12 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Delete a practice table assignment
+   * Delete a practice table assignment in this division
    */
-  async deleteAssignment(
-    divisionId: string,
-    tableIndex: number,
-    startTime: Date
-  ): Promise<boolean> {
+  async deleteAssignment(tableIndex: number, startTime: Date): Promise<boolean> {
     const result = await this.db
       .deleteFrom('practice_tables_schedule')
-      .where('division_id', '=', divisionId)
+      .where('division_id', '=', this.divisionId)
       .where('table_number', '=', tableIndex)
       .where('start_time', '=', startTime)
       .execute();
@@ -154,15 +152,82 @@ export class PracticeTablesRepository {
   }
 
   /**
-   * Delete all assignments for a division
+   * Delete all assignments for this division
    */
-  async deleteAllAssignments(divisionId: string): Promise<number> {
+  async deleteAllAssignments(): Promise<number> {
     const result = await this.db
       .deleteFrom('practice_tables_schedule')
-      .where('division_id', '=', divisionId)
+      .where('division_id', '=', this.divisionId)
       .execute();
 
     return Number(result[0]?.numDeletedRows || 0);
+  }
+}
+
+/**
+ * @deprecated Use db.divisions.byId(divisionId).practiceTables() instead
+ * Legacy repository for backward compatibility
+ */
+export class PracticeTablesRepository {
+  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
+
+  getConfig(divisionId: string): Promise<PracticeTablesSettings | null> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).getConfig();
+  }
+
+  getAssignments(divisionId: string): Promise<PracticeTableAssignmentWithTeam[]> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).getAssignments();
+  }
+
+  getAssignment(
+    divisionId: string,
+    tableIndex: number,
+    startTime: Date
+  ): Promise<PracticeTablesSchedule | undefined> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).getAssignment(
+      tableIndex,
+      startTime
+    );
+  }
+
+  getTeamAssignments(teamId: string): Promise<PracticeTablesSchedule[]> {
+    // Note: This doesn't filter by division, maintaining backward compatibility
+    return this.db
+      .selectFrom('practice_tables_schedule')
+      .where('team_id', '=', teamId)
+      .selectAll()
+      .orderBy('start_time', 'asc')
+      .execute() as Promise<PracticeTablesSchedule[]>;
+  }
+
+  createAssignment(assignment: InsertablePracticeTablesSchedule): Promise<PracticeTablesSchedule> {
+    return new DivisionPracticeTablesSelector(this.db, assignment.division_id).createAssignment(
+      assignment
+    );
+  }
+
+  updateAssignment(
+    divisionId: string,
+    tableIndex: number,
+    startTime: Date,
+    updates: UpdateablePracticeTablesSchedule
+  ): Promise<PracticeTablesSchedule | undefined> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).updateAssignment(
+      tableIndex,
+      startTime,
+      updates
+    );
+  }
+
+  deleteAssignment(divisionId: string, tableIndex: number, startTime: Date): Promise<boolean> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).deleteAssignment(
+      tableIndex,
+      startTime
+    );
+  }
+
+  deleteAllAssignments(divisionId: string): Promise<number> {
+    return new DivisionPracticeTablesSelector(this.db, divisionId).deleteAllAssignments();
   }
 }
 

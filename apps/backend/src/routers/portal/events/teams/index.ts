@@ -1,5 +1,4 @@
 import express, { Response } from 'express';
-import { createPracticeTablesRepository } from '@lems/database';
 import db from '../../../../lib/database';
 import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
@@ -14,7 +13,6 @@ import {
 } from './util';
 
 const router = express.Router({ mergeParams: true });
-const practiceTablesRepo = createPracticeTablesRepository(db.raw.sql);
 
 router.use('/:teamSlug', attachTeamAtEvent());
 
@@ -60,7 +58,7 @@ router.get(
         db.tables.byDivisionId(req.divisionId).getAll(),
         db.divisions.byId(req.divisionId).agenda().getAll('public'),
         db.divisions.byId(req.divisionId).agenda().getAll('teams'),
-        practiceTablesRepo.getTeamAssignments(req.teamId)
+        db.divisions.byId(req.divisionId).practiceTables().getTeamAssignments(req.teamId)
       ]);
 
     const agenda = [...agendaPublic, ...agendaTeams];
