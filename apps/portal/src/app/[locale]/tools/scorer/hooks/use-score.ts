@@ -68,6 +68,7 @@ export const useScore = () => {
   const edition = useToolEdition();
   const scoresheet = getScoresheet(edition);
   const scoreKey = getScoreKey(edition);
+  const scoresheetVersion = scoresheet._version;
   const [score, setScore] = useState<ScoresDb['scores']['value'] | null>(null);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   // Loading until the draft for the current edition has been read (also while switching editions)
@@ -83,13 +84,13 @@ export const useScore = () => {
 
       const currentScore = await db.get('scores', scoreKey);
       setScore(
-        currentScore && currentScore.version === getScoresheet(edition)._version ? currentScore : null
+        currentScore && currentScore.version === scoresheetVersion ? currentScore : null
       );
       setLoadedKey(scoreKey);
     };
 
     initDb();
-  }, [edition, scoreKey]);
+  }, [scoreKey, scoresheetVersion]);
 
   const updateScore = async (missions: Mission[]) => {
     const { points, errors: missionErrors } = calculateScore(scoresheet, missions);
