@@ -75,6 +75,7 @@ export const useScore = () => {
   const loading = loadedKey !== scoreKey;
 
   useEffect(() => {
+    let cancelled = false;
     const initDb = async () => {
       const db = await openDB<ScoresDb>('scores-database', 1, {
         upgrade(db) {
@@ -83,11 +84,15 @@ export const useScore = () => {
       });
 
       const currentScore = await db.get('scores', scoreKey);
+      if (cancelled) return;
       setScore(currentScore && currentScore.version === scoresheetVersion ? currentScore : null);
       setLoadedKey(scoreKey);
     };
 
     initDb();
+    return () => {
+      cancelled = true;
+    };
   }, [scoreKey, scoresheetVersion]);
 
   const updateScore = async (missions: Mission[]) => {

@@ -34,6 +34,11 @@ router.post(
       return;
     }
 
+    if (futureEdition !== undefined && typeof futureEdition !== 'boolean') {
+      res.status(400).json({ error: 'futureEdition must be a boolean' });
+      return;
+    }
+
     const division = await db.divisions.create({
       name,
       color,

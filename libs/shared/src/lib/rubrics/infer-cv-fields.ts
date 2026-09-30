@@ -60,6 +60,7 @@ export function inferCoreValuesFields(
 /**
  * Gets the list of Core Values field IDs from Innovation Project and Robot Design schemas.
  *
+ * @param edition - The edition whose rubrics schema to use
  * @returns Object mapping category names to arrays of CV-flagged field IDs
  */
 export function getCvFieldIds(edition: Edition): {

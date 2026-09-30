@@ -14,6 +14,7 @@ import {
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
 import { EditionBadge, Flag } from '@lems/shared';
+import { getEdition } from '@lems/shared/edition';
 import { EventSummary } from '@lems/types/api/portal';
 import { LiveIcon } from '../../components/homepage/live-icon';
 
@@ -114,7 +115,7 @@ export const EventListItem: React.FC<EventListItemProps> = ({ event, variant = '
               >
                 {event.name}
               </Typography>
-              <EditionBadge edition={event.futureEdition ? 'future' : 'founders'} />
+              <EditionBadge edition={getEdition(event)} />
               {!event.official && (
                 <Chip
                   icon={<CelebrationIcon />}
