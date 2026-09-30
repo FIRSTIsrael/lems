@@ -99,6 +99,11 @@ extend type Subscription {
   teamArrivalUpdated("The division ID to listen for updates in" divisionId: String!): TeamEvent!
 
   """
+  Subscribe to events when teams are marked as not arrived in a specific division.
+  """
+  teamNotArrived("The division ID to listen for updates in" divisionId: String!): TeamEvent!
+
+  """
   Subscribe to events when teams are disqualified in a specific division.
   """
   teamDisqualified(

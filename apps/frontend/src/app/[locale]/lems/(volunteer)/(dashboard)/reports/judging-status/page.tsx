@@ -12,7 +12,8 @@ import {
   createJudgingSessionStartedSubscription,
   createJudgingSessionCompletedSubscription,
   createJudgingSessionUpdatedSubscription,
-  createTeamArrivalSubscription
+  createTeamArrivalSubscription,
+  createTeamNotArrivedSubscription
 } from './graphql';
 import { JudgingStatusProvider } from './judging-status-context';
 import { CountdownHeader } from './components/countdown-header';
@@ -50,7 +51,8 @@ export default function JudgingStatusPage() {
       createJudgingSessionStartedSubscription(currentDivision.id),
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createJudgingSessionUpdatedSubscription(currentDivision.id),
-      createTeamArrivalSubscription(currentDivision.id)
+      createTeamArrivalSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

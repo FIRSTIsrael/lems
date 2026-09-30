@@ -13,6 +13,7 @@ import {
   createMatchStartedSubscription,
   createMatchCompletedSubscription,
   createTeamArrivedSubscription,
+  createTeamNotArrivedSubscription,
   createParticipantStatusUpdatedSubscription,
   createMatchLoadedSubscription,
   createMatchAbortedSubscription,
@@ -37,6 +38,7 @@ export default function RefereePage() {
   const subscriptions = useMemo(
     () => [
       createTeamArrivedSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id),

@@ -9,7 +9,8 @@ import { usePageData } from '../../../hooks/use-page-data';
 import {
   GET_JUDGING_SCHEDULE,
   parseJudgingSchedule,
-  createTeamArrivalSubscription
+  createTeamArrivalSubscription,
+  createTeamNotArrivedSubscription
 } from './graphql';
 import { ScheduleTable } from './components/schedule-table';
 import { ErrorState } from './components/error-state';
@@ -21,7 +22,10 @@ export default function JudgingSchedulePage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [createTeamArrivalSubscription(currentDivision.id)],
+    () => [
+      createTeamArrivalSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

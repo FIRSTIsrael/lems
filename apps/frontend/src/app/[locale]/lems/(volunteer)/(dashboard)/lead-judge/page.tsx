@@ -21,6 +21,7 @@ import {
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
+  createTeamNotArrivedSubscription,
   getLeadJudgeCategory,
   parseLeadJudgeData,
   createDeliberationUpdatedSubscription
@@ -42,6 +43,7 @@ export default function LeadJudgePage() {
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createRubricStatusChangedSubscription(currentDivision.id),
       createTeamArrivalSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id),
       createDeliberationUpdatedSubscription(currentDivision.id)
     ],
     [currentDivision.id]

@@ -5,7 +5,9 @@ export {
 
 export {
   TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
-  createTeamArrivalUpdatedSubscription
+  TEAM_NOT_ARRIVED_SUBSCRIPTION,
+  createTeamArrivalUpdatedSubscription,
+  createTeamNotArrivedSubscription
 } from './team-arrived';
 
 export {

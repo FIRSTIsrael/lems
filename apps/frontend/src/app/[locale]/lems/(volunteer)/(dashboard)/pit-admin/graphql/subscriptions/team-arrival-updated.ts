@@ -1,11 +1,15 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { merge, updateById, Reconciler } from '@lems/shared/utils';
+import { merge, updateById } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { TeamEvent } from '../types';
 import type { QueryData } from '../query';
 
 interface SubscriptionData {
   teamArrivalUpdated: TeamEvent;
+}
+
+interface NotArrivedSubscriptionData {
+  teamNotArrived: TeamEvent;
 }
 
 interface SubscriptionVars {
@@ -23,21 +27,26 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-const teamArrivalReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
-  if (!data) return prev;
-
-  const { teamId } = data.teamArrivalUpdated;
-
-  if (prev.division) {
-    return merge(prev, {
-      division: {
-        id: prev.division.id,
-        teams: updateById(prev.division.teams, teamId, team => merge(team, { arrived: true }))
-      }
-    });
+export const TEAM_NOT_ARRIVED_SUBSCRIPTION: TypedDocumentNode<
+  NotArrivedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription TeamNotArrived($divisionId: String!) {
+    teamNotArrived(divisionId: $divisionId) {
+      teamId
+    }
   }
+`;
 
-  return prev;
+const setTeamArrived = (prev: QueryData, teamId: string, arrived: boolean): QueryData => {
+  if (!prev.division) return prev;
+
+  return merge(prev, {
+    division: {
+      id: prev.division.id,
+      teams: updateById(prev.division.teams, teamId, team => merge(team, { arrived }))
+    }
+  });
 };
 
 export function createTeamArrivalSubscription(
@@ -45,9 +54,21 @@ export function createTeamArrivalSubscription(
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   return {
     subscription: TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
-    subscriptionVariables: {
-      divisionId
-    },
-    updateQuery: teamArrivalReconciler
-  } as SubscriptionConfig<unknown, QueryData, SubscriptionVars>;
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }) =>
+      data ? setTeamArrived(prev, (data as SubscriptionData).teamArrivalUpdated.teamId, true) : prev
+  };
+}
+
+export function createTeamNotArrivedSubscription(
+  divisionId: string
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
+  return {
+    subscription: TEAM_NOT_ARRIVED_SUBSCRIPTION,
+    subscriptionVariables: { divisionId },
+    updateQuery: (prev: QueryData, { data }: { data?: unknown }) =>
+      data
+        ? setTeamArrived(prev, (data as NotArrivedSubscriptionData).teamNotArrived.teamId, false)
+        : prev
+  };
 }

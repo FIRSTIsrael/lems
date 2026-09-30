@@ -9,7 +9,8 @@ import { PageHeader } from '../../components/page-header';
 import {
   GET_FIELD_SCHEDULE,
   parseFieldScheduleData,
-  createTeamArrivedSubscription
+  createTeamArrivedSubscription,
+  createTeamNotArrivedSubscription
 } from './graphql';
 import { RoundSchedule } from './components/round-schedule';
 import { EmptyState } from './components/empty-state';
@@ -21,7 +22,10 @@ export default function FieldSchedulePage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [createTeamArrivedSubscription(currentDivision.id)],
+    () => [
+      createTeamArrivedSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

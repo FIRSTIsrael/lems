@@ -10,7 +10,8 @@ import { usePageData } from '../../../hooks/use-page-data';
 import {
   GET_DIVISION_TEAMS,
   parseDivisionTeams,
-  createTeamRegistrationSubscription
+  createTeamRegistrationSubscription,
+  createTeamNotArrivedSubscription
 } from './graphql';
 import { MobileTeamListTable } from './components/mobile-team-list-table';
 import { DesktopTeamListTable } from './components/desktop-team-list-table';
@@ -21,7 +22,10 @@ export default function TeamListPage() {
   const { currentDivision } = useEvent();
 
   const subscriptions = useMemo(
-    () => [createTeamRegistrationSubscription(currentDivision.id)],
+    () => [
+      createTeamRegistrationSubscription(currentDivision.id),
+      createTeamNotArrivedSubscription(currentDivision.id)
+    ],
     [currentDivision.id]
   );
 

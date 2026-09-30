@@ -8,4 +8,9 @@ export {
   createSessionCompletedSubscription,
   SESSION_COMPLETED_SUBSCRIPTION
 } from './session-completed';
-export { createTeamArrivedSubscription, TEAM_ARRIVED_SUBSCRIPTION } from './team-arrived';
+export {
+  createTeamArrivedSubscription,
+  createTeamNotArrivedSubscription,
+  TEAM_ARRIVED_SUBSCRIPTION,
+  TEAM_NOT_ARRIVED_SUBSCRIPTION
+} from './team-arrived';

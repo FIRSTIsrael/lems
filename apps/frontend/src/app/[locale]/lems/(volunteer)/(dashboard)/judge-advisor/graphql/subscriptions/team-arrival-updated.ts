@@ -11,6 +11,10 @@ interface TeamArrivalSubscriptionData {
   teamArrivalUpdated: TeamEvent;
 }
 
+interface TeamNotArrivedSubscriptionData {
+  teamNotArrived: TeamEvent;
+}
+
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   TeamArrivalSubscriptionData,
   SubscriptionVars
@@ -21,6 +25,27 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
     }
   }
 `;
+
+export const TEAM_NOT_ARRIVED_SUBSCRIPTION: TypedDocumentNode<
+  TeamNotArrivedSubscriptionData,
+  SubscriptionVars
+> = gql`
+  subscription TeamNotArrived($divisionId: String!) {
+    teamNotArrived(divisionId: $divisionId) {
+      teamId
+    }
+  }
+`;
+
+function setTeamArrived(prev: QueryData, teamId: string, arrived: boolean): QueryData {
+  return updateJudgingSessions(prev, sessions =>
+    updateInArray(
+      sessions,
+      session => session.team.id === teamId,
+      session => merge(session, { team: { arrived } })
+    )
+  );
+}
 
 function updateJudgingSessions(
   prev: QueryData,
@@ -74,14 +99,7 @@ export function createTeamArrivalSubscription(
     if (!data) return prev;
 
     const { teamId } = (data as TeamArrivalSubscriptionData).teamArrivalUpdated;
-
-    return updateJudgingSessions(prev, sessions =>
-      updateInArray(
-        sessions,
-        session => session.team.id === teamId,
-        session => merge(session, { team: { arrived: true } })
-      )
-    );
+    return setTeamArrived(prev, teamId, true);
   };
 
   return updateQueryWithCallback(
@@ -89,5 +107,24 @@ export function createTeamArrivalSubscription(
     divisionId,
     updateQuery,
     onTeamArrived ? data => onTeamArrived(data.teamArrivalUpdated) : undefined
+  );
+}
+
+export function createTeamNotArrivedSubscription(
+  divisionId: string,
+  onTeamNotArrived?: (event: TeamEvent) => void
+): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
+  const updateQuery = (prev: QueryData, { data }: { data?: unknown }) => {
+    if (!data) return prev;
+
+    const { teamId } = (data as TeamNotArrivedSubscriptionData).teamNotArrived;
+    return setTeamArrived(prev, teamId, false);
+  };
+
+  return updateQueryWithCallback(
+    TEAM_NOT_ARRIVED_SUBSCRIPTION,
+    divisionId,
+    updateQuery,
+    onTeamNotArrived ? data => onTeamNotArrived(data.teamNotArrived) : undefined
   );
 }
