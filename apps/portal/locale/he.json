@@ -134,7 +134,8 @@
         "event-in-progress": "אירוע בעיצומו",
         "view-live-data": "צפייה בנתונים חיים",
         "view-event-details": "צפייה בפרטי האירוע",
-        "view-event-results": "לצפייה בתוצאות האירוע"
+        "view-event-results": "לצפייה בתוצאות האירוע",
+        "no-events-this-season": "הקבוצה עדיין לא התחרתה באירועים בעונה זו."
       }
     },
     "event": {
@@ -162,7 +163,8 @@
         "field-schedule": "לוח זמנים זירה",
         "judging-schedule": "לוח זמנים שיפוט",
         "agenda": "סדר יום",
-        "general-schedule": "לוח זמנים כללי"
+        "general-schedule": "לוח זמנים כללי",
+        "practice-tables": "שולחנות אימונים"
       },
       "scoreboard": {
         "rank": "דירוג",
@@ -197,7 +199,17 @@
         }
       },
       "division-teams": "קבוצות {divisionName}",
-      "region": "מדינה"
+      "region": "מדינה",
+      "practice-tables": {
+        "title": "שולחנות אימונים",
+        "description": "{tables, plural, =1 {שולחן אימון אחד} other {#שולחנות אימונים}} זמינים עם סלוטים של {duration} דקות",
+        "time": "שעה",
+        "table": "שולחן",
+        "blocked": "לא זמין",
+        "available": "זמין",
+        "unavailable": "לא זמין",
+        "not-configured": "שולחנות אימונים לא הוגדרו עבור בית זה."
+      }
     },
     "team-in-event": {
       "not-found": {
@@ -247,6 +259,8 @@
         "judging-sessions": "מפגש שיפוט",
         "match-type": "מקצה {stage} #{number} - שולחן {table}",
         "judging-session": "מפגש שיפוט - חדר {room}",
+        "practice-table": "שולחן אימון {tableNumber}",
+        "practice-table-location": "שולחן אימון {tableNumber}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"

@@ -30,7 +30,6 @@ export function useCollectSlides(children: React.ReactNode) {
     }
 
     // Set state here is OK -> no chance of cascading renders
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSlideIds(nextSlideIds);
     setInitialized(true);
   }, [slideContainer, children]);
