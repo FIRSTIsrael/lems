@@ -36,7 +36,7 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
   UpdateRubricFeedbackArgs,
   Promise<RubricFeedbackUpdatedEvent>
 > = async (_root, { divisionId, rubricId, greatJob, thinkAbout }, context) => {
-  const { rubric, rubricObjectId } = await authorizeRubricAccess(context, divisionId, rubricId);
+  const { rubric, rubricObjectId, edition } = await authorizeRubricAccess(context, divisionId, rubricId);
 
   const status = (rubric.status as string) || 'empty';
   assertRubricEditable(status, context.user?.role);
@@ -60,7 +60,7 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
   // Determine new status based on completion criteria
   const rubricData = result.data as Record<string, unknown>;
   const rubricCategory = result.category as JudgingCategory;
-  const newStatus = determineRubricCompletionStatus(rubricData, rubricCategory);
+  const newStatus = determineRubricCompletionStatus(rubricData, rubricCategory, edition);
 
   // Update status if it has changed
   const statusChanged = newStatus !== status;
