@@ -4,6 +4,7 @@ import React, { createContext, useContext, useCallback, useMemo } from 'react';
 import { useMutation } from '@apollo/client/react';
 import { JudgingCategory } from '@lems/types/judging';
 import { underscoresToHyphens } from '@lems/shared/utils';
+import { useEdition } from '../../../../../hooks/use-edition';
 import { useEvent } from '../../../../../components/event-context';
 import {
   UPDATE_RUBRIC_VALUE_MUTATION,
@@ -30,6 +31,7 @@ interface RubricProviderProps {
 
 export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children }) => {
   const { currentDivision } = useEvent();
+  const edition = useEdition();
 
   const [updateRubricValue] = useMutation(UPDATE_RUBRIC_VALUE_MUTATION, {
     errorPolicy: 'all',
@@ -58,14 +60,14 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
             value,
             notes: notes || undefined
           },
-          update: createUpdateRubricValueCacheUpdate(rubric.id, fieldId, fieldValue)
+          update: createUpdateRubricValueCacheUpdate(edition, rubric.id, fieldId, fieldValue)
         });
       } catch (err) {
         console.error(`[RubricProvider] Failed to update field ${fieldId}:`, err);
         throw err;
       }
     },
-    [updateRubricValue, currentDivision.id, rubric.id]
+    [updateRubricValue, currentDivision.id, rubric.id, edition]
   );
 
   const updateFeedback = useCallback(
@@ -78,7 +80,7 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
             greatJob,
             thinkAbout
           },
-          update: createUpdateRubricFeedbackCacheUpdate(rubric.id, {
+          update: createUpdateRubricFeedbackCacheUpdate(edition, rubric.id, {
             greatJob,
             thinkAbout
           })
@@ -88,12 +90,16 @@ export const RubricProvider: React.FC<RubricProviderProps> = ({ rubric, children
         throw err;
       }
     },
-    [updateRubricFeedback, currentDivision.id, rubric.id]
+    [updateRubricFeedback, currentDivision.id, rubric.id, edition]
   );
 
   const validation = useMemo(() => {
-    return validateRubric(rubric, underscoresToHyphens(rubric.category) as JudgingCategory);
-  }, [rubric]);
+    return validateRubric(
+      edition,
+      rubric,
+      underscoresToHyphens(rubric.category) as JudgingCategory
+    );
+  }, [edition, rubric]);
 
   const value: RubricContextValue = useMemo(
     () => ({
