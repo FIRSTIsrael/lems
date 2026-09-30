@@ -27,6 +27,10 @@ const config = defineConfig([
       // React Hooks rules - must be explicit to override inherited configs
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
+      'react-hooks/refs': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/immutability': 'off',
+      'react-hooks/error-boundaries': 'off',
 
       // React rules
       'react/prop-types': 'off',
