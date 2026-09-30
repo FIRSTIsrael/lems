@@ -50,20 +50,34 @@ router.get(
 router.get(
   '/:teamSlug/activities',
   asHandler<PortalTeamAtEventRequest>(async (req, res: Response) => {
-    const session = await db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId);
-    const rooms = await db.rooms.byDivisionId(req.divisionId).getAll();
-    const matches = await db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId);
-    const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-    const agendaPublic = await db.divisions.byId(req.divisionId).agenda().getAll('public');
-    const agendaTeams = await db.divisions.byId(req.divisionId).agenda().getAll('teams');
+    const [session, rooms, matches, tables, agendaPublic, agendaTeams, practiceAssignments] =
+      await Promise.all([
+        db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId),
+        db.rooms.byDivisionId(req.divisionId).getAll(),
+        db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId),
+        db.tables.byDivisionId(req.divisionId).getAll(),
+        db.divisions.byId(req.divisionId).agenda().getAll('public'),
+        db.divisions.byId(req.divisionId).agenda().getAll('teams'),
+        db.divisions.byId(req.divisionId).practiceTables().getTeamAssignments(req.teamId)
+      ]);
+
     const agenda = [...agendaPublic, ...agendaTeams];
+
+    // Format practice table assignments with ISO datetime strings
+    const formattedPracticeAssignments = practiceAssignments.map(a => ({
+      id: a.id,
+      tableNumber: a.table_number,
+      startTime: a.start_time.toISOString(),
+      endTime: a.end_time.toISOString()
+    }));
 
     res.json({
       session: session ? makePortalTeamJudgingSessionResponse(req.teamId, session, rooms) : null,
       matches: matches.map(match =>
         makePortalTeamRobotGameMatchResponse(req.teamId, match, tables)
       ),
-      agenda: agenda.map(a => makeAgendaResponse(a))
+      agenda: agenda.map(a => makeAgendaResponse(a)),
+      practiceAssignments: formattedPracticeAssignments
     });
   })
 );
