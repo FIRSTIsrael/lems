@@ -121,7 +121,8 @@
         "event-in-progress": "Wydarzenie w toku",
         "view-live-data": "Zobacz dane na żywo",
         "view-event-details": "Zobacz szczegóły wydarzenia",
-        "view-event-results": "Zobacz wyniki wydarzenia"
+        "view-event-results": "Zobacz wyniki wydarzenia",
+        "no-events-this-season": "Ta drużyna nie brała jeszcze udziału w żadnych wydarzeniach w tym sezonie."
       }
     },
     "teams": {
