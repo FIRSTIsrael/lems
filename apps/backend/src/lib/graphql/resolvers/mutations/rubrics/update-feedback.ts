@@ -36,7 +36,11 @@ export const updateRubricFeedbackResolver: GraphQLFieldResolver<
   UpdateRubricFeedbackArgs,
   Promise<RubricFeedbackUpdatedEvent>
 > = async (_root, { divisionId, rubricId, greatJob, thinkAbout }, context) => {
-  const { rubric, rubricObjectId, edition } = await authorizeRubricAccess(context, divisionId, rubricId);
+  const { rubric, rubricObjectId, edition } = await authorizeRubricAccess(
+    context,
+    divisionId,
+    rubricId
+  );
 
   const status = (rubric.status as string) || 'empty';
   assertRubricEditable(status, context.user?.role);

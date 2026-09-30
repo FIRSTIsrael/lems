@@ -83,9 +83,7 @@ export const useScore = () => {
       });
 
       const currentScore = await db.get('scores', scoreKey);
-      setScore(
-        currentScore && currentScore.version === scoresheetVersion ? currentScore : null
-      );
+      setScore(currentScore && currentScore.version === scoresheetVersion ? currentScore : null);
       setLoadedKey(scoreKey);
     };
 

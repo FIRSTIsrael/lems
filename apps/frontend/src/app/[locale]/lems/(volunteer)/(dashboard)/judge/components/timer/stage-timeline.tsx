@@ -22,11 +22,7 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
   const { getStage } = useJudgingSessionStageTranslations();
   const { session, sessionLength } = useSession();
   const edition = useEdition();
-  const { judgingStages } = useJudgingSessionTimer(
-    session.startTime!,
-    sessionLength,
-    edition
-  );
+  const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength, edition);
   const { currentStageIndex, stageTimeRemaining } = timerState;
 
   const nextStageIndex = currentStageIndex + 1;

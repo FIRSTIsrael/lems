@@ -78,7 +78,9 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   // Determine new status based on completion criteria
   // Don't change status if already submitted or in gp status (locked states)
   const newStatus =
-    status === 'submitted' || status === 'gp' ? status : determineScoresheetCompletionStatus(scoresheet, data);
+    status === 'submitted' || status === 'gp'
+      ? status
+      : determineScoresheetCompletionStatus(scoresheet, data);
 
   const updateFields: Record<string, unknown> = {
     [`data.missions.${missionId}.${clauseIndex}`]: value,
