@@ -1,0 +1,28 @@
+{
+  "_source": "hebrew_founders_rgr_verbatim.md (בתוך ערכת האתגר)",
+  "_note": "כל שדות ה-text הם ציטוט מילולי (verbatim) מהמדריך. bagNumbers שמורים בסדר בו הם מופיעים במסמך המקורי (טור \"מספרי השקיות\").",
+  "title": "בתוך ערכת האתגר",
+  "intro": "בתוך ערכת האתגר של BIOGLOW, תמצאו את שטיח המשחק, מדבקות ™3M Dual Lock להצמדה, ואת חלקי ה-®LEGO הדרושים לבניית דגמי המשימה. דגמי המשימה יגיעו בשקיות ממוספרות וחייבים להיבנות על-ידי הקבוצה לפי ההנחיות לבניית המשימות.",
+  "bagTable": [
+    { "bagNumbers": [2, 1], "missionNameHe": "סקר בעזרת רחפן", "missionNumber": 1, "missionId": "m01" },
+    { "bagNumbers": [3], "missionNameHe": "זרעים נפצים", "missionNumber": 2, "missionId": "m02" },
+    { "bagNumbers": [5, 4], "missionNameHe": "להפוך את הסלע", "missionNumber": 3, "missionId": "m03" },
+    { "bagNumbers": [6], "missionNameHe": "עלים ברי מזל", "missionNumber": 4, "missionId": "m04" },
+    { "bagNumbers": [7], "missionNameHe": "שורשים מתפרסים", "missionNumber": 5, "missionId": "m05" },
+    { "bagNumbers": [10, 9, 8], "missionNameHe": "טירוף חותכי העלים", "missionNumber": 6, "missionId": "m06" },
+    { "bagNumbers": [10], "missionNameHe": "תפטיר אדיר", "missionNumber": 7, "missionId": "m07" },
+    { "bagNumbers": [15, 14, 13, 12, 11], "missionNameHe": "פלונטר", "missionNumber": 8, "missionId": "m08" },
+    { "bagNumbers": [15, 14, 13, 12, 11], "missionNameHe": "פלטפורמת מחקר", "missionNumber": 9, "missionId": "m09" },
+    { "bagNumbers": [16], "missionNameHe": "בתי גידול זעירים ועדינים", "missionNumber": 10, "missionId": "m10" },
+    { "bagNumbers": [17], "missionNameHe": "חלון אל העבר", "missionNumber": 11, "missionId": "m11" },
+    { "bagNumbers": [18], "missionNameHe": "זקן היער", "missionNumber": 12, "missionId": "m12" },
+    { "bagNumbers": [20, 19], "missionNameHe": "מין מפתח", "missionNumber": 13, "missionId": "m13" },
+    { "bagNumbers": [21], "missionNameHe": "זרעים של התחדשות", "missionNumber": 14, "missionId": "m14" },
+    { "bagNumbers": [24, 23, 22], "missionNameHe": "אדריכלות ביוצנטרית", "missionNumber": 15, "missionId": "m15" }
+  ],
+  "importantNote": {
+    "title": "חשוב!",
+    "text": "הרובוט פועל מול דגמי המשימה בזירה כדי לצבור נקודות, לכן חשוב לבנות אותם בדיוק לפי ההנחיות לבניית המשימות. אימונים עם דגמים שלא נבנו נכון יכולים להשפיע לרעה על ההצלחה במשחק הרובוט."
+  },
+  "footerNote": "הנחיות לבניית המשימות בדף מפת המשאבים"
+}

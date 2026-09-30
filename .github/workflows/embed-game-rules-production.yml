@@ -1,0 +1,73 @@
+name: Embed Game Rules Corpus (Production)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "run-embeddings" to confirm production embedding execution'
+        required: true
+        type: string
+
+permissions: {}
+
+jobs:
+  validate-confirmation:
+    name: Validate Confirmation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check confirmation
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "run-embeddings" ]; then
+            echo "❌ ERROR: Incorrect confirmation string"
+            echo "Please provide 'run-embeddings' as confirmation to prevent accidental execution"
+            exit 1
+          fi
+          echo "✅ Confirmation validated - proceeding with production embedding job"
+
+  embed:
+    name: Embed Game Rules Corpus on Production
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    needs: validate-confirmation
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build embedding job
+        run: npx nx build-embed-game-rules backend
+
+      - name: Run embedding job on production database
+        env:
+          PG_HOST: ${{ secrets.PG_HOST }}
+          PG_PORT: ${{ secrets.PG_PORT }}
+          DB_NAME: ${{ vars.DB_NAME }}
+          PG_USER: ${{ secrets.PG_USER }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+          PG_SSL_CA: ${{ secrets.PG_SSL_CA }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "⚠️  PRODUCTION EMBEDDING JOB IN PROGRESS"
+          echo "🔄 Embedding game-rules corpus into Postgres (pgvector)..."
+          node dist/apps/backend-embed-game-rules/main.js
+          EMBED_EXIT_CODE=$?
+
+          if [ $EMBED_EXIT_CODE -eq 0 ]; then
+            echo ""
+            echo "✅ Production embedding job completed successfully"
+          else
+            echo ""
+            echo "❌ Embedding job failed with exit code $EMBED_EXIT_CODE"
+            exit $EMBED_EXIT_CODE
+          fi

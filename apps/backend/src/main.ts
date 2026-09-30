@@ -1,3 +1,4 @@
+import './lib/ai/tracing';
 import * as http from 'http';
 import * as path from 'path';
 import express, { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
@@ -16,6 +17,7 @@ import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/a
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
+import { getCheckpointer, closeCheckpointer } from './lib/ai/checkpointer';
 import { getWorkerManager } from './lib/queues/worker-manager';
 import { handleSessionCompleted } from './lib/queues/handlers/session-completed';
 import { handleMatchCompleted } from './lib/queues/handlers/match-completed';
@@ -25,6 +27,7 @@ import adminRouter from './routers/admin';
 import portalRouter from './routers/portal';
 import schedulerRouter from './routers/scheduler';
 import intergrationsRouter from './routers/integrations';
+import aiRouter from './routers/ai';
 
 logger.info({ component: 'server' }, 'Backend server initializing');
 
@@ -34,8 +37,16 @@ const server = http.createServer(app);
 app.use(cookies());
 app.use(morgan('tiny'));
 
+const isProduction = process.env.NODE_ENV === 'production';
+const origins = [/\.firstisrael\.org.il$/];
+
+// Allow localhost origins in development
+if (!isProduction) {
+  origins.push(/localhost:\d+$/);
+}
+
 const corsOptions = {
-  origin: [/localhost:\d+$/, /\.firstisrael\.org.il$/],
+  origin: origins,
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -59,6 +70,18 @@ try {
     'Failed to initialize Redis'
   );
   throw new Error('Redis initialization failed');
+}
+
+// AI checkpointer: Initialize Postgres-backed LangGraph checkpoint tables
+try {
+  await getCheckpointer().setup();
+  logger.info({ component: 'ai-checkpointer' }, 'AI checkpointer initialized');
+} catch (error) {
+  logger.error(
+    { component: 'ai-checkpointer', error: error instanceof Error ? error.message : String(error) },
+    'Failed to initialize AI checkpointer'
+  );
+  throw new Error('AI checkpointer initialization failed');
 }
 
 // Worker Manager: Initialize and register event handlers
@@ -139,6 +162,7 @@ app.use(
 );
 
 // Application routers
+app.use('/ai', aiRouter);
 app.use('/lems', lemsRouter);
 app.use('/admin', adminRouter);
 app.use('/scheduler', schedulerRouter);
@@ -192,6 +216,7 @@ process.on('SIGTERM', async () => {
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
+    await closeCheckpointer();
     logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });
@@ -207,6 +232,7 @@ process.on('SIGINT', async () => {
     await workerManager.stop();
     await shutdownRedisPubSub();
     await closeRedisClient();
+    await closeCheckpointer();
     logger.info({ component: 'server' }, 'Graceful shutdown complete');
     process.exit(0);
   });
