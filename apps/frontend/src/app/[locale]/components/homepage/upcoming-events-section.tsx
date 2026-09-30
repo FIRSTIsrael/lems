@@ -41,6 +41,7 @@ export const UpcomingEventsSection: React.FC = () => {
       timezone: '',
       region: event.region,
       official: event.official,
+      futureEdition: event.futureEdition,
       seasonId: '' // Placeholder - not available from current query
     })) || [];
 

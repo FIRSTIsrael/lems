@@ -17,3 +17,7 @@ export const getEdition = (division: {
 /** Parses an untrusted string (e.g. a URL query value) into an Edition, defaulting to 'founders'. */
 export const parseEdition = (value: string | null | undefined): Edition =>
   EDITIONS.find(e => e === value) ?? DEFAULT_EDITION;
+
+/** An event is Future Edition if any of its divisions is. Missing flags count as false. */
+export const getEventEdition = (divisions: { futureEdition?: boolean | null }[]): Edition =>
+  divisions.some(division => division.futureEdition) ? 'future' : 'founders';

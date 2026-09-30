@@ -30,7 +30,12 @@ router.get('/', async (req: Request, res: Response) => {
 
     const eventSummary: EventSummary = {
       ...event,
-      divisions,
+      divisions: divisions.map(division => ({
+        id: division.id,
+        name: division.name,
+        color: division.color,
+        futureEdition: division.future_edition
+      })),
       date: event.start_date.toISOString(),
       location: event.location,
       season_id: event.season_id,

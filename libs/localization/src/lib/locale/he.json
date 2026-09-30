@@ -102,6 +102,9 @@
       "description": "קבוצות המעפילות לתחרות האליפות"
     }
   },
+  "edition": {
+    "future": "Future Edition"
+  },
   "scoresheet": {
     "missions": {
       "eib": {

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material';
 import { CalendarToday } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/admin';
+import { EditionBadge, getEventEdition } from '@lems/shared';
+
 interface EventListItemProps {
   event: EventSummary;
 }
@@ -35,17 +37,20 @@ export default function EventListItem({ event }: EventListItemProps) {
             }}
           >
             <Stack spacing={0.5} sx={{ flex: 1, minWidth: 0 }}>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 600,
-                  lineHeight: 1.3,
-                  wordBreak: 'break-word',
-                  color: 'text.primary'
-                }}
-              >
-                {event.name}
-              </Typography>
+              <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 600,
+                    lineHeight: 1.3,
+                    wordBreak: 'break-word',
+                    color: 'text.primary'
+                  }}
+                >
+                  {event.name}
+                </Typography>
+                <EditionBadge edition={getEventEdition(event.divisions)} />
+              </Stack>
               <Typography
                 variant="caption"
                 sx={{

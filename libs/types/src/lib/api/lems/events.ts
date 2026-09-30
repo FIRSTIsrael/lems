@@ -11,7 +11,8 @@ export const LemsEventResponseSchema = z.object({
   timezone: z.string(),
   coordinates: z.string().nullish(),
   seasonId: z.string(),
-  official: z.boolean()
+  official: z.boolean(),
+  futureEdition: z.boolean().optional()
 });
 
 export type Event = z.infer<typeof LemsEventResponseSchema>;
