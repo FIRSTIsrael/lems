@@ -2,7 +2,8 @@
 
 import { createContext, useContext, ReactNode, useEffect } from 'react';
 import { Mission } from '@lems/types/scoring';
-import { scoresheet } from '@lems/shared/scoresheet';
+import { getScoresheet } from '@lems/shared/scoresheet';
+import { useToolEdition } from '../../hooks/use-tool-edition';
 import { useScore, ErrorWithMessage } from '../hooks/use-score';
 
 const ALLOW_DEFAULT_VALUES = false;
@@ -30,6 +31,7 @@ export const MissionContext = createContext<MissionContextType>({
 });
 
 export function MissionProvider({ children }: { children: ReactNode }) {
+  const scoresheet = getScoresheet(useToolEdition());
   const { score, updateScore, resetScore, loading } = useScore();
 
   const getDefaultScoresheet = () => {

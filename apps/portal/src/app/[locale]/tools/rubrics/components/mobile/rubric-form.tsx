@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Container, Stack } from '@mui/material';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
 import { MobileCategoryNavigation } from './mobile-category-navigation';
 import { MobileSection } from './mobile-section';
@@ -10,7 +11,7 @@ import { MobileFeedback } from './mobile-feedback';
 
 export const MobileRubricForm: React.FC = () => {
   const { category, loading } = useRubricContext();
-  const schema = rubrics[category];
+  const schema = getRubrics(useToolEdition())[category];
 
   return (
     <Container maxWidth="sm" sx={{ py: 2 }}>

@@ -267,6 +267,10 @@
       }
     },
     "tools": {
+      "edition": {
+        "founders": "Founders",
+        "future": "Future"
+      },
       "scorer": {
         "title": "מחשבון ניקוד",
         "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",

@@ -1,12 +1,14 @@
 'use client';
 
 import { Typography, Stack } from '@mui/material';
-import { scoresheet } from '@lems/shared/scoresheet';
+import { getScoresheet } from '@lems/shared/scoresheet';
 import { useScoresheetTranslations } from '@lems/localization';
+import { useToolEdition } from '../../hooks/use-tool-edition';
 import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
+  const scoresheet = getScoresheet(useToolEdition());
   const { getError } = useScoresheetTranslations();
   const { errors } = useScoresheetValidator();
 

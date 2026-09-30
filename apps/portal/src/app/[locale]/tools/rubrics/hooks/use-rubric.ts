@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
+import { useToolEdition } from '../../hooks/use-tool-edition';
 import { RubricFormValues } from '../rubric-types';
 import { getEmptyRubric } from '../rubric-utils';
 
@@ -19,14 +21,17 @@ interface RubricsDb extends DBSchema {
   };
 }
 
-const getRubricKey = (category: JudgingCategory) => `rubric-${category}`;
+const getRubricKey = (edition: Edition, category: JudgingCategory) =>
+  edition === 'founders' ? `rubric-${category}` : `rubric-${edition}-${category}`;
 
 export const useRubric = (category: JudgingCategory) => {
+  const edition = useToolEdition();
+  const rubricsVersion = getRubrics(edition)._version;
   const [rubric, setRubric] = useState<RubricData>(() => ({
-    id: getRubricKey(category),
-    version: rubrics._version,
+    id: getRubricKey(edition, category),
+    version: rubricsVersion,
     category,
-    values: getEmptyRubric(category)
+    values: getEmptyRubric(edition, category)
   }));
   const [loading, setLoading] = useState(true);
 
@@ -40,32 +45,32 @@ export const useRubric = (category: JudgingCategory) => {
         }
       });
 
-      const rubricKey = getRubricKey(category);
+      const rubricKey = getRubricKey(edition, category);
       const currentRubric = await db.get('rubrics', rubricKey);
       if (
         currentRubric &&
-        currentRubric.version === rubrics._version &&
+        currentRubric.version === rubricsVersion &&
         currentRubric.category === category
       ) {
         setRubric(currentRubric);
       } else {
         setRubric({
           id: rubricKey,
-          version: rubrics._version,
+          version: rubricsVersion,
           category,
-          values: getEmptyRubric(category)
+          values: getEmptyRubric(edition, category)
         });
       }
       setLoading(false);
     };
 
     initDb();
-  }, [category]);
+  }, [edition, category, rubricsVersion]);
 
   const updateRubric = async (values: RubricFormValues) => {
     const newRubric: RubricData = {
-      id: getRubricKey(category),
-      version: rubrics._version,
+      id: getRubricKey(edition, category),
+      version: rubricsVersion,
       category,
       values
     };
@@ -83,13 +88,13 @@ export const useRubric = (category: JudgingCategory) => {
     const db = await openDB<RubricsDb>('rubrics-database', 1);
     const tx = db.transaction('rubrics', 'readwrite');
     const store = tx.objectStore('rubrics');
-    await store.clear();
+    await store.delete(getRubricKey(edition, category));
     await tx.done;
     setRubric({
-      id: getRubricKey(category),
-      version: rubrics._version,
+      id: getRubricKey(edition, category),
+      version: rubricsVersion,
       category,
-      values: getEmptyRubric(category)
+      values: getEmptyRubric(edition, category)
     });
   };
 
