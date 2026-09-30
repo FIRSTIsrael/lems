@@ -4,6 +4,7 @@ import React from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Division, Team } from '@lems/types/api/admin';
+import { getEdition } from '@lems/shared/edition';
 import { useEvent } from '../components/event-context';
 import { AwardsProvider } from './components/awards-context';
 import { parseApiResponseToSchema } from './utils/schema';
@@ -38,12 +39,14 @@ export default function AwardsLayout({ children }: AwardsLayoutProps) {
   }
 
   const teamCount = teams.length;
+  const selectedDivision = divisions.find(division => division.id === selectedDivisionId);
   const initialSchema = parseApiResponseToSchema(awardsData);
 
   return (
     <AwardsProvider
       key={selectedDivisionId}
       divisionId={selectedDivisionId}
+      edition={selectedDivision ? getEdition(selectedDivision) : undefined}
       teamCount={teamCount}
       initialSchema={initialSchema}
       onSchemaChange={mutateAwards}

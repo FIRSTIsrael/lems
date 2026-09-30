@@ -6,6 +6,8 @@ import { EmojiEvents } from '@mui/icons-material';
 import NextLink from 'next/link';
 import { Award, Team } from '@lems/types/api/portal';
 import { useAwardTranslations } from '@lems/localization';
+import { getEdition } from '@lems/shared/edition';
+import { useDivision } from '../../division-data-context';
 
 interface AwardRowProps {
   awardName: string;
@@ -17,7 +19,8 @@ export const AwardRow: React.FC<AwardRowProps> = ({ awardName, awardList, teams 
   const params = useParams();
   const eventSlug = params.slug as string;
 
-  const { getName } = useAwardTranslations();
+  const division = useDivision();
+  const { getName } = useAwardTranslations(getEdition(division));
 
   return (
     <Box>

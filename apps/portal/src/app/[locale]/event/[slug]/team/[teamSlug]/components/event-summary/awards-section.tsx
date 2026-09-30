@@ -6,12 +6,13 @@ import { Typography, Grid } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { Award } from '@lems/types/api/portal';
 import { useAwardTranslations } from '@lems/localization';
+import { getEdition } from '@lems/shared/edition';
 import { useRealtimeData } from '../../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 
 export const AwardsSection: React.FC = () => {
-  const { event, team } = useTeamAtEvent();
-  const { getName } = useAwardTranslations();
+  const { event, team, division } = useTeamAtEvent();
+  const { getName } = useAwardTranslations(getEdition(division));
   const t = useTranslations('pages.team-in-event');
 
   const { data: awards, isLoading } = useRealtimeData<Award[] | null>(

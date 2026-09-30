@@ -38,18 +38,17 @@ export default function RubricsExportPage() {
   const params = useParams();
   const t = useTranslations('pages.exports.rubrics');
   const { getTerm } = useRubricsGeneralTranslations();
-  const { getName: getAwardName, getDescription: getAwardDescription } = useAwardTranslations();
-
   const { data: rubricsData } = useSWR<RubricsPageData>(
     `/lems/export/${params.teamSlug}/${params.eventSlug}/rubrics`
   );
+  const edition = getEdition(rubricsData ?? {});
+  const { getName: getAwardName, getDescription: getAwardDescription } =
+    useAwardTranslations(edition);
 
   if (!rubricsData) {
     return null;
   }
 
-  // Award names will resolve via useAwardTranslations(edition) in a later task
-  const edition = getEdition(rubricsData);
   const rubricSchemas = getRubrics(edition);
 
   const rubrics = rubricsData.rubrics.map(rubric => {
