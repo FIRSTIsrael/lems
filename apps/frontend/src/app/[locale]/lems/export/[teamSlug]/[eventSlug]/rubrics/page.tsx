@@ -3,7 +3,8 @@
 import { useTranslations } from 'next-intl';
 import { useRubricsGeneralTranslations, useAwardTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
-import { rubrics as rubricSchemas } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import { getEdition } from '@lems/shared/edition';
 import Image from 'next/image';
 import { Box, Alert, Typography, Paper, Stack, Checkbox, FormControlLabel } from '@mui/material';
 import useSWR from 'swr';
@@ -28,6 +29,7 @@ interface RubricsPageData {
   eventName: string;
   divisionName: string;
   seasonName: string;
+  futureEdition: boolean;
   rubrics: RubricData[];
   awards: Record<string, boolean>;
 }
@@ -45,6 +47,10 @@ export default function RubricsExportPage() {
   if (!rubricsData) {
     return null;
   }
+
+  // Award names will resolve via useAwardTranslations(edition) in a later task
+  const edition = getEdition(rubricsData);
+  const rubricSchemas = getRubrics(edition);
 
   const rubrics = rubricsData.rubrics.map(rubric => {
     const categoryKey = rubric.category.replace(/_/g, '-') as JudgingCategory;
