@@ -1,5 +1,5 @@
 import { GraphQLFieldResolver } from 'graphql';
-import { AudienceDisplayScreen } from '@lems/database';
+import { AudienceDisplay } from '@lems/database';
 import db from '../../../../database';
 
 interface FieldWithDivisionId {
@@ -8,26 +8,23 @@ interface FieldWithDivisionId {
 
 /**
  * Resolver for Division.audienceDisplay field.
- * Fetches field information for a division from the division_states collection.
+ * Fetches field information for a division from the divisions table's state column.
  */
 export const audienceDisplayResolver: GraphQLFieldResolver<
   FieldWithDivisionId,
   unknown,
   unknown,
-  Promise<Record<AudienceDisplayScreen, Record<string, unknown>> | null>
+  Promise<AudienceDisplay>
 > = async (field: FieldWithDivisionId) => {
   try {
-    const divisionState = await db.raw.mongo
-      .collection('division_states')
-      .findOne({ divisionId: field.divisionId });
+    const division = await db.divisions.byId(field.divisionId).get();
+    const divisionState = division?.state;
 
     if (!divisionState) {
       throw new Error(`Division state not found for division ID: ${field.divisionId}`);
     }
 
-    return divisionState.audienceDisplay ?? {
-      activeDisplay: 'logo'
-    };
+    return divisionState.audienceDisplay;
   } catch (error) {
     console.error('Error fetching audience display for division:', field.divisionId, error);
     throw error;

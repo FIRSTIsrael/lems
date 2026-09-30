@@ -39,12 +39,12 @@ export const judgingFinalDeliberationResolver: GraphQLFieldResolver<
   }
 
   return {
-    divisionId: deliberation.divisionId,
+    divisionId: deliberation.division_id,
     stage: deliberation.stage,
     status: deliberation.status,
-    startTime: deliberation.startTime ? new Date(deliberation.startTime).toISOString() : null,
-    completionTime: deliberation.completionTime
-      ? new Date(deliberation.completionTime).toISOString()
+    startTime: deliberation.start_time ? new Date(deliberation.start_time).toISOString() : null,
+    completionTime: deliberation.completion_time
+      ? new Date(deliberation.completion_time).toISOString()
       : null,
     champions: JSON.stringify(deliberation.awards.champions || {}),
     innovationProject: deliberation.awards['innovation-project'] || [],
@@ -52,8 +52,8 @@ export const judgingFinalDeliberationResolver: GraphQLFieldResolver<
     coreValues: deliberation.awards['core-values'] || [],
     robotPerformance: deliberation.awards['robot-performance'] || [],
     optionalAwards: JSON.stringify(deliberation.awards.optionalAwards || {}),
-    coreAwardsManualEligibility: deliberation.stageData?.['core-awards']?.manualEligibility || [],
+    coreAwardsManualEligibility: deliberation.stage_data?.['core-awards']?.manualEligibility || [],
     optionalAwardsManualEligibility:
-      deliberation.stageData?.['optional-awards']?.manualEligibility || []
+      deliberation.stage_data?.['optional-awards']?.manualEligibility || []
   };
 };

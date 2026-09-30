@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, RobotGameMatchState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -60,18 +59,12 @@ export const abortMatchResolver: GraphQLFieldResolver<
       // The dequeue failure should be monitored separately
     }
 
-    const divisionStateResult = await db.raw.mongo
-      .collection<DivisionState>('division_states')
-      .findOneAndUpdate(
-        { divisionId },
-        {
-          $set: {
-            'field.activeMatch': null,
-            'field.loadedMatch': match.stage === 'TEST' ? null : matchId
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const divisionStateResult = await db.divisions.byId(divisionId).updateState({
+      field: {
+        activeMatch: null,
+        loadedMatch: match.stage === 'TEST' ? null : matchId
+      }
+    });
 
     if (!divisionStateResult) {
       throw new MutationError(
@@ -80,19 +73,11 @@ export const abortMatchResolver: GraphQLFieldResolver<
       );
     }
 
-    const result = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOneAndUpdate(
-        { matchId },
-        {
-          $set: {
-            status: 'not-started',
-            startTime: null,
-            startDelta: null
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.robotGameMatches.byId(matchId).update({
+      status: 'not-started',
+      start_time: null,
+      start_delta: null
+    });
 
     if (!result) {
       throw new MutationError(
@@ -121,11 +106,9 @@ export const abortMatchResolver: GraphQLFieldResolver<
  * @throws {MutationError} if any check fails.
  */
 const checkMatchCanBeAborted = async (matchId: string): Promise<void> => {
-  const matchState = await db.raw.mongo
-    .collection<RobotGameMatchState>('robot_game_match_states')
-    .findOne({ matchId });
+  const match = await db.robotGameMatches.byId(matchId).get();
 
-  if (!matchState || matchState.status !== 'in-progress') {
+  if (!match || match.status !== 'in-progress') {
     throw new MutationError(MutationErrorCode.CONFLICT, 'Match is not in in-progress status');
   }
 };

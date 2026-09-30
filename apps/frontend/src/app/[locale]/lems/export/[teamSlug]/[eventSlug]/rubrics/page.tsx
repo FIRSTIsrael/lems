@@ -241,7 +241,13 @@ export default function RubricsExportPage() {
                 }}
               >
                 <Stack spacing={1}>
-                  <Typography variant="h4" fontSize="1rem" fontWeight={600}>
+                  <Typography
+                    variant="h4"
+                    sx={{
+                      fontSize: '1rem',
+                      fontWeight: 600
+                    }}
+                  >
                     {t('feedback.awards.title')}
                   </Typography>
 
@@ -264,8 +270,10 @@ export default function RubricsExportPage() {
                               label={
                                 <Typography
                                   variant="body2"
-                                  fontWeight={500}
-                                  sx={{ fontSize: '0.875rem' }}
+                                  sx={{
+                                    fontWeight: 500,
+                                    fontSize: '0.875rem'
+                                  }}
                                 >
                                   {getAwardName(awardName)}
                                 </Typography>

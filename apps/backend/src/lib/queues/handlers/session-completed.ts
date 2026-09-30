@@ -1,5 +1,4 @@
 import { Job } from 'bullmq';
-import { JudgingSessionState } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../redis/redis-pubsub';
 import db from '../../database';
@@ -19,33 +18,23 @@ export async function handleSessionCompleted(job: Job<ScheduledEvent>): Promise<
     );
 
     // Idempotency check: verify session is still in-progress
-    const sessionState = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOne({ sessionId });
+    const session = await db.judgingSessions.byId(sessionId).get();
 
-    if (!sessionState) {
+    if (!session) {
       console.warn(
         `[SessionCompletionHandler] Session state not found for ${sessionId}, marking as completed`
       );
       return; // Job already processed or session was deleted
     }
 
-    if (sessionState.status !== 'in-progress') {
+    if (session.status !== 'in-progress') {
       console.warn(
-        `[SessionCompletionHandler] Session ${sessionId} is not in-progress (status: ${sessionState.status}), cannot complete`
+        `[SessionCompletionHandler] Session ${sessionId} is not in-progress (status: ${session.status}), cannot complete`
       );
       return;
     }
 
-    const result = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOneAndUpdate(
-        { sessionId },
-        {
-          $set: { status: 'completed' }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.judgingSessions.byId(sessionId).update({ status: 'completed' });
 
     if (!result) {
       throw new Error(`Failed to update judging session state for ${sessionId}`);

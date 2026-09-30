@@ -21,7 +21,13 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
   const items = buildNavigationItems(user, pathname);
 
   return (
-    <Stack mt={2} spacing={4} alignItems="center">
+    <Stack
+      spacing={4}
+      sx={{
+        mt: 2,
+        alignItems: 'center'
+      }}
+    >
       {items.map(item => (
         <Link
           key={item.label}
@@ -45,19 +51,21 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
           >
             <Box
               className="navigation-icon"
-              borderRadius={8}
-              p={2}
-              bgcolor={item.active ? lighten(theme.palette.primary.main, 0.8) : 'none'}
-              width={70}
-              height={40}
               key={item.label}
-              display="flex"
-              alignItems="center"
-              justifyContent="center"
-              color={item.active ? 'primary.main' : 'text.secondary'}
               sx={{
+                borderRadius: 8,
+                p: 2,
+                bgcolor: item.active ? lighten(theme.palette.primary.main, 0.8) : 'none',
+                width: 70,
+                height: 40,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: item.active ? 'primary.main' : 'text.secondary',
+
                 transition:
                   'background-color 0.25s, color 0.15s, box-shadow 0.15s, transform 0.15s',
+
                 boxShadow: item.active ? theme.shadows[3] : 'none',
                 transform: 'translateY(0)'
               }}
@@ -66,12 +74,14 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
             </Box>
             <Typography
               className="navigation-text"
-              color={item.active ? theme.palette.primary.main : 'text.secondary'}
-              mt={1}
               align="center"
               variant="body2"
-              fontWeight={item.active ? 700 : 600}
-              sx={{ transition: 'color 0.15s, font-weight 0.15s' }}
+              sx={{
+                mt: 1,
+                color: item.active ? 'primary.main' : 'text.secondary',
+                fontWeight: item.active ? 700 : 600,
+                transition: 'color 0.15s, font-weight 0.15s'
+              }}
             >
               {t(item.label)}
             </Typography>

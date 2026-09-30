@@ -62,7 +62,6 @@ export function NextMatchInfo() {
       >
         {t('next-match')}
       </Typography>
-
       <Stack
         spacing={2}
         sx={{
@@ -82,7 +81,14 @@ export function NextMatchInfo() {
           {getMatchLabel()}
         </Typography>
 
-        <Stack direction="row" spacing={2} justifyContent="center" sx={{ flexWrap: 'wrap' }}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{
+            justifyContent: 'center',
+            flexWrap: 'wrap'
+          }}
+        >
           <Chip
             icon={<ScheduleIcon />}
             label={formattedScheduledTime}
@@ -103,10 +109,9 @@ export function NextMatchInfo() {
                 <Countdown
                   targetDate={scheduledTime}
                   expiredText="00:00"
-                  fontWeight={600}
                   color="#fff"
                   allowNegativeValues
-                  sx={{ display: 'inline' }}
+                  sx={{ display: 'inline', fontWeight: 600 }}
                 />
               ) : (
                 '00:00'

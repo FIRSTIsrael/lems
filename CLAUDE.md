@@ -9,6 +9,7 @@ LEMS (Local Event Management System) is a full-stack application for managing FI
 ## Repository Structure
 
 ### Applications (`apps/`)
+
 - **backend**: Express server with GraphQL API (Apollo Server), WebSockets, REST endpoints, Redis queue management
   - Ports: 3333 (HTTP), WebSocket at `/lems/graphql`
   - Key modules: `routers/` (REST), `lib/graphql/` (GraphQL), `lib/queues/` (BullMQ workers)
@@ -18,6 +19,7 @@ LEMS (Local Event Management System) is a full-stack application for managing FI
 - **scheduler**: Python/FastAPI service for event scheduling - port 8000
 
 ### Shared Libraries (`libs/`)
+
 - **@lems/database**: Database layer with Kysely (PostgreSQL) and MongoDB clients, migrations, repositories, object storage (S3)
 - **@lems/types**: TypeScript types and GraphQL schemas (`.graphql` files in `lib/api/lems/graphql/`)
 - **@lems/shared**: React components, hooks, utilities, icons, rubrics, scoresheets
@@ -29,11 +31,15 @@ All TypeScript path aliases are configured in `tsconfig.base.json`.
 ## Development Commands
 
 ### Setup
-```bash
-# Install dependencies
-npm install
 
-# Start Docker services (MongoDB, PostgreSQL, Redis)
+Requires **Node.js 26** (see `.nvmrc`).
+
+```bash
+# Install dependencies and start Docker services (MongoDB, PostgreSQL, Redis) via compose.dev.yml
+make setup   # afterwards: `make start` / `make stop`
+
+# ...or manually
+npm install
 docker run -d --name lems-local-mongo -p 27017:27017 mongo:8
 docker run -d --name lems-local-sql -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:17
 docker run -d --name lems-local-redis -p 6379:6379 redis:7
@@ -43,6 +49,7 @@ npm run migrate
 ```
 
 ### Development Workflow
+
 ```bash
 # Start all applications (backend, frontend, portal, admin)
 npm run dev
@@ -58,6 +65,7 @@ npm run build
 ```
 
 ### Nx Commands
+
 ```bash
 # Build specific project
 npx nx build <project-name>
@@ -77,12 +85,14 @@ Project names: `backend`, `frontend`, `portal`, `admin`, `database`, `shared`, `
 ## Architecture Notes
 
 ### Backend Service Architecture
+
 - **GraphQL API**: Apollo Server with subscriptions over WebSocket (`/lems/graphql`)
 - **REST API**: Separate routers in `apps/backend/src/routers/` for:
   - `lems`: Main LEMS API
   - `admin`: Admin operations (events, divisions, awards, schedule, pit-maps)
   - `portal`: Team portal operations
   - `scheduler`: Scheduler service integration
+  - `integrations`: Third-party integrations (SendGrid, FIRST Israel dashboard, exports)
 - **Queue System**: BullMQ with Redis for async job processing (session completion, match scoring)
   - Worker manager in `lib/queues/worker-manager.ts` handles event-driven jobs
   - Handlers in `lib/queues/handlers/` process events (session-completed, match-completed, match-endgame-triggered)
@@ -90,21 +100,24 @@ Project names: `backend`, `frontend`, `portal`, `admin`, `database`, `shared`, `
 - **Logging**: Pino logger with file rotation in `lib/logger.ts`
 
 ### Frontend Architecture
+
 - **Next.js 16** with App Router (locale routing at `[locale]`)
-- **Material UI v7** with Emotion styling, RTL support via `@mui/stylis-plugin-rtl`
+- **Material UI v9** with Emotion styling, RTL support via `@mui/stylis-plugin-rtl`
 - **Apollo Client** for GraphQL with Next.js integration (`@apollo/client-integration-nextjs`)
 - **SWR** for REST API data fetching
 - **Authentication**: JWT cookies, handled by backend middleware
 - All Next.js apps use similar structure: `src/app/[locale]/` for i18n routing
 
 ### Database Layer
+
 - **PostgreSQL**: Kysely query builder, schema in `libs/database/src/schema/`, repositories in `repositories/`
-- **MongoDB**: Native driver for legacy data
+- **MongoDB**: Native driver for legacy data; state is progressively being moved to PostgreSQL (see migrations `031`/`032`), so prefer SQL for new data
 - **Redis**: IORedis client for caching, queues (BullMQ), and pub/sub
-- **Migrations**: Run via `npm run migrate`, scripts in `libs/database/src/scripts/`
+- **Migrations**: `npm run migrate` builds the `database` lib and runs `dist/libs/database/src/scripts/run-migrations.js` (Kysely `Migrator`). New migrations go in `libs/database/src/migrations/` as `NNN_snake_case_description.ts` (next sequential number) exporting `up`/`down(db: Kysely<any>)`; also update the table types in `libs/database/src/schema/tables/` and `schema/kysely.ts`
 - **Object Storage**: S3-compatible (DigitalOcean Spaces) for file uploads
 
 ### Type System
+
 - Shared types in `@lems/types` are the source of truth
 - GraphQL schemas define API contracts (`.graphql` files)
 - Backend copies GraphQL files to output during build (see `apps/backend/project.json`)
@@ -114,6 +127,7 @@ Project names: `backend`, `frontend`, `portal`, `admin`, `database`, `shared`, `
 Each app has a `.template.env` file showing required variables. Key variables:
 
 **Backend:**
+
 - `MONGODB_URI`, `PG_*` (database connections)
 - `REDIS_*` (Redis configuration)
 - `JWT_SECRET`, `DASHBOARD_JWT_SECRET` (authentication)
@@ -122,22 +136,29 @@ Each app has a `.template.env` file showing required variables. Key variables:
 - `SCHEDULER_URL`, `SCHEDULER_JWT_SECRET`
 
 **Frontend/Portal/Admin:**
+
 - `NEXT_PUBLIC_BASE_URL` (build-time, embedded in bundle)
 - `LOCAL_BASE_URL` (server-side runtime)
 - `RECAPTCHA` (optional)
 
 **Scheduler:**
+
 - `LOCAL_BASE_URL`, `SCHEDULER_JWT_SECRET`
 
-## Testing & CI
+## Verification & CI
+
+There is no automated test suite. Verify changes with lint and a build of the affected projects (e.g. `npx nx lint admin && npx nx build admin`).
 
 ### Linting
-Use `npm run lint` or `npx nx lint <project>`. ESLint configured via `eslint.config.mjs`.
+
+Use `npm run lint` or `npx nx lint <project>`. ESLint configured via `eslint.config.mjs`; formatting uses Prettier (`@firstisrael/prettier-config`).
 
 ### Building
+
 Production builds go to `dist/` directory. Each app has separate build configuration in `project.json`.
 
 ### Docker
+
 - `compose.yml` defines all services
 - Each app has its own `Dockerfile`
 - Images tagged as `${REGISTRY}/lems:<app>-${IMAGE_TAG}`
@@ -146,24 +167,28 @@ Production builds go to `dist/` directory. Each app has separate build configura
 ## Coding Patterns
 
 ### GraphQL Implementation
+
 - Schema-first: Define `.graphql` schema files in `@lems/types`
 - Resolvers in `apps/backend/src/lib/graphql/resolvers/`
 - Use context for authentication (`GraphQLContext` with user)
 - Subscriptions use Redis pub/sub
 
 ### Data Access Pattern
+
 - Use repositories from `@lems/database` for data operations
 - Kysely for type-safe PostgreSQL queries
 - MongoDB client for legacy collections
 - Keep business logic in backend, not in repositories
 
 ### React Components
+
 - Use Material UI components from `@mui/material`
 - Emotion for styling (`@emotion/styled`, `@emotion/react`)
 - Shared components in `@lems/shared/components`
-- Use `next-intl` for i18n in Next.js apps
+- Use `next-intl` for i18n in Next.js apps. Messages live in `apps/<app>/locale/{en,he,pl}.json` (shared strings in `libs/localization/src/lib/locale/`); add new keys to every locale file. Hebrew is RTL.
 
 ### Queue/Worker Pattern
+
 - Define job types in `lib/queues/types.ts`
 - Implement handlers in `lib/queues/handlers/`
 - Register handlers in `main.ts` via `workerManager.registerHandler()`
@@ -177,4 +202,5 @@ Production builds go to `dist/` directory. Each app has separate build configura
 - **Port conflicts**: Ensure ports 3000, 3333, 4200, 4201, 8000 are available
 - **Database initialization**: After first `npm run migrate`, manually insert an admin user via SQL
 - **Redis requirement**: Backend will not start without Redis connection
+- **`old-lems-code/`**: Legacy reference code (e.g. CV forms, insights). It is not an Nx project and is not built or linted.
 - **Platform-specific commands**: Use `npm run scheduler` (uses `run-script-os` for cross-platform support)

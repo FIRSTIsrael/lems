@@ -62,15 +62,19 @@ export async function handleCoreAwardsStageCompletion(
   const teamScores = await calculateAllTeamScores(divisionId, teams);
   const teamsWithRanks = await rankTeams(teamScores, divisionId);
 
+  const innovationProjectWinners = awards['innovation-project'] ?? [];
+  const robotDesignWinners = awards['robot-design'] ?? [];
+  const coreValuesWinners = awards['core-values'] ?? [];
+
   const excellenceInEngineeringWinners = teamsWithRanks
     .filter(
       t =>
         !Object.values(awards.champions || {}).includes(t.teamId) &&
-        !awards['innovation-project'].includes(t.teamId) &&
-        !awards['robot-design'].includes(t.teamId) &&
-        !awards['core-values'].includes(t.teamId)
+        !innovationProjectWinners.includes(t.teamId) &&
+        !robotDesignWinners.includes(t.teamId) &&
+        !coreValuesWinners.includes(t.teamId)
     )
-    .sort((a, b) => a.ranks['total'] - b.ranks['total'])
+    .sort((a, b) => a.averageRank - b.averageRank)
     .slice(0, excellenceInEngineeringAwards.length)
     .map(t => t.teamId);
 
@@ -89,7 +93,8 @@ export async function handleCoreAwardsStageCompletion(
 async function validateCoreAwardsAssignment(awards: FinalDeliberationAwards): Promise<void> {
   const championsIds = Object.values(awards.champions || {});
   for (const category of categories) {
-    if (awards[category].filter(winnerId => championsIds.includes(winnerId)).length > 0) {
+    const categoryWinners = awards[category] ?? [];
+    if (categoryWinners.filter(winnerId => championsIds.includes(winnerId)).length > 0) {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,
         `Category ${category} has a winner that was already assigned a champions award`
@@ -109,7 +114,8 @@ async function assignCoreAwardsToTeams(
     const categoryAwards = await db.awards.byDivisionId(divisionId).get(category);
     for (let i = 0; i < categoryAwards.length; i++) {
       const award = categoryAwards[i];
-      const teamId = awards[category][i];
+      const categoryWinners = awards[category] ?? [];
+      const teamId = categoryWinners[i];
       if (!teamId) {
         throw new MutationError(
           MutationErrorCode.FORBIDDEN,

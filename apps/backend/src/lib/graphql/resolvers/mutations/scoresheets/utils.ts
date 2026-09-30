@@ -81,9 +81,7 @@ export async function authorizeScoresheetAccess(
     );
   }
 
-  const matchState = await db.robotGameMatches.byId(match.id).state().get();
-
-  if (matchState?.status !== 'completed') {
+  if (match?.status !== 'completed') {
     throw new MutationError(
       MutationErrorCode.FORBIDDEN,
       'Cannot access scoresheet before the team match is completed'

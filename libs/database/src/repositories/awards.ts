@@ -49,6 +49,13 @@ class AwardsSelector {
       .execute();
     return result.length > 0;
   }
+
+  async hasUnassignedAwards(): Promise<boolean> {
+    const unassignedAward = await this.getAwardsQuery()
+      .where(eb => eb.and([eb('winner_id', 'is', null), eb('winner_name', 'is', null)]))
+      .executeTakeFirst();
+    return !!unassignedAward;
+  }
 }
 
 export class AwardsRepository {

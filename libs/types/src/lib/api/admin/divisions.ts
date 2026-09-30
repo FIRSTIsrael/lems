@@ -9,6 +9,7 @@ export const AdminDivisionResponseSchema = z.object({
   hasSchedule: z.boolean(),
   hasAwards: z.boolean(),
   hasUsers: z.boolean(),
+  futureEdition: z.boolean(),
   scheduleSettings: z
     .object({
       matchLength: z.number(),
@@ -16,6 +17,22 @@ export const AdminDivisionResponseSchema = z.object({
       rankingCycleTime: z.number(),
       judgingSessionLength: z.number(),
       judgingSessionCycleTime: z.number()
+    })
+    .nullable()
+    .default(null),
+  practiceTablesSettings: z
+    .object({
+      tableCount: z.number(),
+      slotDurationMinutes: z.number(),
+      startTime: z.string(),
+      endTime: z.string(),
+      blockedTimeSlots: z.array(
+        z.object({
+          start: z.string(),
+          end: z.string(),
+          reason: z.string().optional()
+        })
+      )
     })
     .nullable()
     .default(null)

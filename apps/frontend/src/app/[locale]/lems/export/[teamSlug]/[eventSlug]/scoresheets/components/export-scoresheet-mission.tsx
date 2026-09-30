@@ -81,13 +81,23 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
               }
             }}
           >
-            <Typography fontWeight={800} fontSize="0.9rem">
+            <Typography
+              sx={{
+                fontWeight: 800,
+                fontSize: '0.9rem'
+              }}
+            >
               {mission.id.toUpperCase()}
             </Typography>
           </Box>
 
           <Box sx={{ flex: 1, py: 0.5, px: 1 }}>
-            <Typography fontSize="0.9rem" fontWeight={600}>
+            <Typography
+              sx={{
+                fontSize: '0.9rem',
+                fontWeight: 600
+              }}
+            >
               {title}
             </Typography>
           </Box>
@@ -95,7 +105,12 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
 
         {description && (
           <Box sx={{ px: 1.5, py: 0.5 }}>
-            <Typography fontSize="0.75rem" sx={{ lineHeight: 1.4 }}>
+            <Typography
+              sx={{
+                fontSize: '0.75rem',
+                lineHeight: 1.4
+              }}
+            >
               {description}
             </Typography>
           </Box>
@@ -106,12 +121,23 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
             const valueDisplay = getClauseValueDisplay(clauseIndex);
             return (
               <Box key={clauseIndex} sx={{ py: 0.3 }}>
-                <Typography component="span" fontSize="0.75rem" sx={{ lineHeight: 1.4 }}>
+                <Typography
+                  component="span"
+                  sx={{
+                    fontSize: '0.75rem',
+                    lineHeight: 1.4
+                  }}
+                >
                   {getClauseDescription(clauseIndex)}
                 </Typography>
                 {valueDisplay && (
                   <>
-                    <Typography component="span" fontSize="0.75rem">
+                    <Typography
+                      component="span"
+                      sx={{
+                        fontSize: '0.75rem'
+                      }}
+                    >
                       {' '}
                     </Typography>
                     <Typography
@@ -131,7 +157,6 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
           })}
         </Box>
       </Box>
-
       <Box
         sx={{
           bgcolor: '#f5f5f5',
@@ -145,7 +170,13 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
           }
         }}
       >
-        <Typography fontSize="1.5rem" fontWeight={600} sx={{ color: '#2e7d32' }}>
+        <Typography
+          sx={{
+            fontSize: '1.5rem',
+            fontWeight: 600,
+            color: '#2e7d32'
+          }}
+        >
           {score}
         </Typography>
       </Box>

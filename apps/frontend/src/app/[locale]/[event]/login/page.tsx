@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { apiFetch } from '@lems/shared';
 import { getClient } from '../../../../lib/graphql/ssr-client';
-import { GET_EVENT_BY_SLUG_QUERY, EventDetails } from './graphql';
+import { GET_EVENT_BY_SLUG_QUERY } from './graphql';
 import { LoginPageContent } from './components/login-page-content';
 
 interface LoginPageProps {
@@ -20,7 +20,7 @@ export default async function LoginPage({ params }: LoginPageProps) {
 
   try {
     const client = getClient();
-    const result = await client.query<{ event: EventDetails | null }>({
+    const result = await client.query({
       query: GET_EVENT_BY_SLUG_QUERY,
       variables: { slug: eventSlug }
     });

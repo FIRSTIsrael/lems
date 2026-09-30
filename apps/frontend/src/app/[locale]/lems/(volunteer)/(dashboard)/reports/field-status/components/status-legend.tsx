@@ -5,7 +5,7 @@ import { Typography, Stack, Popover, Box, useTheme, Divider } from '@mui/materia
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlinedIcon from '@mui/icons-material/HelpOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 
 type ParticipantStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
@@ -21,7 +21,7 @@ const getStatusIcon = (status: ParticipantStatus) => {
     case 'queued':
       return <HourglassEmptyIcon fontSize="small" color="info" />;
     case 'missing':
-      return <HelpOutlineIcon fontSize="small" color="disabled" />;
+      return <HelpOutlinedIcon fontSize="small" color="disabled" />;
     case 'no-show':
       return <BlockIcon fontSize="small" color="error" />;
   }
@@ -110,8 +110,10 @@ export const StatusLegend: React.FC<StatusLegendProps> = ({ open, anchorEl, onCl
               key={status}
               direction="row"
               spacing={1.5}
-              alignItems="flex-start"
-              sx={{ py: 0.5 }}
+              sx={{
+                alignItems: 'flex-start',
+                py: 0.5
+              }}
             >
               <Box
                 sx={{

@@ -44,7 +44,7 @@ export const divisionAgendaResolver: GraphQLFieldResolver<
       startTime: event.start_time.toISOString(),
       duration: event.duration,
       visibility: event.visibility,
-      location: event.location || undefined
+      location: event.location ?? null
     }));
   } catch (error) {
     console.error('Error fetching agenda events for division:', division.id, error);

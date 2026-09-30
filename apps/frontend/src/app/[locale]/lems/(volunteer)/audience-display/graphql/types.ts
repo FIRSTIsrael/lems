@@ -1,12 +1,7 @@
 import { AwardsPresentation } from '@lems/database';
 
 export type AudienceDisplayScreen =
-  | 'scoreboard'
-  | 'match_preview'
-  | 'sponsors'
-  | 'logo'
-  | 'message'
-  | 'awards';
+  'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
 
 export interface AudienceDisplayState {
   activeDisplay: AudienceDisplayScreen;

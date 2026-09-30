@@ -16,10 +16,10 @@ export const TitleSlide: React.FC<TitleSlideProps> = ({ primary, secondary, divi
     <Slide>
       <Stack
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         spacing={6}
         sx={{
+          alignItems: 'center',
+          justifyContent: 'center',
           height: '100%',
           width: '100%',
           px: 4,

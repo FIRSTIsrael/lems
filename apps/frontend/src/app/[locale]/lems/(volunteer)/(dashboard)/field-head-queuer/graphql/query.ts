@@ -61,7 +61,7 @@ export const GET_HEAD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gql
 
 export function parseHeadQueuerData(queryData: QueryData): HeadQueuerData {
   const division = queryData.division;
-  
+
   if (!division) {
     return {
       matches: [],

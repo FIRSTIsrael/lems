@@ -51,13 +51,10 @@ export const LogoUploadDialog: React.FC<LogoUploadDialogProps> = ({ team, open, 
       formData.append('city', team.city);
       formData.append('logo', selectedFile);
 
-      const response = await apiFetch(
-        `/admin/teams/${team.id}`,
-        {
-          method: 'PUT',
-          body: formData
-        }
-      );
+      const response = await apiFetch(`/admin/teams/${team.id}`, {
+        method: 'PUT',
+        body: formData
+      });
 
       if (response.ok) {
         await mutate('/admin/teams?extraFields=deletable');

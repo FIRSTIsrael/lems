@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "משהו השתבש, אנא נסו שנית.",
         "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
-        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
+        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר.",
+        "Network error: Failed to fetch": "שגיאת רשת. אנא בדקו את החיבור לאינטרנט ונסו שוב."
       }
     },
     "seasons": {
@@ -370,7 +371,8 @@
           "integrations": "אינטגרציות",
           "settings": "הגדרות",
           "users": "משתמשים",
-          "divisions": "בתים"
+          "divisions": "בתים",
+          "practice-tables": "שולחנות אימונים"
         },
         "color": "צבע"
       },
@@ -657,6 +659,8 @@
             "title": "פרסום אירוע",
             "message": "האם אתם בטוחים שברצונכם לפרסם את האירוע? פעולה זו תהפוך את התוצאות לציבוריות ונראות לכולם.",
             "event-name": "אירוע: {eventName}",
+            "info": "אם קיימת אינטגרציה עם SendGrid, יישלחו הודעות דוא\"ל ליצירי קשר של הקבוצה עם התוצאות שלהם.",
+            "publishing-progress": "מפרסם תוצאות...",
             "confirm": "פרסום אירוע",
             "cancel": "ביטול",
             "publishing": "מפרסם..."
@@ -666,6 +670,7 @@
             "message": "להוריד תוצאות כקובץ ZIP? זה יכלול מחווני שיפוט ודפי ניקוד לכל הקבוצות הרשומות באירוע זה.",
             "event-name": "אירוע: {eventName}",
             "info": "קובץ ה-ZIP יהיה מאורגן לפי סימון הקבוצה (לדוגמה, 9999-IL) עם קבצי PDF בתוך כל תיקייה.",
+            "generating": "מייצר תוצאות...",
             "confirm": "הורדה",
             "cancel": "ביטול",
             "downloading": "מוריד..."
@@ -676,7 +681,9 @@
           "save-error": "שמירת ההגדרות נכשלה",
           "complete-success": "האירוע הושלם בהצלחה",
           "complete-error": "סיום האירוע נכשל",
+          "complete-error-awards-not-assigned": "לא ניתן לסיים את האירוע: לא כל הפרסים הוקצו.",
           "publish-success": "האירוע פורסם בהצלחה",
+          "publish-success-with-emails": "האירוע פורסם בהצלחה! נשלחו {emailsSent} הודעות דוא\"ל ({emailsFailed} נכשלו).",
           "publish-error": "פרסום האירוע נכשל",
           "download-success": "תוצאות האירוע הורדו בהצלחה",
           "download-error": "הורדת תוצאות האירוע נכשלה",
@@ -1090,6 +1097,62 @@
             "cancel": "ביטול",
             "add": "הוסף מתנדב"
           }
+        }
+      },
+      "practice-tables": {
+        "title": "הגדרות שולחנות אימונים",
+        "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "fields": {
+          "division": "בית",
+          "table-count": "מספר שולחנות אימונים",
+          "table-count-helper": "כמה שולחנות אימונים זמינים",
+          "slot-duration": "משך סלוט (דקות)",
+          "slot-duration-helper": "משך כל סלוט אימון",
+          "minutes": "דקות",
+          "start-time": "שעת התחלה",
+          "start-time-helper": "מתי שולחנות האימון נפתחים",
+          "end-time": "שעת סיום",
+          "end-time-helper": "מתי שולחנות האימון נסגרים"
+        },
+        "blocked-times": {
+          "title": "זמנים חסומים",
+          "description": "הגדר זמנים בהם שולחנות האימונים לא זמינים (למשל, הפסקת צהריים)",
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "reason": "סיבה (אופציונלי)",
+          "reason-placeholder": "למשל, הפסקת צהריים",
+          "add": "הוסף זמן חסום",
+          "none": "כל הזמנים זמינים",
+          "details": "שעות לא זמינות",
+          "start": "שעת התחלה",
+          "end": "שעת סיום"
+        },
+        "actions": {
+          "edit-config": "ערוך הגדרות",
+          "delete-config": "מחק הגדרות",
+          "confirm-delete": "האם אתה בטוח שברצונך למחוק את ההגדרות? פעולה זו אינה ניתנת לביטול.",
+          "cancel": "ביטול",
+          "save": "שמור הגדרות",
+          "saving": "שומר..."
+        },
+        "messages": {
+          "save-success": "ההגדרות נשמרו בהצלחה!"
+        },
+        "errors": {
+          "select-division": "אנא בחר בית",
+          "save-failed": "שמירת ההגדרות נכשלה",
+          "delete-failed": "מחיקת ההגדרות נכשלה",
+          "load-failed": "טעינת ההגדרות נכשלה"
+        },
+        "status": {
+          "current-config": "הגדרות נוכחיות: {tables} שולחנות, סלוטים של {duration} דקות, {blockedSlots} תקופות חסומות",
+          "title": "הגדרות נוכחיות",
+          "deleted": "ההגדרות נמחקו בהצלחה"
+        },
+        "no-config": {
+          "title": "לא נמצאה הגדרה",
+          "description": "לתחרות זו אין עדיין הגדרות שולחנות אימונים. לחץ למטה ליצירת הגדרה חדשה.",
+          "create-button": "צור הגדרה"
         }
       }
     },

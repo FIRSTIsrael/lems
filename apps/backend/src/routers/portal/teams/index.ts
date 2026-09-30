@@ -7,6 +7,7 @@ import { makePortalSeasonResponse } from '../seasons/util';
 import { attachTeam } from '../middleware/attach-team';
 import { PortalTeamRequest } from '../../../types/express';
 import { getTeamRankingData } from '../utils/ranking-calculator';
+import { asHandler, asMiddleware } from '../../../types/express-handlers';
 import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 
 const router = express.Router({ mergeParams: true });
@@ -38,44 +39,54 @@ router.use('/:teamSlug', attachTeam());
 /**
  * Returns a team, as well as the latest season they competed at
  */
-router.get('/:teamSlug/summary', async (req: PortalTeamRequest, res: Response) => {
-  const team = await db.teams.byId(req.teamId).get();
-
-  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
-  const seasons = await db.seasons.getAll(); // Sorted by default
-
-  for (const season of seasons) {
-    if (teamEvents.some(event => event.season_id === season.id)) {
-      const seasonResponse = makePortalSeasonResponse(season);
-
-      res.status(200).json(makePortalTeamSummaryResponse(team, seasonResponse));
+router.get(
+  '/:teamSlug/summary',
+  asHandler<PortalTeamRequest>(async (req, res: Response) => {
+    const team = await db.teams.byId(req.teamId).get();
+    if (!team) {
+      res.status(404).json({ error: 'Team not found' });
       return;
     }
-  }
 
-  res.status(200).json(makePortalTeamSummaryResponse(team, null));
-});
+    const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    const seasons = await db.seasons.getAll(); // Sorted by default
+
+    for (const season of seasons) {
+      if (teamEvents.some(event => event.season_id === season.id)) {
+        const seasonResponse = makePortalSeasonResponse(season);
+
+        res.status(200).json(makePortalTeamSummaryResponse(team, seasonResponse));
+        return;
+      }
+    }
+
+    res.status(200).json(makePortalTeamSummaryResponse(team, null));
+  })
+);
 
 /**
  * Returns the seasons a team competed at
  */
-router.get('/:teamSlug/seasons', async (req: PortalTeamRequest, res: Response) => {
-  const seasons = await db.seasons.getAll();
-  const teamSeasons = new Set();
+router.get(
+  '/:teamSlug/seasons',
+  asHandler<PortalTeamRequest>(async (req, res: Response) => {
+    const seasons = await db.seasons.getAll();
+    const teamSeasons = new Set();
 
-  const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
+    const teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
 
-  for (const event of teamEvents) {
-    if (!event.visible) continue;
+    for (const event of teamEvents) {
+      if (!event.visible) continue;
 
-    if (!teamSeasons.has(event.season_id)) {
-      teamSeasons.add(event.season_id);
+      if (!teamSeasons.has(event.season_id)) {
+        teamSeasons.add(event.season_id);
+      }
     }
-  }
 
-  const filteredSeasons = seasons.filter(season => teamSeasons.has(season.id));
-  res.status(200).json(filteredSeasons.map(makePortalSeasonResponse));
-});
+    const filteredSeasons = seasons.filter(season => teamSeasons.has(season.id));
+    res.status(200).json(filteredSeasons.map(makePortalSeasonResponse));
+  })
+);
 
 type PortalTeamWithSeasonRequest = PortalTeamRequest & { seasonId?: string };
 
@@ -108,8 +119,8 @@ const seasonFilter = async (
  */
 router.get(
   '/:teamSlug/events',
-  seasonFilter,
-  async (req: PortalTeamRequest & { seasonId?: string }, res: Response) => {
+  asMiddleware<PortalTeamWithSeasonRequest>(seasonFilter),
+  asHandler<PortalTeamWithSeasonRequest>(async (req, res) => {
     let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
     teamEvents = teamEvents.filter(event => event.visible);
 
@@ -118,7 +129,7 @@ router.get(
     }
 
     res.status(200).json(teamEvents.map(makePortalEventResponse));
-  }
+  })
 );
 
 /**
@@ -126,8 +137,8 @@ router.get(
  */
 router.get(
   '/:teamSlug/events/results',
-  seasonFilter,
-  async (req: PortalTeamWithSeasonRequest, res: Response) => {
+  asMiddleware<PortalTeamWithSeasonRequest>(seasonFilter),
+  asHandler<PortalTeamWithSeasonRequest>(async (req, res) => {
     let teamEvents = await db.events.byTeam(req.teamId).getAllSummaries();
     teamEvents = teamEvents.filter(event => event.visible);
 
@@ -154,6 +165,10 @@ router.get(
       // TODO: This isn't the most efficient way to check division registration,
       // we should improve this sometime by batch-requesting
       const teamDivision = await db.teams.byId(req.teamId).isInEvent(event.id);
+      if (!teamDivision) {
+        eventResults.push(eventResult);
+        continue;
+      }
 
       const awards = await db.awards.byDivisionId(teamDivision).getAll();
       const teamAwards = awards.filter(award => award.winner_id === req.teamId);
@@ -173,16 +188,20 @@ router.get(
 
       const scoresByRound = new Map<number, number>();
       for (const sheet of submittedScoresheets) {
-        scoresByRound.set(sheet.round, sheet.data.score);
+        scoresByRound.set(sheet.round, sheet.data?.score ?? 0);
       }
 
-      const teamMatchResults = rankingMatches.map(match => ({
-        number: match.round,
-        score: scoresByRound.get(match.round) ?? null
-      }));
+      const teamMatchResults = rankingMatches
+        .map(match => ({
+          number: match.round,
+          score: scoresByRound.get(match.round)
+        }))
+        .filter((match): match is { number: number; score: number } => match.score != null);
+
+      const divisionTeams = await db.teams.byDivisionId(teamDivision).getAll();
 
       const rankingData = await getTeamRankingData(teamDivision, req.teamId);
-      const robotGameRank = rankingData?.rank ?? null;
+      const robotGameRank = rankingData?.rank ?? divisionTeams.length;
 
       eventResult.results = {
         awards: teamAwards.map(award => ({
@@ -197,7 +216,7 @@ router.get(
     }
 
     res.status(200).json(eventResults);
-  }
+  })
 );
 
 export default router;

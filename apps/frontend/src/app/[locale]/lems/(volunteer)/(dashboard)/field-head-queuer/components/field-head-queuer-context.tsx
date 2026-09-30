@@ -39,7 +39,9 @@ export function FieldHeadQueuerProvider({
     [divisionId, data.matches, data.tables, data.activeMatch, data.loadedMatch, loading]
   );
 
-  return <FieldHeadQueuerContext.Provider value={value}>{children}</FieldHeadQueuerContext.Provider>;
+  return (
+    <FieldHeadQueuerContext.Provider value={value}>{children}</FieldHeadQueuerContext.Provider>
+  );
 }
 
 export function useFieldHeadQueuer() {

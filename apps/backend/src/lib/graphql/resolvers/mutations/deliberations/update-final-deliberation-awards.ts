@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { Award, OPTIONAL_AWARDS } from '@lems/shared/awards';
+import { FinalDeliberationAwards } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -85,12 +86,12 @@ export const updateFinalDeliberationAwardsResolver: GraphQLFieldResolver<
   const updatedAwards = {
     ...deliberation.awards,
     optionalAwards: {
-      ...deliberation.awards.optionalAwards, // Preserve existing optional awards
-      ...optionalAwards // Apply incoming updates
+      ...deliberation.awards.optionalAwards,
+      ...optionalAwards
     },
-    ...mandatoryAwards, // Mandatory awards already handle all fields in this update
-    ...(Object.keys(championsAward).length > 0 && { champions: championsAward })
-  };
+    ...mandatoryAwards,
+    ...(Object.keys(championsAward).length > 0 ? { champions: championsAward } : {})
+  } as FinalDeliberationAwards;
 
   // Update the deliberation
   const updated = await db.finalDeliberations.byDivision(divisionId).update({

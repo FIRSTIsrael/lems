@@ -7,6 +7,10 @@ import { FirstIsraelDashboardEventRequest } from '../../../../types/express';
 
 const firstIsraelDashboardSecret = process.env.FIRST_ISRAEL_DASHBOARD_SECRET;
 
+if (!firstIsraelDashboardSecret) {
+  throw new Error('FIRST_ISRAEL_DASHBOARD_SECRET environment variable is required');
+}
+
 export const firstIsraelDashboardTeamMiddleware = async (
   req: Request,
   res: Response,
@@ -17,7 +21,7 @@ export const firstIsraelDashboardTeamMiddleware = async (
     const tokenData = jwt.verify(
       token,
       firstIsraelDashboardSecret
-    ) as FirstIsraelDashboardTokenData;
+    ) as unknown as FirstIsraelDashboardTokenData;
 
     const team = await db.teams.bySlug(tokenData.teamSlug).get();
     if (!team) throw new Error('Team not found');

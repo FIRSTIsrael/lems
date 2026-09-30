@@ -92,7 +92,14 @@ export default function ScoresheetPage() {
             }
           >
             <RoleAuthorizer user={user} allowedRoles="head-referee">
-              <Stack direction="row" spacing={2} justifyContent="flex-end" alignItems="top">
+              <Stack
+                direction="row"
+                spacing={2}
+                sx={{
+                  justifyContent: 'flex-end',
+                  alignItems: 'top'
+                }}
+              >
                 <EditButton scoresheet={scoresheet} isEditMode={forceEdit} />
                 <HeadRefViewToggle />
                 <ScoresheetSwitcher />

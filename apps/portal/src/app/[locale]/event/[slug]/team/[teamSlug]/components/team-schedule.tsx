@@ -16,6 +16,13 @@ interface ScheduleEntry {
   location: string;
 }
 
+interface PracticeTableAssignment {
+  id: string;
+  tableNumber: number;
+  startTime: string; // ISO 8601 datetime
+  endTime: string; // ISO 8601 datetime
+}
+
 export const TeamSchedule: React.FC = () => {
   const { event, team } = useTeamAtEvent();
 
@@ -23,6 +30,7 @@ export const TeamSchedule: React.FC = () => {
     session: TeamJudgingSession;
     matches: TeamRobotGameMatch[];
     agenda: AgendaEvent[];
+    practiceAssignments: PracticeTableAssignment[];
   } | null>(`/portal/events/${event.slug}/teams/${team.slug}/activities`, {
     suspense: true
   });
@@ -34,7 +42,7 @@ export const TeamSchedule: React.FC = () => {
     return null; // Should be handled by suspense
   }
 
-  const { session: judgingSession, matches, agenda } = data;
+  const { session: judgingSession, matches, agenda, practiceAssignments } = data;
 
   const scheduleEntries: ScheduleEntry[] = [
     ...(matches || []).map(match => ({
@@ -58,6 +66,15 @@ export const TeamSchedule: React.FC = () => {
           }
         ]
       : []),
+    ...(practiceAssignments || []).map(assignment => ({
+      time: new Date(assignment.startTime),
+      description: t('schedule.practice-table', {
+        tableNumber: assignment.tableNumber
+      }),
+      location: t('schedule.practice-table-location', {
+        tableNumber: assignment.tableNumber
+      })
+    })),
     ...(agenda || []).map(agendaItem => ({
       time: new Date(agendaItem.startTime),
       description: agendaItem.title,
@@ -74,21 +91,36 @@ export const TeamSchedule: React.FC = () => {
         flexDirection: 'column'
       }}
     >
-      <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 2 }}>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{
+          alignItems: 'center',
+          mb: 2
+        }}
+      >
         <ScheduleIcon color="primary" />
-        <Typography variant="h6" fontWeight="bold">
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 'bold'
+          }}
+        >
           {t('schedule.title')}
         </Typography>
       </Stack>
-
       {scheduleEntries.length === 0 && (
         <Box sx={{ p: 3, textAlign: 'center' }}>
-          <Typography variant="body2" color="text.secondary">
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary'
+            }}
+          >
             {t('schedule.no-schedule')}
           </Typography>
         </Box>
       )}
-
       {scheduleEntries.length > 0 && (
         <Stack spacing={0} divider={<Divider />}>
           {scheduleEntries.map((entry, index) => (
@@ -105,7 +137,12 @@ export const TeamSchedule: React.FC = () => {
                 <ListItemText
                   primary={
                     <Box sx={{ display: 'flex', alignItems: 'center', width: '100%' }}>
-                      <Typography variant="body2" fontWeight="600">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: '600'
+                        }}
+                      >
                         {dayjs(entry.time).format('HH:mm')}
                       </Typography>
                       <Box
@@ -116,7 +153,12 @@ export const TeamSchedule: React.FC = () => {
                           mx: 2
                         }}
                       />
-                      <Typography variant="body2" fontWeight="600">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: '600'
+                        }}
+                      >
                         {entry.description}
                       </Typography>
                     </Box>

@@ -170,6 +170,7 @@ export function OptionalAwardsDataGrid() {
             filterable: false,
             headerAlign: 'center' as const,
             align: 'center' as const,
+
             renderCell: params => {
               const value = params.row.rubricsFields['core-values'][label];
               return value !== null ? value : '-';
@@ -193,6 +194,7 @@ export function OptionalAwardsDataGrid() {
               filterable: false,
               headerAlign: 'center' as const,
               align: 'center' as const,
+
               renderCell: params => {
                 const value = params.row.gpScores[gpKey];
                 return value !== null ? value : '-';

@@ -20,11 +20,18 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
   const theme = useTheme();
 
   return (
-    <Stack spacing={1.5} flex={1} minWidth={0} sx={{ maxWidth: '50%' }}>
+    <Stack
+      spacing={1.5}
+      sx={{
+        flex: 1,
+        minWidth: 0,
+        maxWidth: '50%'
+      }}
+    >
       <Typography
-        textAlign="center"
         variant="subtitle1"
         sx={{
+          textAlign: 'center',
           fontWeight: 600,
           color: 'text.secondary',
           fontSize: '0.875rem',
@@ -50,7 +57,16 @@ export const SlideDisplay: React.FC<SlideDisplayProps> = ({
           transition: 'box-shadow 0.3s ease'
         }}
       >
-        <div style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column'
+          }}
+        >
           <Deck ref={deckRef} initialState={initialState} enableReinitialize={true}>
             {awardSlides}
           </Deck>

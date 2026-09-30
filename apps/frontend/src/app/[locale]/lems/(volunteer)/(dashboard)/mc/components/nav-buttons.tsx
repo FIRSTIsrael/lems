@@ -19,9 +19,9 @@ export const NavButtons: React.FC<NavButtonsProps> = ({ current, total, onPrevio
     <Stack
       direction="row"
       spacing={2}
-      alignItems="center"
-      justifyContent="center"
       sx={{
+        alignItems: 'center',
+        justifyContent: 'center',
         pt: 2,
         pb: 1
       }}
@@ -40,13 +40,11 @@ export const NavButtons: React.FC<NavButtonsProps> = ({ current, total, onPrevio
       >
         <DirectionalIcon ltr={NavigateBefore} rtl={NavigateNext} />
       </IconButton>
-
       <Box sx={{ minWidth: isMobile ? 60 : 80, textAlign: 'center' }}>
         <Typography variant={isMobile ? 'body2' : 'body1'} sx={{ fontWeight: 600 }}>
           {current + 1}/{total}
         </Typography>
       </Box>
-
       <IconButton
         onClick={onNext}
         disabled={current === total - 1}

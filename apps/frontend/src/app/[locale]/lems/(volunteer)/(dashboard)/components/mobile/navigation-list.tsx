@@ -56,8 +56,8 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
           >
             <Box
               className="navigation-icon"
-              color={item.active ? 'primary' : 'text.secondary'}
               sx={{
+                color: item.active ? 'primary.main' : 'text.secondary',
                 transition: 'color 0.15s ease-in-out',
                 display: 'flex',
                 alignItems: 'center',
@@ -68,10 +68,10 @@ export const NavigationList: React.FC<NavigationListProps> = ({ onItemClick }) =
             </Box>
             <Typography
               className="navigation-text"
-              color={item.active ? 'primary' : 'text.secondary'}
               variant="body2"
-              fontWeight={item.active ? 700 : 600}
               sx={{
+                color: item.active ? 'primary.main' : 'text.secondary',
+                fontWeight: item.active ? 700 : 600,
                 transition: 'all 0.15s ease-in-out'
               }}
             >

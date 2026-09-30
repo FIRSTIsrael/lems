@@ -8,7 +8,12 @@ export function EmptyState() {
 
   return (
     <Box sx={{ textAlign: 'center', py: 6 }}>
-      <Typography variant="h6" color="text.secondary">
+      <Typography
+        variant="h6"
+        sx={{
+          color: 'text.secondary'
+        }}
+      >
         {t('no-awards')}
       </Typography>
     </Box>

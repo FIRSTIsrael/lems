@@ -2,19 +2,23 @@ import express from 'express';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
+import { asHandler } from '../../../../../types/express-handlers';
 import { makeAdminAwardResponse } from './utils';
 
 const router = express.Router({ mergeParams: true });
 
-router.get('/', async (req: AdminDivisionRequest, res) => {
-  const awards = await db.awards.byDivisionId(req.divisionId).getAll();
-  res.status(200).json(awards.map(award => makeAdminAwardResponse(award)));
-});
+router.get(
+  '/',
+  asHandler<AdminDivisionRequest>(async (req, res) => {
+    const awards = await db.awards.byDivisionId(req.divisionId).getAll();
+    res.status(200).json(awards.map(award => makeAdminAwardResponse(award)));
+  })
+);
 
 router.post(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     const awards = req.body.awards;
     if (!Array.isArray(awards)) {
       res.status(400).json({ error: 'Awards array is required' });
@@ -50,17 +54,17 @@ router.post(
     await db.divisions.byId(req.divisionId).update({ has_awards: true });
 
     res.status(201).end();
-  }
+  })
 );
 
 router.delete(
   '/',
   requirePermission('MANAGE_EVENT_DETAILS'),
-  async (req: AdminDivisionRequest, res) => {
+  asHandler<AdminDivisionRequest>(async (req, res) => {
     await db.awards.byDivisionId(req.divisionId).deleteAll();
     await db.divisions.byId(req.divisionId).update({ has_awards: false });
     res.status(200).end();
-  }
+  })
 );
 
 export default router;

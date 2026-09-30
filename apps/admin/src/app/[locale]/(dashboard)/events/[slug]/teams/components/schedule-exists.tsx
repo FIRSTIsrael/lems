@@ -69,7 +69,12 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => 
 
   return (
     <>
-      <Stack spacing={2} mb={2}>
+      <Stack
+        spacing={2}
+        sx={{
+          mb: 2
+        }}
+      >
         {divisionsWithSchedule.map(division => (
           <Alert
             key={division.id}
@@ -99,14 +104,12 @@ export const ScheduleExists: React.FC<ScheduleExistsProps> = ({ divisions }) => 
               </Box>
             }
           >
-            {(divisions.length > 1 
-              ? t('division-message', { divisionName: division.name }) 
-              : t('event-message', { eventName: event.name })
-              )}
+            {divisions.length > 1
+              ? t('division-message', { divisionName: division.name })
+              : t('event-message', { eventName: event.name })}
           </Alert>
         ))}
       </Stack>
-
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

@@ -55,8 +55,7 @@ export const SponsorsDisplay = () => {
           width: '90%',
           maxWidth: '1200px',
           pt: '10vh',
-          height: '40vh',
-          animation: 'fadeInScale 0.5s ease-out'
+          height: '40vh'
         }}
       >
         <Image
@@ -72,28 +71,6 @@ export const SponsorsDisplay = () => {
           }}
         />
       </Box>
-
-      <style>{`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-          }
-          100% {
-            opacity: 1;
-          }
-        }
-
-        @keyframes fadeInScale {
-          0% {
-            opacity: 0;
-            transform: scale(0.98);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-      `}</style>
     </Box>
   );
 };

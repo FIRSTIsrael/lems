@@ -3,6 +3,7 @@ import fileUpload, { UploadedFile } from 'express-fileupload';
 import sharp from 'sharp';
 import db from '../../../lib/database';
 import { FirstIsraelDashboardRequest } from '../../../types/express';
+import { asHandler } from '../../../types/express-handlers';
 import { teamLogoFileValidator, firstIsraelDashboardTeamMiddleware } from './middleware';
 import eventRouter from './team/event';
 
@@ -14,7 +15,7 @@ router.post(
   '/team/logo',
   fileUpload({ limits: { fileSize: 200 * 1024, files: 1 } }),
   teamLogoFileValidator,
-  async (req: FirstIsraelDashboardRequest, res: Response) => {
+  asHandler<FirstIsraelDashboardRequest>(async (req, res: Response) => {
     if (!req.files || !req.files.file) {
       res.status(400).json({ error: 'NO_FILE_UPLOADED' });
       return;
@@ -37,7 +38,7 @@ router.post(
     }
 
     res.status(200).end();
-  }
+  })
 );
 
 router.use('/team/event', eventRouter);

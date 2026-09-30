@@ -2,7 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import dayjs from 'dayjs';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { JudgingSession, JudgingSessionState } from '@lems/database';
+import { JudgingSession } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -32,24 +32,22 @@ export const startJudgingSessionResolver: GraphQLFieldResolver<
     await checkSessionCanBeStarted(divisionId, session);
 
     const division = await db.divisions.byId(divisionId).get();
+    if (!division?.schedule_settings) {
+      throw new MutationError(
+        MutationErrorCode.INTERNAL_ERROR,
+        `Division schedule settings not found for division ${divisionId}`
+      );
+    }
 
     const scheduledTime = dayjs(session.scheduled_time);
     const startTime = new Date();
     const startDelta = Math.round((startTime.getTime() - scheduledTime.toDate().getTime()) / 1000);
 
-    const result = await db.raw.mongo
-      .collection<JudgingSessionState>('judging_session_states')
-      .findOneAndUpdate(
-        { sessionId },
-        {
-          $set: {
-            status: 'in-progress',
-            startTime,
-            startDelta
-          }
-        },
-        { returnDocument: 'after' }
-      );
+    const result = await db.judgingSessions.byId(sessionId).update({
+      status: 'in-progress',
+      start_time: startTime,
+      start_delta: startDelta
+    });
 
     if (!result) {
       throw new MutationError(
@@ -107,11 +105,7 @@ const checkSessionCanBeStarted = async (
   session: JudgingSession
 ): Promise<void> => {
   // Check 1: Session must be in not-started status
-  const sessionState = await db.raw.mongo
-    .collection<JudgingSessionState>('judging_session_states')
-    .findOne({ sessionId: session.id });
-
-  if (!sessionState || sessionState.status !== 'not-started') {
+  if (!session || session.status !== 'not-started') {
     throw new MutationError(MutationErrorCode.CONFLICT, `Session is not in not-started status`);
   }
 

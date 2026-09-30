@@ -58,7 +58,13 @@ export function RoundSchedule({ roundGroup, defaultExpanded = true }: RoundSched
           }
         }}
       >
-        <Typography variant="h6" fontWeight={600} color="text.primary">
+        <Typography
+          variant="h6"
+          sx={{
+            fontWeight: 600,
+            color: 'text.primary'
+          }}
+        >
           {title}
         </Typography>
       </AccordionSummary>

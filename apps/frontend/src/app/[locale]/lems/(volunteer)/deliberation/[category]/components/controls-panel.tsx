@@ -104,7 +104,13 @@ export const ControlsPanel: React.FC = () => {
       )}
       {isInProgress && (
         <Stack spacing={1.25} sx={{ flex: 1 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack
+            direction="row"
+            sx={{
+              justifyContent: 'space-between',
+              alignItems: 'center'
+            }}
+          >
             <Typography
               variant="caption"
               sx={{
@@ -120,10 +126,10 @@ export const ControlsPanel: React.FC = () => {
             <Countdown
               variant="subtitle2"
               targetDate={timerValues.endTime || new Date()}
-              fontFamily="monospace"
-              fontWeight={700}
-              fontSize="1.1rem"
               sx={{
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                fontSize: '1.1rem',
                 color:
                   timerValues.progressPercent >= 20
                     ? theme.palette.primary.main
@@ -150,11 +156,16 @@ export const ControlsPanel: React.FC = () => {
         </Stack>
       )}
       {!isInProgress && !isCompleted && (
-        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center' }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            textAlign: 'center'
+          }}
+        >
           {t('not-started')}
         </Typography>
       )}
-
       <Box sx={{ display: 'flex', gap: 1 }}>
         {!isInProgress && !isCompleted ? (
           <Button
@@ -187,7 +198,6 @@ export const ControlsPanel: React.FC = () => {
           </Button>
         ) : null}
       </Box>
-
       <CompleteDeliberationModal
         open={isCompleteModalOpen}
         onClose={() => setIsCompleteModalOpen(false)}

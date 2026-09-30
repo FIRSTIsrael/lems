@@ -1,6 +1,6 @@
-import { NextFunction, Response } from 'express';
 import { AdminDivisionRequest, AdminEventRequest } from '../../../types/express';
 import database from '../../../lib/database';
+import { asMiddleware } from '../../../types/express-handlers';
 
 /**
  * Middleware to attach the division ID to the request.
@@ -8,7 +8,7 @@ import database from '../../../lib/database';
  * If the division is not bound to the event preceding it, a 400 error is returned.
  */
 export const attachDivision = () => {
-  return async (req: AdminEventRequest, res: Response, next: NextFunction) => {
+  return asMiddleware<AdminEventRequest>(async (req, res, next) => {
     try {
       const divisionId = req.params.divisionId;
 
@@ -36,5 +36,5 @@ export const attachDivision = () => {
       console.error('Error attaching division:', error);
       res.status(500).json({ error: 'INTERNAL_SERVER_ERROR' });
     }
-  };
+  });
 };

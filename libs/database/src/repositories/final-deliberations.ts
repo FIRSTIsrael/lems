@@ -1,68 +1,60 @@
-import { Db } from 'mongodb';
-import { FinalDeliberation } from '../schema/documents/final-deliberation';
-
-const COLLECTION_NAME = 'final_deliberations';
+import { Kysely } from 'kysely';
+import { KyselyDatabaseSchema } from '../schema/kysely';
+import { FinalDeliberation, FinalDeliberationUpdate } from '../schema/tables/final-deliberation';
 
 export class FinalDeliberationSelector {
   constructor(
-    private mongoDb: Db,
+    private db: Kysely<KyselyDatabaseSchema>,
     private divisionId: string
   ) {}
 
-  async get(): Promise<FinalDeliberation | null> {
-    const deliberation = await this.mongoDb
-      .collection<FinalDeliberation>(COLLECTION_NAME)
-      .findOne({ divisionId: this.divisionId });
-    return deliberation;
+  private getDeliberationQuery() {
+    return this.db
+      .selectFrom('final_deliberations')
+      .selectAll()
+      .where('division_id', '=', this.divisionId);
   }
 
-  async update(
-    updates: Omit<Partial<FinalDeliberation>, 'divisionId'>
-  ): Promise<FinalDeliberation | null> {
-    const result = await this.mongoDb
-      .collection<FinalDeliberation>(COLLECTION_NAME)
-      .findOneAndUpdate(
-        { divisionId: this.divisionId },
-        { $set: updates },
-        { returnDocument: 'after' }
-      );
+  async get(): Promise<FinalDeliberation | null> {
+    const deliberation = await this.getDeliberationQuery().executeTakeFirst();
+    return deliberation || null;
+  }
 
-    return result;
+  async update(updates: FinalDeliberationUpdate): Promise<FinalDeliberation | undefined> {
+    return this.db
+      .updateTable('final_deliberations')
+      .set(updates)
+      .where('division_id', '=', this.divisionId)
+      .returningAll()
+      .executeTakeFirst();
   }
 
   async delete(): Promise<void> {
-    await this.mongoDb
-      .collection<FinalDeliberation>(COLLECTION_NAME)
-      .deleteOne({ divisionId: this.divisionId });
+    await this.db
+      .deleteFrom('final_deliberations')
+      .where('division_id', '=', this.divisionId)
+      .execute();
   }
 }
 
 export class FinalDeliberationsRepository {
-  constructor(private mongoDb: Db) {}
-
-  async create(divisionId: string): Promise<FinalDeliberation> {
-    const document: FinalDeliberation = {
-      divisionId,
-      stage: 'champions',
-      status: 'not-started',
-      startTime: null,
-      completionTime: null,
-      awards: {},
-      stageData: {}
-    };
-
-    const result = await this.mongoDb
-      .collection<FinalDeliberation>(COLLECTION_NAME)
-      .insertOne(document);
-
-    if (!result.insertedId) {
-      throw new Error(`Failed to create final deliberation for division ${divisionId}`);
-    }
-
-    return document;
-  }
+  constructor(private db: Kysely<KyselyDatabaseSchema>) {}
 
   byDivision(divisionId: string): FinalDeliberationSelector {
-    return new FinalDeliberationSelector(this.mongoDb, divisionId);
+    return new FinalDeliberationSelector(this.db, divisionId);
+  }
+
+  async create(divisionId: string): Promise<FinalDeliberation> {
+    return this.db
+      .insertInto('final_deliberations')
+      .values({
+        division_id: divisionId,
+        stage: 'champions',
+        status: 'not-started',
+        awards: {},
+        stage_data: {}
+      })
+      .returningAll()
+      .executeTakeFirstOrThrow();
   }
 }

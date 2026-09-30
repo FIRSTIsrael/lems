@@ -12,15 +12,16 @@ export const LiveIcon: React.FC = () => {
   return (
     <Box
       component="span"
-      display="inline-block"
-      position="relative"
-      bgcolor="red"
-      width={12}
-      height={12}
-      border="1px solid rgba(0, 0, 0, 0.1)"
-      borderRadius="50%"
-      zIndex={1}
       sx={{
+        display: 'inline-block',
+        position: 'relative',
+        bgcolor: 'red',
+        width: 12,
+        height: 12,
+        border: '1px solid rgba(0, 0, 0, 0.1)',
+        borderRadius: '50%',
+        zIndex: 1,
+
         '::before': {
           content: '""',
           display: 'block',

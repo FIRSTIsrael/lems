@@ -1,4 +1,4 @@
-import { Worker, Job, RedisClient } from 'bullmq';
+import { Worker, Job, createIORedisClient } from 'bullmq';
 import { getRedisClient } from '../redis/redis-client';
 import { logger } from '../logger';
 import { ScheduledEvent } from './types';
@@ -53,7 +53,7 @@ export class WorkerManager {
           await this.processJob(job);
         },
         {
-          connection: redisConnection as RedisClient,
+          connection: createIORedisClient(redisConnection),
           concurrency: 1
         }
       );
@@ -98,10 +98,28 @@ export class WorkerManager {
         throw new Error(`No handler registered for event type: ${eventType}`);
       }
 
-      logger.info({ component: 'worker-manager', action: 'process-job', eventType, divisionId, jobId: job.id }, 'Routing job');
+      logger.info(
+        {
+          component: 'worker-manager',
+          action: 'process-job',
+          eventType,
+          divisionId,
+          jobId: job.id
+        },
+        'Routing job'
+      );
       await handler(job);
     } catch (error) {
-      logger.error({ component: 'worker-manager', action: 'process-job', eventType: job.data.eventType, jobId: job.id, error: error instanceof Error ? error.message : String(error) }, 'Error processing job');
+      logger.error(
+        {
+          component: 'worker-manager',
+          action: 'process-job',
+          eventType: job.data.eventType,
+          jobId: job.id,
+          error: error instanceof Error ? error.message : String(error)
+        },
+        'Error processing job'
+      );
       throw error; // Re-throw to trigger retry
     }
   }
@@ -118,12 +136,22 @@ export class WorkerManager {
     this.isShuttingDown = true;
 
     try {
-      logger.info({ component: 'worker-manager', action: 'shutdown' }, 'Shutting down worker gracefully');
+      logger.info(
+        { component: 'worker-manager', action: 'shutdown' },
+        'Shutting down worker gracefully'
+      );
       await this.worker.close();
       this.worker = null;
       logger.info({ component: 'worker-manager', action: 'shutdown' }, 'Worker stopped');
     } catch (error) {
-      logger.error({ component: 'worker-manager', action: 'shutdown', error: error instanceof Error ? error.message : String(error) }, 'Error during worker shutdown');
+      logger.error(
+        {
+          component: 'worker-manager',
+          action: 'shutdown',
+          error: error instanceof Error ? error.message : String(error)
+        },
+        'Error during worker shutdown'
+      );
       throw error;
     } finally {
       this.isShuttingDown = false;

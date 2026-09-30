@@ -25,24 +25,17 @@ export const teamJudgingSessionResolver: GraphQLFieldResolver<
       return null;
     }
 
-    // Fetch state data from MongoDB
-    const state = await db.judgingSessions.byId(session.id).state().get();
-
     return {
       id: session.id,
       number: session.number,
       scheduledTime: session.scheduled_time.toISOString(),
-      status: state?.status || 'not-started',
-      called: !!state?.called,
-      queued: !!state?.queued,
+      status: session.status,
+      called: !!session.called,
+      queued: !!session.queued,
       roomId: session.room_id,
       teamId: session.team_id,
-      startTime: state?.startTime ? new Date(state.startTime).toISOString() : undefined,
-      startDelta: state?.startTime
-        ? Math.floor(
-            (new Date(state.startTime).getTime() - session.scheduled_time.getTime()) / 1000
-          )
-        : undefined,
+      startTime: session.start_time ? session.start_time.toISOString() : undefined,
+      startDelta: session.start_delta ?? undefined,
       divisionId: team.divisionId
     };
   } catch (error) {

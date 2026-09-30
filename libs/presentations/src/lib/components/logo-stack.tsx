@@ -12,12 +12,12 @@ export const LogoStack: React.FC<LogoStackProps> = ({ color }) => {
   return (
     <Stack
       direction="row"
-      justifyContent="space-around"
-      alignItems="center"
       sx={{
+        justifyContent: 'space-around',
+        alignItems: 'center',
         position: 'absolute',
         bottom: 0,
-        left: 0,
+        insetInlineStart: 0,
         width: '100%',
         height: '100px',
         bgcolor: '#f7f8f9',

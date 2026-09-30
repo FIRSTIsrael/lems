@@ -11,9 +11,11 @@
     "@nx/eslint:lint": {
       "inputs": [
         "default",
+        "^default",
         "{workspaceRoot}/.eslint.config.mjs",
         "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs"
+        "{workspaceRoot}/eslint.config.mjs",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
       ],
       "cache": true
     },
@@ -43,7 +45,7 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "babel": true
+        "babel": false
       },
       "library": {
         "unitTestRunner": "none"
@@ -56,5 +58,6 @@
       }
     }
   },
-  "useLegacyCache": false
+  "useLegacyCache": false,
+  "analytics": false
 }

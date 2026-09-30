@@ -176,9 +176,7 @@ export function getOrganizedRubricFields(
   const result: Record<string, number> = {};
 
   const categoryKey = hyphensToUnderscores(category) as
-    | 'innovation_project'
-    | 'robot_design'
-    | 'core_values';
+    'innovation_project' | 'robot_design' | 'core_values';
 
   const categoryMap = {
     innovation_project: team.rubrics.innovation_project,

@@ -126,18 +126,18 @@ export class Database {
     this.seasons = new SeasonsRepository(this.kysely, this.space);
     this.teams = new TeamsRepository(this.kysely, this.space);
     this.events = new EventsRepository(this.kysely);
-    this.divisions = new DivisionsRepository(this.kysely, this.space, this.mongoDb);
+    this.divisions = new DivisionsRepository(this.kysely, this.space);
     this.eventUsers = new EventUsersRepository(this.kysely);
     this.integrations = new EventIntegrationsRepository(this.kysely);
 
     this.rooms = new RoomsRepository(this.kysely);
-    this.judgingSessions = new JudgingSessionsRepository(this.kysely, this.mongoDb);
+    this.judgingSessions = new JudgingSessionsRepository(this.kysely);
     this.judgingDeliberations = new JudgingDeliberationsRepository(this.kysely);
-    this.finalDeliberations = new FinalDeliberationsRepository(this.mongoDb);
+    this.finalDeliberations = new FinalDeliberationsRepository(this.kysely);
     this.rubrics = new RubricsRepository(this.kysely, this.mongoDb);
 
     this.tables = new TablesRepository(this.kysely);
-    this.robotGameMatches = new RobotGameMatchesRepository(this.kysely, this.mongoDb);
+    this.robotGameMatches = new RobotGameMatchesRepository(this.kysely);
     this.scoresheets = new ScoresheetsRepository(this.kysely, this.mongoDb);
 
     this.awards = new AwardsRepository(this.kysely);

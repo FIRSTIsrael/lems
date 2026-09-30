@@ -92,7 +92,13 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
   return (
     <>
       <DialogContent>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+        <Typography
+          variant="body2"
+          sx={{
+            color: 'text.secondary',
+            mb: 2
+          }}
+        >
           {t('description')}
         </Typography>
 
@@ -105,7 +111,7 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
         <FormGroup>
           {ALL_ADMIN_PERMISSIONS.map(permission => {
             const isEditor = user.id === userId;
-            const isManageUsers = permission === "MANAGE_USERS";
+            const isManageUsers = permission === 'MANAGE_USERS';
             return (
               <FormControlLabel
                 key={permission}
@@ -117,13 +123,14 @@ const PermissionsForm: React.FC<PermissionsFormProps> = ({ userId, onClose }) =>
                   />
                 }
                 label={getPermissionName(permission)}
-                title={isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined}
+                title={
+                  isEditor && isManageUsers ? t('errors.cannot-remove-own-manage-users') : undefined
+                }
               />
             );
           })}
         </FormGroup>
       </DialogContent>
-
       <DialogActions>
         <Button onClick={onClose} disabled={isSubmitting}>
           {t('actions.cancel')}
@@ -152,7 +159,6 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <DialogTitle>{t('title', { userName })}</DialogTitle>
-
       <ErrorBoundary
         fallback={
           <DialogContent>
@@ -163,7 +169,13 @@ export const PermissionsEditorDialog: React.FC<PermissionsEditorDialogProps> = (
         <Suspense
           fallback={
             <DialogContent>
-              <Box display="flex" justifyContent="center" p={3}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  p: 3
+                }}
+              >
                 <CircularProgress />
               </Box>
             </DialogContent>

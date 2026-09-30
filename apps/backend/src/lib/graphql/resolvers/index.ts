@@ -1,4 +1,4 @@
-import { GraphQLScalarType, Kind } from 'graphql';
+import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import db from '../../database';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
@@ -58,33 +58,39 @@ import {
   DeliberationUpdatedEventResolver,
   FinalDeliberationUpdatedEventResolver
 } from './subscriptions/deliberations';
+import { divisionPracticeTablesResolver } from './divisions/practice-tables';
+import { practiceTablesConfigResolver } from './practice-tables/config';
+import { practiceTablesScheduleResolver } from './practice-tables/schedule';
+import { practiceTableAssignmentTeamResolver } from './divisions/practice-table-assignment-team.js';
 
 // JSON scalar resolver - passes through any valid JSON value
+function parseJsonLiteral(ast: ValueNode): unknown {
+  switch (ast.kind) {
+    case Kind.STRING:
+    case Kind.BOOLEAN:
+      return ast.value;
+    case Kind.INT:
+    case Kind.FLOAT:
+      return parseFloat(ast.value);
+    case Kind.OBJECT:
+      return Object.fromEntries(
+        ast.fields.map(field => [field.name.value, parseJsonLiteral(field.value)])
+      );
+    case Kind.LIST:
+      return ast.values.map(value => parseJsonLiteral(value));
+    case Kind.NULL:
+      return null;
+    default:
+      return null;
+  }
+}
+
 const JSONScalar = new GraphQLScalarType({
   name: 'JSON',
   description: 'Arbitrary JSON value',
   serialize: (value: unknown) => value,
   parseValue: (value: unknown) => value,
-  parseLiteral: ast => {
-    switch (ast.kind) {
-      case Kind.STRING:
-      case Kind.BOOLEAN:
-        return ast.value;
-      case Kind.INT:
-      case Kind.FLOAT:
-        return parseFloat(ast.value);
-      case Kind.OBJECT:
-        return Object.fromEntries(
-          ast.fields.map(field => [field.name.value, JSONScalar.parseLiteral(field.value)])
-        );
-      case Kind.LIST:
-        return ast.values.map(value => JSONScalar.parseLiteral(value));
-      case Kind.NULL:
-        return null;
-      default:
-        return null;
-    }
-  }
+  parseLiteral: parseJsonLiteral
 });
 
 export const resolvers = {
@@ -98,7 +104,7 @@ export const resolvers = {
   Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
-    seasonName: async event => {
+    seasonName: async (event: { id: string }) => {
       const dbEvent = await db.events.byId(event.id).get();
       if (!dbEvent) {
         return null;
@@ -116,7 +122,12 @@ export const resolvers = {
     teams: divisionTeamsResolver,
     judging: divisionJudgingResolver,
     field: divisionFieldResolver,
-    agenda: divisionAgendaResolver
+    agenda: divisionAgendaResolver,
+    practiceTables: divisionPracticeTablesResolver
+  },
+  PracticeTables: {
+    config: practiceTablesConfigResolver,
+    schedule: practiceTablesScheduleResolver
   },
   Judging: {
     sessions: judgingSessionsResolver,
@@ -175,6 +186,9 @@ export const resolvers = {
     divisions: volunteerDivisionsResolver
   },
   RoleInfo: RoleInfoResolver,
+  PracticeTableSlot: {
+    team: practiceTableAssignmentTeamResolver
+  },
   RubricUpdatedEvent: RubricUpdatedEventResolver,
   ScoresheetUpdatedEvent: ScoresheetUpdatedEventResolver,
   DeliberationUpdatedEvent: DeliberationUpdatedEventResolver,

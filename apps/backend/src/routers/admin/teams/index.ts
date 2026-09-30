@@ -4,81 +4,92 @@ import { ensureArray } from '@lems/shared/utils';
 import db from '../../../lib/database';
 import { AdminRequest } from '../../../types/express';
 import { requirePermission } from '../middleware/require-permission';
+import { asHandler } from '../../../types/express-handlers';
 import { makeAdminTeamResponse, parseTeamList } from './util';
 
 const router = express.Router({ mergeParams: true });
 const FILE_SIZE_LIMIT = 2 * 1024 * 1024; // 2 MB
 
-router.get('/', async (req: AdminRequest, res) => {
-  let teams = await db.teams.getAllWithActiveStatus();
+router.get(
+  '/',
+  asHandler<AdminRequest>(async (req, res) => {
+    let teams = await db.teams.getAllWithActiveStatus();
 
-  const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
+    const extraFields = ensureArray(req.query.extraFields).map(field => field.toLowerCase());
 
-  if (extraFields.includes('deletable')) {
-    const unregistered = await db.teams.getAllUnregistered();
-    const unregisteredIds = new Set(unregistered.map(t => t.id));
+    if (extraFields.includes('deletable')) {
+      const unregistered = await db.teams.getAllUnregistered();
+      const unregisteredIds = new Set(unregistered.map(t => t.id));
 
-    teams = teams.map(team => {
-      return {
-        ...team,
-        deletable: unregisteredIds.has(team.id)
-      };
-    });
-  }
+      teams = teams.map(team => {
+        return {
+          ...team,
+          deletable: unregisteredIds.has(team.id)
+        };
+      });
+    }
 
-  const response = teams.map(team => makeAdminTeamResponse(team));
-  res.json(response);
-});
+    const response = teams.map(team => makeAdminTeamResponse(team));
+    res.json(response);
+  })
+);
 
-router.delete('/:teamId', requirePermission('MANAGE_TEAMS'), async (req: AdminRequest, res) => {
-  const teamId = req.params.teamId;
-  if (!teamId || typeof teamId !== 'string') {
-    res.status(400).json({ error: 'Team ID is required' });
-    return;
-  }
+router.delete(
+  '/:teamId',
+  requirePermission('MANAGE_TEAMS'),
+  asHandler<AdminRequest>(async (req, res) => {
+    const teamId = req.params.teamId;
+    if (!teamId || typeof teamId !== 'string') {
+      res.status(400).json({ error: 'Team ID is required' });
+      return;
+    }
 
-  const team = await db.teams.byId(teamId).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
+    const team = await db.teams.byId(teamId).get();
+    if (!team) {
+      res.status(404).json({ error: 'Team not found' });
+      return;
+    }
 
-  const teamEvents = await db.events.byTeam(team.id).getAll();
+    const teamEvents = await db.events.byTeam(team.id).getAll();
 
-  if (teamEvents.length > 0) {
-    res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
-    return;
-  }
+    if (teamEvents.length > 0) {
+      res.status(400).json({ error: 'Cannot delete team that is registered for an event' });
+      return;
+    }
 
-  const success = await db.teams.byId(teamId).delete();
-  if (!success) {
-    res.status(500).json({ error: 'Could not delete team' });
-    return;
-  }
+    const success = await db.teams.byId(teamId).delete();
+    if (!success) {
+      res.status(500).json({ error: 'Could not delete team' });
+      return;
+    }
 
-  res.status(200).end();
-});
+    res.status(200).end();
+  })
+);
 
-router.get('/:teamId', async (req: AdminRequest, res) => {
-  const id = req.params.teamId;
-  if (!id || typeof id !== 'string') {
-    res.status(400).json({ error: 'Team ID is required' });
-    return;
-  }
+router.get(
+  '/:teamId',
+  asHandler<AdminRequest>(async (req, res) => {
+    const id = req.params.teamId;
+    if (!id || typeof id !== 'string') {
+      res.status(400).json({ error: 'Team ID is required' });
+      return;
+    }
 
-  const team = await db.teams.byId(id).get();
-  if (!team) {
-    res.status(404).json({ error: 'Team not found' });
-    return;
-  }
-  res.json(makeAdminTeamResponse(team));
-});
+    const team = await db.teams.byId(id).get();
+    if (!team) {
+      res.status(404).json({ error: 'Team not found' });
+      return;
+    }
+    res.json(makeAdminTeamResponse(team));
+  })
+);
 
 router.put(
   '/:teamId',
   requirePermission('MANAGE_TEAMS'),
   fileUpload(),
-  async (req: AdminRequest, res) => {
+  asHandler<AdminRequest>(async (req, res) => {
     const { name, affiliation, city } = req.body;
 
     if (!name || !affiliation || !city) {
@@ -99,6 +110,11 @@ router.put(
         city
       });
 
+      if (!team) {
+        res.status(404).json({ error: 'Team not found' });
+        return;
+      }
+
       if (req.files && req.files.logo) {
         const logoFile = req.files.logo as fileUpload.UploadedFile;
 
@@ -118,7 +134,12 @@ router.put(
         }
 
         try {
-          team = await db.teams.byId(team.id).updateLogo(logoFile.data);
+          const updatedTeam = await db.teams.byId(team.id).updateLogo(logoFile.data);
+          if (!updatedTeam) {
+            res.status(500).json({ error: 'Failed to upload team logo' });
+            return;
+          }
+          team = updatedTeam;
         } catch (error) {
           console.error('Error uploading team logo:', error);
           res.status(500).json({ error: 'Failed to upload team logo' });
@@ -136,14 +157,14 @@ router.put(
       console.error('Error updating team:', error);
       res.status(500).json({ error: 'Failed to update team' });
     }
-  }
+  })
 );
 
 router.post(
   '/',
   requirePermission('MANAGE_TEAMS'),
   fileUpload(),
-  async (req: AdminRequest, res) => {
+  asHandler<AdminRequest>(async (req, res) => {
     const { name, number, affiliation, city, region } = req.body;
 
     if (!name || !number || !affiliation || !city || !region) {
@@ -168,6 +189,11 @@ router.post(
         logo_url: null
       });
 
+      if (!team) {
+        res.status(500).json({ error: 'Failed to create team' });
+        return;
+      }
+
       if (req.files && req.files.logo) {
         const logoFile = req.files.logo as fileUpload.UploadedFile;
 
@@ -187,7 +213,12 @@ router.post(
         }
 
         try {
-          team = await db.teams.byId(team.id).updateLogo(logoFile.data);
+          const updatedTeam = await db.teams.byId(team.id).updateLogo(logoFile.data);
+          if (!updatedTeam) {
+            res.status(500).json({ error: 'Failed to upload team logo' });
+            return;
+          }
+          team = updatedTeam;
         } catch (error) {
           console.error('Error uploading team logo:', error);
           res.status(500).json({ error: 'Failed to upload team logo' });
@@ -209,13 +240,13 @@ router.post(
         res.status(500).json({ error: 'Failed to create team' });
       }
     }
-  }
+  })
 );
 
 router.post(
   '/import',
   [requirePermission('MANAGE_TEAMS'), fileUpload()],
-  async (req: AdminRequest, res) => {
+  asHandler<AdminRequest>(async (req, res) => {
     if (!req.files || !req.files.file) {
       res.status(400).json({ error: 'No file uploaded' });
       return;
@@ -239,7 +270,7 @@ router.post(
       console.error('Error importing teams:', error);
       res.status(500).json({ error: 'Failed to import teams' });
     }
-  }
+  })
 );
 
 export default router;

@@ -77,35 +77,33 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
   };
 
   return (
-    <Paper sx={{ p: 3 }}>
+    <Paper sx={{ p: 3, height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Typography variant="h6" gutterBottom>
         {t('title')}
       </Typography>
-
       <Stack spacing={2}>
-        <Stack direction="row" spacing={2} alignItems="flex-end">
-          <Box sx={{ maxWidth: 300 }}>
-            <FileUpload
-              label={t('upload-button')}
-              placeholder={t('upload-placeholder')}
-              accept="image/jpeg,image/jpg,image/png"
-              selectedFile={selectedFile}
-              setSelectedFile={handleFileChange}
-              description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
-              disabled={uploading}
-            />
-          </Box>
+        <Box sx={{ maxWidth: 300 }}>
+          <FileUpload
+            label={t('upload-button')}
+            placeholder={t('upload-placeholder')}
+            accept="image/jpeg,image/jpg,image/png"
+            selectedFile={selectedFile}
+            setSelectedFile={handleFileChange}
+            description="JPG, JPEG, or PNG format, recommended 16:9 aspect ratio"
+            disabled={uploading}
+          />
+        </Box>
 
-          {division.pitMapUrl && (
-            <Button
-              variant="outlined"
-              startIcon={<Visibility />}
-              onClick={() => setViewMapOpen(true)}
-            >
-              {t('view-button')}
-            </Button>
-          )}
-        </Stack>
+        {division.pitMapUrl && (
+          <Button
+            variant="outlined"
+            startIcon={<Visibility />}
+            onClick={() => setViewMapOpen(true)}
+            sx={{ maxWidth: 300, width: '100%' }}
+          >
+            {t('view-button')}
+          </Button>
+        )}
 
         {selectedFile && (
           <Button
@@ -133,13 +131,17 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
 
         {!division.pitMapUrl && (
           <Box sx={{ mt: 2 }}>
-            <Typography variant="body2" color="text.secondary">
+            <Typography
+              variant="body2"
+              sx={{
+                color: 'text.secondary'
+              }}
+            >
               {t('no-map')}
             </Typography>
           </Box>
         )}
       </Stack>
-
       <UploadPitMapDialog
         open={uploadDialogOpen}
         onClose={() => !uploading && setUploadDialogOpen(false)}
@@ -149,14 +151,12 @@ export const PitMapManager: React.FC<PitMapManagerProps> = ({ division, onDivisi
         onSuccess={handleUploadSuccess}
         onError={handleUploadError}
       />
-
       <ViewPitMapDialog
         open={viewMapOpen}
         onClose={() => setViewMapOpen(false)}
         division={division}
         onDelete={() => setDeleteDialogOpen(true)}
       />
-
       <DeletePitMapDialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}

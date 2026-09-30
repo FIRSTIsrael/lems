@@ -1,5 +1,4 @@
 import { Job } from 'bullmq';
-import { RobotGameMatchState } from '@lems/database';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../redis/redis-pubsub';
 import db from '../../database';
@@ -28,20 +27,9 @@ export async function handleMatchEndgameTriggered(job: Job<ScheduledEvent>): Pro
     }
 
     // Check if match is still in-progress
-    const matchState = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId });
-
-    if (!matchState) {
+    if (match.status !== 'in-progress') {
       console.warn(
-        `[MatchEndgameTriggeredHandler] Match state not found for ${matchId}, skipping event`
-      );
-      return;
-    }
-
-    if (matchState.status !== 'in-progress') {
-      console.warn(
-        `[MatchEndgameTriggeredHandler] Match ${matchId} is not in-progress (status: ${matchState.status}), skipping event`
+        `[MatchEndgameTriggeredHandler] Match ${matchId} is not in-progress (status: ${match.status}), skipping event`
       );
       return;
     }

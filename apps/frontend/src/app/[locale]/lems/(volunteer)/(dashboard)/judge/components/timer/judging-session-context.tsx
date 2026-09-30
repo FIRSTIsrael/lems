@@ -23,9 +23,7 @@ export function JudgingSessionProvider({
   openRubricsDuringSession?: boolean;
 }) {
   return (
-    <JudgingSessionContext.Provider
-      value={{ session, sessionLength, openRubricsDuringSession }}
-    >
+    <JudgingSessionContext.Provider value={{ session, sessionLength, openRubricsDuringSession }}>
       {children}
     </JudgingSessionContext.Provider>
   );

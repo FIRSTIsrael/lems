@@ -36,8 +36,7 @@ class RubricSelector {
 }
 
 type RubricsSelectorType =
-  | { type: 'division'; divisionId: string }
-  | { type: 'room'; roomId: string };
+  { type: 'division'; divisionId: string } | { type: 'room'; roomId: string };
 
 class RubricsSelector {
   constructor(

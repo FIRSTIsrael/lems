@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import BlockIcon from '@mui/icons-material/Block';
 import type { Team } from '../../graphql/types';
 import { TeamInfo } from '../../../components/team-info';
+import { useFilters } from '../filters-context';
 
 interface DisqualifiedTeamsListProps {
   disqualifiedTeams: Team[];
@@ -13,8 +14,9 @@ interface DisqualifiedTeamsListProps {
 export function DisqualifiedTeamsList({ disqualifiedTeams }: DisqualifiedTeamsListProps) {
   const t = useTranslations('pages.judge-advisor.awards.disqualification');
   const theme = useTheme();
+  const { showBlocked } = useFilters();
 
-  if (disqualifiedTeams.length === 0) {
+  if (disqualifiedTeams.length === 0 || !showBlocked) {
     return null;
   }
 

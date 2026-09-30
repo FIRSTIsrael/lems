@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { Dayjs } from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack } from '@mui/material';
 import { AgendaBlock, HEADER_HEIGHT } from '../calendar-types';
 import { snapToGrid } from '../drag-utils';
+import { calculateOverlapLayout } from '../calendar-utils';
 import { useCalendar } from '../calendar-context';
 import { AgendaBlockComponent } from '../agenda-block/agenda-block';
 import { AgendaDragState } from './drag-types';
@@ -25,6 +26,10 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
 
   const [dragState, setDragState] = useState<AgendaDragState | null>(null);
   const columnRef = useRef<HTMLDivElement>(null);
+
+  const overlapLayout = useMemo(() => {
+    return calculateOverlapLayout(agendaBlocks as AgendaBlock[]);
+  }, [agendaBlocks]);
 
   const { handleMouseMove, handleMouseUp } = useDragHandlers({
     dragState,
@@ -109,7 +114,13 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       : undefined;
 
   return (
-    <Stack width="33.33%" ref={columnRef} onMouseDown={handleMouseDown}>
+    <Stack
+      ref={columnRef}
+      onMouseDown={handleMouseDown}
+      sx={{
+        width: '33.33%'
+      }}
+    >
       <Box
         sx={{
           height: HEADER_HEIGHT,
@@ -133,8 +144,8 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
       >
         {dragState?.mode === 'create' && (
           <Box
-            display={dragPreviewHeight ? 'block' : 'none'}
             sx={{
+              display: dragPreviewHeight ? 'block' : 'none',
               position: 'absolute',
               top: dragPreviewTop,
               left: 8,
@@ -187,6 +198,7 @@ export const AgendaColumn: React.FC<AgendaColumnProps> = ({ startTime, endTime }
                     ? dragState.originalStartTime
                     : undefined
                 }
+                overlapInfo={overlapLayout.get(block.id)}
                 onDragStartBody={handleDragStartBody}
                 onDragStartTopEdge={handleDragStartTopEdge}
                 onDragStartBottomEdge={handleDragStartBottomEdge}

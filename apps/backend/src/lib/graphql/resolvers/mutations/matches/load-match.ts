@@ -1,7 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { RobotGameMatchState, DivisionState } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -34,11 +33,7 @@ export const loadMatchResolver: GraphQLFieldResolver<
     const match = await authorizeMatchAccess(context, divisionId, matchId);
 
     // Check 1: Match must be in not-started status
-    const matchState = await db.raw.mongo
-      .collection<RobotGameMatchState>('robot_game_match_states')
-      .findOne({ matchId });
-
-    if (!matchState || matchState.status !== 'not-started') {
+    if (match.status !== 'not-started') {
       throw new MutationError(MutationErrorCode.CONFLICT, 'Match is not in not-started status');
     }
 
@@ -53,16 +48,12 @@ export const loadMatchResolver: GraphQLFieldResolver<
       );
     }
 
-    // Update the division's loaded match in MongoDB
-    const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
-      { divisionId },
-      {
-        $set: {
-          'field.loadedMatch': matchId
-        }
-      },
-      { returnDocument: 'after' }
-    );
+    // Update the division's loaded match
+    const result = await db.divisions.byId(divisionId).updateState({
+      field: {
+        loadedMatch: matchId
+      }
+    });
 
     if (!result) {
       throw new MutationError(

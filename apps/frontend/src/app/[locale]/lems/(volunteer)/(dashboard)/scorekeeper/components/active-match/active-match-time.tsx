@@ -31,7 +31,13 @@ export const ActiveMatchTime = () => {
 
   return (
     <Stack spacing={0.75} sx={{ mb: 1.5, flex: 1 }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
+      <Stack
+        direction="row"
+        sx={{
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}
+      >
         <Typography
           variant="caption"
           sx={{
@@ -47,15 +53,14 @@ export const ActiveMatchTime = () => {
         <Countdown
           variant="subtitle2"
           targetDate={endTime.toDate()}
-          fontFamily="monospace"
-          fontWeight={700}
-          fontSize="1.1rem"
           sx={{
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            fontSize: '1.1rem',
             color: isEndgame ? theme.palette.warning.main : theme.palette.success.main
           }}
         />
       </Stack>
-
       <LinearProgress
         variant="determinate"
         value={progressPercent}

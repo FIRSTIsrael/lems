@@ -1,7 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { DivisionState, AudienceDisplayScreen } from '@lems/database';
+import { AudienceDisplayScreen } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
@@ -40,16 +40,12 @@ export const switchActiveDisplayResolver: GraphQLFieldResolver<
       }
     }
 
-    // Update the division's active display in MongoDB
-    const result = await db.raw.mongo.collection<DivisionState>('division_states').findOneAndUpdate(
-      { divisionId },
-      {
-        $set: {
-          'audienceDisplay.activeDisplay': newDisplay
-        }
-      },
-      { returnDocument: 'after' }
-    );
+    // Update the division's active display
+    const result = await db.divisions.byId(divisionId).updateState({
+      audienceDisplay: {
+        activeDisplay: newDisplay
+      }
+    });
 
     if (!result) {
       throw new MutationError(

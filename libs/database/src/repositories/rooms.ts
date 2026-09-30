@@ -35,7 +35,7 @@ class RoomSelector {
 
     return updatedRoom;
   }
-  
+
   async delete(): Promise<void> {
     await this.db.deleteFrom('judging_rooms').where('id', '=', this.id).execute();
   }
@@ -83,11 +83,11 @@ export class RoomsRepository {
       .values(newRoom)
       .returningAll()
       .execute();
-    
+
     if (!createdRoom) {
       throw new Error('Failed to create room');
     }
-    
+
     return createdRoom;
   }
 }

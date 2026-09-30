@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {
   CheckCircle,
   WarningAmber,
-  HelpOutline,
+  HelpOutlined,
   Edit,
   Send,
   Diversity1
@@ -42,7 +42,7 @@ export const getScoresheetStatusIcon = (
 
   switch (status) {
     case 'empty':
-      return <HelpOutline {...iconProps} color={colorOverride ? undefined : 'disabled'} />;
+      return <HelpOutlined {...iconProps} color={colorOverride ? undefined : 'disabled'} />;
     case 'draft':
       return <Edit {...iconProps} color={colorOverride ? undefined : 'info'} />;
     case 'gp':

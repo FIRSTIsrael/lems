@@ -23,10 +23,7 @@ export function computeRank(
   category: JudgingCategory | 'total' = 'total'
 ): number {
   const categoryKey = underscoresToHyphens(category) as
-    | 'innovation-project'
-    | 'robot-design'
-    | 'core-values'
-    | 'total';
+    'innovation-project' | 'robot-design' | 'core-values' | 'total';
   // Helper: compute rank by category
   const computeRankByCategory = (category: keyof MetricPerCategory, teamScore: number): number => {
     // Count how many teams have a higher score

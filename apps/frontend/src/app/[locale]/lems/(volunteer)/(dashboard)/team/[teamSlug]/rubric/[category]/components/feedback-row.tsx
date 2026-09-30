@@ -36,7 +36,6 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
 
   useEffect(() => {
     // Sync local state with context changes -> It's OK
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setFeedback({
       greatJob: rubric.data?.feedback?.greatJob || '',
       thinkAbout: rubric.data?.feedback?.thinkAbout || ''
@@ -85,11 +84,16 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
               }
             }}
           >
-            <Typography fontWeight={600}>{getFeedbackTitle(field)}...</Typography>
+            <Typography
+              sx={{
+                fontWeight: 600
+              }}
+            >
+              {getFeedbackTitle(field)}...
+            </Typography>
           </TableCell>
         ))}
       </TableRow>
-
       <TableRow
         sx={{
           '& .MuiTableCell-root': {

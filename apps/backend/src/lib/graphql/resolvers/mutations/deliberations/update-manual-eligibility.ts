@@ -69,16 +69,16 @@ export const updateManualEligibilityResolver: GraphQLFieldResolver<
 
   // Update stage data
   const updatedStageData = {
-    ...deliberation.stageData,
+    ...deliberation.stage_data,
     [stage]: {
-      ...deliberation.stageData[stage],
+      ...deliberation.stage_data[stage],
       manualEligibility: teamIds
     }
   };
 
   // Update the deliberation
   const updated = await db.finalDeliberations.byDivision(divisionId).update({
-    stageData: updatedStageData
+    stage_data: updatedStageData
   });
 
   if (!updated) {
@@ -92,7 +92,7 @@ export const updateManualEligibilityResolver: GraphQLFieldResolver<
   const pubSub = getRedisPubSub();
   await pubSub.publish(divisionId, RedisEventTypes.FINAL_DELIBERATION_UPDATED, {
     divisionId,
-    stageData: updated.stageData
+    stageData: updated.stage_data
   });
 
   return {

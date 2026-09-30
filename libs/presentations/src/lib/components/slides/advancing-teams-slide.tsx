@@ -37,10 +37,10 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
     <Slide>
       <Stack
         direction="column"
-        alignItems="center"
-        justifyContent="center"
         spacing={5}
         sx={{
+          alignItems: 'center',
+          justifyContent: 'center',
           height: '100%',
           width: '100%',
           px: 4,
@@ -97,14 +97,15 @@ export const AdvancingTeamsSlide: React.FC<AdvancingTeamsSlideProps> = ({ awards
                     <Stack
                       key={teamData.id}
                       direction="column"
-                      alignItems="center"
                       spacing={2}
                       sx={{
+                        alignItems: 'center',
                         p: 3,
                         borderRadius: 2,
                         backgroundColor: '#f9fafb',
                         border: '2px solid #e5e7eb',
                         transition: 'all 0.3s ease',
+
                         '&:hover': {
                           backgroundColor: '#f3f4f6',
                           borderColor: '#d1d5db',

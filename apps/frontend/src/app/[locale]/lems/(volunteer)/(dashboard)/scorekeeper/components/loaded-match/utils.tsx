@@ -4,19 +4,13 @@ import {
   HourglassEmpty,
   PersonPin,
   WarningAmber,
-  HelpOutline,
+  HelpOutlined,
   HorizontalRuleRounded
 } from '@mui/icons-material';
 import { Match } from '../../graphql';
 
 export type TeamReadinessStatus =
-  | 'ready'
-  | 'present'
-  | 'queued'
-  | 'no-show'
-  | 'conflict'
-  | 'missing'
-  | 'empty';
+  'ready' | 'present' | 'queued' | 'no-show' | 'conflict' | 'missing' | 'empty';
 
 export const getStatusIcon = (status: TeamReadinessStatus) => {
   const iconProps = { sx: { fontSize: '1.5rem' } };
@@ -33,7 +27,7 @@ export const getStatusIcon = (status: TeamReadinessStatus) => {
     case 'conflict':
       return <WarningAmber {...iconProps} sx={{ ...iconProps.sx, color: 'warning.main' }} />;
     case 'missing':
-      return <HelpOutline {...iconProps} color="disabled" />;
+      return <HelpOutlined {...iconProps} color="disabled" />;
     case 'empty':
       return <HorizontalRuleRounded {...iconProps} color="disabled" />;
     default:

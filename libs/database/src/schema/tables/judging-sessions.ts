@@ -8,6 +8,11 @@ export interface JudgingSessionsTable {
   room_id: string; // UUID foreign key to judging_rooms.id
   division_id: string; // UUID foreign key to divisions.id
   scheduled_time: Date;
+  status: ColumnType<string, string | undefined, string>; // defaults to 'not-started'
+  called: Date | null;
+  queued: Date | null;
+  start_time: Date | null;
+  start_delta: number | null;
 }
 
 export type JudgingSession = Selectable<JudgingSessionsTable>;
