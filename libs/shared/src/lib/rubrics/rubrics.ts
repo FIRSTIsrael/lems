@@ -3,7 +3,7 @@ import { RubricsSchema } from './types';
 
 export const rubricColumns = ['beginning', 'developing', 'accomplished', 'exceeds'] as const;
 
-export const rubrics: RubricsSchema = {
+const rubrics: RubricsSchema = {
   _version: '2025-11-23',
   'core-values': {
     awards: true,

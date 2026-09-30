@@ -1,7 +1,7 @@
 import type { Edition } from '../edition';
 import { ScoresheetSchema, ScoresheetError } from './types';
 
-export const scoresheet: ScoresheetSchema = {
+const scoresheet: ScoresheetSchema = {
   _version: '2026-08-04',
   missions: [
     {
