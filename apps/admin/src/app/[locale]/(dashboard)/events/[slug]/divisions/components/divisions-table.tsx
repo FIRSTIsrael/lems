@@ -14,7 +14,10 @@ import {
   TextField,
   Stack,
   Box,
-  Typography
+  Typography,
+  FormControlLabel,
+  Switch,
+  Tooltip
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -38,9 +41,14 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
   const hasMultipleDivisions = divisions.length > 1;
 
   const [editingDivision, setEditingDivision] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState<{ name: string; color: HsvaColor }>({
+  const [editForm, setEditForm] = useState<{
+    name: string;
+    color: HsvaColor;
+    futureEdition: boolean;
+  }>({
     name: '',
-    color: hexToHsva(defaultColor)
+    color: hexToHsva(defaultColor),
+    futureEdition: false
   });
   const [nameError, setNameError] = useState<string>('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -50,14 +58,15 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     setEditingDivision(division.id);
     setEditForm({
       name: division.name,
-      color: hexToHsva(division.color)
+      color: hexToHsva(division.color),
+      futureEdition: division.futureEdition
     });
     setNameError('');
   };
 
   const handleEditCancel = () => {
     setEditingDivision(null);
-    setEditForm({ name: '', color: hexToHsva(defaultColor) });
+    setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
     setNameError('');
   };
 
@@ -83,13 +92,16 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
       },
       body: JSON.stringify({
         name: editForm.name.trim(),
-        color: hsvaToHex(editForm.color)
+        color: hsvaToHex(editForm.color),
+        ...(editForm.futureEdition !== division.futureEdition
+          ? { futureEdition: editForm.futureEdition }
+          : {})
       })
     });
 
     if (result.ok) {
       setEditingDivision(null);
-      setEditForm({ name: '', color: hexToHsva(defaultColor) });
+      setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
       await onEditDivision();
     }
   };
@@ -126,15 +138,37 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
               <TableRow key={division.id}>
                 <TableCell>
                   {editingDivision === division.id ? (
-                    <TextField
-                      value={editForm.name}
-                      onChange={e => handleNameChange(e.target.value)}
-                      variant="outlined"
-                      size="small"
-                      fullWidth
-                      error={!!nameError}
-                      helperText={nameError}
-                    />
+                    <>
+                      <TextField
+                        value={editForm.name}
+                        onChange={e => handleNameChange(e.target.value)}
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        error={!!nameError}
+                        helperText={nameError}
+                      />
+                      <Tooltip title={division.hasSchedule ? t('list.edition-locked-tooltip') : ''}>
+                        <span>
+                          <FormControlLabel
+                            control={
+                              <Switch
+                                size="small"
+                                checked={editForm.futureEdition}
+                                disabled={division.hasSchedule}
+                                onChange={e =>
+                                  setEditForm(prev => ({
+                                    ...prev,
+                                    futureEdition: e.target.checked
+                                  }))
+                                }
+                              />
+                            }
+                            label={t('list.future-edition')}
+                          />
+                        </span>
+                      </Tooltip>
+                    </>
                   ) : (
                     division.name
                   )}

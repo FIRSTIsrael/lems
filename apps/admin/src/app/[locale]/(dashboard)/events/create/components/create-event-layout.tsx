@@ -4,7 +4,17 @@ import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Formik, Form, FormikErrors, FormikHelpers } from 'formik';
-import { Paper, Typography, Box, Stack, IconButton, Button, Alert } from '@mui/material';
+import {
+  Paper,
+  Typography,
+  Box,
+  Stack,
+  IconButton,
+  Button,
+  Alert,
+  FormControlLabel,
+  Switch
+} from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { Add as AddIcon } from '@mui/icons-material';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
@@ -22,6 +32,7 @@ import { DivisionItem } from './division-item';
 interface Division {
   name: string;
   color: HsvaColor;
+  futureEdition: boolean;
 }
 
 interface EventFormValues {
@@ -41,7 +52,7 @@ const initialValues: EventFormValues = {
   location: '',
   region: '',
   timezone: dayjs.tz.guess(),
-  divisions: [{ name: '', color: hexToHsva(defaultColor) }]
+  divisions: [{ name: '', color: hexToHsva(defaultColor), futureEdition: false }]
 };
 
 export const CreateEventLayout = () => {
@@ -124,7 +135,8 @@ export const CreateEventLayout = () => {
         timezone: values.timezone,
         divisions: values.divisions.map(division => ({
           name: division.name,
-          color: hsvaToHex(division.color) // Convert to hex string for backend
+          color: hsvaToHex(division.color), // Convert to hex string for backend
+          futureEdition: division.futureEdition
         }))
       };
 
@@ -166,7 +178,8 @@ export const CreateEventLayout = () => {
           const addDivision = () => {
             const newDivision: Division = {
               name: '',
-              color: hexToHsva(defaultColor)
+              color: hexToHsva(defaultColor),
+              futureEdition: false
             };
             setFieldValue('divisions', [...values.divisions, newDivision]);
           };
@@ -181,7 +194,7 @@ export const CreateEventLayout = () => {
           const updateDivisionField = (
             index: number,
             field: keyof Division,
-            value: string | HsvaColor
+            value: string | HsvaColor | boolean
           ) => {
             const newDivisions = [...values.divisions];
             newDivisions[index] = { ...newDivisions[index], [field]: value };
@@ -285,6 +298,20 @@ export const CreateEventLayout = () => {
                       />
                     </Grid>
                   </Grid>
+
+                  {!isMultipleDivisions && (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          checked={values.divisions[0].futureEdition}
+                          onChange={e => updateDivisionField(0, 'futureEdition', e.target.checked)}
+                          disabled={isSubmitting}
+                        />
+                      }
+                      label={t('fields.division.future-edition')}
+                      sx={{ alignSelf: 'flex-start' }}
+                    />
+                  )}
 
                   {isMultipleDivisions && (
                     <Box
