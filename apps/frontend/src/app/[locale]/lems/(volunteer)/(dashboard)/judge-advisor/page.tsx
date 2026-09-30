@@ -25,7 +25,6 @@ import {
   createJudgingSessionCompletedSubscription,
   createRubricStatusChangedSubscription,
   createTeamArrivalSubscription,
-  createTeamNotArrivedSubscription,
   createTeamDisqualifiedSubscription,
   parseDivisionSessions,
   createDeliberationUpdatedSubscription,
@@ -63,7 +62,6 @@ export default function JudgeAdvisorPage() {
       createJudgingSessionCompletedSubscription(currentDivision.id),
       createRubricStatusChangedSubscription(currentDivision.id),
       createTeamArrivalSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id),
       createTeamDisqualifiedSubscription(currentDivision.id),
       createDeliberationUpdatedSubscription(currentDivision.id),
       createFinalDeliberationStatusChangedSubscription(currentDivision.id)

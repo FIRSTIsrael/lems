@@ -15,7 +15,6 @@ import {
   createMatchCompletedSubscription,
   createMatchAbortedSubscription,
   createTeamArrivalSubscription,
-  createTeamNotArrivedSubscription,
   createAudienceDisplaySwitchedSubscription,
   createAudienceDisplaySettingUpdatedSubscription,
   createParticipantStatusUpdatedSubscription,
@@ -38,7 +37,6 @@ export default function ScorekeeperPage() {
   const subscriptions = useMemo(
     () => [
       createTeamArrivalSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id),
       createMatchLoadedSubscription(currentDivision.id),
       createMatchStartedSubscription(currentDivision.id),
       createMatchStageAdvancedSubscription(currentDivision.id),

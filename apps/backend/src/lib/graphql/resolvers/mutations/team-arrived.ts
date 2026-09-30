@@ -67,7 +67,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
       .execute();
 
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
+    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId, arrived: true });
 
     return { teamId };
   } catch (error) {

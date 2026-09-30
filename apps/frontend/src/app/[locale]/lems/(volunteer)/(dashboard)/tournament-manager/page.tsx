@@ -14,8 +14,7 @@ import {
   createSessionStartedSubscription,
   createSessionAbortedSubscription,
   createSessionCompletedSubscription,
-  createTeamArrivedSubscription,
-  createTeamNotArrivedSubscription
+  createTeamArrivedSubscription
 } from './graphql';
 import { TournamentManagerProvider } from './context';
 import { ScheduleReference } from './components/schedule/schedule-reference';
@@ -33,8 +32,7 @@ export default function TournamentManagerPage() {
       createSessionStartedSubscription(currentDivision.id),
       createSessionAbortedSubscription(currentDivision.id),
       createSessionCompletedSubscription(currentDivision.id),
-      createTeamArrivedSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id)
+      createTeamArrivedSubscription(currentDivision.id)
     ],
     [currentDivision.id]
   );

@@ -15,7 +15,6 @@ import {
   type Team,
   parseDivisionTeams,
   createTeamArrivalSubscription,
-  createTeamNotArrivedSubscription,
   createTeamArrivedCacheUpdate,
   createTeamNotArrivedCacheUpdate
 } from './graphql';
@@ -38,10 +37,7 @@ export default function PitAdminPage() {
   });
 
   const subscriptions = useMemo(
-    () => [
-      createTeamArrivalSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id)
-    ],
+    () => [createTeamArrivalSubscription(currentDivision.id)],
     [currentDivision.id]
   );
 

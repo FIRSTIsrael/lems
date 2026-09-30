@@ -19,9 +19,7 @@ export {
 
 export {
   TEAM_ARRIVAL_UPDATED_SUBSCRIPTION,
-  TEAM_NOT_ARRIVED_SUBSCRIPTION,
-  createTeamArrivalSubscription,
-  createTeamNotArrivedSubscription
+  createTeamArrivalSubscription
 } from './team-arrival-updated';
 
 export {

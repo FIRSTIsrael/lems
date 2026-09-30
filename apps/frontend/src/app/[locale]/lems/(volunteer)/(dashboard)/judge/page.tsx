@@ -14,7 +14,6 @@ import { SoundTestDialog } from '../components/sound-test-dialog';
 import {
   GET_ROOM_JUDGING_SESSIONS,
   createTeamArrivalSubscription,
-  createTeamNotArrivedSubscription,
   createJudgingSessionStartedSubscription,
   START_JUDGING_SESSION_MUTATION,
   createJudgingSessionAbortedSubscription,
@@ -51,7 +50,6 @@ export default function JudgePage() {
   const subscriptions = useMemo(
     () => [
       createTeamArrivalSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id),
       createJudgingSessionStartedSubscription(currentDivision.id, () => {
         playSound('start');
       }),

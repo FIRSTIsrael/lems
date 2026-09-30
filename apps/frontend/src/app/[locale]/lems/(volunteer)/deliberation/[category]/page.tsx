@@ -16,7 +16,6 @@ import {
   parseCategoryDeliberationData,
   createDeliberationUpdatedSubscription,
   createTeamArrivalUpdatedSubscription,
-  createTeamNotArrivedSubscription,
   createRubricUpdatedSubscription,
   createScoresheetUpdatedSubscription,
   createTeamDisqualifiedSubscription
@@ -32,7 +31,6 @@ export default function CategoryDeliberationPage() {
     () => [
       createDeliberationUpdatedSubscription(currentDivision.id),
       createTeamArrivalUpdatedSubscription(currentDivision.id),
-      createTeamNotArrivedSubscription(currentDivision.id),
       createRubricUpdatedSubscription(currentDivision.id),
       createScoresheetUpdatedSubscription(currentDivision.id),
       createTeamDisqualifiedSubscription(currentDivision.id)

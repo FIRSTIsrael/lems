@@ -12,3 +12,7 @@ export interface Team {
 export interface TeamEvent {
   teamId: string;
 }
+
+export interface TeamArrivalEvent extends TeamEvent {
+  arrived: boolean;
+}
