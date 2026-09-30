@@ -268,8 +268,8 @@
     },
     "tools": {
       "edition": {
-        "founders": "Founders",
-        "future": "Future"
+        "founders": "Edycja założycielska",
+        "future": "Edycja przyszłości"
       },
       "scorer": {
         "title": "Punktator Robot Game",

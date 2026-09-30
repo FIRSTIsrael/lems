@@ -305,7 +305,7 @@
             },
             "division": {
               "title": "Dywizja {number}",
-              "future-edition": "Future edition",
+              "future-edition": "Edycja przyszłości",
               "name": {
                 "label": "Nazwa dywizji",
                 "placeholder": "Wprowadź nazwę dywizji..."
@@ -506,8 +506,8 @@
             "confirm": "Usuń dywizję",
             "deleting": "Usuwanie..."
           },
-          "future-edition": "Future edition",
-          "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
+          "future-edition": "Edycja przyszłości",
+          "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -520,7 +520,7 @@
           },
           "form": {
             "fields": {
-              "future-edition": "Future edition",
+              "future-edition": "Edycja przyszłości",
               "name": {
                 "label": "Nazwa dywizji",
                 "placeholder": "np. House A"

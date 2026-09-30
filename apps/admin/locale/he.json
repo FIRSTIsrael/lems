@@ -305,7 +305,7 @@
             },
             "division": {
               "title": "בית {number}",
-              "future-edition": "Future edition",
+              "future-edition": "מהדורת העתיד",
               "name": {
                 "label": "שם הבית",
                 "placeholder": "הזן שם בית..."
@@ -506,8 +506,8 @@
             "confirm": "מחק בית",
             "deleting": "מוחק..."
           },
-          "future-edition": "Future edition",
-          "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
+          "future-edition": "מהדורת העתיד",
+          "edition-locked-tooltip": "לא ניתן לשנות את המהדורה לאחר יצירת לוח הזמנים",
           "alerts": {
             "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
           }
@@ -520,7 +520,7 @@
           },
           "form": {
             "fields": {
-              "future-edition": "Future edition",
+              "future-edition": "מהדורת העתיד",
               "name": {
                 "label": "שם הבית",
                 "placeholder": "לדוגמה: בית א'"

@@ -268,8 +268,8 @@
     },
     "tools": {
       "edition": {
-        "founders": "Founders",
-        "future": "Future"
+        "founders": "מהדורת המייסדים",
+        "future": "מהדורת העתיד"
       },
       "scorer": {
         "title": "מחשבון ניקוד",
