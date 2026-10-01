@@ -1,8 +1,9 @@
 'use client';
 
 import { Stack, Alert, Typography } from '@mui/material';
-import { scoresheet } from '@lems/shared/scoresheet';
+import { getScoresheet } from '@lems/shared/scoresheet';
 import { useScoresheetTranslations } from '@lems/localization';
+import { useEdition } from '../../../../../../hooks/use-edition';
 import { useScoresheet } from '../scoresheet-context';
 import ScoresheetMission from './scoresheet-mission';
 import { ScoresheetIncompleteAlert } from './scoresheet-alert';
@@ -14,6 +15,7 @@ interface ScoresheetFormProps {
 }
 
 export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false }) => {
+  const scoresheet = getScoresheet(useEdition());
   const { validation } = useScoresheet();
   const { getError } = useScoresheetTranslations();
 

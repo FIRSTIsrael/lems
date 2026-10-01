@@ -19,6 +19,7 @@ import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple } from '@mui/material/colors';
 import { OPTIONAL_AWARDS, Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
@@ -33,7 +34,9 @@ export function OptionalAwardsDataGrid() {
     useFinalDeliberation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
-  const { getName } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName } = useAwardTranslations(edition);
 
   const [selectedTeams, setSelectedTeams] = useState<GridRowSelectionModel>({
     type: 'include',

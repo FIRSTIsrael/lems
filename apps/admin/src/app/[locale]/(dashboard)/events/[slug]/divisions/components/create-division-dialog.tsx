@@ -12,7 +12,9 @@ import {
   FormHelperText,
   IconButton,
   CircularProgress,
-  Alert
+  Alert,
+  FormControlLabel,
+  Switch
 } from '@mui/material';
 import { ColorPicker, FormikTextField, apiFetch } from '@lems/shared';
 import { HsvaColor, hsvaToHex, hexToHsva } from '@uiw/react-color';
@@ -28,6 +30,7 @@ interface CreateDivisionModalProps {
 interface DivisionFormValues {
   name: string;
   color: HsvaColor;
+  futureEdition: boolean;
 }
 
 interface DivisionFormErrors {
@@ -45,7 +48,8 @@ export const CreateDivisionDialog: React.FC<CreateDivisionModalProps> = ({
 
   const initialValues: DivisionFormValues = {
     name: '',
-    color: hexToHsva(defaultColor)
+    color: hexToHsva(defaultColor),
+    futureEdition: false
   };
 
   const validateForm = (values: DivisionFormValues): DivisionFormErrors => {
@@ -71,7 +75,8 @@ export const CreateDivisionDialog: React.FC<CreateDivisionModalProps> = ({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: values.name.trim(),
-          color: hsvaToHex(values.color)
+          color: hsvaToHex(values.color),
+          futureEdition: values.futureEdition
         })
       });
 
@@ -152,6 +157,17 @@ export const CreateDivisionDialog: React.FC<CreateDivisionModalProps> = ({
                       <FormHelperText error>{t(`form.errors.${errors.color}`)}</FormHelperText>
                     )}
                   </Stack>
+
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={values.futureEdition}
+                        onChange={e => setFieldValue('futureEdition', e.target.checked)}
+                        disabled={isSubmitting}
+                      />
+                    }
+                    label={t('form.fields.future-edition')}
+                  />
 
                   {status && <Alert severity="error">{t(`form.errors.${status}`)}</Alert>}
                 </Stack>

@@ -267,6 +267,10 @@
       }
     },
     "tools": {
+      "edition": {
+        "founders": "Founders",
+        "future": "Future"
+      },
       "scorer": {
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",

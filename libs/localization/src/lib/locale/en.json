@@ -102,6 +102,9 @@
       "description": "Teams advancing to the next stage of competition"
     }
   },
+  "edition": {
+    "future": "Future Edition"
+  },
   "scoresheet": {
     "missions": {
       "eib": {

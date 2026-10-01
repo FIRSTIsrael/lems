@@ -3,9 +3,10 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRubricsTranslations, useJudgingCategoryTranslations } from '@lems/localization';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
 import { JudgingCategory } from '@lems/types/judging';
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
+import { useEdition } from '../../../hooks/use-edition';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
 import { getCategoryColor, getCategoryBgColor } from './rubric-scores-utils';
@@ -16,6 +17,7 @@ interface ExceedingNotesProps {
 
 function SectionName({ category, fieldId }: { category: string; fieldId: string }) {
   const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
+  const rubrics = getRubrics(useEdition());
 
   const sectionId = rubrics[category as JudgingCategory]?.sections?.find(section =>
     section.fields.some(field => field.id === fieldId)

@@ -3,6 +3,7 @@
 import { Box, Paper, Stack, Typography } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import { EnrichedTeam } from '../../types';
 import { AwardWinnerCard } from './award-winner-card';
 
@@ -12,7 +13,9 @@ interface AwardSectionProps {
 }
 
 export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }) => {
-  const { getName } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName } = useAwardTranslations(edition);
   return (
     <Paper
       variant="outlined"

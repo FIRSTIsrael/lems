@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
 import { TeamInfo } from '../../../components/team-info';
+import { useEdition } from '../../../../hooks/use-edition';
 import { AbortSessionDialog } from './abort-session-dialog';
 import { formatTime, getStageColor, useJudgingSessionTimer } from './hooks/use-judging-timer';
 import { StageTimeline } from './stage-timeline';
@@ -36,7 +37,12 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
 
   const { session, sessionLength, openRubricsDuringSession } = useSession();
   const { getStage } = useJudgingSessionStageTranslations();
-  const { judgingStages, timerState } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const edition = useEdition();
+  const { judgingStages, timerState } = useJudgingSessionTimer(
+    session.startTime!,
+    sessionLength,
+    edition
+  );
   const { currentStageIndex, stageTimeRemaining, totalTimeRemaining } = timerState;
 
   const currentStage = judgingStages[currentStageIndex];

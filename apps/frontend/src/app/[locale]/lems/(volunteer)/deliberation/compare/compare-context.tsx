@@ -3,6 +3,7 @@
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import { JudgingCategory } from '@lems/types/judging';
 import { inferCoreValuesFields } from '@lems/shared/rubrics';
+import { useEdition } from '../../hooks/use-edition';
 import type { Team, Rubric, RubricFieldValue, Award, DivisionTeam } from './graphql/types';
 import { getFieldComparisonColor } from './components/rubric-scores-utils';
 
@@ -54,6 +55,7 @@ export const CompareProvider = ({
   allTeams,
   category
 }: CompareProviderProps) => {
+  const edition = useEdition();
   const value = useMemo(() => {
     const rubricsToCompare: Rubric[] = [];
     const categories: JudgingCategory[] = category
@@ -77,7 +79,7 @@ export const CompareProvider = ({
         const ipRubric = team.rubrics.innovation_project;
         const rdRubric = team.rubrics.robot_design;
         if (ipRubric?.data && rdRubric?.data) {
-          const cvFields = inferCoreValuesFields(ipRubric.data, rdRubric.data);
+          const cvFields = inferCoreValuesFields(edition, ipRubric.data, rdRubric.data);
           Object.entries(cvFields).forEach(([key, value]) => {
             coreValuesFields.set(`${team.id}-${key}`, value as RubricFieldValue);
           });
@@ -161,7 +163,7 @@ export const CompareProvider = ({
       teamComparisons,
       coreValuesFields
     };
-  }, [teams, awards, allTeams, category]);
+  }, [teams, awards, allTeams, category, edition]);
 
   return <CompareContext.Provider value={value}>{children}</CompareContext.Provider>;
 };

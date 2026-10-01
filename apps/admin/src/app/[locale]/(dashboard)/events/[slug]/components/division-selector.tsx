@@ -3,6 +3,7 @@
 import { Box, Typography, Avatar, Chip, Stack } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
+import { EditionBadge, getEdition } from '@lems/shared';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface DivisionSelectorProps {
@@ -58,7 +59,12 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
                   {division.name.charAt(0)}
                 </Avatar>
               }
-              label={division.name}
+              label={
+                <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                  <span>{division.name}</span>
+                  <EditionBadge edition={getEdition(division)} />
+                </Stack>
+              }
               variant={isSelected ? 'filled' : 'outlined'}
               onClick={() => handleDivisionChange(division.id)}
               sx={{

@@ -4,6 +4,7 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Paper } from '@mui/material';
 import { useAwardTranslations } from '@lems/localization';
+import type { Edition } from '@lems/shared/edition';
 import { Slide } from '../slide';
 import { Appear } from '../appear';
 
@@ -36,10 +37,11 @@ export interface AwardWinnerSlideAward {
 
 interface AwardWinnerSlideProps {
   award: AwardWinnerSlideAward;
+  edition?: Edition;
 }
 
-export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award }) => {
-  const { getName } = useAwardTranslations();
+export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, edition }) => {
+  const { getName } = useAwardTranslations(edition);
   const t = useTranslations('awards-presentation');
 
   if (!award.winner) {

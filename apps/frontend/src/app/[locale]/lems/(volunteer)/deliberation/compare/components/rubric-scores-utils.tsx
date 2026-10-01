@@ -1,4 +1,5 @@
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import type { RubricCategorySchema } from '@lems/shared/rubrics';
 import type { Team, Rubric, RubricFieldValue } from '../graphql/types';
 import type { FieldComparison } from '../compare-context';
@@ -100,10 +101,12 @@ export const getCategoryBgColor = (category: string) =>
   categoryColors['innovation-project'].bg;
 
 export const processFieldsByCategory = (
+  edition: Edition,
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
 ): Record<string, RubricField[]> => {
+  const rubrics = getRubrics(edition);
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
 
   return categories.reduce(

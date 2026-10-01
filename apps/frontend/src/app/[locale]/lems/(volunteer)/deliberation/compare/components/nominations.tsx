@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Stack, Typography, Box } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../hooks/use-edition';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
 
@@ -22,7 +23,9 @@ const CORE_VALUES_AWARDS = [
 
 export function Nominations({ team }: NominationsProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getName: getAwardName } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName: getAwardName } = useAwardTranslations(edition);
   const { category } = useCompareContext();
 
   const nominations = useMemo(() => {

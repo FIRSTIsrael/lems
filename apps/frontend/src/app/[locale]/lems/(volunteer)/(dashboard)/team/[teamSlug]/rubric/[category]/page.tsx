@@ -1,16 +1,17 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Container, CircularProgress, Box, Stack } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { PageHeader } from '../../../../components/page-header';
 import { useTeam } from '../../components/team-context';
 import { useUser } from '../../../../../components/user-context';
+import { useEdition } from '../../../../../hooks/use-edition';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { useEvent } from '../../../../../components/event-context';
 import { RubricProvider } from './rubric-context';
@@ -29,13 +30,19 @@ export default function RubricPage() {
   const team = useTeam();
   const user = useUser();
   const { currentDivision } = useEvent();
+  const edition = useEdition();
 
   const { category }: { category: JudgingCategory } = useParams();
-  const schema = rubrics[category as JudgingCategory];
+  const schema = getRubrics(edition)[category as JudgingCategory];
 
   const subscriptions = useMemo(
-    () => [createRubricUpdatedSubscription(currentDivision.id)],
-    [currentDivision.id]
+    () => [createRubricUpdatedSubscription(edition, currentDivision.id)],
+    [edition, currentDivision.id]
+  );
+
+  const parseData = useCallback(
+    (queryData: Parameters<typeof parseRubricData>[1]) => parseRubricData(edition, queryData),
+    [edition]
   );
 
   const { data, loading } = usePageData(
@@ -45,7 +52,7 @@ export default function RubricPage() {
       teamId: team.id,
       category: hyphensToUnderscores(category)
     },
-    parseRubricData,
+    parseData,
     subscriptions
   );
 

@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Typography, Box, Menu, MenuItem } from '@mui/material';
 import { ChevronRight, ChevronLeft } from '@mui/icons-material';
 import { Locale, Locales } from '@lems/localization';
+import { EditionBadge, getEdition } from '@lems/shared';
 import { useEvent } from '../../../components/event-context';
 
 export const DivisionSwitcher = () => {
@@ -85,6 +86,7 @@ export const DivisionSwitcher = () => {
         >
           {event.currentDivision.name}
         </Typography>
+        <EditionBadge edition={getEdition(event.currentDivision)} />
         {event.canSwitchDivisions && (
           <ChevronIcon
             sx={{
@@ -152,6 +154,7 @@ export const DivisionSwitcher = () => {
               >
                 {division.name}
               </Typography>
+              <EditionBadge edition={getEdition(division)} />
             </MenuItem>
           ))}
         </Menu>

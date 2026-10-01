@@ -21,7 +21,8 @@ import {
   Celebration as CelebrationIcon
 } from '@mui/icons-material';
 import { DirectionalIcon } from '@lems/localization';
-import { Flag } from '@lems/shared';
+import { EditionBadge, Flag } from '@lems/shared';
+import { getEdition } from '@lems/shared/edition';
 import { Event } from '@lems/types/api/lems';
 
 interface EventCardProps {
@@ -145,6 +146,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, variant }) => {
                 >
                   {event.name}
                 </Typography>
+                <EditionBadge edition={getEdition(event)} />
                 {!event.official && (
                   <Chip
                     icon={<CelebrationIcon />}
