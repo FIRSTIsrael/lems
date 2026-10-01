@@ -31,8 +31,11 @@ export function SectionScoreRow({
       {showSectionName && (
         <Typography
           variant="body2"
+          noWrap
+          title={getSectionTitle(sectionId)}
           sx={{
             flex: 1,
+            minWidth: 0,
             fontSize: '0.9rem',
             color: 'text.primary',
             fontWeight: 500
@@ -43,7 +46,7 @@ export function SectionScoreRow({
       )}
       <Stack
         direction="row"
-        spacing={0.5}
+        useFlexGap
         sx={{
           flexWrap: 'wrap',
           gap: showAllScores ? 0.75 : 0.5,
