@@ -19,41 +19,37 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
   const { user } = result.data as { ok: boolean; user: LemsUser };
   const { eventId } = user;
 
+  let eventData;
   try {
     const client = getClient();
-    const result = await client.query({
+    const queryResult = await client.query({
       query: GET_VOLUNTEER_EVENT_DATA_QUERY,
       variables: { eventId, userId: user.id }
     });
-
-    if (!result.data?.event) {
-      throw new Error('Event not found');
-    }
-
-    const eventData = result.data;
-
-    if (!eventData.event) {
-      throw new Error('Event not found');
-    }
-
-    const volunteerData = eventData.event.volunteers[0];
-    if (!volunteerData || !volunteerData.divisions || volunteerData.divisions.length === 0) {
-      throw new Error('Volunteer has no assigned divisions');
-    }
-
-    return (
-      <UserProvider value={user}>
-        <EventProvider
-          eventId={eventData.event.id}
-          eventName={eventData.event.name}
-          divisions={volunteerData.divisions}
-        >
-          {children}
-        </EventProvider>
-      </UserProvider>
-    );
+    eventData = queryResult.data;
   } catch (error) {
     console.error('Error in volunteer layout:', error);
     throw error;
   }
+
+  if (!eventData?.event) {
+    throw new Error('Event not found');
+  }
+
+  const volunteerData = eventData.event.volunteers[0];
+  if (!volunteerData || !volunteerData.divisions || volunteerData.divisions.length === 0) {
+    throw new Error('Volunteer has no assigned divisions');
+  }
+
+  return (
+    <UserProvider value={user}>
+      <EventProvider
+        eventId={eventData.event.id}
+        eventName={eventData.event.name}
+        divisions={volunteerData.divisions}
+      >
+        {children}
+      </EventProvider>
+    </UserProvider>
+  );
 }
