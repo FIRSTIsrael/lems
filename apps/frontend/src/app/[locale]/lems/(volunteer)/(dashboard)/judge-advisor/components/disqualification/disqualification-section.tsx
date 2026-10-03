@@ -33,8 +33,7 @@ export function DisqualificationSection() {
   const tGrid = useTranslations('pages.judge-advisor.grid');
   const theme = useTheme();
   const { currentDivision } = useEvent();
-  const { sessions, disqualifiedTeams, deliberations, finalDeliberation, loading } =
-    useJudgeAdvisor();
+  const { sessions, disqualifiedTeams, deliberations, loading } = useJudgeAdvisor();
   const { showBlocked, setShowBlocked } = useFilters();
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
@@ -45,7 +44,7 @@ export function DisqualificationSection() {
     return Object.values(deliberations).some(
       deliberation => deliberation && deliberation.status !== 'not-started'
     );
-  }, [deliberations, finalDeliberation]);
+  }, [deliberations]);
 
   useEffect(() => {
     if (!anyDeliberationStarted) return;
