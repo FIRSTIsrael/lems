@@ -83,52 +83,55 @@ export function SearchTeamSection({
             }}
           />
         )}
-        renderOption={(props, team) => (
-          <Box component="li" {...props} key={team.id}>
-            <Stack
-              spacing={0.5}
-              sx={{
-                width: '100%'
-              }}
-            >
+        renderOption={(props, team) => {
+          const { key: _key, ...optionProps } = props;
+          return (
+            <Box component="li" key={team.id} {...optionProps}>
               <Stack
-                direction="row"
-                spacing={1}
-                sx={{
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  #{team.number}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'text.secondary'
-                  }}
-                >
-                  {team.name}
-                </Typography>
-              </Stack>
-              <Stack
-                direction="row"
                 spacing={0.5}
                 sx={{
-                  alignItems: 'center'
+                  width: '100%'
                 }}
               >
-                <Typography
-                  variant="caption"
+                <Stack
+                  direction="row"
+                  spacing={1}
                   sx={{
-                    color: 'text.secondary'
+                    alignItems: 'center'
                   }}
                 >
-                  {team.affiliation} • {team.city}
-                </Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    #{team.number}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
+                    {team.name}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
+                    {team.affiliation} • {team.city}
+                  </Typography>
+                </Stack>
               </Stack>
-            </Stack>
-          </Box>
-        )}
+            </Box>
+          );
+        }}
         slotProps={{
           paper: {
             sx: {
