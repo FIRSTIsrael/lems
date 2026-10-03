@@ -141,7 +141,7 @@
     "run-script-os": "^1.1.6",
     "ts-node": "10.9.2",
     "tsx": "^4.22.4",
-    "typescript": "^6.0.0",
+    "typescript": "^7.0.2",
     "typescript-eslint": "^8.62.1",
     "webpack": "5.108.3",
     "webpack-cli": "^7.0.0",
