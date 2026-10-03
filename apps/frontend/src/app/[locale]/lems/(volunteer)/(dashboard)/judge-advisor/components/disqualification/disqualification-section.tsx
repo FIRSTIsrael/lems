@@ -42,11 +42,9 @@ export function DisqualificationSection() {
   const [disqualifyTeam] = useMutation(DISQUALIFY_TEAM);
 
   const anyDeliberationStarted = useMemo(() => {
-    const categoryStarted = Object.values(deliberations).some(
+    return Object.values(deliberations).some(
       deliberation => deliberation && deliberation.status !== 'not-started'
     );
-    const finalStarted = !!finalDeliberation && finalDeliberation.status !== 'not-started';
-    return categoryStarted || finalStarted;
   }, [deliberations, finalDeliberation]);
 
   useEffect(() => {
