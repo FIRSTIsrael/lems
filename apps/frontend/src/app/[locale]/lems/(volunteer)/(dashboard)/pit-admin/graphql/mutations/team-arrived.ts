@@ -1,6 +1,5 @@
 import { gql, TypedDocumentNode, ApolloCache } from '@apollo/client';
-import { merge, updateById } from '@lems/shared/utils';
-import type { TeamEvent, Team } from '../types';
+import type { TeamEvent } from '../types';
 
 interface TeamArrivedMutationData {
   teamArrived: TeamEvent;
@@ -25,15 +24,10 @@ export const TEAM_ARRIVED_MUTATION: TypedDocumentNode<
 export function createTeamArrivedCacheUpdate(teamId: string) {
   return (cache: ApolloCache) => {
     cache.modify({
+      id: cache.identify({ __typename: 'Team', id: teamId }),
       fields: {
-        division(existingDivision = {}) {
-          const division = existingDivision as { teams?: Team[] };
-          if (!division.teams) {
-            return existingDivision;
-          }
-          return merge(existingDivision, {
-            teams: updateById(division.teams, teamId, team => merge(team, { arrived: true }))
-          });
+        arrived() {
+          return true;
         }
       }
     });

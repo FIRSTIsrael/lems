@@ -2,11 +2,14 @@ import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler } from '@lems/shared/utils';
 import type { CategoryDeliberationData } from '../types';
 
+interface TeamArrivalEvent {
+  teamId: string;
+  arrived: boolean;
+}
+
 export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   {
-    teamArrivalUpdated: {
-      teamId: string;
-    };
+    teamArrivalUpdated: TeamArrivalEvent;
   },
   {
     divisionId: string;
@@ -15,22 +18,21 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription TeamArrivalUpdated($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;
 
 const teamArrivalUpdatedReconciler: Reconciler<
   CategoryDeliberationData,
-  { teamArrivalUpdated: { teamId: string } }
+  { teamArrivalUpdated: TeamArrivalEvent }
 > = (prev, { data }) => {
   if (!data?.teamArrivalUpdated) return prev;
 
-  const { teamId } = data.teamArrivalUpdated;
+  const { teamId, arrived } = data.teamArrivalUpdated;
   const teamIndex = prev.division.teams.findIndex(t => t.id === teamId);
 
   if (teamIndex === -1) return prev;
-
-  const team = prev.division.teams[teamIndex];
 
   return merge(prev, {
     division: {
@@ -38,7 +40,7 @@ const teamArrivalUpdatedReconciler: Reconciler<
         ...prev.division.teams.slice(0, teamIndex),
         {
           ...prev.division.teams[teamIndex],
-          arrived: !team.arrived
+          arrived
         },
         ...prev.division.teams.slice(teamIndex + 1)
       ]
