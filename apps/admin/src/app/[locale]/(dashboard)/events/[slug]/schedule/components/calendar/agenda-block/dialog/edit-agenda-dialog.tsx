@@ -40,7 +40,6 @@ export const EditAgendaDialog: React.FC<EditAgendaDialogProps> = ({
   useEffect(() => {
     if (block && open) {
       // Sync with external state -> this is OK.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(block.title || '');
       setLocation(block.location);
       setVisibility(block.visibilty ?? 'public');

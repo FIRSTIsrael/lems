@@ -1,0 +1,108 @@
+"""
+Practice tables information for a division
+"""
+type PracticeTables {
+  "ID of the division this practice tables data belongs to"
+  divisionId: String!
+
+  "Configuration for practice tables (null if not configured)"
+  config: PracticeTablesConfig
+
+  "Assigned practice table slots (excludes empty slots)"
+  schedule: [PracticeTableSlot!]!
+}
+
+"""
+Configuration for practice tables in a division
+"""
+type PracticeTablesConfig {
+  "Division ID this configuration belongs to"
+  divisionId: String!
+
+  "Number of practice tables available"
+  tableCount: Int!
+
+  "Duration of each practice slot in minutes"
+  slotDurationMinutes: Int!
+
+  "Start time for practice tables (ISO 8601 datetime)"
+  startTime: String!
+
+  "End time for practice tables (ISO 8601 datetime)"
+  endTime: String!
+
+  "Blocked time slots (e.g., lunch breaks)"
+  blockedTimeSlots: [BlockedTimeSlot!]!
+}
+
+"""
+A blocked time slot where practice tables are not available
+"""
+type BlockedTimeSlot {
+  "Start time (ISO 8601 datetime)"
+  start: String!
+
+  "End time (ISO 8601 datetime)"
+  end: String!
+
+  "Optional reason for blocking (e.g., 'Lunch break')"
+  reason: String
+}
+
+"""
+A practice table slot that may or may not have a team assigned
+"""
+type PracticeTableSlot {
+  "Unique identifier for the slot"
+  id: String!
+
+  "Division ID"
+  divisionId: String!
+
+  "Team assigned to this slot (null if unassigned)"
+  team: Team
+
+  "Table index (0-based)"
+  tableIndex: Int!
+
+  "Start time of the practice slot (ISO 8601 datetime)"
+  startTime: String!
+
+  "End time of the practice slot (ISO 8601 datetime)"
+  endTime: String!
+
+  "When this slot was created (ISO 8601 datetime)"
+  createdAt: String!
+}
+
+"""
+Input for updating a practice table slot assignment
+"""
+input UpdatePracticeTableSlotInput {
+  "Division ID"
+  divisionId: String!
+
+  "Team ID to assign (null to unassign)"
+  teamId: String
+
+  "Table index (0-based)"
+  tableIndex: Int!
+
+  "Start time (ISO 8601 datetime)"
+  startTime: String!
+}
+
+extend type Division {
+  "Practice tables information for this division"
+  practiceTables: PracticeTables!
+}
+
+extend type Mutation {
+  "Update a practice table slot assignment. Set teamId to null to unassign. Returns the updated slot."
+  updatePracticeTableAssignment(input: UpdatePracticeTableSlotInput!): PracticeTableSlot!
+}
+
+extend type Subscription {
+  "Subscribe to practice table assignment changes for a division (only returns assigned slots)"
+  practiceTableAssignmentsUpdated(divisionId: String!): [PracticeTableSlot!]!
+}

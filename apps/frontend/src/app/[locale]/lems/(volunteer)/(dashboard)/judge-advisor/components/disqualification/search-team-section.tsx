@@ -19,13 +19,15 @@ interface SearchTeamSectionProps {
   selectedTeam: Team | null;
   onTeamSelect: (team: Team | null) => void;
   loading: boolean;
+  disabled?: boolean;
 }
 
 export function SearchTeamSection({
   availableTeams,
   selectedTeam,
   onTeamSelect,
-  loading
+  loading,
+  disabled = false
 }: SearchTeamSectionProps) {
   const t = useTranslations('pages.judge-advisor.awards.disqualification');
   const theme = useTheme();
@@ -44,7 +46,7 @@ export function SearchTeamSection({
         }
         value={selectedTeam}
         onChange={(_, newValue) => onTeamSelect(newValue)}
-        disabled={loading || availableTeams.length === 0}
+        disabled={disabled || loading || availableTeams.length === 0}
         noOptionsText={t('no-teams-found')}
         renderInput={params => (
           <TextField

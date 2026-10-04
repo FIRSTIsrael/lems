@@ -2,7 +2,8 @@ import { promises as fs } from 'fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import { Pool } from 'pg';
-import { Kysely, Migrator, PostgresDialect, MigrationProvider, Migration, sql } from 'kysely';
+import { Kysely, PostgresDialect, sql } from 'kysely';
+import { Migrator, MigrationProvider, Migration } from 'kysely/migration';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { syncAllSequences } from '../utils/sequence-sync.js';
 

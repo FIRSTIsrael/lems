@@ -132,7 +132,6 @@ export function useCollectSteps() {
       );
 
     // Set state here is OK, no risk of cascading updates
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActivationThresholds(thresholds);
     setFinalStepIndex(numSteps - 1);
   }, [stepContainer]);
