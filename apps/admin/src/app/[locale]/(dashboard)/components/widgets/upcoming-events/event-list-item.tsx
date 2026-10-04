@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Box, ListItem, ListItemButton, Stack, Typography } from '@mui/material';
 import { CalendarToday } from '@mui/icons-material';
 import { EventSummary } from '@lems/types/api/admin';
-import { EditionBadge, getEventEdition } from '@lems/shared';
+import { EditionBadge } from '@lems/shared';
 
 interface EventListItemProps {
   event: EventSummary;
@@ -49,7 +49,7 @@ export default function EventListItem({ event }: EventListItemProps) {
                 >
                   {event.name}
                 </Typography>
-                <EditionBadge edition={getEventEdition(event.divisions)} />
+                <EditionBadge isFuture={event.divisions.some(division => division.futureEdition)} />
               </Stack>
               <Typography
                 variant="caption"

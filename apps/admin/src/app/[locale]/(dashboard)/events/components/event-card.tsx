@@ -18,7 +18,7 @@ import {
 } from '@mui/material';
 import { LocationOn, CalendarMonth, Group, Edit, Delete, ContentCopy } from '@mui/icons-material';
 import { EventSummary, Division } from '@lems/types/api/admin';
-import { EditionBadge, Flag, getEventEdition } from '@lems/shared';
+import { EditionBadge, Flag } from '@lems/shared';
 import { useSession } from '../../components/session-context';
 import { EventMissingInfo } from './missing-info/event-missing-info';
 
@@ -72,7 +72,7 @@ export const EventCard: React.FC<EventCardProps> = ({
           <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold' }}>
             {name}
           </Typography>
-          <EditionBadge edition={getEventEdition(divisions)} />
+          <EditionBadge isFuture={divisions.some(division => division.futureEdition)} />
         </Stack>
 
         <Stack spacing={1.5} sx={{ mb: 2 }}>

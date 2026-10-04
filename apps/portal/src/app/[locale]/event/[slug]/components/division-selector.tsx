@@ -1,7 +1,7 @@
 'use client';
 
 import { EventDetailsDivision } from '@lems/types/api/portal';
-import { EditionBadge, getEdition } from '@lems/shared';
+import { EditionBadge } from '@lems/shared';
 import { Grid, Box, Typography, Chip, Button } from '@mui/material';
 import { useRouter, useSearchParams } from 'next/navigation';
 
@@ -95,7 +95,7 @@ export const DivisionSelector: React.FC<DivisionSelectorProps> = ({ divisions })
                 >
                   {division.name}
                 </Typography>
-                <EditionBadge edition={getEdition(division)} />
+                <EditionBadge isFuture={division.futureEdition} />
               </Box>
             </Button>
           </Grid>

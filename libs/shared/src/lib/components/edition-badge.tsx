@@ -2,15 +2,14 @@
 
 import { Chip } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import type { Edition } from '../edition';
 
 interface EditionBadgeProps {
-  edition: Edition;
+  isFuture: boolean;
   size?: 'small' | 'medium';
 }
 
-export const EditionBadge: React.FC<EditionBadgeProps> = ({ edition, size = 'small' }) => {
+export const EditionBadge: React.FC<EditionBadgeProps> = ({ isFuture, size = 'small' }) => {
   const t = useTranslations('shared.edition');
-  if (edition === 'founders') return null;
-  return <Chip label={t(edition)} size={size} color="secondary" />;
+  if (!isFuture) return null;
+  return <Chip label={t('future')} size={size} color="secondary" />;
 };

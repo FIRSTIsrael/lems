@@ -26,7 +26,6 @@ import {
   Close as CloseIcon
 } from '@mui/icons-material';
 import { ColorPicker, EditionBadge, apiFetch } from '@lems/shared';
-import { getEdition } from '@lems/shared/edition';
 import { hsvaToHex, hexToHsva, HsvaColor } from '@uiw/react-color';
 import { Division } from '@lems/types/api/admin';
 import { defaultColor } from '../../../../../../../theme';
@@ -173,7 +172,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                   ) : (
                     <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
                       <span>{division.name}</span>
-                      <EditionBadge edition={getEdition(division)} />
+                      <EditionBadge isFuture={division.futureEdition} />
                     </Stack>
                   )}
                 </TableCell>
