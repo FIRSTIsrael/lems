@@ -772,7 +772,8 @@
           "confirm-disqualify": "פסול",
           "cancel": "ביטול",
           "team-option-label": "קבוצה #{number} - {name} ({affiliation}, {city})",
-          "error-disqualifying-team": "שגיאה בפסילת הקבוצה"
+          "error-disqualifying-team": "שגיאה בפסילת הקבוצה",
+          "blocked-after-deliberation": "לא ניתן לפסול קבוצות לאחר שהתחיל דיון שופטים."
         },
         "deliberation": {
           "final-deliberation": "דיון סופי",

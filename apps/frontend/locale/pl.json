@@ -774,7 +774,8 @@
           "confirm-disqualify": "Dyskwalifikuj",
           "cancel": "Anuluj",
           "team-option-label": "Drużyna #{number} - {name} ({affiliation}, {city})",
-          "error-disqualifying-team": "Błąd podczas dyskwalifikacji drużyny"
+          "error-disqualifying-team": "Błąd podczas dyskwalifikacji drużyny",
+          "blocked-after-deliberation": "Dyskwalifikacja nie jest już dostępna po rozpoczęciu deliberacji."
         },
         "deliberation": {
           "final-deliberation": "Ostateczna deliberacja",
