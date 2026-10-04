@@ -163,7 +163,7 @@ export async function apiFetch<TSchema extends z.ZodTypeAny>(
       }
     } catch (error) {
       if (error instanceof z.ZodError) {
-        throw new Error(`Response validation failed: ${error.message}`);
+        throw new Error(`Response validation failed: ${error.message}`, { cause: error });
       }
       throw new ApiFetchError(`Failed to parse JSON response: ${error}`, response, undefined);
     }
