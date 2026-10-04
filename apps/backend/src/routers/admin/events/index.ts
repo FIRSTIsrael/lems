@@ -1,12 +1,12 @@
 import express from 'express';
 import dayjs from 'dayjs';
 import { UpdateableEvent } from '@lems/database';
+import { CoordinatesSchema } from '@lems/types/api/coordinates';
 import db from '../../../lib/database';
 import { attachEvent } from '../middleware/attach-event';
 import { requirePermission } from '../middleware/require-permission';
 import { AdminEventRequest, AdminRequest } from '../../../types/express';
 import { asHandler } from '../../../types/express-handlers';
-import { coordinatesToPointLiteral } from '../../../lib/utils/coordinates';
 import { makeAdminEventResponse, makeAdminEventSummaryResponse } from './util';
 import eventUsersRouter from './users';
 import eventTeamsRouter from './teams';
@@ -245,12 +245,13 @@ router.put(
       }
 
       if (coordinates !== undefined) {
-        const point = coordinatesToPointLiteral(coordinates);
-        if (point === undefined) {
+        const parsed = CoordinatesSchema.nullable().safeParse(coordinates);
+        if (!parsed.success) {
           res.status(400).json({ error: 'Invalid coordinates' });
           return;
         }
-        updateData.coordinates = point;
+        updateData.latitude = parsed.data?.latitude ?? null;
+        updateData.longitude = parsed.data?.longitude ?? null;
       }
 
       if (Object.keys(updateData).length === 0) {

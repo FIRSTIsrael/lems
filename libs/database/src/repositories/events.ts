@@ -1,10 +1,9 @@
-import { Kysely, sql } from 'kysely';
+import { Kysely } from 'kysely';
 import dayjs from 'dayjs';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
 import { TeamWithDivision, Team, Division, Admin } from '../schema';
-import { parsePoint } from '../utils/point';
 
 class EventSelector {
   constructor(
@@ -313,7 +312,8 @@ class EventsSelector {
           'events.end_date',
           'events.location',
           'events.region',
-          'events.coordinates',
+          'events.latitude',
+          'events.longitude',
           'events.timezone',
           'events.season_id'
         ])
@@ -352,6 +352,8 @@ class EventsSelector {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -363,10 +365,7 @@ class EventsSelector {
         'event_settings.completed',
         'event_settings.official'
       ])
-      .select(eb => [
-        eb.fn.count('team_divisions.team_id').as('team_count'),
-        sql<string | null>`events.coordinates::text`.as('coordinates')
-      ]);
+      .select(eb => eb.fn.count('team_divisions.team_id').as('team_count'));
 
     if (this.selector.type === 'after') {
       query = query.where(
@@ -390,6 +389,8 @@ class EventsSelector {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -401,7 +402,6 @@ class EventsSelector {
         'event_settings.completed',
         'event_settings.official'
       ])
-      .groupBy(sql`events.coordinates::text`)
       .orderBy('events.start_date', 'asc');
 
     const result = await query.execute();
@@ -450,7 +450,8 @@ class EventsSelector {
           location: row.location,
           timezone: row.timezone,
           region: row.region,
-          coordinates: parsePoint(row.coordinates),
+          latitude: row.latitude,
+          longitude: row.longitude,
           team_count: 0,
           divisions: [],
           visible: row.visible,
@@ -592,6 +593,8 @@ export class EventsRepository {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -601,10 +604,7 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .select(eb => [
-        eb.fn.count('team_divisions.team_id').as('team_count'),
-        sql<string | null>`events.coordinates::text`.as('coordinates')
-      ])
+      .select(eb => eb.fn.count('team_divisions.team_id').as('team_count'))
       .groupBy([
         'events.id',
         'events.name',
@@ -614,6 +614,8 @@ export class EventsRepository {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -623,7 +625,6 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .groupBy(sql`events.coordinates::text`)
       .orderBy('events.start_date', 'asc');
 
     const eventRows = await query.execute();
@@ -656,7 +657,8 @@ export class EventsRepository {
           timezone: row.timezone,
           location: row.location,
           region: row.region,
-          coordinates: parsePoint(row.coordinates),
+          latitude: row.latitude,
+          longitude: row.longitude,
           visible: row.visible,
           published: row.published,
           team_count: 0,
