@@ -11,7 +11,9 @@ export type OptionalAwardNominations = Partial<Record<OptionalAwards, boolean>>;
 export type RanksPerCategory = Record<JudgingCategory | 'total' | 'robot-game', number>;
 export type EligiblityPerStage = Record<StagesWithNomination, boolean>;
 export type RubricFields = Record<string, number | null>;
+export type RubricFieldNotes = Record<string, string | undefined>;
 export type RubricsFields = Record<JudgingCategory, RubricFields>;
+export type RubricsFieldNotes = Record<JudgingCategory, RubricFieldNotes>;
 
 /**
  * Enriched team data with all computed values for final deliberation.
@@ -33,6 +35,7 @@ export type EnrichedTeam = {
   eligibility: EligiblityPerStage;
 
   rubricsFields: RubricsFields;
+  rubricsFieldNotes: RubricsFieldNotes;
   gpScores: Record<string, number | null>;
 
   rubricIds: Record<JudgingCategory, string | null>;
