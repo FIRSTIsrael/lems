@@ -127,11 +127,12 @@
     },
     "teams": {
       "title": "Drużyny <i>FIRST</i> LEGO League Challenge",
+      "search": {
+        "placeholder": "Szukaj drużyny..."
+      },
       "region": {
         "label": "Region",
-        "all": "Wszystkie regiony",
-        "current-all": "Wyświetlane drużyny ze wszystkich regionów",
-        "current": "Wyświetlane drużyny z regionu {region}"
+        "all": "Wszystkie regiony"
       },
       "no-teams": {
         "title": "Brak drużyn do wyświetlenia",

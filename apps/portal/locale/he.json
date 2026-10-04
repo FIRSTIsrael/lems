@@ -59,15 +59,16 @@
     },
     "teams": {
       "title": "קבוצות <i>FIRST</i> LEGO League Challenge",
+      "search": {
+        "placeholder": "חיפוש קבוצות..."
+      },
       "region": {
         "label": "מדינה",
-        "all": "כל המדינות",
-        "current-all": "מציג קבוצות מכל המדינות",
-        "current": "מציג קבוצות מהמדינה {region}"
+        "all": "כל המדינות"
       },
       "no-teams": {
-        "title": "אין קבוצות להציג",
-        "message": "אנא בדקו שוב מאוחר יותר"
+        "title": "לא נמצאו תוצאות שתואמות לחיפוש",
+        "message": "נסו לחפש במלים אחרות"
       }
     },
     "events": {
