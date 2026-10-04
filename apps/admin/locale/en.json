@@ -381,6 +381,8 @@
             "open-google-maps": "Open in Google Maps"
           },
           "messages": {
+            "no-results": "No coordinates found for this search. Open it in Google Maps, copy the coordinates and paste them here.",
+            "search-error": "Search failed. Please try again.",
             "save-success": "Event location saved.",
             "save-error": "Failed to save event location."
           }

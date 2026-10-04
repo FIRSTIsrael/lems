@@ -21,6 +21,8 @@ import { Coordinates } from '@lems/types/api/coordinates';
 import { apiFetch, GoogleMapEmbed } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
 
+const GEOCODING_URL = 'https://nominatim.openstreetmap.org/search';
+
 const isSameLocation = (a: Coordinates | null, b: Coordinates | null) =>
   a?.latitude === b?.latitude && a?.longitude === b?.longitude;
 
@@ -70,6 +72,7 @@ export const EventLocationEditor: React.FC = () => {
     event.coordinates?.longitude.toString() ?? ''
   );
   const [searchQuery, setSearchQuery] = useState(event.location);
+  const [isSearching, setIsSearching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -100,9 +103,32 @@ export const EventLocationEditor: React.FC = () => {
     updateLocation(coordinates);
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     const query = searchQuery.trim();
-    if (query) setPreview(query);
+    if (!query) return;
+
+    setIsSearching(true);
+    setAlert(null);
+    try {
+      const params = new URLSearchParams({ q: query, format: 'jsonv2', limit: '1' });
+      const response = await fetch(`${GEOCODING_URL}?${params}`, {
+        headers: { 'Accept-Language': locale }
+      });
+      if (!response.ok) throw new Error(response.statusText);
+
+      const [result] = (await response.json()) as { lat: string; lon: string }[];
+      if (result) {
+        updateLocation({ latitude: Number(result.lat), longitude: Number(result.lon) });
+      } else {
+        setPreview(query);
+        setAlert({ type: 'error', message: t('messages.no-results') });
+      }
+    } catch {
+      setPreview(query);
+      setAlert({ type: 'error', message: t('messages.search-error') });
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   const latitudeError = latitudeInput !== '' && parseCoordinate(latitudeInput, 90) === null;
@@ -173,11 +199,11 @@ export const EventLocationEditor: React.FC = () => {
                     <InputAdornment position="end">
                       <IconButton
                         onClick={handleSearch}
-                        disabled={!searchQuery.trim()}
+                        disabled={isSearching || !searchQuery.trim()}
                         edge="end"
                         aria-label={t('fields.search.label')}
                       >
-                        <Search />
+                        {isSearching ? <CircularProgress size={20} /> : <Search />}
                       </IconButton>
                     </InputAdornment>
                   )

@@ -381,6 +381,8 @@
             "open-google-maps": "Otwórz w Google Maps"
           },
           "messages": {
+            "no-results": "Nie znaleziono współrzędnych dla tego wyszukiwania. Otwórz je w Google Maps, skopiuj współrzędne i wklej je tutaj.",
+            "search-error": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
             "save-success": "Lokalizacja wydarzenia została zapisana.",
             "save-error": "Nie udało się zapisać lokalizacji wydarzenia."
           }
