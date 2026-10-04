@@ -14,6 +14,7 @@ import {
 } from 'recharts';
 import { useJudgingCategoryTranslations, useRubricsTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { useEdition } from '../../../hooks/use-edition';
 import type { Team } from '../graphql/types';
 import {
   processCoreValuesRadarData,
@@ -120,12 +121,14 @@ export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) 
   const t = useTranslations('layouts.deliberation.compare');
   const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations('innovation-project');
   const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
+  const edition = useEdition();
 
   const data = useMemo(() => {
-    if (category === 'core-values') return processCoreValuesRadarData(team, getIpSectionTitle);
+    if (category === 'core-values')
+      return processCoreValuesRadarData(edition, team, getIpSectionTitle);
     const rubric = team.rubrics[category.replace('-', '_') as keyof typeof team.rubrics];
-    return processRubricRadarData(rubric, category, getSectionTitle);
-  }, [team, category, getSectionTitle, getIpSectionTitle]);
+    return processRubricRadarData(edition, rubric, category, getSectionTitle);
+  }, [edition, team, category, getSectionTitle, getIpSectionTitle]);
 
   if (data.length === 0) {
     return (
@@ -152,6 +155,10 @@ interface AllCategoriesRadarChartProps {
 
 export const AllCategoriesRadarChart = ({ team }: AllCategoriesRadarChartProps) => {
   const { getCategory } = useJudgingCategoryTranslations();
-  const data = useMemo(() => processAllCategoriesRadarData(team, getCategory), [team, getCategory]);
+  const edition = useEdition();
+  const data = useMemo(
+    () => processAllCategoriesRadarData(edition, team, getCategory),
+    [edition, team, getCategory]
+  );
   return <RadarChartContainer data={data} dataKey="category" />;
 };

@@ -16,6 +16,7 @@ import {
 } from '@mui/material';
 import { useAwardTranslations } from '@lems/localization';
 import { Award } from '../types';
+import { useAwards } from './awards-context';
 
 interface AddAwardDialogProps {
   open: boolean;
@@ -31,7 +32,8 @@ export const AddAwardDialog: React.FC<AddAwardDialogProps> = ({
   onClose
 }) => {
   const t = useTranslations('pages.events.awards.editor.add-dialog');
-  const { getName } = useAwardTranslations();
+  const { edition } = useAwards();
+  const { getName } = useAwardTranslations(edition);
   const [selectedAward, setSelectedAward] = useState<Award | ''>('');
 
   const handleAddAward = () => {

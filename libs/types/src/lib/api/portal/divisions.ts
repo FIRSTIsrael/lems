@@ -3,7 +3,8 @@ import { z } from 'zod';
 export const PortalDivisionResponseSchema = z.object({
   id: z.string(),
   name: z.string(),
-  color: z.string().nullable()
+  color: z.string().nullable(),
+  futureEdition: z.boolean()
 });
 
 export type Division = z.infer<typeof PortalDivisionResponseSchema>;

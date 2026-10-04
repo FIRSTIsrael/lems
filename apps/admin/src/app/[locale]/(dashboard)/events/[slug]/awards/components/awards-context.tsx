@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useCallback, useMemo, useEffect } from 'react';
 import { reorderArray } from '@lems/shared/utils';
 import { apiFetch } from '@lems/shared';
+import type { Edition } from '@lems/shared/edition';
 import { mutate } from 'swr';
 import { AwardContextValue, AwardSchema, Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
 import { validateAwardsSchema } from '../utils/validation';
@@ -22,6 +23,7 @@ export function useAwards() {
 interface AwardsProviderProps {
   children: React.ReactNode;
   divisionId: string;
+  edition?: Edition;
   teamCount?: number;
   initialSchema?: AwardSchema | null;
   onSchemaChange?: () => void;
@@ -30,6 +32,7 @@ interface AwardsProviderProps {
 export function AwardsProvider({
   children,
   divisionId,
+  edition = 'founders',
   teamCount = 32,
   initialSchema,
   onSchemaChange
@@ -171,6 +174,7 @@ export function AwardsProvider({
     schema: currentSchema,
     validation,
     teamCount,
+    edition,
     isLoading,
     isDirty,
     isNew: !isLoadedFromDatabase,

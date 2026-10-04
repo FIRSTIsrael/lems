@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Stack, Chip } from '@mui/material';
 import { CalendarToday, LocationOn, Celebration as CelebrationIcon } from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
+import { EditionBadge } from '@lems/shared';
+
 interface EventHeaderProps {
   eventData: EventDetails;
 }
@@ -37,6 +39,10 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
         }}
       >
         <Typography variant="h2">{eventName}</Typography>
+        <EditionBadge
+          isFuture={eventData.divisions.some(division => division.futureEdition)}
+          size="medium"
+        />
         {!official && (
           <Chip
             icon={<CelebrationIcon />}

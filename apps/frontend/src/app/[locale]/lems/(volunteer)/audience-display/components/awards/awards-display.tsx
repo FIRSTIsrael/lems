@@ -3,6 +3,7 @@ import { Deck, DeckRef, buildAwardsSlides, AwardWinnerSlideStyle } from '@lems/p
 import { useAwardTranslations } from '@lems/localization';
 import { useAwardsPresentationContext } from '@lems/shared/providers';
 import { useTranslations } from 'next-intl';
+import { useEdition } from '../../../hooks/use-edition';
 import { Award } from '../../graphql';
 
 export interface AwardsDisplayProps {
@@ -14,7 +15,9 @@ export interface AwardsDisplayProps {
 export const AwardsDisplay = forwardRef<DeckRef, AwardsDisplayProps>(
   ({ awards, awardWinnerSlideStyle = 'both', divisionColor }, ref) => {
     const { awardsAssigned, presentationState } = useAwardsPresentationContext();
-    const { getName, getDescription } = useAwardTranslations();
+    const edition = useEdition();
+
+    const { getName, getDescription } = useAwardTranslations(edition);
     const t = useTranslations('awards-presentation');
 
     const awardSlides = useMemo(
@@ -24,9 +27,10 @@ export const AwardsDisplay = forwardRef<DeckRef, AwardsDisplayProps>(
           getAwardDescription: getDescription,
           divisionColor,
           awardTranslation: (name: string) => t('prize', { name }),
-          awardSectionTitle: t('title-slide')
+          awardSectionTitle: t('title-slide'),
+          edition
         }),
-      [awards, awardWinnerSlideStyle, getName, getDescription, divisionColor, t]
+      [awards, awardWinnerSlideStyle, getName, getDescription, divisionColor, t, edition]
     );
 
     if (!awardsAssigned) {

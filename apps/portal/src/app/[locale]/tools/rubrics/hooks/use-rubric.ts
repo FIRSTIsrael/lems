@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
-import { JudgingCategory } from '@lems/types/judging';
-import { rubrics } from '@lems/shared/rubrics';
+import { JudgingCategory, JUDGING_CATEGORIES } from '@lems/types/judging';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
+import { useToolEdition } from '../../hooks/use-tool-edition';
 import { RubricFormValues } from '../rubric-types';
 import { getEmptyRubric } from '../rubric-utils';
 
@@ -19,18 +21,25 @@ interface RubricsDb extends DBSchema {
   };
 }
 
-const getRubricKey = (category: JudgingCategory) => `rubric-${category}`;
+const getRubricKey = (edition: Edition, category: JudgingCategory) =>
+  edition === 'founders' ? `rubric-${category}` : `rubric-${edition}-${category}`;
 
 export const useRubric = (category: JudgingCategory) => {
+  const edition = useToolEdition();
+  const rubricsVersion = getRubrics(edition)._version;
+  const rubricKey = getRubricKey(edition, category);
   const [rubric, setRubric] = useState<RubricData>(() => ({
-    id: getRubricKey(category),
-    version: rubrics._version,
+    id: rubricKey,
+    version: rubricsVersion,
     category,
-    values: getEmptyRubric(category)
+    values: getEmptyRubric(edition, category)
   }));
-  const [loading, setLoading] = useState(true);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
+  // Loading until the draft for the current edition/category has been read
+  const loading = loadedKey !== rubricKey;
 
   useEffect(() => {
+    let cancelled = false;
     const initDb = async () => {
       const db = await openDB<RubricsDb>('rubrics-database', 1, {
         upgrade(db) {
@@ -40,32 +49,35 @@ export const useRubric = (category: JudgingCategory) => {
         }
       });
 
-      const rubricKey = getRubricKey(category);
       const currentRubric = await db.get('rubrics', rubricKey);
+      if (cancelled) return;
       if (
         currentRubric &&
-        currentRubric.version === rubrics._version &&
+        currentRubric.version === rubricsVersion &&
         currentRubric.category === category
       ) {
         setRubric(currentRubric);
       } else {
         setRubric({
           id: rubricKey,
-          version: rubrics._version,
+          version: rubricsVersion,
           category,
-          values: getEmptyRubric(category)
+          values: getEmptyRubric(edition, category)
         });
       }
-      setLoading(false);
+      setLoadedKey(rubricKey);
     };
 
     initDb();
-  }, [category]);
+    return () => {
+      cancelled = true;
+    };
+  }, [edition, category, rubricKey, rubricsVersion]);
 
   const updateRubric = async (values: RubricFormValues) => {
     const newRubric: RubricData = {
-      id: getRubricKey(category),
-      version: rubrics._version,
+      id: getRubricKey(edition, category),
+      version: rubricsVersion,
       category,
       values
     };
@@ -83,13 +95,14 @@ export const useRubric = (category: JudgingCategory) => {
     const db = await openDB<RubricsDb>('rubrics-database', 1);
     const tx = db.transaction('rubrics', 'readwrite');
     const store = tx.objectStore('rubrics');
-    await store.clear();
+    // Reset all categories' drafts, but only for the current edition
+    await Promise.all(JUDGING_CATEGORIES.map(c => store.delete(getRubricKey(edition, c))));
     await tx.done;
     setRubric({
-      id: getRubricKey(category),
-      version: rubrics._version,
+      id: getRubricKey(edition, category),
+      version: rubricsVersion,
       category,
-      values: getEmptyRubric(category)
+      values: getEmptyRubric(edition, category)
     });
   };
 
