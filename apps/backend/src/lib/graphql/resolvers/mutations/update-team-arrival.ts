@@ -5,25 +5,27 @@ import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
-interface TeamNotArrivedArgs {
+interface UpdateTeamArrivalArgs {
   teamId: string;
   divisionId: string;
+  arrived: boolean;
 }
 
-interface TeamEvent {
+interface TeamArrivalEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 /**
- * Resolver for Mutation.teamNotArrived
- * Marks that a team has not arrived at a division (reverses arrival) and publishes an event.
+ * Resolver for Mutation.updateTeamArrival
+ * Marks a team as arrived or not arrived at a division and publishes an event.
  */
-export const teamNotArrivedResolver: GraphQLFieldResolver<
+export const updateTeamArrivalResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  TeamNotArrivedArgs,
-  Promise<TeamEvent>
-> = async (_root, { teamId, divisionId }, context) => {
+  UpdateTeamArrivalArgs,
+  Promise<TeamArrivalEvent>
+> = async (_root, { teamId, divisionId, arrived }, context) => {
   try {
     if (!context.user) {
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
@@ -32,7 +34,7 @@ export const teamNotArrivedResolver: GraphQLFieldResolver<
     if (context.user.role !== 'pit-admin') {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,
-        'User does not have permission to mark teams as not arrived'
+        'User does not have permission to update team arrival status'
       );
     }
 
@@ -57,14 +59,19 @@ export const teamNotArrivedResolver: GraphQLFieldResolver<
       );
     }
 
-    if (!existing.arrived) {
+    if (existing.arrived === arrived) {
       throw new MutationError(
         MutationErrorCode.CONFLICT,
-        `Team #${teamId} has not arrived at this division yet`
+        arrived
+          ? `Team #${teamId} has already arrived at this division`
+          : `Team #${teamId} has not arrived at this division yet`
       );
     }
 
-    const update: Record<string, unknown> = { arrived: false, arrived_at: null };
+    const update: Record<string, unknown> = {
+      arrived,
+      arrived_at: arrived ? new Date() : null
+    };
     await db.raw.sql
       .updateTable('team_divisions')
       .set(update)
@@ -73,9 +80,9 @@ export const teamNotArrivedResolver: GraphQLFieldResolver<
       .execute();
 
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId, arrived: false });
+    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId, arrived });
 
-    return { teamId };
+    return { teamId, arrived };
   } catch (error) {
     console.error(
       'Error updating team arrival status for team:',

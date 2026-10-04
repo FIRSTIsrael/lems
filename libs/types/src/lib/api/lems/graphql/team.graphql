@@ -69,26 +69,18 @@ type TeamArrivalEvent {
 
 extend type Mutation {
   """
-  Update that a team has arrived in a specific division.
+  Update whether a team has arrived in a specific division.
   """
-  teamArrived(
+  updateTeamArrival(
     "The team ID to update"
     teamId: String!
 
     "Relevant division ID"
     divisionId: String!
-  ): TeamEvent!
 
-  """
-  Mark a team as not arrived in a specific division (reverses teamArrived).
-  """
-  teamNotArrived(
-    "The team ID to update"
-    teamId: String!
-
-    "Relevant division ID"
-    divisionId: String!
-  ): TeamEvent!
+    "Whether the team should be marked as arrived"
+    arrived: Boolean!
+  ): TeamArrivalEvent!
 
   """
   Disqualify a team in a specific division. This action is irreversible.
