@@ -1,13 +1,23 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { Card, CardContent, CardHeader, Stack, useTheme, Button, Tooltip } from '@mui/material';
+import {
+  Alert,
+  Card,
+  CardContent,
+  CardHeader,
+  Stack,
+  useTheme,
+  Button,
+  Tooltip
+} from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
 import SearchIcon from '@mui/icons-material/Search';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import type { Team } from '../../graphql/types';
 import { DISQUALIFY_TEAM } from '../../graphql/mutations/disqualify-team';
 import { useEvent } from '../../../../components/event-context';
@@ -23,12 +33,24 @@ export function DisqualificationSection() {
   const tGrid = useTranslations('pages.judge-advisor.grid');
   const theme = useTheme();
   const { currentDivision } = useEvent();
-  const { sessions, disqualifiedTeams, loading } = useJudgeAdvisor();
+  const { sessions, disqualifiedTeams, deliberations, loading } = useJudgeAdvisor();
   const { showBlocked, setShowBlocked } = useFilters();
   const [selectedTeam, setSelectedTeam] = useState<Team | null>(null);
   const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
 
   const [disqualifyTeam] = useMutation(DISQUALIFY_TEAM);
+
+  const anyDeliberationStarted = useMemo(() => {
+    return Object.values(deliberations).some(
+      deliberation => deliberation && deliberation.status !== 'not-started'
+    );
+  }, [deliberations]);
+
+  useEffect(() => {
+    if (!anyDeliberationStarted) return;
+    setSelectedTeam(null);
+    setConfirmDialogOpen(false);
+  }, [anyDeliberationStarted]);
 
   const allTeams = useMemo(() => {
     return sessions.map(session => session.team);
@@ -43,11 +65,12 @@ export function DisqualificationSection() {
   }, [allTeams, disqualifiedTeams]);
 
   const handleDisqualifyClick = useCallback(() => {
+    if (anyDeliberationStarted) return;
     setConfirmDialogOpen(true);
-  }, []);
+  }, [anyDeliberationStarted]);
 
   const handleConfirmDisqualify = useCallback(async () => {
-    if (!selectedTeam) return;
+    if (!selectedTeam || anyDeliberationStarted) return;
 
     try {
       await disqualifyTeam({
@@ -62,7 +85,7 @@ export function DisqualificationSection() {
       console.error('Error disqualifying team:', error);
       toast.error(t('error-disqualifying-team'));
     }
-  }, [selectedTeam, disqualifyTeam, currentDivision.id, t]);
+  }, [selectedTeam, anyDeliberationStarted, disqualifyTeam, currentDivision.id, t]);
 
   const handleCancelDisqualify = useCallback(() => {
     setConfirmDialogOpen(false);
@@ -94,14 +117,21 @@ export function DisqualificationSection() {
         />
         <CardContent>
           <Stack spacing={2.5}>
+            {anyDeliberationStarted && (
+              <Alert severity="info" icon={<InfoOutlinedIcon />}>
+                {t('blocked-after-deliberation')}
+              </Alert>
+            )}
+
             <SearchTeamSection
               availableTeams={availableTeams}
               selectedTeam={selectedTeam}
               onTeamSelect={setSelectedTeam}
               loading={loading}
+              disabled={anyDeliberationStarted}
             />
 
-            {selectedTeam && (
+            {selectedTeam && !anyDeliberationStarted && (
               <SelectedTeamPreview
                 selectedTeam={selectedTeam}
                 loading={loading}

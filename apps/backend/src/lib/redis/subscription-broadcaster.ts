@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 
 export interface RedisEvent {
