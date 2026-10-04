@@ -14,16 +14,12 @@ import {
   Paper,
   Stack,
   TextField,
-  ToggleButton,
-  ToggleButtonGroup,
   Typography
 } from '@mui/material';
 import { OpenInNew, Search } from '@mui/icons-material';
 import { Coordinates } from '@lems/types/api/coordinates';
-import { apiFetch, GoogleMapEmbed, LocationMap } from '@lems/shared';
+import { apiFetch, GoogleMapEmbed } from '@lems/shared';
 import { useEvent } from '../../components/event-context';
-
-const NOMINATIM_URL = 'https://nominatim.openstreetmap.org/search';
 
 const isSameLocation = (a: Coordinates | null, b: Coordinates | null) =>
   a?.latitude === b?.latitude && a?.longitude === b?.longitude;
@@ -37,10 +33,10 @@ const parseCoordinate = (value: string, limit: number) => {
 
 const NUMBER = String.raw`(-?\d+(?:\.\d+)?)`;
 const COORDINATE_PATTERNS = [
-  new RegExp(`!3d${NUMBER}!4d${NUMBER}`), // Google Maps place link
-  new RegExp(`@${NUMBER},${NUMBER}`), // Google Maps view link
+  new RegExp(`!3d${NUMBER}!4d${NUMBER}`),
+  new RegExp(`@${NUMBER},${NUMBER}`),
   new RegExp(String.raw`[?&](?:q|query|ll|destination)=${NUMBER}(?:,|%2C)\s*${NUMBER}`, 'i'),
-  new RegExp(String.raw`^\s*${NUMBER}\s*[,\s]\s*${NUMBER}\s*$`) // '32.0853, 34.7818'
+  new RegExp(String.raw`^\s*${NUMBER}\s*[,\s]\s*${NUMBER}\s*$`)
 ];
 
 /**
@@ -57,6 +53,9 @@ const parseCoordinatesText = (text: string): Coordinates | null => {
   return null;
 };
 
+const toQueryString = (query: Coordinates | string) =>
+  typeof query === 'string' ? query : `${query.latitude},${query.longitude}`;
+
 export const EventLocationEditor: React.FC = () => {
   const event = useEvent();
   const t = useTranslations('pages.events.edit.location-editor');
@@ -65,21 +64,20 @@ export const EventLocationEditor: React.FC = () => {
 
   const [savedValue, setSavedValue] = useState<Coordinates | null>(event.coordinates);
   const [value, setValue] = useState<Coordinates | null>(event.coordinates);
-  const [center, setCenter] = useState<Coordinates | null>(null);
+  const [preview, setPreview] = useState<Coordinates | string>(event.coordinates ?? event.location);
   const [latitudeInput, setLatitudeInput] = useState(event.coordinates?.latitude.toString() ?? '');
   const [longitudeInput, setLongitudeInput] = useState(
     event.coordinates?.longitude.toString() ?? ''
   );
   const [searchQuery, setSearchQuery] = useState(event.location);
-  const [isSearching, setIsSearching] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [mapView, setMapView] = useState<'google' | 'picker'>('google');
   const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
   const updateLocation = (coordinates: Coordinates | null) => {
     setValue(coordinates);
     setLatitudeInput(coordinates?.latitude.toString() ?? '');
     setLongitudeInput(coordinates?.longitude.toString() ?? '');
+    setPreview(coordinates ?? (searchQuery.trim() || event.location));
   };
 
   const handleCoordinateInput = (latitudeText: string, longitudeText: string) => {
@@ -89,6 +87,7 @@ export const EventLocationEditor: React.FC = () => {
     const longitude = parseCoordinate(longitudeText, 180);
     if (latitude !== null && longitude !== null) {
       setValue({ latitude, longitude });
+      setPreview({ latitude, longitude });
     } else if (!latitudeText.trim() && !longitudeText.trim()) {
       setValue(null);
     }
@@ -99,41 +98,16 @@ export const EventLocationEditor: React.FC = () => {
     if (!coordinates) return;
     e.preventDefault();
     updateLocation(coordinates);
-    setCenter(coordinates);
+  };
+
+  const handleSearch = () => {
+    const query = searchQuery.trim();
+    if (query) setPreview(query);
   };
 
   const latitudeError = latitudeInput !== '' && parseCoordinate(latitudeInput, 90) === null;
   const longitudeError = longitudeInput !== '' && parseCoordinate(longitudeInput, 180) === null;
   const isIncomplete = !latitudeInput.trim() !== !longitudeInput.trim();
-
-  const handleSearch = async () => {
-    const query = searchQuery.trim();
-    if (!query) return;
-
-    setIsSearching(true);
-    setAlert(null);
-    try {
-      const params = new URLSearchParams({ q: query, format: 'jsonv2', limit: '1' });
-      const response = await fetch(`${NOMINATIM_URL}?${params}`, {
-        headers: { 'Accept-Language': locale }
-      });
-      if (!response.ok) throw new Error(response.statusText);
-
-      const [result] = (await response.json()) as { lat: string; lon: string }[];
-      if (!result) {
-        setAlert({ type: 'error', message: t('messages.no-results') });
-        return;
-      }
-
-      const coordinates = { latitude: Number(result.lat), longitude: Number(result.lon) };
-      updateLocation(coordinates);
-      setCenter(coordinates);
-    } catch {
-      setAlert({ type: 'error', message: t('messages.search-error') });
-    } finally {
-      setIsSearching(false);
-    }
-  };
 
   const handleSave = async (coordinates: Coordinates | null) => {
     setIsSaving(true);
@@ -156,15 +130,9 @@ export const EventLocationEditor: React.FC = () => {
   };
 
   const hasChanges = !isSameLocation(value, savedValue);
-
-  // Without coordinates, preview the typed location as a Google Maps query
-  const googleQuery = value ?? (searchQuery.trim() || event.location);
   const googleMapsUrl = `https://www.google.com/maps/search/?${new URLSearchParams({
     api: '1',
-    query:
-      typeof googleQuery === 'string'
-        ? googleQuery
-        : `${googleQuery.latitude},${googleQuery.longitude}`
+    query: toQueryString(preview)
   })}`;
 
   return (
@@ -182,21 +150,7 @@ export const EventLocationEditor: React.FC = () => {
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 8 }}>
-          <ToggleButtonGroup
-            value={mapView}
-            exclusive
-            size="small"
-            onChange={(_, view) => view && setMapView(view)}
-            sx={{ mb: 1 }}
-          >
-            <ToggleButton value="google">{t('views.google')}</ToggleButton>
-            <ToggleButton value="picker">{t('views.picker')}</ToggleButton>
-          </ToggleButtonGroup>
-          {mapView === 'google' ? (
-            <GoogleMapEmbed query={googleQuery} language={locale} height={360} />
-          ) : (
-            <LocationMap value={value} onChange={updateLocation} center={center} height={360} />
-          )}
+          <GoogleMapEmbed query={preview} language={locale} height={360} />
         </Grid>
 
         <Grid size={{ xs: 12, md: 4 }}>
@@ -219,17 +173,27 @@ export const EventLocationEditor: React.FC = () => {
                     <InputAdornment position="end">
                       <IconButton
                         onClick={handleSearch}
-                        disabled={isSearching || !searchQuery.trim()}
+                        disabled={!searchQuery.trim()}
                         edge="end"
                         aria-label={t('fields.search.label')}
                       >
-                        {isSearching ? <CircularProgress size={20} /> : <Search />}
+                        <Search />
                       </IconButton>
                     </InputAdornment>
                   )
                 }
               }}
             />
+
+            <Button
+              href={googleMapsUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              startIcon={<OpenInNew />}
+              sx={{ alignSelf: 'flex-start' }}
+            >
+              {t('actions.open-google-maps')}
+            </Button>
 
             <Stack direction="row" spacing={2}>
               <TextField
@@ -255,16 +219,6 @@ export const EventLocationEditor: React.FC = () => {
             <Typography variant="caption" sx={{ color: 'text.secondary' }}>
               {t('hint')}
             </Typography>
-
-            <Button
-              href={googleMapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              startIcon={<OpenInNew />}
-              sx={{ alignSelf: 'flex-start' }}
-            >
-              {t('actions.open-google-maps')}
-            </Button>
 
             <Box sx={{ flexGrow: 1 }} />
 

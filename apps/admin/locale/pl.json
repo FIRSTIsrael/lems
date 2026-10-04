@@ -364,12 +364,12 @@
         "location": "Lokalizacja",
         "location-editor": {
           "title": "Lokalizacja wydarzenia",
-          "description": "Zaznacz miejsce wydarzenia na mapie, aby drużyny mogły je zobaczyć i nawigować do niego z portalu.",
-          "hint": "Wybierz punkt na mapie lub kliknij prawym przyciskiem miejsce w Google Maps, skopiuj jego współrzędne (lub link) i wklej je w jedno z pól.",
+          "description": "Ustaw współrzędne miejsca wydarzenia, aby drużyny mogły zobaczyć je na mapie i nawigować do niego z portalu.",
+          "hint": "Wyszukaj, aby zobaczyć miejsce, otwórz je w Google Maps, kliknij prawym przyciskiem dokładny punkt, skopiuj współrzędne (lub link) i wklej je w jedno z pól.",
           "fields": {
             "search": {
-              "label": "Szukaj adresu",
-              "placeholder": "Wyszukaj miejsce lub adres"
+              "label": "Szukaj w Google Maps",
+              "placeholder": "Miejsce lub adres"
             },
             "latitude": "Szerokość geograficzna",
             "longitude": "Długość geograficzna"
@@ -381,14 +381,8 @@
             "open-google-maps": "Otwórz w Google Maps"
           },
           "messages": {
-            "no-results": "Nie znaleziono wyników dla tego wyszukiwania.",
-            "search-error": "Wyszukiwanie adresu nie powiodło się. Spróbuj ponownie.",
             "save-success": "Lokalizacja wydarzenia została zapisana.",
             "save-error": "Nie udało się zapisać lokalizacji wydarzenia."
-          },
-          "views": {
-            "google": "Google Maps",
-            "picker": "Wybierz na mapie"
           }
         },
         "date": "Data",
