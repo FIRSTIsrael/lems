@@ -1,4 +1,5 @@
 import { ColumnType, Insertable, Selectable, Updateable } from 'kysely';
+import { PgPoint } from '../../utils/point';
 import { DivisionSummary } from './divisions';
 
 export interface EventsTable {
@@ -10,7 +11,7 @@ export interface EventsTable {
   end_date: Date;
   location: string;
   region: string; // ISO 3166 alpha-2 country code (e.g., 'IL', 'US')
-  coordinates: string | null; // PostGIS point stored as string
+  coordinates: ColumnType<PgPoint | null, string | null | undefined, string | null>; // Postgres point (x = longitude, y = latitude), written as '(x,y)'
   timezone: string; // IANA timezone identifier (e.g., 'Europe/Warsaw', 'Asia/Jerusalem')
   season_id: string; // UUID foreign key to seasons.id
 }
@@ -29,7 +30,7 @@ export interface EventSummary {
   location: string;
   region: string;
   timezone: string;
-  coordinates: string | null;
+  coordinates: PgPoint | null;
   team_count: number;
   divisions: {
     id: string;
@@ -54,7 +55,7 @@ export interface EventDetails {
   location: string;
   region: string;
   timezone: string;
-  coordinates: string | null;
+  coordinates: PgPoint | null;
   season_id: string;
   divisions: DivisionSummary[];
   season_name: string;

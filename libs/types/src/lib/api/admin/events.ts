@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CoordinatesSchema } from '../coordinates';
 
 export const AdminEventResponseSchema = z.object({
   id: z.string(),
@@ -9,7 +10,7 @@ export const AdminEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   timezone: z.string(),
-  coordinates: z.string().nullable(),
+  coordinates: CoordinatesSchema.nullable(),
   seasonId: z.string()
 });
 

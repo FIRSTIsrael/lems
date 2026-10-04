@@ -4,6 +4,7 @@ import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
 import { TeamWithDivision, Team, Division, Admin } from '../schema';
+import { parsePoint } from '../utils/point';
 
 class EventSelector {
   constructor(
@@ -449,6 +450,7 @@ class EventsSelector {
           location: row.location,
           timezone: row.timezone,
           region: row.region,
+          coordinates: parsePoint(row.coordinates),
           team_count: 0,
           divisions: [],
           visible: row.visible,
@@ -654,6 +656,7 @@ export class EventsRepository {
           timezone: row.timezone,
           location: row.location,
           region: row.region,
+          coordinates: parsePoint(row.coordinates),
           visible: row.visible,
           published: row.published,
           team_count: 0,

@@ -44,12 +44,12 @@ export const EventCard: React.FC<EventCardProps> = ({
   const { user } = useSession();
   const router = useRouter();
   const t = useTranslations('pages.events.card');
-  const [showDetails, setShowDetails] = useState(false);
+  const [, setShowDetails] = useState(false);
 
   const isAssigned = adminIds.includes(user.id);
 
   const { data: detailedDivisions } = useSWR<Division[]>(
-    !isFullySetUp ? `/admin/events/${id}/divisions` : null
+    isAssigned && !isFullySetUp ? `/admin/events/${id}/divisions` : null
   );
 
   const handleDelete = () => onDelete?.(id);

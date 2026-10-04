@@ -142,6 +142,11 @@
       "general-info": "Informacje ogólne",
       "event-date": "Data wydarzenia",
       "location": "Lokalizacja",
+      "navigation": {
+        "directions": "Wyznacz trasę",
+        "show-map": "Pokaż na mapie",
+        "close": "Zamknij"
+      },
       "teams": "Drużyny",
       "team": "Drużyna",
       "division": "Dywizja",
