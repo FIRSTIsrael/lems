@@ -1,14 +1,17 @@
 import { TableCell, TableHead, TableRow, alpha } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
+import type { RankingStrategy } from '@lems/shared/utils';
 import type { ScoreboardRound } from '../hooks/use-scoreboard-rounds';
 
 interface ScoresTableHeaderProps {
   rounds: ScoreboardRound[];
+  rankingStrategy: RankingStrategy;
 }
 
-export const ScoresTableHeader = ({ rounds }: ScoresTableHeaderProps) => {
+export const ScoresTableHeader = ({ rounds, rankingStrategy }: ScoresTableHeaderProps) => {
   const t = useTranslations('pages.audience-display.scoreboard.scores-table');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const { getStage } = useMatchTranslations();
 
   return (
@@ -30,7 +33,7 @@ export const ScoresTableHeader = ({ rounds }: ScoresTableHeaderProps) => {
           </TableCell>
         ))}
         <TableCell align="center" sx={{ fontWeight: 700, py: 1.5, fontSize: '1.25rem' }}>
-          {t('highest-score')}
+          {headlineScoreT(rankingStrategy)}
         </TableCell>
       </TableRow>
     </TableHead>

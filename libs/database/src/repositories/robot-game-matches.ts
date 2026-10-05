@@ -156,6 +156,22 @@ class RobotGameMatchesSelector {
    * This is computed with a single batched query so it can be reused across an
    * entire division (e.g. deliberations) without a query per team/scoresheet.
    */
+  /**
+   * Returns the number of RANKING-stage rounds configured for this division, i.e.
+   * `MAX(round)` across `robot_game_matches` with `stage = 'RANKING'`. Divisions with
+   * no ranking matches yet resolve to `0` (treated as empty rankings by callers).
+   */
+  async getRankingRoundCount(): Promise<number> {
+    const result = await this.db
+      .selectFrom('robot_game_matches')
+      .select(({ fn }) => fn.max('round').as('maxRound'))
+      .where('division_id', '=', this.divisionId)
+      .where('stage', '=', 'RANKING')
+      .executeTakeFirst();
+
+    return result?.maxRound ?? 0;
+  }
+
   async getRankingNoShows(): Promise<Set<string>> {
     const rows = await this.db
       .selectFrom('robot_game_match_participants')

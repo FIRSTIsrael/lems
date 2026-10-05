@@ -1,4 +1,5 @@
 import { Avatar, Box, TableCell, TableRow, Typography, alpha } from '@mui/material';
+import { formatHeadlineScore } from '@lems/shared/utils';
 import type { TeamScoreData } from '../hooks/use-team-scores';
 import { ScoreCell } from './score-cell';
 
@@ -57,7 +58,7 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
         align="center"
         sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.35rem' }}
       >
-        {team.maxScore}
+        {formatHeadlineScore(team.maxScore)}
       </TableCell>
     </TableRow>
   );

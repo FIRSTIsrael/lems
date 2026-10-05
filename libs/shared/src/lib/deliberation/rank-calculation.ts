@@ -1,5 +1,5 @@
 import type { JudgingCategory } from '@lems/database';
-import { compareScoreArrays } from '../utils';
+import { compareRobotGameScores, RankingStrategy } from '../utils';
 
 /**
  * Team with enriched rank data
@@ -79,7 +79,8 @@ export function calculateCategoryRank(
 export function calculateTeamRanks(
   teamData: RankCalculationData,
   allTeams: RankCalculationData[],
-  picklists: Partial<Record<JudgingCategory, string[]>>
+  picklists: Partial<Record<JudgingCategory, string[]>>,
+  rankingStrategy: RankingStrategy = 'max'
 ): TeamWithRanks {
   const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
   const ranks: Record<JudgingCategory | 'robot-game', number> = {
@@ -97,7 +98,7 @@ export function calculateTeamRanks(
 
   // Calculate robot game rank
   const sortedTeams = [...allTeams].sort((a, b) =>
-    compareScoreArrays(a.robotGameScores, b.robotGameScores)
+    compareRobotGameScores(a.robotGameScores, b.robotGameScores, rankingStrategy)
   );
   const teamIndex = sortedTeams.findIndex(t => t.teamId === teamData.teamId);
   ranks['robot-game'] = teamIndex >= 0 ? teamIndex + 1 : allTeams.length;

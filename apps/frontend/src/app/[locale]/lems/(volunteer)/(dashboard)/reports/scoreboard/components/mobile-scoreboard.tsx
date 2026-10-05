@@ -4,15 +4,18 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Paper, Stack, Collapse, IconButton, Chip, Divider } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 import type { ScoreboardTeam } from '../graphql/types';
 
 interface MobileScoreboardProps {
   data: ScoreboardTeam[];
   matchesPerTeam: number;
+  rankingStrategy: RankingStrategy;
 }
 
-export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps) {
+export function MobileScoreboard({ data, matchesPerTeam, rankingStrategy }: MobileScoreboardProps) {
   const t = useTranslations('pages.reports.scoreboard');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
 
   if (data.length === 0) {
@@ -129,7 +132,7 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                     fontSize: '0.75rem'
                   }}
                 >
-                  {t('best-score')}
+                  {headlineScoreT(rankingStrategy)}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -138,7 +141,7 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore ?? '-'}
+                  {entry.maxScore !== null ? formatHeadlineScore(entry.maxScore) : '-'}
                 </Typography>
               </Box>
 

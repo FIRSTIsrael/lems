@@ -4,6 +4,7 @@ import { Award } from '@lems/shared';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import { getRankingStrategy, padRankingScores } from '@lems/shared/utils';
 import {
   computeNormalizedScores,
   computeRoomMetrics,
@@ -142,6 +143,12 @@ export const FinalDeliberationProvider = ({
   );
 
   const value = useMemo<FinalDeliberationContextValue>(() => {
+    const rankingStrategy = getRankingStrategy(edition);
+    const rankingRoundCount = Math.max(
+      0,
+      ...division.teams.flatMap(team => team.scoresheets.map(s => s.round))
+    );
+
     // Step 1: Compute base team scores (category scores and GP)
     const teamScores = division.teams.map(team =>
       computeTeamScores(edition, team, zeroGpForNoShows)
@@ -150,7 +157,10 @@ export const FinalDeliberationProvider = ({
     const teamsWithScores = division.teams.map((team, index) => ({
       ...team,
       scores: teamScores[index],
-      robotGameScores: team.scoresheets.map(s => s.data?.score || 0)
+      robotGameScores: padRankingScores(
+        team.scoresheets.map(s => ({ round: s.round, score: s.data?.score ?? 0 })),
+        rankingRoundCount
+      )
     }));
 
     // Step 2: Compute room metrics (aggregated scores per room)
@@ -169,7 +179,12 @@ export const FinalDeliberationProvider = ({
       );
       const awardNominations = extractOptionalAwards(team.rubrics);
       // Compute ranks (with picklist consideration)
-      const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
+      const ranks = computeRank(
+        teamsWithScores[index],
+        teamsWithScores,
+        categoryPicklists,
+        rankingStrategy
+      );
       // Compute raw ranks (score-based only, for anomaly detection)
       const rawRanks = computeRawRank(teamsWithScores[index], teamsWithScores);
 

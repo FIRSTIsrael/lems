@@ -306,5 +306,11 @@
         "rubrics": "Rubrics"
       }
     }
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Highest Score",
+      "average": "Average Score"
+    }
   }
 }

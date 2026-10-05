@@ -10,6 +10,7 @@ export interface ScoreboardTeam {
 export interface QueryData {
   division?: {
     id: string;
+    futureEdition: boolean;
     field: {
       currentStage: string;
     };

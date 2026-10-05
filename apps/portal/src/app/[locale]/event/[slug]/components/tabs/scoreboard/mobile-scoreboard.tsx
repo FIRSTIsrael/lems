@@ -6,19 +6,23 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Paper, Stack, Collapse, IconButton, Chip, Divider } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 
 interface MobileScoreboardProps {
   sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
+  rankingStrategy: RankingStrategy;
 }
 
 export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
   sortedData,
   matchesPerTeam,
-  eventSlug
+  eventSlug,
+  rankingStrategy
 }) => {
   const t = useTranslations('pages.event');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
 
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
 
@@ -139,7 +143,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     fontSize: '0.75rem'
                   }}
                 >
-                  {t('scoreboard.best-score')}
+                  {headlineScoreT(rankingStrategy)}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -148,7 +152,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore ?? '-'}
+                  {entry.maxScore != null ? formatHeadlineScore(entry.maxScore) : '-'}
                 </Typography>
               </Box>
 
