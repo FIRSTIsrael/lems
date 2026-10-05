@@ -4,11 +4,22 @@
   "sourceRoot": "libs/shared/src",
   "projectType": "library",
   "tags": [],
-  "// targets": "to see all targets run: nx show project shared --web",
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "outputs": [
+        "{options.outputFile}"
+      ]
+    },
+    "test": {
+      "executor": "@nx/vitest:test",
+      "outputs": [
+        "{options.reportsDirectory}"
+      ],
+      "options": {
+        "configFile": "libs/shared/vite.config.ts",
+        "reportsDirectory": "coverage/libs/shared"
+      }
     }
   }
 }
