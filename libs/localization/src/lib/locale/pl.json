@@ -636,7 +636,15 @@
     },
     "general": {
       "yes": "Tak",
-      "no": "Nie"
+      "no": "Nie",
+      "score-overridden": "Wynik meczu jest zerowy z powodu 3 lub więcej kar."
+    }
+  },
+  "scoresheet-future": {
+    "general": {
+      "yes": "Tak",
+      "no": "Nie",
+      "score-overridden": "Wynik meczu jest zerowy z powodu 3 lub więcej kar."
     }
   },
   "roles": {

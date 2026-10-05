@@ -19,6 +19,7 @@ export interface Score {
   missionErrors: ErrorWithMessage[];
   validatorErrors: ErrorWithMessage[];
   points: number;
+  scoreOverridden: boolean;
 }
 
 export interface ErrorWithMessage {
@@ -121,13 +122,17 @@ export const useScore = () => {
   const updateScore = async (missions: Mission[]) => {
     const missionErrors = collectMissionErrors(scoresheet, missions);
     const validatorErrors = validate(scoresheet, missions);
-    const { total: points } = calculateScoresheetScore(scoresheet, missionsToRecord(missions));
+    const { total: points, scoreOverridden } = calculateScoresheetScore(
+      scoresheet,
+      missionsToRecord(missions)
+    );
 
     const newScore: Score = {
       id: scoreKey,
       version: scoresheet._version,
       missions,
       points,
+      scoreOverridden,
       missionErrors,
       validatorErrors
     };

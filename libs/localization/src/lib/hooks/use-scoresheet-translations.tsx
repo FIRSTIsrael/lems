@@ -1,17 +1,30 @@
 import { useTranslations } from 'next-intl';
+import type { Edition } from '@lems/shared/edition';
 import { RichText } from '../rich-text';
 
-export const useScoresheetTranslations = (season: string) => {
-  const t = useTranslations('shared.scoresheet');
+// The Future edition has its own (season-less) namespace, Founders strings are keyed by season.
+const getScoresheetNamespace = (season: string, edition: Edition) =>
+  edition === 'future' ? 'shared.scoresheet-future' : `shared.scoresheet.seasons.${season}`;
+
+const getGeneralNamespace = (edition: Edition) =>
+  edition === 'future' ? 'shared.scoresheet-future.general' : 'shared.scoresheet.general';
+
+export const useScoresheetTranslations = (season: string, edition: Edition = 'founders') => {
+  const t = useTranslations(getScoresheetNamespace(season, edition));
+  const general = useTranslations(getGeneralNamespace(edition));
 
   return {
-    getError: (errorId: string) => t(`seasons.${season}.errors.${errorId}.description`),
-    getGeneralTerm: (term: string) => t(`general.${term}`)
+    getError: (errorId: string) => t(`errors.${errorId}.description`),
+    getGeneralTerm: (term: string) => general(term)
   };
 };
 
-export const useScoresheetMissionTranslations = (season: string, missionId: string) => {
-  const t = useTranslations(`shared.scoresheet.seasons.${season}.missions.${missionId}`);
+export const useScoresheetMissionTranslations = (
+  season: string,
+  edition: Edition,
+  missionId: string
+) => {
+  const t = useTranslations(`${getScoresheetNamespace(season, edition)}.missions.${missionId}`);
 
   const getRemarks = () => {
     const remarks: string[] = [];
@@ -41,11 +54,12 @@ export const useScoresheetMissionTranslations = (season: string, missionId: stri
 
 export const useScoresheetClauseTranslations = (
   season: string,
+  edition: Edition,
   missionId: string,
   clauseIndex: number
 ) => {
   const t = useTranslations(
-    `shared.scoresheet.seasons.${season}.missions.${missionId}.clauses.${clauseIndex}`
+    `${getScoresheetNamespace(season, edition)}.missions.${missionId}.clauses.${clauseIndex}`
   );
 
   return {
@@ -56,8 +70,8 @@ export const useScoresheetClauseTranslations = (
   };
 };
 
-export const useScoresheetGeneralTranslations = () => {
-  const t = useTranslations('shared.scoresheet.general');
+export const useScoresheetGeneralTranslations = (edition: Edition = 'founders') => {
+  const t = useTranslations(getGeneralNamespace(edition));
 
   return {
     yes: t('yes'),

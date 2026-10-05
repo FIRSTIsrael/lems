@@ -636,7 +636,15 @@
     },
     "general": {
       "yes": "כן",
-      "no": "לא"
+      "no": "לא",
+      "score-overridden": "ניקוד המשחק הוא אפס בשל 3 עונשים או יותר."
+    }
+  },
+  "scoresheet-future": {
+    "general": {
+      "yes": "כן",
+      "no": "לא",
+      "score-overridden": "ניקוד המשחק הוא אפס בשל 3 עונשים או יותר."
     }
   },
   "roles": {

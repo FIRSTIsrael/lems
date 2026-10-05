@@ -3,14 +3,23 @@
 import { Paper, Stack, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslations } from 'next-intl';
+import { useScoresheetGeneralTranslations } from '@lems/localization';
+import type { Edition } from '@lems/shared/edition';
 
 interface ScoreFloaterProps {
   score: number;
+  scoreOverridden?: boolean;
+  edition: Edition;
 }
 
-export const ScoreFloater: React.FC<ScoreFloaterProps> = ({ score }) => {
+export const ScoreFloater: React.FC<ScoreFloaterProps> = ({
+  score,
+  scoreOverridden = false,
+  edition
+}) => {
   const theme = useTheme();
   const t = useTranslations('layouts.scoresheet');
+  const { getTerm } = useScoresheetGeneralTranslations(edition);
 
   return (
     <Paper
@@ -78,6 +87,17 @@ export const ScoreFloater: React.FC<ScoreFloaterProps> = ({ score }) => {
               {t('points-unit')}
             </Typography>
           </Box>
+          {scoreOverridden && (
+            <Typography
+              sx={{
+                fontSize: '0.75rem',
+                color: 'text.secondary',
+                textAlign: 'center'
+              }}
+            >
+              {getTerm('score-overridden')}
+            </Typography>
+          )}
         </Stack>
       </Stack>
     </Paper>

@@ -3,12 +3,14 @@
 import { Typography, Stack } from '@mui/material';
 import { useScoresheetTranslations } from '@lems/localization';
 import { useToolScoresheet } from '../hooks/use-tool-scoresheet';
+import { useToolEdition } from '../../hooks/use-tool-edition';
 import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
+  const edition = useToolEdition();
   const scoresheet = useToolScoresheet();
-  const { getError } = useScoresheetTranslations(scoresheet.season);
+  const { getError } = useScoresheetTranslations(scoresheet.season, edition);
   const { errors } = useScoresheetValidator();
 
   return (
@@ -26,6 +28,7 @@ export const ScoresheetForm: React.FC = () => {
           season={scoresheet.season}
           src={`/assets/scoresheet/missions/${scoresheet.season}/${mission.id}.webp`}
           mission={mission}
+          edition={edition}
         />
       ))}
       {errors.map((error, index) => (

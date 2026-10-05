@@ -49,7 +49,8 @@ export default function ScoresExportPage() {
     );
   }
 
-  const scoresheet = getScoresheet(getEdition(scoresheetsData), scoresheetsData.seasonSlug);
+  const edition = getEdition(scoresheetsData);
+  const scoresheet = getScoresheet(edition, scoresheetsData.seasonSlug);
 
   return (
     <Box
@@ -105,6 +106,7 @@ export default function ScoresExportPage() {
                       mission={mission}
                       clauses={missionData.clauses}
                       score={score}
+                      edition={edition}
                     />
                   );
                 } catch (error) {
