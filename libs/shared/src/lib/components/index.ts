@@ -4,6 +4,7 @@ export * from './color-picker';
 export * from './timezone-picker';
 export * from './responsive-component';
 export * from './flag';
+export * from './google-map-embed';
 export * from './edition-badge';
 
 // Formik helpers

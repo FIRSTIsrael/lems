@@ -142,6 +142,11 @@
       "general-info": "General Information",
       "event-date": "Event Date",
       "location": "Location",
+      "navigation": {
+        "directions": "Get directions",
+        "show-map": "Show on map",
+        "close": "Close"
+      },
       "teams": "Teams",
       "team": "Team",
       "division": "Division",

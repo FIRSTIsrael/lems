@@ -3,18 +3,26 @@
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { Box, Typography, Stack, Chip } from '@mui/material';
-import { CalendarToday, LocationOn, Celebration as CelebrationIcon } from '@mui/icons-material';
+import { Box, Typography, Stack, Chip, Button } from '@mui/material';
+import {
+  CalendarToday,
+  LocationOn,
+  Map as MapIcon,
+  Celebration as CelebrationIcon
+} from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
 import { EditionBadge } from '@lems/shared';
 
 interface EventHeaderProps {
   eventData: EventDetails;
+  /** When provided, a "show on map" action is displayed next to the location. */
+  onShowLocation?: () => void;
 }
 
-export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
+export const EventHeader: React.FC<EventHeaderProps> = ({ eventData, onShowLocation }) => {
   const { seasonName, seasonSlug, name: eventName, startDate, location, official } = eventData;
   const t = useTranslations('pages.index.events');
+  const tNavigation = useTranslations('pages.event.navigation');
 
   return (
     <Stack
@@ -92,6 +100,16 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData }) => {
           >
             {location}
           </Typography>
+          {onShowLocation && (
+            <Button
+              size="small"
+              startIcon={<MapIcon fontSize="small" />}
+              onClick={onShowLocation}
+              sx={{ py: 0, minHeight: 0 }}
+            >
+              {tNavigation('show-map')}
+            </Button>
+          )}
         </Box>
       </Stack>
     </Stack>

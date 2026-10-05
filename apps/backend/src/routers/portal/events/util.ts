@@ -66,6 +66,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
+  coordinates: event.coordinates,
   region: event.region,
   timezone: event.timezone,
   seasonId: event.season_id,

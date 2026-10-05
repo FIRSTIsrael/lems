@@ -363,6 +363,31 @@
       },
       "edit": {
         "location": "Location",
+        "location-editor": {
+          "title": "Event Location",
+          "description": "Set the venue coordinates so teams can view it on the map and navigate there from the portal.",
+          "hint": "Search to preview the place, open it in Google Maps, right-click the exact spot, copy the coordinates (or the link) and paste them into one of the fields.",
+          "fields": {
+            "search": {
+              "label": "Search in Google Maps",
+              "placeholder": "Place or address"
+            },
+            "latitude": "Latitude",
+            "longitude": "Longitude"
+          },
+          "actions": {
+            "clear": "Clear",
+            "save": "Save Location",
+            "saving": "Saving...",
+            "open-google-maps": "Open in Google Maps"
+          },
+          "messages": {
+            "no-results": "No coordinates found for this search. Open it in Google Maps, copy the coordinates and paste them here.",
+            "search-error": "Search failed. Please try again.",
+            "save-success": "Event location saved.",
+            "save-error": "Failed to save event location."
+          }
+        },
         "date": "Date",
         "cards": {
           "awards": "Awards",

@@ -1,9 +1,32 @@
-import { Kysely, sql } from 'kysely';
+import { Kysely } from 'kysely';
 import dayjs from 'dayjs';
 import { KyselyDatabaseSchema } from '../schema/kysely';
-import { InsertableEvent, Event, UpdateableEvent, EventSummary } from '../schema/tables/events';
+import {
+  InsertableEvent,
+  Event,
+  UpdateableEvent,
+  EventSummary,
+  Coordinates
+} from '../schema/tables/events';
 import { EventSettings, UpdateableEventSettings } from '../schema/tables/event-settings';
 import { TeamWithDivision, Team, Division, Admin } from '../schema';
+
+export const toCoordinates = (row: {
+  latitude: number | null;
+  longitude: number | null;
+}): Coordinates | null =>
+  row.latitude !== null && row.longitude !== null
+    ? { latitude: row.latitude, longitude: row.longitude }
+    : null;
+
+export const toEvent = <T extends { latitude: number | null; longitude: number | null }>({
+  latitude,
+  longitude,
+  ...rest
+}: T): Omit<T, 'latitude' | 'longitude'> & { coordinates: Coordinates | null } => ({
+  ...rest,
+  coordinates: toCoordinates({ latitude, longitude })
+});
 
 class EventSelector {
   constructor(
@@ -18,7 +41,7 @@ class EventSelector {
 
   async get(): Promise<Event | null> {
     const event = await this.getEventQuery().executeTakeFirst();
-    return event || null;
+    return event ? toEvent(event) : null;
   }
 
   async update(updateData: UpdateableEvent): Promise<Event | null> {
@@ -29,7 +52,7 @@ class EventSelector {
       .returningAll()
       .executeTakeFirst();
 
-    return updatedEvent || null;
+    return updatedEvent ? toEvent(updatedEvent) : null;
   }
 
   async getAdmins(): Promise<Admin[]> {
@@ -313,7 +336,8 @@ class EventsSelector {
           'events.end_date',
           'events.location',
           'events.region',
-          'events.coordinates',
+          'events.latitude',
+          'events.longitude',
           'events.timezone',
           'events.season_id'
         ])
@@ -334,7 +358,8 @@ class EventsSelector {
   }
 
   async getAll(): Promise<Event[]> {
-    return await this.getEventsQuery().execute();
+    const events = await this.getEventsQuery().execute();
+    return events.map(toEvent);
   }
 
   async getAllSummaries(): Promise<EventSummary[]> {
@@ -352,6 +377,8 @@ class EventsSelector {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -364,10 +391,7 @@ class EventsSelector {
         'event_settings.completed',
         'event_settings.official'
       ])
-      .select(eb => [
-        eb.fn.count('team_divisions.team_id').as('team_count'),
-        sql<string | null>`events.coordinates::text`.as('coordinates')
-      ]);
+      .select(eb => eb.fn.count('team_divisions.team_id').as('team_count'));
 
     if (this.selector.type === 'after') {
       query = query.where(
@@ -391,6 +415,8 @@ class EventsSelector {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -403,7 +429,6 @@ class EventsSelector {
         'event_settings.completed',
         'event_settings.official'
       ])
-      .groupBy(sql`events.coordinates::text`)
       .orderBy('events.start_date', 'asc');
 
     const result = await query.execute();
@@ -452,6 +477,7 @@ class EventsSelector {
           location: row.location,
           timezone: row.timezone,
           region: row.region,
+          coordinates: toCoordinates(row),
           team_count: 0,
           divisions: [],
           visible: row.visible,
@@ -529,7 +555,7 @@ export class EventsRepository {
 
   async getAll() {
     const events = await this.db.selectFrom('events').selectAll().execute();
-    return events;
+    return events.map(toEvent);
   }
 
   async search(
@@ -577,7 +603,7 @@ export class EventsRepository {
 
     const now = new Date();
     return events.map(event => ({
-      ...event,
+      ...toEvent(event),
       status: event.start_date > now ? 'upcoming' : event.end_date < now ? 'past' : 'active'
     }));
   }
@@ -597,6 +623,8 @@ export class EventsRepository {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
@@ -607,10 +635,7 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .select(eb => [
-        eb.fn.count('team_divisions.team_id').as('team_count'),
-        sql<string | null>`events.coordinates::text`.as('coordinates')
-      ])
+      .select(eb => eb.fn.count('team_divisions.team_id').as('team_count'))
       .groupBy([
         'events.id',
         'events.name',
@@ -620,6 +645,8 @@ export class EventsRepository {
         'events.region',
         'events.season_id',
         'events.timezone',
+        'events.latitude',
+        'events.longitude',
         'divisions.id',
         'divisions.name',
         'divisions.color',
@@ -630,7 +657,6 @@ export class EventsRepository {
         'event_settings.visible',
         'event_settings.published'
       ])
-      .groupBy(sql`events.coordinates::text`)
       .orderBy('events.start_date', 'asc');
 
     const eventRows = await query.execute();
@@ -663,6 +689,7 @@ export class EventsRepository {
           timezone: row.timezone,
           location: row.location,
           region: row.region,
+          coordinates: toCoordinates(row),
           visible: row.visible,
           published: row.published,
           team_count: 0,
@@ -721,6 +748,6 @@ export class EventsRepository {
 
     await this.db.insertInto('event_settings').values({ event_id: createdEvent.id }).execute();
 
-    return createdEvent;
+    return toEvent(createdEvent);
   }
 }

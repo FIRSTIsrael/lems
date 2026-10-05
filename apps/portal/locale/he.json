@@ -142,6 +142,11 @@
       "general-info": "מידע כללי",
       "event-date": "תאריך האירוע",
       "location": "מיקום",
+      "navigation": {
+        "directions": "ניווט למקום",
+        "show-map": "הצגה במפה",
+        "close": "סגירה"
+      },
       "teams": "קבוצות",
       "team": "קבוצה",
       "division": "בית",

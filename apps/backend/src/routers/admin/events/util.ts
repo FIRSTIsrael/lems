@@ -12,7 +12,7 @@ export const makeAdminEventResponse = (event: DbEvent): Event => ({
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
-  coordinates: event.coordinates ?? null,
+  coordinates: event.coordinates,
   seasonId: event.season_id,
   region: event.region,
   timezone: event.timezone
@@ -25,7 +25,7 @@ export const makeAdminEventSummaryResponse = (event: DbEventSummary): EventSumma
   startDate: new Date(event.date),
   endDate: new Date(event.date),
   location: event.location,
-  coordinates: event.coordinates ?? null,
+  coordinates: event.coordinates,
   seasonId: event.season_id,
   divisions: event.divisions,
   teamCount: event.team_count,
