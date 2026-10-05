@@ -95,7 +95,7 @@ export default function ComparePage() {
   const teams = data.division.selectedTeams;
   const awards = data.division.judging?.awards ?? [];
   const allTeams: DivisionTeam[] = data.division.allTeams ?? [];
-  const zeroGpForNoShows = data.division.judging?.zeroGpForNoShows ?? false;
+  const zeroGpForNoShows = data.division.judging?.zeroGpForNoShows ?? true;
 
   return (
     <CompareProvider

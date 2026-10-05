@@ -56,7 +56,7 @@ export const CompareProvider = ({
   awards,
   allTeams,
   category,
-  zeroGpForNoShows = false
+  zeroGpForNoShows = true
 }: CompareProviderProps) => {
   const edition = useEdition();
   const value = useMemo(() => {

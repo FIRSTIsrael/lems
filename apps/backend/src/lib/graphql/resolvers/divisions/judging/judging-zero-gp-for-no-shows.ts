@@ -24,7 +24,7 @@ export const judgingZeroGpForNoShowsResolver: GraphQLFieldResolver<
     }
 
     const eventSettings = await db.events.byId(division.event_id).getSettings();
-    return eventSettings?.zero_gp_for_no_shows ?? false;
+    return eventSettings?.zero_gp_for_no_shows ?? true;
   } catch (error) {
     console.error(
       'Error resolving zeroGpForNoShows for division:',
