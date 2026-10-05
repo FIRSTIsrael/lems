@@ -5,7 +5,6 @@ import {
   EventDetails as DbEventDetails
 } from '@lems/database';
 import { Event, EventDetails, EventSummary } from '@lems/types/api/portal';
-import { toCoordinates } from '../../../lib/utils/coordinates';
 
 export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event => {
   let startDate: Date;
@@ -26,7 +25,7 @@ export const makePortalEventResponse = (event: DbEvent | DbEventSummary): Event 
     startDate,
     endDate,
     location: event.location,
-    coordinates: toCoordinates(event),
+    coordinates: event.coordinates,
     seasonId: event.season_id,
     region: event.region,
     timezone: event.timezone
@@ -67,7 +66,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
-  coordinates: toCoordinates(event),
+  coordinates: event.coordinates,
   region: event.region,
   timezone: event.timezone,
   seasonId: event.season_id,
