@@ -34,6 +34,11 @@ router.post(
       return;
     }
 
+    if (futureEdition !== undefined && typeof futureEdition !== 'boolean') {
+      res.status(400).json({ error: 'futureEdition must be a boolean' });
+      return;
+    }
+
     const division = await db.divisions.create({
       name,
       color,
@@ -59,7 +64,7 @@ router.put(
   '/:divisionId',
   requirePermission('MANAGE_EVENT_DETAILS'),
   asHandler<AdminDivisionRequest>(async (req, res) => {
-    const { name, color } = req.body; // Only these properties can be updated
+    const { name, color, futureEdition } = req.body; // Only these properties can be updated
 
     // Name can be empty, but has to exist
     if (name === null || name === undefined || !color) {
@@ -67,7 +72,30 @@ router.put(
       return;
     }
 
-    await db.divisions.byId(req.divisionId).update({ name, color });
+    if (futureEdition !== undefined && typeof futureEdition !== 'boolean') {
+      res.status(400).json({ error: 'futureEdition must be a boolean' });
+      return;
+    }
+
+    const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+
+    const editionChanged = futureEdition !== undefined && futureEdition !== division.future_edition;
+    if (editionChanged && division.has_schedule) {
+      res
+        .status(400)
+        .json({ error: 'Cannot change the edition after the schedule has been generated' });
+      return;
+    }
+
+    await db.divisions.byId(req.divisionId).update({
+      name,
+      color,
+      ...(editionChanged ? { future_edition: futureEdition } : {})
+    });
 
     res.status(200).end();
   })

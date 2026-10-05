@@ -119,6 +119,7 @@ class EventSelector {
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
+        'divisions.future_edition as division_future_edition',
         'divisions.event_id as division_event_id'
       ])
       .orderBy('divisions.name', 'asc')
@@ -357,6 +358,7 @@ class EventsSelector {
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
+        'divisions.future_edition as division_future_edition',
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
@@ -394,6 +396,7 @@ class EventsSelector {
         'divisions.id',
         'divisions.name',
         'divisions.color',
+        'divisions.future_edition',
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
@@ -474,6 +477,7 @@ class EventsSelector {
           id: row.division_id,
           name: row.division_name,
           color: row.division_color,
+          future_edition: row.division_future_edition,
           has_awards: row.has_awards,
           has_users: row.has_users,
           has_schedule: row.has_schedule
@@ -489,11 +493,14 @@ class EventsSelector {
 
       return {
         ...event,
-        divisions: event.divisions.map((division: { id: string; name: string; color: string }) => ({
-          id: division.id,
-          name: division.name,
-          color: division.color
-        })),
+        divisions: event.divisions.map(
+          (division: { id: string; name: string; color: string; future_edition: boolean }) => ({
+            id: division.id,
+            name: division.name,
+            color: division.color,
+            futureEdition: division.future_edition
+          })
+        ),
         is_fully_set_up: isFullySetUp
       };
     });
@@ -598,6 +605,7 @@ export class EventsRepository {
         'divisions.id as division_id',
         'divisions.name as division_name',
         'divisions.color as division_color',
+        'divisions.future_edition as division_future_edition',
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
@@ -619,6 +627,7 @@ export class EventsRepository {
         'divisions.id',
         'divisions.name',
         'divisions.color',
+        'divisions.future_edition',
         'divisions.has_awards',
         'divisions.has_users',
         'divisions.has_schedule',
@@ -679,6 +688,7 @@ export class EventsRepository {
           id: row.division_id,
           name: row.division_name,
           color: row.division_color,
+          future_edition: row.division_future_edition,
           has_awards: row.has_awards,
           has_users: row.has_users,
           has_schedule: row.has_schedule
@@ -694,11 +704,14 @@ export class EventsRepository {
 
       return {
         ...event,
-        divisions: event.divisions.map((division: { id: string; name: string; color: string }) => ({
-          id: division.id,
-          name: division.name,
-          color: division.color
-        })),
+        divisions: event.divisions.map(
+          (division: { id: string; name: string; color: string; future_edition: boolean }) => ({
+            id: division.id,
+            name: division.name,
+            color: division.color,
+            futureEdition: division.future_edition
+          })
+        ),
         is_fully_set_up: isFullySetUp
       };
     });

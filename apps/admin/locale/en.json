@@ -305,6 +305,7 @@
             },
             "division": {
               "title": "Division {number}",
+              "future-edition": "Future edition",
               "name": {
                 "label": "Division Name",
                 "placeholder": "Enter division name..."
@@ -530,6 +531,8 @@
             "confirm": "Delete Division",
             "deleting": "Deleting..."
           },
+          "future-edition": "Future edition",
+          "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }
@@ -542,6 +545,7 @@
           },
           "form": {
             "fields": {
+              "future-edition": "Future edition",
               "name": {
                 "label": "Division Name",
                 "placeholder": "e.g., House A"

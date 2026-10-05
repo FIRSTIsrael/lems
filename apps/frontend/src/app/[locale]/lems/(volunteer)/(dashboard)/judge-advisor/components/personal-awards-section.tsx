@@ -24,6 +24,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import ErrorIcon from '@mui/icons-material/Error';
 import toast from 'react-hot-toast';
+import { useEdition } from '../../../hooks/use-edition';
 import { ASSIGN_PERSONAL_AWARD } from '../graphql/mutations/assign-personal-award';
 import { useEvent } from '../../../components/event-context';
 import type { Award } from '../graphql/types';
@@ -32,7 +33,9 @@ import { AssignAwardConfirmationDialog } from './personal-awards/assign-award-co
 
 export function PersonalAwardsSection() {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
-  const { getName, getDescription } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName, getDescription } = useAwardTranslations(edition);
   const { awards, loading } = useJudgeAdvisor();
   const { currentDivision } = useEvent();
   const theme = useTheme();

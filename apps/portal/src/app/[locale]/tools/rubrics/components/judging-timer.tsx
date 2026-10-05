@@ -240,16 +240,12 @@ export const JudgingTimer = () => {
                 }}
               >
                 {JUDGING_STAGES.map((stage: { id: string; duration: number }, index: number) => {
-                  let progressPercentage = 0;
-
-                  if (index < currentStage) {
-                    progressPercentage = 100;
-                  } else if (index === currentStage) {
-                    const timeElapsed = stage.duration - stageTimeRemaining;
-                    progressPercentage = (timeElapsed / stage.duration) * 100;
-                  } else {
-                    progressPercentage = 0;
-                  }
+                  const progressPercentage =
+                    index < currentStage
+                      ? 100
+                      : index === currentStage
+                        ? ((stage.duration - stageTimeRemaining) / stage.duration) * 100
+                        : 0;
 
                   return (
                     <Box

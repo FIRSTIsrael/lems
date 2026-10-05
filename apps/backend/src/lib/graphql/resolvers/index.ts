@@ -3,6 +3,7 @@ import db from '../../database';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
+import { futureEditionResolver } from './events/future-edition';
 import { eventDivisionsResolver } from './events/event-divisions';
 import {
   volunteersResolver,
@@ -104,6 +105,7 @@ export const resolvers = {
   Subscription: subscriptionResolvers,
   Event: {
     isFullySetUp: isFullySetUpResolver,
+    futureEdition: futureEditionResolver,
     seasonName: async (event: { id: string }) => {
       const dbEvent = await db.events.byId(event.id).get();
       if (!dbEvent) {

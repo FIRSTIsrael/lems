@@ -84,6 +84,16 @@ router.post(
         return;
       }
 
+      if (
+        divisions.some(
+          division =>
+            division.futureEdition !== undefined && typeof division.futureEdition !== 'boolean'
+        )
+      ) {
+        res.status(400).json({ error: 'futureEdition must be a boolean' });
+        return;
+      }
+
       if (divisions.length > 1) {
         for (const division of divisions) {
           if (!division.name || !division.color) {
@@ -150,7 +160,8 @@ router.post(
         divisions.map(division => ({
           name: division.name,
           color: division.color,
-          event_id: eventResult.id
+          event_id: eventResult.id,
+          future_edition: division.futureEdition === true
         }))
       );
 

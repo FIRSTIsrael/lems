@@ -37,6 +37,7 @@ export interface EventSummary {
     id: string;
     name: string;
     color: string;
+    futureEdition: boolean;
   }[];
   season_id: string;
   visible: boolean;

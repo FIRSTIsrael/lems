@@ -1,6 +1,7 @@
+import type { Edition } from '../edition';
 import { ScoresheetSchema, ScoresheetError } from './types';
 
-export const scoresheet: ScoresheetSchema = {
+const scoresheet: ScoresheetSchema = {
   _version: '2026-08-04',
   missions: [
     {
@@ -227,4 +228,14 @@ export const scoresheet: ScoresheetSchema = {
       if (supply < Number(missions['m14'][0])) throw new ScoresheetError('e1');
     }
   ]
+};
+
+export const getScoresheet = (edition: Edition): ScoresheetSchema => {
+  switch (edition) {
+    case 'future':
+      // TODO(future-edition): replace with Future content (phase 2)
+      return scoresheet;
+    case 'founders':
+      return scoresheet;
+  }
 };

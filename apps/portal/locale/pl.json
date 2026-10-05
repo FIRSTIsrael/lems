@@ -272,6 +272,10 @@
       }
     },
     "tools": {
+      "edition": {
+        "founders": "Edycja założycielska",
+        "future": "Edycja przyszłości"
+      },
       "scorer": {
         "title": "Punktator Robot Game",
         "no-equipment-constraint-title": "Brak ograniczenia sprzętu:",

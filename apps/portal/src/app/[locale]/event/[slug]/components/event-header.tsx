@@ -11,6 +11,8 @@ import {
   Celebration as CelebrationIcon
 } from '@mui/icons-material';
 import { EventDetails } from '@lems/types/api/portal';
+import { EditionBadge } from '@lems/shared';
+
 interface EventHeaderProps {
   eventData: EventDetails;
   /** When provided, a "show on map" action is displayed next to the location. */
@@ -45,6 +47,10 @@ export const EventHeader: React.FC<EventHeaderProps> = ({ eventData, onShowLocat
         }}
       >
         <Typography variant="h2">{eventName}</Typography>
+        <EditionBadge
+          isFuture={eventData.divisions.some(division => division.futureEdition)}
+          size="medium"
+        />
         {!official && (
           <Chip
             icon={<CelebrationIcon />}

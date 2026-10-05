@@ -3,21 +3,9 @@
 import dayjs from 'dayjs';
 import { useEffect, useRef, useMemo } from 'react';
 import { useJudgingSounds } from '@lems/shared';
+import type { Edition } from '@lems/shared/edition';
+import { getJudgingStages, resolveJudgingStages } from '@lems/shared/judging';
 import { useCountdown } from '../../../../../../../../../lib/time/hooks/use-countdown';
-
-// Judging stages with durations in seconds
-const FIXED_JUDGING_STAGES = [
-  { id: 'setup', duration: 120 }, // 2 min - Welcome
-  { id: 'innovation-presentation', duration: 300 }, // 5 min
-  { id: 'innovation-questions', duration: 300 }, // 5 min
-  { id: 'robot-presentation', duration: 300 }, // 5 min
-  { id: 'robot-questions', duration: 300 } // 5 min
-];
-
-const FIXED_SESSION_LENGTH = FIXED_JUDGING_STAGES.reduce(
-  (total, stage) => total + stage.duration,
-  0
-);
 
 export interface JudgingSessionTimerState {
   currentStageIndex: number;
@@ -25,17 +13,18 @@ export interface JudgingSessionTimerState {
   totalTimeRemaining: number;
 }
 
-export const useJudgingSessionTimer = (startTime: string, sessionLength: number) => {
+export const useJudgingSessionTimer = (
+  startTime: string,
+  sessionLength: number,
+  edition: Edition
+) => {
   const [, , minutes, seconds] = useCountdown(
     dayjs(startTime).add(sessionLength, 'second').toDate()
   );
 
   const judgingStages = useMemo(
-    () => [
-      ...FIXED_JUDGING_STAGES,
-      { id: 'final-thoughts', duration: sessionLength - FIXED_SESSION_LENGTH }
-    ],
-    [sessionLength]
+    () => resolveJudgingStages(getJudgingStages(edition), sessionLength),
+    [edition, sessionLength]
   );
 
   const { currentStageIndex, stageTimeRemaining } = useMemo(() => {

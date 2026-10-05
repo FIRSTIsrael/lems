@@ -1,12 +1,16 @@
 import { ColorPicker, FormikTextField } from '@lems/shared';
-import { Paper, Box, IconButton, Typography } from '@mui/material';
+import { Paper, Box, IconButton, Typography, FormControlLabel, Switch } from '@mui/material';
 import { Delete as DeleteIcon } from '@mui/icons-material';
 import { HsvaColor, hsvaToHex } from '@uiw/react-color';
 import { useTranslations } from 'next-intl';
 
 interface DivisionItemProps {
-  division: { name: string; color: HsvaColor };
-  updateDivisionField: (index: number, field: 'name' | 'color', value: string | HsvaColor) => void;
+  division: { name: string; color: HsvaColor; futureEdition: boolean };
+  updateDivisionField: (
+    index: number,
+    field: 'name' | 'color' | 'futureEdition',
+    value: string | HsvaColor | boolean
+  ) => void;
   removeDivision: (index: number) => void;
   isRemovable?: boolean;
   index: number;
@@ -79,6 +83,16 @@ export const DivisionItem: React.FC<DivisionItemProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           updateDivisionField(index, 'name', e.target.value)
         }
+      />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={division.futureEdition}
+            onChange={e => updateDivisionField(index, 'futureEdition', e.target.checked)}
+          />
+        }
+        label={t('future-edition')}
+        sx={{ mt: 1 }}
       />
     </Paper>
   );

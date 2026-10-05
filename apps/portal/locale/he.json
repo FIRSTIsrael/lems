@@ -272,6 +272,10 @@
       }
     },
     "tools": {
+      "edition": {
+        "founders": "מהדורת המייסדים",
+        "future": "מהדורת העתיד"
+      },
       "scorer": {
         "title": "מחשבון ניקוד",
         "no-equipment-constraint-title": "מגבלת ”ללא מגע ציוד של הקבוצה“:",

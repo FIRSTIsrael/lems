@@ -102,6 +102,9 @@
       "description": "Drużyny awansujące do kolejnego etapu rywalizacji"
     }
   },
+  "edition": {
+    "future": "Edycja przyszłości"
+  },
   "scoresheet": {
     "missions": {
       "eib": {

@@ -1,10 +1,11 @@
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricFormValues } from './rubric-types';
 
-export const getEmptyRubric = (category: JudgingCategory): RubricFormValues => {
+export const getEmptyRubric = (edition: Edition, category: JudgingCategory): RubricFormValues => {
   const fields: { [fieldId: string]: { value: null; notes?: string } } = {};
-  const schema = rubrics[category];
+  const schema = getRubrics(edition)[category];
 
   schema.sections.forEach(section => {
     section.fields.forEach(field => {

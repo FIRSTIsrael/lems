@@ -1,6 +1,7 @@
 import { JudgingCategory } from '@lems/database';
 import { hyphensToUnderscores, underscoresToHyphens } from '@lems/shared/utils';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { FieldMetadata, MetricPerCategory, RoomMetricsMap, Team } from './types';
 
 /**
@@ -19,10 +20,11 @@ export const CATEGORY_ABBREVIATIONS = {
  * For core-values, also includes sum of GP scores (default 3 if not present).
  * Total score is the sum of all three categories.
  *
+ * @param edition - The edition whose rubric schema applies
  * @param team - The team to compute scores for
  * @returns TeamScores object with all category and total scores
  */
-export const computeTeamScores = (team: Team): MetricPerCategory => {
+export const computeTeamScores = (edition: Edition, team: Team): MetricPerCategory => {
   // Compute innovation-project score
   const ipRubric = team.rubrics.innovation_project;
   const ipScore = ipRubric?.data?.fields
@@ -36,7 +38,7 @@ export const computeTeamScores = (team: Team): MetricPerCategory => {
     : 0;
 
   // Compute core-values score (rubric fields + GP scores)
-  const cvRubricValues = getOrganizedRubricFields(team, 'core-values');
+  const cvRubricValues = getOrganizedRubricFields(edition, team, 'core-values');
   const cvRubricScore = Object.values(cvRubricValues).reduce((sum, value) => sum + (value ?? 0), 0);
   const gpScoresSum = (team.scoresheets ?? []).reduce(
     (sum, scoresheet) => sum + (scoresheet.data?.gp?.value ?? 3),
@@ -169,10 +171,11 @@ export function computeNormalizedScores(
  * @returns Object mapping display labels (e.g., 'IP-1') to field values
  */
 export function getOrganizedRubricFields(
+  edition: Edition,
   team: Team,
   category: JudgingCategory
 ): Record<string, number> {
-  const fields = buildFieldMetadata(category);
+  const fields = buildFieldMetadata(edition, category);
   const result: Record<string, number> = {};
 
   const categoryKey = hyphensToUnderscores(category) as
@@ -186,8 +189,8 @@ export function getOrganizedRubricFields(
 
   if (categoryKey === 'core_values') {
     // For core-values, include both IP and RD fields with prefixes
-    const ipFields = buildFieldMetadata('innovation-project').filter(f => f.coreValues);
-    const rdFields = buildFieldMetadata('robot-design').filter(f => f.coreValues);
+    const ipFields = buildFieldMetadata(edition, 'innovation-project').filter(f => f.coreValues);
+    const rdFields = buildFieldMetadata(edition, 'robot-design').filter(f => f.coreValues);
 
     ipFields.forEach(field => {
       const ipRubric = team.rubrics.innovation_project;
@@ -223,7 +226,8 @@ export function getOrganizedRubricFields(
  * @param category - The judging category (hyphenated: 'innovation-project', 'robot-design', 'core-values')
  * @returns Array of FieldMetadata objects, ordered by field number
  */
-export function buildFieldMetadata(category: JudgingCategory): FieldMetadata[] {
+export function buildFieldMetadata(edition: Edition, category: JudgingCategory): FieldMetadata[] {
+  const rubrics = getRubrics(edition);
   const categoryKey = underscoresToHyphens(category) as JudgingCategory;
   const abbreviation = CATEGORY_ABBREVIATIONS[categoryKey];
 
@@ -273,16 +277,16 @@ export function getGPScores(team: Team): Record<string, number | null> {
  * @param category - The judging category
  * @returns Array of display labels (e.g., ['IP-1', 'IP-2', ...] or ['IP-1', ..., 'RD-1', ...])
  */
-export function getFieldDisplayLabels(category: JudgingCategory): string[] {
+export function getFieldDisplayLabels(edition: Edition, category: JudgingCategory): string[] {
   if ((category as string) === 'core_values') {
-    const ipLabels = buildFieldMetadata('innovation-project')
+    const ipLabels = buildFieldMetadata(edition, 'innovation-project')
       .filter(f => f.coreValues)
       .map(f => f.displayLabel);
-    const rdLabels = buildFieldMetadata('robot-design')
+    const rdLabels = buildFieldMetadata(edition, 'robot-design')
       .filter(f => f.coreValues)
       .map(f => f.displayLabel);
     return [...ipLabels, ...rdLabels];
   }
 
-  return buildFieldMetadata(category).map(f => f.displayLabel);
+  return buildFieldMetadata(edition, category).map(f => f.displayLabel);
 }

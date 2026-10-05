@@ -1,3 +1,5 @@
+import type { Edition } from '../edition';
+
 /**
  * Award type constants and configurations.
  * Shared across admin and volunteer applications.
@@ -74,4 +76,15 @@ export const AWARD_LIMITS: { [key in Award]: number } = {
   'lead-mentor': -1, // Unlimited
   'volunteer-of-the-year': -1, // Unlimited
   advancement: -1 // Unlimited
+};
+
+/** Returns the translation key id for an award under the given edition. */
+export const getAwardLabelKey = (award: string, edition: Edition): string => {
+  switch (edition) {
+    case 'future':
+      // TODO(future-edition): apply Future renames (phase 3)
+      return award;
+    case 'founders':
+      return award;
+  }
 };

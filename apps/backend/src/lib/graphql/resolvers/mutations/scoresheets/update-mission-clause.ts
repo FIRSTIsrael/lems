@@ -1,12 +1,15 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { scoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import { getScoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { Scoresheet } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
+import { getDivisionEdition } from '../../../utils/division-edition';
 import { authorizeScoresheetAccess, assertScoresheetEditable } from './utils';
+
+type ScoresheetSchema = ReturnType<typeof getScoresheet>;
 
 type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
@@ -44,6 +47,8 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   const status = (dbScoresheet.status as string) || 'empty';
   assertScoresheetEditable(status, context.user?.role);
 
+  const scoresheet = getScoresheet(await getDivisionEdition(divisionId));
+
   const mission = scoresheet.missions.find(m => m.id === missionId);
   if (!mission) {
     throw new MutationError(
@@ -68,12 +73,14 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   data.missions ??= {};
   data.missions[missionId] ??= {};
   data.missions[missionId][clauseIndex] = value;
-  const points = calculateScore(data.missions);
+  const points = calculateScore(scoresheet, data.missions);
 
   // Determine new status based on completion criteria
   // Don't change status if already submitted or in gp status (locked states)
   const newStatus =
-    status === 'submitted' || status === 'gp' ? status : determineScoresheetCompletionStatus(data);
+    status === 'submitted' || status === 'gp'
+      ? status
+      : determineScoresheetCompletionStatus(scoresheet, data);
 
   const updateFields: Record<string, unknown> = {
     [`data.missions.${missionId}.${clauseIndex}`]: value,
@@ -135,7 +142,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
  * Validates that the provided value matches the clause type requirements
  */
 function validateClauseValue(
-  clause: (typeof scoresheet.missions)[number]['clauses'][number],
+  clause: ScoresheetSchema['missions'][number]['clauses'][number],
   value: ScoresheetClauseValue
 ): void {
   if (value === null) {
@@ -224,7 +231,10 @@ function validateClauseValue(
 /**
  * Calculates the total score based on mission values
  */
-function calculateScore(missions: Record<string, Record<number, ScoresheetClauseValue>>): number {
+function calculateScore(
+  scoresheet: ScoresheetSchema,
+  missions: Record<string, Record<number, ScoresheetClauseValue>>
+): number {
   let points = 0;
 
   scoresheet.missions.forEach(mission => {
@@ -252,7 +262,10 @@ function calculateScore(missions: Record<string, Record<number, ScoresheetClause
  * Returns 'completed' only if all missions have all clauses filled AND no errors exist
  * Otherwise returns 'draft'
  */
-function determineScoresheetCompletionStatus(data: Record<string, unknown>): 'draft' | 'completed' {
+function determineScoresheetCompletionStatus(
+  scoresheet: ScoresheetSchema,
+  data: Record<string, unknown>
+): 'draft' | 'completed' {
   const missionsData = (data['missions'] as Record<string, Record<number, unknown>>) || {};
 
   // Check if all missions have all their clauses filled
