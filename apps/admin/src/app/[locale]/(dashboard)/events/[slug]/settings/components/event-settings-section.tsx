@@ -76,7 +76,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
       setVisible(settings.visible);
       setOfficial(settings.official);
       setOpenRubricsDuringSession(settings.openRubricsDuringSession);
-      setZeroGpForNoShows(settings.zeroGpForNoShows);
+      setZeroGpForNoShows(settings.zeroGpForNoShows ?? true);
     }
   }, [settings]);
 
