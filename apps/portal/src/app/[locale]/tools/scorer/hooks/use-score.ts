@@ -3,7 +3,9 @@ import { openDB, DBSchema } from 'idb';
 import { Mission, MissionClause } from '@lems/types/scoring';
 import {
   DEFAULT_SCORESHEET_SEASON,
+  calculateScoresheetScore,
   ScoresheetError,
+  type ScoresheetClauseValue,
   type ScoresheetSchema
 } from '@lems/shared/scoresheet';
 import type { Edition } from '@lems/shared/edition';
@@ -36,21 +38,35 @@ const getScoreKey = (season: string, edition: Edition) => {
   return edition === 'founders' ? 'score' : `score-${edition}`;
 };
 
-const calculateScore = (scoresheet: ScoresheetSchema, values: Mission[]) => {
-  let points = 0;
+const missionsToRecord = (
+  values: Mission[]
+): Record<string, Record<number, ScoresheetClauseValue>> =>
+  Object.fromEntries(
+    values.map(mission => [
+      mission.id,
+      Object.fromEntries(
+        mission.clauses.map((clause, index) => [index, clause.value as ScoresheetClauseValue])
+      )
+    ])
+  );
+
+const collectMissionErrors = (
+  scoresheet: ScoresheetSchema,
+  values: Mission[]
+): ErrorWithMessage[] => {
   const errors: ErrorWithMessage[] = [];
 
   scoresheet.missions.forEach((mission, missionIndex) => {
     const clauses = values[missionIndex].clauses;
     try {
-      points += mission.calculation(...clauses.map(clause => clause.value));
+      mission.calculation(...clauses.map(clause => clause.value));
     } catch (error) {
       if (error instanceof ScoresheetError) {
         errors.push({ mission: mission.id, id: error.id });
       }
     }
   });
-  return { points, errors };
+  return errors;
 };
 
 const validate = (scoresheet: ScoresheetSchema, values: Mission[]) => {
@@ -103,8 +119,9 @@ export const useScore = () => {
   }, [scoreKey, scoresheetVersion]);
 
   const updateScore = async (missions: Mission[]) => {
-    const { points, errors: missionErrors } = calculateScore(scoresheet, missions);
+    const missionErrors = collectMissionErrors(scoresheet, missions);
     const validatorErrors = validate(scoresheet, missions);
+    const { total: points } = calculateScoresheetScore(scoresheet, missionsToRecord(missions));
 
     const newScore: Score = {
       id: scoreKey,

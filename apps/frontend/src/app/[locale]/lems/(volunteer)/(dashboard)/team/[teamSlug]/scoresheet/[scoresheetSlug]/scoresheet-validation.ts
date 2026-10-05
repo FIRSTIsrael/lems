@@ -1,5 +1,6 @@
 import {
   ScoresheetClauseValue,
+  calculateScoresheetScore,
   ScoresheetError,
   type ScoresheetSchema
 } from '@lems/shared/scoresheet';
@@ -14,34 +15,12 @@ interface MissionValidationResult {
 export interface ScoresheetValidationResult {
   isComplete: boolean;
   score: number;
+  scoreOverridden: boolean;
+  rawTotal?: number;
   missionErrors: Map<string, MissionValidationResult>;
   validatorErrors: string[];
   firstIncompleteMissionId?: string;
   firstErrorMissionId?: string;
-}
-
-function calculateScore(
-  scoresheet: ScoresheetSchema,
-  missions: Record<string, Record<number, ScoresheetClauseValue>>
-): number {
-  let points = 0;
-
-  scoresheet.missions.forEach(mission => {
-    const missionData = missions[mission.id];
-    if (!missionData) {
-      return; // Skip if no data for this mission
-    }
-    const clauseValues = mission.clauses.map(
-      (_, index) => (missionData[index] ?? null) as ScoresheetClauseValue
-    );
-    try {
-      points += mission.calculation(...clauseValues);
-    } catch {
-      // Silently handle calculation errors, score will be partial
-    }
-  });
-
-  return points;
 }
 
 function validateMission(
@@ -142,7 +121,10 @@ export function validateScoresheet(
     }
   }
 
-  const score = calculateScore(scoresheet, missionsData);
+  const { total: score, scoreOverridden, rawTotal } = calculateScoresheetScore(
+    scoresheet,
+    missionsData
+  );
 
   const allMissionsComplete = Array.from(missionErrors.values()).every(m => m.isComplete);
   const hasErrors =
@@ -152,6 +134,8 @@ export function validateScoresheet(
   return {
     isComplete,
     score,
+    scoreOverridden,
+    rawTotal,
     missionErrors,
     validatorErrors,
     firstIncompleteMissionId,
