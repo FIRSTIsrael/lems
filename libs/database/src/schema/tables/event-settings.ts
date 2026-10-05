@@ -9,6 +9,7 @@ export interface EventSettingsTable {
   published: Generated<boolean>;
   advancement_percent: Generated<number>; // Float between 0 and 1
   open_rubrics_during_session: Generated<boolean>;
+  zero_gp_for_no_shows: Generated<boolean>;
 }
 
 export type EventSettings = Selectable<EventSettingsTable>;
