@@ -641,6 +641,140 @@
     }
   },
   "scoresheet-future": {
+    "missions": {
+      "m01": {
+        "title": "MIGHTY MICROBIOMES",
+        "clauses": {
+          "0": {
+            "description": "Number of keystone species in the young forest microbiome:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "1": {
+            "description": "Number of keystone species in the grand tree microbiome:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "2": {
+            "description": "Number of keystone species in the hollow tree microbiome:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "3": {
+            "description": "<b>Bonus</b>: at least three keystone species are in the young forest microbiome, and the invasive queen on the opposite side of the field is knocked down:"
+          }
+        },
+        "errors": {
+          "m01-e1": {
+            "description": "You can only receive the bonus if there are at least three keystone species in the young forest microbiome."
+          }
+        }
+      },
+      "m02": {
+        "title": "ROOTS OF RENEWAL",
+        "clauses": {
+          "0": {
+            "description": "Number of resources in the grand tree base:"
+          },
+          "1": {
+            "description": "Number of resources in the canopy chamber:"
+          }
+        }
+      },
+      "m03": {
+        "title": "CAVE WATERFALL",
+        "clauses": {
+          "0": {
+            "description": "Number of keystone species cycled through the cave waterfall:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6",
+              "7": "7",
+              "8": "8",
+              "9": "9",
+              "10": "10"
+            }
+          }
+        }
+      },
+      "m04": {
+        "title": "RAINFOREST AWAKENING",
+        "clauses": {
+          "0": {
+            "description": "All keystone species are released from the nest:"
+          },
+          "1": {
+            "description": "All resources are released from the hollow tree:"
+          }
+        }
+      },
+      "m05": {
+        "title": "CENTRAL HAVEN",
+        "clauses": {
+          "0": {
+            "description": "Number of keystone species or resources resting completely in the central haven:"
+          }
+        }
+      },
+      "luc": {
+        "title": "LEVEL UP CHALLENGE: INVASIVE ATTACK",
+        "clauses": {
+          "0": {
+            "description": "Number of invasive species added:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5"
+            }
+          },
+          "1": {
+            "description": "Number of invasive species in the containment zone:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "PENALTIES",
+        "clauses": {
+          "0": {
+            "description": "Number of penalties received:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3+": "3+"
+            }
+          }
+        }
+      }
+    },
     "general": {
       "yes": "Yes",
       "no": "No",
