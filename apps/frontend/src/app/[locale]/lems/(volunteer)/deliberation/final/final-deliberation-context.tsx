@@ -54,7 +54,7 @@ export const FinalDeliberationProvider = ({
   const edition = useEdition();
   const deliberation = division.judging.finalDeliberation;
   const deliberationAwards = division.judging.awards.filter(award => award.type === 'TEAM');
-  const zeroGpForNoShows = division.judging.zeroGpForNoShows;
+  const zeroGpForNoShows = division.judging.zeroGpForNoShows ?? true;
 
   // Mutations
   const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
@@ -166,10 +166,7 @@ export const FinalDeliberationProvider = ({
 
   const value = useMemo<FinalDeliberationContextValue>(() => {
     const rankingStrategy = getRankingStrategy(edition);
-    const rankingRoundCount = Math.max(
-      0,
-      ...division.teams.flatMap(team => team.scoresheets.map(s => s.round))
-    );
+    const rankingRoundCount = division.field?.rankingRoundCount ?? 0;
 
     // Step 1: Compute base team scores (category scores and GP)
     const teamScores = division.teams.map(team =>

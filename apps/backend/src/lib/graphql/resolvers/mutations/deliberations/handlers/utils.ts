@@ -131,7 +131,7 @@ async function getZeroGpForNoShowsSetting(divisionId: string): Promise<boolean> 
   if (!division) return false;
 
   const settings = await db.events.byId(division.event_id).getSettings();
-  return settings?.zero_gp_for_no_shows ?? false;
+  return settings?.zero_gp_for_no_shows ?? true;
 }
 
 /**

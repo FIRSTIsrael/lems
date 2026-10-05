@@ -104,7 +104,7 @@ export function CategoryDeliberationProvider({
     [deliberation, handleUpdatePicklist]
   );
 
-  const zeroGpForNoShows = division.judging.zeroGpForNoShows;
+  const zeroGpForNoShows = division.judging.zeroGpForNoShows ?? true;
 
   const value = useMemo<DeliberationContextValue>(() => {
     // Step 1: Compute base team scores (category scores and GP)

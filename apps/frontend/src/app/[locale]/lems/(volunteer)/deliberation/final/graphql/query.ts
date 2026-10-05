@@ -17,6 +17,10 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
       name
       color
 
+      field {
+        rankingRoundCount
+      }
+
       teams {
         id
         number
