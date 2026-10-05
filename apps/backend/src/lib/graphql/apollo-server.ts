@@ -6,6 +6,7 @@ import type { Disposable } from 'graphql-ws';
 import { loadLemsGraphQLSchema } from '@lems/types/api/lems/graphql';
 import { resolvers } from './resolvers';
 import type { VolunteerUser } from './auth-context';
+import type { NoShowCache } from './utils/no-show-cache';
 
 export const typeDefs = loadLemsGraphQLSchema();
 export const schema = makeExecutableSchema({ typeDefs, resolvers });
@@ -16,6 +17,8 @@ export const schema = makeExecutableSchema({ typeDefs, resolvers });
  */
 export interface GraphQLContext {
   user: VolunteerUser | null;
+  /** Request-scoped cache for `getRankingNoShows()`, deduplicated per division. */
+  noShowCache: NoShowCache;
 }
 
 /**

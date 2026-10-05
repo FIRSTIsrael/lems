@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Scoresheet } from '@lems/database';
 import db from '../../../../database';
+import type { GraphQLContext } from '../../../apollo-server';
 import {
   attachNoShowFlags,
   buildScoresheetResult,
@@ -26,10 +27,10 @@ interface ScoresheetsArgs {
  */
 export const fieldScoresheetsResolver: GraphQLFieldResolver<
   FieldWithDivisionId,
-  unknown,
+  GraphQLContext,
   ScoresheetsArgs,
   Promise<ScoresheetGraphQL[]>
-> = async (field: FieldWithDivisionId, args: ScoresheetsArgs) => {
+> = async (field: FieldWithDivisionId, args: ScoresheetsArgs, context: GraphQLContext) => {
   try {
     // Get all scoresheets for the division
     const scoresheets = await db.raw.mongo
@@ -69,7 +70,7 @@ export const fieldScoresheetsResolver: GraphQLFieldResolver<
       filteredScoresheets = filteredScoresheets.filter(s => s.round === args.round);
     }
 
-    const noShows = await db.robotGameMatches.byDivision(field.divisionId).getRankingNoShows();
+    const noShows = await context.noShowCache.get(field.divisionId);
     return attachNoShowFlags(
       filteredScoresheets.map(s => buildScoresheetResult(s)),
       noShows

@@ -13,6 +13,7 @@ import './lib/dayjs';
 import './lib/database';
 import { logger } from './lib/logger';
 import { createApolloServer, type GraphQLContext, schema } from './lib/graphql/apollo-server';
+import { createNoShowCache } from './lib/graphql/utils/no-show-cache';
 import { authenticateHttp, authenticateWebsocket } from './lib/graphql/auth-context';
 import { getRedisClient, closeRedisClient } from './lib/redis/redis-client';
 import { shutdownRedisPubSub } from './lib/redis/redis-pubsub';
@@ -103,7 +104,7 @@ const serverCleanup = createGraphqlWsServer(
     schema,
     context: async (ctx): Promise<GraphQLContext> => {
       const user = await authenticateWebsocket(ctx.connectionParams);
-      return { user };
+      return { user, noShowCache: createNoShowCache() };
     },
     onConnect: async () => {
       logger.info({ component: 'websocket' }, 'Client connected');
@@ -133,7 +134,7 @@ app.use(
   expressMiddleware(apolloServer, {
     context: async ({ req }): Promise<GraphQLContext> => {
       const user = await authenticateHttp(req);
-      return { user };
+      return { user, noShowCache: createNoShowCache() };
     }
   })
 );
