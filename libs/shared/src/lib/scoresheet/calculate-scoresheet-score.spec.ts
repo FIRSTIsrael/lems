@@ -54,4 +54,16 @@ describe('calculateScoresheetScore', () => {
     expect(r.rawTotal).toBe(10);
     expect(r.scoreOverridden).toBe(true);
   });
+
+  it('does not set scoreOverridden when finalizeScore returns same total', () => {
+    const schema: ScoresheetSchema = {
+      ...miniSchema,
+      missions: [miniSchema.missions[0]],
+      finalizeScore: ({ total }) => total
+    };
+    const r = calculateScoresheetScore(schema, { a: { 0: true } });
+    expect(r.total).toBe(10);
+    expect(r.rawTotal).toBe(10);
+    expect(r.scoreOverridden).toBe(false);
+  });
 });
