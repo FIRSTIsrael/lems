@@ -68,7 +68,7 @@ export function calculateScoresheetScore(
       missionScores,
       total: rawTotal
     });
-    scoreOverridden = true;
+    scoreOverridden = total !== rawTotal;
   }
 
   return {
