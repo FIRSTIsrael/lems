@@ -13,6 +13,7 @@ export interface QueryData {
     futureEdition: boolean;
     field: {
       currentStage: string;
+      rankingRoundCount: number;
     };
     teams: {
       id: string;

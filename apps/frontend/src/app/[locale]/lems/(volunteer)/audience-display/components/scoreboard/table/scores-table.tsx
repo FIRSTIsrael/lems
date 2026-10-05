@@ -13,14 +13,20 @@ import { ScoresTableRow } from './scores-table-row';
 const SCROLL_DURATION = 70;
 
 export const ScoresTable = () => {
-  const { matches, scoresheets, currentStage } = useScoreboard();
+  const { matches, scoresheets, currentStage, rankingRoundCount } = useScoreboard();
   const rankingStrategy = getRankingStrategy(useEdition());
   const rounds = useScoreboardRounds(scoresheets, currentStage);
-  const teamScores = useTeamScores(scoresheets, matches, currentStage, rankingStrategy);
+  const teamScores = useTeamScores(
+    scoresheets,
+    matches,
+    currentStage,
+    rankingRoundCount,
+    rankingStrategy
+  );
   const tableBodyRef = useInfiniteScroll(SCROLL_DURATION);
 
   const tableContent = teamScores.map((team, index) => (
-    <ScoresTableRow key={team.teamId} team={team} index={index} />
+    <ScoresTableRow key={team.teamId} team={team} index={index} rankingStrategy={rankingStrategy} />
   ));
 
   return (

@@ -2,6 +2,7 @@ import { Scoresheet, JudgingCategory, buildNoShowKey } from '@lems/database';
 import { getRubrics } from '@lems/shared/rubrics';
 import { Edition } from '@lems/shared/edition';
 import { calculateTeamRanks, TeamWithRanks, getEffectiveGp } from '@lems/shared/deliberation';
+import { getRankingStrategy, padRankingScores } from '@lems/shared/utils';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
 import { getDivisionEdition } from '../../../../utils/division-edition';
@@ -32,16 +33,21 @@ export async function calculateAllTeamScores(
   const edition = await getDivisionEdition(divisionId);
   const noShows = await db.robotGameMatches.byDivision(divisionId).getRankingNoShows();
   const zeroGpForNoShows = await getZeroGpForNoShowsSetting(divisionId);
+  const rankingRoundCount = await db.robotGameMatches.byDivision(divisionId).getRankingRoundCount();
 
-  return teams.map(team => ({
-    teamId: team.id,
-    teamNumber: team.number,
-    rubricScores: calculateRubricScores(team.id, rubrics, edition),
-    gpScore: calculateGPScore(team.id, scoresheets, noShows, zeroGpForNoShows),
-    robotGameScores: scoresheets
+  return teams.map(team => {
+    const submittedRankingScores = scoresheets
       .filter(s => s.teamId === team.id && s.stage === 'RANKING' && s.status === 'submitted')
-      .map(s => s.data?.score || 0)
-  }));
+      .map(s => ({ round: s.round, score: s.data?.score || 0 }));
+
+    return {
+      teamId: team.id,
+      teamNumber: team.number,
+      rubricScores: calculateRubricScores(team.id, rubrics, edition),
+      gpScore: calculateGPScore(team.id, scoresheets, noShows, zeroGpForNoShows),
+      robotGameScores: padRankingScores(submittedRankingScores, rankingRoundCount)
+    };
+  });
 }
 
 /**
@@ -154,6 +160,8 @@ export async function rankTeams(
   divisionId: string
 ): Promise<TeamWithRanks[]> {
   const picklists = await fetchPicklists(divisionId);
+  const edition = await getDivisionEdition(divisionId);
+  const rankingStrategy = getRankingStrategy(edition);
 
   // Calculate modified scores for all teams first (add GP score to core-values)
   const teamScoresWithGP = teamScores.map(teamData => ({
@@ -167,7 +175,7 @@ export async function rankTeams(
   return teamScoresWithGP.map(teamData => {
     const teamDataCopy = structuredClone(teamData);
     const teamScoresWithGPCopy = structuredClone(teamScoresWithGP);
-    return calculateTeamRanks(teamDataCopy, teamScoresWithGPCopy, picklists);
+    return calculateTeamRanks(teamDataCopy, teamScoresWithGPCopy, picklists, rankingStrategy);
   });
 }
 

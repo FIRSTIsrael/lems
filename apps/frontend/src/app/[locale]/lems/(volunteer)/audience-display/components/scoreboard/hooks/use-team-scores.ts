@@ -32,6 +32,7 @@ export const useTeamScores = (
   scoresheets: Scoresheet[],
   matches: Match[],
   currentStage: string,
+  rankingRoundCount: number,
   rankingStrategy: RankingStrategy = 'max'
 ): TeamScoreData[] => {
   return useMemo(() => {
@@ -49,7 +50,6 @@ export const useTeamScores = (
     >();
 
     const relevantScoresheets = scoresheets.filter(s => s.stage === currentStage);
-    const rankingRoundCount = Math.max(0, ...relevantScoresheets.map(s => s.round));
 
     relevantScoresheets.forEach(scoresheet => {
       const matchParticipant = matches
@@ -88,5 +88,5 @@ export const useTeamScores = (
       })
       .sort((a, b) => compareRobotGameScores(a.scores, b.scores, rankingStrategy))
       .map((team, index) => ({ ...team, rank: index + 1 }));
-  }, [scoresheets, matches, currentStage, rankingStrategy]);
+  }, [scoresheets, matches, currentStage, rankingRoundCount, rankingStrategy]);
 };

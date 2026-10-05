@@ -48,6 +48,7 @@ import { subscriptionResolvers } from './subscriptions';
 import { matchesResolver } from './divisions/field/matches';
 import { matchLengthResolver } from './divisions/field/match-length';
 import { currentStageResolver } from './divisions/field/current-stage';
+import { rankingRoundCountResolver } from './divisions/field/ranking-round-count';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
@@ -151,6 +152,7 @@ export const resolvers = {
     matches: matchesResolver,
     matchLength: matchLengthResolver,
     currentStage: currentStageResolver,
+    rankingRoundCount: rankingRoundCountResolver,
     scoresheets: fieldScoresheetsResolver
   },
   Match: {
