@@ -6,19 +6,23 @@ import Link from 'next/link';
 import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ScoreboardEntry } from '@lems/types/api/portal';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 
 interface DesktopScoreboardProps {
   sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
+  rankingStrategy: RankingStrategy;
 }
 
 export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
   sortedData,
   matchesPerTeam,
-  eventSlug
+  eventSlug,
+  rankingStrategy
 }) => {
   const t = useTranslations('pages.event');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const theme = useTheme();
 
   const columns: GridColDef<ScoreboardEntry>[] = [
@@ -60,9 +64,10 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
     },
     {
       field: 'maxScore',
-      headerName: t('scoreboard.best-score'),
+      headerName: headlineScoreT(rankingStrategy),
       width: 120,
-      valueGetter: (_, row) => row.maxScore || '-'
+      valueGetter: (_, row) =>
+        row.maxScore != null ? formatHeadlineScore(row.maxScore) : '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,

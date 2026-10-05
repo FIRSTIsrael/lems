@@ -52,6 +52,31 @@ export const compareRobotGameScores = (
   return difference;
 };
 
+/**
+ * Pads a team's per-round ranking scores into a fixed-length array indexed by round
+ * (index `i` -> round `i + 1`). Rounds with no submitted score (e.g. no-show, not yet
+ * played) are filled with `0`. Rounds outside `[1, rankingRoundCount]` are ignored.
+ */
+export const padRankingScores = (
+  scoresByRound: Array<{ round: number; score: number }>,
+  rankingRoundCount: number
+): number[] => {
+  const padded = new Array(Math.max(rankingRoundCount, 0)).fill(0);
+  scoresByRound.forEach(({ round, score }) => {
+    if (round >= 1 && round <= rankingRoundCount) {
+      padded[round - 1] = score;
+    }
+  });
+  return padded;
+};
+
+/**
+ * Rounds a headline score for display (2 decimals). Ranking/sorting must always use the
+ * unrounded value (e.g. via `getRobotGameHeadlineScore`/`compareRobotGameScores`); only the
+ * on-screen representation is rounded.
+ */
+export const formatHeadlineScore = (score: number): number => Math.round(score * 100) / 100;
+
 /** The single headline number shown for a team's robot game performance, per ranking strategy. */
 export const getRobotGameHeadlineScore = (
   scores: (number | undefined)[],

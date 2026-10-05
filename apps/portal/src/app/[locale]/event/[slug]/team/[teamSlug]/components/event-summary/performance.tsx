@@ -4,17 +4,21 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Typography, Grid, Stack } from '@mui/material';
 import { TrendingUp as ScoreIcon, SmartToy as RobotIcon } from '@mui/icons-material';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 
 interface PerformanceMetricsProps {
   highestScore: number | null;
   robotGameRank: number | null;
+  rankingStrategy: RankingStrategy;
 }
 
 export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
   highestScore,
-  robotGameRank
+  robotGameRank,
+  rankingStrategy
 }) => {
   const t = useTranslations('pages.team-in-event');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
 
   return (
     <>
@@ -45,7 +49,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
               fontWeight: '600'
             }}
           >
-            {t('performance.highest-score')}
+            {headlineScoreT(rankingStrategy)}
           </Typography>
         </Stack>
         <Typography
@@ -55,7 +59,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
             fontWeight: '600'
           }}
         >
-          {highestScore ?? '-'}
+          {highestScore !== null ? formatHeadlineScore(highestScore) : '-'}
         </Typography>
       </Grid>
       <Grid

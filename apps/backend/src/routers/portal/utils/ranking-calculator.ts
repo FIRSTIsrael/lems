@@ -1,18 +1,26 @@
 import { WithId } from 'mongodb';
-import { compareScoreArrays } from '@lems/shared/utils';
+import {
+  compareRobotGameScores,
+  getRankingStrategy,
+  getRobotGameHeadlineScore,
+  padRankingScores
+} from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { Scoresheet } from '@lems/database';
 import db from '../../../lib/database';
 
 export interface RankingData {
   rank: number;
+  /** Headline robot-game score for the team's ranking strategy (max attempt or average). */
   maxScore: number;
+  /** Scores padded to the division's ranking round count (index `i` -> round `i + 1`). */
   scores: number[];
   scoresWithRounds: Array<{ round: number; score: number }>;
 }
 
 /**
  * Calculate robot game rankings for all teams in a division.
- * Uses compareScoreArrays to implement FLL ranking rules:
+ * Uses compareRobotGameScores (edition-aware: max attempt for Founders, average for Future) to implement FLL ranking rules:
  * 1. Sort by highest score (descending)
  * 2. Tiebreaker: compare all scores element-by-element from highest to lowest
  * 3. Handle tied teams (same rank for identical score arrays)
@@ -32,6 +40,11 @@ export async function calculateRobotGameRankings(
   if (!divisionState?.field?.currentStage) {
     return new Map<string, RankingData>();
   }
+
+  const strategy = getRankingStrategy(getEdition(division));
+  const rankingRoundCount = await db.robotGameMatches
+    .byDivision(divisionId)
+    .getRankingRoundCount();
 
   const scoresheets = await db.scoresheets
     .byDivision(divisionId)
@@ -55,16 +68,16 @@ export async function calculateRobotGameRankings(
   }
 
   const teamMetrics = Array.from(teamScores.entries()).map(([teamId, scoresWithRounds]) => {
-    const scores = scoresWithRounds.map(s => s.score);
+    const scores = padRankingScores(scoresWithRounds, rankingRoundCount);
     return {
       teamId,
       scores,
-      maxScore: Math.max(...scores),
+      maxScore: getRobotGameHeadlineScore(scores, strategy),
       scoresWithRounds
     };
   });
 
-  teamMetrics.sort((a, b) => compareScoreArrays(a.scores, b.scores));
+  teamMetrics.sort((a, b) => compareRobotGameScores(a.scores, b.scores, strategy));
 
   // Assign ranks, handling ties
   let currentRank = 1;
@@ -75,7 +88,10 @@ export async function calculateRobotGameRankings(
     let rank = currentRank;
 
     // Check if tied with previous team (same score arrays)
-    if (i > 0 && compareScoreArrays(metrics.scores, teamMetrics[i - 1].scores) === 0) {
+    if (
+      i > 0 &&
+      compareRobotGameScores(metrics.scores, teamMetrics[i - 1].scores, strategy) === 0
+    ) {
       // Tied with previous team, use same rank
       rank = (rankingMap.get(teamMetrics[i - 1].teamId) || { rank: currentRank }).rank;
     }

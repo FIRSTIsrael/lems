@@ -1,5 +1,5 @@
 import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
-import { compareScoreArrays } from '@lems/shared/utils/arrays';
+import { compareRobotGameScores, RankingStrategy } from '@lems/shared/utils';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { EnrichedTeam, OptionalAwardNominations, RanksPerCategory } from './types';
@@ -95,7 +95,8 @@ export function computeRawRank(
 export function computeRank(
   team: Team & { scores: MetricPerCategory; robotGameScores: number[] },
   allTeams: (Team & { scores: MetricPerCategory; robotGameScores: number[] })[],
-  picklists: Record<JudgingCategory, string[]>
+  picklists: Record<JudgingCategory, string[]>,
+  rankingStrategy: RankingStrategy = 'max'
 ): RanksPerCategory {
   const ranks: RanksPerCategory = {
     'innovation-project': 0,
@@ -126,9 +127,9 @@ export function computeRank(
     ranks[category] = computeRankByCategory(category, team.scores[category]);
   });
 
-  // Compute robot-game rank using compareScoreArrays
+  // Compute robot-game rank using the edition's ranking strategy
   const sortedTeams = [...allTeams].sort((a, b) =>
-    compareScoreArrays(a.robotGameScores, b.robotGameScores)
+    compareRobotGameScores(a.robotGameScores, b.robotGameScores, rankingStrategy)
   );
 
   const teamIndex = sortedTeams.findIndex(t => t.id === team.id);

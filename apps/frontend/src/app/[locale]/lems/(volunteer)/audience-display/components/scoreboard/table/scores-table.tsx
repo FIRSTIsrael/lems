@@ -1,10 +1,12 @@
 'use client';
 
 import { Paper, Table, TableBody, TableContainer, alpha } from '@mui/material';
+import { getRankingStrategy } from '@lems/shared/utils';
 import { useScoreboard } from '../scoreboard-context';
 import { useScoreboardRounds } from '../hooks/use-scoreboard-rounds';
 import { useTeamScores } from '../hooks/use-team-scores';
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
+import { useEdition } from '../../../../hooks/use-edition';
 import { ScoresTableHeader } from './scores-table-header';
 import { ScoresTableRow } from './scores-table-row';
 
@@ -12,8 +14,9 @@ const SCROLL_DURATION = 70;
 
 export const ScoresTable = () => {
   const { matches, scoresheets, currentStage } = useScoreboard();
+  const rankingStrategy = getRankingStrategy(useEdition());
   const rounds = useScoreboardRounds(scoresheets, currentStage);
-  const teamScores = useTeamScores(scoresheets, matches, currentStage);
+  const teamScores = useTeamScores(scoresheets, matches, currentStage, rankingStrategy);
   const tableBodyRef = useInfiniteScroll(SCROLL_DURATION);
 
   const tableContent = teamScores.map((team, index) => (
@@ -32,7 +35,7 @@ export const ScoresTable = () => {
     >
       <TableContainer>
         <Table stickyHeader>
-          <ScoresTableHeader rounds={rounds} />
+          <ScoresTableHeader rounds={rounds} rankingStrategy={rankingStrategy} />
           <TableBody
             ref={tableBodyRef}
             sx={{
