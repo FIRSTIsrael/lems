@@ -388,6 +388,140 @@
     }
   },
   "scoresheet-future": {
+    "missions": {
+      "m01": {
+        "title": "POTĘŻNE MIKROBIOMY",
+        "clauses": {
+          "0": {
+            "description": "Liczba gatunków kluczowych w mikrobiomie młodego lasu:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "1": {
+            "description": "Liczba gatunków kluczowych w mikrobiomie wielkiego drzewa:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "2": {
+            "description": "Liczba gatunków kluczowych w mikrobiomie wydrążonego drzewa:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3"
+            }
+          },
+          "3": {
+            "description": "<b>Bonus</b>: co najmniej trzy gatunki kluczowe znajdują się w młodym lesie, a inwazyjna królowa po drugiej stronie pola została przewrócona:"
+          }
+        },
+        "errors": {
+          "m01-e1": {
+            "description": "Bonus można otrzymać tylko wtedy, gdy w młodym lesie znajdują się co najmniej trzy gatunki kluczowe."
+          }
+        }
+      },
+      "m02": {
+        "title": "KORZENIE ODNOWY",
+        "clauses": {
+          "0": {
+            "description": "Liczba zasobów w podstawie wielkiego drzewa:"
+          },
+          "1": {
+            "description": "Liczba zasobów w komorze baldachimu:"
+          }
+        }
+      },
+      "m03": {
+        "title": "WODOSPAD W JASKINI",
+        "clauses": {
+          "0": {
+            "description": "Liczba gatunków kluczowych przeniesionych przez wodospad w jaskini:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5",
+              "6": "6",
+              "7": "7",
+              "8": "8",
+              "9": "9",
+              "10": "10"
+            }
+          }
+        }
+      },
+      "m04": {
+        "title": "PRZEBUDZENIE LASU DESZCZOWEGO",
+        "clauses": {
+          "0": {
+            "description": "Wszystkie gatunki kluczowe zostały uwolnione z gniazda:"
+          },
+          "1": {
+            "description": "Wszystkie zasoby zostały uwolnione z wydrążonego drzewa:"
+          }
+        }
+      },
+      "m05": {
+        "title": "CENTRALNE SCHRONIENIE",
+        "clauses": {
+          "0": {
+            "description": "Liczba gatunków kluczowych lub zasobów znajdujących się całkowicie w centralnym schronieniu:"
+          }
+        }
+      },
+      "luc": {
+        "title": "WYZWANIE NA WYŻSZYM POZIOMIE: ATAK INWAZYJNY",
+        "clauses": {
+          "0": {
+            "description": "Liczba dodanych gatunków inwazyjnych:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5"
+            }
+          },
+          "1": {
+            "description": "Liczba gatunków inwazyjnych w strefie powstrzymania:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3": "3",
+              "4": "4",
+              "5": "5"
+            }
+          }
+        }
+      },
+      "pt": {
+        "title": "KARY",
+        "clauses": {
+          "0": {
+            "description": "Liczba otrzymanych kar:",
+            "labels": {
+              "0": "0",
+              "1": "1",
+              "2": "2",
+              "3+": "3+"
+            }
+          }
+        }
+      }
+    },
     "general": {
       "yes": "Tak",
       "no": "Nie",
