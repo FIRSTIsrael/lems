@@ -15,6 +15,14 @@ describe('futureScoresheet', () => {
     expect(r.scoreOverridden).toBe(false);
   });
 
+  it('scores m02 canopy chamber count times 10 (not capped at 15 pts)', () => {
+    const r = calculateScoresheetScore(futureScoresheet, {
+      m02: { 0: 0, 1: 2 }
+    });
+    expect(r.hasCalculationErrors).toBe(false);
+    expect(r.missionScores['m02']).toBe(20);
+  });
+
   it('zeroes the total with 3+ penalties', () => {
     const r = calculateScoresheetScore(futureScoresheet, {
       m01: { 0: '3', 1: '3', 2: '3', 3: false },
