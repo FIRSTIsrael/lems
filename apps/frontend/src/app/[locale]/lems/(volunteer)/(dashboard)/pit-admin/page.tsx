@@ -10,11 +10,11 @@ import { PageHeader } from '../components/page-header';
 import { usePageData } from '../../hooks/use-page-data';
 import {
   GET_DIVISION_TEAMS,
-  TEAM_ARRIVED_MUTATION,
+  UPDATE_TEAM_ARRIVAL_MUTATION,
   type Team,
   parseDivisionTeams,
   createTeamArrivalSubscription,
-  createTeamArrivedCacheUpdate
+  createTeamArrivalCacheUpdate
 } from './graphql';
 import { TeamArrivalInput } from './components/team-arrival-input';
 import { ArrivalsStats } from './components/arrivals-stats';
@@ -23,7 +23,7 @@ export default function PitAdminPage() {
   const t = useTranslations('pages.pit-admin');
 
   const { currentDivision } = useEvent();
-  const [teamArrivedMutation] = useMutation(TEAM_ARRIVED_MUTATION, {
+  const [updateTeamArrivalMutation] = useMutation(UPDATE_TEAM_ARRIVAL_MUTATION, {
     onError: () => {
       toast.error(t('error'));
     }
@@ -43,14 +43,24 @@ export default function PitAdminPage() {
 
   const teams = pageData || [];
 
-  const handleTeamArrival = useCallback(
-    async (team: Team) => {
-      await teamArrivedMutation({
-        variables: { teamId: team.id, divisionId: currentDivision.id },
-        update: createTeamArrivedCacheUpdate(team.id)
+  const updateTeamArrival = useCallback(
+    async (team: Team, arrived: boolean) => {
+      await updateTeamArrivalMutation({
+        variables: { teamId: team.id, divisionId: currentDivision.id, arrived },
+        update: createTeamArrivalCacheUpdate(team.id, arrived)
       });
     },
-    [teamArrivedMutation, currentDivision.id]
+    [updateTeamArrivalMutation, currentDivision.id]
+  );
+
+  const handleTeamArrival = useCallback(
+    (team: Team) => updateTeamArrival(team, true),
+    [updateTeamArrival]
+  );
+
+  const handleTeamNotArrival = useCallback(
+    (team: Team) => updateTeamArrival(team, false),
+    [updateTeamArrival]
   );
 
   return (
@@ -65,7 +75,7 @@ export default function PitAdminPage() {
           disabled={loading}
         />
 
-        <ArrivalsStats teams={teams} loading={loading} />
+        <ArrivalsStats teams={teams} onTeamNotArrival={handleTeamNotArrival} loading={loading} />
       </Stack>
     </>
   );

@@ -5,25 +5,27 @@ import type { GraphQLContext } from '../../apollo-server';
 import db from '../../../database';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
-interface TeamArrivedArgs {
+interface UpdateTeamArrivalArgs {
   teamId: string;
   divisionId: string;
+  arrived: boolean;
 }
 
-interface TeamEvent {
+interface TeamArrivalEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 /**
- * Resolver for Mutation.teamArrived
- * Marks that a team arrived at a division and publishes an event.
+ * Resolver for Mutation.updateTeamArrival
+ * Marks a team as arrived or not arrived at a division and publishes an event.
  */
-export const teamArrivedResolver: GraphQLFieldResolver<
+export const updateTeamArrivalResolver: GraphQLFieldResolver<
   unknown,
   GraphQLContext,
-  TeamArrivedArgs,
-  Promise<TeamEvent>
-> = async (_root, { teamId, divisionId }, context) => {
+  UpdateTeamArrivalArgs,
+  Promise<TeamArrivalEvent>
+> = async (_root, { teamId, divisionId, arrived }, context) => {
   try {
     if (!context.user) {
       throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
@@ -32,7 +34,7 @@ export const teamArrivedResolver: GraphQLFieldResolver<
     if (context.user.role !== 'pit-admin') {
       throw new MutationError(
         MutationErrorCode.FORBIDDEN,
-        'User does not have permission to mark teams as arrived'
+        'User does not have permission to update team arrival status'
       );
     }
 
@@ -45,20 +47,31 @@ export const teamArrivedResolver: GraphQLFieldResolver<
 
     const existing = await db.raw.sql
       .selectFrom('team_divisions')
-      .select(['pk'])
+      .select(['pk', 'arrived'])
       .where('team_id', '=', teamId)
       .where('division_id', '=', divisionId)
-      .where('arrived', '=', true as never) // TypeScript quirk workaround
       .executeTakeFirst();
 
-    if (existing) {
+    if (!existing) {
       throw new MutationError(
-        MutationErrorCode.CONFLICT,
-        `Team #${teamId} has already arrived at this division`
+        MutationErrorCode.NOT_FOUND,
+        `Team #${teamId} is not registered in this division`
       );
     }
 
-    const update: Record<string, unknown> = { arrived: true, arrived_at: new Date() };
+    if (existing.arrived === arrived) {
+      throw new MutationError(
+        MutationErrorCode.CONFLICT,
+        arrived
+          ? `Team #${teamId} has already arrived at this division`
+          : `Team #${teamId} has not arrived at this division yet`
+      );
+    }
+
+    const update: Record<string, unknown> = {
+      arrived,
+      arrived_at: arrived ? new Date() : null
+    };
     await db.raw.sql
       .updateTable('team_divisions')
       .set(update)
@@ -67,9 +80,9 @@ export const teamArrivedResolver: GraphQLFieldResolver<
       .execute();
 
     const pubSub = getRedisPubSub();
-    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId });
+    await pubSub.publish(divisionId, RedisEventTypes.TEAM_ARRIVED, { teamId, arrived });
 
-    return { teamId };
+    return { teamId, arrived };
   } catch (error) {
     console.error(
       'Error updating team arrival status for team:',

@@ -18,6 +18,7 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, Subs
   subscription TeamArrived($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;

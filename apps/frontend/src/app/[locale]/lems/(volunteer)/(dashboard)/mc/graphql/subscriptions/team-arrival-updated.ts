@@ -4,13 +4,12 @@ import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { McData } from '../types';
 
 interface TeamArrivedEvent {
-  matchId: string;
   teamId: string;
   arrived: boolean;
 }
 
 interface TeamArrivedSubscriptionData {
-  teamArrived: TeamArrivedEvent;
+  teamArrivalUpdated: TeamArrivedEvent;
 }
 
 interface SubscriptionVars {
@@ -23,7 +22,6 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<
 > = gql`
   subscription TeamArrived($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
-      matchId
       teamId
       arrived
     }
@@ -36,22 +34,18 @@ export function createTeamArrivedSubscription(divisionId: string) {
     subscriptionVariables: { divisionId },
     updateQuery: (prev: McData, { data }: { data?: unknown }) => {
       if (!prev.division?.field || !data) return prev;
-      const event = (data as TeamArrivedSubscriptionData).teamArrived;
+      const event = (data as TeamArrivedSubscriptionData).teamArrivalUpdated;
       return merge(prev, {
         division: {
           field: {
-            matches: prev.division.field.matches.map(_match =>
-              _match.id === event.matchId
-                ? {
-                    ..._match,
-                    participants: _match.participants.map(p =>
-                      p.team?.id === event.teamId
-                        ? { ...p, team: p.team ? { ...p.team, arrived: event.arrived } : null }
-                        : p
-                    )
-                  }
-                : _match
-            )
+            matches: prev.division.field.matches.map(_match => ({
+              ..._match,
+              participants: _match.participants.map(p =>
+                p.team?.id === event.teamId
+                  ? { ...p, team: { ...p.team, arrived: event.arrived } }
+                  : p
+              )
+            }))
           }
         }
       });
