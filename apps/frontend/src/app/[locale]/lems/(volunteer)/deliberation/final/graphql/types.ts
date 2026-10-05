@@ -56,6 +56,7 @@ export interface Division {
     coreValuesDeliberation: CategoryDeliberation;
     finalDeliberation: FinalJudgingDeliberation;
     advancementPercentage: number | null;
+    zeroGpForNoShows: boolean;
   };
 }
 

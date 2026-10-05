@@ -117,6 +117,7 @@ export function TeamComparisonDialog({
             awards={data.division.judging?.awards ?? []}
             allTeams={(data.division.allTeams ?? []) as DivisionTeam[]}
             category={category}
+            zeroGpForNoShows={data.division.judging?.zeroGpForNoShows ?? false}
           >
             <Grid container spacing={3}>
               {data.division.selectedTeams.map(team => (

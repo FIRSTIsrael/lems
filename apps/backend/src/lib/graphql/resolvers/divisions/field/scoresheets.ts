@@ -2,6 +2,7 @@ import { GraphQLFieldResolver } from 'graphql';
 import { Scoresheet } from '@lems/database';
 import db from '../../../../database';
 import {
+  attachNoShowFlags,
   buildScoresheetResult,
   ScoresheetGraphQL,
   generateScoresheetSlug
@@ -68,7 +69,11 @@ export const fieldScoresheetsResolver: GraphQLFieldResolver<
       filteredScoresheets = filteredScoresheets.filter(s => s.round === args.round);
     }
 
-    return filteredScoresheets.map(s => buildScoresheetResult(s));
+    const noShows = await db.robotGameMatches.byDivision(field.divisionId).getRankingNoShows();
+    return attachNoShowFlags(
+      filteredScoresheets.map(s => buildScoresheetResult(s)),
+      noShows
+    );
   } catch (error) {
     console.error('Error fetching scoresheets for division:', field.divisionId, error);
     throw error;

@@ -54,6 +54,7 @@ export interface Scoresheet {
   round: number;
   slug: string;
   data?: ScoresheetData;
+  isNoShow: boolean;
 }
 
 export interface Team {
@@ -92,6 +93,7 @@ export interface UnifiedDivisionData {
     judging: {
       divisionId: string;
       awards: Award[];
+      zeroGpForNoShows: boolean;
     };
   };
 }

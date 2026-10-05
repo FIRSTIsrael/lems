@@ -104,9 +104,13 @@ export function CategoryDeliberationProvider({
     [deliberation, handleUpdatePicklist]
   );
 
+  const zeroGpForNoShows = division.judging.zeroGpForNoShows;
+
   const value = useMemo<DeliberationContextValue>(() => {
     // Step 1: Compute base team scores (category scores and GP)
-    const teamScores = division.teams.map(team => computeTeamScores(edition, team));
+    const teamScores = division.teams.map(team =>
+      computeTeamScores(edition, team, zeroGpForNoShows)
+    );
 
     // Step 2: Compute room metrics (aggregated scores per room)
     const roomMetrics = computeRoomMetrics(
@@ -130,7 +134,7 @@ export function CategoryDeliberationProvider({
         const isEligible = computeEligibility(team, deliberation);
         const rubricFields = getOrganizedRubricFields(edition, team, category);
         const rubricFieldNotes = getOrganizedRubricFieldNotes(edition, team, category);
-        const gpScores = getGPScores(team);
+        const gpScores = getGPScores(team, zeroGpForNoShows);
 
         return {
           id: team.id,
@@ -216,6 +220,7 @@ export function CategoryDeliberationProvider({
     edition,
     picklistLimit,
     hypenatedCategory,
+    zeroGpForNoShows,
     handleStartDeliberation,
     handleUpdatePicklist,
     handleAddToPicklist,

@@ -1,7 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Scoresheet } from '@lems/database';
 import db from '../../../database';
-import { buildScoresheetResult, ScoresheetGraphQL } from '../../utils/scoresheet-builder';
+import {
+  attachNoShowFlags,
+  buildScoresheetResult,
+  ScoresheetGraphQL
+} from '../../utils/scoresheet-builder';
 
 interface TeamWithDivisionId {
   id: string;
@@ -37,7 +41,11 @@ export const teamScoresheetsResolver: GraphQLFieldResolver<
       scoresheets = scoresheets.filter(s => s.stage === args.stage);
     }
 
-    return scoresheets.map(s => buildScoresheetResult(s));
+    const noShows = await db.robotGameMatches.byDivision(team.divisionId).getRankingNoShows();
+    return attachNoShowFlags(
+      scoresheets.map(s => buildScoresheetResult(s)),
+      noShows
+    );
   } catch (error) {
     console.error('Error fetching scoresheets for team:', team.id, error);
     throw error;

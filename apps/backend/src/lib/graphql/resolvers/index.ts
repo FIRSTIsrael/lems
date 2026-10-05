@@ -21,6 +21,7 @@ import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingAdvancementPercentageResolver } from './divisions/judging/judging-advancement-percentage';
 import { judgingOpenRubricsDuringSessionResolver } from './divisions/judging/judging-open-rubrics-during-session';
+import { judgingZeroGpForNoShowsResolver } from './divisions/judging/judging-zero-gp-for-no-shows';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
@@ -137,6 +138,7 @@ export const resolvers = {
     sessionLength: judgingSessionLengthResolver,
     advancementPercentage: judgingAdvancementPercentageResolver,
     openRubricsDuringSession: judgingOpenRubricsDuringSessionResolver,
+    zeroGpForNoShows: judgingZeroGpForNoShowsResolver,
     rubrics: judgingRubricsResolver,
     deliberation: judgingDeliberationResolver,
     finalDeliberation: judgingFinalDeliberationResolver,
