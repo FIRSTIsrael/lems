@@ -28,6 +28,7 @@ export interface CompareContextType {
   fieldComparisons: Map<string, FieldComparison>;
   teamComparisons: Map<string, TeamComparison>;
   coreValuesFields: Map<string, RubricFieldValue>;
+  zeroGpForNoShows: boolean;
 }
 
 const CompareContext = createContext<CompareContextType | null>(null);
@@ -46,6 +47,7 @@ interface CompareProviderProps {
   awards: Award[];
   allTeams: DivisionTeam[];
   category?: JudgingCategory;
+  zeroGpForNoShows?: boolean;
 }
 
 export const CompareProvider = ({
@@ -53,7 +55,8 @@ export const CompareProvider = ({
   teams,
   awards,
   allTeams,
-  category
+  category,
+  zeroGpForNoShows = false
 }: CompareProviderProps) => {
   const edition = useEdition();
   const value = useMemo(() => {
@@ -161,9 +164,10 @@ export const CompareProvider = ({
       category,
       fieldComparisons,
       teamComparisons,
-      coreValuesFields
+      coreValuesFields,
+      zeroGpForNoShows
     };
-  }, [teams, awards, allTeams, category, edition]);
+  }, [teams, awards, allTeams, category, edition, zeroGpForNoShows]);
 
   return <CompareContext.Provider value={value}>{children}</CompareContext.Provider>;
 };

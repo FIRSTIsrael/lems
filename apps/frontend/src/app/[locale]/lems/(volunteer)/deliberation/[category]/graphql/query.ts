@@ -41,6 +41,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
               notes
             }
           }
+          isNoShow
         }
         rubrics {
           innovation_project {
@@ -91,6 +92,7 @@ export const GET_CATEGORY_DELIBERATION: TypedDocumentNode<
           startTime
           picklist
         }
+        zeroGpForNoShows
       }
     }
   }

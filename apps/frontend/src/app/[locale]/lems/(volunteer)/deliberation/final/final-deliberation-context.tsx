@@ -53,6 +53,7 @@ export const FinalDeliberationProvider = ({
   const edition = useEdition();
   const deliberation = division.judging.finalDeliberation;
   const deliberationAwards = division.judging.awards.filter(award => award.type === 'TEAM');
+  const zeroGpForNoShows = division.judging.zeroGpForNoShows;
 
   // Mutations
   const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
@@ -164,7 +165,9 @@ export const FinalDeliberationProvider = ({
 
   const value = useMemo<FinalDeliberationContextValue>(() => {
     // Step 1: Compute base team scores (category scores and GP)
-    const teamScores = division.teams.map(team => computeTeamScores(edition, team));
+    const teamScores = division.teams.map(team =>
+      computeTeamScores(edition, team, zeroGpForNoShows)
+    );
 
     const teamsWithScores = division.teams.map((team, index) => ({
       ...team,
@@ -213,7 +216,7 @@ export const FinalDeliberationProvider = ({
         },
         {}
       );
-      const gpScores = getGPScores(team);
+      const gpScores = getGPScores(team, zeroGpForNoShows);
 
       return {
         id: team.id,
@@ -294,6 +297,7 @@ export const FinalDeliberationProvider = ({
     awards,
     awardCounts,
     manualOptionalAwards,
+    zeroGpForNoShows,
     handleStartFinalDeliberation,
     handleUpdateFinalDeliberationAwards,
     handleAdvanceStage,

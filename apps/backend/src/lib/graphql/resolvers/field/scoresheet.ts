@@ -111,5 +111,10 @@ export const scoresheetResolvers = {
   stage: ((scoresheet: ScoresheetGraphQL) => {
     // Return stage as-is (PRACTICE or RANKING)
     return scoresheet.stage;
-  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, string>
+  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, string>,
+
+  isNoShow: ((scoresheet: ScoresheetGraphQL) => {
+    // Pre-computed by the parent list resolver (batched per division)
+    return scoresheet.isNoShow ?? false;
+  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, boolean>
 };

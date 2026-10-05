@@ -17,6 +17,7 @@ export interface Division {
   teams: Team[];
   judging: {
     deliberation: JudgingDeliberation | null;
+    zeroGpForNoShows: boolean;
   };
 }
 

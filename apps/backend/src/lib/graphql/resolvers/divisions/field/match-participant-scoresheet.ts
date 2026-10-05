@@ -52,7 +52,11 @@ export const matchParticipantScoresheetResolver: GraphQLFieldResolver<
       return null;
     }
 
-    return buildScoresheetResult(scoresheet);
+    const participantRow = match.participants.find(p => p.team_id === participant.teamId);
+    const isNoShow =
+      match.stage === 'RANKING' && match.status === 'completed' && participantRow?.present == null;
+
+    return { ...buildScoresheetResult(scoresheet), isNoShow };
   } catch (error) {
     console.error(
       'Error fetching scoresheet for participant:',

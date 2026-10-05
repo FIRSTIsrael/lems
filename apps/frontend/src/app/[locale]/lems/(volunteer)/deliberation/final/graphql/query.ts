@@ -47,6 +47,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
               notes
             }
           }
+          isNoShow
         }
         rubrics {
           innovation_project {
@@ -143,6 +144,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           optionalAwardsManualEligibility
         }
         advancementPercentage
+        zeroGpForNoShows
       }
     }
   }

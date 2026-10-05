@@ -84,6 +84,7 @@ export interface Scoresheet {
   stage: 'PRACTICE' | 'RANKING';
   slug: string;
   data?: ScoresheetData;
+  isNoShow: boolean;
 }
 
 export interface Team {
