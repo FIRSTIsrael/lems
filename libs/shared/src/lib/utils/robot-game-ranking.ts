@@ -71,11 +71,14 @@ export const padRankingScores = (
 };
 
 /**
- * Rounds a headline score for display (2 decimals). Ranking/sorting must always use the
- * unrounded value (e.g. via `getRobotGameHeadlineScore`/`compareRobotGameScores`); only the
- * on-screen representation is rounded.
+ * Formats a headline score for display, per ranking strategy:
+ * - 'average': rounded to 2 decimals (e.g. "123.33"), since the average is rarely a whole number.
+ * - 'max': the raw integer score, unrounded.
+ * Ranking/sorting must always use the unrounded value (e.g. via `getRobotGameHeadlineScore`/
+ * `compareRobotGameScores`); only the on-screen representation is formatted here.
  */
-export const formatHeadlineScore = (score: number): number => Math.round(score * 100) / 100;
+export const formatHeadlineScore = (score: number, strategy: RankingStrategy): string =>
+  strategy === 'average' ? score.toFixed(2) : String(score);
 
 /** The single headline number shown for a team's robot game performance, per ranking strategy. */
 export const getRobotGameHeadlineScore = (

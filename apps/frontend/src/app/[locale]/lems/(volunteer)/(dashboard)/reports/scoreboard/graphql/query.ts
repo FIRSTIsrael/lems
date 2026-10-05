@@ -15,6 +15,7 @@ export const GET_SCOREBOARD: TypedDocumentNode<QueryData, QueryVars> = gql`
       field {
         divisionId
         currentStage
+        rankingRoundCount
       }
       teams {
         id
@@ -51,7 +52,9 @@ export function parseScoreboard(data: QueryData): ScoreboardTeam[] {
       )
     )
   ].sort((a, b) => a - b);
-  const rankingRoundCount = rounds.length ? Math.max(...rounds) : 0;
+  // Use the division's configured ranking round count (not inferred from submitted sheets),
+  // so missing/no-show rounds still pad correctly for ranking comparisons.
+  const rankingRoundCount = data.division.field?.rankingRoundCount ?? 0;
 
   // Padded (round-indexed) score arrays per team, used only for ranking comparisons
   const comparisonScores = new Map<string, number[]>(

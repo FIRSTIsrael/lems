@@ -67,7 +67,7 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
       headerName: headlineScoreT(rankingStrategy),
       width: 120,
       valueGetter: (_, row) =>
-        row.maxScore != null ? formatHeadlineScore(row.maxScore) : '-'
+        row.maxScore != null ? formatHeadlineScore(row.maxScore, rankingStrategy) : '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,

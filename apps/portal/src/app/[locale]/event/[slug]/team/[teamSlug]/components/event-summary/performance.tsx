@@ -59,7 +59,7 @@ export const PerformanceMetrics: React.FC<PerformanceMetricsProps> = ({
             fontWeight: '600'
           }}
         >
-          {highestScore !== null ? formatHeadlineScore(highestScore) : '-'}
+          {highestScore !== null ? formatHeadlineScore(highestScore, rankingStrategy) : '-'}
         </Typography>
       </Grid>
       <Grid

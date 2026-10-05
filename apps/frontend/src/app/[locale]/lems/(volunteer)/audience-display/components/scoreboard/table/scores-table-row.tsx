@@ -1,14 +1,15 @@
 import { Avatar, Box, TableCell, TableRow, Typography, alpha } from '@mui/material';
-import { formatHeadlineScore } from '@lems/shared/utils';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 import type { TeamScoreData } from '../hooks/use-team-scores';
 import { ScoreCell } from './score-cell';
 
 interface ScoresTableRowProps {
   team: TeamScoreData;
   index: number;
+  rankingStrategy: RankingStrategy;
 }
 
-export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
+export const ScoresTableRow = ({ team, index, rankingStrategy }: ScoresTableRowProps) => {
   return (
     <TableRow
       sx={{
@@ -58,7 +59,7 @@ export const ScoresTableRow = ({ team, index }: ScoresTableRowProps) => {
         align="center"
         sx={{ fontWeight: 700, py: 1.25, color: 'primary.main', fontSize: '1.35rem' }}
       >
-        {formatHeadlineScore(team.maxScore)}
+        {formatHeadlineScore(team.maxScore, rankingStrategy)}
       </TableCell>
     </TableRow>
   );

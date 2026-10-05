@@ -48,6 +48,7 @@ export const GET_SCOREBOARD_DATA: TypedDocumentNode<ScoreboardData, ScoreboardVa
         loadedMatch
         activeMatch
         matchLength
+        rankingRoundCount
       }
     }
   }

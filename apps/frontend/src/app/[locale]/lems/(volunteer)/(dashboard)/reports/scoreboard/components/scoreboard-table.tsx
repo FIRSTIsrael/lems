@@ -41,7 +41,9 @@ export function ScoreboardTable({ data, matchesPerTeam, rankingStrategy }: Score
       width: 120,
       valueGetter: (_, row) => row.maxScore ?? -1,
       renderCell: params =>
-        params.row.maxScore !== null ? formatHeadlineScore(params.row.maxScore) : '-'
+        params.row.maxScore !== null
+          ? formatHeadlineScore(params.row.maxScore, rankingStrategy)
+          : '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,

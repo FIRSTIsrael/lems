@@ -141,7 +141,9 @@ export function MobileScoreboard({ data, matchesPerTeam, rankingStrategy }: Mobi
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore !== null ? formatHeadlineScore(entry.maxScore) : '-'}
+                  {entry.maxScore !== null
+                    ? formatHeadlineScore(entry.maxScore, rankingStrategy)
+                    : '-'}
                 </Typography>
               </Box>
 

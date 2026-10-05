@@ -152,7 +152,9 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore != null ? formatHeadlineScore(entry.maxScore) : '-'}
+                  {entry.maxScore != null
+                    ? formatHeadlineScore(entry.maxScore, rankingStrategy)
+                    : '-'}
                 </Typography>
               </Box>
 
