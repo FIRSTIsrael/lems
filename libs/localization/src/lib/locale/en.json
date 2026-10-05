@@ -383,7 +383,15 @@
     },
     "general": {
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "score-overridden": "Match score is zero because of 3 or more penalties."
+    }
+  },
+  "scoresheet-future": {
+    "general": {
+      "yes": "Yes",
+      "no": "No",
+      "score-overridden": "Match score is zero because of 3 or more penalties."
     }
   },
   "roles": {

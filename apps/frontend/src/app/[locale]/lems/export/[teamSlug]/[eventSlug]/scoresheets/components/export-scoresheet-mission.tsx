@@ -7,21 +7,24 @@ import {
   useScoresheetGeneralTranslations
 } from '@lems/localization';
 import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import type { Edition } from '@lems/shared/edition';
 
 interface ExportScoresheetMissionProps {
   mission: MissionSchema;
   clauses: Array<{ value: ScoresheetClauseValue }>;
   score: number;
+  edition: Edition;
 }
 
 export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
   mission,
   clauses,
-  score
+  score,
+  edition
 }) => {
   const { title, description, getClauseDescription, getClauseLabel } =
-    useScoresheetMissionTranslations(mission.id);
-  const { yes, no } = useScoresheetGeneralTranslations();
+    useScoresheetMissionTranslations(edition, mission.id);
+  const { yes, no } = useScoresheetGeneralTranslations(edition);
 
   const getClauseValueDisplay = (clauseIndex: number) => {
     const clause = mission.clauses[clauseIndex];

@@ -1,8 +1,12 @@
 import { useTranslations } from 'next-intl';
+import type { Edition } from '@lems/shared/edition';
 import { RichText } from '../rich-text';
 
-export const useScoresheetTranslations = () => {
-  const t = useTranslations('shared.scoresheet');
+const getScoresheetNamespace = (edition: Edition) =>
+  edition === 'future' ? 'shared.scoresheet-future' : 'shared.scoresheet';
+
+export const useScoresheetTranslations = (edition: Edition) => {
+  const t = useTranslations(getScoresheetNamespace(edition));
 
   return {
     getError: (errorId: string) => t(`errors.${errorId}.description`),
@@ -10,8 +14,8 @@ export const useScoresheetTranslations = () => {
   };
 };
 
-export const useScoresheetMissionTranslations = (missionId: string) => {
-  const t = useTranslations(`shared.scoresheet.missions.${missionId}`);
+export const useScoresheetMissionTranslations = (edition: Edition, missionId: string) => {
+  const t = useTranslations(`${getScoresheetNamespace(edition)}.missions.${missionId}`);
 
   const getRemarks = () => {
     const remarks: string[] = [];
@@ -39,8 +43,14 @@ export const useScoresheetMissionTranslations = (missionId: string) => {
   };
 };
 
-export const useScoresheetClauseTranslations = (missionId: string, clauseIndex: number) => {
-  const t = useTranslations(`shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}`);
+export const useScoresheetClauseTranslations = (
+  edition: Edition,
+  missionId: string,
+  clauseIndex: number
+) => {
+  const t = useTranslations(
+    `${getScoresheetNamespace(edition)}.missions.${missionId}.clauses.${clauseIndex}`
+  );
 
   return {
     description: <RichText>{tags => t.rich('description', tags)}</RichText>,
@@ -50,8 +60,8 @@ export const useScoresheetClauseTranslations = (missionId: string, clauseIndex: 
   };
 };
 
-export const useScoresheetGeneralTranslations = () => {
-  const t = useTranslations('shared.scoresheet.general');
+export const useScoresheetGeneralTranslations = (edition: Edition) => {
+  const t = useTranslations(`${getScoresheetNamespace(edition)}.general`);
 
   return {
     yes: t('yes'),

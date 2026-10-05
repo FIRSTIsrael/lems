@@ -10,6 +10,7 @@ const ALLOW_DEFAULT_VALUES = false;
 
 interface MissionContextType {
   points: number;
+  scoreOverridden: boolean;
   missions: Mission[];
   missionErrors: ErrorWithMessage[];
   validatorErrors: ErrorWithMessage[];
@@ -23,6 +24,7 @@ interface MissionContextType {
 
 export const MissionContext = createContext<MissionContextType>({
   points: 0,
+  scoreOverridden: false,
   missions: [] as Mission[],
   missionErrors: [] as ErrorWithMessage[],
   validatorErrors: [] as ErrorWithMessage[],
@@ -71,6 +73,7 @@ export function MissionProvider({ children }: { children: ReactNode }) {
     <MissionContext.Provider
       value={{
         points: score?.points || 0,
+        scoreOverridden: score?.scoreOverridden || false,
         missions: score?.missions || [],
         missionErrors: score?.missionErrors || [],
         validatorErrors: score?.validatorErrors || [],
