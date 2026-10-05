@@ -29,7 +29,7 @@ export const futureScoresheet: ScoresheetSchema = {
       id: 'm02',
       clauses: [
         { type: 'number', min: 0, max: 4, default: 0 },
-        { type: 'enum', options: ['0', '1'], default: '0' }
+        { type: 'number', min: 0, max: 15, default: 0 }
       ],
       calculation: (clause1, clause2) => {
         const grandTreeBase = Number(clause1) * 5;
