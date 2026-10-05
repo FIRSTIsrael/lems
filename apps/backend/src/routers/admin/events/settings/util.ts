@@ -8,7 +8,8 @@ export const makeAdminSettingsResponse = (settings: DbEventSettings): EventSetti
     completed: settings.completed,
     published: settings.published,
     advancementPercent: settings.advancement_percent,
-    openRubricsDuringSession: settings.open_rubrics_during_session
+    openRubricsDuringSession: settings.open_rubrics_during_session,
+    zeroGpForNoShows: settings.zero_gp_for_no_shows
   };
 };
 
@@ -33,6 +34,7 @@ export const makeUpdateableEventSettings = (
   assignIfDefined(result, 'published', settings.published);
   assignIfDefined(result, 'advancement_percent', settings.advancementPercent);
   assignIfDefined(result, 'open_rubrics_during_session', settings.openRubricsDuringSession);
+  assignIfDefined(result, 'zero_gp_for_no_shows', settings.zeroGpForNoShows);
 
   return result as UpdateableEventSettings;
 };
