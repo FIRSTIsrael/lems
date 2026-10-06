@@ -64,7 +64,212 @@
       }
     },
     "insights": {
-      "coming-soon": "Wkrótce dostępne..."
+      "title": "Statystyki",
+      "event": "Wydarzenie",
+      "division": "Dywizja",
+      "not-completed": "Niezakończone",
+      "no-completed-events": "Nie ma jeszcze zakończonych wydarzeń. Statystyki będą dostępne po oznaczeniu wydarzenia jako zakończonego.",
+      "all-stages": "Wszystkie etapy",
+      "no-data": "Brak danych",
+      "errors": {
+        "load-events": "Nie udało się wczytać wydarzeń."
+      },
+      "tabs": {
+        "overview": "Przegląd",
+        "judging": "Ocenianie",
+        "explorer": "Eksplorator"
+      },
+      "widgets": {
+        "overview-stats": {
+          "teams": "Drużyny",
+          "matches": "Zakończone mecze",
+          "sessions": "Zakończone sesje oceniania",
+          "scoresheets": "Przesłane karty punktacji",
+          "rubrics": "Ukończone arkusze ocen",
+          "robot-game-average": "Średni wynik rankingowy",
+          "judging-average": "Średnia ocena z arkuszy",
+          "median": "Mediana: {value}",
+          "match-delay": "Średnie opóźnienie meczów",
+          "session-delay": "Średnie opóźnienie sesji",
+          "delay-hint": "Rzeczywisty vs. planowany start (m:ss)"
+        },
+        "teams-table": {
+          "title": "Podsumowanie drużyn",
+          "rank": "Miejsce",
+          "number": "Drużyna",
+          "name": "Nazwa",
+          "affiliation": "Instytucja",
+          "max-score": "Najlepszy wynik",
+          "average-score": "Średni wynik",
+          "judging-average": "Średnia ocen",
+          "gp-average": "Średnia GP"
+        },
+        "robot-game-stats": {
+          "average": "Średni wynik",
+          "median": "Mediana: {value}",
+          "top-scores": "Średni najlepszy wynik",
+          "highest-score": "Najwyższy wynik",
+          "std-dev": "Odchylenie standardowe",
+          "score-count": "{count, plural, one {# karta punktacji} few {# karty punktacji} other {# kart punktacji}}"
+        },
+        "scores-by-round": {
+          "title": "Wyniki według rundy",
+          "average": "Średnia",
+          "median": "Mediana",
+          "max": "Maksimum"
+        },
+        "scores-per-table": {
+          "title": "Wyniki według stołu",
+          "description": "Średni i medianowy wynik dla każdego stołu. Duże różnice mogą wskazywać na inaczej przygotowany stół.",
+          "average": "Średnia",
+          "median": "Mediana",
+          "overall": "Średnia ogólna"
+        },
+        "mission-success": {
+          "title": "Ukończenie misji",
+          "description": "Odsetek meczów, w których dana misja przyniosła jakiekolwiek punkty.",
+          "success-rate": "Wskaźnik ukończenia"
+        },
+        "inspection": {
+          "description": "Odsetek drużyn, które przeszły inspekcję sprzętu we wszystkich swoich meczach.",
+          "success-rate": "Drużyny, które zawsze przeszły",
+          "failures": "{count, plural, =0 {Żadna drużyna nie oblała inspekcji} one {# drużyna oblała inspekcję} few {# drużyny oblały inspekcję} other {# drużyn oblało inspekcję}}",
+          "times": "{count, plural, one {# raz} other {# razy}}"
+        },
+        "precision-tokens": {
+          "description": "Ile żetonów precyzji pozostało na koniec meczów oraz średni wynik dla każdej liczby.",
+          "tokens": "Żetony: {count}",
+          "count": "Mecze",
+          "average-score": "Średni wynik"
+        },
+        "cycle-times": {
+          "title": "Czasy cyklu meczów",
+          "description": "Czas między startami kolejnych meczów w tej samej rundzie (m:ss).",
+          "average": "Średnia",
+          "median": "Mediana",
+          "min": "Najkrótszy",
+          "max": "Najdłuższy",
+          "percentile95": "95. percentyl",
+          "average-delay": "Średnie opóźnienie"
+        },
+        "match-delays": {
+          "title": "Opóźnienia meczów w ciągu dnia",
+          "description": "Różnica między planowanym a rzeczywistym czasem rozpoczęcia każdego meczu. Wartości dodatnie oznaczają opóźnienie.",
+          "minutes-unit": "min",
+          "delay": "Opóźnienie"
+        },
+        "robot-consistency": {
+          "title": "Powtarzalność robota",
+          "description": "Średni wynik każdej drużyny w zestawieniu z jej względnym odchyleniem standardowym. Niższa wartość oznacza większą powtarzalność.",
+          "average-rel-std-dev": "Średnia: {value}",
+          "average-score": "Średni wynik",
+          "rel-std-dev": "Względne odchylenie std.",
+          "scores": "Wyniki: {scores}"
+        },
+        "judging-stats": {
+          "average": "Średnia ocena z arkuszy",
+          "median": "Mediana: {value}",
+          "highest-average": "Najwyższa średnia drużyny",
+          "nominated-teams": "Drużyny nominowane do nagród dodatkowych",
+          "session-delay": "Średnie opóźnienie sesji",
+          "worst-room": "Najbardziej opóźniona sala: {room} ({delay})"
+        },
+        "category-scores": {
+          "title": "Oceny według kategorii",
+          "average": "Średnia",
+          "median": "Mediana"
+        },
+        "room-scores": {
+          "title": "Oceny według sali oceniania",
+          "description": "Średnia ocena w każdej kategorii dla każdej sali. Pomaga wykryć sale oceniające surowiej lub łagodniej niż inne."
+        },
+        "room-delays": {
+          "title": "Średnie opóźnienie według sali",
+          "description": "Średnia różnica między planowanym a rzeczywistym rozpoczęciem sesji, dla każdej sali.",
+          "minutes-unit": "min",
+          "delay": "Opóźnienie"
+        },
+        "robot-correlation": {
+          "title": "{design} a {game}",
+          "description": "Średnia ocena z arkusza {design} każdej drużyny w zestawieniu z jej najlepszym wynikiem rankingowym, wraz z linią regresji liniowej. r to współczynnik korelacji Pearsona; R² to część wariancji wyników wyjaśniona przez {design}.",
+          "robot-game": "Najlepszy wynik rankingowy",
+          "team-detail": "Projekt {design} · Wynik {score} · Reszta {residual}",
+          "strength": {
+            "weak": "słaba",
+            "moderate": "umiarkowana",
+            "strong": "silna"
+          },
+          "equation": "Wynik ≈ {slope} × projekt + {intercept}",
+          "over-performers": "Lepsze niż wskazuje projekt",
+          "under-performers": "Słabsze niż wskazuje projekt"
+        },
+        "field-distribution": {
+          "title": "Rozkład poziomów w arkuszach ocen",
+          "description": "Jak często przyznawano każdy poziom, dla każdego pola."
+        },
+        "award-nominations": {
+          "title": "Nominacje do nagród dodatkowych",
+          "description": "Liczba drużyn nominowanych do każdej nagrody dodatkowej.",
+          "count": "Nominacje"
+        }
+      },
+      "explorer": {
+        "metric": "Miara",
+        "mission": "Misja",
+        "category": "Kategoria",
+        "field": "Pole",
+        "stage": "Etap",
+        "group-by": "Grupuj według",
+        "aggregation": "Agregacja",
+        "all": "Wszystkie",
+        "all-fields": "Wszystkie pola (średnia)",
+        "results": "Wyniki",
+        "export": "Eksportuj CSV",
+        "minutes-unit": "min",
+        "views": {
+          "chart": "Wykres",
+          "table": "Tabela"
+        },
+        "columns": {
+          "group": "Grupa",
+          "value": "Wartość",
+          "count": "Próbki"
+        },
+        "metrics": {
+          "robot-game-score": "Wynik rozgrywek robotów",
+          "mission-points": "Punkty za misję",
+          "gp-score": "Ocena Gracious Professionalism",
+          "rubric-score": "Ocena z arkusza",
+          "match-delay": "Opóźnienie meczu",
+          "session-delay": "Opóźnienie sesji oceniania"
+        },
+        "dimensions": {
+          "none": "Brak (ogółem)",
+          "team": "Drużyna",
+          "table": "Stół",
+          "room": "Sala oceniania",
+          "stage": "Etap",
+          "round": "Runda",
+          "category": "Kategoria"
+        },
+        "aggregations": {
+          "average": "Średnia",
+          "median": "Mediana",
+          "min": "Minimum",
+          "max": "Maksimum",
+          "sum": "Suma",
+          "count": "Liczba",
+          "std-dev": "Odchylenie standardowe"
+        },
+        "summary": {
+          "count": "Próbki: {value}",
+          "average": "Średnia: {value}",
+          "median": "Mediana: {value}",
+          "min": "Min: {value}",
+          "max": "Maks: {value}",
+          "std-dev": "Odch. std.: {value}"
+        }
+      }
     },
     "teams": {
       "title": "Drużyny",

@@ -633,7 +633,9 @@ export class EventsRepository {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published'
+        'event_settings.published',
+        'event_settings.completed',
+        'event_settings.official'
       ])
       .select(eb => eb.fn.count('team_divisions.team_id').as('team_count'))
       .groupBy([
@@ -655,7 +657,9 @@ export class EventsRepository {
         'divisions.has_users',
         'divisions.has_schedule',
         'event_settings.visible',
-        'event_settings.published'
+        'event_settings.published',
+        'event_settings.completed',
+        'event_settings.official'
       ])
       .orderBy('events.start_date', 'asc');
 
@@ -692,6 +696,8 @@ export class EventsRepository {
           coordinates: toCoordinates(row),
           visible: row.visible,
           published: row.published,
+          completed: row.completed,
+          official: row.official,
           team_count: 0,
           divisions: [],
           assigned_admin_ids: adminsByEvent.get(eventId) || [],
