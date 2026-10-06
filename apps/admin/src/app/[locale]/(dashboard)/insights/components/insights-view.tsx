@@ -77,7 +77,7 @@ export const InsightsView: React.FC = () => {
           <Skeleton variant="rounded" height={40} />
         ) : (
           <Grid container spacing={2} sx={{ alignItems: 'center' }}>
-            <Grid size={{ xs: 12, md: 6 }}>
+            <Grid size={{ xs: 12, md: 6, lg: 3 }}>
               <Autocomplete
                 options={events ?? []}
                 value={event ?? null}
@@ -103,7 +103,7 @@ export const InsightsView: React.FC = () => {
               />
             </Grid>
             {event && event.divisions.length > 1 && (
-              <Grid size={{ xs: 12, md: 4 }}>
+              <Grid size={{ xs: 12, md: 6, lg: 2 }}>
                 <FormControl fullWidth>
                   <InputLabel>{t('division')}</InputLabel>
                   <Select
@@ -126,6 +126,54 @@ export const InsightsView: React.FC = () => {
                 </FormControl>
               </Grid>
             )}
+            {event && division && (
+              <Grid size={{ xs: 12, lg: 'grow' }}>
+                <Stack
+                  direction="row"
+                  spacing={2}
+                  useFlexGap
+                  sx={{
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    flexWrap: 'wrap'
+                  }}
+                >
+                  <Tabs
+                    value={tab}
+                    onChange={(_, value) => setParams({ tab: value })}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                  >
+                    {TABS.map(tab => (
+                      <Tab
+                        key={tab}
+                        value={tab}
+                        label={
+                          tab === 'robot-game'
+                            ? getAwardName('robot-performance')
+                            : t(`tabs.${tab}`)
+                        }
+                      />
+                    ))}
+                  </Tabs>
+                  {tab === 'robot-game' && (
+                    <ToggleButtonGroup
+                      size="small"
+                      exclusive
+                      value={stage ?? ALL_STAGES}
+                      onChange={(_, value) => value && setParams({ stage: value })}
+                    >
+                      <ToggleButton value={ALL_STAGES}>{t('all-stages')}</ToggleButton>
+                      {INSIGHTS_STAGES.map(s => (
+                        <ToggleButton key={s} value={s}>
+                          {getStage(s)}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                  )}
+                </Stack>
+              </Grid>
+            )}
           </Grid>
         )}
       </Paper>
@@ -134,39 +182,6 @@ export const InsightsView: React.FC = () => {
 
       {event && division && (
         <>
-          <Stack
-            direction={{ xs: 'column', md: 'row' }}
-            spacing={2}
-            sx={{ alignItems: { md: 'center' }, justifyContent: 'space-between' }}
-          >
-            <Tabs value={tab} onChange={(_, value) => setParams({ tab: value })}>
-              {TABS.map(tab => (
-                <Tab
-                  key={tab}
-                  value={tab}
-                  label={
-                    tab === 'robot-game' ? getAwardName('robot-performance') : t(`tabs.${tab}`)
-                  }
-                />
-              ))}
-            </Tabs>
-            {tab === 'robot-game' && (
-              <ToggleButtonGroup
-                size="small"
-                exclusive
-                value={stage ?? ALL_STAGES}
-                onChange={(_, value) => value && setParams({ stage: value })}
-              >
-                <ToggleButton value={ALL_STAGES}>{t('all-stages')}</ToggleButton>
-                {INSIGHTS_STAGES.map(s => (
-                  <ToggleButton key={s} value={s}>
-                    {getStage(s)}
-                  </ToggleButton>
-                ))}
-              </ToggleButtonGroup>
-            )}
-          </Stack>
-
           {tab === 'explorer' ? (
             <Explorer key={division.id} divisionId={division.id} edition={getEdition(division)} />
           ) : (

@@ -18,17 +18,7 @@ import {
   YAxis,
   ZAxis
 } from 'recharts';
-import {
-  Box,
-  Grid,
-  LinearProgress,
-  List,
-  ListItem,
-  ListItemText,
-  Paper,
-  Stack,
-  Typography
-} from '@mui/material';
+import { Chip, Grid, LinearProgress, Paper, Stack, Typography } from '@mui/material';
 import { green, orange, purple } from '@mui/material/colors';
 import { useRobotGameInsights } from '../../lib/hooks';
 import { formatDuration, formatNumber, formatPercent, round } from '../../lib/format';
@@ -215,41 +205,40 @@ export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage }) =
       loading={isLoading}
       empty={!inspection || inspection.teamCount === 0}
       ltr={false}
+      height="auto"
     >
       {inspection && (
-        <Stack spacing={2} sx={{ height: '100%' }}>
-          <Box>
-            <Stack direction="row" sx={{ justifyContent: 'space-between', mb: 0.5 }}>
-              <Typography variant="body2" color="text.secondary">
-                {t('success-rate')}
-              </Typography>
-              <Typography sx={{ fontWeight: 700 }}>
-                {formatPercent(inspection.successRate)}
-              </Typography>
-            </Stack>
+        <Stack spacing={1.5}>
+          <Stack direction="row" spacing={2} sx={{ alignItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary" sx={{ flexShrink: 0 }}>
+              {t('success-rate')}
+            </Typography>
             <LinearProgress
               variant="determinate"
               value={inspection.successRate ?? 0}
               color="success"
-              sx={{ height: 10, borderRadius: 5 }}
+              sx={{ height: 10, borderRadius: 5, flex: 1 }}
             />
-          </Box>
+            <Typography sx={{ fontWeight: 700, flexShrink: 0 }}>
+              {formatPercent(inspection.successRate)}
+            </Typography>
+          </Stack>
           <Typography variant="subtitle2">
             {t('failures', { count: inspection.failures.length })}
           </Typography>
-          <List dense sx={{ overflow: 'auto', flex: 1 }}>
-            {inspection.failures.map(team => (
-              <ListItem key={team.teamId} disableGutters>
-                <ListItemText
-                  primary={`#${team.number} ${team.name}`}
-                  secondary={team.affiliation}
+          {inspection.failures.length > 0 && (
+            <Stack direction="row" spacing={1} useFlexGap sx={{ flexWrap: 'wrap' }}>
+              {inspection.failures.map(team => (
+                <Chip
+                  key={team.teamId}
+                  size="small"
+                  color="error"
+                  variant="outlined"
+                  label={`#${team.number} ${team.name} · ${t('times', { count: team.count })}`}
                 />
-                <Typography variant="body2" color="error">
-                  {t('times', { count: team.count })}
-                </Typography>
-              </ListItem>
-            ))}
-          </List>
+              ))}
+            </Stack>
+          )}
         </Stack>
       )}
     </ChartCard>
@@ -311,36 +300,34 @@ export const CycleTimesWidget: React.FC<WidgetProps> = ({ divisionId, stage }) =
       loading={isLoading}
       empty={!data?.cycleTimes.some(c => c.count > 0)}
       ltr={false}
-      height={220}
+      height="auto"
     >
-      <Grid container spacing={2}>
+      <Stack spacing={1.5}>
         {data?.cycleTimes.map(cycle => (
-          <Grid key={cycle.stage} size={{ xs: 12, md: 12 / data.cycleTimes.length }}>
-            <Paper variant="outlined" sx={{ p: 2 }}>
-              <Typography sx={{ fontWeight: 600, mb: 1 }}>{getStage(cycle.stage)}</Typography>
-              <Grid container spacing={1}>
-                {(
-                  [
-                    ['average', cycle.average],
-                    ['median', cycle.median],
-                    ['min', cycle.min],
-                    ['max', cycle.max],
-                    ['percentile95', cycle.percentile95],
-                    ['average-delay', cycle.averageDelay]
-                  ] as const
-                ).map(([key, value]) => (
-                  <Grid key={key} size={4}>
-                    <Typography variant="caption" color="text.secondary">
-                      {t(key)}
-                    </Typography>
-                    <Typography sx={{ fontWeight: 700 }}>{formatDuration(value)}</Typography>
-                  </Grid>
-                ))}
+          <Grid key={cycle.stage} container spacing={1} sx={{ alignItems: 'center' }}>
+            <Grid size={12}>
+              <Typography sx={{ fontWeight: 600 }}>{getStage(cycle.stage)}</Typography>
+            </Grid>
+            {(
+              [
+                ['average', cycle.average],
+                ['median', cycle.median],
+                ['min', cycle.min],
+                ['max', cycle.max],
+                ['percentile95', cycle.percentile95],
+                ['average-delay', cycle.averageDelay]
+              ] as const
+            ).map(([key, value]) => (
+              <Grid key={key} size={4}>
+                <Typography variant="caption" color="text.secondary">
+                  {t(key)}
+                </Typography>
+                <Typography sx={{ fontWeight: 700 }}>{formatDuration(value)}</Typography>
               </Grid>
-            </Paper>
+            ))}
           </Grid>
         ))}
-      </Grid>
+      </Stack>
     </ChartCard>
   );
 };

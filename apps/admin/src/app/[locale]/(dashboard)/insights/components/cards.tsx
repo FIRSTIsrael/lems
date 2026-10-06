@@ -56,7 +56,10 @@ export const ChartCard: React.FC<ChartCardProps> = ({
           <Typography color="text.secondary">{t('no-data')}</Typography>
         </Box>
       ) : (
-        <Box sx={{ height, direction: ltr ? 'ltr' : undefined }}>{children}</Box>
+        // The `dir` attribute is used instead of CSS `direction`, since the RTL stylis plugin flips the latter
+        <Box dir={ltr ? 'ltr' : undefined} sx={{ height }}>
+          {children}
+        </Box>
       )}
     </Paper>
   );

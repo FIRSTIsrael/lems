@@ -157,7 +157,9 @@ export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition }) => {
 
   const rows = (data?.rows ?? []).map(row => ({ ...row, label: getRowLabel(row.label) }));
   const chartData = rows.map(row => ({
-    name: row.label,
+    // Team labels are "#number name" - only the number fits on the axis, the tooltip shows the full label
+    name: data?.dimension === 'team' ? row.label.split(' ')[0] : row.label,
+    fullName: row.label,
     value: isDuration && row.value !== null ? round(row.value / 60) : round(row.value)
   }));
 
@@ -302,18 +304,23 @@ export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition }) => {
       >
         {view === 'chart' ? (
           <ResponsiveContainer>
-            <BarChart data={chartData} margin={{ bottom: 60 }}>
+            <BarChart data={chartData} margin={{ top: 10, right: 10 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis
                 dataKey="name"
-                angle={-35}
+                angle={-45}
                 textAnchor="end"
                 interval={0}
+                height={90}
                 tick={{ fontSize: 11 }}
+                tickFormatter={(value: string) =>
+                  value.length > 16 ? `${value.slice(0, 15)}…` : value
+                }
               />
               <YAxis unit={isDuration ? t('minutes-unit') : undefined} />
               <Tooltip
                 {...tooltipStyle}
+                labelFormatter={(label, payload) => payload?.[0]?.payload?.fullName ?? label}
                 formatter={value =>
                   isDuration ? formatDuration((value as number) * 60) : (value as number)
                 }

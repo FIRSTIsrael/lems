@@ -47,8 +47,8 @@ export const INSIGHTS_WIDGETS = {
   'mission-success': { component: MissionSuccessWidget, size: FULL },
   inspection: { component: InspectionWidget, size: HALF },
   'precision-tokens': { component: PrecisionTokensWidget, size: HALF },
-  'cycle-times': { component: CycleTimesWidget, size: FULL },
-  'match-delays': { component: MatchDelaysWidget, size: FULL },
+  'cycle-times': { component: CycleTimesWidget, size: HALF },
+  'match-delays': { component: MatchDelaysWidget, size: HALF },
   'robot-consistency': { component: RobotConsistencyWidget, size: FULL },
   'judging-stats': { component: JudgingStatsWidget, size: FULL },
   'category-scores': { component: CategoryScoresWidget, size: HALF },
@@ -65,14 +65,14 @@ export const INSIGHTS_DASHBOARDS = {
   overview: ['overview-stats', 'teams-table'],
   'robot-game': [
     'robot-game-stats',
+    'inspection',
+    'cycle-times',
     'scores-by-round',
     'scores-per-table',
     'mission-success',
-    'inspection',
     'precision-tokens',
-    'robot-consistency',
-    'cycle-times',
-    'match-delays'
+    'match-delays',
+    'robot-consistency'
   ],
   judging: [
     'judging-stats',
