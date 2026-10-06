@@ -1,17 +1,16 @@
 'use client';
 
-import { useMemo, useState, useCallback } from 'react';
-import { mutate } from 'swr';
+import { useMemo, useState } from 'react';
 import { DataGrid, GridColDef, GridActionsCellItem } from '@mui/x-data-grid';
 import { Avatar, Box, Chip, useTheme } from '@mui/material';
 import { Edit } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { apiFetch } from '@lems/shared';
 import { TeamWithDivision, Division } from '@lems/types/api/admin';
 import { getAsset } from '../../../../../../../lib/assets';
 import { UnifiedTeamsSearch } from './unified-teams-search';
 import { RemoveTeamButton } from './remove-team-button';
 import { ChangeDivisionMenu } from './change-division-menu';
+import { useChangeTeamDivision } from './use-change-team-division';
 
 interface EventTeamsUnifiedViewProps {
   teams: TeamWithDivision[];
@@ -27,53 +26,13 @@ export const EventTeamsUnifiedView: React.FC<EventTeamsUnifiedViewProps> = ({
   const t = useTranslations('pages.events.teams.unified');
   const theme = useTheme();
   const [searchValue, setSearchValue] = useState('');
-  const [selectedTeam, setSelectedTeam] = useState<TeamWithDivision | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleChangeDivision = useCallback(
-    async (newDivisionId: string) => {
-      if (!selectedTeam || newDivisionId === selectedTeam.division.id) return;
-
-      try {
-        const response = await apiFetch(
-          `/admin/events/${eventId}/teams/${selectedTeam.id}/division`,
-          {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ divisionId: newDivisionId })
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error('Failed to change team division');
-        }
-
-        setSelectedTeam(null);
-        setAnchorEl(null);
-
-        mutate(`/admin/events/${eventId}/teams`);
-      } catch (error) {
-        console.error('Failed to change team division:', error);
-      }
-    },
-    [selectedTeam, eventId]
-  );
-
-  const handleOpenDivisionMenu = useCallback(
-    (event: React.MouseEvent<HTMLDivElement>, team: TeamWithDivision) => {
-      event.stopPropagation();
-      setSelectedTeam(team);
-      setAnchorEl(event.currentTarget);
-    },
-    []
-  );
-
-  const handleCloseDivisionMenu = useCallback(() => {
-    setSelectedTeam(null);
-    setAnchorEl(null);
-  }, []);
+  const {
+    selectedTeam,
+    anchorEl,
+    handleOpenDivisionMenu,
+    handleCloseDivisionMenu,
+    handleChangeDivision
+  } = useChangeTeamDivision(eventId);
 
   const hasMultipleDivisions = divisions.length > 1;
   const divisionsWithSchedule = new Set(
