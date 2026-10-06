@@ -58,7 +58,7 @@ export default function EventTeamsPage() {
           {isUnified ? (
             <EventTeamsUnifiedView teams={teams} divisions={divisions} eventId={event.id} />
           ) : (
-            <EventTeamsSplitView eventId={event.id} />
+            <EventTeamsSplitView teams={teams} divisions={divisions} eventId={event.id} />
           )}
         </Box>
       </Box>
