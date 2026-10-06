@@ -106,279 +106,531 @@
     "future": "Edycja przyszłości"
   },
   "scoresheet": {
-    "missions": {
-      "eib": {
-        "title": "KONTROLA SPRZĘTU",
-        "clauses": {
-          "0": {
-            "description": "(Przed meczem) Robot i cały sprzęt mieszczą się całkowicie w jednej strefie startowej i pod limitem wysokości:"
-          }
-        }
-      },
-      "m01": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
+    "seasons": {
+      "bioglow": {
+        "missions": {
+          "eib": {
+            "title": "KONTROLA SPRZĘTU",
+            "clauses": {
+              "0": {
+                "description": "(Przed meczem) Robot i cały sprzęt mieszczą się całkowicie w jednej strefie startowej i pod limitem wysokości:"
+              }
+            }
           },
-          "1": {
-            "description": ""
+          "m01": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              }
+            },
+            "errors": {
+              "m01-e1": {
+                "description": ""
+              }
+            }
+          },
+          "m02": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3"
+                }
+              }
+            }
+          },
+          "m03": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              }
+            },
+            "errors": {
+              "m03-e1": {
+                "description": ""
+              }
+            }
+          },
+          "m04": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2"
+                }
+              },
+              "1": {
+                "description": ""
+              },
+              "2": {
+                "description": ""
+              }
+            },
+            "errors": {
+              "m04-e1": {
+                "description": ""
+              }
+            },
+            "remarks": {
+              "0": "",
+              "1": "",
+              "2": ""
+            }
+          },
+          "m05": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": "",
+                "labels": {
+                  "none": "",
+                  "partially-extended": "",
+                  "fully-extended": ""
+                }
+              }
+            }
+          },
+          "m06": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4"
+                }
+              }
+            }
+          },
+          "m07": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2"
+                }
+              }
+            },
+            "errors": {
+              "m07-e1": {
+                "description": ""
+              }
+            },
+            "remarks": {
+              "0": "",
+              "1": ""
+            }
+          },
+          "m08": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              }
+            }
+          },
+          "m09": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              },
+              "2": {
+                "description": ""
+              }
+            }
+          },
+          "m10": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              }
+            }
+          },
+          "m11": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              }
+            }
+          },
+          "m12": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              }
+            }
+          },
+          "m13": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              }
+            }
+          },
+          "m14": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4"
+                }
+              },
+              "1": {
+                "description": "",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4"
+                }
+              }
+            },
+            "errors": {
+              "m14-e1": {
+                "description": ""
+              }
+            }
+          },
+          "m15": {
+            "title": "",
+            "clauses": {
+              "0": {
+                "description": ""
+              },
+              "1": {
+                "description": ""
+              },
+              "2": {
+                "description": ""
+              },
+              "3": {
+                "description": "",
+                "labels": {
+                  "mine": "",
+                  "city": "",
+                  "farm": ""
+                }
+              }
+            }
+          },
+          "pt": {
+            "title": "ŻETONY PRECYZJI",
+            "clauses": {
+              "0": {
+                "description": "Liczba pozostałych żetonów precyzji:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4",
+                  "5": "5",
+                  "6": "6"
+                }
+              }
+            }
           }
         },
         "errors": {
-          "m01-e1": {
+          "e1": {
             "description": ""
           }
         }
       },
-      "m02": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3"
+      "unearthed": {
+        "missions": {
+          "eib": {
+            "title": "KONTROLA SPRZĘTU",
+            "clauses": {
+              "0": {
+                "description": "(Przed meczem) Robot i cały sprzęt mieszczą się całkowicie w jednej strefie startowej i pod limitem wysokości:"
+              }
             }
-          }
-        }
-      },
-      "m03": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
           },
-          "1": {
-            "description": ""
+          "m01": {
+            "title": "SZCZOTKOWANIE POWIERZCHNI",
+            "clauses": {
+              "0": {
+                "description": "Osady ziemi całkowicie usunięte, dotykające maty:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2"
+                }
+              },
+              "1": {
+                "description": "Pędzel archeologa nie dotyka stanowiska pracy:"
+              }
+            }
+          },
+          "m02": {
+            "title": "ODSŁONIĘCIE MAPY",
+            "clauses": {
+              "0": {
+                "description": "Warstwy gleby całkowicie usunięte:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3"
+                }
+              }
+            }
+          },
+          "m03": {
+            "title": "EKSPEDYCJA DO SZYBU",
+            "clauses": {
+              "0": {
+                "description": "Wózek wydobywczy Waszej drużyny znajduje się na polu drużyny przeciwnej:"
+              },
+              "1": {
+                "description": "<b>Premia</b>: I wózek drużyny przeciwnej znajduje się na polu Waszej drużyny:"
+              }
+            },
+            "errors": {
+              "m03-e1": {
+                "description": "Premia jest możliwa tylko wtedy, gdy wózek Waszej drużyny znajduje się na polu drużyny przeciwnej."
+              }
+            },
+            "remarks": {
+              "0": "Wózek Waszej drużyny musi całkowicie przejechać przez wejście do szybu, aby zdobyć punkty za tę misję.",
+              "1": "Nie można zdobyć premii, jeśli nie ma drużyny przeciwnej lub w zawodach zdalnych."
+            }
+          },
+          "m04": {
+            "title": "OSTROŻNE WYDOBYCIE",
+            "clauses": {
+              "0": {
+                "description": "Cenny artefakt nie dotyka ścian szybu:"
+              },
+              "1": {
+                "description": "Obie konstrukcje wspierające stoją:"
+              }
+            }
+          },
+          "m05": {
+            "title": "KTO TU MIESZKAŁ?",
+            "clauses": {
+              "0": {
+                "description": "Podłoga konstrukcji jest całkowicie ustawiona pionowo:"
+              }
+            }
+          },
+          "m06": {
+            "title": "KUŹNIA",
+            "clauses": {
+              "0": {
+                "description": "Bloki rudy nie dotykają kuźni:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3"
+                }
+              }
+            }
+          },
+          "m07": {
+            "title": "CIĘŻKIE PODNOSZENIE",
+            "clauses": {
+              "0": {
+                "description": "Kamień młyński nie dotyka już swojej podstawy:"
+              }
+            }
+          },
+          "m08": {
+            "title": "SILOS",
+            "clauses": {
+              "0": {
+                "description": "Zachowane elementy znajdują się poza silosem:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3"
+                }
+              }
+            }
+          },
+          "m09": {
+            "title": "CO JEST NA SPRZEDAŻ?",
+            "clauses": {
+              "0": {
+                "description": "Dach jest całkowicie podniesiony:"
+              },
+              "1": {
+                "description": "Towary na rynku są podniesione:"
+              }
+            }
+          },
+          "m10": {
+            "title": "PRZECHYŁ WAGI",
+            "clauses": {
+              "0": {
+                "description": "Waga jest przechylona i dotyka maty:"
+              },
+              "1": {
+                "description": "Talerz wagi został całkowicie usunięty:"
+              }
+            }
+          },
+          "m11": {
+            "title": "ARTEFAKTY Z WĘDKI",
+            "clauses": {
+              "0": {
+                "description": "Artefakty są uniesione ponad warstwę gruntu:"
+              },
+              "1": {
+                "description": "<b>Premia</b>: I flaga żurawia jest co najmniej częściowo opuszczona:"
+              }
+            },
+            "errors": {
+              "m11-e1": {
+                "description": "Premia jest możliwa tylko wtedy, gdy artefakty są uniesione ponad warstwę gruntu."
+              }
+            }
+          },
+          "m12": {
+            "title": "OPERACJA RATUNKOWA",
+            "clauses": {
+              "0": {
+                "description": "Piasek całkowicie usunięty:"
+              },
+              "1": {
+                "description": "Statek całkowicie podniesiony:"
+              }
+            },
+            "remarks": {
+              "0": "Piasek uznaje się za całkowicie usunięty, gdy aktywator pociągowy znajduje się za linią na macie."
+            }
+          },
+          "m13": {
+            "title": "ODTWORZENIE POSĄGU",
+            "clauses": {
+              "0": {
+                "description": "Posąg jest całkowicie podniesiony:"
+              }
+            }
+          },
+          "m14": {
+            "title": "FORUM",
+            "clauses": {
+              "0": {
+                "description": "Zaznacz wszystkie artefakty dotykające maty i przynajmniej częściowo znajdujące się w forum:",
+                "labels": {
+                  "none": "Brak",
+                  "brush": "Pędzel",
+                  "minecart": "Wózek drużyny przeciwnej",
+                  "scale-pan": "Talerz wagi",
+                  "topsoil": "Warstwa gleby",
+                  "ore-with-fossilized-artifact": "Ruda z utrwalonym artefaktem",
+                  "precious-artifact": "Cenny artefakt",
+                  "millstone": "Kamień młyński"
+                }
+              }
+            },
+            "errors": {
+              "m14-e1": {
+                "description": "Nie można wybrać „Brak”, jeśli zaznaczono więcej niż jedną opcję."
+              }
+            }
+          },
+          "m15": {
+            "title": "OZNACZENIE STANOWISKA",
+            "clauses": {
+              "0": {
+                "description": "Stanowiska z flagą co najmniej częściowo wewnątrz i dotykającą maty:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3"
+                }
+              }
+            }
+          },
+          "pt": {
+            "title": "ŻETONY PRECYZJI",
+            "clauses": {
+              "0": {
+                "description": "Liczba pozostałych żetonów precyzji:",
+                "labels": {
+                  "0": "0",
+                  "1": "1",
+                  "2": "2",
+                  "3": "3",
+                  "4": "4",
+                  "5": "5",
+                  "6": "6"
+                }
+              }
+            }
           }
         },
         "errors": {
-          "m03-e1": {
-            "description": ""
-          }
-        }
-      },
-      "m04": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2"
-            }
+          "e1": {
+            "description": "Pędzel nie może znajdować się jednocześnie w forum (M14) i dotykać stanowiska wykopalisk (M01)."
           },
-          "1": {
-            "description": ""
+          "e3": {
+            "description": "Talerz wagi nie może znaleźć się w forum (M14), jeśli nie został całkowicie usunięty (M10)."
           },
-          "2": {
-            "description": ""
-          }
-        },
-        "errors": {
-          "m04-e1": {
-            "description": ""
-          }
-        },
-        "remarks": {
-          "0": "",
-          "1": "",
-          "2": ""
-        }
-      },
-      "m05": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": "",
-            "labels": {
-              "none": "",
-              "partially-extended": "",
-              "fully-extended": ""
-            }
-          }
-        }
-      },
-      "m06": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
+          "e4": {
+            "description": "Ruda z utrwalonym artefaktem nie może znaleźć się w forum (M14), jeśli żadna ruda nie została usunięta ze stanowiska wykopalisk (M06)."
           },
-          "1": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4"
-            }
-          }
-        }
-      },
-      "m07": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
+          "e5": {
+            "description": "Kamień młyński nie może znajdować się w forum (M14), jeśli nadal dotyka swojej podstawy (M07)."
           },
-          "1": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2"
-            }
-          }
-        },
-        "errors": {
-          "m07-e1": {
-            "description": ""
-          }
-        },
-        "remarks": {
-          "0": "",
-          "1": ""
-        }
-      },
-      "m08": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
+          "e6": {
+            "description": "Cenny artefakt nie może znajdować się w forum (M14), jeśli dotyka szybu (M04)."
           }
         }
-      },
-      "m09": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          },
-          "1": {
-            "description": ""
-          },
-          "2": {
-            "description": ""
-          }
-        }
-      },
-      "m10": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          },
-          "1": {
-            "description": ""
-          }
-        }
-      },
-      "m11": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          }
-        }
-      },
-      "m12": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          },
-          "1": {
-            "description": ""
-          }
-        }
-      },
-      "m13": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          }
-        }
-      },
-      "m14": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4"
-            }
-          },
-          "1": {
-            "description": "",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4"
-            }
-          }
-        },
-        "errors": {
-          "m14-e1": {
-            "description": ""
-          }
-        }
-      },
-      "m15": {
-        "title": "",
-        "clauses": {
-          "0": {
-            "description": ""
-          },
-          "1": {
-            "description": ""
-          },
-          "2": {
-            "description": ""
-          },
-          "3": {
-            "description": "",
-            "labels": {
-              "mine": "",
-              "city": "",
-              "farm": ""
-            }
-          }
-        }
-      },
-      "pt": {
-        "title": "ŻETONY PRECYZJI",
-        "clauses": {
-          "0": {
-            "description": "Liczba pozostałych żetonów precyzji:",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4",
-              "5": "5",
-              "6": "6"
-            }
-          }
-        }
-      }
-    },
-    "errors": {
-      "e1": {
-        "description": ""
       }
     },
     "general": {

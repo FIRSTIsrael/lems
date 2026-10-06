@@ -1,17 +1,17 @@
 import { useTranslations } from 'next-intl';
 import { RichText } from '../rich-text';
 
-export const useScoresheetTranslations = () => {
+export const useScoresheetTranslations = (season: string) => {
   const t = useTranslations('shared.scoresheet');
 
   return {
-    getError: (errorId: string) => t(`errors.${errorId}.description`),
+    getError: (errorId: string) => t(`seasons.${season}.errors.${errorId}.description`),
     getGeneralTerm: (term: string) => t(`general.${term}`)
   };
 };
 
-export const useScoresheetMissionTranslations = (missionId: string) => {
-  const t = useTranslations(`shared.scoresheet.missions.${missionId}`);
+export const useScoresheetMissionTranslations = (season: string, missionId: string) => {
+  const t = useTranslations(`shared.scoresheet.seasons.${season}.missions.${missionId}`);
 
   const getRemarks = () => {
     const remarks: string[] = [];
@@ -39,8 +39,14 @@ export const useScoresheetMissionTranslations = (missionId: string) => {
   };
 };
 
-export const useScoresheetClauseTranslations = (missionId: string, clauseIndex: number) => {
-  const t = useTranslations(`shared.scoresheet.missions.${missionId}.clauses.${clauseIndex}`);
+export const useScoresheetClauseTranslations = (
+  season: string,
+  missionId: string,
+  clauseIndex: number
+) => {
+  const t = useTranslations(
+    `shared.scoresheet.seasons.${season}.missions.${missionId}.clauses.${clauseIndex}`
+  );
 
   return {
     description: <RichText>{tags => t.rich('description', tags)}</RichText>,

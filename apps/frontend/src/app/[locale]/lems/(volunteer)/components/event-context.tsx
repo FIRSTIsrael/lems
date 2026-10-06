@@ -8,6 +8,7 @@ type VolunteerDivision = { id: string; name: string; color: string; futureEditio
 interface EventContextType {
   eventId: string;
   eventName: string;
+  seasonSlug: string | null;
   currentDivision: VolunteerDivision;
   availableDivisions: VolunteerDivision[];
   canSwitchDivisions: boolean;
@@ -19,11 +20,13 @@ export function EventProvider({
   children,
   eventId,
   eventName,
+  seasonSlug,
   divisions
 }: {
   children: React.ReactNode;
   eventId: string;
   eventName: string;
+  seasonSlug: string | null;
   divisions: VolunteerDivision[];
 }) {
   const searchParams = useSearchParams();
@@ -46,6 +49,7 @@ export function EventProvider({
   const eventContext = {
     eventId,
     eventName,
+    seasonSlug,
     currentDivision,
     availableDivisions: divisions,
     canSwitchDivisions: divisions.length > 1

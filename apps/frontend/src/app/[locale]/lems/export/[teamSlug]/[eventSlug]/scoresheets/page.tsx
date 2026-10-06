@@ -21,6 +21,7 @@ interface ScoresData {
   eventName: string;
   divisionName: string;
   seasonName: string;
+  seasonSlug: string;
   futureEdition: boolean;
   scoresheets: ScoresheetData[];
 }
@@ -48,7 +49,7 @@ export default function ScoresExportPage() {
     );
   }
 
-  const scoresheet = getScoresheet(getEdition(scoresheetsData));
+  const scoresheet = getScoresheet(getEdition(scoresheetsData), scoresheetsData.seasonSlug);
 
   return (
     <Box
@@ -100,6 +101,7 @@ export default function ScoresExportPage() {
                   return (
                     <ExportScoresheetMission
                       key={mission.id}
+                      season={scoresheet.season}
                       mission={mission}
                       clauses={missionData.clauses}
                       score={score}

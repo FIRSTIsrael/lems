@@ -2,6 +2,7 @@ export type GetVolunteerEventDataQuery = {
   event: {
     id: string;
     name: string;
+    seasonSlug: string | null;
     volunteers: Array<{
       divisions: Array<{
         id: string;

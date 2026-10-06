@@ -14,6 +14,9 @@ type Event {
   "Display name of the season"
   seasonName: String
 
+  "URL-friendly slug of the season (e.g., 'bioglow'), used to pick the scoresheet"
+  seasonSlug: String
+
   "ISO 8601 datetime when the event starts"
   startDate: String!
 
