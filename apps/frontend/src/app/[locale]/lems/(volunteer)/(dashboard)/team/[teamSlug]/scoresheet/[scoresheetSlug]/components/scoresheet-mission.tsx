@@ -15,6 +15,7 @@ import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../graphql';
 import { MissionClause } from './mission-clause';
 
 interface ScoresheetMissionProps {
+  season: string;
   missionIndex: number;
   mission: MissionSchema;
   src: string;
@@ -23,6 +24,7 @@ interface ScoresheetMissionProps {
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  season,
   missionIndex,
   mission,
   src,
@@ -34,7 +36,10 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const ref = useRef<HTMLDivElement | null>(null);
   const { scoresheet } = useScoresheet();
   const { currentDivision } = useEvent();
-  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(
+    season,
+    mission.id
+  );
   const [missionWidth, setMissionWidth] = useState(0);
 
   const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION, {
@@ -154,6 +159,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           return (
             <MissionClause
               key={index}
+              season={season}
               missionId={mission.id}
               missionIndex={missionIndex}
               clauseIndex={index}

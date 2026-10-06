@@ -46,6 +46,7 @@ export default async function VolunteerLayout({ children }: VolunteerLayoutProps
       <EventProvider
         eventId={eventData.event.id}
         eventName={eventData.event.name}
+        seasonSlug={eventData.event.seasonSlug}
         divisions={volunteerData.divisions}
       >
         {children}

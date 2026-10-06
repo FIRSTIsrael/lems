@@ -1,12 +1,10 @@
-import { getScoresheet } from '@lems/shared/scoresheet';
-import type { Edition } from '@lems/shared/edition';
+import type { ScoresheetSchema } from '@lems/shared/scoresheet';
 import type { ScoresheetData } from './graphql';
 
 /**
  * Creates an empty scoresheet data object with all missions initialized.
  */
-export const getEmptyScoresheet = (edition: Edition): ScoresheetData => {
-  const scoresheet = getScoresheet(edition);
+export const getEmptyScoresheet = (scoresheet: ScoresheetSchema): ScoresheetData => {
   const missions: Record<string, Record<number, null>> = {};
 
   scoresheet.missions.forEach(mission => {
