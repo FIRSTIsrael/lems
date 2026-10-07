@@ -7,7 +7,7 @@ import { TableCell, TableRow, Typography, Tooltip, Stack } from '@mui/material';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { ScoresheetStatusButton } from '../scoresheet-status-button';
@@ -214,9 +214,9 @@ export function MatchRow({
                 )}
                 <Stack
                   direction="column"
-                  alignItems="center"
                   spacing={0.25}
                   sx={{
+                    alignItems: 'center',
                     minWidth: 0,
                     flex: 1,
                     opacity: isTeamFiltered ? 1 : 0.35,

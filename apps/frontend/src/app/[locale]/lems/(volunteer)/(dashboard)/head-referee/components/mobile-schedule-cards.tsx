@@ -8,7 +8,7 @@ import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } fro
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import PersonPinIcon from '@mui/icons-material/PersonPin';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
-import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 import { Flag } from '@lems/shared';
 import type { Match, Scoresheet } from '../graphql/types';

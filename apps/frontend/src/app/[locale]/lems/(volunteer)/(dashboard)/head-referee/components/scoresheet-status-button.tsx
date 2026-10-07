@@ -100,7 +100,7 @@ export function ScoresheetStatusButton({
 
   const textColor = isSubmitted ? 'common.white' : statusColor;
 
-  const tooltipTitle = teamAffiliation && teamCity ? `${teamAffiliation} • ${teamCity}` : teamName;
+  const tooltipTitle = [teamName, teamAffiliation, teamCity].filter(Boolean).join(' • ');
 
   const button = (
     <Box
@@ -125,7 +125,8 @@ export function ScoresheetStatusButton({
         cursor: disabled ? 'default' : 'pointer',
         transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
         width: 'auto',
-        minWidth: 'max-content',
+        minWidth: 0,
+        maxWidth: 160,
         minHeight: '45px',
         opacity: disabled ? 0.5 : dimmed ? 0.35 : 1,
         filter: dimmed ? 'grayscale(0.7)' : 'none',
@@ -152,10 +153,11 @@ export function ScoresheetStatusButton({
           display: 'flex',
           flexDirection: 'column',
           gap: 0.25,
-          textAlign: 'left'
+          textAlign: 'left',
+          minWidth: 0
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0 }}>
           <Typography
             variant="caption"
             sx={{
@@ -163,20 +165,23 @@ export function ScoresheetStatusButton({
               fontSize: '0.8rem',
               lineHeight: 1,
               color: textColor,
-              textDecoration: 'none'
+              textDecoration: 'none',
+              flexShrink: 0
             }}
           >
             #{teamNumber}
           </Typography>
           <Typography
             variant="caption"
+            noWrap
             sx={{
               fontWeight: 500,
               fontSize: '0.7rem',
-              lineHeight: 1,
+              lineHeight: 1.2,
               color: textColor,
               textDecoration: 'none',
-              opacity: 0.85
+              opacity: 0.85,
+              minWidth: 0
             }}
           >
             {teamName}
