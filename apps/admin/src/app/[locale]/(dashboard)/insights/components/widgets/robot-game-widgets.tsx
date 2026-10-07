@@ -19,7 +19,6 @@ import {
   ZAxis
 } from 'recharts';
 import { Chip, Grid, LinearProgress, Paper, Stack, Typography } from '@mui/material';
-import { green, orange, purple } from '@mui/material/colors';
 import { useRobotGameInsights } from '../../lib/hooks';
 import { formatDuration, formatNumber, formatPercent, round } from '../../lib/format';
 import { ChartCard, StatCard } from '../cards';
@@ -68,7 +67,7 @@ export const RobotGameStatsWidget: React.FC<WidgetProps> = ({ divisionId, stage 
     <Grid container spacing={2}>
       {cards.map(card => (
         <Grid key={card.title} size={{ xs: 12, sm: 6, lg: 3 }}>
-          <StatCard {...card} color={green[600]} loading={isLoading} />
+          <StatCard {...card} loading={isLoading} />
         </Grid>
       ))}
     </Grid>
@@ -138,7 +137,7 @@ export const ScoresPerTableWidget: React.FC<WidgetProps> = ({ divisionId, stage 
           {overall !== null && (
             <ReferenceLine
               y={overall}
-              stroke={CHART_COLORS.secondary}
+              stroke={CHART_COLORS.reference}
               strokeDasharray="4 4"
               label={{ value: t('overall'), position: 'insideTopRight' }}
             />
@@ -183,7 +182,7 @@ export const MissionSuccessWidget: React.FC<WidgetProps> = ({ divisionId, stage 
           <Bar
             dataKey="successRate"
             name={t('success-rate')}
-            fill={CHART_COLORS.positive}
+            fill={CHART_COLORS.primary}
             radius={[4, 4, 0, 0]}
           />
         </BarChart>
@@ -216,7 +215,6 @@ export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage }) =
             <LinearProgress
               variant="determinate"
               value={inspection.successRate ?? 0}
-              color="success"
               sx={{ height: 10, borderRadius: 5, flex: 1 }}
             />
             <Typography sx={{ fontWeight: 700, flexShrink: 0 }}>
@@ -232,7 +230,6 @@ export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage }) =
                 <Chip
                   key={team.teamId}
                   size="small"
-                  color="error"
                   variant="outlined"
                   label={`#${team.number} ${team.name} · ${t('times', { count: team.count })}`}
                 />
@@ -355,11 +352,11 @@ export const MatchDelaysWidget: React.FC<WidgetProps> = ({ divisionId, stage }) 
           <XAxis dataKey="name" tick={false} />
           <YAxis unit={t('minutes-unit')} />
           <Tooltip {...tooltipStyle} formatter={value => formatDuration((value as number) * 60)} />
-          <ReferenceLine y={0} stroke={CHART_COLORS.neutral} />
+          <ReferenceLine y={0} stroke={CHART_COLORS.reference} />
           <Line
             dataKey="delay"
             name={t('delay')}
-            stroke={purple[400]}
+            stroke={CHART_COLORS.primary}
             strokeWidth={2}
             dot={false}
           />
@@ -401,7 +398,7 @@ export const RobotConsistencyWidget: React.FC<WidgetProps> = ({ divisionId, stag
           <YAxis type="number" dataKey="relStdDev" name={t('rel-std-dev')} unit="%" />
           <ZAxis range={[60, 60]} />
           {average !== null && (
-            <ReferenceLine y={average} stroke={orange[600]} strokeDasharray="4 4" />
+            <ReferenceLine y={average} stroke={CHART_COLORS.reference} strokeDasharray="4 4" />
           )}
           <Tooltip
             {...tooltipStyle}

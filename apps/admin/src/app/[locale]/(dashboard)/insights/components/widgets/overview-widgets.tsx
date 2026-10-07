@@ -3,7 +3,6 @@
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef, GridComparatorFn, GridSortDirection } from '@mui/x-data-grid';
 import { Grid, Paper, Typography, useTheme } from '@mui/material';
-import { blue, green, orange, purple } from '@mui/material/colors';
 import { InsightsOverviewTeam } from '@lems/types/api/admin';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { useOverviewInsights } from '../../lib/hooks';
@@ -16,50 +15,42 @@ export const OverviewStatsWidget: React.FC<WidgetProps> = ({ divisionId }) => {
   const { data, isLoading } = useOverviewInsights(divisionId);
 
   const cards = [
-    { title: t('teams'), value: formatNumber(data?.teamCount, 0), color: blue[500] },
+    { title: t('teams'), value: formatNumber(data?.teamCount, 0) },
     {
       title: t('matches'),
-      value: `${data?.matches.completed ?? 0} / ${data?.matches.total ?? 0}`,
-      color: green[600]
+      value: `${data?.matches.completed ?? 0} / ${data?.matches.total ?? 0}`
     },
     {
       title: t('sessions'),
-      value: `${data?.sessions.completed ?? 0} / ${data?.sessions.total ?? 0}`,
-      color: orange[600]
+      value: `${data?.sessions.completed ?? 0} / ${data?.sessions.total ?? 0}`
     },
     {
       title: t('scoresheets'),
-      value: `${data?.scoresheets.completed ?? 0} / ${data?.scoresheets.total ?? 0}`,
-      color: green[600]
+      value: `${data?.scoresheets.completed ?? 0} / ${data?.scoresheets.total ?? 0}`
     },
     {
       title: t('rubrics'),
-      value: `${data?.rubrics.completed ?? 0} / ${data?.rubrics.total ?? 0}`,
-      color: orange[600]
+      value: `${data?.rubrics.completed ?? 0} / ${data?.rubrics.total ?? 0}`
     },
     {
       title: t('robot-game-average'),
       value: formatNumber(data?.robotGame.average),
-      subtitle: t('median', { value: formatNumber(data?.robotGame.median) }),
-      color: green[600]
+      subtitle: t('median', { value: formatNumber(data?.robotGame.median) })
     },
     {
       title: t('judging-average'),
       value: formatNumber(data?.judging.average, 2),
-      subtitle: t('median', { value: formatNumber(data?.judging.median, 2) }),
-      color: orange[600]
+      subtitle: t('median', { value: formatNumber(data?.judging.median, 2) })
     },
     {
       title: t('match-delay'),
       value: formatDuration(data?.averageMatchDelay),
-      subtitle: t('delay-hint'),
-      color: purple[400]
+      subtitle: t('delay-hint')
     },
     {
       title: t('session-delay'),
       value: formatDuration(data?.averageSessionDelay),
-      subtitle: t('delay-hint'),
-      color: purple[400]
+      subtitle: t('delay-hint')
     }
   ];
 

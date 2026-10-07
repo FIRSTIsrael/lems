@@ -1,10 +1,12 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { blue, green, red, amber, purple, grey } from '@mui/material/colors';
+import { Color } from '@mui/material';
+import { blue, green, grey, red } from '@mui/material/colors';
 import { Edition } from '@lems/shared/edition';
 import { getRubrics } from '@lems/shared/rubrics';
 import { InsightsJudgingCategory, InsightsStage } from '@lems/types/api/admin';
+import { defaultColor } from '../../../../../../theme';
 
 export interface WidgetProps {
   divisionId: string;
@@ -13,23 +15,44 @@ export interface WidgetProps {
   stage?: InsightsStage;
 }
 
-export const CATEGORY_COLORS: Record<InsightsJudgingCategory, string> = {
-  'innovation-project': blue[500],
-  'robot-design': green[500],
-  'core-values': red[400]
+/**
+ * Judging categories keep their established colors across LEMS (Innovation Project - blue,
+ * Robot Design - green, Core Values - red), so category charts can be read without a legend.
+ */
+const CATEGORY_HUES: Record<InsightsJudgingCategory, Color> = {
+  'innovation-project': blue,
+  'robot-design': green,
+  'core-values': red
 };
 
+const mapCategories = (getColor: (hue: Color) => string) =>
+  Object.fromEntries(
+    Object.entries(CATEGORY_HUES).map(([category, hue]) => [category, getColor(hue)])
+  ) as Record<InsightsJudgingCategory, string>;
+
+export const CATEGORY_COLORS = mapCategories(hue => hue[400]);
+
+export const CATEGORY_LIGHT_COLORS = mapCategories(hue => hue[200]);
+
+/** Sequential scale per category, from Beginning (lightest) to Exceeds (darkest). */
+export const CATEGORY_LEVEL_COLORS = Object.fromEntries(
+  Object.entries(CATEGORY_HUES).map(([category, hue]) => [
+    category,
+    [hue[100], hue[300], hue[500], hue[800]]
+  ])
+) as Record<InsightsJudgingCategory, string[]>;
+
+/**
+ * Generic data colors, built from the admin theme's primary color so charts match the rest of the app.
+ * Used wherever color carries no meaning of its own.
+ */
 export const CHART_COLORS = {
-  primary: blue[600],
-  primaryLight: blue[200],
-  secondary: amber[700],
-  positive: green[500],
-  negative: red[500],
-  neutral: grey[500],
-  accent: purple[400]
+  primary: defaultColor,
+  primaryLight: '#8fb3d6',
+  secondary: '#3d7cb8',
+  /** Reference lines such as averages and zero lines. */
+  reference: grey[500]
 };
-
-export const RUBRIC_LEVEL_COLORS = [red[300], amber[400], green[300], green[700]];
 
 export const tooltipStyle = {
   contentStyle: { borderRadius: 8, fontSize: 13 },

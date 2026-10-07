@@ -2,7 +2,16 @@
 
 import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis
+} from 'recharts';
 import {
   Button,
   Chip,
@@ -43,6 +52,7 @@ import { useExplorerInsights } from '../lib/hooks';
 import { formatDuration, formatNumber, round } from '../lib/format';
 import { ChartCard } from './cards';
 import {
+  CATEGORY_COLORS,
   CHART_COLORS,
   WidgetProps,
   tooltipStyle,
@@ -330,7 +340,17 @@ export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition }) => {
                 name={t(`aggregations.${aggregation}`)}
                 fill={CHART_COLORS.primary}
                 radius={[4, 4, 0, 0]}
-              />
+              >
+                {data?.dimension === 'category' &&
+                  rows.map(row => (
+                    <Cell
+                      key={row.key}
+                      fill={
+                        CATEGORY_COLORS[row.key as InsightsJudgingCategory] ?? CHART_COLORS.primary
+                      }
+                    />
+                  ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         ) : (

@@ -6,6 +6,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   ReferenceLine,
   ResponsiveContainer,
@@ -29,7 +30,7 @@ import {
   Stack,
   Typography
 } from '@mui/material';
-import { orange, purple } from '@mui/material/colors';
+import { grey } from '@mui/material/colors';
 import {
   INSIGHTS_JUDGING_CATEGORIES,
   InsightsJudgingCategory,
@@ -46,8 +47,9 @@ import { formatDuration, formatNumber, round } from '../../lib/format';
 import { ChartCard, StatCard } from '../cards';
 import {
   CATEGORY_COLORS,
+  CATEGORY_LEVEL_COLORS,
+  CATEGORY_LIGHT_COLORS,
   CHART_COLORS,
-  RUBRIC_LEVEL_COLORS,
   WidgetProps,
   tooltipStyle,
   useRubricFieldLabel
@@ -90,7 +92,7 @@ export const JudgingStatsWidget: React.FC<WidgetProps> = ({ divisionId }) => {
     <Grid container spacing={2}>
       {cards.map(card => (
         <Grid key={card.title} size={{ xs: 12, sm: 6, lg: 3 }}>
-          <StatCard {...card} color={orange[600]} loading={isLoading} />
+          <StatCard {...card} loading={isLoading} />
         </Grid>
       ))}
     </Grid>
@@ -103,6 +105,7 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
   const { data, isLoading } = useJudgingInsights(divisionId);
 
   const chartData = (data?.categories ?? []).map(category => ({
+    category: category.category,
     name: getCategory(category.category),
     average: round(category.average),
     median: round(category.median)
@@ -121,8 +124,17 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
           <YAxis domain={[0, 4]} />
           <Tooltip {...tooltipStyle} />
           <Legend />
-          <Bar dataKey="average" name={t('average')} fill={CHART_COLORS.primary} />
-          <Bar dataKey="median" name={t('median')} fill={CHART_COLORS.primaryLight} />
+          {/* Bars are colored per category; the neutral fills only key the legend (dark = average, light = median) */}
+          <Bar dataKey="average" name={t('average')} fill={grey[600]} radius={[4, 4, 0, 0]}>
+            {chartData.map(entry => (
+              <Cell key={entry.category} fill={CATEGORY_COLORS[entry.category]} />
+            ))}
+          </Bar>
+          <Bar dataKey="median" name={t('median')} fill={grey[300]} radius={[4, 4, 0, 0]}>
+            {chartData.map(entry => (
+              <Cell key={entry.category} fill={CATEGORY_LIGHT_COLORS[entry.category]} />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>
@@ -165,7 +177,11 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
             />
           ))}
           {data?.scores.average != null && (
-            <ReferenceLine y={data.scores.average} stroke={orange[600]} strokeDasharray="4 4" />
+            <ReferenceLine
+              y={data.scores.average}
+              stroke={CHART_COLORS.reference}
+              strokeDasharray="4 4"
+            />
           )}
         </BarChart>
       </ResponsiveContainer>
@@ -194,8 +210,13 @@ export const RoomDelaysWidget: React.FC<WidgetProps> = ({ divisionId }) => {
           <XAxis dataKey="name" />
           <YAxis unit={t('minutes-unit')} />
           <Tooltip {...tooltipStyle} formatter={value => formatDuration((value as number) * 60)} />
-          <ReferenceLine y={0} stroke={CHART_COLORS.neutral} />
-          <Bar dataKey="delay" name={t('delay')} fill={purple[300]} radius={[4, 4, 0, 0]} />
+          <ReferenceLine y={0} stroke={CHART_COLORS.reference} />
+          <Bar
+            dataKey="delay"
+            name={t('delay')}
+            fill={CHART_COLORS.primary}
+            radius={[4, 4, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>
@@ -229,9 +250,9 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
   const overPerformers = byResidual.slice(0, 3);
   const underPerformers = byResidual.slice(-3).reverse();
 
-  const renderTeams = (title: string, teams: InsightsRobotCorrelationPoint[], color: string) => (
+  const renderTeams = (title: string, teams: InsightsRobotCorrelationPoint[]) => (
     <Box>
-      <Typography variant="subtitle2" sx={{ color }}>
+      <Typography variant="subtitle2" color="text.secondary">
         {title}
       </Typography>
       <List dense disablePadding>
@@ -310,11 +331,11 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
                   );
                 }}
               />
-              <Scatter data={points} fill={CHART_COLORS.negative} />
+              <Scatter data={points} fill={CHART_COLORS.primary} />
               {regression && (
                 <Scatter
                   data={lineData}
-                  line={{ stroke: CHART_COLORS.primary, strokeWidth: 2 }}
+                  line={{ stroke: CHART_COLORS.secondary, strokeWidth: 2 }}
                   shape={() => <g />}
                   legendType="none"
                   isAnimationActive={false}
@@ -332,8 +353,8 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
               })}
             </Typography>
           )}
-          {renderTeams(t('over-performers'), overPerformers, CHART_COLORS.positive)}
-          {renderTeams(t('under-performers'), underPerformers, CHART_COLORS.negative)}
+          {renderTeams(t('over-performers'), overPerformers)}
+          {renderTeams(t('under-performers'), underPerformers)}
         </Grid>
       </Grid>
     </ChartCard>
@@ -390,7 +411,7 @@ export const FieldDistributionWidget: React.FC<WidgetProps> = ({ divisionId, edi
               dataKey={`level${level}`}
               stackId="levels"
               name={getColumnTitle(rubricColumns[level - 1])}
-              fill={RUBRIC_LEVEL_COLORS[level - 1]}
+              fill={CATEGORY_LEVEL_COLORS[category][level - 1]}
             />
           ))}
         </BarChart>
@@ -422,7 +443,12 @@ export const AwardNominationsWidget: React.FC<WidgetProps> = ({ divisionId, edit
           <XAxis dataKey="name" />
           <YAxis allowDecimals={false} />
           <Tooltip {...tooltipStyle} />
-          <Bar dataKey="count" name={t('count')} fill={CHART_COLORS.accent} radius={[4, 4, 0, 0]} />
+          <Bar
+            dataKey="count"
+            name={t('count')}
+            fill={CHART_COLORS.primary}
+            radius={[4, 4, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </ChartCard>
