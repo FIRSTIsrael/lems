@@ -64,7 +64,212 @@
       }
     },
     "insights": {
-      "coming-soon": "Coming soon..."
+      "title": "Insights",
+      "event": "Event",
+      "division": "Division",
+      "not-completed": "Not completed",
+      "no-completed-events": "There are no completed events yet. Insights become available once an event is marked as completed.",
+      "all-stages": "All stages",
+      "no-data": "No data available",
+      "errors": {
+        "load-events": "Failed to load events."
+      },
+      "tabs": {
+        "overview": "Overview",
+        "judging": "Judging",
+        "explorer": "Explorer"
+      },
+      "widgets": {
+        "overview-stats": {
+          "teams": "Teams",
+          "matches": "Completed matches",
+          "sessions": "Completed judging sessions",
+          "scoresheets": "Submitted scoresheets",
+          "rubrics": "Completed rubrics",
+          "robot-game-average": "Average ranking score",
+          "judging-average": "Average rubric score",
+          "median": "Median: {value}",
+          "match-delay": "Average match delay",
+          "session-delay": "Average session delay",
+          "delay-hint": "Actual vs. scheduled start (m:ss)"
+        },
+        "teams-table": {
+          "title": "Team summary",
+          "rank": "Rank",
+          "number": "Team",
+          "name": "Name",
+          "affiliation": "Affiliation",
+          "max-score": "Max score",
+          "average-score": "Avg. score",
+          "judging-average": "Judging avg.",
+          "gp-average": "GP avg."
+        },
+        "robot-game-stats": {
+          "average": "Average score",
+          "median": "Median: {value}",
+          "top-scores": "Average top score",
+          "highest-score": "Highest score",
+          "std-dev": "Standard deviation",
+          "score-count": "{count, plural, one {# scoresheet} other {# scoresheets}}"
+        },
+        "scores-by-round": {
+          "title": "Scores by round",
+          "average": "Average",
+          "median": "Median",
+          "max": "Max"
+        },
+        "scores-per-table": {
+          "title": "Scores per table",
+          "description": "Average and median score for each table. Large differences may indicate a table that is set up differently.",
+          "average": "Average",
+          "median": "Median",
+          "overall": "Overall average"
+        },
+        "mission-success": {
+          "title": "Mission completion",
+          "description": "Percentage of matches in which each mission earned any points.",
+          "success-rate": "Completion rate"
+        },
+        "inspection": {
+          "description": "Share of teams that passed equipment inspection in all of their matches.",
+          "success-rate": "Teams that always passed",
+          "failures": "{count, plural, =0 {No teams failed inspection} one {# team failed inspection} other {# teams failed inspection}}",
+          "times": "{count, plural, one {# time} other {# times}}"
+        },
+        "precision-tokens": {
+          "description": "How many precision tokens were left at the end of matches, and the average score for each.",
+          "tokens": "{count} tokens",
+          "count": "Matches",
+          "average-score": "Average score"
+        },
+        "cycle-times": {
+          "title": "Match cycle times",
+          "description": "Time between the starts of consecutive matches within the same round (m:ss).",
+          "average": "Average",
+          "median": "Median",
+          "min": "Shortest",
+          "max": "Longest",
+          "percentile95": "95th percentile",
+          "average-delay": "Average delay"
+        },
+        "match-delays": {
+          "title": "Match delays over the day",
+          "description": "Difference between scheduled and actual start time of each match. Positive values mean the match started late.",
+          "minutes-unit": "m",
+          "delay": "Delay"
+        },
+        "robot-consistency": {
+          "title": "Robot consistency",
+          "description": "Each team's average score vs. its relative standard deviation. Lower is more consistent.",
+          "average-rel-std-dev": "Average: {value}",
+          "average-score": "Average score",
+          "rel-std-dev": "Relative std. deviation",
+          "scores": "Scores: {scores}"
+        },
+        "judging-stats": {
+          "average": "Average rubric score",
+          "median": "Median: {value}",
+          "highest-average": "Highest team average",
+          "nominated-teams": "Teams nominated for optional awards",
+          "session-delay": "Average session delay",
+          "worst-room": "Latest room: {room} ({delay})"
+        },
+        "category-scores": {
+          "title": "Scores by category",
+          "average": "Average",
+          "median": "Median"
+        },
+        "room-scores": {
+          "title": "Scores by judging room",
+          "description": "Average rubric score per category for each room. Helps spot rooms that judge harder or softer than others."
+        },
+        "room-delays": {
+          "title": "Average delay by room",
+          "description": "Average difference between scheduled and actual session start, per room.",
+          "minutes-unit": "m",
+          "delay": "Delay"
+        },
+        "robot-correlation": {
+          "title": "{design} vs. {game}",
+          "description": "Each team's average {design} rubric score vs. its best ranking score, with a linear regression line. r is the Pearson correlation; R² is the share of score variance explained by {design}.",
+          "robot-game": "Best ranking score",
+          "team-detail": "Design {design} · Score {score} · Residual {residual}",
+          "strength": {
+            "weak": "weak",
+            "moderate": "moderate",
+            "strong": "strong"
+          },
+          "equation": "Score ≈ {slope} × design + {intercept}",
+          "over-performers": "Outperforming their design",
+          "under-performers": "Underperforming their design"
+        },
+        "field-distribution": {
+          "title": "Rubric level distribution",
+          "description": "How often each rubric level was given, per field."
+        },
+        "award-nominations": {
+          "title": "Optional award nominations",
+          "description": "Number of teams nominated for each optional award.",
+          "count": "Nominations"
+        }
+      },
+      "explorer": {
+        "metric": "Metric",
+        "mission": "Mission",
+        "category": "Category",
+        "field": "Field",
+        "stage": "Stage",
+        "group-by": "Group by",
+        "aggregation": "Aggregation",
+        "all": "All",
+        "all-fields": "All fields (average)",
+        "results": "Results",
+        "export": "Export CSV",
+        "minutes-unit": "m",
+        "views": {
+          "chart": "Chart",
+          "table": "Table"
+        },
+        "columns": {
+          "group": "Group",
+          "value": "Value",
+          "count": "Samples"
+        },
+        "metrics": {
+          "robot-game-score": "Robot game score",
+          "mission-points": "Mission points",
+          "gp-score": "Gracious Professionalism score",
+          "rubric-score": "Rubric score",
+          "match-delay": "Match delay",
+          "session-delay": "Judging session delay"
+        },
+        "dimensions": {
+          "none": "Nothing (overall)",
+          "team": "Team",
+          "table": "Table",
+          "room": "Judging room",
+          "stage": "Stage",
+          "round": "Round",
+          "category": "Category"
+        },
+        "aggregations": {
+          "average": "Average",
+          "median": "Median",
+          "min": "Minimum",
+          "max": "Maximum",
+          "sum": "Sum",
+          "count": "Count",
+          "std-dev": "Standard deviation"
+        },
+        "summary": {
+          "count": "Samples: {value}",
+          "average": "Average: {value}",
+          "median": "Median: {value}",
+          "min": "Min: {value}",
+          "max": "Max: {value}",
+          "std-dev": "Std. dev.: {value}"
+        }
+      }
     },
     "teams": {
       "title": "Teams",
