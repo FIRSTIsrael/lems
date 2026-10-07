@@ -217,7 +217,6 @@ export async function getLemsWebpageAsPdf(
   }
 ): Promise<Buffer> {
   let page: Page | null = null;
-  let pdfBuffer: Buffer | null = null;
 
   try {
     const domain = process.env.LEMS_DOMAIN;
@@ -260,7 +259,8 @@ export async function getLemsWebpageAsPdf(
     } catch (navigationError) {
       console.error(`[Puppeteer] Navigation failed for URL ${url.toString()}:`, navigationError);
       throw new Error(
-        `Failed to navigate to export page: ${navigationError instanceof Error ? navigationError.message : String(navigationError)}`
+        `Failed to navigate to export page: ${navigationError instanceof Error ? navigationError.message : String(navigationError)}`,
+        { cause: navigationError }
       );
     }
 
@@ -278,8 +278,7 @@ export async function getLemsWebpageAsPdf(
       75000
     );
 
-    pdfBuffer = Buffer.from(data);
-    return pdfBuffer;
+    return Buffer.from(data);
   } catch (error) {
     console.error(
       '[Puppeteer] Error generating PDF for path:',
@@ -302,7 +301,6 @@ export async function getLemsWebpageAsPdf(
       }
 
       page = null;
-      pdfBuffer = null;
 
       if (global.gc) global.gc();
     } catch (cleanupError) {

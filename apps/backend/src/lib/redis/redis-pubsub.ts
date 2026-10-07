@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisClient } from './redis-client';
 import { SubscriptionManager } from './subscription-manager';

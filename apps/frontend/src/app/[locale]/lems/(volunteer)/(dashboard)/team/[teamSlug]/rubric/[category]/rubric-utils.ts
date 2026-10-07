@@ -1,10 +1,11 @@
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import { Rubric } from '@lems/database';
 import type { RubricFieldValue } from './graphql';
 
-export const getEmptyRubric = (category: JudgingCategory): Rubric['data'] => {
-  const schema = rubrics[category];
+export const getEmptyRubric = (edition: Edition, category: JudgingCategory): Rubric['data'] => {
+  const schema = getRubrics(edition)[category];
 
   const awards: { [awardId: string]: boolean } = {};
 

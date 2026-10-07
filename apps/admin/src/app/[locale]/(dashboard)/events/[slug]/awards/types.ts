@@ -1,4 +1,5 @@
 import { Award } from '@lems/shared';
+import type { Edition } from '@lems/shared/edition';
 import { ValidationResult } from './utils/validation';
 
 export type {
@@ -36,6 +37,7 @@ export interface AwardContextState {
   schema: AwardSchema;
   validation: ValidationResult;
   teamCount: number;
+  edition: Edition;
   isLoading: boolean;
   isDirty: boolean;
   isNew: boolean;

@@ -81,7 +81,8 @@ export async function generatePlaceholderPDF(): Promise<string> {
   } catch (error) {
     console.error('PDF generation error:', error);
     throw new Error(
-      `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`
+      `Failed to generate PDF: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      { cause: error }
     );
   } finally {
     if (browser) {

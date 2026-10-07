@@ -58,7 +58,7 @@ try {
     { component: 'redis', error: error instanceof Error ? error.message : String(error) },
     'Failed to initialize Redis'
   );
-  throw new Error('Redis initialization failed');
+  throw new Error('Redis initialization failed', { cause: error });
 }
 
 // Worker Manager: Initialize and register event handlers
@@ -88,7 +88,7 @@ try {
     { component: 'worker-manager', error: error instanceof Error ? error.message : String(error) },
     'Failed to initialize worker manager'
   );
-  throw new Error('Worker manager initialization failed');
+  throw new Error('Worker manager initialization failed', { cause: error });
 }
 
 // WebSocket: Create WebSocket server for subscriptions

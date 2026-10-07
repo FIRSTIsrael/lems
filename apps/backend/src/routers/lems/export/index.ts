@@ -108,6 +108,7 @@ router.get(
       eventName: event.name,
       divisionName: division.name,
       seasonName: season.name,
+      futureEdition: division.future_edition,
       scoresheets: scoresheets.map(s => {
         // Gracefully handle missing data object
         if (!s.data) {
@@ -205,6 +206,7 @@ router.get(
       eventName: event.name,
       divisionName: division.name,
       seasonName: season.name,
+      futureEdition: division.future_edition,
       rubrics: rubrics.map(r => {
         if (!r.data) {
           logger.warn(

@@ -5,6 +5,7 @@ import { Stack, Paper, Typography, Box, useTheme, alpha } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
 import { Flag } from '@lems/shared';
+import { useEdition } from '../../../hooks/use-edition';
 import type { Award } from '../graphql/types';
 
 interface AwardGroup {
@@ -21,7 +22,9 @@ interface AwardPageProps {
 export const AwardPage: React.FC<AwardPageProps> = ({ awardGroup }) => {
   const theme = useTheme();
   const t = useTranslations('pages.mc.awards');
-  const { getName, getDescription } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName, getDescription } = useAwardTranslations(edition);
 
   const getMedalColor = (place: number) => {
     switch (place) {

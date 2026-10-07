@@ -3,10 +3,12 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Grid, Paper } from '@mui/material';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import type { Team } from '../graphql/types';
+import { useEdition } from '../../../hooks/use-edition';
 import { useCompareContext } from '../compare-context';
 import {
   getCategoryColor,
@@ -34,12 +36,14 @@ interface FieldsByCategories {
 }
 
 const processFieldsBySections = (
+  edition: Edition,
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
 ): FieldsByCategories => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
   const result: FieldsByCategories = {};
+  const rubrics = getRubrics(edition);
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
@@ -142,10 +146,11 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
   const t = useTranslations('layouts.deliberation.compare');
   const { getCategory } = useJudgingCategoryTranslations();
   const { fieldComparisons, category } = useCompareContext();
+  const edition = useEdition();
 
   const fieldsBySections = useMemo(
-    () => processFieldsBySections(team, fieldComparisons, category),
-    [team, fieldComparisons, category]
+    () => processFieldsBySections(edition, team, fieldComparisons, category),
+    [edition, team, fieldComparisons, category]
   );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>

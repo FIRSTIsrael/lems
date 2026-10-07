@@ -1,6 +1,7 @@
 import express from 'express';
 import dayjs from 'dayjs';
 import { UpdateableEvent } from '@lems/database';
+import { CoordinatesSchema } from '@lems/types/api/coordinates';
 import db from '../../../lib/database';
 import { attachEvent } from '../middleware/attach-event';
 import { requirePermission } from '../middleware/require-permission';
@@ -83,6 +84,16 @@ router.post(
         return;
       }
 
+      if (
+        divisions.some(
+          division =>
+            division.futureEdition !== undefined && typeof division.futureEdition !== 'boolean'
+        )
+      ) {
+        res.status(400).json({ error: 'futureEdition must be a boolean' });
+        return;
+      }
+
       if (divisions.length > 1) {
         for (const division of divisions) {
           if (!division.name || !division.color) {
@@ -149,7 +160,8 @@ router.post(
         divisions.map(division => ({
           name: division.name,
           color: division.color,
-          event_id: eventResult.id
+          event_id: eventResult.id,
+          future_edition: division.futureEdition === true
         }))
       );
 
@@ -192,7 +204,7 @@ router.put(
   asHandler<AdminRequest>(async (req, res) => {
     try {
       const { eventId } = req.params;
-      const { name, date, location, region } = req.body;
+      const { name, date, location, region, coordinates } = req.body;
 
       if (!eventId || typeof eventId !== 'string') {
         res.status(400).json({ error: 'EVENT_ID_REQUIRED' });
@@ -241,6 +253,16 @@ router.put(
           return;
         }
         updateData.region = region;
+      }
+
+      if (coordinates !== undefined) {
+        const parsed = CoordinatesSchema.nullable().safeParse(coordinates);
+        if (!parsed.success) {
+          res.status(400).json({ error: 'Invalid coordinates' });
+          return;
+        }
+        updateData.latitude = parsed.data?.latitude ?? null;
+        updateData.longitude = parsed.data?.longitude ?? null;
       }
 
       if (Object.keys(updateData).length === 0) {

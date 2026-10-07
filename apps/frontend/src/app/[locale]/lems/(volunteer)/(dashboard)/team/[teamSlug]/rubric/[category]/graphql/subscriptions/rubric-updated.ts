@@ -1,4 +1,5 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
+import type { Edition } from '@lems/shared/edition';
 import { merge, updateById, Reconciler, underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import type { SubscriptionConfig } from '../../../../../../../hooks/use-page-data';
@@ -89,79 +90,91 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-const rubricUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (prev, { data }) => {
-  if (!data?.rubricUpdated) {
-    return prev;
-  }
-
-  const event = data.rubricUpdated;
-  const { rubricId } = event;
-
-  return merge(prev, {
-    division: {
-      judging: {
-        rubrics: updateById(prev.division.judging.rubrics, rubricId, rubric => {
-          if (event.__typename === 'RubricValueUpdated') {
-            return merge(rubric, {
-              data: merge(
-                rubric.data ||
-                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
-                {
-                  fields: {
-                    ...(rubric.data?.fields || {}),
-                    [event.fieldId]: event.value
-                  }
-                }
-              )
-            });
-          }
-
-          if (event.__typename === 'RubricFeedbackUpdated') {
-            return merge(rubric, {
-              data: merge(
-                rubric.data ||
-                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
-                {
-                  feedback: event.feedback
-                }
-              )
-            });
-          }
-
-          if (event.__typename === 'RubricStatusUpdated') {
-            return merge(rubric, {
-              status: event.status
-            });
-          }
-
-          if (event.__typename === 'RubricAwardsUpdated') {
-            return merge(rubric, {
-              data: merge(
-                rubric.data ||
-                  getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
-                {
-                  awards: event.awards
-                }
-              )
-            });
-          }
-
-          if (event.__typename === 'RubricReset') {
-            if (!event.reset) return rubric;
-
-            return merge(rubric, {
-              data: null
-            });
-          }
-
-          return rubric;
-        })
-      }
+const rubricUpdatedReconciler =
+  (edition: Edition): Reconciler<QueryResult, SubscriptionResult> =>
+  (prev, { data }) => {
+    if (!data?.rubricUpdated) {
+      return prev;
     }
-  });
-};
+
+    const event = data.rubricUpdated;
+    const { rubricId } = event;
+
+    return merge(prev, {
+      division: {
+        judging: {
+          rubrics: updateById(prev.division.judging.rubrics, rubricId, rubric => {
+            if (event.__typename === 'RubricValueUpdated') {
+              return merge(rubric, {
+                data: merge(
+                  rubric.data ||
+                    getEmptyRubric(
+                      edition,
+                      underscoresToHyphens(rubric.category) as JudgingCategory
+                    ),
+                  {
+                    fields: {
+                      ...(rubric.data?.fields || {}),
+                      [event.fieldId]: event.value
+                    }
+                  }
+                )
+              });
+            }
+
+            if (event.__typename === 'RubricFeedbackUpdated') {
+              return merge(rubric, {
+                data: merge(
+                  rubric.data ||
+                    getEmptyRubric(
+                      edition,
+                      underscoresToHyphens(rubric.category) as JudgingCategory
+                    ),
+                  {
+                    feedback: event.feedback
+                  }
+                )
+              });
+            }
+
+            if (event.__typename === 'RubricStatusUpdated') {
+              return merge(rubric, {
+                status: event.status
+              });
+            }
+
+            if (event.__typename === 'RubricAwardsUpdated') {
+              return merge(rubric, {
+                data: merge(
+                  rubric.data ||
+                    getEmptyRubric(
+                      edition,
+                      underscoresToHyphens(rubric.category) as JudgingCategory
+                    ),
+                  {
+                    awards: event.awards
+                  }
+                )
+              });
+            }
+
+            if (event.__typename === 'RubricReset') {
+              if (!event.reset) return rubric;
+
+              return merge(rubric, {
+                data: null
+              });
+            }
+
+            return rubric;
+          })
+        }
+      }
+    });
+  };
 
 export function createRubricUpdatedSubscription(
+  edition: Edition,
   divisionId: string
 ): SubscriptionConfig<unknown, QueryResult, SubscriptionVariables> {
   return {
@@ -169,7 +182,7 @@ export function createRubricUpdatedSubscription(
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: rubricUpdatedReconciler as (
+    updateQuery: rubricUpdatedReconciler(edition) as (
       prev: QueryResult,
       subscriptionData: { data?: unknown }
     ) => QueryResult

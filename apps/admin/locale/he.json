@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "משהו השתבש, אנא נסו שנית.",
         "invalid-credentials": "שם משתמש או סיסמה לא תקינים.",
-        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר."
+        "too-many-requests": "הגישה נדחתה, אנא נסו שוב מאוחר יותר.",
+        "Network error: Failed to fetch": "שגיאת רשת. אנא בדקו את החיבור לאינטרנט ונסו שוב."
       }
     },
     "seasons": {
@@ -304,6 +305,7 @@
             },
             "division": {
               "title": "בית {number}",
+              "future-edition": "מהדורת העתיד",
               "name": {
                 "label": "שם הבית",
                 "placeholder": "הזן שם בית..."
@@ -361,6 +363,31 @@
       },
       "edit": {
         "location": "מיקום",
+        "location-editor": {
+          "title": "מיקום האירוע",
+          "description": "הגדירו את הקואורדינטות של מקום האירוע כדי שקבוצות יוכלו לראות אותו על המפה ולנווט אליו מהפורטל.",
+          "hint": "חפשו כדי לראות את המקום, פתחו אותו ב-Google Maps, לחצו קליק ימני על הנקודה המדויקת, העתיקו את הקואורדינטות (או את הקישור) והדביקו אותן באחד השדות.",
+          "fields": {
+            "search": {
+              "label": "חיפוש ב-Google Maps",
+              "placeholder": "מקום או כתובת"
+            },
+            "latitude": "קו רוחב",
+            "longitude": "קו אורך"
+          },
+          "actions": {
+            "clear": "ניקוי",
+            "save": "שמירת מיקום",
+            "saving": "שומר...",
+            "open-google-maps": "פתיחה ב-Google Maps"
+          },
+          "messages": {
+            "no-results": "לא נמצאו קואורדינטות לחיפוש זה. פתחו אותו ב-Google Maps, העתיקו את הקואורדינטות והדביקו אותן כאן.",
+            "search-error": "החיפוש נכשל. נסו שוב.",
+            "save-success": "מיקום האירוע נשמר.",
+            "save-error": "שמירת מיקום האירוע נכשלה."
+          }
+        },
         "date": "תאריך",
         "cards": {
           "awards": "פרסים",
@@ -370,7 +397,8 @@
           "integrations": "אינטגרציות",
           "settings": "הגדרות",
           "users": "משתמשים",
-          "divisions": "בתים"
+          "divisions": "בתים",
+          "practice-tables": "שולחנות אימונים"
         },
         "color": "צבע"
       },
@@ -503,6 +531,8 @@
             "confirm": "מחק בית",
             "deleting": "מוחק..."
           },
+          "future-edition": "מהדורת העתיד",
+          "edition-locked-tooltip": "לא ניתן לשנות את המהדורה לאחר יצירת לוח הזמנים",
           "alerts": {
             "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
           }
@@ -515,6 +545,7 @@
           },
           "form": {
             "fields": {
+              "future-edition": "מהדורת העתיד",
               "name": {
                 "label": "שם הבית",
                 "placeholder": "לדוגמה: בית א'"
@@ -1095,6 +1126,62 @@
             "cancel": "ביטול",
             "add": "הוסף מתנדב"
           }
+        }
+      },
+      "practice-tables": {
+        "title": "הגדרות שולחנות אימונים",
+        "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "fields": {
+          "division": "בית",
+          "table-count": "מספר שולחנות אימונים",
+          "table-count-helper": "כמה שולחנות אימונים זמינים",
+          "slot-duration": "משך סלוט (דקות)",
+          "slot-duration-helper": "משך כל סלוט אימון",
+          "minutes": "דקות",
+          "start-time": "שעת התחלה",
+          "start-time-helper": "מתי שולחנות האימון נפתחים",
+          "end-time": "שעת סיום",
+          "end-time-helper": "מתי שולחנות האימון נסגרים"
+        },
+        "blocked-times": {
+          "title": "זמנים חסומים",
+          "description": "הגדר זמנים בהם שולחנות האימונים לא זמינים (למשל, הפסקת צהריים)",
+          "start-time": "שעת התחלה",
+          "end-time": "שעת סיום",
+          "reason": "סיבה (אופציונלי)",
+          "reason-placeholder": "למשל, הפסקת צהריים",
+          "add": "הוסף זמן חסום",
+          "none": "כל הזמנים זמינים",
+          "details": "שעות לא זמינות",
+          "start": "שעת התחלה",
+          "end": "שעת סיום"
+        },
+        "actions": {
+          "edit-config": "ערוך הגדרות",
+          "delete-config": "מחק הגדרות",
+          "confirm-delete": "האם אתה בטוח שברצונך למחוק את ההגדרות? פעולה זו אינה ניתנת לביטול.",
+          "cancel": "ביטול",
+          "save": "שמור הגדרות",
+          "saving": "שומר..."
+        },
+        "messages": {
+          "save-success": "ההגדרות נשמרו בהצלחה!"
+        },
+        "errors": {
+          "select-division": "אנא בחר בית",
+          "save-failed": "שמירת ההגדרות נכשלה",
+          "delete-failed": "מחיקת ההגדרות נכשלה",
+          "load-failed": "טעינת ההגדרות נכשלה"
+        },
+        "status": {
+          "current-config": "הגדרות נוכחיות: {tables} שולחנות, סלוטים של {duration} דקות, {blockedSlots} תקופות חסומות",
+          "title": "הגדרות נוכחיות",
+          "deleted": "ההגדרות נמחקו בהצלחה"
+        },
+        "no-config": {
+          "title": "לא נמצאה הגדרה",
+          "description": "לתחרות זו אין עדיין הגדרות שולחנות אימונים. לחץ למטה ליצירת הגדרה חדשה.",
+          "create-button": "צור הגדרה"
         }
       }
     },

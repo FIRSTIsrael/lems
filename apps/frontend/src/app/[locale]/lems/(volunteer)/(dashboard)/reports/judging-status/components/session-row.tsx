@@ -60,6 +60,17 @@ export const SessionRow: React.FC<SessionRowProps> = ({ session, sessionLength }
               {t('table.started-at', {
                 time: dayjs(session.startTime).format('HH:mm')
               })}
+              {session.startDelta !== 0 && (
+                <Typography
+                  component="span"
+                  variant="caption"
+                  color={session.startDelta > 0 ? 'error' : 'success.main'}
+                  sx={{ ml: 0.5 }}
+                >
+                  ({session.startDelta > 0 ? '+' : ''}
+                  {session.startDelta}s)
+                </Typography>
+              )}
             </Typography>
           )}
 

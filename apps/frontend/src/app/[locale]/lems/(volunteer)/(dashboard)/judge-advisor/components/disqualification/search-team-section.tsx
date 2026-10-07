@@ -19,13 +19,15 @@ interface SearchTeamSectionProps {
   selectedTeam: Team | null;
   onTeamSelect: (team: Team | null) => void;
   loading: boolean;
+  disabled?: boolean;
 }
 
 export function SearchTeamSection({
   availableTeams,
   selectedTeam,
   onTeamSelect,
-  loading
+  loading,
+  disabled = false
 }: SearchTeamSectionProps) {
   const t = useTranslations('pages.judge-advisor.awards.disqualification');
   const theme = useTheme();
@@ -44,7 +46,7 @@ export function SearchTeamSection({
         }
         value={selectedTeam}
         onChange={(_, newValue) => onTeamSelect(newValue)}
-        disabled={loading || availableTeams.length === 0}
+        disabled={disabled || loading || availableTeams.length === 0}
         noOptionsText={t('no-teams-found')}
         renderInput={params => (
           <TextField
@@ -81,52 +83,55 @@ export function SearchTeamSection({
             }}
           />
         )}
-        renderOption={(props, team) => (
-          <Box component="li" {...props} key={team.id}>
-            <Stack
-              spacing={0.5}
-              sx={{
-                width: '100%'
-              }}
-            >
+        renderOption={(props, team) => {
+          const { key: _key, ...optionProps } = props;
+          return (
+            <Box component="li" key={team.id} {...optionProps}>
               <Stack
-                direction="row"
-                spacing={1}
-                sx={{
-                  alignItems: 'center'
-                }}
-              >
-                <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                  #{team.number}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  sx={{
-                    color: 'text.secondary'
-                  }}
-                >
-                  {team.name}
-                </Typography>
-              </Stack>
-              <Stack
-                direction="row"
                 spacing={0.5}
                 sx={{
-                  alignItems: 'center'
+                  width: '100%'
                 }}
               >
-                <Typography
-                  variant="caption"
+                <Stack
+                  direction="row"
+                  spacing={1}
                   sx={{
-                    color: 'text.secondary'
+                    alignItems: 'center'
                   }}
                 >
-                  {team.affiliation} • {team.city}
-                </Typography>
+                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
+                    #{team.number}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
+                    {team.name}
+                  </Typography>
+                </Stack>
+                <Stack
+                  direction="row"
+                  spacing={0.5}
+                  sx={{
+                    alignItems: 'center'
+                  }}
+                >
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: 'text.secondary'
+                    }}
+                  >
+                    {team.affiliation} • {team.city}
+                  </Typography>
+                </Stack>
               </Stack>
-            </Stack>
-          </Box>
-        )}
+            </Box>
+          );
+        }}
         slotProps={{
           paper: {
             sx: {

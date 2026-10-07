@@ -1,14 +1,17 @@
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import type { Team } from '../graphql/types';
 
 export interface RadarChartDataPoint {
   field: string;
   score: number;
+  [key: string]: string | number;
 }
 
 export interface CategoryDataPoint {
   category: string;
   score: number;
+  [key: string]: string | number;
 }
 
 export const calculateAverage = (values: number[]) =>
@@ -61,6 +64,7 @@ export const getCategoryRadarColor = (category: string): string => {
 };
 
 export const processCoreValuesRadarData = (
+  edition: Edition,
   team: Team,
   getSectionTitle: (sectionId: string) => string
 ): RadarChartDataPoint[] => {
@@ -68,6 +72,7 @@ export const processCoreValuesRadarData = (
   const rdRubric = team.rubrics.robot_design;
   if (!ipRubric?.data?.fields && !rdRubric?.data?.fields) return [];
 
+  const rubrics = getRubrics(edition);
   const ipSchema = rubrics['innovation-project'];
   const ipSectionScores = extractCoreValuesBySection(ipRubric, ipSchema);
   const rdSectionScores = extractCoreValuesBySection(rdRubric, rubrics['robot-design']);
@@ -82,11 +87,13 @@ export const processCoreValuesRadarData = (
 };
 
 export const processRubricRadarData = (
+  edition: Edition,
   rubric: any,
   category: string,
   getSectionTitle: (sectionId: string) => string
 ): RadarChartDataPoint[] => {
   if (!rubric?.data?.fields) return [];
+  const rubrics = getRubrics(edition);
   const schema = rubrics[category as keyof typeof rubrics];
   if (!schema || typeof schema === 'string' || !schema.sections) return [];
 
@@ -101,9 +108,11 @@ export const processRubricRadarData = (
 };
 
 export const processAllCategoriesRadarData = (
+  edition: Edition,
   team: Team,
   getCategory: (key: string) => string
 ): CategoryDataPoint[] => {
+  const rubrics = getRubrics(edition);
   const categories = [
     { key: 'innovation-project', rubric: team.rubrics.innovation_project },
     { key: 'robot-design', rubric: team.rubrics.robot_design }

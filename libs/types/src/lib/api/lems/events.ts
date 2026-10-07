@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CoordinatesSchema } from '../coordinates';
 
 export const LemsEventResponseSchema = z.object({
   id: z.string(),
@@ -9,9 +10,10 @@ export const LemsEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   timezone: z.string(),
-  coordinates: z.string().nullish(),
+  coordinates: CoordinatesSchema.nullish(),
   seasonId: z.string(),
-  official: z.boolean()
+  official: z.boolean(),
+  futureEdition: z.boolean().optional()
 });
 
 export type Event = z.infer<typeof LemsEventResponseSchema>;

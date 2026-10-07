@@ -4,6 +4,7 @@ import { Stack, Typography } from '@mui/material';
 import { motion, AnimatePresence } from 'motion/react';
 import { useTranslations } from 'next-intl';
 import { useJudgingSessionStageTranslations } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import {
   formatTime,
   getStageColor,
@@ -20,7 +21,8 @@ export const StageTimeline = ({ timerState }: StageTimelineProps) => {
   const t = useTranslations('pages.judge');
   const { getStage } = useJudgingSessionStageTranslations();
   const { session, sessionLength } = useSession();
-  const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength);
+  const edition = useEdition();
+  const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength, edition);
   const { currentStageIndex, stageTimeRemaining } = timerState;
 
   const nextStageIndex = currentStageIndex + 1;

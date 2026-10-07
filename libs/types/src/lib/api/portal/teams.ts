@@ -46,7 +46,8 @@ export const PortalTeamEventResultSchema = z.object({
           score: z.number()
         })
       ),
-      robotGameRank: z.number()
+      robotGameRank: z.number(),
+      futureEdition: z.boolean()
     })
     .nullable()
 });

@@ -1,7 +1,8 @@
 import { ObjectId } from 'mongodb';
 import { JudgingCategory, Rubric } from '@lems/database';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics, RubricsSchema } from '@lems/shared/rubrics';
+import { Edition, getEdition } from '@lems/shared/edition';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 
@@ -15,7 +16,7 @@ export async function authorizeRubricAccess(
   context: GraphQLContext,
   divisionId: string,
   rubricId: string
-): Promise<{ rubric: Record<string, unknown>; rubricObjectId: ObjectId }> {
+): Promise<{ rubric: Record<string, unknown>; rubricObjectId: ObjectId; edition: Edition }> {
   if (!context.user) {
     throw new MutationError(MutationErrorCode.UNAUTHORIZED, 'Authentication required');
   }
@@ -113,7 +114,7 @@ export async function authorizeRubricAccess(
     }
   }
 
-  return { rubric, rubricObjectId };
+  return { rubric, rubricObjectId, edition: getEdition(division) };
 }
 
 /**
@@ -148,17 +149,19 @@ export function assertRubricEditable(status: string, userRole?: string): void {
  *
  * @param rubricData - The rubric's data object
  * @param rubricCategory - The category key (e.g., 'innovation-project')
+ * @param edition - The edition of the division the rubric belongs to
  * @returns The determined status ('empty', 'draft', or 'completed')
  */
 export function determineRubricCompletionStatus(
   rubricData: Record<string, unknown>,
-  rubricCategory: JudgingCategory
+  rubricCategory: JudgingCategory,
+  edition: Edition
 ): 'empty' | 'draft' | 'completed' {
   if (!rubricData || typeof rubricData !== 'object') {
     return 'empty';
   }
 
-  const schema = rubrics[rubricCategory as keyof typeof rubrics];
+  const schema = getRubrics(edition)[rubricCategory as keyof RubricsSchema];
   if (!schema || typeof schema === 'string') {
     return 'empty';
   }
@@ -191,7 +194,7 @@ export function determineRubricCompletionStatus(
     return 'empty';
   }
 
-  const isComplete = isRubricComplete(rubricData, rubricCategory);
+  const isComplete = isRubricComplete(rubricData, rubricCategory, edition);
 
   return isComplete ? 'completed' : 'draft';
 }
@@ -206,17 +209,19 @@ export function determineRubricCompletionStatus(
  *
  * @param rubricData - The rubric's data object
  * @param rubricCategory - The category key (e.g., 'innovation-project')
+ * @param edition - The edition of the division the rubric belongs to
  * @returns true if all criteria are met, false otherwise
  */
 export function isRubricComplete(
   rubricData: Record<string, unknown> | undefined,
-  rubricCategory: string
+  rubricCategory: string,
+  edition: Edition
 ): boolean {
   if (!rubricData || typeof rubricData !== 'object') {
     return false;
   }
 
-  const schema = rubrics[rubricCategory as keyof typeof rubrics];
+  const schema = getRubrics(edition)[rubricCategory as keyof RubricsSchema];
   if (!schema || typeof schema === 'string') {
     return false;
   }

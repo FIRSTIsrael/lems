@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -21,9 +20,7 @@ export const MuiProvider = ({
   }
 
   // Configure dayjs with the current locale
-  useEffect(() => {
-    configureDayjs(locale);
-  }, [locale]);
+  configureDayjs(locale);
 
   const theme = getLocalizedTheme(locale);
   const cacheConfig = getEmotionCacheOptions(locale);

@@ -102,6 +102,9 @@
       "description": "Teams advancing to the next stage of competition"
     }
   },
+  "edition": {
+    "future": "Future Edition"
+  },
   "scoresheet": {
     "missions": {
       "eib": {
@@ -431,6 +434,9 @@
     },
     "tournament-manager": {
       "name": "Tournament Manager"
+    },
+    "practice-tables-manager": {
+      "name": "Practice Tables Manager"
     }
   },
   "rubrics": {
