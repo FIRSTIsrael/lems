@@ -62,7 +62,8 @@ export function calculateScoresheetScore(
   let total = rawTotal;
   let scoreOverridden = false;
 
-  if (!hasCalculationErrors && schema.finalizeScore) {
+  // Always apply finalizeScore (e.g. Future 3+ penalties → 0), even on invalid/partial sheets.
+  if (schema.finalizeScore) {
     total = schema.finalizeScore({
       missions: missionValues,
       missionScores,
