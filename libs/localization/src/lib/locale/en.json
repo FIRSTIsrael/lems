@@ -476,7 +476,10 @@
         "title": "CENTRAL HAVEN",
         "clauses": {
           "0": {
-            "description": "Number of keystone species or resources resting completely in the central haven:"
+            "description": "Keystone species resting completely in the central haven:"
+          },
+          "1": {
+            "description": "Resources resting completely in the central haven:"
           }
         }
       },
@@ -495,15 +498,7 @@
             }
           },
           "1": {
-            "description": "Number of invasive species in the containment zone:",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4",
-              "5": "5"
-            }
+            "description": "Number of invasive species in the containment zone:"
           }
         }
       },
@@ -520,6 +515,14 @@
             }
           }
         }
+      }
+    },
+    "errors": {
+      "e1": {
+        "description": "No more than 40 Keystone species can be scored"
+      },
+      "e2": {
+        "description": "No more than 40 resources can be scored"
       }
     },
     "general": {

@@ -476,7 +476,10 @@
         "title": "CENTRALNE SCHRONIENIE",
         "clauses": {
           "0": {
-            "description": "Liczba gatunków kluczowych lub zasobów znajdujących się całkowicie w centralnym schronieniu:"
+            "description": "Gatunki kluczowe znajdujące się całkowicie w centralnym schronieniu:"
+          },
+          "1": {
+            "description": "Zasoby znajdujące się całkowicie w centralnym schronieniu:"
           }
         }
       },
@@ -495,15 +498,7 @@
             }
           },
           "1": {
-            "description": "Liczba gatunków inwazyjnych w strefie powstrzymania:",
-            "labels": {
-              "0": "0",
-              "1": "1",
-              "2": "2",
-              "3": "3",
-              "4": "4",
-              "5": "5"
-            }
+            "description": "Liczba gatunków inwazyjnych w strefie powstrzymania:"
           }
         }
       },
@@ -520,6 +515,14 @@
             }
           }
         }
+      }
+    },
+    "errors": {
+      "e1": {
+        "description": "Nie można przyznać punktów za więcej niż 40 gatunków kluczowych"
+      },
+      "e2": {
+        "description": "Nie można przyznać punktów za więcej niż 40 zasobów"
       }
     },
     "general": {
