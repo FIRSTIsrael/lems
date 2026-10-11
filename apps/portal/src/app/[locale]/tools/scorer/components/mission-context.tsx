@@ -72,8 +72,8 @@ export function MissionProvider({ children }: { children: ReactNode }) {
   return (
     <MissionContext.Provider
       value={{
-        points: score?.points || 0,
-        scoreOverridden: score?.scoreOverridden || false,
+        points: score?.points ?? 0,
+        scoreOverridden: score?.scoreOverridden ?? false,
         missions: score?.missions || [],
         missionErrors: score?.missionErrors || [],
         validatorErrors: score?.validatorErrors || [],
