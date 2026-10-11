@@ -8,7 +8,7 @@ export type CalculateScoresheetScoreResult = {
   rawTotal: number;
 };
 
-export function normalizeMissionValues(
+function normalizeMissionValues(
   schema: ScoresheetSchema,
   missions: Record<string, Record<number, ScoresheetClauseValue>>
 ): MissionValues {

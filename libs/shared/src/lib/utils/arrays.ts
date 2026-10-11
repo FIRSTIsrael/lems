@@ -28,7 +28,6 @@ export const sum = (arr: Array<number>) => {
   return arr.reduce((acc, value) => acc + value, 0);
 };
 
-/** @deprecated thin wrapper for backwards compatibility; use `compareRobotGameScores` with an explicit strategy. */
 export const compareScoreArrays = (
   scoresA: (number | undefined)[],
   scoresB: (number | undefined)[],
