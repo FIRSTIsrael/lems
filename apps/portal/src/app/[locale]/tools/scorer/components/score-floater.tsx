@@ -14,7 +14,7 @@ export const ScoreFloater = () => {
   const { getTerm } = useScoresheetGeneralTranslations(useToolEdition());
 
   return (
-    <Slide direction="up" in={Boolean(points)} unmountOnExit>
+    <Slide direction="up" in={points > 0 || scoreOverridden} unmountOnExit>
       <Stack
         component={Paper}
         spacing={0.5}
