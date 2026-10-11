@@ -4,8 +4,9 @@ import type { SubscriptionConfig } from '../../../../hooks/use-page-data';
 import type { SubscriptionVars, QueryData } from '../types';
 
 interface SubscriptionData {
-  teamArrived: {
+  teamArrivalUpdated: {
     teamId: string;
+    arrived: boolean;
   };
 }
 
@@ -13,18 +14,19 @@ export const TEAM_ARRIVED_SUBSCRIPTION: TypedDocumentNode<SubscriptionData, Subs
   subscription TeamArrived($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;
 
 export function createTeamArrivedSubscription(
   divisionId: string,
-  onTeamArrived?: (event: SubscriptionData['teamArrived']) => void
+  onTeamArrived?: (event: SubscriptionData['teamArrivalUpdated']) => void
 ): SubscriptionConfig<unknown, QueryData, SubscriptionVars> {
   const updateQuery = (prev: QueryData, { data }: { data?: unknown }) => {
     if (!data) return prev;
 
-    const { teamId } = (data as SubscriptionData).teamArrived;
+    const { teamId, arrived } = (data as SubscriptionData).teamArrivalUpdated;
 
     if (!prev.division) {
       return prev;
@@ -34,7 +36,7 @@ export function createTeamArrivedSubscription(
     const updatedTeams = updateInArray(
       prev.division.teams,
       team => team.id === teamId,
-      team => ({ ...team, arrived: true })
+      team => ({ ...team, arrived })
     );
 
     // Update match participants' teams
@@ -50,7 +52,7 @@ export function createTeamArrivedSubscription(
             participant.team?.id === teamId
               ? {
                   ...participant,
-                  team: { ...participant.team, arrived: true }
+                  team: { ...participant.team, arrived }
                 }
               : participant
         )
@@ -65,7 +67,7 @@ export function createTeamArrivedSubscription(
         session.team?.id === teamId
           ? {
               ...session,
-              team: { ...session.team, arrived: true }
+              team: { ...session.team, arrived }
             }
           : session
     );
@@ -102,7 +104,7 @@ export function createTeamArrivedSubscription(
     const originalUpdateQuery = baseConfig.updateQuery;
     baseConfig.updateQuery = (prev: QueryData, subscriptionData: { data?: unknown }) => {
       if (subscriptionData.data) {
-        onTeamArrived((subscriptionData.data as SubscriptionData).teamArrived);
+        onTeamArrived((subscriptionData.data as SubscriptionData).teamArrivalUpdated);
       }
       return originalUpdateQuery(prev, subscriptionData);
     };

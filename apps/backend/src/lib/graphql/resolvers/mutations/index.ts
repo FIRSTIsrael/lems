@@ -1,4 +1,4 @@
-import { teamArrivedResolver } from './team-arrived';
+import { updateTeamArrivalResolver } from './update-team-arrival';
 import { disqualifyTeamResolver } from './disqualify-team';
 import { assignPersonalAwardResolver } from './assign-personal-award';
 import {
@@ -52,7 +52,7 @@ import {
 import { updatePracticeTableAssignmentResolver } from './practice-tables';
 
 export const mutationResolvers = {
-  teamArrived: teamArrivedResolver,
+  updateTeamArrival: updateTeamArrivalResolver,
   disqualifyTeam: disqualifyTeamResolver,
   assignPersonalAward: assignPersonalAwardResolver,
   startJudgingSession: startJudgingSessionResolver,

@@ -5,6 +5,7 @@ import type { ScorekeeperData } from '../types';
 
 interface TeamEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 interface TeamArrivalSubscriptionData {
@@ -22,6 +23,7 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription TeamArrivalUpdated($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;
@@ -45,7 +47,7 @@ export function createTeamArrivalSubscription(divisionId: string) {
                     ...participant,
                     team: {
                       ...participant.team,
-                      arrived: true
+                      arrived: teamArrivalUpdated.arrived
                     }
                   };
                 }
