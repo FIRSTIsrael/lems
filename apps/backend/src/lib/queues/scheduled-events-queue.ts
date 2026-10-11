@@ -1,4 +1,4 @@
-import { Queue } from 'bullmq';
+import { Queue, createIORedisClient } from 'bullmq';
 import { getRedisClient } from '../redis/redis-client';
 import type { ScheduledEvent } from './types';
 
@@ -13,7 +13,7 @@ export function getScheduledEventsQueue(): Queue<ScheduledEvent> {
     const redisConnection = getRedisClient();
 
     queueInstance = new Queue<ScheduledEvent>('scheduled-events', {
-      connection: redisConnection,
+      connection: createIORedisClient(redisConnection),
       defaultJobOptions: {
         attempts: 3,
         backoff: {

@@ -15,7 +15,8 @@
       "form-status": {
         "server-error": "Błąd serwera, spróbuj ponownie.",
         "invalid-credentials": "Nieprawidłowa nazwa użytkownika lub hasło.",
-        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później."
+        "too-many-requests": "Odmowa dostępu, spróbuj ponownie później.",
+        "Network error: Failed to fetch": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie."
       }
     },
     "seasons": {
@@ -304,6 +305,7 @@
             },
             "division": {
               "title": "Dywizja {number}",
+              "future-edition": "Edycja przyszłości",
               "name": {
                 "label": "Nazwa dywizji",
                 "placeholder": "Wprowadź nazwę dywizji..."
@@ -361,6 +363,31 @@
       },
       "edit": {
         "location": "Lokalizacja",
+        "location-editor": {
+          "title": "Lokalizacja wydarzenia",
+          "description": "Ustaw współrzędne miejsca wydarzenia, aby drużyny mogły zobaczyć je na mapie i nawigować do niego z portalu.",
+          "hint": "Wyszukaj, aby zobaczyć miejsce, otwórz je w Google Maps, kliknij prawym przyciskiem dokładny punkt, skopiuj współrzędne (lub link) i wklej je w jedno z pól.",
+          "fields": {
+            "search": {
+              "label": "Szukaj w Google Maps",
+              "placeholder": "Miejsce lub adres"
+            },
+            "latitude": "Szerokość geograficzna",
+            "longitude": "Długość geograficzna"
+          },
+          "actions": {
+            "clear": "Wyczyść",
+            "save": "Zapisz lokalizację",
+            "saving": "Zapisywanie...",
+            "open-google-maps": "Otwórz w Google Maps"
+          },
+          "messages": {
+            "no-results": "Nie znaleziono współrzędnych dla tego wyszukiwania. Otwórz je w Google Maps, skopiuj współrzędne i wklej je tutaj.",
+            "search-error": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
+            "save-success": "Lokalizacja wydarzenia została zapisana.",
+            "save-error": "Nie udało się zapisać lokalizacji wydarzenia."
+          }
+        },
         "date": "Data",
         "cards": {
           "awards": "Nagrody",
@@ -370,7 +397,8 @@
           "integrations": "Integracje",
           "settings": "Ustawienia",
           "users": "Użytkownicy",
-          "divisions": "Dywizje"
+          "divisions": "Dywizje",
+          "practice-tables": "Stoły Treningowe"
         },
         "color": "Kolor"
       },
@@ -503,6 +531,8 @@
             "confirm": "Usuń dywizję",
             "deleting": "Usuwanie..."
           },
+          "future-edition": "Edycja przyszłości",
+          "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -515,6 +545,7 @@
           },
           "form": {
             "fields": {
+              "future-edition": "Edycja przyszłości",
               "name": {
                 "label": "Nazwa dywizji",
                 "placeholder": "np. House A"
@@ -598,6 +629,62 @@
             "deleting": "Usuwanie..."
           },
           "upload-placeholder": "Wybierz plik"
+        },
+        "practice-tables": {
+          "title": "Konfiguracja Stołów Treningowych",
+          "description": "Skonfiguruj ustawienia stołów treningowych dla każdej dywizji",
+          "fields": {
+            "division": "Dywizja",
+            "table-count": "Liczba Stołów Treningowych",
+            "table-count-helper": "Ile stołów treningowych jest dostępnych",
+            "slot-duration": "Czas Trwania Slotu (minuty)",
+            "slot-duration-helper": "Czas trwania każdego slotu treningowego",
+            "minutes": "minut",
+            "start-time": "Godzina Rozpoczęcia",
+            "start-time-helper": "Kiedy stoły treningowe stają się dostępne",
+            "end-time": "Godzina Zakończenia",
+            "end-time-helper": "Kiedy stoły treningowe są zamykane"
+          },
+          "blocked-times": {
+            "title": "Zablokowane Przedziały Czasowe",
+            "description": "Określ czasy, kiedy stoły treningowe nie są dostępne (np. przerwy obiadowe)",
+            "start-time": "Godzina Rozpoczęcia",
+            "end-time": "Godzina Zakończenia",
+            "reason": "Powód (opcjonalnie)",
+            "reason-placeholder": "np. Przerwa obiadowa",
+            "add": "Dodaj Zablokowany Czas",
+            "none": "Brak zablokowanych czasów",
+            "details": "Zablokowane Przedziały Czasowe",
+            "start": "Godzina Rozpoczęcia",
+            "end": "Godzina Zakończenia"
+          },
+          "actions": {
+            "edit-config": "Edytuj Konfigurację",
+            "delete-config": "Usuń Konfigurację",
+            "confirm-delete": "Czy na pewno chcesz usunąć tę konfigurację? Tej operacji nie można cofnąć.",
+            "cancel": "Anuluj",
+            "save": "Zapisz Konfigurację",
+            "saving": "Zapisywanie..."
+          },
+          "messages": {
+            "save-success": "Konfiguracja zapisana pomyślnie!"
+          },
+          "errors": {
+            "select-division": "Proszę wybrać dywizję",
+            "save-failed": "Nie udało się zapisać konfiguracji",
+            "delete-failed": "Nie udało się usunąć konfiguracji",
+            "load-failed": "Nie udało się wczytać konfiguracji"
+          },
+          "status": {
+            "current-config": "Aktualna konfiguracja: {tables} stołów, {duration} minutowe sloty, {blockedSlots} zablokowanych przedziałów czasowych",
+            "title": "Aktualna Konfiguracja",
+            "deleted": "Konfiguracja usunięta pomyślnie"
+          },
+          "no-config": {
+            "title": "Nie Znaleziono Konfiguracji",
+            "description": "Ta dywizja nie ma jeszcze skonfigurowanych stołów treningowych. Kliknij poniżej, aby utworzyć nową konfigurację.",
+            "create-button": "Utwórz Konfigurację"
+          }
         },
         "messages": {
           "save-success": "Zmiany zapisano pomyślnie",

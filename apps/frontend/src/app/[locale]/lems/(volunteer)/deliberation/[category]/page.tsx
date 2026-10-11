@@ -7,6 +7,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { ResponsiveComponent } from '@lems/shared';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useEvent } from '../../components/event-context';
+import { useEdition } from '../../hooks/use-edition';
 import { usePageData } from '../../hooks/use-page-data';
 import { SmallScreenBlock } from '../components/small-screen-block';
 import { CategoryDeliberationProvider } from './deliberation-context';
@@ -23,6 +24,7 @@ import {
 
 export default function CategoryDeliberationPage() {
   const { currentDivision } = useEvent();
+  const edition = useEdition();
   const { category }: { category: JudgingCategory } = useParams();
 
   const categoryEnum = hyphensToUnderscores(category) as JudgingCategory;
@@ -31,11 +33,11 @@ export default function CategoryDeliberationPage() {
     () => [
       createDeliberationUpdatedSubscription(currentDivision.id),
       createTeamArrivalUpdatedSubscription(currentDivision.id),
-      createRubricUpdatedSubscription(currentDivision.id),
+      createRubricUpdatedSubscription(edition, currentDivision.id),
       createScoresheetUpdatedSubscription(currentDivision.id),
       createTeamDisqualifiedSubscription(currentDivision.id)
     ],
-    [currentDivision.id]
+    [edition, currentDivision.id]
   );
 
   const { data: division, loading } = usePageData(

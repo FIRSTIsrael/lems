@@ -5,6 +5,7 @@ import { Paper, Stack, Typography, FormControlLabel, Checkbox } from '@mui/mater
 import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../../../../hooks/use-edition';
 import { useEvent } from '../../../../../../components/event-context';
 import { UPDATE_RUBRIC_AWARDS_MUTATION } from '../graphql';
 import { useRubric } from '../rubric-context';
@@ -18,7 +19,9 @@ export const AwardNominations: React.FC<AwardNominationsProps> = ({ awards, disa
   const t = useTranslations('pages.rubric.award-nominations');
   const { currentDivision } = useEvent();
   const { rubric } = useRubric();
-  const { getName, getDescription } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName, getDescription } = useAwardTranslations(edition);
 
   const awardOptions = useMemo(() => new Set(awards.map(award => award.name)), [awards]);
   const currentAwards = useMemo(() => {

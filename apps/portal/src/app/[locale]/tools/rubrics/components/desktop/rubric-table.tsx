@@ -2,7 +2,8 @@
 
 import React from 'react';
 import { Table, TableHead, TableBody, Paper } from '@mui/material';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
 import { TableHeaderRow } from './table-header-row';
 import { SectionTitleRow } from './section-title-row';
@@ -13,7 +14,7 @@ import { RubricCategoryNavigation } from './rubric-category-navigation';
 
 export const RubricTable: React.FC = () => {
   const { category, rubric, loading } = useRubricContext();
-  const schema = rubrics[category];
+  const schema = getRubrics(useToolEdition())[category];
 
   return (
     <Paper

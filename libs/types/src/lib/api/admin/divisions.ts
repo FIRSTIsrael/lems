@@ -19,6 +19,22 @@ export const AdminDivisionResponseSchema = z.object({
       judgingSessionCycleTime: z.number()
     })
     .nullable()
+    .default(null),
+  practiceTablesSettings: z
+    .object({
+      tableCount: z.number(),
+      slotDurationMinutes: z.number(),
+      startTime: z.string(),
+      endTime: z.string(),
+      blockedTimeSlots: z.array(
+        z.object({
+          start: z.string(),
+          end: z.string(),
+          reason: z.string().optional()
+        })
+      )
+    })
+    .nullable()
     .default(null)
 });
 

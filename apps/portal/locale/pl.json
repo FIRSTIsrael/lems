@@ -121,7 +121,8 @@
         "event-in-progress": "Wydarzenie w toku",
         "view-live-data": "Zobacz dane na żywo",
         "view-event-details": "Zobacz szczegóły wydarzenia",
-        "view-event-results": "Zobacz wyniki wydarzenia"
+        "view-event-results": "Zobacz wyniki wydarzenia",
+        "no-events-this-season": "Ta drużyna nie brała jeszcze udziału w żadnych wydarzeniach w tym sezonie."
       }
     },
     "teams": {
@@ -141,6 +142,11 @@
       "general-info": "Informacje ogólne",
       "event-date": "Data wydarzenia",
       "location": "Lokalizacja",
+      "navigation": {
+        "directions": "Wyznacz trasę",
+        "show-map": "Pokaż na mapie",
+        "close": "Zamknij"
+      },
       "teams": "Drużyny",
       "team": "Drużyna",
       "division": "Dywizja",
@@ -162,7 +168,8 @@
         "field-schedule": "Harmonogram pola",
         "judging-schedule": "Harmonogram sędziowania",
         "agenda": "Agenda",
-        "general-schedule": "Ogólny harmonogram"
+        "general-schedule": "Ogólny harmonogram",
+        "practice-tables": "Stoły Treningowe"
       },
       "scoreboard": {
         "rank": "Pozycja",
@@ -197,7 +204,17 @@
         }
       },
       "division-teams": "Drużyny {divisionName}",
-      "region": "Region"
+      "region": "Region",
+      "practice-tables": {
+        "title": "Stoły Treningowe",
+        "description": "{tables, plural, =1 {1 stół treningowy} other {# stoły treningowe}} dostępne ze slotami {duration} minutowymi",
+        "time": "Czas",
+        "table": "Stół",
+        "blocked": "Niedostępne",
+        "available": "Dostępne",
+        "unavailable": "Niedostępne",
+        "not-configured": "Stoły treningowe nie zostały skonfigurowane dla tej dywizji."
+      }
     },
     "team-in-event": {
       "not-found": {
@@ -247,12 +264,18 @@
         "judging-sessions": "Sesje sędziowskie",
         "match-type": "{stage} Mecz #{number} - Stół {table}",
         "judging-session": "Sesja sędziowska - Pokój {room}",
+        "practice-table": "Stół Treningowy {tableNumber}",
+        "practice-table-location": "Stół Treningowy {tableNumber}",
         "no-matches": "Brak zaplanowanych meczów",
         "no-judging": "Brak zaplanowanych sesji sędziowskich",
         "no-schedule": "Brak harmonogramu"
       }
     },
     "tools": {
+      "edition": {
+        "founders": "Edycja założycielska",
+        "future": "Edycja przyszłości"
+      },
       "scorer": {
         "title": "Punktator Robot Game",
         "no-equipment-constraint-title": "Brak ograniczenia sprzętu:",

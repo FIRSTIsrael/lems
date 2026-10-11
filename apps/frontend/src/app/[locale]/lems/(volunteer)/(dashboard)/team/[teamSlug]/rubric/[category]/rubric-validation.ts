@@ -1,4 +1,5 @@
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricItem } from './graphql';
 
@@ -11,8 +12,12 @@ export interface ValidationResult {
   invalidFieldId?: string;
 }
 
-export function validateRubric(rubric: RubricItem, category: JudgingCategory): ValidationResult {
-  const schema = rubrics[category];
+export function validateRubric(
+  edition: Edition,
+  rubric: RubricItem,
+  category: JudgingCategory
+): ValidationResult {
+  const schema = getRubrics(edition)[category];
   const data = rubric.data;
 
   if (!data) {

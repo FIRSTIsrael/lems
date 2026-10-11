@@ -198,6 +198,7 @@ router.get(
         }))
         .filter((match): match is { number: number; score: number } => match.score != null);
 
+      const division = await db.divisions.byId(teamDivision).get();
       const divisionTeams = await db.teams.byDivisionId(teamDivision).getAll();
 
       const rankingData = await getTeamRankingData(teamDivision, req.teamId);
@@ -209,7 +210,8 @@ router.get(
           place: award.show_places ? award.place : null
         })),
         matches: teamMatchResults,
-        robotGameRank
+        robotGameRank,
+        futureEdition: division?.future_edition ?? false
       };
 
       eventResults.push(eventResult);

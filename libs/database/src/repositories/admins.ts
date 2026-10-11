@@ -3,6 +3,7 @@ import { KyselyDatabaseSchema } from '../schema/kysely';
 import { InsertableAdmin, Admin } from '../schema/tables/admins';
 import { PermissionType, AdminPermission } from '../schema/tables/admin-permissions';
 import { Event } from '../schema/tables/events';
+import { toEvent } from './events';
 
 class AdminSelector {
   constructor(
@@ -122,7 +123,7 @@ class AdminSelector {
       .where('admin_events.admin_id', '=', adminIdResult.id)
       .execute();
 
-    return events;
+    return events.map(toEvent);
   }
 
   async isAssignedToEvent(eventId: string): Promise<boolean> {

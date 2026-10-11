@@ -11,6 +11,7 @@ import { AwardsTab } from './tabs/awards/awards-tab';
 import { FieldScheduleTab } from './tabs/field-schedule-tab';
 import { JudgingScheduleTab } from './tabs/judging-schedule-tab';
 import { AgendaTab } from './tabs/agenda-tab';
+import { PracticeTablesTab } from './tabs/practice-tables-tab';
 import { LoadingTab } from './tabs/loading-tab';
 
 interface DivisionTabBarProps {
@@ -45,6 +46,7 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
           <Tab label={t('quick-links.awards')} />
           <Tab label={t('quick-links.field-schedule')} />
           <Tab label={t('quick-links.judging-schedule')} />
+          <Tab label={t('quick-links.practice-tables')} />
           <Tab label={t('quick-links.agenda')} />
         </Tabs>
       </Paper>
@@ -84,6 +86,11 @@ export const DivisionTabBar: React.FC<DivisionTabBarProps> = ({ divisionId }) =>
         )}
 
         {activeTab === 5 && (
+          <Suspense fallback={<LoadingTab />}>
+            <PracticeTablesTab />
+          </Suspense>
+        )}
+        {activeTab === 6 && (
           <Suspense fallback={<LoadingTab />}>
             <AgendaTab />
           </Suspense>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Container, Box, CircularProgress, Stack } from '@mui/material';
@@ -10,6 +10,7 @@ import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import { useTeam } from '../../components/team-context';
 import { useEvent } from '../../../../../components/event-context';
 import { useUser } from '../../../../../components/user-context';
+import { useEdition } from '../../../../../hooks/use-edition';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetSwitcher } from './components/scoresheet-switcher';
@@ -32,10 +33,17 @@ export default function ScoresheetPage() {
   const team = useTeam();
   const { currentDivision } = useEvent();
   const { scoresheetSlug } = useParams();
+  const edition = useEdition();
 
   const subscriptions = useMemo(
-    () => [createScoresheetUpdatedSubscription(currentDivision.id)],
-    [currentDivision.id]
+    () => [createScoresheetUpdatedSubscription(edition, currentDivision.id)],
+    [edition, currentDivision.id]
+  );
+
+  const parseData = useCallback(
+    (queryData: Parameters<typeof parseScoresheetData>[1]) =>
+      parseScoresheetData(edition, queryData),
+    [edition]
   );
 
   const { data: scoresheet, loading } = usePageData(
@@ -45,7 +53,7 @@ export default function ScoresheetPage() {
       teamId: team.id,
       slug: scoresheetSlug as string
     },
-    parseScoresheetData,
+    parseData,
     subscriptions
   );
 

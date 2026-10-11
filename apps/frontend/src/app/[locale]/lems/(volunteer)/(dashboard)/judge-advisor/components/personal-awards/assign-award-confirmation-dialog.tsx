@@ -15,6 +15,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { useAwardTranslations } from '@lems/localization';
 import WarningIcon from '@mui/icons-material/Warning';
+import { useEdition } from '../../../../hooks/use-edition';
 
 interface AssignAwardConfirmationDialogProps {
   open: boolean;
@@ -34,7 +35,9 @@ export function AssignAwardConfirmationDialog({
   onCancel
 }: AssignAwardConfirmationDialogProps) {
   const t = useTranslations('pages.judge-advisor.awards.personal-awards');
-  const { getName } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName } = useAwardTranslations(edition);
   const theme = useTheme();
 
   return (

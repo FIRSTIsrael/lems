@@ -1,4 +1,10 @@
-import { ScoresheetClauseValue, scoresheet, ScoresheetError } from '@lems/shared/scoresheet';
+import {
+  ScoresheetClauseValue,
+  getScoresheet,
+  ScoresheetError,
+  type ScoresheetSchema
+} from '@lems/shared/scoresheet';
+import type { Edition } from '@lems/shared/edition';
 import type { ScoresheetData } from './graphql/types';
 
 interface MissionValidationResult {
@@ -16,7 +22,10 @@ export interface ScoresheetValidationResult {
   firstErrorMissionId?: string;
 }
 
-function calculateScore(missions: Record<string, Record<number, ScoresheetClauseValue>>): number {
+function calculateScore(
+  scoresheet: ScoresheetSchema,
+  missions: Record<string, Record<number, ScoresheetClauseValue>>
+): number {
   let points = 0;
 
   scoresheet.missions.forEach(mission => {
@@ -38,6 +47,7 @@ function calculateScore(missions: Record<string, Record<number, ScoresheetClause
 }
 
 function validateMission(
+  scoresheet: ScoresheetSchema,
   missionId: string,
   missionData: Record<number, ScoresheetClauseValue>
 ): MissionValidationResult {
@@ -87,7 +97,11 @@ function validateMission(
   };
 }
 
-export function validateScoresheet(data: ScoresheetData): ScoresheetValidationResult {
+export function validateScoresheet(
+  edition: Edition,
+  data: ScoresheetData
+): ScoresheetValidationResult {
+  const scoresheet = getScoresheet(edition);
   const missionsData = data.missions || {};
   const missionErrors = new Map<string, MissionValidationResult>();
   let firstIncompleteMissionId: string | undefined;
@@ -96,7 +110,7 @@ export function validateScoresheet(data: ScoresheetData): ScoresheetValidationRe
   // Validate each mission
   scoresheet.missions.forEach(mission => {
     const missionData = missionsData[mission.id] || {};
-    const result = validateMission(mission.id, missionData);
+    const result = validateMission(scoresheet, mission.id, missionData);
     missionErrors.set(mission.id, result);
 
     // Track first incomplete mission
@@ -131,7 +145,7 @@ export function validateScoresheet(data: ScoresheetData): ScoresheetValidationRe
     }
   }
 
-  const score = calculateScore(missionsData);
+  const score = calculateScore(scoresheet, missionsData);
 
   const allMissionsComplete = Array.from(missionErrors.values()).every(m => m.isComplete);
   const hasErrors =

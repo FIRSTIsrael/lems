@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CoordinatesSchema } from '../coordinates';
 
 export const AdminEventResponseSchema = z.object({
   id: z.string(),
@@ -9,13 +10,20 @@ export const AdminEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   timezone: z.string(),
-  coordinates: z.string().nullable(),
+  coordinates: CoordinatesSchema.nullable(),
   seasonId: z.string()
 });
 
 export const AdminEventSummaryResponseSchema = z.object({
   ...AdminEventResponseSchema.shape,
-  divisions: z.array(z.object({ id: z.string(), name: z.string(), color: z.string() })),
+  divisions: z.array(
+    z.object({
+      id: z.string(),
+      name: z.string(),
+      color: z.string(),
+      futureEdition: z.boolean()
+    })
+  ),
   teamCount: z.number(),
   isFullySetUp: z.boolean(),
   adminIds: z.array(z.string())

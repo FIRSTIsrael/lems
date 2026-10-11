@@ -12,10 +12,12 @@ import {
   makePortalMatchResponse,
   makePortalAgendaResponse
 } from './util';
+import practiceTablesRouter from './practice-tables';
 
 const router = express.Router({ mergeParams: true });
 
 router.use('/:divisionId', attachDivision());
+router.use('/:divisionId/practice-tables', practiceTablesRouter);
 
 router.get(
   '/:divisionId',

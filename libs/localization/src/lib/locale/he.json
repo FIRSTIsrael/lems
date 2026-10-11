@@ -102,6 +102,9 @@
       "description": "קבוצות המעפילות לתחרות האליפות"
     }
   },
+  "edition": {
+    "future": "מהדורת העתיד"
+  },
   "scoresheet": {
     "missions": {
       "eib": {
@@ -431,6 +434,9 @@
     },
     "tournament-manager": {
       "name": "מנהל תחרות"
+    },
+    "practice-tables-manager": {
+      "name": "מנהל שולחנות אימונים"
     }
   },
   "rubrics": {

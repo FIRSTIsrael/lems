@@ -54,7 +54,8 @@ export const makePortalEventSummaryResponse = (event: DbEventSummary): EventSumm
     teamsRegistered: event.team_count,
     status: eventStatus,
     completed: event.completed,
-    official: event.official
+    official: event.official,
+    futureEdition: event.divisions.some(division => division.futureEdition)
   };
 };
 
@@ -65,6 +66,7 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
   startDate: event.start_date,
   endDate: event.end_date,
   location: event.location,
+  coordinates: event.coordinates,
   region: event.region,
   timezone: event.timezone,
   seasonId: event.season_id,
@@ -72,7 +74,8 @@ export const makePortalEventDetailsResponse = (event: DbEventDetails): EventDeta
     id: division.id,
     name: division.name,
     color: division.color,
-    teamCount: division.team_count
+    teamCount: division.team_count,
+    futureEdition: Boolean(division.future_edition)
   })),
   seasonName: event.season_name,
   seasonSlug: event.season_slug,

@@ -32,7 +32,8 @@ export default function BrowseEventsPage() {
       region: event.region,
       coordinates: null,
       seasonId: '', // Placeholder - not available from current query
-      official: event.official
+      official: event.official,
+      futureEdition: event.futureEdition
     })) || [];
 
   return (

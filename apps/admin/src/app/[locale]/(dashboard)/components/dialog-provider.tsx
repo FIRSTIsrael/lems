@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useState, useContext, ReactNode, useCallback } from 'react';
+import React, { createContext, useState, ReactNode, useCallback, use } from 'react';
 import { Dialog } from '@mui/material';
 
 export interface DialogComponentProps {
@@ -67,13 +67,14 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
       return React.createElement(DialogContent, dialogProps);
     } catch (error) {
       throw new Error(
-        `Error creating dialog component ${DialogContent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        `Error creating dialog component ${DialogContent.name}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { cause: error }
       );
     }
   };
 
   return (
-    <DialogContext.Provider value={contextValue}>
+    <DialogContext value={contextValue}>
       {children}
       <Dialog
         open={isOpen}
@@ -85,12 +86,12 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
       >
         {renderDialogContent()}
       </Dialog>
-    </DialogContext.Provider>
+    </DialogContext>
   );
 };
 
 export const useDialog = (): DialogContextType => {
-  const context = useContext(DialogContext);
+  const context = use(DialogContext);
 
   if (!context) {
     throw new Error('useDialog must be used within a DialogProvider');

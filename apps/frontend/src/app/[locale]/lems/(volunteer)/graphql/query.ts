@@ -14,6 +14,7 @@ export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
           id
           name
           color
+          futureEdition
         }
       }
     }

@@ -121,7 +121,8 @@
         "event-in-progress": "Event in Progress",
         "view-live-data": "View Live Data",
         "view-event-details": "View Event Details",
-        "view-event-results": "View Event Results"
+        "view-event-results": "View Event Results",
+        "no-events-this-season": "This team has not competed in any events this season yet."
       }
     },
     "teams": {
@@ -141,6 +142,11 @@
       "general-info": "General Information",
       "event-date": "Event Date",
       "location": "Location",
+      "navigation": {
+        "directions": "Get directions",
+        "show-map": "Show on map",
+        "close": "Close"
+      },
       "teams": "Teams",
       "team": "Team",
       "division": "Division",
@@ -162,7 +168,8 @@
         "field-schedule": "Field Schedule",
         "judging-schedule": "Judging Schedule",
         "agenda": "Agenda",
-        "general-schedule": "General Schedule"
+        "general-schedule": "General Schedule",
+        "practice-tables": "Practice Tables"
       },
       "scoreboard": {
         "rank": "Rank",
@@ -197,7 +204,17 @@
         }
       },
       "division-teams": "{divisionName} teams",
-      "region": "Region"
+      "region": "Region",
+      "practice-tables": {
+        "title": "Practice Tables",
+        "description": "{tables, plural, =1 {1 practice table} other {# practice tables}} available with {duration} minute slots",
+        "time": "Time",
+        "table": "Table",
+        "blocked": "Unavailable",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "not-configured": "Practice tables have not been configured for this division."
+      }
     },
     "team-in-event": {
       "not-found": {
@@ -247,12 +264,18 @@
         "judging-sessions": "Judging Session",
         "match-type": "{stage} Match #{number} - Table {table}",
         "judging-session": "Judging Session - Room {room}",
+        "practice-table": "Practice Table {tableNumber}",
+        "practice-table-location": "Practice Table {tableNumber}",
         "no-matches": "No matches scheduled",
         "no-judging": "No judging sessions scheduled",
         "no-schedule": "No schedule available"
       }
     },
     "tools": {
+      "edition": {
+        "founders": "Founders",
+        "future": "Future"
+      },
       "scorer": {
         "title": "Robot Game Scorer",
         "no-equipment-constraint-title": "No Equipment Constraint:",

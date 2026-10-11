@@ -6,6 +6,7 @@ import { Box, Paper, Stack, Typography, alpha, useTheme, IconButton, Tooltip } f
 import { Close } from '@mui/icons-material';
 import { Award, OPTIONAL_AWARDS } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 
@@ -109,7 +110,9 @@ export const OptionalAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
   const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
-  const { getName } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName } = useAwardTranslations(edition);
 
   const handleRemoveAward = useCallback(
     async (award: Award, index: number) => {

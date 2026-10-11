@@ -49,7 +49,7 @@ export async function sendEmailWithSendGrid(params: SendEmailParams): Promise<vo
     await sgMail.send(mail);
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Failed to send email to ${params.to}: ${error.message}`);
+      throw new Error(`Failed to send email to ${params.to}: ${error.message}`, { cause: error });
     }
     console.error(error);
     throw error;

@@ -7,6 +7,7 @@ export type GetVolunteerEventDataQuery = {
         id: string;
         name: string;
         color: string;
+        futureEdition: boolean;
       }>;
     }>;
   } | null;

@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { EmojiEvents, ExpandMore } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import { Award } from '../graphql';
 
 interface AwardCardProps {
@@ -23,7 +24,9 @@ interface AwardCardProps {
 
 export function AwardCard({ name, awardList }: AwardCardProps) {
   const t = useTranslations('pages.reports.awards-list');
-  const { getName, getDescription } = useAwardTranslations();
+  const edition = useEdition();
+
+  const { getName, getDescription } = useAwardTranslations(edition);
   const [isExpanded, setIsExpanded] = useState(false);
 
   const localizedName = getName(name);

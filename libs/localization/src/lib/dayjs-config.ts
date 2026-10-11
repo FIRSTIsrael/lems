@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/he';
 import 'dayjs/locale/en';
+import 'dayjs/locale/pl';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { Locale, Locales } from './locales';

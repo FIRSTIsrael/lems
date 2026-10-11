@@ -12,6 +12,7 @@ export interface EventGraphQL {
   region: string;
   timezone: string;
   isFullySetUp?: boolean;
+  futureEdition?: boolean;
   official: boolean;
 }
 
@@ -37,6 +38,7 @@ interface EventRow {
   region: string;
   timezone: string;
   is_fully_set_up?: boolean;
+  future_edition?: boolean;
   official?: boolean | null;
 }
 
@@ -93,6 +95,7 @@ function buildEventQuery(args: EventsArgs) {
         'is_fully_set_up'
       )
     )
+    .select(sql<boolean>`COALESCE(BOOL_OR(divisions.future_edition), false)`.as('future_edition'))
     .select('event_settings.official')
     .groupBy([
       'events.id',
@@ -145,6 +148,7 @@ function buildResult(event: EventRow): EventGraphQL {
     region: event.region,
     timezone: event.timezone,
     isFullySetUp: event.is_fully_set_up,
+    futureEdition: event.future_edition,
     official: event.official ?? true
   };
 }
