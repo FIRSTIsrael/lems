@@ -29,7 +29,7 @@ export const futureScoresheet: ScoresheetSchema = {
       // Roots of Renewal
       id: 'm02',
       clauses: [
-        { type: 'number', min: 0, max: 4, default: 0 },
+        { type: 'number', min: 0, max: 40, default: 0 },
         { type: 'number', min: 0, max: 15, default: 0 }
       ],
       calculation: (clause1, clause2) => {
@@ -41,13 +41,7 @@ export const futureScoresheet: ScoresheetSchema = {
     {
       // Cave Waterfall
       id: 'm03',
-      clauses: [
-        {
-          type: 'enum',
-          options: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
-          default: '0'
-        }
-      ],
+      clauses: [{ type: 'number', min: 0, max: 50, default: 0 }],
       calculation: clause1 => Number(clause1) * 5
     },
     {
@@ -67,15 +61,18 @@ export const futureScoresheet: ScoresheetSchema = {
     {
       // Central Haven
       id: 'm05',
-      clauses: [{ type: 'number', min: 0, max: 4, default: 0 }],
-      calculation: clause1 => Number(clause1) * 5
+      clauses: [
+        { type: 'number', min: 0, max: 40, default: 0 },
+        { type: 'number', min: 0, max: 40, default: 0 }
+      ],
+      calculation: (clause1, clause2) => (Number(clause1) + Number(clause2)) * 5
     },
     {
       // Level Up Challenge: Invasive Attack
       id: 'luc',
       clauses: [
         { type: 'enum', options: ['0', '1', '2', '3', '4', '5'], default: '0' },
-        { type: 'enum', options: ['0', '1', '2', '3', '4', '5'], default: '0' }
+        { type: 'number', min: 0, max: 12, default: 0 }
       ],
       calculation: (clause1, clause2) => {
         const invasivesAdded = Number(clause1) * 20;
@@ -101,6 +98,21 @@ export const futureScoresheet: ScoresheetSchema = {
       }
     }
   ],
-  validators: [],
+  validators: [
+    missions => {
+      if (
+        Number(missions['m01'][0]) +
+          Number(missions['m01'][1]) +
+          Number(missions['m01'][2]) +
+          Number(missions['m05'][0]) >
+        40
+      )
+        throw new ScoresheetError('e1');
+    },
+    missions => {
+      if (Number(missions['m02'][0]) + Number(missions['m02'][1]) + Number(missions['m05'][1]) > 40)
+        throw new ScoresheetError('e2');
+    }
+  ],
   finalizeScore: ctx => (ctx.missions['pt']?.[0] === '3+' ? 0 : ctx.total)
 };
