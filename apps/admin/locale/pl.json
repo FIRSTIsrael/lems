@@ -508,7 +508,10 @@
           }
         },
         "split": {
-          "placeholder": "Widok podzielony wkrótce dostępny"
+          "team-count": "{count, plural, =0 {Brak drużyn} one {# drużyna} few {# drużyny} many {# drużyn} other {# drużyny}}",
+          "empty": "Brak drużyn zarejestrowanych w tej dywizji",
+          "locked": "Dla tej dywizji ustawiono harmonogram",
+          "change-division": "Przenieś do innej dywizji"
         }
       },
       "divisions": {

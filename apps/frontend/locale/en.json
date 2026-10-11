@@ -112,7 +112,9 @@
         "arrived": "Arrived",
         "all-arrived": "All teams arrived! Great job 🎉",
         "waiting-for": "Waiting for {count, plural, one {# team} other {# teams}}",
-        "teams-pending": "{count, plural, one {# team pending} other {# teams pending}}"
+        "teams-pending": "{count, plural, one {# team pending} other {# teams pending}}",
+        "arrived-teams": "{count, plural, one {# Arrived Team} other {# Arrived Teams}}",
+        "mark-not-arrived": "Mark as not arrived"
       },
       "team-input": {
         "title": "Register Team Arrival",

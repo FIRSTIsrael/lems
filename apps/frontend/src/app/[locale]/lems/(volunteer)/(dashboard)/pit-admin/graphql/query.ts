@@ -21,6 +21,7 @@ export const GET_DIVISION_TEAMS: TypedDocumentNode<QueryData, QueryVars> = gql`
         city
         arrived
         region
+        logoUrl
       }
     }
   }

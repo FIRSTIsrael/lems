@@ -76,7 +76,6 @@ export interface MatchEvent {
 
 export interface TeamArrivedEvent {
   teamId: string;
-  matchId: string;
   arrived: boolean;
 }
 

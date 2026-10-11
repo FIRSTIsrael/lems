@@ -508,7 +508,10 @@
           }
         },
         "split": {
-          "placeholder": "תצוגה מפוצלת: בקרוב"
+          "team-count": "{count, plural, =0 {אין קבוצות} one {קבוצה אחת} other {# קבוצות}}",
+          "empty": "אין קבוצות רשומות לבית זה",
+          "locked": "נקבע לוח זמנים עבור בית זה",
+          "change-division": "העבר לבית אחר"
         }
       },
       "divisions": {
