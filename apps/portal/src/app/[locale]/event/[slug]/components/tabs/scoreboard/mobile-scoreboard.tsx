@@ -181,6 +181,9 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores?.[index];
+                    const hasScore = score != null;
+                    const isBest =
+                      rankingStrategy === 'max' && hasScore && score === entry.maxScore;
                     return (
                       <Box
                         key={index}
@@ -188,11 +191,11 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                           minWidth: 60,
                           p: 1,
                           textAlign: 'center',
-                          bgcolor: score ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
-                          color: score ? 'primary.main' : 'text.disabled',
+                          bgcolor: hasScore ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
+                          color: hasScore ? 'primary.main' : 'text.disabled',
                           borderRadius: 1,
-                          border: score === entry.maxScore ? '2px solid' : 'none',
-                          borderColor: score === entry.maxScore ? 'primary.main' : 'transparent'
+                          border: isBest ? '2px solid' : 'none',
+                          borderColor: isBest ? 'primary.main' : 'transparent'
                         }}
                       >
                         <Typography

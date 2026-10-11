@@ -83,6 +83,7 @@ export interface Scoresheet {
   round: number;
   stage: 'PRACTICE' | 'RANKING';
   slug: string;
+  status?: 'empty' | 'draft' | 'completed' | 'gp' | 'submitted';
   data?: ScoresheetData;
   isNoShow: boolean;
 }

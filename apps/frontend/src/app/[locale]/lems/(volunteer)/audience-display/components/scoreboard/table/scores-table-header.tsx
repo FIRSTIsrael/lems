@@ -2,7 +2,11 @@ import { TableCell, TableHead, TableRow, alpha } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMatchTranslations } from '@lems/localization';
 import type { RankingStrategy } from '@lems/shared/utils';
-import type { ScoreboardRound } from '../hooks/use-scoreboard-rounds';
+
+interface ScoreboardRound {
+  stage: string;
+  round: number;
+}
 
 interface ScoresTableHeaderProps {
   rounds: ScoreboardRound[];

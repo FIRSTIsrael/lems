@@ -73,7 +73,10 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
       field: `match${index + 1}`,
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: 100,
-      valueGetter: (_: never, row: ScoreboardEntry) => row.scores?.[index] || '-'
+      valueGetter: (_: never, row: ScoreboardEntry) => {
+        const score = row.scores?.[index];
+        return score == null ? '-' : score;
+      }
     }))
   ];
 

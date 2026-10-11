@@ -1,9 +1,8 @@
 'use client';
 
 import { Paper, Table, TableBody, TableContainer, alpha } from '@mui/material';
-import { getRankingStrategy } from '@lems/shared/utils';
+import { getRankingStrategy, getScoreboardRoundCount } from '@lems/shared/utils';
 import { useScoreboard } from '../scoreboard-context';
-import { useScoreboardRounds } from '../hooks/use-scoreboard-rounds';
 import { useTeamScores } from '../hooks/use-team-scores';
 import { useInfiniteScroll } from '../hooks/use-infinite-scroll';
 import { useEdition } from '../../../../hooks/use-edition';
@@ -15,14 +14,18 @@ const SCROLL_DURATION = 70;
 export const ScoresTable = () => {
   const { matches, scoresheets, currentStage, rankingRoundCount } = useScoreboard();
   const rankingStrategy = getRankingStrategy(useEdition());
-  const rounds = useScoreboardRounds(scoresheets, currentStage);
-  const teamScores = useTeamScores(
-    scoresheets,
-    matches,
+  const roundCount = getScoreboardRoundCount(
     currentStage,
     rankingRoundCount,
-    rankingStrategy
+    scoresheets
+      .filter(scoresheet => scoresheet.stage === currentStage && scoresheet.status === 'submitted')
+      .map(scoresheet => scoresheet.round)
   );
+  const rounds = Array.from({ length: roundCount }, (_, index) => ({
+    stage: currentStage,
+    round: index + 1
+  }));
+  const teamScores = useTeamScores(scoresheets, matches, currentStage, roundCount, rankingStrategy);
   const tableBodyRef = useInfiniteScroll(SCROLL_DURATION);
 
   const tableContent = teamScores.map((team, index) => (

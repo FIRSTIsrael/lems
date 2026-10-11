@@ -1,5 +1,5 @@
 import type { JudgingCategory } from '@lems/database';
-import { compareRobotGameScores, RankingStrategy } from '../utils';
+import { getRobotGameRank, RankingStrategy } from '../utils';
 
 /**
  * Team with enriched rank data
@@ -24,7 +24,7 @@ export interface RankCalculationData {
   teamNumber: number;
   rubricScores: Record<JudgingCategory, number>;
   gpScore: number; // GP score (used for core-values tiebreaker)
-  robotGameScores: number[];
+  robotGameScores: (number | null | undefined)[];
 }
 
 /**
@@ -96,12 +96,11 @@ export function calculateTeamRanks(
     ranks[category] = calculateCategoryRank(teamData, allTeams, category, picklist);
   });
 
-  // Calculate robot game rank
-  const sortedTeams = [...allTeams].sort((a, b) =>
-    compareRobotGameScores(a.robotGameScores, b.robotGameScores, rankingStrategy)
+  ranks['robot-game'] = getRobotGameRank(
+    teamData.robotGameScores,
+    allTeams.map(team => team.robotGameScores),
+    rankingStrategy
   );
-  const teamIndex = sortedTeams.findIndex(t => t.teamId === teamData.teamId);
-  ranks['robot-game'] = teamIndex >= 0 ? teamIndex + 1 : allTeams.length;
 
   // Calculate average rank
   const averageRank =
