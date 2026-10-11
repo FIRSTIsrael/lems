@@ -72,6 +72,3 @@ logs/
 .nx/migrate-runs
 # Local git worktrees
 .worktrees/
-
-
-vitest.config.*.timestamp*

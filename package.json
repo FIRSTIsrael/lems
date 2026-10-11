@@ -103,8 +103,6 @@
     "@nx/next": "23.2.1",
     "@nx/node": "23.2.1",
     "@nx/react": "23.2.1",
-    "@nx/vite": "23.2.1",
-    "@nx/vitest": "23.2.1",
     "@nx/webpack": "23.2.1",
     "@nx/workspace": "23.2.1",
     "@swc-node/register": "1.12.1",
@@ -144,8 +142,6 @@
     "tsx": "^4.22.4",
     "typescript": "^6.0.0",
     "typescript-eslint": "^8.62.1",
-    "vite": "^8.0.0",
-    "vitest": "~4.1.0",
     "webpack": "5.108.3",
     "webpack-cli": "^7.0.0",
     "webpack-dev-server": "5.2.6"
