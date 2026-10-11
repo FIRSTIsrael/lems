@@ -114,7 +114,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           </Grid>
         )}
         {mission.clauses.map((clause, index) => {
-          const value = missionData?.clauses[index].value ?? null;
+          const value = missionData?.clauses[index]?.value ?? null;
           const setValue = (value: string | number | boolean | null) => {
             updateClause(index, value);
           };
