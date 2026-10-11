@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Paper, Stack, Typography, alpha, useTheme, IconButton, Tooltip } from '@mui/material';
 import { Close } from '@mui/icons-material';
-import { Award, OPTIONAL_AWARDS } from '@lems/shared';
+import { Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
 import { useEdition } from '../../../../hooks/use-edition';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -109,7 +109,7 @@ const AwardListItem: React.FC<AwardListItemProps> = ({ team, index, onRemove }) 
 export const OptionalAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
-  const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
+  const { teams, awards, awardCounts, updateAward, manualOptionalAwards } = useFinalDeliberation();
   const edition = useEdition();
 
   const { getName } = useAwardTranslations(edition);
@@ -123,13 +123,9 @@ export const OptionalAwardsAwardLists: React.FC = () => {
     [awards, updateAward]
   );
 
-  // Filter out excellence-in-engineering from optional awards
   const displayedAwards = useMemo(
-    () =>
-      OPTIONAL_AWARDS.filter(
-        award => award !== 'excellence-in-engineering' && (awardCounts[award] ?? 0) > 0
-      ) as Award[],
-    [awardCounts]
+    () => manualOptionalAwards.filter(award => (awardCounts[award] ?? 0) > 0),
+    [awardCounts, manualOptionalAwards]
   );
 
   const awardSelections = useMemo(

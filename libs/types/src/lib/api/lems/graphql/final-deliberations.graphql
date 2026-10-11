@@ -32,7 +32,7 @@ type FinalDeliberation {
   "Robot Performance award winners (ordered list of team IDs)"
   robotPerformance: [String!]!
 
-  "Optional awards - dynamic based on division's award configuration with automatic_assignment=true. Key is award name, value is ordered list of team IDs. Returned as JSON."
+  "Optional awards for this division (isOptional awards). Key is award name, value is an ordered list of team IDs. Returned as JSON."
   optionalAwards: JSON!
 
   "Manual eligibility for core awards stage"
