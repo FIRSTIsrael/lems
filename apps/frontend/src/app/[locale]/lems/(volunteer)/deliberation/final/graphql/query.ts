@@ -44,6 +44,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           id
           round
           slug
+          status
           data {
             score
             gp {

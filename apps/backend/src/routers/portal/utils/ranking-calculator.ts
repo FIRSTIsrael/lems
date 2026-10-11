@@ -3,7 +3,8 @@ import {
   compareRobotGameScores,
   getRankingStrategy,
   getRobotGameHeadlineScore,
-  padRankingScores
+  getScoreboardRoundCount,
+  indexScoresByRound
 } from '@lems/shared/utils';
 import { getEdition } from '@lems/shared/edition';
 import { Scoresheet } from '@lems/database';
@@ -13,17 +14,19 @@ export interface RankingData {
   rank: number;
   /** Headline robot-game score for the team's ranking strategy (max attempt or average). */
   maxScore: number;
-  /** Scores padded to the division's ranking round count (index `i` -> round `i + 1`). */
-  scores: number[];
+  /**
+   * Round-indexed scores (index `i` -> round `i + 1`).
+   * `null` is a round that has not been scored and is excluded from the average.
+   */
+  scores: (number | null)[];
   scoresWithRounds: Array<{ round: number; score: number }>;
 }
 
 /**
  * Calculate robot game rankings for all teams in a division.
- * Uses compareRobotGameScores (edition-aware: max attempt for Founders, average for Future) to implement FLL ranking rules:
- * 1. Sort by highest score (descending)
- * 2. Tiebreaker: compare all scores element-by-element from highest to lowest
- * 3. Handle tied teams (same rank for identical score arrays)
+ * Uses compareRobotGameScores (edition-aware: max attempt for Founders, average of
+ * scored matches for Future). Unscored rounds are blank and do not affect the average.
+ * Identical score vectors share a rank.
  *
  * @param divisionId - The division ID
  * @returns Map of teamId -> RankingData
@@ -42,14 +45,10 @@ export async function calculateRobotGameRankings(
   }
 
   const strategy = getRankingStrategy(getEdition(division));
-  const rankingRoundCount = await db.robotGameMatches
-    .byDivision(divisionId)
-    .getRankingRoundCount();
+  const stage = divisionState.field.currentStage;
+  const rankingRoundCount = await db.robotGameMatches.byDivision(divisionId).getRankingRoundCount();
 
-  const scoresheets = await db.scoresheets
-    .byDivision(divisionId)
-    .byStage(divisionState.field.currentStage)
-    .getAll();
+  const scoresheets = await db.scoresheets.byDivision(divisionId).byStage(stage).getAll();
 
   const submitted = scoresheets.filter(
     (s): s is WithId<Scoresheet> => s.status === 'submitted' && s.data?.score != null
@@ -67,8 +66,14 @@ export async function calculateRobotGameRankings(
     });
   }
 
+  const roundCount = getScoreboardRoundCount(
+    stage,
+    rankingRoundCount,
+    submitted.map(scoresheet => scoresheet.round)
+  );
+
   const teamMetrics = Array.from(teamScores.entries()).map(([teamId, scoresWithRounds]) => {
-    const scores = padRankingScores(scoresWithRounds, rankingRoundCount);
+    const scores = indexScoresByRound(scoresWithRounds, roundCount).map(score => score ?? null);
     return {
       teamId,
       scores,

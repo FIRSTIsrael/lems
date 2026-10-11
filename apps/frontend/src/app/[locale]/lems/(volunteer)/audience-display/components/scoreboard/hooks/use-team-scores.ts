@@ -1,20 +1,12 @@
 import { useMemo } from 'react';
-import { compareRobotGameScores, getRobotGameHeadlineScore, RankingStrategy } from '@lems/shared/utils';
+import {
+  compareRobotGameScores,
+  getRobotGameHeadlineScore,
+  getRobotGameRank,
+  indexScoresByRound,
+  RankingStrategy
+} from '@lems/shared/utils';
 import type { Scoresheet, Match } from '../graphql';
-
-/** Round-indexes scores for display, leaving missing rounds `undefined` (shown as "—"). */
-const indexScoresByRound = (
-  scoresByRound: Array<{ round: number; score: number }>,
-  rankingRoundCount: number
-): (number | undefined)[] => {
-  const indexed = new Array<number | undefined>(Math.max(rankingRoundCount, 0)).fill(undefined);
-  scoresByRound.forEach(({ round, score }) => {
-    if (round >= 1 && round <= rankingRoundCount) {
-      indexed[round - 1] = score;
-    }
-  });
-  return indexed;
-};
 
 export interface TeamScoreData {
   teamId: string;
@@ -32,7 +24,7 @@ export const useTeamScores = (
   scoresheets: Scoresheet[],
   matches: Match[],
   currentStage: string,
-  rankingRoundCount: number,
+  roundCount: number,
   rankingStrategy: RankingStrategy = 'max'
 ): TeamScoreData[] => {
   return useMemo(() => {
@@ -77,16 +69,24 @@ export const useTeamScores = (
       }
     });
 
-    return Array.from(teamsMap.values())
+    const rows = Array.from(teamsMap.values())
       .map(team => {
-        const scores = indexScoresByRound(team.scoresByRound, rankingRoundCount);
+        const scores = indexScoresByRound(team.scoresByRound, roundCount);
         return {
           ...team,
           scores,
           maxScore: getRobotGameHeadlineScore(scores, rankingStrategy)
         };
       })
-      .sort((a, b) => compareRobotGameScores(a.scores, b.scores, rankingStrategy))
-      .map((team, index) => ({ ...team, rank: index + 1 }));
-  }, [scoresheets, matches, currentStage, rankingRoundCount, rankingStrategy]);
+      .sort((a, b) => compareRobotGameScores(a.scores, b.scores, rankingStrategy));
+
+    return rows.map(team => ({
+      ...team,
+      rank: getRobotGameRank(
+        team.scores,
+        rows.map(candidate => candidate.scores),
+        rankingStrategy
+      )
+    }));
+  }, [scoresheets, matches, currentStage, roundCount, rankingStrategy]);
 };

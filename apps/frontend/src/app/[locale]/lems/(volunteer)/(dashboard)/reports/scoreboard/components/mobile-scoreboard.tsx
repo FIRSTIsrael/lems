@@ -170,6 +170,9 @@ export function MobileScoreboard({ data, matchesPerTeam, rankingStrategy }: Mobi
                 >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores[index];
+                    const hasScore = score !== null;
+                    const isBest =
+                      rankingStrategy === 'max' && hasScore && score === entry.maxScore;
                     return (
                       <Box
                         key={index}
@@ -177,14 +180,11 @@ export function MobileScoreboard({ data, matchesPerTeam, rankingStrategy }: Mobi
                           minWidth: 60,
                           p: 1,
                           textAlign: 'center',
-                          bgcolor: score !== null ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
-                          color: score !== null ? 'primary.main' : 'text.disabled',
+                          bgcolor: hasScore ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
+                          color: hasScore ? 'primary.main' : 'text.disabled',
                           borderRadius: 1,
-                          border: score !== null && score === entry.maxScore ? '2px solid' : 'none',
-                          borderColor:
-                            score !== null && score === entry.maxScore
-                              ? 'primary.main'
-                              : 'transparent'
+                          border: isBest ? '2px solid' : 'none',
+                          borderColor: isBest ? 'primary.main' : 'transparent'
                         }}
                       >
                         <Typography

@@ -4,7 +4,7 @@ import { Award } from '@lems/shared';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
-import { getRankingStrategy, padRankingScores } from '@lems/shared/utils';
+import { getRankingStrategy, indexScoresByRound } from '@lems/shared/utils';
 import {
   computeNormalizedScores,
   computeRoomMetrics,
@@ -154,8 +154,10 @@ export const FinalDeliberationProvider = ({
     const teamsWithScores = division.teams.map((team, index) => ({
       ...team,
       scores: teamScores[index],
-      robotGameScores: padRankingScores(
-        team.scoresheets.map(s => ({ round: s.round, score: s.data?.score ?? 0 })),
+      robotGameScores: indexScoresByRound(
+        team.scoresheets
+          .filter(sheet => sheet.status === 'submitted' && sheet.data != null)
+          .map(sheet => ({ round: sheet.round, score: sheet.data!.score })),
         rankingRoundCount
       )
     }));
@@ -201,7 +203,7 @@ export const FinalDeliberationProvider = ({
 
       const robotGameScores = team.scoresheets.reduce<Record<string, number | null>>(
         (acc, sheet) => {
-          acc[sheet.round] = sheet.data?.score || null;
+          if (sheet.status === 'submitted') acc[sheet.round] = sheet.data?.score ?? null;
           return acc;
         },
         {}

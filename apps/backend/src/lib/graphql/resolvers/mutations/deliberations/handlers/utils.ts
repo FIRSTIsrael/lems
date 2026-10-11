@@ -2,7 +2,7 @@ import { Scoresheet, JudgingCategory, buildNoShowKey } from '@lems/database';
 import { getRubrics } from '@lems/shared/rubrics';
 import { Edition } from '@lems/shared/edition';
 import { calculateTeamRanks, TeamWithRanks, getEffectiveGp } from '@lems/shared/deliberation';
-import { getRankingStrategy, padRankingScores } from '@lems/shared/utils';
+import { getRankingStrategy, indexScoresByRound } from '@lems/shared/utils';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
 import { getDivisionEdition } from '../../../../utils/division-edition';
@@ -18,7 +18,7 @@ interface TeamScoreData {
   teamNumber: number;
   rubricScores: Record<JudgingCategory, number>;
   gpScore: number;
-  robotGameScores: number[];
+  robotGameScores: (number | undefined)[];
 }
 
 /**
@@ -38,14 +38,14 @@ export async function calculateAllTeamScores(
   return teams.map(team => {
     const submittedRankingScores = scoresheets
       .filter(s => s.teamId === team.id && s.stage === 'RANKING' && s.status === 'submitted')
-      .map(s => ({ round: s.round, score: s.data?.score || 0 }));
+      .map(s => ({ round: s.round, score: s.data?.score ?? 0 }));
 
     return {
       teamId: team.id,
       teamNumber: team.number,
       rubricScores: calculateRubricScores(team.id, rubrics, edition),
       gpScore: calculateGPScore(team.id, scoresheets, noShows, zeroGpForNoShows),
-      robotGameScores: padRankingScores(submittedRankingScores, rankingRoundCount)
+      robotGameScores: indexScoresByRound(submittedRankingScores, rankingRoundCount)
     };
   });
 }
