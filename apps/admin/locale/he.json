@@ -64,7 +64,212 @@
       }
     },
     "insights": {
-      "coming-soon": "בקרוב..."
+      "title": "תובנות",
+      "event": "אירוע",
+      "division": "בית",
+      "not-completed": "לא הסתיים",
+      "no-completed-events": "עדיין אין אירועים שהסתיימו. התובנות יהיו זמינות לאחר סימון האירוע כהסתיים.",
+      "all-stages": "כל השלבים",
+      "no-data": "אין נתונים להצגה",
+      "errors": {
+        "load-events": "טעינת האירועים נכשלה."
+      },
+      "tabs": {
+        "overview": "סקירה כללית",
+        "judging": "שיפוט",
+        "explorer": "חקירת נתונים"
+      },
+      "widgets": {
+        "overview-stats": {
+          "teams": "קבוצות",
+          "matches": "מקצים שהושלמו",
+          "sessions": "מפגשי שיפוט שהושלמו",
+          "scoresheets": "דפי ניקוד שהוגשו",
+          "rubrics": "מחוונים שהושלמו",
+          "robot-game-average": "ניקוד דירוג ממוצע",
+          "judging-average": "ציון מחוון ממוצע",
+          "median": "חציון: {value}",
+          "match-delay": "עיכוב מקצים ממוצע",
+          "session-delay": "עיכוב מפגשי שיפוט ממוצע",
+          "delay-hint": "התחלה בפועל לעומת המתוכנן (דק':שנ')"
+        },
+        "teams-table": {
+          "title": "סיכום קבוצות",
+          "rank": "דירוג",
+          "number": "קבוצה",
+          "name": "שם",
+          "affiliation": "מוסד",
+          "max-score": "ניקוד מקסימלי",
+          "average-score": "ניקוד ממוצע",
+          "judging-average": "ממוצע שיפוט",
+          "gp-average": "ממוצע GP"
+        },
+        "robot-game-stats": {
+          "average": "ניקוד ממוצע",
+          "median": "חציון: {value}",
+          "top-scores": "ניקוד גבוה ממוצע",
+          "highest-score": "שיא ניקוד",
+          "std-dev": "סטיית תקן",
+          "score-count": "{count, plural, one {דף ניקוד אחד} other {# דפי ניקוד}}"
+        },
+        "scores-by-round": {
+          "title": "ניקוד לפי סבב",
+          "average": "ממוצע",
+          "median": "חציון",
+          "max": "מקסימום"
+        },
+        "scores-per-table": {
+          "title": "ניקוד לפי שולחן",
+          "description": "ניקוד ממוצע וחציוני בכל שולחן. הבדלים גדולים עשויים להעיד על שולחן שהוצב אחרת.",
+          "average": "ממוצע",
+          "median": "חציון",
+          "overall": "ממוצע כללי"
+        },
+        "mission-success": {
+          "title": "השלמת משימות",
+          "description": "אחוז המקצים שבהם כל משימה הניבה נקודות כלשהן.",
+          "success-rate": "אחוז השלמה"
+        },
+        "inspection": {
+          "description": "שיעור הקבוצות שעברו את בדיקת הציוד בכל המקצים שלהן.",
+          "success-rate": "קבוצות שעברו תמיד",
+          "failures": "{count, plural, =0 {אף קבוצה לא נכשלה בבדיקה} one {קבוצה אחת נכשלה בבדיקה} other {# קבוצות נכשלו בבדיקה}}",
+          "times": "{count, plural, one {פעם אחת} other {# פעמים}}"
+        },
+        "precision-tokens": {
+          "description": "כמה אסימוני דיוק נותרו בסוף המקצים, והניקוד הממוצע לכל כמות.",
+          "tokens": "{count} אסימונים",
+          "count": "מקצים",
+          "average-score": "ניקוד ממוצע"
+        },
+        "cycle-times": {
+          "title": "זמני סבב מקצים",
+          "description": "הזמן בין תחילת מקצים עוקבים באותו סבב (דק':שנ').",
+          "average": "ממוצע",
+          "median": "חציון",
+          "min": "הקצר ביותר",
+          "max": "הארוך ביותר",
+          "percentile95": "אחוזון 95",
+          "average-delay": "עיכוב ממוצע"
+        },
+        "match-delays": {
+          "title": "עיכובי מקצים לאורך היום",
+          "description": "ההפרש בין זמן ההתחלה המתוכנן לבין זמן ההתחלה בפועל של כל מקצה. ערך חיובי פירושו שהמקצה התחיל באיחור.",
+          "minutes-unit": "ד'",
+          "delay": "עיכוב"
+        },
+        "robot-consistency": {
+          "title": "עקביות הרובוט",
+          "description": "הניקוד הממוצע של כל קבוצה לעומת סטיית התקן היחסית שלה. ערך נמוך יותר = עקביות גבוהה יותר.",
+          "average-rel-std-dev": "ממוצע: {value}",
+          "average-score": "ניקוד ממוצע",
+          "rel-std-dev": "סטיית תקן יחסית",
+          "scores": "ניקוד: {scores}"
+        },
+        "judging-stats": {
+          "average": "ציון מחוון ממוצע",
+          "median": "חציון: {value}",
+          "highest-average": "ממוצע קבוצתי גבוה ביותר",
+          "nominated-teams": "קבוצות שהועמדו לפרסי רשות",
+          "session-delay": "עיכוב מפגשים ממוצע",
+          "worst-room": "החדר המאחר ביותר: {room} ({delay})"
+        },
+        "category-scores": {
+          "title": "ציונים לפי תחום",
+          "average": "ממוצע",
+          "median": "חציון"
+        },
+        "room-scores": {
+          "title": "ציונים לפי חדר שיפוט",
+          "description": "ציון מחוון ממוצע לכל תחום בכל חדר. עוזר לזהות חדרים שמשפטים בחומרה או בקלות יחסית."
+        },
+        "room-delays": {
+          "title": "עיכוב ממוצע לפי חדר",
+          "description": "ההפרש הממוצע בין זמן תחילת המפגש המתוכנן לבין זמן ההתחלה בפועל, לכל חדר.",
+          "minutes-unit": "ד'",
+          "delay": "עיכוב"
+        },
+        "robot-correlation": {
+          "title": "{design} לעומת {game}",
+          "description": "ציון מחוון {design} הממוצע של כל קבוצה לעומת הניקוד הגבוה ביותר שלה בדירוג, עם קו רגרסיה לינארית. r הוא מקדם המתאם של פירסון; R² הוא החלק מהשונות בניקוד שמוסבר על ידי {design}.",
+          "robot-game": "הניקוד הגבוה ביותר בדירוג",
+          "team-detail": "תכנון {design} · ניקוד {score} · שארית {residual}",
+          "strength": {
+            "weak": "חלש",
+            "moderate": "בינוני",
+            "strong": "חזק"
+          },
+          "equation": "ניקוד ≈ {slope} × תכנון + {intercept}",
+          "over-performers": "מצליחות מעבר לתכנון",
+          "under-performers": "מצליחות פחות מהתכנון"
+        },
+        "field-distribution": {
+          "title": "התפלגות רמות במחוונים",
+          "description": "כמה פעמים ניתנה כל רמה, לכל שדה במחוון."
+        },
+        "award-nominations": {
+          "title": "מועמדויות לפרסי רשות",
+          "description": "מספר הקבוצות שהועמדו לכל פרס רשות.",
+          "count": "מועמדויות"
+        }
+      },
+      "explorer": {
+        "metric": "מדד",
+        "mission": "משימה",
+        "category": "תחום",
+        "field": "שדה",
+        "stage": "שלב",
+        "group-by": "קיבוץ לפי",
+        "aggregation": "חישוב",
+        "all": "הכל",
+        "all-fields": "כל השדות (ממוצע)",
+        "results": "תוצאות",
+        "export": "ייצוא CSV",
+        "minutes-unit": "ד'",
+        "views": {
+          "chart": "גרף",
+          "table": "טבלה"
+        },
+        "columns": {
+          "group": "קבוצה",
+          "value": "ערך",
+          "count": "דגימות"
+        },
+        "metrics": {
+          "robot-game-score": "ניקוד משחק הרובוט",
+          "mission-points": "נקודות משימה",
+          "gp-score": "ציון מקצועיות אדיבה",
+          "rubric-score": "ציון מחוון",
+          "match-delay": "עיכוב מקצה",
+          "session-delay": "עיכוב מפגש שיפוט"
+        },
+        "dimensions": {
+          "none": "ללא (כללי)",
+          "team": "קבוצה",
+          "table": "שולחן",
+          "room": "חדר שיפוט",
+          "stage": "שלב",
+          "round": "סבב",
+          "category": "תחום"
+        },
+        "aggregations": {
+          "average": "ממוצע",
+          "median": "חציון",
+          "min": "מינימום",
+          "max": "מקסימום",
+          "sum": "סכום",
+          "count": "ספירה",
+          "std-dev": "סטיית תקן"
+        },
+        "summary": {
+          "count": "דגימות: {value}",
+          "average": "ממוצע: {value}",
+          "median": "חציון: {value}",
+          "min": "מינימום: {value}",
+          "max": "מקסימום: {value}",
+          "std-dev": "סטיית תקן: {value}"
+        }
+      }
     },
     "teams": {
       "title": "קבוצות",
