@@ -15,6 +15,7 @@ import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { MobileFieldSection } from './mobile-field-section';
 
 interface MobileSectionProps {
@@ -31,7 +32,7 @@ export const MobileSection: React.FC<MobileSectionProps> = ({
   disabled = false
 }) => {
   const [expanded, setExpanded] = useState(true);
-  const { getSectionTitle } = useRubricsTranslations(category);
+  const { getSectionTitle } = useRubricsTranslations(category, useToolEdition());
 
   const color = getRubricColor(category);
   const background = lighten(color, 0.9);

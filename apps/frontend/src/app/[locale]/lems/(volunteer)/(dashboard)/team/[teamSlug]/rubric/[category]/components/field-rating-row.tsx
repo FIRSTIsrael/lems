@@ -6,6 +6,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
 import { rubricColumns } from '@lems/shared/rubrics';
 import toast from 'react-hot-toast';
+import { useEdition } from '../../../../../../hooks/use-edition';
 import { useRubric } from '../rubric-context';
 import { RubricRadioIcon } from './rubric-radio-icon';
 
@@ -25,7 +26,7 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   disabled = false
 }) => {
   const t = useTranslations('pages.rubric');
-  const { getFieldLevel } = useRubricsTranslations(category);
+  const { getFieldLevel } = useRubricsTranslations(category, useEdition());
 
   const { rubric, updateFieldValue } = useRubric();
   const currentValue = rubric.data?.fields?.[fieldId]?.value;

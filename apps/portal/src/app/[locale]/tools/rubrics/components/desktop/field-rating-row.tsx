@@ -4,6 +4,7 @@ import { TableRow, TableCell, Typography, IconButton, Stack } from '@mui/materia
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
 import { rubricColumns } from '@lems/shared/rubrics';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
 import { RubricRadioIcon } from './rubric-radio-icon';
 
@@ -22,7 +23,7 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   coreValues = false,
   disabled = false
 }) => {
-  const { getFieldLevel } = useRubricsTranslations(category);
+  const { getFieldLevel } = useRubricsTranslations(category, useToolEdition());
   const { rubric, updateRubric } = useRubricContext();
 
   const currentValue = rubric.values.fields[fieldId]?.value;

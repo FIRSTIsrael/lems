@@ -809,5 +809,137 @@
       "great-job": "Great job...",
       "think-about": "Think about..."
     }
+  },
+  "rubrics-future": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACHIEVES",
+      "exceeds": "EXCEEDS"
+    },
+    "core-values-explanation": "Criteria with this style of check box count dually toward Project or Engineering Design and Core Values awards rankings. Core Values make up 25% of a team’s Champion’s score and should be demonstrated throughout their work and event experience.",
+    "feedback": {
+      "great-job": "Great job with...",
+      "think-about": "As a next step, think about..."
+    },
+    "categories": {
+      "core-values": { "title": "Core Values" },
+      "innovation-project": {
+        "title": "Project",
+        "sections": {
+          "explore": {
+            "title": "EXPLORE",
+            "description": "How does the team research the project path?",
+            "fields": {
+              "guided-research": {
+                "criterion": "Team clearly explains how the guided research influenced their project direction"
+              },
+              "sources": {
+                "criterion": "Team uses multiple relevant sources to learn about their selected prompt"
+              }
+            }
+          },
+          "ideate": {
+            "title": "IDEATE",
+            "description": "What ideas does the team generate based on their research?",
+            "fields": {
+              "ideas": {
+                "criterion": "Team explored multiple ideas and clearly explains reasoning for selection"
+              },
+              "iteration": {
+                "criterion": "Team clearly explains the iterative process for developing and improving their idea based on research or feedback"
+              },
+              "innovation": {
+                "criterion": "Team clearly explains the innovative approach or original thinking in their project idea"
+              }
+            }
+          },
+          "implement": {
+            "title": "IMPLEMENT",
+            "description": "How does the team’s idea have a positive impact?",
+            "fields": {
+              "impact": {
+                "criterion": "Team clearly identifies the real-world users and potential impact of their idea"
+              },
+              "steps": {
+                "criterion": "Team clearly identifies the steps needed to implement their idea"
+              },
+              "feasibility": {
+                "criterion": "Team considers the feasibility of their idea including challenges or trade-offs"
+              }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "How does the team communicate their project work?",
+            "fields": {
+              "visuals": {
+                "criterion": "Team provides clear visuals, models, or prototypes to support project presentation"
+              },
+              "contribution": {
+                "criterion": "Team explains how all members meaningfully contribute to project development"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "title": "Engineering Design",
+        "sections": {
+          "identify": {
+            "title": "IDENTIFY",
+            "description": "How does the team practice and identify areas for improvement?",
+            "fields": {
+              "resources": {
+                "criterion": "Team explains the use of guided missions and building and coding resources"
+              },
+              "improvement-areas": {
+                "criterion": "Team identifies areas for improvement in provided tools to inform design requirements"
+              }
+            }
+          },
+          "design-create": {
+            "title": "DESIGN & CREATE",
+            "description": "What ideas does the team generate to improve their tools and strategy?",
+            "fields": {
+              "mission-strategy": {
+                "criterion": "Team develops a clear mission strategy that guides design decisions"
+              },
+              "mechanical": {
+                "criterion": "Team solutions include custom mechanical builds that support their mission strategy"
+              },
+              "coding": {
+                "criterion": "Team solutions include custom coding that supports their mission strategy"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERATE",
+            "description": "How does the team test and improve their designs?",
+            "fields": {
+              "options": {
+                "criterion": "Team explores multiple design options for each role tool before selecting one to test"
+              },
+              "testing-process": {
+                "criterion": "Team follows a clear testing process and documents results"
+              },
+              "improve": { "criterion": "Team uses testing results to improve designs" }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "How does the team present their design process and strategy?",
+            "fields": {
+              "cooperative-strategy": {
+                "criterion": "Team clearly explains cooperative game strategy between player roles and with another team"
+              },
+              "contribution": {
+                "criterion": "Team explains how all members meaningfully contribute to engineering design process"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

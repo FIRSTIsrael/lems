@@ -37,11 +37,11 @@ interface RubricsPageData {
 export default function RubricsExportPage() {
   const params = useParams();
   const t = useTranslations('pages.exports.rubrics');
-  const { getTerm } = useRubricsGeneralTranslations();
   const { data: rubricsData } = useSWR<RubricsPageData>(
     `/lems/export/${params.teamSlug}/${params.eventSlug}/rubrics`
   );
   const edition = getEdition(rubricsData ?? {});
+  const { getTerm } = useRubricsGeneralTranslations(edition);
   const { getName: getAwardName, getDescription: getAwardDescription } =
     useAwardTranslations(edition);
 
@@ -161,6 +161,7 @@ export default function RubricsExportPage() {
                     scores={rubric.scores}
                     notes={rubric.notes}
                     feedback={rubric.feedback}
+                    edition={edition}
                   />
                 ) : (
                   <Alert severity="info">{t('no-rubric-data')}</Alert>

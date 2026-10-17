@@ -8,6 +8,11 @@ export interface RubricCategorySchema {
     }[];
   }[];
   feedback?: boolean;
+  /**
+   * 'levels' (default): each field has its own text per level (Founders).
+   * 'criteria': each field is a single criterion sentence rated on plain level columns (Future).
+   */
+  layout?: 'levels' | 'criteria';
 }
 
 export interface RubricsSchema {

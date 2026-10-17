@@ -21,7 +21,7 @@ function FeedbackItem({
   content: string;
   compact?: boolean;
 }) {
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(useEdition());
 
   return (
     <Box>

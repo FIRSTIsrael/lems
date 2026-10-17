@@ -4,6 +4,7 @@ import { TableRow, TableCell, Typography } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations } from '@lems/localization';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 
 interface TableHeaderRowProps {
   category: JudgingCategory;
@@ -16,7 +17,7 @@ const categoryColors: { [K in JudgingCategory]: string[] } = {
 };
 
 export const TableHeaderRow: React.FC<TableHeaderRowProps> = ({ category }) => {
-  const { getColumnTitle } = useRubricsGeneralTranslations();
+  const { getColumnTitle } = useRubricsGeneralTranslations(useToolEdition());
   const colors = categoryColors[category];
 
   return (
