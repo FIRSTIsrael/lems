@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Button } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import type { Team } from '../../graphql/types';
+import { useEdition } from '../../../../hooks/use-edition';
 
 type JudgingCategory = 'innovation-project' | 'robot-design' | 'core-values';
 
@@ -18,7 +19,8 @@ export const RubricButton: React.FC<RubricButtonProps> = ({
   category,
   fontSize = '0.75rem'
 }) => {
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
 
   return (
     <Button

@@ -31,6 +31,7 @@ export const GET_VOLUNTEER_BY_ROLE_QUERY: TypedDocumentNode<
         id
         name
         color
+        futureEdition
       }
       volunteers(role: $role) {
         id

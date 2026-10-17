@@ -34,7 +34,11 @@
   "judging-categories": {
     "core-values": "Core Values",
     "innovation-project": "Innovation Project",
-    "robot-design": "Robot Design"
+    "robot-design": "Robot Design",
+    "future": {
+      "innovation-project": "Project",
+      "robot-design": "Engineering Design"
+    }
   },
   "judging-session-stages": {
     "setup": "Setup Time",

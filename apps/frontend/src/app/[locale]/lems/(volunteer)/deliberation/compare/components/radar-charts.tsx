@@ -154,8 +154,8 @@ interface AllCategoriesRadarChartProps {
 }
 
 export const AllCategoriesRadarChart = ({ team }: AllCategoriesRadarChartProps) => {
-  const { getCategory } = useJudgingCategoryTranslations();
   const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const data = useMemo(
     () => processAllCategoriesRadarData(edition, team, getCategory),
     [edition, team, getCategory]

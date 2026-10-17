@@ -34,7 +34,11 @@
   "judging-categories": {
     "core-values": "ערכי הליבה",
     "innovation-project": "פרויקט החדשנות",
-    "robot-design": "תכנון הרובוט"
+    "robot-design": "תכנון הרובוט",
+    "future": {
+      "innovation-project": "הפרויקט",
+      "robot-design": "התכנון ההנדסי"
+    }
   },
   "judging-session-stages": {
     "setup": "זמן התארגנות",

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Box, Chip, Stack, Typography } from '@mui/material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { useEdition } from '../../../hooks/use-edition';
 
 interface CategoryFilterProps {
   currentCategory?: JudgingCategory;
@@ -15,7 +16,8 @@ const CATEGORIES: JudgingCategory[] = ['innovation-project', 'robot-design', 'co
 
 export function CategoryFilter({ currentCategory, compact = false }: CategoryFilterProps) {
   const tCompare = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const router = useRouter();
   const searchParams = useSearchParams();
 
