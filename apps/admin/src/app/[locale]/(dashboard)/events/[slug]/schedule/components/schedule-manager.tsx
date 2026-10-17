@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Alert, Box, Grid, Stack } from '@mui/material';
 import { Groups, Domain, Warning } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
+import { getEdition } from '@lems/shared/edition';
 import { useEvent } from '../../components/event-context';
 import { ScheduleProvider, useSchedule } from './schedule-context';
 import { ScheduleSettings } from './schedule-settings';
@@ -73,7 +74,12 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
 
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({ division }) => {
   return (
-    <ScheduleProvider eventId={division.eventId} divisionId={division.id}>
+    <ScheduleProvider
+      key={division.id}
+      eventId={division.eventId}
+      divisionId={division.id}
+      edition={getEdition(division)}
+    >
       <ScheduleManagerContent division={division} />
     </ScheduleProvider>
   );
