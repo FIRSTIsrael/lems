@@ -77,8 +77,8 @@ export function AwardsProvider({
   }, [currentSchema, originalSchema]);
 
   const validation = useMemo(() => {
-    return validateAwardsSchema(currentSchema, teamCount);
-  }, [currentSchema, teamCount]);
+    return validateAwardsSchema(currentSchema, teamCount, edition);
+  }, [currentSchema, teamCount, edition]);
 
   const updateAwardCount = useCallback((award: Award, count: number) => {
     setCurrentSchema(prev => ({

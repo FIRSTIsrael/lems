@@ -975,7 +975,8 @@
             "title": "Problemy z konfiguracją",
             "no-teams": "Brak zarejestrowanych drużyn",
             "not-enough-awards": "Skonfigurowano zbyt mało nagród ({count}%)",
-            "too-many-awards": "Skonfigurowano zbyt wiele nagród ({count}%)"
+            "too-many-awards": "Skonfigurowano zbyt wiele nagród ({count}%)",
+            "unavailable-awards": "{count, plural, one {# skonfigurowana nagroda nie jest dostępna} few {# skonfigurowane nagrody nie są dostępne} other {# skonfigurowanych nagród nie jest dostępnych}} w edycji tej dywizji"
           },
           "success": {
             "title": "Konfiguracja nagród poprawna",
