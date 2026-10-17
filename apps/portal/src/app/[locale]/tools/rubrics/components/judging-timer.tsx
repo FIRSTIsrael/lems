@@ -24,8 +24,10 @@ import {
   DragIndicator as DragIndicatorIcon
 } from '@mui/icons-material';
 import { DirectionalIcon, useJudgingSessionStageTranslations } from '@lems/localization';
+import type { Edition } from '@lems/shared/edition';
 import { useLocale } from 'next-intl';
-import { useJudgingTimer, formatTime, getJudgingStages } from '../hooks/use-judging-timer';
+import { useToolEdition } from '../../hooks/use-tool-edition';
+import { useJudgingTimer, formatTime, getPracticeJudgingStages } from '../hooks/use-judging-timer';
 
 interface DragState {
   isDragging: boolean;
@@ -35,9 +37,9 @@ interface DragState {
   offsetY: number;
 }
 
-export const JudgingTimer = () => {
+const JudgingTimerContent = ({ edition }: { edition: Edition }) => {
   const locale = useLocale();
-  const JUDGING_STAGES = getJudgingStages(locale);
+  const JUDGING_STAGES = getPracticeJudgingStages(edition, locale);
 
   const [isOpen, setIsOpen] = useState(false);
   const [dragState, setDragState] = useState<DragState>({
@@ -48,12 +50,12 @@ export const JudgingTimer = () => {
     offsetY: 0
   });
   const paperRef = useRef<HTMLDivElement>(null);
-  const { getStage } = useJudgingSessionStageTranslations();
+  const { getStage } = useJudgingSessionStageTranslations(edition);
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const [timerState, timerControls] = useJudgingTimer();
+  const [timerState, timerControls] = useJudgingTimer(edition);
   const { currentStage, stageTimeRemaining, totalTimeRemaining, isRunning, isFinished } =
     timerState;
   const { start, pause, resume, stop, reset, forward, back } = timerControls;
@@ -385,4 +387,9 @@ export const JudgingTimer = () => {
       </Slide>
     </>
   );
+};
+
+export const JudgingTimer: React.FC = () => {
+  const edition = useToolEdition();
+  return <JudgingTimerContent key={edition} edition={edition} />;
 };

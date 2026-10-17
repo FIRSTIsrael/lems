@@ -42,7 +42,16 @@
     "innovation-questions": "שאלות - פרויקט חדשנות",
     "robot-presentation": "הצגה - תכנון הרובוט",
     "robot-questions": "שאלות - תכנון הרובוט",
-    "final-thoughts": "שיתוף מסכם"
+    "final-thoughts": "שיתוף מסכם",
+    "core-values-questions": "שאלות - ערכי הליבה",
+    "judging-feedback": "משוב השופטים",
+    "future": {
+      "setup": "קבלת פנים",
+      "innovation-presentation": "הצגה - הפרויקט",
+      "innovation-questions": "שאלות - הפרויקט",
+      "robot-presentation": "הצגה - התכנון ההנדסי",
+      "robot-questions": "שאלות - התכנון ההנדסי"
+    }
   },
   "awards": {
     "core-values": {
