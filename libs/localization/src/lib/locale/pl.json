@@ -42,7 +42,16 @@
     "innovation-questions": "Pytania – Projekt Innowacyjny",
     "robot-presentation": "Prezentacja – Robot Design",
     "robot-questions": "Pytania – Robot Design",
-    "final-thoughts": "Podsumowanie"
+    "final-thoughts": "Podsumowanie",
+    "core-values-questions": "Pytania – Wartości Podstawowe",
+    "judging-feedback": "Informacja zwrotna od sędziów",
+    "future": {
+      "setup": "Powitanie",
+      "innovation-presentation": "Prezentacja – Projekt",
+      "innovation-questions": "Pytania – Projekt",
+      "robot-presentation": "Prezentacja – Engineering Design",
+      "robot-questions": "Pytania – Engineering Design"
+    }
   },
   "awards": {
     "core-values": {

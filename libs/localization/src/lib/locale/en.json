@@ -42,7 +42,16 @@
     "innovation-questions": "Questions - Innovation Project",
     "robot-presentation": "Presentation - Robot Design",
     "robot-questions": "Questions - Robot Design",
-    "final-thoughts": "Final Thoughts"
+    "final-thoughts": "Final Thoughts",
+    "core-values-questions": "Core Values Q&A",
+    "judging-feedback": "Judging Feedback",
+    "future": {
+      "setup": "Welcome",
+      "innovation-presentation": "Project Presentation",
+      "innovation-questions": "Project Q&A",
+      "robot-presentation": "Engineering Design Presentation",
+      "robot-questions": "Engineering Design Q&A"
+    }
   },
   "awards": {
     "core-values": {

@@ -3,17 +3,27 @@
 import { useEffect, useCallback, useRef, useReducer, useMemo } from 'react';
 import { useLocale } from 'next-intl';
 import { useJudgingSounds } from '@lems/shared';
+import type { Edition } from '@lems/shared/edition';
+import { getJudgingStages, resolveJudgingStages, JUDGING_DEFAULTS } from '@lems/shared/judging';
 
-// Locale-aware judging stages
-// Hebrew: 6 min final stage, English: 8 min final stage
-export const getJudgingStages = (locale: string) => [
-  { id: 'setup', duration: 120 }, // 2 min
-  { id: 'innovation-presentation', duration: 300 }, // 5 min
-  { id: 'innovation-questions', duration: 300 }, // 5 min
-  { id: 'robot-presentation', duration: 300 }, // 5 min
-  { id: 'robot-questions', duration: 300 }, // 5 min
-  { id: 'final-thoughts', duration: locale === 'he' ? 360 : 480 } // 6 min (Hebrew) / 8 min (English)
-];
+export type PracticeJudgingStage = { id: string; duration: number };
+
+// Founders: Hebrew 6 min final stage, English 8 min final stage.
+// Future: the official 24-minute flowchart, regardless of locale.
+export const getPracticeJudgingStages = (
+  edition: Edition,
+  locale: string
+): PracticeJudgingStage[] =>
+  edition === 'future'
+    ? resolveJudgingStages(getJudgingStages('future'), JUDGING_DEFAULTS.future.sessionLengthSeconds)
+    : [
+        { id: 'setup', duration: 120 }, // 2 min
+        { id: 'innovation-presentation', duration: 300 }, // 5 min
+        { id: 'innovation-questions', duration: 300 }, // 5 min
+        { id: 'robot-presentation', duration: 300 }, // 5 min
+        { id: 'robot-questions', duration: 300 }, // 5 min
+        { id: 'final-thoughts', duration: locale === 'he' ? 360 : 480 } // 6 min (Hebrew) / 8 min (English)
+      ];
 
 export interface JudgingTimerState {
   currentStage: number;
@@ -51,7 +61,7 @@ type TimerAction =
   | { type: 'STAGE_COMPLETE'; nextStage: number }
   | { type: 'TICK_BY'; count: number };
 
-const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
+const createTimerReducer = (stages: PracticeJudgingStage[]) => {
   return (state: TimerState, action: TimerAction): TimerState => {
     if (typeof action === 'object' && action.type === 'STAGE_COMPLETE') {
       return {
@@ -150,11 +160,14 @@ const createTimerReducer = (stages: ReturnType<typeof getJudgingStages>) => {
   };
 };
 
-export const useJudgingTimer = (): [JudgingTimerState, JudgingTimerControls] => {
+export const useJudgingTimer = (edition: Edition): [JudgingTimerState, JudgingTimerControls] => {
   const locale = useLocale();
   const { playSound } = useJudgingSounds();
 
-  const JUDGING_STAGES = useMemo(() => getJudgingStages(locale), [locale]);
+  const JUDGING_STAGES = useMemo(
+    () => getPracticeJudgingStages(edition, locale),
+    [edition, locale]
+  );
   const timerReducer = useMemo(() => createTimerReducer(JUDGING_STAGES), [JUDGING_STAGES]);
 
   const [state, dispatch] = useReducer(timerReducer, {
