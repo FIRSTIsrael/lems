@@ -124,14 +124,15 @@ export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) 
     'innovation-project',
     edition
   );
+  const { getSectionTitle: getRdSectionTitle } = useRubricsTranslations('robot-design', edition);
   const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory, edition);
 
   const data = useMemo(() => {
     if (category === 'core-values')
-      return processCoreValuesRadarData(edition, team, getIpSectionTitle);
+      return processCoreValuesRadarData(edition, team, getIpSectionTitle, getRdSectionTitle);
     const rubric = team.rubrics[category.replace('-', '_') as keyof typeof team.rubrics];
     return processRubricRadarData(edition, rubric, category, getSectionTitle);
-  }, [edition, team, category, getSectionTitle, getIpSectionTitle]);
+  }, [edition, team, category, getSectionTitle, getIpSectionTitle, getRdSectionTitle]);
 
   if (data.length === 0) {
     return (
