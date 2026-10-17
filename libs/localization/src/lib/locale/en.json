@@ -109,6 +109,36 @@
     "advancement": {
       "name": "Advancement",
       "description": "Teams advancing to the next stage of competition"
+    },
+    "future": {
+      "champions": {
+        "name": "Champion's",
+        "description": "This award celebrates a team that embodies the <i>FIRST</i>® LEGO® League experience by fully embracing the Core Values while achieving top scores in their project, engineering design, and game matches."
+      },
+      "core-values": {
+        "name": "Core Values",
+        "description": "This award celebrates a team that exemplifies teamwork, discovery, inclusion, innovation, impact, and fun throughout their work and during the event."
+      },
+      "innovation-project": {
+        "name": "Project",
+        "description": "This award celebrates a team that excels in research, creativity, and teamwork to deliver an outstanding project."
+      },
+      "robot-design": {
+        "name": "Engineering Design",
+        "description": "This award celebrates a team that uses solid engineering principles to build and code their team solutions to solve game missions."
+      },
+      "robot-performance": {
+        "name": "Game Performance",
+        "description": "This award celebrates a team that scores the highest average points from game matches, demonstrating both engineering excellence and collaborative game strategy."
+      },
+      "rising-all-star": {
+        "name": "Rising All-Star",
+        "description": "This award celebrates a team that makes significant progress in their confidence and capability, and who judges expect great things from in the future."
+      },
+      "lead-mentor": {
+        "name": "Mentorship",
+        "description": "Mentors guide and inspire their teams to grow, both individually and together. This award recognizes a teacher, coach, or mentor who demonstrates exceptional leadership and models the <i>FIRST</i> Core Values."
+      }
     }
   },
   "edition": {

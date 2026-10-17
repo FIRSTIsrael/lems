@@ -959,11 +959,11 @@
           },
           "minimum": {
             "title": "Minimalna liczba nagród",
-            "description": "Nagrody nieosobiste, bez nagród za robot performance i awans"
+            "description": "Nagrody nieosobiste, bez nagród „{award}” i awansu"
           },
           "maximum": {
             "title": "Maksymalna liczba nagród",
-            "description": "Minimalna liczba nagród plus nagrody za robot performance"
+            "description": "Minimalna liczba nagród plus nagrody „{award}”"
           },
           "rules": {
             "title": "Zasady walidacji",

@@ -903,11 +903,11 @@
           },
           "minimum": {
             "title": "Minimum Awards",
-            "description": "Non-personal awards excluding robot performance and advancement"
+            "description": "Non-personal awards excluding {award} and advancement"
           },
           "maximum": {
             "title": "Maximum Awards",
-            "description": "Minimum awards plus robot performance awards"
+            "description": "Minimum awards plus {award} awards"
           },
           "rules": {
             "title": "Validation Rules",

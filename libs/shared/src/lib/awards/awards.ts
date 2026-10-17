@@ -91,13 +91,17 @@ export const AWARD_LIMITS: { [key in Award]: number } = {
   advancement: -1 // Unlimited
 };
 
+/** Awards whose display name or description differs in Future Edition. Ids are unchanged. */
+const FUTURE_LABEL_OVERRIDES: readonly string[] = [
+  'champions',
+  'core-values',
+  'innovation-project',
+  'robot-design',
+  'robot-performance',
+  'rising-all-star',
+  'lead-mentor'
+];
+
 /** Returns the translation key id for an award under the given edition. */
-export const getAwardLabelKey = (award: string, edition: Edition): string => {
-  switch (edition) {
-    case 'future':
-      // TODO(future-edition): apply Future renames (phase 3)
-      return award;
-    case 'founders':
-      return award;
-  }
-};
+export const getAwardLabelKey = (award: string, edition: Edition): string =>
+  edition === 'future' && FUTURE_LABEL_OVERRIDES.includes(award) ? `future.${award}` : award;
