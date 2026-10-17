@@ -75,7 +75,7 @@ const ScheduleManagerContent: React.FC<ScheduleManagerProps> = ({ division }) =>
 export const ScheduleManager: React.FC<ScheduleManagerProps> = ({ division }) => {
   return (
     <ScheduleProvider
-      key={division.id}
+      key={`${division.id}-${getEdition(division)}`}
       eventId={division.eventId}
       divisionId={division.id}
       edition={getEdition(division)}
