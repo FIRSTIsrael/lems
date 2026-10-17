@@ -15,7 +15,6 @@ import {
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { useMemo } from 'react';
-import { OPTIONAL_AWARDS } from '@lems/shared';
 import { ArrowBack } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { useFinalDeliberation } from '../final-deliberation-context';
@@ -31,22 +30,17 @@ export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
   const router = useRouter();
-  const { awardCounts, deliberation, anomalies } = useFinalDeliberation();
+  const { deliberation, anomalies, manualOptionalAwards } = useFinalDeliberation();
 
-  // Determine visible stages based on whether optional awards exist
   const visibleStages = useMemo(() => {
     if (!deliberation) {
       return STAGES;
     }
 
-    const hasOptionalAwards = Object.keys(awardCounts).some(award =>
-      (OPTIONAL_AWARDS as readonly string[])
-        .filter(name => name !== 'excellence-in-engineering')
-        .includes(award)
-    );
-
-    return hasOptionalAwards ? STAGES : STAGES.filter(stage => stage !== 'optional-awards');
-  }, [awardCounts, deliberation]);
+    return manualOptionalAwards.length > 0
+      ? STAGES
+      : STAGES.filter(stage => stage !== 'optional-awards');
+  }, [deliberation, manualOptionalAwards]);
 
   // Get current stage index
   const currentStageIndex = useMemo(() => {

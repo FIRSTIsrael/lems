@@ -1,5 +1,5 @@
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { OPTIONAL_AWARDS } from '@lems/shared/awards';
+import { isDeliberationOptionalAward } from '@lems/shared/awards';
 import { Award, FinalDeliberationAwards } from '@lems/database';
 import db from '../../../../../database';
 import { updateFinalDeliberationAwards } from './utils';
@@ -12,11 +12,12 @@ export function validateOptionalAwardsStage(
   divisionAwards: Award[]
 ): Promise<void> {
   const resolvedOptionalAwards = optionalAwards ?? {};
-  const divisionOptionalAwards = divisionAwards.filter(
-    award =>
-      (OPTIONAL_AWARDS as readonly string[])
-        .filter(name => name !== 'excellence-in-engineering')
-        .includes(award.name) && award.type === 'TEAM'
+  const divisionOptionalAwards = divisionAwards.filter(award =>
+    isDeliberationOptionalAward({
+      type: award.type,
+      isOptional: award.is_optional,
+      automaticAssignment: award.automatic_assignment
+    })
   );
   for (const award of divisionOptionalAwards) {
     if (!resolvedOptionalAwards[award.name] || resolvedOptionalAwards[award.name].length === 0) {

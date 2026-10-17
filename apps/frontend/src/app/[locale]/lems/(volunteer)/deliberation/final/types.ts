@@ -62,6 +62,8 @@ export interface FinalDeliberationContextValue {
 
   awards: DeliberationAwards;
   awardCounts: Partial<Record<Award, number>>;
+  /** Optional team awards judges assign in the optional-awards stage, in presentation order. */
+  manualOptionalAwards: Award[];
 
   roomMetrics: RoomMetricsMap;
 

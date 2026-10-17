@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { Stars, Add, CompareArrows } from '@mui/icons-material';
 import { purple } from '@mui/material/colors';
-import { OPTIONAL_AWARDS, Award } from '@lems/shared';
+import { Award } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
 import { useEdition } from '../../../../hooks/use-edition';
 import { useFinalDeliberation } from '../../final-deliberation-context';
@@ -30,7 +30,7 @@ export function OptionalAwardsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.optional-awards');
   const tTable = useTranslations('pages.deliberations.category.table');
-  const { teams, eligibleTeams, deliberation, awards, updateAward, awardCounts } =
+  const { teams, eligibleTeams, deliberation, awards, updateAward, awardCounts, manualOptionalAwards } =
     useFinalDeliberation();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedTeamForAward, setSelectedTeamForAward] = useState<string | null>(null);
@@ -75,13 +75,13 @@ export function OptionalAwardsDataGrid() {
   // Get teams that have been selected for any optional award
   const selectedTeamIds = useMemo<Set<string>>(() => {
     const set = new Set<string>();
-    OPTIONAL_AWARDS.filter(award => award !== 'excellence-in-engineering').forEach(award => {
+    manualOptionalAwards.forEach(award => {
       const awardArray = awards[award] as string[];
       if (!awardArray) return;
       awardArray.forEach(teamId => set.add(teamId));
     });
     return set;
-  }, [awards]);
+  }, [awards, manualOptionalAwards]);
 
   const handleOpenPopover = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>, teamId: string) => {
@@ -306,10 +306,8 @@ export function OptionalAwardsDataGrid() {
   // Get all available awards that can be assigned
   const availableAwards: Award[] = useMemo(
     () =>
-      OPTIONAL_AWARDS.filter(
-        award => award !== 'excellence-in-engineering' && (awardCounts[award] ?? 0) > 0
-      ) as Award[],
-    [awardCounts]
+      manualOptionalAwards.filter(award => (awardCounts[award] ?? 0) > 0),
+    [awardCounts, manualOptionalAwards]
   );
 
   return (

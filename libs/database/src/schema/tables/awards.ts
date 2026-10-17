@@ -13,7 +13,7 @@ export interface AwardsTable {
   is_optional: boolean;
   show_places: boolean;
   allow_nominations: boolean; // Whether to allow team nominations from the Core Values rubric
-  automatic_assignment: boolean; // Whether this award is available for assignment in final deliberation optional awards stage
+  automatic_assignment: boolean; // Filled in by the system during final deliberation, not picked in the optional-awards stage
   winner_id: string | null; // UUID foreign key to teams.id (only for TEAM awards)
   winner_name: string | null; // VARCHAR(64) freetext (only for PERSONAL awards)
 }
