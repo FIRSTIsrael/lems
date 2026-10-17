@@ -1075,5 +1075,139 @@
       "great-job": "Świetna robota...",
       "think-about": "Zastanówcie się nad..."
     }
+  },
+  "rubrics-future": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACHIEVES",
+      "exceeds": "EXCEEDS"
+    },
+    "core-values-explanation": "Kryteria oznaczone tym stylem pola wyboru liczą się jednocześnie do klasyfikacji nagród Projekt lub Engineering Design oraz Wartości Podstawowych. Wartości Podstawowe stanowią 25% wyniku drużyny w Nagrodzie Champion i powinny być widoczne w całej pracy drużyny oraz podczas wydarzenia.",
+    "feedback": {
+      "great-job": "Świetna robota z...",
+      "think-about": "Jako kolejny krok zastanówcie się nad..."
+    },
+    "categories": {
+      "core-values": { "title": "Wartości Podstawowe" },
+      "innovation-project": {
+        "title": "Projekt",
+        "sections": {
+          "explore": {
+            "title": "ODKRYWANIE",
+            "description": "W jaki sposób drużyna bada ścieżkę projektu?",
+            "fields": {
+              "guided-research": {
+                "criterion": "Drużyna jasno wyjaśnia, jak badania z przewodnikiem wpłynęły na kierunek jej projektu"
+              },
+              "sources": {
+                "criterion": "Drużyna korzysta z wielu odpowiednich źródeł, aby poznać wybrany temat"
+              }
+            }
+          },
+          "ideate": {
+            "title": "GENEROWANIE POMYSŁÓW",
+            "description": "Jakie pomysły drużyna generuje na podstawie swoich badań?",
+            "fields": {
+              "ideas": {
+                "criterion": "Drużyna rozważyła wiele pomysłów i jasno uzasadnia dokonany wybór"
+              },
+              "iteration": {
+                "criterion": "Drużyna jasno wyjaśnia iteracyjny proces rozwijania i ulepszania swojego pomysłu na podstawie badań lub informacji zwrotnej"
+              },
+              "innovation": {
+                "criterion": "Drużyna jasno wyjaśnia innowacyjne podejście lub oryginalne myślenie w swoim pomyśle na projekt"
+              }
+            }
+          },
+          "implement": {
+            "title": "WDRAŻANIE",
+            "description": "W jaki sposób pomysł drużyny wywiera pozytywny wpływ?",
+            "fields": {
+              "impact": {
+                "criterion": "Drużyna jasno określa rzeczywistych użytkowników i potencjalny wpływ swojego pomysłu"
+              },
+              "steps": {
+                "criterion": "Drużyna jasno określa kroki potrzebne do wdrożenia swojego pomysłu"
+              },
+              "feasibility": {
+                "criterion": "Drużyna rozważa wykonalność swojego pomysłu, w tym wyzwania i kompromisy"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "W jaki sposób drużyna przedstawia swoją pracę nad projektem?",
+            "fields": {
+              "visuals": {
+                "criterion": "Drużyna przedstawia czytelne materiały wizualne, modele lub prototypy wspierające prezentację projektu"
+              },
+              "contribution": {
+                "criterion": "Drużyna wyjaśnia, w jaki sposób wszyscy jej członkowie znacząco przyczyniają się do rozwoju projektu"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "title": "Engineering Design",
+        "sections": {
+          "identify": {
+            "title": "IDENTYFIKACJA",
+            "description": "W jaki sposób drużyna ćwiczy i identyfikuje obszary do poprawy?",
+            "fields": {
+              "resources": {
+                "criterion": "Drużyna wyjaśnia, jak korzysta z misji z przewodnikiem oraz materiałów do budowania i programowania"
+              },
+              "improvement-areas": {
+                "criterion": "Drużyna identyfikuje obszary do poprawy w dostarczonych narzędziach, aby określić wymagania projektowe"
+              }
+            }
+          },
+          "design-create": {
+            "title": "PROJEKTOWANIE I TWORZENIE",
+            "description": "Jakie pomysły drużyna generuje, aby ulepszyć swoje narzędzia i strategię?",
+            "fields": {
+              "mission-strategy": {
+                "criterion": "Drużyna opracowuje jasną strategię misji, która kieruje decyzjami projektowymi"
+              },
+              "mechanical": {
+                "criterion": "Rozwiązania drużyny obejmują własne konstrukcje mechaniczne wspierające jej strategię misji"
+              },
+              "coding": {
+                "criterion": "Rozwiązania drużyny obejmują własny kod wspierający jej strategię misji"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERACJE",
+            "description": "W jaki sposób drużyna testuje i ulepsza swoje projekty?",
+            "fields": {
+              "options": {
+                "criterion": "Drużyna rozważa wiele opcji projektowych dla każdego narzędzia roli, zanim wybierze jedną do testów"
+              },
+              "testing-process": {
+                "criterion": "Drużyna stosuje jasny proces testowania i dokumentuje wyniki"
+              },
+              "improve": {
+                "criterion": "Drużyna wykorzystuje wyniki testów do ulepszania projektów"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "W jaki sposób drużyna przedstawia swój proces projektowy i strategię?",
+            "fields": {
+              "cooperative-strategy": {
+                "criterion": "Drużyna jasno wyjaśnia strategię współpracy w grze między rolami graczy oraz z drugą drużyną"
+              },
+              "contribution": {
+                "criterion": "Drużyna wyjaśnia, w jaki sposób wszyscy jej członkowie znacząco przyczyniają się do procesu Engineering Design"
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

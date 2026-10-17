@@ -18,6 +18,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema, rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
 import { useTranslations } from 'next-intl';
+import type { Edition } from '@lems/shared/edition';
 
 interface ExportRubricTableProps {
   sections: RubricsSchema[JudgingCategory]['sections'];
@@ -25,6 +26,7 @@ interface ExportRubricTableProps {
   scores: Record<string, number | null>;
   notes?: Record<string, string>;
   feedback?: { greatJob: string; thinkAbout: string };
+  edition: Edition;
 }
 
 const categoryColors: { [K in JudgingCategory]: string[] } = {
@@ -44,11 +46,14 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
   category,
   scores,
   notes,
-  feedback
+  feedback,
+  edition
 }) => {
-  const { getColumnTitle } = useRubricsGeneralTranslations();
-  const { getSectionTitle, getSectionDescription, getFieldLevel } =
-    useRubricsTranslations(category);
+  const { getColumnTitle } = useRubricsGeneralTranslations(edition);
+  const { getSectionTitle, getSectionDescription, getFieldLevel } = useRubricsTranslations(
+    category,
+    edition
+  );
   const t = useTranslations('pages.rubric');
   const colors = categoryColors[category];
   const sectionBgColor = sectionColors[category];

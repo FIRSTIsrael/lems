@@ -119,9 +119,12 @@ const RadarChartContainer = ({ data, dataKey, color = '#64B5F6' }: RadarChartCon
 
 export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) => {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations('innovation-project');
-  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
   const edition = useEdition();
+  const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations(
+    'innovation-project',
+    edition
+  );
+  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory, edition);
 
   const data = useMemo(() => {
     if (category === 'core-values')

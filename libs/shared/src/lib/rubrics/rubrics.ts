@@ -1,5 +1,6 @@
 import type { Edition } from '../edition';
 import { RubricsSchema } from './types';
+import { futureRubrics } from './future';
 
 export const rubricColumns = ['beginning', 'developing', 'accomplished', 'exceeds'] as const;
 
@@ -71,8 +72,7 @@ const rubrics: RubricsSchema = {
 export const getRubrics = (edition: Edition): RubricsSchema => {
   switch (edition) {
     case 'future':
-      // TODO(future-edition): replace with Future content (phase 3)
-      return rubrics;
+      return futureRubrics;
     case 'founders':
       return rubrics;
   }

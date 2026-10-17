@@ -19,6 +19,7 @@ import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui
 import { JudgingCategory } from '@lems/types/judging';
 import { rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { RubricRadioIcon } from '../desktop/rubric-radio-icon';
 import { useRubricContext } from '../rubric-context';
 
@@ -39,8 +40,9 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
 }) => {
   const t = useTranslations('pages.tools.rubrics');
   const [expanded, setExpanded] = useState(false);
-  const { getFieldLevel } = useRubricsTranslations(category);
-  const { getColumnTitle } = useRubricsGeneralTranslations();
+  const edition = useToolEdition();
+  const { getFieldLevel } = useRubricsTranslations(category, edition);
+  const { getColumnTitle } = useRubricsGeneralTranslations(edition);
   const { rubric, updateRubric } = useRubricContext();
   const currentValue = rubric.values.fields[fieldId]?.value;
 

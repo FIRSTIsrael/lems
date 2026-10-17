@@ -25,7 +25,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({
 }) => {
   const t = useTranslations('pages.exports.rubrics.feedback');
   const { getCategory } = useJudgingCategoryTranslations(edition);
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
 
   const getFeedback = (category: string) => {
     const rubric = rubrics.find(r => r.category === category);
