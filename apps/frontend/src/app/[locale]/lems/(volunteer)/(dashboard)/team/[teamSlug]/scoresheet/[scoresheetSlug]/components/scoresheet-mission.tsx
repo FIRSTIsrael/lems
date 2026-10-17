@@ -9,6 +9,7 @@ import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@apollo/client/react';
 import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import type { Edition } from '@lems/shared/edition';
 import { useScoresheet } from '../scoresheet-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../graphql';
@@ -20,6 +21,7 @@ interface ScoresheetMissionProps {
   src: string;
   missionErrors?: string[];
   disabled?: boolean;
+  edition: Edition;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
@@ -27,14 +29,18 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   mission,
   src,
   missionErrors,
-  disabled = false
+  disabled = false,
+  edition
 }) => {
   const t = useTranslations('layouts.scoresheet');
   const theme = useTheme();
   const ref = useRef<HTMLDivElement | null>(null);
   const { scoresheet } = useScoresheet();
   const { currentDivision } = useEvent();
-  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(
+    edition,
+    mission.id
+  );
   const [missionWidth, setMissionWidth] = useState(0);
 
   const [updateMissionClause] = useMutation(UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION, {
@@ -161,6 +167,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               maxWidth={missionWidth * 0.9}
               value={value}
               disabled={disabled}
+              edition={edition}
               onChange={newValue => handleClauseChange(index, newValue)}
             />
           );

@@ -6,19 +6,23 @@ import { useTranslations } from 'next-intl';
 import { Box, Typography, Paper, Stack, Collapse, IconButton, Chip, Divider } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 
 interface MobileScoreboardProps {
   sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
+  rankingStrategy: RankingStrategy;
 }
 
 export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
   sortedData,
   matchesPerTeam,
-  eventSlug
+  eventSlug,
+  rankingStrategy
 }) => {
   const t = useTranslations('pages.event');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
 
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
 
@@ -139,7 +143,7 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     fontSize: '0.75rem'
                   }}
                 >
-                  {t('scoreboard.best-score')}
+                  {headlineScoreT(rankingStrategy)}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -148,7 +152,9 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore ?? '-'}
+                  {entry.maxScore != null
+                    ? formatHeadlineScore(entry.maxScore, rankingStrategy)
+                    : '-'}
                 </Typography>
               </Box>
 
@@ -175,6 +181,9 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                 >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores?.[index];
+                    const hasScore = score != null;
+                    const isBest =
+                      rankingStrategy === 'max' && hasScore && score === entry.maxScore;
                     return (
                       <Box
                         key={index}
@@ -182,11 +191,11 @@ export const MobileScoreboard: React.FC<MobileScoreboardProps> = ({
                           minWidth: 60,
                           p: 1,
                           textAlign: 'center',
-                          bgcolor: score ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
-                          color: score ? 'primary.main' : 'text.disabled',
+                          bgcolor: hasScore ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
+                          color: hasScore ? 'primary.main' : 'text.disabled',
                           borderRadius: 1,
-                          border: score === entry.maxScore ? '2px solid' : 'none',
-                          borderColor: score === entry.maxScore ? 'primary.main' : 'transparent'
+                          border: isBest ? '2px solid' : 'none',
+                          borderColor: isBest ? 'primary.main' : 'transparent'
                         }}
                       >
                         <Typography

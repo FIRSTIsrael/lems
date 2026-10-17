@@ -21,6 +21,7 @@ import { judgingRoomsResolver } from './divisions/judging/judging-rooms';
 import { judgingSessionLengthResolver } from './divisions/judging/judging-session-length';
 import { judgingAdvancementPercentageResolver } from './divisions/judging/judging-advancement-percentage';
 import { judgingOpenRubricsDuringSessionResolver } from './divisions/judging/judging-open-rubrics-during-session';
+import { judgingZeroGpForNoShowsResolver } from './divisions/judging/judging-zero-gp-for-no-shows';
 import { judgingRubricsResolver } from './divisions/judging/judging-rubrics';
 import { judgingDeliberationResolver } from './divisions/judging/judging-deliberation';
 import { judgingFinalDeliberationResolver } from './divisions/judging/judging-final-deliberation';
@@ -47,6 +48,7 @@ import { subscriptionResolvers } from './subscriptions';
 import { matchesResolver } from './divisions/field/matches';
 import { matchLengthResolver } from './divisions/field/match-length';
 import { currentStageResolver } from './divisions/field/current-stage';
+import { rankingRoundCountResolver } from './divisions/field/ranking-round-count';
 import { matchParticipantsResolver } from './divisions/field/match-participants';
 import { matchParticipantTeamResolver } from './divisions/field/match-participant-team';
 import { matchParticipantTableResolver } from './divisions/field/match-partitipant-table';
@@ -137,6 +139,7 @@ export const resolvers = {
     sessionLength: judgingSessionLengthResolver,
     advancementPercentage: judgingAdvancementPercentageResolver,
     openRubricsDuringSession: judgingOpenRubricsDuringSessionResolver,
+    zeroGpForNoShows: judgingZeroGpForNoShowsResolver,
     rubrics: judgingRubricsResolver,
     deliberation: judgingDeliberationResolver,
     finalDeliberation: judgingFinalDeliberationResolver,
@@ -150,6 +153,7 @@ export const resolvers = {
     matches: matchesResolver,
     matchLength: matchLengthResolver,
     currentStage: currentStageResolver,
+    rankingRoundCount: rankingRoundCountResolver,
     scoresheets: fieldScoresheetsResolver
   },
   Match: {

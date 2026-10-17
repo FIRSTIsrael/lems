@@ -5,6 +5,8 @@ import { useTranslations } from 'next-intl';
 import { Typography, Paper } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
 import { ScoreboardEntry } from '@lems/types/api/portal/divisions';
+import { getRankingStrategy } from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useDivision } from '../../division-data-context';
 import { MobileScoreboard } from './mobile-scoreboard';
@@ -17,6 +19,7 @@ export const ScoreboardTab = () => {
   const eventSlug = params.slug as string;
 
   const division = useDivision();
+  const rankingStrategy = getRankingStrategy(getEdition(division));
 
   const { data: scoreboard } = useRealtimeData<ScoreboardEntry[]>(
     `/portal/divisions/${division.id}/scoreboard`,
@@ -44,6 +47,7 @@ export const ScoreboardTab = () => {
             sortedData={sortedData}
             matchesPerTeam={matchesPerTeam}
             eventSlug={eventSlug}
+            rankingStrategy={rankingStrategy}
           />
         }
         mobile={
@@ -51,6 +55,7 @@ export const ScoreboardTab = () => {
             sortedData={sortedData}
             matchesPerTeam={matchesPerTeam}
             eventSlug={eventSlug}
+            rankingStrategy={rankingStrategy}
           />
         }
       />

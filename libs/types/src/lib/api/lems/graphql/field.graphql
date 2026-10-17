@@ -141,6 +141,9 @@ type Field {
 
   "Current stage of the field (PRACTICE or RANKING)"
   currentStage: String!
+
+  "Number of RANKING-stage rounds configured for this division, used to pad/compare robot game scores"
+  rankingRoundCount: Int!
 }
 
 extend type Division {

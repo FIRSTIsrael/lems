@@ -6,6 +6,7 @@ import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema } from '@lems/shared/scoresheet';
+import type { Edition } from '@lems/shared/edition';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
 import MissionClause from './mission-clause';
 import { useMission } from './mission-context';
@@ -14,12 +15,21 @@ interface ScoresheetMissionProps {
   missionIndex: number;
   mission: MissionSchema;
   src: string;
+  edition: Edition;
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  missionIndex,
+  mission,
+  src,
+  edition
+}) => {
   const theme = useTheme();
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
-  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(
+    edition,
+    mission.id
+  );
   const [missionWidth, setMissionWidth] = useState(0);
 
   // Use callback ref to measure width when element mounts
@@ -101,7 +111,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           </Grid>
         )}
         {mission.clauses.map((clause, index) => {
-          const value = missionData?.clauses[index].value ?? null;
+          const value = missionData?.clauses[index]?.value ?? null;
           const setValue = (value: string | number | boolean | null) => {
             updateClause(index, value);
           };
@@ -116,6 +126,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
               maxWidth={missionWidth * 0.9}
               value={value}
               setValue={setValue}
+              edition={edition}
             />
           );
         })}

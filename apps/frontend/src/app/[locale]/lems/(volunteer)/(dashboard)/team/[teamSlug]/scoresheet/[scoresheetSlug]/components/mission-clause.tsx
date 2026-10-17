@@ -3,6 +3,7 @@
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { MissionClauseSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import type { Edition } from '@lems/shared/edition';
 import {
   useScoresheetGeneralTranslations,
   useScoresheetClauseTranslations
@@ -16,10 +17,16 @@ interface ClausePickerProps<T> {
   value: T | null;
   onChange: (value: T) => void;
   disabled?: boolean;
+  edition: Edition;
 }
 
-const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange, disabled }) => {
-  const { yes, no } = useScoresheetGeneralTranslations();
+const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({
+  value,
+  onChange,
+  disabled,
+  edition
+}) => {
+  const { yes, no } = useScoresheetGeneralTranslations(edition);
 
   return (
     <ToggleButtonGroup
@@ -52,10 +59,11 @@ const EnumClause: React.FC<EnumClauseProps> = ({
   values,
   maxWidth,
   multiSelect,
-  disabled
+  disabled,
+  edition
 }) => {
   const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
-  const { getLabel } = useScoresheetClauseTranslations(missionId, clauseIndex);
+  const { getLabel } = useScoresheetClauseTranslations(edition, missionId, clauseIndex);
 
   return (
     <ToggleButtonGroup
@@ -109,6 +117,7 @@ interface MissionClauseProps {
   value: ScoresheetClauseValue;
   maxWidth?: number;
   disabled?: boolean;
+  edition: Edition;
   onChange?: (value: ScoresheetClauseValue) => void;
 }
 
@@ -120,9 +129,10 @@ export const MissionClause: React.FC<MissionClauseProps> = ({
   value,
   maxWidth = 550,
   disabled = false,
+  edition,
   onChange
 }) => {
-  const { description } = useScoresheetClauseTranslations(missionId, clauseIndex);
+  const { description } = useScoresheetClauseTranslations(edition, missionId, clauseIndex);
 
   const handleChange = (newValue: string | number | boolean | null) => {
     onChange?.(newValue);
@@ -151,6 +161,7 @@ export const MissionClause: React.FC<MissionClauseProps> = ({
             value={value as boolean | null}
             onChange={handleChange}
             disabled={disabled}
+            edition={edition}
           />
         ) : clause.type === 'enum' ? (
           <EnumClause
@@ -162,6 +173,7 @@ export const MissionClause: React.FC<MissionClauseProps> = ({
             multiSelect={!!clause.multiSelect}
             maxWidth={maxWidth}
             disabled={disabled}
+            edition={edition}
           />
         ) : (
           <NumericClause
@@ -172,6 +184,7 @@ export const MissionClause: React.FC<MissionClauseProps> = ({
             value={value as number | null}
             onChange={handleChange}
             disabled={disabled}
+            edition={edition}
           />
         )}
       </Grid>

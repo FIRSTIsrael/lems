@@ -4,6 +4,8 @@ import React from 'react';
 import { useTranslations } from 'next-intl';
 import { Paper, Typography, Grid, Box } from '@mui/material';
 import { TeamRobotPerformance } from '@lems/types/api/portal';
+import { getRankingStrategy } from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { useRealtimeData } from '../../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from '../team-at-event-context';
 import { AwardsSection } from './awards-section';
@@ -13,7 +15,8 @@ import { MatchResults } from './match-results';
 export const EventSummary: React.FC = () => {
   const t = useTranslations('pages.team-in-event');
 
-  const { event, team } = useTeamAtEvent();
+  const { event, team, division } = useTeamAtEvent();
+  const rankingStrategy = getRankingStrategy(getEdition(division));
 
   const { data: robotPerformance } = useRealtimeData<TeamRobotPerformance>(
     `/portal/events/${event.slug}/teams/${team.slug}/robot-performance`,
@@ -48,7 +51,11 @@ export const EventSummary: React.FC = () => {
         </Typography>
         <Grid container spacing={2}>
           <AwardsSection />
-          <PerformanceMetrics highestScore={highestScore} robotGameRank={robotGameRank} />
+          <PerformanceMetrics
+            highestScore={highestScore}
+            robotGameRank={robotGameRank}
+            rankingStrategy={rankingStrategy}
+          />
         </Grid>
       </Box>
       {scores.length > 0 && <MatchResults scores={scores} />}

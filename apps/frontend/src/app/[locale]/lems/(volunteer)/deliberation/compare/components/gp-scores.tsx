@@ -2,6 +2,8 @@
 
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Box } from '@mui/material';
+import { getEffectiveGp } from '@lems/shared/deliberation';
+import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
 
 interface GpScoresProps {
@@ -10,8 +12,9 @@ interface GpScoresProps {
 
 export function GpScores({ team }: GpScoresProps) {
   const t = useTranslations('layouts.deliberation.compare');
+  const { zeroGpForNoShows } = useCompareContext();
 
-  const scoresheets = team.scoresheets.filter(s => s.data?.gp?.value);
+  const scoresheets = team.scoresheets.filter(s => s.data?.gp?.value || s.isNoShow);
 
   if (scoresheets.length === 0) {
     return null;
@@ -55,7 +58,9 @@ export function GpScores({ team }: GpScoresProps) {
                 {t('round')} {scoresheet.round}
               </Typography>
               <Box sx={{ display: 'flex', gap: 0.5, mt: 1, justifyContent: 'center' }}>
-                {Array.from({ length: gp?.value ?? 3 }).map((_, i) => (
+                {Array.from({
+                  length: getEffectiveGp(gp?.value, scoresheet.isNoShow, zeroGpForNoShows)
+                }).map((_, i) => (
                   <Box
                     key={i}
                     sx={{

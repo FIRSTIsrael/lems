@@ -306,5 +306,11 @@
         "rubrics": "Rubryki"
       }
     }
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Najwyższy wynik",
+      "average": "Średni wynik"
+    }
   }
 }

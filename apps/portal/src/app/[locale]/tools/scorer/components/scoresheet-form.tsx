@@ -8,8 +8,9 @@ import ScoresheetMission from './scoresheet-mission';
 import { useScoresheetValidator } from './mission-context';
 
 export const ScoresheetForm: React.FC = () => {
-  const scoresheet = getScoresheet(useToolEdition());
-  const { getError } = useScoresheetTranslations();
+  const edition = useToolEdition();
+  const scoresheet = getScoresheet(edition);
+  const { getError } = useScoresheetTranslations(edition);
   const { errors } = useScoresheetValidator();
 
   return (
@@ -26,6 +27,7 @@ export const ScoresheetForm: React.FC = () => {
           missionIndex={index}
           src={`/assets/scoresheet/missions/${mission.id}.webp`}
           mission={mission}
+          edition={edition}
         />
       ))}
       {errors.map((error, index) => (

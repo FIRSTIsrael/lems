@@ -15,9 +15,10 @@ interface ScoresheetFormProps {
 }
 
 export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false }) => {
-  const scoresheet = getScoresheet(useEdition());
+  const edition = useEdition();
+  const scoresheet = getScoresheet(edition);
   const { validation } = useScoresheet();
-  const { getError } = useScoresheetTranslations();
+  const { getError } = useScoresheetTranslations(edition);
 
   return (
     <Stack
@@ -35,6 +36,7 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
           mission={mission}
           missionErrors={validation.missionErrors.get(mission.id)?.errors}
           disabled={disabled}
+          edition={edition}
         />
       ))}
       {validation.validatorErrors.length > 0 && (
@@ -54,7 +56,11 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
       )}
       <ScoresheetIncompleteAlert validation={validation} />
       <ScoresheetSubmission />
-      <ScoreFloater score={validation.score} />
+      <ScoreFloater
+        score={validation.score}
+        scoreOverridden={validation.scoreOverridden}
+        edition={edition}
+      />
     </Stack>
   );
 };

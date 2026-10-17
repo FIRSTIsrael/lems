@@ -1709,5 +1709,11 @@
     "no-events-description": "Spróbuj ponownie później lub skontaktuj się z pomocą techniczną po więcej informacji",
     "go-home": "Powrót do strony głównej",
     "back": "Wróć"
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Najwyższy wynik",
+      "average": "Średni wynik"
+    }
   }
 }

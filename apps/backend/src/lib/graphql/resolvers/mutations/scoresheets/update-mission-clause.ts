@@ -1,7 +1,11 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
-import { getScoresheet, ScoresheetClauseValue } from '@lems/shared/scoresheet';
+import {
+  getScoresheet,
+  calculateScoresheetScore,
+  ScoresheetClauseValue
+} from '@lems/shared/scoresheet';
 import { Scoresheet } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
@@ -73,7 +77,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   data.missions ??= {};
   data.missions[missionId] ??= {};
   data.missions[missionId][clauseIndex] = value;
-  const points = calculateScore(scoresheet, data.missions);
+  const points = calculateScoresheetScore(scoresheet, data.missions).total;
 
   // Determine new status based on completion criteria
   // Don't change status if already submitted or in gp status (locked states)
@@ -226,34 +230,6 @@ function validateClauseValue(
         `Unknown clause type: ${clause.type}`
       );
   }
-}
-
-/**
- * Calculates the total score based on mission values
- */
-function calculateScore(
-  scoresheet: ScoresheetSchema,
-  missions: Record<string, Record<number, ScoresheetClauseValue>>
-): number {
-  let points = 0;
-
-  scoresheet.missions.forEach(mission => {
-    const missionData = missions[mission.id];
-    if (!missionData) {
-      return; // Skip if no data for this mission
-    }
-    const clauseValues = mission.clauses.map(
-      (_, index) => (missionData[index] ?? null) as ScoresheetClauseValue
-    );
-    try {
-      points += mission.calculation(...clauseValues);
-    } catch {
-      // Silently handle calculation errors, score will be partial
-      console.error(`Error calculating score for mission ${mission.id}`);
-    }
-  });
-
-  return points;
 }
 
 /**

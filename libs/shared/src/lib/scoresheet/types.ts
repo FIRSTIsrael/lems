@@ -26,10 +26,17 @@ export interface MissionSchema {
   noEquipment?: boolean;
 }
 
+export type MissionValues = Record<string, ScoresheetClauseValue[]>;
+
 export interface ScoresheetSchema {
   _version: string;
   missions: Array<MissionSchema>;
-  validators: Array<(missions: { [key: string]: Array<ScoresheetClauseValue> }) => void>;
+  validators: Array<(missions: MissionValues) => void>;
+  finalizeScore?: (ctx: {
+    missions: MissionValues;
+    missionScores: Record<string, number>;
+    total: number;
+  }) => number;
 }
 
 export class ScoresheetError extends Error {

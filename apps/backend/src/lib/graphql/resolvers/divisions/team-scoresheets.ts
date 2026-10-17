@@ -1,7 +1,12 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { Scoresheet } from '@lems/database';
 import db from '../../../database';
-import { buildScoresheetResult, ScoresheetGraphQL } from '../../utils/scoresheet-builder';
+import type { GraphQLContext } from '../../apollo-server';
+import {
+  attachNoShowFlags,
+  buildScoresheetResult,
+  ScoresheetGraphQL
+} from '../../utils/scoresheet-builder';
 
 interface TeamWithDivisionId {
   id: string;
@@ -18,10 +23,10 @@ interface ScoresheetsArgs {
  */
 export const teamScoresheetsResolver: GraphQLFieldResolver<
   TeamWithDivisionId,
-  unknown,
+  GraphQLContext,
   ScoresheetsArgs,
   Promise<ScoresheetGraphQL[]>
-> = async (team: TeamWithDivisionId, args: ScoresheetsArgs) => {
+> = async (team: TeamWithDivisionId, args: ScoresheetsArgs, context: GraphQLContext) => {
   try {
     // Get all scoresheets for this team in the division
     let scoresheets = await db.raw.mongo
@@ -37,7 +42,11 @@ export const teamScoresheetsResolver: GraphQLFieldResolver<
       scoresheets = scoresheets.filter(s => s.stage === args.stage);
     }
 
-    return scoresheets.map(s => buildScoresheetResult(s));
+    const noShows = await context.noShowCache.get(team.divisionId);
+    return attachNoShowFlags(
+      scoresheets.map(s => buildScoresheetResult(s)),
+      noShows
+    );
   } catch (error) {
     console.error('Error fetching scoresheets for team:', team.id, error);
     throw error;

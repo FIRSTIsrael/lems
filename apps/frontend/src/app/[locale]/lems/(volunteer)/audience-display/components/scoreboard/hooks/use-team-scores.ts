@@ -1,5 +1,11 @@
 import { useMemo } from 'react';
-import { compareScoreArrays } from '@lems/shared/utils/arrays';
+import {
+  compareRobotGameScores,
+  getRobotGameHeadlineScore,
+  getRobotGameRank,
+  indexScoresByRound,
+  RankingStrategy
+} from '@lems/shared/utils';
 import type { Scoresheet, Match } from '../graphql';
 
 export interface TeamScoreData {
@@ -17,7 +23,9 @@ export interface TeamScoreData {
 export const useTeamScores = (
   scoresheets: Scoresheet[],
   matches: Match[],
-  currentStage: string
+  currentStage: string,
+  roundCount: number,
+  rankingStrategy: RankingStrategy = 'max'
 ): TeamScoreData[] => {
   return useMemo(() => {
     const teamsMap = new Map<
@@ -29,45 +37,56 @@ export const useTeamScores = (
         affiliation?: string;
         city?: string;
         logoUrl?: string;
-        scores: (number | undefined)[];
-        maxScore: number;
+        scoresByRound: Array<{ round: number; score: number }>;
       }
     >();
 
-    scoresheets
-      .filter(s => s.stage === currentStage)
-      .forEach(scoresheet => {
-        const matchParticipant = matches
-          .flatMap(m => m.participants)
-          .find(p => p.team?.id === scoresheet.team.id);
+    const relevantScoresheets = scoresheets.filter(s => s.stage === currentStage);
 
-        if (!matchParticipant?.team) return;
+    relevantScoresheets.forEach(scoresheet => {
+      const matchParticipant = matches
+        .flatMap(m => m.participants)
+        .find(p => p.team?.id === scoresheet.team.id);
 
-        const teamId = matchParticipant.team.id;
-        if (!teamsMap.has(teamId)) {
-          teamsMap.set(teamId, {
-            teamId,
-            number: matchParticipant.team.number,
-            name: matchParticipant.team.name,
-            affiliation: matchParticipant.team.affiliation,
-            city: matchParticipant.team.city,
-            logoUrl: matchParticipant.team.logoUrl,
-            scores: [],
-            maxScore: 0
-          });
-        }
+      if (!matchParticipant?.team) return;
 
-        const team = teamsMap.get(teamId)!;
-        if (scoresheet.status === 'submitted' && scoresheet.data) {
-          team.scores.push(scoresheet.data.score);
-          team.maxScore = Math.max(team.maxScore, scoresheet.data.score);
-        } else {
-          team.scores.push(undefined);
-        }
-      });
+      const teamId = matchParticipant.team.id;
+      if (!teamsMap.has(teamId)) {
+        teamsMap.set(teamId, {
+          teamId,
+          number: matchParticipant.team.number,
+          name: matchParticipant.team.name,
+          affiliation: matchParticipant.team.affiliation,
+          city: matchParticipant.team.city,
+          logoUrl: matchParticipant.team.logoUrl,
+          scoresByRound: []
+        });
+      }
 
-    return Array.from(teamsMap.values())
-      .sort((a, b) => compareScoreArrays(a.scores, b.scores))
-      .map((team, index) => ({ ...team, rank: index + 1 }));
-  }, [scoresheets, matches, currentStage]);
+      const team = teamsMap.get(teamId)!;
+      if (scoresheet.status === 'submitted' && scoresheet.data) {
+        team.scoresByRound.push({ round: scoresheet.round, score: scoresheet.data.score });
+      }
+    });
+
+    const rows = Array.from(teamsMap.values())
+      .map(team => {
+        const scores = indexScoresByRound(team.scoresByRound, roundCount);
+        return {
+          ...team,
+          scores,
+          maxScore: getRobotGameHeadlineScore(scores, rankingStrategy)
+        };
+      })
+      .sort((a, b) => compareRobotGameScores(a.scores, b.scores, rankingStrategy));
+
+    return rows.map(team => ({
+      ...team,
+      rank: getRobotGameRank(
+        team.scores,
+        rows.map(candidate => candidate.scores),
+        rankingStrategy
+      )
+    }));
+  }, [scoresheets, matches, currentStage, roundCount, rankingStrategy]);
 };

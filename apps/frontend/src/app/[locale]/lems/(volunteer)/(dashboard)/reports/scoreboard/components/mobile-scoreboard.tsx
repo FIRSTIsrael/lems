@@ -4,15 +4,18 @@ import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Box, Typography, Paper, Stack, Collapse, IconButton, Chip, Divider } from '@mui/material';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 import type { ScoreboardTeam } from '../graphql/types';
 
 interface MobileScoreboardProps {
   data: ScoreboardTeam[];
   matchesPerTeam: number;
+  rankingStrategy: RankingStrategy;
 }
 
-export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps) {
+export function MobileScoreboard({ data, matchesPerTeam, rankingStrategy }: MobileScoreboardProps) {
   const t = useTranslations('pages.reports.scoreboard');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const [expandedTeams, setExpandedTeams] = useState<string[]>([]);
 
   if (data.length === 0) {
@@ -129,7 +132,7 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                     fontSize: '0.75rem'
                   }}
                 >
-                  {t('best-score')}
+                  {headlineScoreT(rankingStrategy)}
                 </Typography>
                 <Typography
                   variant="h6"
@@ -138,7 +141,9 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                     color: 'primary.main'
                   }}
                 >
-                  {entry.maxScore ?? '-'}
+                  {entry.maxScore !== null
+                    ? formatHeadlineScore(entry.maxScore, rankingStrategy)
+                    : '-'}
                 </Typography>
               </Box>
 
@@ -165,6 +170,9 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                 >
                   {Array.from({ length: matchesPerTeam }, (_, index) => {
                     const score = entry.scores[index];
+                    const hasScore = score !== null;
+                    const isBest =
+                      rankingStrategy === 'max' && hasScore && score === entry.maxScore;
                     return (
                       <Box
                         key={index}
@@ -172,14 +180,11 @@ export function MobileScoreboard({ data, matchesPerTeam }: MobileScoreboardProps
                           minWidth: 60,
                           p: 1,
                           textAlign: 'center',
-                          bgcolor: score !== null ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
-                          color: score !== null ? 'primary.main' : 'text.disabled',
+                          bgcolor: hasScore ? 'rgba(25, 118, 210, 0.3)' : 'grey.100',
+                          color: hasScore ? 'primary.main' : 'text.disabled',
                           borderRadius: 1,
-                          border: score !== null && score === entry.maxScore ? '2px solid' : 'none',
-                          borderColor:
-                            score !== null && score === entry.maxScore
-                              ? 'primary.main'
-                              : 'transparent'
+                          border: isBest ? '2px solid' : 'none',
+                          borderColor: isBest ? 'primary.main' : 'transparent'
                         }}
                       >
                         <Typography

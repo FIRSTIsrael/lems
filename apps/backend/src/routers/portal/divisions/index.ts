@@ -90,8 +90,7 @@ router.get(
     const scoreboard = teams.map(team => {
       const rankingData = rankings.get(team.id);
 
-      const scores =
-        rankingData?.scoresWithRounds.sort((a, b) => a.round - b.round).map(s => s.score) ?? [];
+      const scores = rankingData?.scores ?? [];
 
       return {
         team: {
@@ -105,7 +104,7 @@ router.get(
         },
         robotGameRank: rankingData?.rank ?? null,
         maxScore: rankingData?.maxScore ?? null,
-        scores: scores.length > 0 ? scores : null
+        scores: scores.some(score => score != null) ? scores : null
       };
     });
 

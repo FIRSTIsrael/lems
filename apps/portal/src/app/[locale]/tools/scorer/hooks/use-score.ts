@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
 import { Mission, MissionClause } from '@lems/types/scoring';
-import { getScoresheet, ScoresheetError } from '@lems/shared/scoresheet';
+import {
+  getScoresheet,
+  calculateScoresheetScore,
+  ScoresheetError,
+  type ScoresheetClauseValue
+} from '@lems/shared/scoresheet';
 import type { Edition } from '@lems/shared/edition';
 import { useToolEdition } from '../../hooks/use-tool-edition';
 
@@ -12,6 +17,7 @@ export interface Score {
   missionErrors: ErrorWithMessage[];
   validatorErrors: ErrorWithMessage[];
   points: number;
+  scoreOverridden: boolean;
 }
 
 export interface ErrorWithMessage {
@@ -28,21 +34,35 @@ interface ScoresDb extends DBSchema {
 
 const getScoreKey = (edition: Edition) => (edition === 'founders' ? 'score' : `score-${edition}`);
 
-const calculateScore = (scoresheet: ReturnType<typeof getScoresheet>, values: Mission[]) => {
-  let points = 0;
+const missionsToRecord = (
+  values: Mission[]
+): Record<string, Record<number, ScoresheetClauseValue>> =>
+  Object.fromEntries(
+    values.map(mission => [
+      mission.id,
+      Object.fromEntries(
+        mission.clauses.map((clause, index) => [index, clause.value as ScoresheetClauseValue])
+      )
+    ])
+  );
+
+const collectMissionErrors = (
+  scoresheet: ReturnType<typeof getScoresheet>,
+  values: Mission[]
+): ErrorWithMessage[] => {
   const errors: ErrorWithMessage[] = [];
 
   scoresheet.missions.forEach((mission, missionIndex) => {
     const clauses = values[missionIndex].clauses;
     try {
-      points += mission.calculation(...clauses.map(clause => clause.value));
+      mission.calculation(...clauses.map(clause => clause.value));
     } catch (error) {
       if (error instanceof ScoresheetError) {
         errors.push({ mission: mission.id, id: error.id });
       }
     }
   });
-  return { points, errors };
+  return errors;
 };
 
 const validate = (scoresheet: ReturnType<typeof getScoresheet>, values: Mission[]) => {
@@ -96,14 +116,19 @@ export const useScore = () => {
   }, [scoreKey, scoresheetVersion]);
 
   const updateScore = async (missions: Mission[]) => {
-    const { points, errors: missionErrors } = calculateScore(scoresheet, missions);
+    const missionErrors = collectMissionErrors(scoresheet, missions);
     const validatorErrors = validate(scoresheet, missions);
+    const { total: points, scoreOverridden } = calculateScoresheetScore(
+      scoresheet,
+      missionsToRecord(missions)
+    );
 
     const newScore: Score = {
       id: scoreKey,
       version: scoresheet._version,
       missions,
       points,
+      scoreOverridden,
       missionErrors,
       validatorErrors
     };

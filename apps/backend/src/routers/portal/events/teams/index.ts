@@ -116,12 +116,8 @@ router.get(
       return;
     }
 
-    const sortedScores = rankingData.scoresWithRounds
-      .sort((a, b) => a.round - b.round)
-      .map(s => s.score);
-
     res.status(200).json({
-      scores: sortedScores,
+      scores: rankingData.scores,
       highestScore: rankingData.maxScore,
       robotGameRank: rankingData.rank
     });

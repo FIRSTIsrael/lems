@@ -1710,5 +1710,11 @@
     "no-events-description": "Try again later or contact support for more information",
     "go-home": "Back to Home",
     "back": "Back"
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Highest Score",
+      "average": "Average Score"
+    }
   }
 }

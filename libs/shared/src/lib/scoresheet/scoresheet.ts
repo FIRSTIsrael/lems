@@ -1,5 +1,6 @@
 import type { Edition } from '../edition';
 import { ScoresheetSchema, ScoresheetError } from './types';
+import { futureScoresheet } from './future';
 
 const scoresheet: ScoresheetSchema = {
   _version: '2026-08-04',
@@ -233,8 +234,7 @@ const scoresheet: ScoresheetSchema = {
 export const getScoresheet = (edition: Edition): ScoresheetSchema => {
   switch (edition) {
     case 'future':
-      // TODO(future-edition): replace with Future content (phase 2)
-      return scoresheet;
+      return futureScoresheet;
     case 'founders':
       return scoresheet;
   }
