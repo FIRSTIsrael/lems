@@ -919,7 +919,8 @@
             "title": "Validation Issues",
             "no-teams": "No teams registered for this event",
             "not-enough-awards": "Not enough awards configured ({count}%)",
-            "too-many-awards": "Too many awards configured ({count}%)"
+            "too-many-awards": "Too many awards configured ({count}%)",
+            "unavailable-awards": "{count, plural, one {# configured award is} other {# configured awards are}} not available in this division's edition"
           },
           "success": {
             "title": "Awards Configuration Valid",

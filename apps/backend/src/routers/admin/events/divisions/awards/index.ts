@@ -1,4 +1,6 @@
 import express from 'express';
+import { getEdition } from '@lems/shared/edition';
+import { isAwardAvailable } from '@lems/shared/awards';
 import db from '../../../../../lib/database';
 import { requirePermission } from '../../../middleware/require-permission';
 import { AdminDivisionRequest } from '../../../../../types/express';
@@ -22,6 +24,23 @@ router.post(
     const awards = req.body.awards;
     if (!Array.isArray(awards)) {
       res.status(400).json({ error: 'Awards array is required' });
+      return;
+    }
+
+    const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+
+    const edition = getEdition(division);
+    const unavailable = awards
+      .map((award: { name?: unknown }) => award?.name)
+      .filter((name: unknown) => typeof name !== 'string' || !isAwardAvailable(name, edition));
+    if (unavailable.length > 0) {
+      res.status(400).json({
+        error: `Awards not available in the ${edition} edition: ${unavailable.join(', ')}`
+      });
       return;
     }
 

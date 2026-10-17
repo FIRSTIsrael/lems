@@ -82,6 +82,14 @@
       "name": "Wpływ",
       "description": "Ta nagroda wyróżnia drużynę, która wywarła trwały, pozytywny wpływ na swoją społeczność — rozumie znaczenie dzielenia się wiedzą i inspirowania innych."
     },
+    "inspiration": {
+      "name": "Inspiracja",
+      "description": "Ta nagroda wyróżnia drużynę, która przyjmuje kulturę <i>FIRST</i> LEGO League poprzez ponadprzeciętną innowacyjność, wpływ lub działania na rzecz społeczności."
+    },
+    "peer": {
+      "name": "Nagroda Rówieśników",
+      "description": "Ta nagroda wyróżnia drużynę nominowaną przez inne drużyny za to, jak prezentuje Wartości Podstawowe <i>FIRST</i> i Gracious Professionalism."
+    },
     "lead-mentor": {
       "name": "Trener/Mentor",
       "description": "Trenerzy i mentorzy inspirują drużyny do działania na najwyższym poziomie, indywidualnie i jako grupa. Bez nich nie byłoby FIRST LEGO League Challenge. Nagroda trafia do mentora, którego przywództwo i wsparcie najlepiej odzwierciedlają Wartości Podstawowe FIRST."

@@ -919,7 +919,8 @@
             "title": "בעיות בתקינות",
             "no-teams": "אין קבוצות רשומות לאירוע זה",
             "not-enough-awards": "לא הוגדרו מספיק פרסים ({count}%)",
-            "too-many-awards": "הוגדרו יותר מדי פרסים ({count}%)"
+            "too-many-awards": "הוגדרו יותר מדי פרסים ({count}%)",
+            "unavailable-awards": "{count, plural, one {פרס מוגדר אחד אינו זמין} other {# פרסים מוגדרים אינם זמינים}} במהדורה של בית זה"
           },
           "success": {
             "title": "הגדרת הפרסים תקינה",

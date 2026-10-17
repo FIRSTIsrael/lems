@@ -13,7 +13,8 @@ export const CORE_VALUES_AWARDS = [
   'rising-all-star',
   'motivate',
   'judges-award',
-  'impact'
+  'impact',
+  'inspiration'
 ] as const;
 export type CoreValuesAward = (typeof CORE_VALUES_AWARDS)[number];
 
@@ -36,7 +37,8 @@ export type AutomaticAssignmentAward = (typeof AUTOMATIC_ASSIGNMENT_AWARDS)[numb
 export const OPTIONAL_AWARDS = [
   'excellence-in-engineering',
   ...PERSONAL_AWARDS,
-  ...CORE_VALUES_AWARDS
+  ...CORE_VALUES_AWARDS,
+  'peer'
 ] as const;
 export type OptionalAwards = (typeof OPTIONAL_AWARDS)[number];
 
@@ -52,7 +54,8 @@ export type MandatoryAwards = (typeof MANDATORY_AWARDS)[number];
 export const HIDE_PLACES: Award[] = [
   ...PERSONAL_AWARDS,
   ...CORE_VALUES_AWARDS,
-  'excellence-in-engineering'
+  'excellence-in-engineering',
+  'peer'
 ];
 
 export const AWARDS = [...MANDATORY_AWARDS, ...OPTIONAL_AWARDS, 'advancement'] as const;
@@ -86,6 +89,8 @@ export const AWARD_LIMITS: { [key in Award]: number } = {
   'rising-all-star': 3,
   'judges-award': 3,
   impact: 1,
+  inspiration: 1,
+  peer: 1,
   'lead-mentor': -1, // Unlimited
   'volunteer-of-the-year': -1, // Unlimited
   advancement: -1 // Unlimited
@@ -105,3 +110,21 @@ const FUTURE_LABEL_OVERRIDES: readonly string[] = [
 /** Returns the translation key id for an award under the given edition. */
 export const getAwardLabelKey = (award: string, edition: Edition): string =>
   edition === 'future' && FUTURE_LABEL_OVERRIDES.includes(award) ? `future.${award}` : award;
+
+/** Awards offered only to Future Edition divisions. Every other award is available in both editions. */
+export const FUTURE_ONLY_AWARDS = ['inspiration', 'peer'] as const satisfies readonly Award[];
+
+const isInEdition = (award: string, edition: Edition): boolean =>
+  edition === 'future' || !(FUTURE_ONLY_AWARDS as readonly string[]).includes(award);
+
+export const getAvailableAwards = (edition: Edition): readonly Award[] =>
+  AWARDS.filter(award => isInEdition(award, edition));
+
+export const getOptionalAwards = (edition: Edition): readonly OptionalAwards[] =>
+  OPTIONAL_AWARDS.filter(award => isInEdition(award, edition));
+
+export const getCoreValuesAwards = (edition: Edition): readonly CoreValuesAward[] =>
+  CORE_VALUES_AWARDS.filter(award => isInEdition(award, edition));
+
+export const isAwardAvailable = (award: string, edition: Edition): boolean =>
+  (AWARDS as readonly string[]).includes(award) && isInEdition(award, edition);

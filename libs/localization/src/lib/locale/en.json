@@ -82,6 +82,14 @@
       "name": "Impact",
       "description": "This award celebrates a team that has made a significant ongoing impact on their community. They demonstrate that they understand the importance of sharing their knowledge and inspiring others."
     },
+    "inspiration": {
+      "name": "Inspiration",
+      "description": "This award celebrates a team that embraces the culture of <i>FIRST</i> LEGO League through above and beyond innovation, impact, or outreach."
+    },
+    "peer": {
+      "name": "Peer",
+      "description": "This award honors a team nominated by their peers for how they demonstrate the <i>FIRST</i> Core Values and Gracious Professionalism."
+    },
     "lead-mentor": {
       "name": "Coach/Mentor",
       "description": "Coaches and mentors inspire their teams to do their best, both as individuals and together. Without them, there would be no FIRST LEGO League Challenge. This award goes to the coach or mentor whose leadership and guidance is clearly evident and best exemplifies the FIRST Core Values."

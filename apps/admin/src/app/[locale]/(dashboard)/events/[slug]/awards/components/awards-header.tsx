@@ -20,7 +20,7 @@ import {
   CheckCircle,
   FiberNew
 } from '@mui/icons-material';
-import { OPTIONAL_AWARDS } from '../types';
+import { getOptionalAwards } from '../types';
 import { useAwards } from './awards-context';
 import { AddAwardDialog } from './add-award-dialog';
 import { OverrideValidationDialog } from './override-validation-dialog';
@@ -28,12 +28,21 @@ import { OverrideValidationDialog } from './override-validation-dialog';
 export const AwardsHeader = () => {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.editor');
-  const { awards, addAward, saveSchema, resetChanges, isLoading, isDirty, isNew, validation } =
-    useAwards();
+  const {
+    awards,
+    addAward,
+    saveSchema,
+    resetChanges,
+    isLoading,
+    isDirty,
+    isNew,
+    validation,
+    edition
+  } = useAwards();
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [overrideDialogOpen, setOverrideDialogOpen] = useState(false);
 
-  const availableAwards = OPTIONAL_AWARDS.filter(award => !awards.includes(award));
+  const availableAwards = getOptionalAwards(edition).filter(award => !awards.includes(award));
 
   const handleSaveClick = useCallback(() => {
     if (!validation.isValid) {
