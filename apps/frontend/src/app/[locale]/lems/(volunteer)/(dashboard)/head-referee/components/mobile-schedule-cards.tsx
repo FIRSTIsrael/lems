@@ -1,18 +1,15 @@
 'use client';
 
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
 import { Cancel, CheckCircleSharp } from '@mui/icons-material';
 import { Flag } from '@lems/shared';
 import type { Match, Scoresheet } from '../graphql/types';
-import { useTime } from '../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusButton } from './scoresheet-status-button';
-
-dayjs.extend(isBetween);
+import { useScrollToCurrent } from './use-scroll-to-current';
 
 interface MobileScheduleCardsProps {
   matches: Match[];
@@ -20,8 +17,7 @@ interface MobileScheduleCardsProps {
 }
 
 export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCardsProps) {
-  const { data, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
-  const currentTime = useTime({ interval: 1000 });
+  const { data, currentMatch, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
 
   // Sort matches by scheduled time
   const sortedMatches = useMemo(() => {
@@ -30,18 +26,6 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
     );
   }, [matches]);
 
-  // Find active match
-  const activeMatchId = useMemo(() => {
-    return sortedMatches.find(match => {
-      if (match.status !== 'in-progress') return false;
-      if (!match.startTime) return false;
-
-      const startTime = dayjs(match.startTime);
-      const endTime = startTime.add(data.matchLength || 150, 'second');
-      return currentTime.isBetween(startTime, endTime);
-    })?.id;
-  }, [sortedMatches, currentTime, data.matchLength]);
-
   return (
     <Stack spacing={2}>
       {sortedMatches.map(match => (
@@ -49,7 +33,7 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
           key={match.id}
           match={match}
           scoresheets={scoresheets}
-          isActive={match.id === activeMatchId}
+          isActive={match.id === currentMatch?.id}
           isLoaded={match.id === data.loadedMatch}
           findScoresheetForTeam={findScoresheetForTeam}
           searchQuery={filterOptions.searchQuery}
@@ -77,7 +61,7 @@ function MatchCard({
   searchQuery
 }: MatchCardProps) {
   const t = useTranslations('pages.head-referee');
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useScrollToCurrent<HTMLDivElement>(isActive);
 
   // Check if a team matches the search query
   const doesTeamMatchSearch = (teamNumber: string, teamName: string): boolean => {
@@ -86,13 +70,6 @@ function MatchCard({
     const regex = new RegExp(escapedQuery, 'i');
     return regex.test(teamNumber) || regex.test(teamName);
   };
-
-  // Auto-scroll to active match
-  useEffect(() => {
-    if (isActive && cardRef.current) {
-      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [isActive]);
 
   const scheduledTime = dayjs(match.scheduledTime).format('HH:mm');
 

@@ -8,6 +8,7 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
       field {
         divisionId
         loadedMatch
+        activeMatch
         matches {
           id
           slug

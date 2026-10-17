@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { TableCell, TableRow, Typography, Tooltip, Stack } from '@mui/material';
@@ -8,6 +7,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { ScoresheetStatusButton } from '../scoresheet-status-button';
+import { useScrollToCurrent } from '../use-scroll-to-current';
 
 interface MatchRowProps {
   match: Match;
@@ -29,7 +29,7 @@ export function MatchRow({
   searchQuery
 }: MatchRowProps) {
   const t = useTranslations('pages.head-referee');
-  const rowRef = useRef<HTMLTableRowElement>(null);
+  const rowRef = useScrollToCurrent<HTMLTableRowElement>(isActive);
 
   // Check if a team matches the search query
   const doesTeamMatchSearch = (teamNumber: string, teamName: string): boolean => {
@@ -38,13 +38,6 @@ export function MatchRow({
     const regex = new RegExp(escapedQuery, 'i');
     return regex.test(teamNumber) || regex.test(teamName);
   };
-
-  // Auto-scroll to active match on mount
-  useEffect(() => {
-    if (isActive && rowRef.current) {
-      rowRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [isActive]);
 
   const scheduledTime = dayjs(match.scheduledTime).format('HH:mm');
 
