@@ -109,7 +109,7 @@
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.15.43",
     "@swc/helpers": "^0.5.23",
-    "@swc/plugin-emotion": "^14.14.1",
+    "@swc/plugin-emotion": "^19.0.0",
     "@types/archiver": "^8.0.0",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.10",
