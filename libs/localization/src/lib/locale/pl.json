@@ -109,6 +109,36 @@
     "advancement": {
       "name": "Awans",
       "description": "Drużyny awansujące do kolejnego etapu rywalizacji"
+    },
+    "future": {
+      "champions": {
+        "name": "Nagroda Champion",
+        "description": "Ta nagroda wyróżnia drużynę, która uosabia doświadczenie <i>FIRST</i>® LEGO® League, w pełni realizując Wartości Podstawowe i osiągając najlepsze wyniki w projekcie, Engineering Design oraz meczach."
+      },
+      "core-values": {
+        "name": "Wartości Podstawowe",
+        "description": "Ta nagroda wyróżnia drużynę, która w swojej pracy i podczas wydarzenia jest przykładem pracy zespołowej, odkrywania, integracji, innowacyjności, wpływu i dobrej zabawy."
+      },
+      "innovation-project": {
+        "name": "Projekt",
+        "description": "Ta nagroda wyróżnia drużynę, która wykazuje się doskonałością w badaniach, kreatywnością i pracą zespołową, tworząc znakomity projekt."
+      },
+      "robot-design": {
+        "name": "Engineering Design",
+        "description": "Ta nagroda wyróżnia drużynę, która stosuje solidne zasady inżynierskie, aby budować i programować rozwiązania realizujące misje gry."
+      },
+      "robot-performance": {
+        "name": "Występ w Grze",
+        "description": "Ta nagroda wyróżnia drużynę, która zdobyła najwyższą średnią punktów w meczach, wykazując się doskonałością inżynierską i strategią współpracy w grze."
+      },
+      "rising-all-star": {
+        "name": "Wschodząca Gwiazda",
+        "description": "Ta nagroda wyróżnia drużynę, która poczyniła znaczne postępy w pewności siebie i umiejętnościach i od której sędziowie oczekują w przyszłości wielkich osiągnięć."
+      },
+      "lead-mentor": {
+        "name": "Mentor",
+        "description": "Mentorzy prowadzą i inspirują swoje drużyny do rozwoju, zarówno indywidualnie, jak i wspólnie. Ta nagroda wyróżnia nauczyciela, trenera lub mentora, który wykazuje się wyjątkowym przywództwem i jest wzorem Wartości Podstawowych <i>FIRST</i>."
+      }
     }
   },
   "edition": {
