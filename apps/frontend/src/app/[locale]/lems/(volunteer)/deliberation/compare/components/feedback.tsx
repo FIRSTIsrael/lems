@@ -6,6 +6,7 @@ import { useRubricsGeneralTranslations, useJudgingCategoryTranslations } from '@
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
+import { useEdition } from '../../../hooks/use-edition';
 
 interface FeedbackProps {
   team: Team;
@@ -114,7 +115,8 @@ function CategoryFeedbackCard({
 
 export function Feedback({ team }: FeedbackProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { category } = useCompareContext();
 
   const feedbacksByCategory = useMemo(() => {

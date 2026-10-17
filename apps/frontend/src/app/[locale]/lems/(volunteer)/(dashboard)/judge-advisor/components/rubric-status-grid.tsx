@@ -29,6 +29,7 @@ import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { useFilteredSessions } from '../hooks/use-filtered-sessions';
+import { useEdition } from '../../../hooks/use-edition';
 import { useFilters } from './filters-context';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
@@ -39,7 +40,8 @@ import { useJudgeAdvisor } from './judge-advisor-context';
 export const RubricStatusGrid = () => {
   const { sessions, loading } = useJudgeAdvisor();
   const t = useTranslations('pages.judge-advisor.grid');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
 
   const {

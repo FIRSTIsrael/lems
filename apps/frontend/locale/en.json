@@ -14,11 +14,6 @@
           "think-about": "Think About",
           "great-job-placeholder": "Note the things the team did excellently...",
           "think-about-placeholder": "Things the team should think about or improve...",
-          "categories": {
-            "core-values": "Core Values",
-            "innovation-project": "Innovation Project",
-            "robot-design": "Robot Design"
-          },
           "category-descriptions": {
             "core-values": "How did the team demonstrate teamwork, discovery, inclusion, innovation, impact, and fun in their work?",
             "innovation-project": "How did the team identify a problem related to the season's theme and approach solving it?",
@@ -330,11 +325,6 @@
         "session-completed": "Completed",
         "profile-document-tooltip": "View team profile document",
         "profile-document-button-label": "Profile",
-        "rubric-labels": {
-          "core-values": "Core Values",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design"
-        },
         "status-glossary": {
           "title": "Rubric Status Guide",
           "aria-label": "Show rubric status guide",
@@ -1360,9 +1350,6 @@
       "scores-chart": {
         "room-scores-distribution": "Room Scores Distribution",
         "no-data-available": "No data available",
-        "innovation-project": "Innovation Project",
-        "robot-design": "Robot Design",
-        "core-values": "Core Values",
         "aggregate-average": "Aggregate Average"
       },
       "compare": {
@@ -1454,9 +1441,7 @@
           "table-team": "Team",
           "table-room": "Room",
           "table-score": "Total Score",
-          "table-innovation-project-rank": "Innovation Project Rank",
-          "table-robot-design-rank": "Robot Design Rank",
-          "table-core-values-rank": "Core Values Rank",
+          "table-category-rank": "{category} Rank",
           "table-robot-game-rank": "Robot Game Rank",
           "save": "Save Champions",
           "advance": "Advance to Core Awards",
@@ -1531,10 +1516,7 @@
           "alert-title": "Ranking Anomalies Detected",
           "alert-description": "Some teams have significant differences between their picklist position and calculated rank.",
           "higher": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} higher in the {category} category",
-          "lower": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} lower in the {category} category",
-          "core-values": "Core Values",
-          "innovation-project": "Innovation Project",
-          "robot-design": "Robot Design"
+          "lower": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} lower in the {category} category"
         }
       }
     },

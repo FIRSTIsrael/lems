@@ -6,11 +6,13 @@ import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { useRubricContext } from '../rubric-context';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 
 export const RubricCategoryNavigation: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.tools.rubrics.navigation');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useToolEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { category: currentCategory, setCategory } = useRubricContext();
 
   return (

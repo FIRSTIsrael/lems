@@ -34,7 +34,11 @@
   "judging-categories": {
     "core-values": "Wartości Podstawowe",
     "innovation-project": "Projekt Innowacyjny",
-    "robot-design": "Robot Design"
+    "robot-design": "Robot Design",
+    "future": {
+      "innovation-project": "Projekt",
+      "robot-design": "Engineering Design"
+    }
   },
   "judging-session-stages": {
     "setup": "Przygotowanie",

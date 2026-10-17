@@ -3,6 +3,7 @@
 import { useSuspenseQuery, skipToken } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { getEdition } from '@lems/shared/edition';
 import { RoleInfo } from '../graphql/volunteers';
 import { useVolunteer } from '../components/volunteer-context';
 import { GET_DIVISION_VENUE_QUERY } from '../graphql/venue';
@@ -37,7 +38,8 @@ interface RoleInfoOption {
  */
 export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOption[] => {
   const { volunteerData } = useVolunteer();
-  const { getCategory } = useJudgingCategoryTranslations();
+  const division = volunteerData?.divisions.find(d => d.id === divisionId);
+  const { getCategory } = useJudgingCategoryTranslations(getEdition(division ?? {}));
 
   const roleInfoType = getRoleInfoType(volunteerData?.volunteers[0].roleInfo);
   const shouldFetch = roleInfoType && roleInfoType !== 'category' && divisionId;

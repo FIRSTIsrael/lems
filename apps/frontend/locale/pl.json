@@ -14,11 +14,6 @@
           "think-about": "Zastanówcie się nad",
           "great-job-placeholder": "Zanotuj, co drużyna zrobiła doskonale...",
           "think-about-placeholder": "Rzeczy do przemyślenia lub poprawy przez drużynę...",
-          "categories": {
-            "core-values": "Wartości Podstawowe",
-            "innovation-project": "Projekt Innowacyjny",
-            "robot-design": "Robot Design"
-          },
           "category-descriptions": {
             "core-values": "Jak drużyna okazywała pracę zespołową, odkrywanie, inkluzywność, innowacyjność, wpływ i zabawę?",
             "innovation-project": "Jak drużyna zidentyfikowała problem związany z tematem sezonu i podeszła do jego rozwiązania?",
@@ -330,11 +325,6 @@
         "session-completed": "Zakończono",
         "profile-document-tooltip": "Wyświetl dokument profilu drużyny",
         "profile-document-button-label": "Profil",
-        "rubric-labels": {
-          "core-values": "Wartości Podstawowe",
-          "innovation-project": "Projekt Innowacyjny",
-          "robot-design": "Robot Design"
-        },
         "status-glossary": {
           "title": "Przewodnik statusów rubryki",
           "aria-label": "Pokaż przewodnik statusów rubryki",
@@ -1359,9 +1349,6 @@
       "scores-chart": {
         "room-scores-distribution": "Rozkład wyników w salach",
         "no-data-available": "Brak danych",
-        "innovation-project": "Projekt Innowacyjny",
-        "robot-design": "Robot Design",
-        "core-values": "Wartości Podstawowe",
         "aggregate-average": "Średnia zbiorcza"
       },
       "compare": {
@@ -1453,9 +1440,7 @@
           "table-team": "Drużyna",
           "table-room": "Sala",
           "table-score": "Łączny wynik",
-          "table-innovation-project-rank": "Miejsce w Projekcie Innowacyjnym",
-          "table-robot-design-rank": "Miejsce w Robot Design",
-          "table-core-values-rank": "Miejsce w Wartościach Podstawowych",
+          "table-category-rank": "Miejsce: {category}",
           "table-robot-game-rank": "Miejsce w Robot Game",
           "save": "Zapisz zwycięzców",
           "advance": "Przejdź do nagród podstawowych",
@@ -1530,10 +1515,7 @@
           "alert-title": "Wykryto anomalie w rankingu",
           "alert-description": "Niektóre zespoły mają znaczące różnice między pozycją na liście a obliczonym rankingiem.",
           "higher": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} wyżej w kategorii {category}",
-          "lower": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} niżej w kategorii {category}",
-          "core-values": "Wartości Podstawowe",
-          "innovation-project": "Projekt Innowacyjny",
-          "robot-design": "Projekt Robota"
+          "lower": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} niżej w kategorii {category}"
         }
       }
     },

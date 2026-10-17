@@ -148,9 +148,9 @@ const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProp
 
 export const RubricScores = ({ team }: RubricScoresProps) => {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
-  const { fieldComparisons, category } = useCompareContext();
   const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
+  const { fieldComparisons, category } = useCompareContext();
 
   const fieldsBySections = useMemo(
     () => processFieldsBySections(edition, team, fieldComparisons, category),

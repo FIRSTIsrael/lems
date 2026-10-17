@@ -229,7 +229,7 @@ export default function RubricsExportPage() {
             </Box>
 
             <Box sx={{ width: '90%', ml: 5 }}>
-              <CombinedFeedbackTable rubrics={rubrics} />
+              <CombinedFeedbackTable rubrics={rubrics} edition={edition} />
 
               <Paper
                 sx={{

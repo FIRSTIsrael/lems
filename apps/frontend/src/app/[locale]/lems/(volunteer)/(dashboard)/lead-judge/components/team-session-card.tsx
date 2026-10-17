@@ -7,6 +7,7 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { Box, Typography, useTheme, Chip, Stack, Card, CardContent } from '@mui/material';
 import { hyphensToUnderscores } from '@lems/shared/utils';
 import { JudgingSession } from '../graphql';
+import { useEdition } from '../../../hooks/use-edition';
 import { TeamInfoCell } from './team-info-cell';
 import { RubricStatusButton } from './rubric-status-button';
 
@@ -22,7 +23,8 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
   loading = false
 }) => {
   const t = useTranslations('pages.lead-judge.list');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
   const rubricColor = getRubricColor(category);
 

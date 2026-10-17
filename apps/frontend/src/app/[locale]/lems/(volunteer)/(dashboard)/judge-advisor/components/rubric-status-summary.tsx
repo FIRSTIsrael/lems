@@ -16,13 +16,15 @@ import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { range } from '@lems/shared/utils';
+import { useEdition } from '../../../hooks/use-edition';
 import { getRubricStatusStats } from './utils';
 import { useJudgeAdvisor } from './judge-advisor-context';
 
 export const RubricStatusSummary = () => {
   const { sessions, loading } = useJudgeAdvisor();
   const t = useTranslations('pages.judge-advisor.summary');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
 
   const stats = useMemo(() => getRubricStatusStats(sessions), [sessions]);

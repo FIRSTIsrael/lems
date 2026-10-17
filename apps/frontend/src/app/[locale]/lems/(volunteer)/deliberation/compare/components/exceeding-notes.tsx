@@ -53,7 +53,8 @@ function NoteItem({
 
 export function ExceedingNotes({ team }: ExceedingNotesProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { category } = useCompareContext();
 
   const exceedingNotesByCategory = useMemo(() => {

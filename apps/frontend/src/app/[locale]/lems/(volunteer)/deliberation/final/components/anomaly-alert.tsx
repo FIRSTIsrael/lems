@@ -4,7 +4,9 @@ import { useState } from 'react';
 import { Alert, Box, Popover, Stack, Typography, useTheme, alpha } from '@mui/material';
 import { Warning } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { Anomaly } from '../final-deliberation-computation';
+import { useEdition } from '../../../hooks/use-edition';
 
 const CATEGORY_COLORS: Record<string, string> = {
   'core-values': '#d32f2f',
@@ -24,6 +26,8 @@ interface AnomalyAlertProps {
 
 export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({ anomalies }) => {
   const t = useTranslations('pages.deliberations.final.anomalies');
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -43,8 +47,7 @@ export const AnomalyAlert: React.FC<AnomalyAlertProps> = ({ anomalies }) => {
   const popoverId = open ? 'anomaly-popover' : undefined;
 
   const getAnomalyMessage = (anomaly: Anomaly): string => {
-    const categoryKey = anomaly.category as 'core-values' | 'innovation-project' | 'robot-design';
-    const categoryLabel = t(categoryKey);
+    const categoryLabel = getCategory(anomaly.category);
     const messageKey = anomaly.isHigher ? 'higher' : 'lower';
 
     return t(messageKey, {
