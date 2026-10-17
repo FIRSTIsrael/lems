@@ -66,7 +66,8 @@ export const getCategoryRadarColor = (category: string): string => {
 export const processCoreValuesRadarData = (
   edition: Edition,
   team: Team,
-  getSectionTitle: (sectionId: string) => string
+  getIpSectionTitle: (sectionId: string) => string,
+  getRdSectionTitle: (sectionId: string) => string
 ): RadarChartDataPoint[] => {
   const ipRubric = team.rubrics.innovation_project;
   const rdRubric = team.rubrics.robot_design;
@@ -74,16 +75,36 @@ export const processCoreValuesRadarData = (
 
   const rubrics = getRubrics(edition);
   const ipSchema = rubrics['innovation-project'];
+  const rdSchema = rubrics['robot-design'];
   const ipSectionScores = extractCoreValuesBySection(ipRubric, ipSchema);
-  const rdSectionScores = extractCoreValuesBySection(rdRubric, rubrics['robot-design']);
+  const rdSectionScores = extractCoreValuesBySection(rdRubric, rdSchema);
 
-  return ipSchema.sections.map(section => ({
-    field: getSectionTitle(section.id),
+  const mergedSectionPoint = (sectionId: string, getTitle: (sectionId: string) => string) => ({
+    field: getTitle(sectionId),
     score: calculateAverage([
-      ...(ipSectionScores[section.id] || []),
-      ...(rdSectionScores[section.id] || [])
+      ...(ipSectionScores[sectionId] || []),
+      ...(rdSectionScores[sectionId] || [])
     ])
-  }));
+  });
+
+  const ipSectionIds = ipSchema.sections.map(section => section.id);
+  const sharesSectionIds =
+    ipSectionIds.length === rdSchema.sections.length &&
+    rdSchema.sections.every(section => ipSectionIds.includes(section.id));
+  if (sharesSectionIds) {
+    return ipSectionIds.map(sectionId => mergedSectionPoint(sectionId, getIpSectionTitle));
+  }
+
+  // Editions whose IP and RD sections differ: IP sections first, then RD-only sections
+  // that carry Core Values fields, each labelled with its own category's title.
+  const rdOnlyCvSections = rdSchema.sections.filter(
+    section =>
+      !ipSectionIds.includes(section.id) && section.fields.some(field => field.coreValues)
+  );
+  return [
+    ...ipSectionIds.map(sectionId => mergedSectionPoint(sectionId, getIpSectionTitle)),
+    ...rdOnlyCvSections.map(section => mergedSectionPoint(section.id, getRdSectionTitle))
+  ];
 };
 
 export const processRubricRadarData = (

@@ -119,16 +119,20 @@ const RadarChartContainer = ({ data, dataKey, color = '#64B5F6' }: RadarChartCon
 
 export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) => {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations('innovation-project');
-  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
   const edition = useEdition();
+  const { getSectionTitle: getIpSectionTitle } = useRubricsTranslations(
+    'innovation-project',
+    edition
+  );
+  const { getSectionTitle: getRdSectionTitle } = useRubricsTranslations('robot-design', edition);
+  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory, edition);
 
   const data = useMemo(() => {
     if (category === 'core-values')
-      return processCoreValuesRadarData(edition, team, getIpSectionTitle);
+      return processCoreValuesRadarData(edition, team, getIpSectionTitle, getRdSectionTitle);
     const rubric = team.rubrics[category.replace('-', '_') as keyof typeof team.rubrics];
     return processRubricRadarData(edition, rubric, category, getSectionTitle);
-  }, [edition, team, category, getSectionTitle, getIpSectionTitle]);
+  }, [edition, team, category, getSectionTitle, getIpSectionTitle, getRdSectionTitle]);
 
   if (data.length === 0) {
     return (
@@ -154,8 +158,8 @@ interface AllCategoriesRadarChartProps {
 }
 
 export const AllCategoriesRadarChart = ({ team }: AllCategoriesRadarChartProps) => {
-  const { getCategory } = useJudgingCategoryTranslations();
   const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const data = useMemo(
     () => processAllCategoriesRadarData(edition, team, getCategory),
     [edition, team, getCategory]

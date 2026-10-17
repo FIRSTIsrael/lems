@@ -34,7 +34,11 @@
   "judging-categories": {
     "core-values": "Wartości Podstawowe",
     "innovation-project": "Projekt Innowacyjny",
-    "robot-design": "Robot Design"
+    "robot-design": "Robot Design",
+    "future": {
+      "innovation-project": "Projekt",
+      "robot-design": "Engineering Design"
+    }
   },
   "judging-session-stages": {
     "setup": "Przygotowanie",
@@ -42,7 +46,16 @@
     "innovation-questions": "Pytania – Projekt Innowacyjny",
     "robot-presentation": "Prezentacja – Robot Design",
     "robot-questions": "Pytania – Robot Design",
-    "final-thoughts": "Podsumowanie"
+    "final-thoughts": "Podsumowanie",
+    "core-values-questions": "Pytania – Wartości Podstawowe",
+    "judging-feedback": "Informacja zwrotna od sędziów",
+    "future": {
+      "setup": "Powitanie",
+      "innovation-presentation": "Prezentacja – Projekt",
+      "innovation-questions": "Pytania – Projekt",
+      "robot-presentation": "Prezentacja – Engineering Design",
+      "robot-questions": "Pytania – Engineering Design"
+    }
   },
   "awards": {
     "core-values": {
@@ -68,6 +81,14 @@
     "impact": {
       "name": "Wpływ",
       "description": "Ta nagroda wyróżnia drużynę, która wywarła trwały, pozytywny wpływ na swoją społeczność — rozumie znaczenie dzielenia się wiedzą i inspirowania innych."
+    },
+    "inspiration": {
+      "name": "Inspiracja",
+      "description": "Ta nagroda wyróżnia drużynę, która przyjmuje kulturę <i>FIRST</i> LEGO League poprzez ponadprzeciętną innowacyjność, wpływ lub działania na rzecz społeczności."
+    },
+    "peer": {
+      "name": "Nagroda Rówieśników",
+      "description": "Ta nagroda wyróżnia drużynę nominowaną przez inne drużyny za to, jak prezentuje Wartości Podstawowe <i>FIRST</i> i Gracious Professionalism."
     },
     "lead-mentor": {
       "name": "Trener/Mentor",
@@ -100,6 +121,36 @@
     "advancement": {
       "name": "Awans",
       "description": "Drużyny awansujące do kolejnego etapu rywalizacji"
+    },
+    "future": {
+      "champions": {
+        "name": "Nagroda Champion",
+        "description": "Ta nagroda wyróżnia drużynę, która uosabia doświadczenie <i>FIRST</i>® LEGO® League, w pełni realizując Wartości Podstawowe i osiągając najlepsze wyniki w projekcie, Engineering Design oraz meczach."
+      },
+      "core-values": {
+        "name": "Wartości Podstawowe",
+        "description": "Ta nagroda wyróżnia drużynę, która w swojej pracy i podczas wydarzenia jest przykładem pracy zespołowej, odkrywania, integracji, innowacyjności, wpływu i dobrej zabawy."
+      },
+      "innovation-project": {
+        "name": "Projekt",
+        "description": "Ta nagroda wyróżnia drużynę, która wykazuje się doskonałością w badaniach, kreatywnością i pracą zespołową, tworząc znakomity projekt."
+      },
+      "robot-design": {
+        "name": "Engineering Design",
+        "description": "Ta nagroda wyróżnia drużynę, która stosuje solidne zasady inżynierskie, aby budować i programować rozwiązania realizujące misje gry."
+      },
+      "robot-performance": {
+        "name": "Występ w Grze",
+        "description": "Ta nagroda wyróżnia drużynę, która zdobyła najwyższą średnią punktów w meczach, wykazując się doskonałością inżynierską i strategią współpracy w grze."
+      },
+      "rising-all-star": {
+        "name": "Wschodząca Gwiazda",
+        "description": "Ta nagroda wyróżnia drużynę, która poczyniła znaczne postępy w pewności siebie i umiejętnościach i od której sędziowie oczekują w przyszłości wielkich osiągnięć."
+      },
+      "lead-mentor": {
+        "name": "Mentor",
+        "description": "Mentorzy prowadzą i inspirują swoje drużyny do rozwoju, zarówno indywidualnie, jak i wspólnie. Ta nagroda wyróżnia nauczyciela, trenera lub mentora, który wykazuje się wyjątkowym przywództwem i jest wzorem Wartości Podstawowych <i>FIRST</i>."
+      }
     }
   },
   "edition": {
@@ -767,6 +818,140 @@
     "feedback": {
       "great-job": "Świetna robota...",
       "think-about": "Zastanówcie się nad..."
+    }
+  },
+  "rubrics-future": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACHIEVES",
+      "exceeds": "EXCEEDS"
+    },
+    "core-values-explanation": "Kryteria oznaczone tym stylem pola wyboru liczą się jednocześnie do klasyfikacji nagród Projekt lub Engineering Design oraz Wartości Podstawowych. Wartości Podstawowe stanowią 25% wyniku drużyny w Nagrodzie Champion i powinny być widoczne w całej pracy drużyny oraz podczas wydarzenia.",
+    "feedback": {
+      "great-job": "Świetna robota z...",
+      "think-about": "Jako kolejny krok zastanówcie się nad..."
+    },
+    "categories": {
+      "core-values": { "title": "Wartości Podstawowe" },
+      "innovation-project": {
+        "title": "Projekt",
+        "sections": {
+          "explore": {
+            "title": "ODKRYWANIE",
+            "description": "W jaki sposób drużyna bada ścieżkę projektu?",
+            "fields": {
+              "guided-research": {
+                "criterion": "Drużyna jasno wyjaśnia, jak badania z przewodnikiem wpłynęły na kierunek jej projektu"
+              },
+              "sources": {
+                "criterion": "Drużyna korzysta z wielu odpowiednich źródeł, aby poznać wybrany temat"
+              }
+            }
+          },
+          "ideate": {
+            "title": "GENEROWANIE POMYSŁÓW",
+            "description": "Jakie pomysły drużyna generuje na podstawie swoich badań?",
+            "fields": {
+              "ideas": {
+                "criterion": "Drużyna rozważyła wiele pomysłów i jasno uzasadnia dokonany wybór"
+              },
+              "iteration": {
+                "criterion": "Drużyna jasno wyjaśnia iteracyjny proces rozwijania i ulepszania swojego pomysłu na podstawie badań lub informacji zwrotnej"
+              },
+              "innovation": {
+                "criterion": "Drużyna jasno wyjaśnia innowacyjne podejście lub oryginalne myślenie w swoim pomyśle na projekt"
+              }
+            }
+          },
+          "implement": {
+            "title": "WDRAŻANIE",
+            "description": "W jaki sposób pomysł drużyny wywiera pozytywny wpływ?",
+            "fields": {
+              "impact": {
+                "criterion": "Drużyna jasno określa rzeczywistych użytkowników i potencjalny wpływ swojego pomysłu"
+              },
+              "steps": {
+                "criterion": "Drużyna jasno określa kroki potrzebne do wdrożenia swojego pomysłu"
+              },
+              "feasibility": {
+                "criterion": "Drużyna rozważa wykonalność swojego pomysłu, w tym wyzwania i kompromisy"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "W jaki sposób drużyna przedstawia swoją pracę nad projektem?",
+            "fields": {
+              "visuals": {
+                "criterion": "Drużyna przedstawia czytelne materiały wizualne, modele lub prototypy wspierające prezentację projektu"
+              },
+              "contribution": {
+                "criterion": "Drużyna wyjaśnia, w jaki sposób wszyscy jej członkowie znacząco przyczyniają się do rozwoju projektu"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "title": "Engineering Design",
+        "sections": {
+          "identify": {
+            "title": "IDENTYFIKACJA",
+            "description": "W jaki sposób drużyna ćwiczy i identyfikuje obszary do poprawy?",
+            "fields": {
+              "resources": {
+                "criterion": "Drużyna wyjaśnia, jak korzysta z misji z przewodnikiem oraz materiałów do budowania i programowania"
+              },
+              "improvement-areas": {
+                "criterion": "Drużyna identyfikuje obszary do poprawy w dostarczonych narzędziach, aby określić wymagania projektowe"
+              }
+            }
+          },
+          "design-create": {
+            "title": "PROJEKTOWANIE I TWORZENIE",
+            "description": "Jakie pomysły drużyna generuje, aby ulepszyć swoje narzędzia i strategię?",
+            "fields": {
+              "mission-strategy": {
+                "criterion": "Drużyna opracowuje jasną strategię misji, która kieruje decyzjami projektowymi"
+              },
+              "mechanical": {
+                "criterion": "Rozwiązania drużyny obejmują własne konstrukcje mechaniczne wspierające jej strategię misji"
+              },
+              "coding": {
+                "criterion": "Rozwiązania drużyny obejmują własny kod wspierający jej strategię misji"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERACJE",
+            "description": "W jaki sposób drużyna testuje i ulepsza swoje projekty?",
+            "fields": {
+              "options": {
+                "criterion": "Drużyna rozważa wiele opcji projektowych dla każdego narzędzia roli, zanim wybierze jedną do testów"
+              },
+              "testing-process": {
+                "criterion": "Drużyna stosuje jasny proces testowania i dokumentuje wyniki"
+              },
+              "improve": {
+                "criterion": "Drużyna wykorzystuje wyniki testów do ulepszania projektów"
+              }
+            }
+          },
+          "communicate": {
+            "title": "KOMUNIKACJA",
+            "description": "W jaki sposób drużyna przedstawia swój proces projektowy i strategię?",
+            "fields": {
+              "cooperative-strategy": {
+                "criterion": "Drużyna jasno wyjaśnia strategię współpracy w grze między rolami graczy oraz z drugą drużyną"
+              },
+              "contribution": {
+                "criterion": "Drużyna wyjaśnia, w jaki sposób wszyscy jej członkowie znacząco przyczyniają się do procesu Engineering Design"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

@@ -3,7 +3,8 @@
 import { TableRow, TableCell, Typography, IconButton, Stack } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
-import { rubricColumns } from '@lems/shared/rubrics';
+import { getRubrics, rubricColumns } from '@lems/shared/rubrics';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
 import { RubricRadioIcon } from './rubric-radio-icon';
 
@@ -22,7 +23,9 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   coreValues = false,
   disabled = false
 }) => {
-  const { getFieldLevel } = useRubricsTranslations(category);
+  const edition = useToolEdition();
+  const { getFieldLevel, getFieldCriterion } = useRubricsTranslations(category, edition);
+  const isCriteria = getRubrics(edition)[category].layout === 'criteria';
   const { rubric, updateRubric } = useRubricContext();
 
   const currentValue = rubric.values.fields[fieldId]?.value;
@@ -43,73 +46,95 @@ export const FieldRatingRow: React.FC<FieldRatingRowProps> = ({
   };
 
   return (
-    <TableRow>
-      {rubricColumns.map((level, levelIndex) => {
-        const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
-        const label = level === 'exceeds' ? null : getFieldLevel(sectionId, fieldId, level);
-        const isChecked = currentValue === cellValue;
-
-        return (
+    <>
+      {isCriteria && (
+        <TableRow>
           <TableCell
-            key={level}
-            align={label ? 'left' : 'center'}
+            colSpan={4}
             sx={{
               borderTop: '1px solid #000',
-              borderRight: '1px solid rgba(0,0,0,0.2)',
-              borderLeft: '1px solid rgba(0,0,0,0.2)',
               borderBottom: 'none',
-              fontSize: '1em',
-              p: '0.75em',
-              pr: '0.5em',
-              pl: '0.25em',
               backgroundColor: '#fff',
-              '@media print': {
-                fontSize: '0.875em',
-                p: '0.5em'
-              }
+              px: '1em',
+              pt: '0.75em',
+              pb: 0
             }}
           >
-            <Stack
-              spacing={0.5}
-              direction="row"
+            <Typography sx={{ fontSize: '0.95em', fontWeight: 500 }}>
+              {getFieldCriterion(sectionId, fieldId)}
+            </Typography>
+          </TableCell>
+        </TableRow>
+      )}
+      <TableRow>
+        {rubricColumns.map((level, levelIndex) => {
+          const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
+          const label =
+            isCriteria || level === 'exceeds' ? null : getFieldLevel(sectionId, fieldId, level);
+          const isChecked = currentValue === cellValue;
+
+          return (
+            <TableCell
+              key={level}
+              align={label ? 'left' : 'center'}
               sx={{
-                alignItems: 'center',
-                justifyContent: label ? 'flex-start' : 'center'
+                borderTop: isCriteria ? 'none' : '1px solid #000',
+                borderRight: '1px solid rgba(0,0,0,0.2)',
+                borderLeft: '1px solid rgba(0,0,0,0.2)',
+                borderBottom: 'none',
+                fontSize: '1em',
+                p: '0.75em',
+                pr: '0.5em',
+                pl: '0.25em',
+                backgroundColor: '#fff',
+                '@media print': {
+                  fontSize: '0.875em',
+                  p: '0.5em'
+                }
               }}
             >
-              <IconButton
-                disabled={disabled}
-                disableRipple
-                size="small"
-                onClick={() => handleFieldUpdate(cellValue)}
+              <Stack
+                spacing={0.5}
+                direction="row"
                 sx={{
-                  p: '0.5em',
-                  flexShrink: 0,
-                  '&:hover': {
-                    backgroundColor: 'transparent'
-                  }
+                  alignItems: 'center',
+                  justifyContent: label ? 'flex-start' : 'center'
                 }}
               >
-                <RubricRadioIcon
-                  checked={isChecked}
-                  isCoreValues={coreValues}
-                  sx={{ fontSize: '1.5em' }}
-                />
-              </IconButton>
-              {label && (
-                <Typography
+                <IconButton
+                  disabled={disabled}
+                  disableRipple
+                  size="small"
+                  onClick={() => handleFieldUpdate(cellValue)}
                   sx={{
-                    fontSize: '0.875em',
-                    pt: '0.25em'
+                    p: '0.5em',
+                    flexShrink: 0,
+                    '&:hover': {
+                      backgroundColor: 'transparent'
+                    }
                   }}
                 >
-                  {label}
-                </Typography>
-              )}
-            </Stack>
-          </TableCell>
-        );
-      })}
-    </TableRow>
+                  <RubricRadioIcon
+                    checked={isChecked}
+                    isCoreValues={coreValues}
+                    sx={{ fontSize: '1.5em' }}
+                  />
+                </IconButton>
+                {label && (
+                  <Typography
+                    sx={{
+                      fontSize: '0.875em',
+                      pt: '0.25em'
+                    }}
+                  >
+                    {label}
+                  </Typography>
+                )}
+              </Stack>
+            </TableCell>
+          );
+        })}
+      </TableRow>
+    </>
   );
 };

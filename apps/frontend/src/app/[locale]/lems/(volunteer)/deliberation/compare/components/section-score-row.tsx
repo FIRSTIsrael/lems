@@ -1,6 +1,7 @@
 import { Stack, Typography, Chip, Tooltip } from '@mui/material';
 import { useRubricsTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { useEdition } from '../../../hooks/use-edition';
 
 interface SectionScoreRowProps {
   category: JudgingCategory;
@@ -22,7 +23,7 @@ export function SectionScoreRow({
   showSectionName = true,
   showAllScores = false
 }: SectionScoreRowProps) {
-  const { getSectionTitle } = useRubricsTranslations(category);
+  const { getSectionTitle } = useRubricsTranslations(category, useEdition());
 
   return (
     <Stack

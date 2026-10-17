@@ -21,6 +21,7 @@ export interface VolunteerByRoleGraphQLData {
     id: string;
     name: string;
     color: string;
+    futureEdition: boolean;
   }[];
   volunteers: {
     id: string;

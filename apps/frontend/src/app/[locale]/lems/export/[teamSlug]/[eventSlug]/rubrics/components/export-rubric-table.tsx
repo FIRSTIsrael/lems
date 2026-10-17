@@ -15,9 +15,10 @@ import {
 import { CircleOutlined, TaskAltRounded } from '@mui/icons-material';
 import { CoreValuesFieldCheckedIcon, CoreValuesFieldUncheckedIcon } from '@lems/shared/icons';
 import { JudgingCategory } from '@lems/types/judging';
-import { RubricsSchema, rubricColumns } from '@lems/shared/rubrics';
+import { RubricsSchema, rubricColumns, getRubricColors, getRubrics } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
 import { useTranslations } from 'next-intl';
+import type { Edition } from '@lems/shared/edition';
 
 interface ExportRubricTableProps {
   sections: RubricsSchema[JudgingCategory]['sections'];
@@ -25,33 +26,23 @@ interface ExportRubricTableProps {
   scores: Record<string, number | null>;
   notes?: Record<string, string>;
   feedback?: { greatJob: string; thinkAbout: string };
+  edition: Edition;
 }
-
-const categoryColors: { [K in JudgingCategory]: string[] } = {
-  'core-values': ['#FAECEA', '#F3D0C9', '#EBB3AA', '#E4928B'],
-  'innovation-project': ['#E9ECF7', '#BDC6E4', '#90A3D2', '#5E82BF'],
-  'robot-design': ['#EDF4EC', '#C6DDC5', '#99C69C', '#64AF75']
-};
-
-const sectionColors: { [K in JudgingCategory]: string } = {
-  'core-values': '#F5DAD4',
-  'innovation-project': '#D3DAED',
-  'robot-design': '#DAE8D8'
-};
 
 export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
   sections,
   category,
   scores,
   notes,
-  feedback
+  feedback,
+  edition
 }) => {
-  const { getColumnTitle } = useRubricsGeneralTranslations();
-  const { getSectionTitle, getSectionDescription, getFieldLevel } =
-    useRubricsTranslations(category);
+  const { getColumnTitle } = useRubricsGeneralTranslations(edition);
+  const { getSectionTitle, getSectionDescription, getFieldLevel, getFieldCriterion } =
+    useRubricsTranslations(category, edition);
   const t = useTranslations('pages.rubric');
-  const colors = categoryColors[category];
-  const sectionBgColor = sectionColors[category];
+  const { columns: colors, section: sectionBgColor } = getRubricColors(edition, category);
+  const isCriteria = getRubrics(edition)[category].layout === 'criteria';
 
   return (
     <Box
@@ -167,19 +158,41 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
 
                   return (
                     <React.Fragment key={field.id}>
+                      {isCriteria && (
+                        <TableRow>
+                          <TableCell
+                            colSpan={4}
+                            sx={{
+                              borderTop: '1px solid #000',
+                              borderBottom: 'none',
+                              backgroundColor: '#fff',
+                              fontSize: '0.75em',
+                              px: '0.6em',
+                              pt: '0.4em',
+                              pb: 0
+                            }}
+                          >
+                            <Typography sx={{ fontSize: '0.95em', fontWeight: 500 }}>
+                              {getFieldCriterion(section.id, field.id)}
+                            </Typography>
+                          </TableCell>
+                        </TableRow>
+                      )}
                       <TableRow>
                         {rubricColumns.map((level, levelIndex) => {
                           const cellValue = (levelIndex + 1) as 1 | 2 | 3 | 4;
                           const isChecked = scores[field.id] === cellValue;
                           const levelText =
-                            level === 'exceeds' ? null : getFieldLevel(section.id, field.id, level);
+                            isCriteria || level === 'exceeds'
+                              ? null
+                              : getFieldLevel(section.id, field.id, level);
 
                           return (
                             <TableCell
                               key={level}
-                              align="left"
+                              align={levelText ? 'left' : 'center'}
                               sx={{
-                                borderTop: '1px solid #000',
+                                borderTop: isCriteria ? 'none' : '1px solid #000',
                                 borderRight: '1px solid rgba(0,0,0,0.2)',
                                 borderLeft: '1px solid rgba(0,0,0,0.2)',
                                 borderBottom: 'none',

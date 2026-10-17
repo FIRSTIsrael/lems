@@ -3,8 +3,9 @@
 import React from 'react';
 import { Typography, Table, TableBody, TableRow, TableCell, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { useRubricsGeneralTranslations } from '@lems/localization';
+import { useRubricsGeneralTranslations, useJudgingCategoryTranslations } from '@lems/localization';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
+import type { Edition } from '@lems/shared/edition';
 import { Rubric } from '../types';
 
 const categoryColors = {
@@ -15,11 +16,16 @@ const categoryColors = {
 
 interface CombinedFeedbackTableProps {
   rubrics: Rubric[];
+  edition: Edition;
 }
 
-export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ rubrics }) => {
+export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({
+  rubrics,
+  edition
+}) => {
   const t = useTranslations('pages.exports.rubrics.feedback');
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
 
   const getFeedback = (category: string) => {
     const rubric = rubrics.find(r => r.category === category);
@@ -175,7 +181,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                           }
                         }}
                       >
-                        {t(`categories.${category}`)}
+                        {getCategory(category)}
                       </Box>
                       <Box
                         component="span"

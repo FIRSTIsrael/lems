@@ -34,7 +34,11 @@
   "judging-categories": {
     "core-values": "Core Values",
     "innovation-project": "Innovation Project",
-    "robot-design": "Robot Design"
+    "robot-design": "Robot Design",
+    "future": {
+      "innovation-project": "Project",
+      "robot-design": "Engineering Design"
+    }
   },
   "judging-session-stages": {
     "setup": "Setup Time",
@@ -42,7 +46,16 @@
     "innovation-questions": "Questions - Innovation Project",
     "robot-presentation": "Presentation - Robot Design",
     "robot-questions": "Questions - Robot Design",
-    "final-thoughts": "Final Thoughts"
+    "final-thoughts": "Final Thoughts",
+    "core-values-questions": "Core Values Q&A",
+    "judging-feedback": "Judging Feedback",
+    "future": {
+      "setup": "Welcome",
+      "innovation-presentation": "Project Presentation",
+      "innovation-questions": "Project Q&A",
+      "robot-presentation": "Engineering Design Presentation",
+      "robot-questions": "Engineering Design Q&A"
+    }
   },
   "awards": {
     "core-values": {
@@ -68,6 +81,14 @@
     "impact": {
       "name": "Impact",
       "description": "This award celebrates a team that has made a significant ongoing impact on their community. They demonstrate that they understand the importance of sharing their knowledge and inspiring others."
+    },
+    "inspiration": {
+      "name": "Inspiration",
+      "description": "This award celebrates a team that embraces the culture of <i>FIRST</i> LEGO League through above and beyond innovation, impact, or outreach."
+    },
+    "peer": {
+      "name": "Peer",
+      "description": "This award honors a team nominated by their peers for how they demonstrate the <i>FIRST</i> Core Values and Gracious Professionalism."
     },
     "lead-mentor": {
       "name": "Coach/Mentor",
@@ -100,6 +121,36 @@
     "advancement": {
       "name": "Advancement",
       "description": "Teams advancing to the next stage of competition"
+    },
+    "future": {
+      "champions": {
+        "name": "Champion's",
+        "description": "This award celebrates a team that embodies the <i>FIRST</i>® LEGO® League experience by fully embracing the Core Values while achieving top scores in their project, engineering design, and game matches."
+      },
+      "core-values": {
+        "name": "Core Values",
+        "description": "This award celebrates a team that exemplifies teamwork, discovery, inclusion, innovation, impact, and fun throughout their work and during the event."
+      },
+      "innovation-project": {
+        "name": "Project",
+        "description": "This award celebrates a team that excels in research, creativity, and teamwork to deliver an outstanding project."
+      },
+      "robot-design": {
+        "name": "Engineering Design",
+        "description": "This award celebrates a team that uses solid engineering principles to build and code their team solutions to solve game missions."
+      },
+      "robot-performance": {
+        "name": "Game Performance",
+        "description": "This award celebrates a team that scores the highest average points from game matches, demonstrating both engineering excellence and collaborative game strategy."
+      },
+      "rising-all-star": {
+        "name": "Rising All-Star",
+        "description": "This award celebrates a team that makes significant progress in their confidence and capability, and who judges expect great things from in the future."
+      },
+      "lead-mentor": {
+        "name": "Mentorship",
+        "description": "Mentors guide and inspire their teams to grow, both individually and together. This award recognizes a teacher, coach, or mentor who demonstrates exceptional leadership and models the <i>FIRST</i> Core Values."
+      }
     }
   },
   "edition": {
@@ -757,6 +808,138 @@
     "feedback": {
       "great-job": "Great job...",
       "think-about": "Think about..."
+    }
+  },
+  "rubrics-future": {
+    "columns": {
+      "beginning": "BEGINNING",
+      "developing": "DEVELOPING",
+      "accomplished": "ACHIEVES",
+      "exceeds": "EXCEEDS"
+    },
+    "core-values-explanation": "Criteria with this style of check box count dually toward Project or Engineering Design and Core Values awards rankings. Core Values make up 25% of a team’s Champion’s score and should be demonstrated throughout their work and event experience.",
+    "feedback": {
+      "great-job": "Great job with...",
+      "think-about": "As a next step, think about..."
+    },
+    "categories": {
+      "core-values": { "title": "Core Values" },
+      "innovation-project": {
+        "title": "Project",
+        "sections": {
+          "explore": {
+            "title": "EXPLORE",
+            "description": "How does the team research the project path?",
+            "fields": {
+              "guided-research": {
+                "criterion": "Team clearly explains how the guided research influenced their project direction"
+              },
+              "sources": {
+                "criterion": "Team uses multiple relevant sources to learn about their selected prompt"
+              }
+            }
+          },
+          "ideate": {
+            "title": "IDEATE",
+            "description": "What ideas does the team generate based on their research?",
+            "fields": {
+              "ideas": {
+                "criterion": "Team explored multiple ideas and clearly explains reasoning for selection"
+              },
+              "iteration": {
+                "criterion": "Team clearly explains the iterative process for developing and improving their idea based on research or feedback"
+              },
+              "innovation": {
+                "criterion": "Team clearly explains the innovative approach or original thinking in their project idea"
+              }
+            }
+          },
+          "implement": {
+            "title": "IMPLEMENT",
+            "description": "How does the team’s idea have a positive impact?",
+            "fields": {
+              "impact": {
+                "criterion": "Team clearly identifies the real-world users and potential impact of their idea"
+              },
+              "steps": {
+                "criterion": "Team clearly identifies the steps needed to implement their idea"
+              },
+              "feasibility": {
+                "criterion": "Team considers the feasibility of their idea including challenges or trade-offs"
+              }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "How does the team communicate their project work?",
+            "fields": {
+              "visuals": {
+                "criterion": "Team provides clear visuals, models, or prototypes to support project presentation"
+              },
+              "contribution": {
+                "criterion": "Team explains how all members meaningfully contribute to project development"
+              }
+            }
+          }
+        }
+      },
+      "robot-design": {
+        "title": "Engineering Design",
+        "sections": {
+          "identify": {
+            "title": "IDENTIFY",
+            "description": "How does the team practice and identify areas for improvement?",
+            "fields": {
+              "resources": {
+                "criterion": "Team explains the use of guided missions and building and coding resources"
+              },
+              "improvement-areas": {
+                "criterion": "Team identifies areas for improvement in provided tools to inform design requirements"
+              }
+            }
+          },
+          "design-create": {
+            "title": "DESIGN & CREATE",
+            "description": "What ideas does the team generate to improve their tools and strategy?",
+            "fields": {
+              "mission-strategy": {
+                "criterion": "Team develops a clear mission strategy that guides design decisions"
+              },
+              "mechanical": {
+                "criterion": "Team solutions include custom mechanical builds that support their mission strategy"
+              },
+              "coding": {
+                "criterion": "Team solutions include custom coding that supports their mission strategy"
+              }
+            }
+          },
+          "iterate": {
+            "title": "ITERATE",
+            "description": "How does the team test and improve their designs?",
+            "fields": {
+              "options": {
+                "criterion": "Team explores multiple design options for each role tool before selecting one to test"
+              },
+              "testing-process": {
+                "criterion": "Team follows a clear testing process and documents results"
+              },
+              "improve": { "criterion": "Team uses testing results to improve designs" }
+            }
+          },
+          "communicate": {
+            "title": "COMMUNICATE",
+            "description": "How does the team present their design process and strategy?",
+            "fields": {
+              "cooperative-strategy": {
+                "criterion": "Team clearly explains cooperative game strategy between player roles and with another team"
+              },
+              "contribution": {
+                "criterion": "Team explains how all members meaningfully contribute to engineering design process"
+              }
+            }
+          }
+        }
+      }
     }
   }
 }

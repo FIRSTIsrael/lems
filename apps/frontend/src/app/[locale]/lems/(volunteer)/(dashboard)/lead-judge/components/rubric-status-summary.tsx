@@ -15,6 +15,7 @@ import {
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import type { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { useEdition } from '../../../hooks/use-edition';
 import { useLeadJudge } from './lead-judge-context';
 import { useFilters } from './filters-context';
 import { getRubricStatusStats } from './utils';
@@ -24,7 +25,8 @@ import { RubricStatusGlossary } from './rubric-status-glossary';
 
 export const RubricStatusSummary: React.FC = () => {
   const t = useTranslations('pages.lead-judge.summary');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
 
   const { sessions, category, loading } = useLeadJudge();

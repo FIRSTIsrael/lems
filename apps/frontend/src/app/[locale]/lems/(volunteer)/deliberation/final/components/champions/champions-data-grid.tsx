@@ -4,12 +4,16 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { useTheme, Tooltip, Box, alpha } from '@mui/material';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
+import { useEdition } from '../../../../hooks/use-edition';
 
 export function ChampionsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.champions');
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { teams, eligibleTeams, awards } = useFinalDeliberation();
 
   // Filter and sort teams: eligible for champions, sorted by total rank ascending
@@ -47,7 +51,7 @@ export function ChampionsDataGrid() {
       },
       {
         field: 'innovationProjectRank',
-        headerName: t('table-innovation-project-rank'),
+        headerName: t('table-category-rank', { category: getCategory('innovation-project') }),
         width: 140,
         filterable: false,
         align: 'center',
@@ -57,7 +61,7 @@ export function ChampionsDataGrid() {
       },
       {
         field: 'robotDesignRank',
-        headerName: t('table-robot-design-rank'),
+        headerName: t('table-category-rank', { category: getCategory('robot-design') }),
         width: 140,
         filterable: false,
         align: 'center',
@@ -67,7 +71,7 @@ export function ChampionsDataGrid() {
       },
       {
         field: 'coreValuesRank',
-        headerName: t('table-core-values-rank'),
+        headerName: t('table-category-rank', { category: getCategory('core-values') }),
         width: 140,
         filterable: false,
         align: 'center',
@@ -97,7 +101,7 @@ export function ChampionsDataGrid() {
         renderCell: params => params.row.ranks.total
       }
     ],
-    [t]
+    [t, getCategory]
   );
 
   return (

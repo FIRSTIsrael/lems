@@ -17,8 +17,9 @@ import {
 } from '@mui/material';
 import { ExpandMore as ExpandMoreIcon, ExpandLess as ExpandLessIcon } from '@mui/icons-material';
 import { JudgingCategory } from '@lems/types/judging';
-import { rubricColumns } from '@lems/shared/rubrics';
+import { getRubrics, rubricColumns } from '@lems/shared/rubrics';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { RubricRadioIcon } from '../desktop/rubric-radio-icon';
 import { useRubricContext } from '../rubric-context';
 
@@ -39,8 +40,10 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
 }) => {
   const t = useTranslations('pages.tools.rubrics');
   const [expanded, setExpanded] = useState(false);
-  const { getFieldLevel } = useRubricsTranslations(category);
-  const { getColumnTitle } = useRubricsGeneralTranslations();
+  const edition = useToolEdition();
+  const { getFieldLevel, getFieldCriterion } = useRubricsTranslations(category, edition);
+  const { getColumnTitle } = useRubricsGeneralTranslations(edition);
+  const isCriteria = getRubrics(edition)[category].layout === 'criteria';
   const { rubric, updateRubric } = useRubricContext();
   const currentValue = rubric.values.fields[fieldId]?.value;
 
@@ -93,6 +96,7 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
             {getCurrentLevelLabel()}
           </Typography>
         }
+        subheader={isCriteria ? getFieldCriterion(sectionId, fieldId) : undefined}
         action={
           <IconButton onClick={() => setExpanded(!expanded)} size="small" sx={{ ml: 1 }}>
             {expanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -108,7 +112,11 @@ export const MobileFieldSection: React.FC<MobileFieldSectionProps> = ({
             >
               {rubricColumns.map((level, index) => {
                 const cellValue = (index + 1) as 1 | 2 | 3 | 4;
-                const label = level === 'exceeds' ? null : getFieldLevel(sectionId, fieldId, level);
+                const label = isCriteria
+                  ? getColumnTitle(level)
+                  : level === 'exceeds'
+                    ? null
+                    : getFieldLevel(sectionId, fieldId, level);
 
                 return (
                   <FormControlLabel
