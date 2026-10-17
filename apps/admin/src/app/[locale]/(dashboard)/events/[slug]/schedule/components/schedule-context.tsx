@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
+import type { Edition } from '@lems/shared/edition';
+import { JUDGING_DEFAULTS } from '@lems/shared/judging';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -15,8 +17,9 @@ const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
 const DEFAULT_RANKING_ROUNDS = 3;
 const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
 
-const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
-const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
+const secondsToTime = (seconds: number) =>
+  dayjs().hour(0).minute(Math.floor(seconds / 60)).second(seconds % 60);
+
 const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
 const multiplyCycleTime = (cycleTime: Dayjs, multiplier: number) => {
@@ -71,14 +74,17 @@ export interface ScheduleProviderProps {
   children: ReactNode;
   eventId: string;
   divisionId: string;
+  edition: Edition;
 }
 
 export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   children,
   eventId,
-  divisionId
+  divisionId,
+  edition
 }) => {
   const event = useEvent();
+  const judgingDefaults = JUDGING_DEFAULTS[edition];
 
   const { data: teams = [] } = useSWR<unknown[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/teams`,
@@ -103,11 +109,11 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const [practiceCycleTime, setPracticeCycleTime] = useState<Dayjs>(DEFAULT_PRACTICE_CYCLE_TIME);
   const [rankingCycleTime, setRankingCycleTime] = useState<Dayjs>(DEFAULT_RANKING_CYCLE_TIME);
   const [judgingSessionCycleTime, setJudgingSessionCycleTime] = useState<Dayjs>(
-    DEFAULT_JUDGING_SESSION_CYCLE_TIME
+    secondsToTime(judgingDefaults.cycleTimeSeconds)
   );
   const [matchLength, setMatchLength] = useState<Dayjs>(DEFAULT_MATCH_LENGTH);
   const [judgingSessionLength, setJudgingSessionLength] = useState<Dayjs>(
-    DEFAULT_JUDGING_SESSION_LENGTH
+    secondsToTime(judgingDefaults.sessionLengthSeconds)
   );
 
   const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
@@ -141,9 +147,9 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     setRankingRounds(DEFAULT_RANKING_ROUNDS);
     setPracticeCycleTime(DEFAULT_PRACTICE_CYCLE_TIME);
     setRankingCycleTime(DEFAULT_RANKING_CYCLE_TIME);
-    setJudgingSessionCycleTime(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
+    setJudgingSessionCycleTime(secondsToTime(judgingDefaults.cycleTimeSeconds));
     setMatchLength(DEFAULT_MATCH_LENGTH);
-    setJudgingSessionLength(DEFAULT_JUDGING_SESSION_LENGTH);
+    setJudgingSessionLength(secondsToTime(judgingDefaults.sessionLengthSeconds));
     setFieldStart(getFieldStart(event.startDate));
     setJudgingStart(getJudgingStart(event.startDate));
   };
