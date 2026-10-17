@@ -11,6 +11,7 @@ import { NumberInput } from '@lems/shared';
 import { ensureArray } from '@lems/shared/utils';
 
 interface ClausePickerProps<T> {
+  season: string;
   missionId: string;
   clauseIndex: number;
   value: T | null;
@@ -43,6 +44,7 @@ interface EnumClauseProps extends ClausePickerProps<string> {
 }
 
 const EnumClause: React.FC<EnumClauseProps> = ({
+  season,
   missionId,
   clauseIndex,
   value,
@@ -52,7 +54,7 @@ const EnumClause: React.FC<EnumClauseProps> = ({
   multiSelect
 }) => {
   const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
-  const { getLabel } = useScoresheetClauseTranslations(missionId, clauseIndex);
+  const { getLabel } = useScoresheetClauseTranslations(season, missionId, clauseIndex);
 
   return (
     <ToggleButtonGroup
@@ -97,6 +99,7 @@ const NumericClause: React.FC<NumericClauseProps> = ({ min, max, value, onChange
 };
 
 interface MissionClauseProps {
+  season: string;
   missionId: string;
   missionIndex: number;
   clauseIndex: number;
@@ -107,6 +110,7 @@ interface MissionClauseProps {
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
+  season,
   missionId,
   missionIndex,
   clauseIndex,
@@ -115,7 +119,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
   setValue,
   maxWidth = 550
 }) => {
-  const { description } = useScoresheetClauseTranslations(missionId, clauseIndex);
+  const { description } = useScoresheetClauseTranslations(season, missionId, clauseIndex);
 
   return (
     <React.Fragment key={missionIndex}>
@@ -135,6 +139,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
       >
         {clause.type === 'boolean' ? (
           <BooleanClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             value={value as boolean | null}
@@ -142,6 +147,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           />
         ) : clause.type === 'enum' ? (
           <EnumClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             value={value as string | null}
@@ -152,6 +158,7 @@ const MissionClause: React.FC<MissionClauseProps> = ({
           />
         ) : (
           <NumericClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             min={clause.min || 0}

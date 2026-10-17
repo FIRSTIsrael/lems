@@ -1,5 +1,6 @@
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import db from '../../database';
+import { getEventSeasonSlug } from '../utils/division-scoresheet';
 import { eventResolvers } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
@@ -115,6 +116,7 @@ export const resolvers = {
       const season = await db.seasons.byId(dbEvent.season_id).get();
       return season?.name ?? null;
     },
+    seasonSlug: (event: { id: string }) => getEventSeasonSlug(event.id),
     divisions: eventDivisionsResolver,
     volunteers: volunteersResolver
   },

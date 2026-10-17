@@ -1,10 +1,8 @@
 import {
   ScoresheetClauseValue,
-  getScoresheet,
   ScoresheetError,
   type ScoresheetSchema
 } from '@lems/shared/scoresheet';
-import type { Edition } from '@lems/shared/edition';
 import type { ScoresheetData } from './graphql/types';
 
 interface MissionValidationResult {
@@ -98,10 +96,9 @@ function validateMission(
 }
 
 export function validateScoresheet(
-  edition: Edition,
+  scoresheet: ScoresheetSchema,
   data: ScoresheetData
 ): ScoresheetValidationResult {
-  const scoresheet = getScoresheet(edition);
   const missionsData = data.missions || {};
   const missionErrors = new Map<string, MissionValidationResult>();
   let firstIncompleteMissionId: string | undefined;
