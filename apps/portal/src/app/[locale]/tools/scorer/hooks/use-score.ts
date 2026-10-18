@@ -1,12 +1,17 @@
 import { useState, useEffect } from 'react';
 import { openDB, DBSchema } from 'idb';
 import { Mission, MissionClause } from '@lems/types/scoring';
-import { getScoresheet, ScoresheetError } from '@lems/shared/scoresheet';
+import {
+  DEFAULT_SCORESHEET_SEASON,
+  ScoresheetError,
+  type ScoresheetSchema
+} from '@lems/shared/scoresheet';
 import type { Edition } from '@lems/shared/edition';
 import { useToolEdition } from '../../hooks/use-tool-edition';
+import { useToolScoresheet } from './use-tool-scoresheet';
 
 export interface Score {
-  id: string; // 'score' for founders, 'score-<edition>' otherwise
+  id: string; // 'score' for the current season's founders edition, see getScoreKey
   version: string;
   missions: Mission[];
   missionErrors: ErrorWithMessage[];
@@ -26,9 +31,12 @@ interface ScoresDb extends DBSchema {
   };
 }
 
-const getScoreKey = (edition: Edition) => (edition === 'founders' ? 'score' : `score-${edition}`);
+const getScoreKey = (season: string, edition: Edition) => {
+  if (season !== DEFAULT_SCORESHEET_SEASON) return `score-${season}`;
+  return edition === 'founders' ? 'score' : `score-${edition}`;
+};
 
-const calculateScore = (scoresheet: ReturnType<typeof getScoresheet>, values: Mission[]) => {
+const calculateScore = (scoresheet: ScoresheetSchema, values: Mission[]) => {
   let points = 0;
   const errors: ErrorWithMessage[] = [];
 
@@ -45,7 +53,7 @@ const calculateScore = (scoresheet: ReturnType<typeof getScoresheet>, values: Mi
   return { points, errors };
 };
 
-const validate = (scoresheet: ReturnType<typeof getScoresheet>, values: Mission[]) => {
+const validate = (scoresheet: ScoresheetSchema, values: Mission[]) => {
   const validatorErrors: Array<ErrorWithMessage> = [];
   const validatorArgs = Object.fromEntries(
     values.map((m: Mission) => [m.id, m.clauses.map((c: MissionClause) => c.value)])
@@ -65,9 +73,8 @@ const validate = (scoresheet: ReturnType<typeof getScoresheet>, values: Mission[
 };
 
 export const useScore = () => {
-  const edition = useToolEdition();
-  const scoresheet = getScoresheet(edition);
-  const scoreKey = getScoreKey(edition);
+  const scoresheet = useToolScoresheet();
+  const scoreKey = getScoreKey(scoresheet.season, useToolEdition());
   const scoresheetVersion = scoresheet._version;
   const [score, setScore] = useState<ScoresDb['scores']['value'] | null>(null);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);

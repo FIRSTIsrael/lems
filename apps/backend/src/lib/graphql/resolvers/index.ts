@@ -1,6 +1,6 @@
 import { GraphQLScalarType, Kind, ValueNode } from 'graphql';
 import db from '../../database';
-import { eventResolvers } from './events/resolver';
+import { eventResolvers, type EventGraphQL } from './events/resolver';
 import { divisionResolver } from './divisions/resolver';
 import { isFullySetUpResolver } from './events/is-fully-set-up';
 import { futureEditionResolver } from './events/future-edition';
@@ -106,14 +106,13 @@ export const resolvers = {
   Event: {
     isFullySetUp: isFullySetUpResolver,
     futureEdition: futureEditionResolver,
-    seasonName: async (event: { id: string }) => {
-      const dbEvent = await db.events.byId(event.id).get();
-      if (!dbEvent) {
-        return null;
-      }
-
-      const season = await db.seasons.byId(dbEvent.season_id).get();
+    seasonName: async (event: EventGraphQL) => {
+      const season = await db.seasons.byId(event.seasonId).get();
       return season?.name ?? null;
+    },
+    seasonSlug: async (event: EventGraphQL) => {
+      const season = await db.seasons.byId(event.seasonId).get();
+      return season?.slug ?? null;
     },
     divisions: eventDivisionsResolver,
     volunteers: volunteersResolver

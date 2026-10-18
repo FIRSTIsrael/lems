@@ -2,11 +2,11 @@ import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { Container, Typography, Stack, Box } from '@mui/material';
 import NoEquipmentImage from '../../../../../public/assets/scoresheet/no-equipment.svg';
-import { EditionToggle } from '../components/edition-toggle';
 import { MissionProvider } from './components/mission-context';
 import { ScoreFloater } from './components/score-floater';
 import { FieldTimer } from './components/field-timer';
 import { ScoresheetForm } from './components/scoresheet-form';
+import { ScorerOptions } from './components/scorer-options';
 
 export default async function ScorerPage() {
   const t = await getTranslations('pages.tools.scorer');
@@ -44,7 +44,7 @@ export default async function ScorerPage() {
             </Stack>
           </Stack>
 
-          <EditionToggle />
+          <ScorerOptions />
 
           <ScoresheetForm />
         </Box>

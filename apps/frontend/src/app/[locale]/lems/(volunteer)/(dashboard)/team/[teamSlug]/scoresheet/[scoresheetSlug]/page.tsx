@@ -10,7 +10,7 @@ import { RoleAuthorizer } from '../../../../../components/role-authorizer';
 import { useTeam } from '../../components/team-context';
 import { useEvent } from '../../../../../components/event-context';
 import { useUser } from '../../../../../components/user-context';
-import { useEdition } from '../../../../../hooks/use-edition';
+import { useScoresheetSchema } from '../../../../../hooks/use-scoresheet-schema';
 import { usePageData } from '../../../../../hooks/use-page-data';
 import { ScoresheetProvider } from './scoresheet-context';
 import { ScoresheetSwitcher } from './components/scoresheet-switcher';
@@ -33,17 +33,17 @@ export default function ScoresheetPage() {
   const team = useTeam();
   const { currentDivision } = useEvent();
   const { scoresheetSlug } = useParams();
-  const edition = useEdition();
+  const scoresheetSchema = useScoresheetSchema();
 
   const subscriptions = useMemo(
-    () => [createScoresheetUpdatedSubscription(edition, currentDivision.id)],
-    [edition, currentDivision.id]
+    () => [createScoresheetUpdatedSubscription(scoresheetSchema, currentDivision.id)],
+    [scoresheetSchema, currentDivision.id]
   );
 
   const parseData = useCallback(
     (queryData: Parameters<typeof parseScoresheetData>[1]) =>
-      parseScoresheetData(edition, queryData),
-    [edition]
+      parseScoresheetData(scoresheetSchema, queryData),
+    [scoresheetSchema]
   );
 
   const { data: scoresheet, loading } = usePageData(
