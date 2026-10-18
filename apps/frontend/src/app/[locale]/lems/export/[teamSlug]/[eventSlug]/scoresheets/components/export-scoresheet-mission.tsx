@@ -9,18 +9,20 @@ import {
 import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
 
 interface ExportScoresheetMissionProps {
+  season: string;
   mission: MissionSchema;
   clauses: Array<{ value: ScoresheetClauseValue }>;
   score: number;
 }
 
 export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = ({
+  season,
   mission,
   clauses,
   score
 }) => {
   const { title, description, getClauseDescription, getClauseLabel } =
-    useScoresheetMissionTranslations(mission.id);
+    useScoresheetMissionTranslations(season, mission.id);
   const { yes, no } = useScoresheetGeneralTranslations();
 
   const getClauseValueDisplay = (clauseIndex: number) => {
