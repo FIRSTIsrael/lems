@@ -82,16 +82,19 @@
       "widgets": {
         "overview-stats": {
           "teams": "קבוצות",
-          "matches": "מקצים שהושלמו",
-          "sessions": "מפגשי שיפוט שהושלמו",
-          "scoresheets": "דפי ניקוד שהוגשו",
-          "rubrics": "מחוונים שהושלמו",
+          "matches": "מקצים",
+          "sessions": "מפגשי שיפוט",
+          "scoresheets": "דפי ניקוד",
+          "rubrics": "מחוונים",
           "robot-game-average": "ניקוד דירוג ממוצע",
           "judging-average": "ציון מחוון ממוצע",
           "median": "חציון: {value}",
-          "match-delay": "עיכוב מקצים ממוצע",
-          "session-delay": "עיכוב מפגשי שיפוט ממוצע",
-          "delay-hint": "התחלה בפועל לעומת המתוכנן (דק':שנ')"
+          "match-delay": "מקצים",
+          "session-delay": "מפגשי שיפוט",
+          "delay-hint": "ממוצע ההתחלה בפועל לעומת המתוכנן (דק׳:שנ׳)",
+          "progress": "התקדמות האירוע",
+          "scores": "ציונים",
+          "delays": "עיכובים בלו״ז"
         },
         "teams-table": {
           "title": "סיכום קבוצות",
@@ -143,7 +146,7 @@
           "average-score": "ניקוד ממוצע"
         },
         "cycle-times": {
-          "title": "זמני סבב מקצים",
+          "title": "סייקל טיים זירה",
           "description": "הזמן בין תחילת מקצים עוקבים באותו סבב (דק':שנ').",
           "average": "ממוצע",
           "median": "חציון",

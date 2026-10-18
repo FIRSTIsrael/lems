@@ -82,16 +82,19 @@
       "widgets": {
         "overview-stats": {
           "teams": "Teams",
-          "matches": "Completed matches",
-          "sessions": "Completed judging sessions",
-          "scoresheets": "Submitted scoresheets",
-          "rubrics": "Completed rubrics",
-          "robot-game-average": "Average ranking score",
-          "judging-average": "Average rubric score",
+          "matches": "Matches",
+          "sessions": "Judging sessions",
+          "scoresheets": "Scoresheets",
+          "rubrics": "Rubrics",
+          "robot-game-average": "Avg. ranking score",
+          "judging-average": "Avg. rubric score",
           "median": "Median: {value}",
-          "match-delay": "Average match delay",
-          "session-delay": "Average session delay",
-          "delay-hint": "Actual vs. scheduled start (m:ss)"
+          "match-delay": "Matches",
+          "session-delay": "Judging sessions",
+          "delay-hint": "Average of actual vs. scheduled start (m:ss)",
+          "progress": "Event progress",
+          "scores": "Scores",
+          "delays": "Schedule delays"
         },
         "teams-table": {
           "title": "Team summary",

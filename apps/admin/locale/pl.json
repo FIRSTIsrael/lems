@@ -82,16 +82,19 @@
       "widgets": {
         "overview-stats": {
           "teams": "Drużyny",
-          "matches": "Zakończone mecze",
-          "sessions": "Zakończone sesje oceniania",
-          "scoresheets": "Przesłane karty punktacji",
-          "rubrics": "Ukończone arkusze ocen",
-          "robot-game-average": "Średni wynik rankingowy",
-          "judging-average": "Średnia ocena z arkuszy",
+          "matches": "Mecze",
+          "sessions": "Sesje oceniania",
+          "scoresheets": "Karty punktacji",
+          "rubrics": "Arkusze ocen",
+          "robot-game-average": "Śr. wynik rankingowy",
+          "judging-average": "Śr. ocena z arkuszy",
           "median": "Mediana: {value}",
-          "match-delay": "Średnie opóźnienie meczów",
-          "session-delay": "Średnie opóźnienie sesji",
-          "delay-hint": "Rzeczywisty vs. planowany start (m:ss)"
+          "match-delay": "Mecze",
+          "session-delay": "Sesje oceniania",
+          "delay-hint": "Średnia rzeczywistego vs. planowanego startu (m:ss)",
+          "progress": "Postęp wydarzenia",
+          "scores": "Wyniki",
+          "delays": "Opóźnienia harmonogramu"
         },
         "teams-table": {
           "title": "Podsumowanie drużyn",
