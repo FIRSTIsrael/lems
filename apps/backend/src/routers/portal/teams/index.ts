@@ -13,9 +13,29 @@ import { makePortalTeamResponse, makePortalTeamSummaryResponse } from './util';
 const router = express.Router({ mergeParams: true });
 
 router.get('/', async (req: Request, res: Response) => {
-  const { page } = req.query;
+  const { page, region, search } = req.query;
 
-  const numberOfPages = await db.teams.numberOfPages();
+  const searchQuery = search ? String(search).trim() : undefined;
+  const regionFilter = region ? String(region) : undefined;
+
+  if (searchQuery) {
+    const pageNumber = page ? parseInt(page as string, 10) : undefined;
+
+    if (pageNumber !== undefined && (isNaN(pageNumber) || pageNumber < 1)) {
+      res.status(400).json({ error: 'Invalid page number' });
+      return;
+    }
+
+    const [teams, totalCount] = await Promise.all([
+      db.teams.search(searchQuery, pageNumber, regionFilter),
+      db.teams.searchCount(searchQuery, regionFilter)
+    ]);
+    const numberOfPages = Math.ceil(totalCount / 200);
+    res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+    return;
+  }
+
+  const numberOfPages = await db.teams.numberOfPages(regionFilter);
 
   if (!page) {
     const teams = await db.teams.getAll();
@@ -30,8 +50,13 @@ router.get('/', async (req: Request, res: Response) => {
     return;
   }
 
-  const teams = await db.teams.getPage(pageNumber);
+  const teams = await db.teams.getPage(pageNumber, regionFilter);
   res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
+});
+
+router.get('/regions', async (_req: Request, res: Response) => {
+  const regions = await db.teams.getRegions();
+  res.status(200).json(regions);
 });
 
 router.use('/:teamSlug', attachTeam());
