@@ -15,6 +15,40 @@ export interface FilterOptions {
 }
 
 /**
+ * Match the schedule should focus on.
+ * Ignores TEST matches. Prefers the match currently running, then the loaded
+ * match, then the next match that has not started. Once every match is
+ * completed, returns the last scheduled match so the final round stays available.
+ */
+export function findCurrentMatch(
+  matches: Match[],
+  activeMatchId: string | null,
+  loadedMatchId: string | null
+): Match | null {
+  const scheduledMatches = matches.filter(match => (match.stage as string) !== 'TEST');
+  if (scheduledMatches.length === 0) return null;
+
+  const byId = (id: string | null) =>
+    id ? scheduledMatches.find(match => match.id === id) : undefined;
+
+  const active =
+    byId(activeMatchId) ?? scheduledMatches.find(match => match.status === 'in-progress');
+  if (active) return active;
+
+  const loaded = byId(loadedMatchId);
+  if (loaded && loaded.status !== 'completed') return loaded;
+
+  const bySchedule = [...scheduledMatches].sort(
+    (a, b) => new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime()
+  );
+
+  const upcoming = bySchedule.find(
+    match => match.status === 'not-started' || match.status === 'loaded'
+  );
+  return upcoming ?? bySchedule[bySchedule.length - 1] ?? null;
+}
+
+/**
  * Groups matches and scoresheets by stage and round.
  * Also calculates escalation count per round.
  */
