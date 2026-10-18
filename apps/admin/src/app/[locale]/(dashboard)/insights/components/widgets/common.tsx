@@ -11,6 +11,8 @@ import { defaultColor } from '../../../../../../theme';
 export interface WidgetProps {
   divisionId: string;
   edition: Edition;
+  /** The scoresheet season used by the division, which selects the mission set and translations. */
+  season: string;
   /** Robot game stage filter. Undefined means all stages. */
   stage?: InsightsStage;
 }
@@ -54,6 +56,21 @@ export const CHART_COLORS = {
   reference: grey[500]
 };
 
+/**
+ * Props for an X axis of named items (tables, rooms, rounds...). Recharts hides labels that would
+ * overlap by default, so every label is forced to show, and they are tilted once there are many items.
+ */
+export const categoryAxisProps = (count: number) => {
+  const tilted = count > 5;
+  return {
+    interval: 0 as const,
+    tick: { fontSize: 12 },
+    angle: tilted ? -30 : 0,
+    textAnchor: tilted ? ('end' as const) : ('middle' as const),
+    height: tilted ? 60 : 30
+  };
+};
+
 export const tooltipStyle = {
   contentStyle: { borderRadius: 8, fontSize: 13 },
   labelStyle: { fontWeight: 600 }
@@ -64,18 +81,21 @@ export const useStageLabel = () => {
   return (stage: string) => t(stage.toLowerCase());
 };
 
-/** The mission's official title from the shared scoresheet translations. */
-export const useMissionTitle = () => {
-  const t = useTranslations('shared.scoresheet.missions');
-  return (missionId: string) => t(`${missionId}.title`);
+/** The mission's official title from the shared, season-specific scoresheet translations. */
+export const useMissionTitle = (season: string) => {
+  const t = useTranslations('shared.scoresheet.seasons');
+  return (missionId: string) => {
+    const key = `${season}.missions.${missionId}.title`;
+    return t.has(key) ? t(key) : missionId.toUpperCase();
+  };
 };
 
-export const useMissionLabel = () => {
-  const t = useTranslations('shared.scoresheet.missions');
-  return (missionId: string) =>
-    t.has(`${missionId}.title`)
-      ? `${missionId.toUpperCase()} - ${t(`${missionId}.title`)}`
-      : missionId.toUpperCase();
+export const useMissionLabel = (season: string) => {
+  const t = useTranslations('shared.scoresheet.seasons');
+  return (missionId: string) => {
+    const key = `${season}.missions.${missionId}.title`;
+    return t.has(key) ? `${missionId.toUpperCase()} - ${t(key)}` : missionId.toUpperCase();
+  };
 };
 
 /**

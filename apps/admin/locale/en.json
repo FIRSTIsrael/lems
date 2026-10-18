@@ -181,7 +181,8 @@
         },
         "room-scores": {
           "title": "Scores by judging room",
-          "description": "Average rubric score per category for each room. Helps spot rooms that judge harder or softer than others."
+          "description": "Average rubric score per category for each room. Helps spot rooms that judge harder or softer than others.",
+          "average": "Total average"
         },
         "room-delays": {
           "title": "Average delay by room",

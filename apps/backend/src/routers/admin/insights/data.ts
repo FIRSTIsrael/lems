@@ -1,9 +1,10 @@
 import { Division, RubricStatus, JudgingCategory } from '@lems/database';
 import { Edition, getEdition } from '@lems/shared/edition';
-import { getScoresheet, ScoresheetClauseValue, ScoresheetSchema } from '@lems/shared/scoresheet';
+import { ScoresheetClauseValue, ScoresheetSchema } from '@lems/shared/scoresheet';
 import { getRubrics, inferCoreValuesFields, RubricsSchema } from '@lems/shared/rubrics';
 import { InsightsStage, InsightsTeamRef } from '@lems/types/api/admin';
 import db from '../../../lib/database';
+import { getDivisionScoresheet } from '../../../lib/graphql/utils/division-scoresheet';
 import { mean } from './stats';
 
 const FINAL_RUBRIC_STATUSES: RubricStatus[] = ['completed', 'locked', 'approved'];
@@ -81,7 +82,7 @@ const toNumericFields = (fields: Record<string, { value: number | null } | undef
 const loadDivisionInsightsData = async (division: Division): Promise<DivisionInsightsData> => {
   const divisionId = division.id;
   const edition = getEdition(division);
-  const scoresheetSchema = getScoresheet(edition);
+  const scoresheetSchema = await getDivisionScoresheet(divisionId);
   const rubricsSchema = getRubrics(edition);
 
   const [teams, tables, rooms, matches, sessions, scoresheets, rubrics] = await Promise.all([

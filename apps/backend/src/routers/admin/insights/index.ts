@@ -18,7 +18,7 @@ router.get(
   '/events',
   asHandler<AdminRequest>(async (req, res) => {
     const [events, seasons] = await Promise.all([db.events.getAllSummaries(), db.seasons.getAll()]);
-    const seasonNames = new Map(seasons.map(season => [season.id, season.name]));
+    const seasonsById = new Map(seasons.map(season => [season.id, season]));
 
     const response: InsightsEvent[] = events
       .map(event => ({
@@ -27,7 +27,8 @@ router.get(
         slug: event.slug,
         startDate: new Date(event.date),
         seasonId: event.season_id,
-        seasonName: seasonNames.get(event.season_id) ?? null,
+        seasonName: seasonsById.get(event.season_id)?.name ?? null,
+        seasonSlug: seasonsById.get(event.season_id)?.slug ?? null,
         completed: event.completed,
         divisions: event.divisions
       }))

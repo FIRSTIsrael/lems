@@ -24,6 +24,7 @@ import { formatDuration, formatNumber, formatPercent, round } from '../../lib/fo
 import { ChartCard, StatCard } from '../cards';
 import {
   CHART_COLORS,
+  categoryAxisProps,
   WidgetProps,
   tooltipStyle,
   useMissionLabel,
@@ -91,7 +92,7 @@ export const ScoresByRoundWidget: React.FC<WidgetProps> = ({ divisionId, stage }
       <ResponsiveContainer>
         <ComposedChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis />
           <Tooltip {...tooltipStyle} />
           <Legend />
@@ -128,7 +129,7 @@ export const ScoresPerTableWidget: React.FC<WidgetProps> = ({ divisionId, stage 
       <ResponsiveContainer>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis />
           <Tooltip {...tooltipStyle} />
           <Legend />
@@ -148,9 +149,9 @@ export const ScoresPerTableWidget: React.FC<WidgetProps> = ({ divisionId, stage 
   );
 };
 
-export const MissionSuccessWidget: React.FC<WidgetProps> = ({ divisionId, stage }) => {
+export const MissionSuccessWidget: React.FC<WidgetProps> = ({ divisionId, stage, season }) => {
   const t = useTranslations('pages.insights.widgets.mission-success');
-  const getMission = useMissionLabel();
+  const getMission = useMissionLabel(season);
   const { data, isLoading } = useRobotGameInsights(divisionId, stage);
 
   const chartData = (data?.missions ?? []).map(mission => ({
@@ -170,7 +171,7 @@ export const MissionSuccessWidget: React.FC<WidgetProps> = ({ divisionId, stage 
       <ResponsiveContainer>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="id" />
+          <XAxis dataKey="id" {...categoryAxisProps(chartData.length)} />
           <YAxis domain={[0, 100]} unit="%" />
           <Tooltip
             {...tooltipStyle}
@@ -191,9 +192,9 @@ export const MissionSuccessWidget: React.FC<WidgetProps> = ({ divisionId, stage 
   );
 };
 
-export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage }) => {
+export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage, season }) => {
   const t = useTranslations('pages.insights.widgets.inspection');
-  const getMissionTitle = useMissionTitle();
+  const getMissionTitle = useMissionTitle(season);
   const { data, isLoading } = useRobotGameInsights(divisionId, stage);
   const inspection = data?.inspection;
 
@@ -242,9 +243,9 @@ export const InspectionWidget: React.FC<WidgetProps> = ({ divisionId, stage }) =
   );
 };
 
-export const PrecisionTokensWidget: React.FC<WidgetProps> = ({ divisionId, stage }) => {
+export const PrecisionTokensWidget: React.FC<WidgetProps> = ({ divisionId, stage, season }) => {
   const t = useTranslations('pages.insights.widgets.precision-tokens');
-  const getMissionTitle = useMissionTitle();
+  const getMissionTitle = useMissionTitle(season);
   const { data, isLoading } = useRobotGameInsights(divisionId, stage);
 
   const chartData = (data?.precisionTokens ?? []).map(row => ({

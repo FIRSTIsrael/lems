@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import { EditionBadge } from '@lems/shared';
 import { getEdition } from '@lems/shared/edition';
+import { getScoresheet } from '@lems/shared/scoresheet';
 import { useAwardTranslations } from '@lems/localization';
 import { INSIGHTS_STAGES, InsightsStage } from '@lems/types/api/admin';
 import { useInsightsEvents } from '../lib/hooks';
@@ -62,9 +63,10 @@ export const InsightsView: React.FC = () => {
     stageParam === ALL_STAGES
       ? undefined
       : (INSIGHTS_STAGES.find(s => s === stageParam) ?? 'RANKING');
-  const { getName: getAwardName } = useAwardTranslations(
-    division ? getEdition(division) : undefined
-  );
+  const edition = division ? getEdition(division) : undefined;
+  const { getName: getAwardName } = useAwardTranslations(edition);
+  // Resolved through the scoresheet so seasons without their own scoresheet fall back like everywhere else
+  const season = edition ? getScoresheet(edition, event?.seasonSlug).season : '';
 
   if (error) return <Alert severity="error">{t('errors.load-events')}</Alert>;
 
@@ -183,13 +185,19 @@ export const InsightsView: React.FC = () => {
       {event && division && (
         <>
           {tab === 'explorer' ? (
-            <Explorer key={division.id} divisionId={division.id} edition={getEdition(division)} />
+            <Explorer
+              key={division.id}
+              divisionId={division.id}
+              edition={getEdition(division)}
+              season={season}
+            />
           ) : (
             <Dashboard
               key={`${division.id}-${tab}`}
               dashboard={tab}
               divisionId={division.id}
               edition={getEdition(division)}
+              season={season}
               stage={stage}
             />
           )}

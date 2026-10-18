@@ -7,7 +7,9 @@ import {
   BarChart,
   CartesianGrid,
   Cell,
+  ComposedChart,
   Legend,
+  Line,
   ReferenceLine,
   ResponsiveContainer,
   Scatter,
@@ -50,6 +52,7 @@ import {
   CATEGORY_LEVEL_COLORS,
   CATEGORY_LIGHT_COLORS,
   CHART_COLORS,
+  categoryAxisProps,
   WidgetProps,
   tooltipStyle,
   useRubricFieldLabel
@@ -120,7 +123,7 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
       <ResponsiveContainer>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis domain={[0, 4]} />
           <Tooltip {...tooltipStyle} />
           <Legend />
@@ -150,7 +153,8 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
     name: room.name,
     'innovation-project': round(room['innovation-project']),
     'robot-design': round(room['robot-design']),
-    'core-values': round(room['core-values'])
+    'core-values': round(room['core-values']),
+    average: round(room.average)
   }));
 
   return (
@@ -161,9 +165,9 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
       empty={chartData.length === 0}
     >
       <ResponsiveContainer>
-        <BarChart data={chartData}>
+        <ComposedChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis domain={[0, 4]} />
           <Tooltip {...tooltipStyle} />
           <Legend />
@@ -176,6 +180,12 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
               radius={[4, 4, 0, 0]}
             />
           ))}
+          <Line
+            dataKey="average"
+            name={t('average')}
+            stroke={CHART_COLORS.primary}
+            strokeWidth={2}
+          />
           {data?.scores.average != null && (
             <ReferenceLine
               y={data.scores.average}
@@ -183,7 +193,7 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
               strokeDasharray="4 4"
             />
           )}
-        </BarChart>
+        </ComposedChart>
       </ResponsiveContainer>
     </ChartCard>
   );
@@ -207,7 +217,7 @@ export const RoomDelaysWidget: React.FC<WidgetProps> = ({ divisionId }) => {
       <ResponsiveContainer>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis unit={t('minutes-unit')} />
           <Tooltip {...tooltipStyle} formatter={value => formatDuration((value as number) * 60)} />
           <ReferenceLine y={0} stroke={CHART_COLORS.reference} />
@@ -440,7 +450,7 @@ export const AwardNominationsWidget: React.FC<WidgetProps> = ({ divisionId, edit
       <ResponsiveContainer>
         <BarChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="name" {...categoryAxisProps(chartData.length)} />
           <YAxis allowDecimals={false} />
           <Tooltip {...tooltipStyle} />
           <Bar

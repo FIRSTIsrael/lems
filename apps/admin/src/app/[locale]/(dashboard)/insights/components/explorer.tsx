@@ -99,14 +99,17 @@ function SelectField<T extends string>({
   );
 }
 
-export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition }) => {
+export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition, season }) => {
   const t = useTranslations('pages.insights.explorer');
   const { getCategory } = useJudgingCategoryTranslations();
   const getStage = useStageLabel();
-  const getMission = useMissionLabel();
+  const getMission = useMissionLabel(season);
   const getFieldLabel = useRubricFieldLabel(edition);
 
-  const missions = useMemo(() => getScoresheet(edition).missions.map(m => m.id), [edition]);
+  const missions = useMemo(
+    () => getScoresheet(edition, season).missions.map(m => m.id),
+    [edition, season]
+  );
 
   const [metric, setMetric] = useState<InsightsExplorerMetric>('robot-game-score');
   const [groupBy, setGroupBy] = useState<InsightsExplorerDimension>('team');

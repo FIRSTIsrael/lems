@@ -181,7 +181,8 @@
         },
         "room-scores": {
           "title": "Oceny według sali oceniania",
-          "description": "Średnia ocena w każdej kategorii dla każdej sali. Pomaga wykryć sale oceniające surowiej lub łagodniej niż inne."
+          "description": "Średnia ocena w każdej kategorii dla każdej sali. Pomaga wykryć sale oceniające surowiej lub łagodniej niż inne.",
+          "average": "Średnia ogólna"
         },
         "room-delays": {
           "title": "Średnie opóźnienie według sali",

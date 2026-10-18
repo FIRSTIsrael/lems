@@ -61,6 +61,7 @@ export const InsightsEventSchema = z.object({
   startDate: z.coerce.date(),
   seasonId: z.string(),
   seasonName: z.string().nullable(),
+  seasonSlug: z.string().nullable(),
   completed: z.boolean(),
   divisions: z.array(
     z.object({
