@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo } from 'react';
 import { JudgingCategory } from '@lems/database';
-import { Award } from '@lems/shared';
+import { Award, isDeliberationOptionalAward } from '@lems/shared';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
@@ -9,7 +9,8 @@ import {
   computeRoomMetrics,
   computeTeamScores,
   getGPScores,
-  getOrganizedRubricFields
+  getOrganizedRubricFields,
+  getOrganizedRubricFieldNotes
 } from '../utils';
 import { useEdition } from '../../hooks/use-edition';
 import {
@@ -58,6 +59,28 @@ export const FinalDeliberationProvider = ({
   const [advanceStage] = useMutation(ADVANCE_FINAL_DELIBERATION_STAGE_MUTATION);
   const [updateFinalDeliberationAwards] = useMutation(UPDATE_FINAL_DELIBERATION_AWARDS_MUTATION);
   const [updateManualEligibility] = useMutation(UPDATE_MANUAL_ELIGIBILITY_MUTATION);
+
+  const manualOptionalAwards = useMemo(() => {
+    const earliestIndex = new Map<string, number>();
+    for (const award of division.judging.awards) {
+      if (
+        !isDeliberationOptionalAward({
+          type: award.type,
+          isOptional: award.isOptional,
+          automaticAssignment: award.automaticAssignment
+        })
+      ) {
+        continue;
+      }
+      const current = earliestIndex.get(award.name);
+      if (current === undefined || award.index < current) {
+        earliestIndex.set(award.name, award.index);
+      }
+    }
+    return [...earliestIndex.entries()]
+      .sort((left, right) => left[1] - right[1])
+      .map(([name]) => name as Award);
+  }, [division.judging.awards]);
 
   const awardCounts: Partial<Record<Award, number>> = deliberationAwards.reduce(
     (acc, award) => {
@@ -211,6 +234,11 @@ export const FinalDeliberationProvider = ({
           'innovation-project': getOrganizedRubricFields(edition, team, 'innovation-project'),
           'core-values': getOrganizedRubricFields(edition, team, 'core-values')
         },
+        rubricsFieldNotes: {
+          'robot-design': getOrganizedRubricFieldNotes(edition, team, 'robot-design'),
+          'innovation-project': getOrganizedRubricFieldNotes(edition, team, 'innovation-project'),
+          'core-values': getOrganizedRubricFieldNotes(edition, team, 'core-values')
+        },
         rubricIds: {
           'robot-design': team.rubrics.robot_design?.id || null,
           'innovation-project': team.rubrics.innovation_project?.id || null,
@@ -250,6 +278,7 @@ export const FinalDeliberationProvider = ({
       categoryPicklists,
       awards,
       awardCounts,
+      manualOptionalAwards,
       roomMetrics,
       anomalies,
       startDeliberation: handleStartFinalDeliberation,
@@ -264,6 +293,7 @@ export const FinalDeliberationProvider = ({
     categoryPicklists,
     awards,
     awardCounts,
+    manualOptionalAwards,
     handleStartFinalDeliberation,
     handleUpdateFinalDeliberationAwards,
     handleAdvanceStage,

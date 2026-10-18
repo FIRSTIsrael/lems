@@ -21,6 +21,7 @@ export interface EnrichedTeam {
   eligible: boolean;
 
   rubricFields: Record<string, number | null>;
+  rubricFieldNotes: Record<string, string | undefined>;
   gpScores: Record<string, number | null>;
 
   rubricId: string | null;

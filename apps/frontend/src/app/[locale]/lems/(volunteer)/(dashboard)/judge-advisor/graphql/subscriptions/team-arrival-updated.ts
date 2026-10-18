@@ -5,6 +5,7 @@ import type { SubscriptionVars, QueryData, JudgingSession } from '../types';
 
 interface TeamEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 interface TeamArrivalSubscriptionData {
@@ -18,6 +19,7 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription TeamArrivalUpdated($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;
@@ -73,13 +75,13 @@ export function createTeamArrivalSubscription(
   const updateQuery = (prev: QueryData, { data }: { data?: unknown }) => {
     if (!data) return prev;
 
-    const { teamId } = (data as TeamArrivalSubscriptionData).teamArrivalUpdated;
+    const { teamId, arrived } = (data as TeamArrivalSubscriptionData).teamArrivalUpdated;
 
     return updateJudgingSessions(prev, sessions =>
       updateInArray(
         sessions,
         session => session.team.id === teamId,
-        session => merge(session, { team: { arrived: true } })
+        session => merge(session, { team: { arrived } })
       )
     );
   };

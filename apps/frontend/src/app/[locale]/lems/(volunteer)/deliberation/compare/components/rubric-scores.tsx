@@ -28,6 +28,7 @@ interface SectionFields {
     fieldId: string;
     value: number | null;
     color: 'success' | 'error' | 'default';
+    notes?: string;
   }>;
 }
 
@@ -58,7 +59,8 @@ const processFieldsBySections = (
             fieldId: id,
             category: 'innovation-project' as const,
             value: field.value,
-            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip'),
+            notes: field.notes
           })),
         ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
           .filter(([id]) =>
@@ -70,7 +72,8 @@ const processFieldsBySections = (
             fieldId: id,
             category: 'robot-design' as const,
             value: field.value,
-            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd'),
+            notes: field.notes
           }))
       ];
       if (fields.length > 0) result[cat] = { 'core-values': fields };
@@ -87,7 +90,8 @@ const processFieldsBySections = (
               fieldId: field.id,
               category: cat,
               value: rubricData.fields[field.id].value,
-              color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
+              color: getFieldComparisonColor(field.id, team.id, fieldComparisons),
+              notes: rubricData.fields[field.id].notes
             }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
         });

@@ -24,8 +24,8 @@ export const PERSONAL_AWARDS = ['lead-mentor', 'volunteer-of-the-year'] as const
 export type PersonalAward = (typeof PERSONAL_AWARDS)[number];
 
 /**
- * IDs of awards that are automatically assigned during final deliberation.
- * These awards will be available in the optional awards stage of final deliberation.
+ * IDs of awards that are assigned by the system during final deliberation,
+ * rather than picked by judges in the optional-awards stage.
  */
 export const AUTOMATIC_ASSIGNMENT_AWARDS = [
   'excellence-in-engineering',
@@ -57,6 +57,19 @@ export const HIDE_PLACES: Award[] = [
 
 export const AWARDS = [...MANDATORY_AWARDS, ...OPTIONAL_AWARDS, 'advancement'] as const;
 export type Award = (typeof AWARDS)[number];
+
+/**
+ * Team awards judges assign during the optional-awards deliberation stage.
+ * Personal awards are optional but assigned outside deliberation.
+ * Automatically assigned awards, such as excellence in engineering, are filled in earlier.
+ */
+export function isDeliberationOptionalAward(award: {
+  type: string;
+  isOptional: boolean;
+  automaticAssignment: boolean;
+}): boolean {
+  return award.type === 'TEAM' && award.isOptional && !award.automaticAssignment;
+}
 
 /**
  * Schema defining the maximum number of each award to be given out at an event.

@@ -6,8 +6,13 @@ export interface Team {
   city: string;
   region: string;
   arrived: boolean;
+  logoUrl: string | null;
 }
 
 export interface TeamEvent {
   teamId: string;
+}
+
+export interface TeamArrivalEvent extends TeamEvent {
+  arrived: boolean;
 }

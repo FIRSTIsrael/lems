@@ -112,7 +112,9 @@
         "arrived": "הגיעו",
         "all-arrived": "כל הקבוצות הגיעו! עבודה מעולה 🎉",
         "waiting-for": "-מחכים ל {count, plural, one {קבוצה} other {# קבוצות}}",
-        "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}"
+        "teams-pending": "{count, plural, one {קבוצה טרם הגיעו} other {# קבוצות טרם הגיעו}}",
+        "arrived-teams": "{count, plural, one {קבוצה הגיעה} other {# קבוצות הגיעו}}",
+        "mark-not-arrived": "סמן כלא הגיעה"
       },
       "team-input": {
         "title": "רישום הגעת קבוצה",

@@ -1,8 +1,9 @@
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { getRedisPubSub } from '../../../redis/redis-pubsub';
 
-interface TeamEvent {
+interface TeamArrivalEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 interface TeamArrivalUpdatedSubscribeArgs {
@@ -22,19 +23,21 @@ const teamArrivalUpdatedSubscribe = (
 };
 
 /**
- * Transforms raw Redis events into minimal TeamEvent objects
+ * Transforms raw Redis events into TeamArrivalEvent objects
  */
 const processTeamArrivalEvent = async (
   event: Record<string, unknown>
-): Promise<TeamEvent | null> => {
-  const teamId = ((event.data as Record<string, unknown>).teamId as string) || '';
+): Promise<TeamArrivalEvent | null> => {
+  const data = event.data as Record<string, unknown>;
+  const teamId = (data.teamId as string) || '';
 
   if (!teamId) {
     return null;
   }
 
-  const result: TeamEvent = {
-    teamId
+  const result: TeamArrivalEvent = {
+    teamId,
+    arrived: data.arrived !== false
   };
 
   return result;

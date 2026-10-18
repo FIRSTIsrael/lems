@@ -132,7 +132,18 @@ export function DeliberationTable() {
 
             renderCell: params => {
               const value = params.row.rubricFields[label];
-              return value !== null ? value : '-';
+              const notes = params.row.rubricFieldNotes[label];
+              const hasExceedsNote = value === 4 && notes;
+
+              if (value === null) return '-';
+
+              return hasExceedsNote ? (
+                <Tooltip title={notes} arrow placement="top">
+                  <Box sx={{ cursor: 'help' }}>{value}</Box>
+                </Tooltip>
+              ) : (
+                value
+              );
             }
           }) as GridColDef<EnrichedTeam>
       ),
@@ -186,48 +197,51 @@ export function DeliberationTable() {
       },
       {
         field: 'actions',
-        type: 'actions',
         headerName: t('actions'),
         width: 100,
-        getActions: params => {
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: params => {
           const team = params.row as EnrichedTeam;
           const hasProfileDoc = !!team.profileDocumentUrl;
 
-          const actions = [
-            <Tooltip key="view-rubric" title={t('view-rubric')}>
-              <IconButton
-                href={`/lems/team/${team.slug}/rubric/${hypenatedCategory}`}
-                target="_blank"
-                size="small"
-                color="primary"
-              >
-                <OpenInNew fontSize="small" />
-              </IconButton>
-            </Tooltip>,
-            <Tooltip
-              key="view-profile-document"
-              title={hasProfileDoc ? t('view-profile-document') : t('no-profile-document')}
-            >
-              <span>
+          return (
+            <>
+              <Tooltip title={t('view-rubric')}>
                 <IconButton
-                  {...(hasProfileDoc && { href: team.profileDocumentUrl!, target: '_blank' })}
+                  href={`/lems/team/${team.slug}/rubric/${hypenatedCategory}`}
+                  target="_blank"
                   size="small"
-                  color={hasProfileDoc ? 'primary' : 'default'}
-                  disabled={!hasProfileDoc}
-                  sx={{
-                    ...(!hasProfileDoc && {
-                      color: 'action.disabled',
-                      cursor: 'not-allowed'
-                    })
-                  }}
+                  color="primary"
                 >
-                  <Description fontSize="small" />
+                  <OpenInNew fontSize="small" />
                 </IconButton>
-              </span>
-            </Tooltip>
-          ];
-
-          return actions;
+              </Tooltip>
+              <Tooltip
+                title={hasProfileDoc ? t('view-profile-document') : t('no-profile-document')}
+              >
+                <span>
+                  <IconButton
+                    {...(hasProfileDoc && { href: team.profileDocumentUrl!, target: '_blank' })}
+                    size="small"
+                    color={hasProfileDoc ? 'primary' : 'default'}
+                    disabled={!hasProfileDoc}
+                    sx={{
+                      ...(!hasProfileDoc && {
+                        color: 'action.disabled',
+                        cursor: 'not-allowed'
+                      })
+                    }}
+                  >
+                    <Description fontSize="small" />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </>
+          );
         }
       }
     ],

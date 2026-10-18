@@ -1,6 +1,6 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { FinalDeliberationStage } from '@lems/database';
-import { OPTIONAL_AWARDS } from '@lems/shared/awards';
+import { isDeliberationOptionalAward } from '@lems/shared/awards';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import type { GraphQLContext } from '../../../apollo-server';
@@ -84,9 +84,11 @@ export const advanceFinalDeliberationStageResolver: GraphQLFieldResolver<
   // Get awards for validation
   const awards = await db.awards.byDivisionId(divisionId).getAll();
   const hasOptionalAwards = awards.some(award =>
-    (OPTIONAL_AWARDS as readonly string[])
-      .filter(name => name !== 'excellence-in-engineering')
-      .includes(award.name)
+    isDeliberationOptionalAward({
+      type: award.type,
+      isOptional: award.is_optional,
+      automaticAssignment: award.automatic_assignment
+    })
   );
   if (nextStage === 'optional-awards' && !hasOptionalAwards) {
     // Skip optional-awards stage if no optional awards exist
