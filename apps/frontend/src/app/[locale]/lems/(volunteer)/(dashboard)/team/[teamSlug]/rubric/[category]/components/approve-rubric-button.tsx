@@ -2,6 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useTranslations } from 'next-intl';
+import { useRouter, useParams } from 'next/navigation';
 import {
   Button,
   Dialog,
@@ -13,6 +14,7 @@ import {
 import { CheckCircle as ApproveIcon } from '@mui/icons-material';
 import { useMutation } from '@apollo/client/react';
 import { toast } from 'react-hot-toast';
+import { JUDGING_CATEGORIES, JudgingCategory } from '@lems/types/judging';
 import { useRubric } from '../rubric-context';
 import { UPDATE_RUBRIC_STATUS_MUTATION } from '../graphql';
 import { useUser } from '../../../../../../components/user-context';
@@ -28,6 +30,8 @@ export const ApproveRubricButton: React.FC<ApproveRubricButtonProps> = ({ disabl
   const { rubric } = useRubric();
   const user = useUser();
   const { currentDivision } = useEvent();
+  const router = useRouter();
+  const { category, teamSlug } = useParams<{ category: JudgingCategory; teamSlug: string }>();
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
 
   const isLocked = rubric.status === 'locked';
@@ -40,6 +44,18 @@ export const ApproveRubricButton: React.FC<ApproveRubricButtonProps> = ({ disabl
     onCompleted: () => {
       setOpenConfirmDialog(false);
       toast.success(t('toasts.approve-success'));
+
+      // Navigate to next category
+      const currentIndex = JUDGING_CATEGORIES.indexOf(category);
+      const nextIndex = currentIndex + 1;
+
+      if (nextIndex < JUDGING_CATEGORIES.length) {
+        const nextCategory = JUDGING_CATEGORIES[nextIndex];
+        router.push(`/lems/team/${teamSlug}/rubric/${nextCategory}`);
+      } else {
+        // If this was the last category, navigate back to judge advisor
+        router.push('/lems/judge-advisor');
+      }
     }
   });
 
