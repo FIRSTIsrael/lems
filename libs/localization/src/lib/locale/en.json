@@ -175,10 +175,10 @@
                 }
               },
               "1": {
-                "description": "The katydid is completely in the leaf habitat:"
+                "description": "The katydid is at least partly in the leaf habitat:"
               },
               "2": {
-                "description": "<b>Bonus</b>: the katydid remained in its original position throughout the match:"
+                "description": "<b>Bonus</b>: the katydid is in its original starting position and remained at least partly in the leaf habitat throughout the match:"
               }
             },
             "errors": {
@@ -188,8 +188,9 @@
             },
             "remarks": {
               "0": "The nest is the mission model that holds the leaves and the katydid.",
-              "1": "If the katydid is completely removed from the nest at any time, the bonus is no longer available.",
-              "2": "If the katydid is outside the leaf habitat at the end of the match, even partly, the team scores zero points for this mission. The leaf habitat includes the nest and the marked area on the mat surrounding it."
+              "1": "The leaf habitat includes the nest and the marked area on the mat that surrounds it.",
+              "2": "If the katydid is completely outside the leaf habitat at any time during the match, the bonus is no longer available.",
+              "3": "If the katydid is completely outside the leaf habitat at the end of the match, the team scores zero points for this mission."
             }
           },
           "m05": {
