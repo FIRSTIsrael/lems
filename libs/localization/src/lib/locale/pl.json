@@ -686,6 +686,9 @@
     },
     "tournament-manager": {
       "name": "Tournament Manager"
+    },
+    "practice-tables-manager": {
+      "name": "Practice Tables Manager"
     }
   },
   "rubrics": {
