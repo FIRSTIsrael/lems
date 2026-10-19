@@ -14,3 +14,10 @@ export const makeSchedulerLocationResponse = (
   id: location.id,
   name: location.name
 });
+
+export const makeSchedulerTableResponse = (table: RobotGameTable): Location => ({
+  id: table.id,
+  name: table.name,
+  pair_key: table.pair_key,
+  side: table.side
+});

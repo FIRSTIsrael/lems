@@ -51,6 +51,12 @@ type Table {
 
   "Display name of the table (e.g., 'Table 1', 'Main Arena')"
   name: String!
+
+  "Shared by both sides of one physical table; null in Founders divisions"
+  pairKey: String
+
+  "'A' or 'B'; null in Founders divisions"
+  side: String
 }
 
 """

@@ -11,7 +11,11 @@ import db from '../../../lib/database';
 import { attachDivision } from '../middleware/attach-division';
 import { SchedulerRequest } from '../../../types/express';
 import { asHandler } from '../../../types/express-handlers';
-import { makeSchedulerLocationResponse, makeSchedulerTeamResponse } from './utils';
+import {
+  makeSchedulerLocationResponse,
+  makeSchedulerTableResponse,
+  makeSchedulerTeamResponse
+} from './utils';
 
 const router = express.Router({ mergeParams: true });
 
@@ -61,7 +65,7 @@ router.get(
   '/tables',
   asHandler<SchedulerRequest>(async (req, res) => {
     const tables = await db.tables.byDivisionId(req.divisionId).getAll();
-    res.status(200).json(tables.map(table => makeSchedulerLocationResponse(table)));
+    res.status(200).json(tables.map(table => makeSchedulerTableResponse(table)));
   })
 );
 

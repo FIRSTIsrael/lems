@@ -7,5 +7,7 @@ import { RobotGameTable } from '@lems/types/api/admin';
  */
 export const makeAdminTableResponse = (table: DbTable): RobotGameTable => ({
   id: table.id,
-  name: table.name
+  name: table.name,
+  pairKey: table.pair_key,
+  side: table.side
 });
