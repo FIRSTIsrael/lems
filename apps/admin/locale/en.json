@@ -536,6 +536,7 @@
           },
           "future-edition": "Future edition",
           "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
+          "edition-has-tables": "Delete this division's tables before changing the edition.",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }
@@ -598,6 +599,7 @@
           "save-button": "Save",
           "delete-button": "Delete",
           "empty-state": "No tables added yet",
+          "pair-hint": "Sides A + B",
           "validation": {
             "name-required": "Table name is required"
           }

@@ -9,6 +9,7 @@ import React from 'react';
 interface AssetCellProps {
   asset: RobotGameTable | JudgingRoom;
   assetType: 'tables' | 'rooms';
+  hint?: string;
   index: number;
   isEditing: boolean;
   editingValue: string;
@@ -25,6 +26,7 @@ interface AssetCellProps {
 export const AssetCell: React.FC<AssetCellProps> = ({
   asset,
   assetType,
+  hint,
   index,
   isEditing,
   editingValue,
@@ -143,6 +145,15 @@ export const AssetCell: React.FC<AssetCellProps> = ({
                   }}
                 >
                   {asset.name}
+                  {hint && (
+                    <Typography
+                      component="span"
+                      variant="caption"
+                      sx={{ color: 'text.secondary', ml: 1 }}
+                    >
+                      {hint}
+                    </Typography>
+                  )}
                 </Typography>
                 <IconButton
                   size="small"

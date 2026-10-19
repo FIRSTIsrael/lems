@@ -536,6 +536,7 @@
           },
           "future-edition": "Edycja przyszłości",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
+          "edition-has-tables": "Delete this division's tables before changing the edition.",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -598,6 +599,7 @@
           "save-button": "Zapisz",
           "delete-button": "Usuń",
           "empty-state": "Nie dodano jeszcze żadnych stołów",
+          "pair-hint": "Sides A + B",
           "validation": {
             "name-required": "Nazwa stołu jest wymagana"
           }

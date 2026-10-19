@@ -91,6 +91,14 @@ router.put(
       return;
     }
 
+    if (editionChanged) {
+      const tables = await db.tables.byDivisionId(req.divisionId).getAll();
+      if (tables.length > 0) {
+        res.status(400).json({ error: 'DIVISION_HAS_TABLES' });
+        return;
+      }
+    }
+
     await db.divisions.byId(req.divisionId).update({
       name,
       color,

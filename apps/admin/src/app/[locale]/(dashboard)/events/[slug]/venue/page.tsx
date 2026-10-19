@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Box, Grid } from '@mui/material';
 import { Division } from '@lems/types/api/admin';
+import { getEdition } from '@lems/shared/edition';
 import { EventPageTitle } from '../components/event-page-title';
 import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
@@ -45,7 +46,12 @@ const VenuePage: React.FC = () => {
           </Grid>
 
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <AssetManager key="tables" division={selectedDivision} assetType="tables" />
+            <AssetManager
+              key="tables"
+              division={selectedDivision}
+              assetType="tables"
+              pairTables={getEdition(selectedDivision) === 'future'}
+            />
           </Grid>
         </Grid>
       )}

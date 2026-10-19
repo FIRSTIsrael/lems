@@ -16,6 +16,7 @@ import {
 import { AddRounded } from '@mui/icons-material';
 import { Division, JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
+import { groupTablesByPair } from '@lems/shared/utils';
 import { AssetCell } from './asset-cell';
 
 type AssetType = JudgingRoom | RobotGameTable;
@@ -23,9 +24,14 @@ type AssetType = JudgingRoom | RobotGameTable;
 interface AssetManagerProps {
   division: Division;
   assetType: 'rooms' | 'tables';
+  pairTables?: boolean;
 }
 
-export const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {
+export const AssetManager = <T extends AssetType>({
+  division,
+  assetType,
+  pairTables = false
+}: AssetManagerProps) => {
   const t = useTranslations(`pages.events.venue`);
   const [editingAssets, setEditingAssets] = useState<{ [key: string]: string }>({});
   const [newAssetName, setNewAssetName] = useState('');
@@ -35,7 +41,7 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
-    data: assets = [] as T[],
+    data: fetchedAssets = [] as T[],
     error,
     isLoading
   } = useSWR<T[]>(
@@ -45,6 +51,13 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
       revalidateOnReconnect: true
     }
   );
+
+  const assets = pairTables
+    ? (groupTablesByPair(fetchedAssets as RobotGameTable[]).map(group => ({
+        id: group.tables[0].id,
+        name: group.name
+      })) as T[])
+    : fetchedAssets;
 
   const clearMessages = () => {
     setErrors({});
@@ -264,6 +277,7 @@ export const AssetManager = <T extends AssetType>({ division, assetType }: Asset
               key={asset.id}
               assetType={assetType}
               asset={asset}
+              hint={pairTables ? t('tables.pair-hint') : undefined}
               index={index}
               disabled={saving[asset.id]}
               isEditing={isEditing(asset.id)}

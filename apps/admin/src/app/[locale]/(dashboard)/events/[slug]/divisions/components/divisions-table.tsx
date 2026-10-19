@@ -16,6 +16,7 @@ import {
   Box,
   Typography,
   FormControlLabel,
+  FormHelperText,
   Switch,
   Tooltip
 } from '@mui/material';
@@ -51,6 +52,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     futureEdition: false
   });
   const [nameError, setNameError] = useState<string>('');
+  const [editionError, setEditionError] = useState<string>('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [divisionToDelete, setDivisionToDelete] = useState<Division | null>(null);
 
@@ -68,6 +70,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     setEditingDivision(null);
     setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
     setNameError('');
+    setEditionError('');
   };
 
   const handleNameChange = (value: string) => {
@@ -84,6 +87,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     }
 
     setNameError('');
+    setEditionError('');
 
     const result = await apiFetch(`/admin/events/${division.eventId}/divisions/${division.id}`, {
       method: 'PUT',
@@ -103,6 +107,8 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
       setEditingDivision(null);
       setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
       await onEditDivision();
+    } else if ((result.error as { error?: string } | null)?.error === 'DIVISION_HAS_TABLES') {
+      setEditionError(t('list.edition-has-tables'));
     }
   };
 
@@ -168,6 +174,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                           />
                         </span>
                       </Tooltip>
+                      {editionError && <FormHelperText error>{editionError}</FormHelperText>}
                     </>
                   ) : (
                     <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>
