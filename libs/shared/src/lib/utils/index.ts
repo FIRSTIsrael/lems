@@ -7,3 +7,4 @@ export * from './reconcilers';
 export * from './strings';
 export * from './random';
 export * from './practice-tables';
+export * from './table-pairs';

@@ -6,6 +6,9 @@ export const useMatchTranslations = () => {
   return {
     getStage: (stage: string) => t(`stages.${stage.toLowerCase()}`),
     getStatus: (status: 'not-started' | 'in-progress' | 'completed') =>
-      t(`status.${status.toLowerCase()}`)
+      t(`status.${status.toLowerCase()}`),
+    getVersus: () => t('versus'),
+    getOpponentLabel: (team: { number: number; name?: string }) =>
+      t('opponent', { number: team.number })
   };
 };

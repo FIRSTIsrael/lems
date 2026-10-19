@@ -1,5 +1,7 @@
 {
   "robot-game-matches": {
+    "versus": "vs",
+    "opponent": "vs #{number}",
     "stages": {
       "practice": "אימון",
       "ranking": "דירוג",
