@@ -7,6 +7,6 @@ class SchedulerError(Exception):
 
 
 class ValidatorError(Exception):
-    def __init__(self, message: str, data: list[ValidatorData], *args):
+    def __init__(self, message: str, data: list[ValidatorData] | None = None, *args):
         super().__init__(message, *args)
-        self.data = data
+        self.data = data or []

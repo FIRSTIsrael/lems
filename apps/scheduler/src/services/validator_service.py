@@ -14,6 +14,11 @@ from models.errors import ValidatorError
 from models.requests import SchedulerRequest, Break
 from repository.lems_repository import LemsRepository
 from config import MIN_MINUTES_BETWEEN_EVENTS
+from services.table_pairs import (
+    build_table_pairs,
+    paired_matches_per_round,
+    paired_slot_counts,
+)
 
 logger = logging.getLogger("lems.scheduler")
 
@@ -74,10 +79,27 @@ class ValidatorService:
     def _get_matches(self) -> list[list[ValidatorMatch]]:
         total_rounds = self.config.practice_rounds + self.config.ranking_rounds
         tables = self.lems_repository.get_tables()
-        slots = math.ceil(
-            len(tables) / 2 if self.config.stagger_matches else len(tables)
-        )
-        matches_per_round = math.ceil(self.team_count / slots)
+        try:
+            pairs = build_table_pairs(tables)
+        except ValueError as e:
+            raise ValidatorError(str(e)) from e
+
+        odd_slots = even_slots = 0
+        if pairs is not None:
+            if self.config.stagger_matches and len(pairs) < 2:
+                raise ValidatorError("Staggered matches require at least 2 table pairs")
+            odd_slots, even_slots = paired_slot_counts(
+                len(pairs), self.config.stagger_matches
+            )
+            slots = 0
+            matches_per_round = paired_matches_per_round(
+                self.team_count, odd_slots, even_slots
+            )
+        else:
+            slots = math.ceil(
+                len(tables) / 2 if self.config.stagger_matches else len(tables)
+            )
+            matches_per_round = math.ceil(self.team_count / slots)
 
         rounds: list[list[ValidatorMatch]] = []
         current_time = self.config.matches_start
@@ -97,13 +119,19 @@ class ValidatorService:
 
             matches = []
             for match in range(1, matches_per_round + 1):
+                number = start_number + match
+                match_slots = (
+                    slots
+                    if pairs is None
+                    else (odd_slots if number % 2 == 1 else even_slots)
+                )
                 matches.append(
                     {
                         "event_type": "match",
                         "stage": stage,
                         "round": round_number,
-                        "number": start_number + match,
-                        "slots": slots,
+                        "number": number,
+                        "slots": match_slots,
                         "start_time": current_time,
                         "end_time": current_time + cycle_time,
                     }

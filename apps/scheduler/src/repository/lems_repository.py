@@ -4,7 +4,7 @@ import requests
 import jwt
 import pandas as pd
 from models.errors import SchedulerError
-from models.lems import Team as TeamModel, Location as LocationModel
+from models.lems import Team as TeamModel, Location as LocationModel, Table as TableModel
 
 logger = logging.getLogger("lems.scheduler")
 
@@ -100,13 +100,21 @@ class LemsRepository:
         logger.debug(f"Retrieved {len(rooms)} judging rooms")
         return rooms
 
-    def get_tables(self) -> list[LocationModel]:
+    def get_tables(self) -> list[TableModel]:
         logger.debug(f"Fetching robot game tables for division {self.division_id}")
 
         response = self._make_request("GET", "/tables")
         tables_data = response.json()
 
-        tables = [LocationModel(table["id"], table["name"]) for table in tables_data]
+        tables = [
+            TableModel(
+                table["id"],
+                table["name"],
+                table.get("pair_key"),
+                table.get("side"),
+            )
+            for table in tables_data
+        ]
         logger.debug(f"Retrieved {len(tables)} robot game tables")
         return tables
 

@@ -13,3 +13,9 @@ class Team:
 class Location:
     id: str
     name: str
+
+
+@dataclass
+class Table(Location):
+    pair_key: str | None = None
+    side: str | None = None
