@@ -8,6 +8,7 @@ import numpy as np
 
 from repository.lems_repository import LemsRepository
 from services.validator_service import ValidatorService
+from services.table_pairs import TablePair, build_table_pairs
 from models.errors import ValidatorError, SchedulerError
 from models.requests import SchedulerRequest
 from config import (
@@ -33,6 +34,8 @@ class SchedulerService:
         self.rooms = lems_repository.get_rooms()
         self.tables = lems_repository.get_tables()
         self.team_table_history: dict[str, dict[str, set[str]]] = {}
+        self.team_pair_history: dict[str, dict[str, set[str]]] = {}
+        self.opponent_history: dict[str, dict[str, set[str]]] = {}
 
         if seed is not None:
             random.seed(seed)
@@ -42,6 +45,13 @@ class SchedulerService:
             np.random.seed(RANDOM_SEED)
 
         self._validate_schedule(request)
+
+        self.pairs = build_table_pairs(self.tables)
+        self.paired = self.pairs is not None
+        self.pair_of: dict[str, TablePair] = {}
+        for pair in self.pairs or []:
+            self.pair_of[pair.side_a] = pair
+            self.pair_of[pair.side_b] = pair
 
     def _validate_schedule(self, request: SchedulerRequest):
         """Validate the schedule using the ValidatorService."""
@@ -173,6 +183,20 @@ class SchedulerService:
         """
 
         match_row = self.match_schedule.loc[match_number]
+
+        if self.paired:
+            sides = self._get_available_tables(match_number)
+            empty = [side for side in sides if pd.isna(match_row[side])]
+            half_filled = [
+                side
+                for side in empty
+                if pd.notna(match_row[self._other_side(side)])
+            ]
+            target = half_filled or empty
+            if target:
+                self.match_schedule.at[match_number, target[0]] = team
+            return
+
         table_columns = [str(table.id) for table in self.tables]
 
         if self.staggered:
@@ -220,6 +244,13 @@ class SchedulerService:
 
     def _get_available_tables(self, match_number: int) -> list[str]:
         """Get available table IDs based on match number when staggering is enabled."""
+
+        if self.paired:
+            return [
+                side
+                for pair in self._get_available_pairs(match_number)
+                for side in (pair.side_a, pair.side_b)
+            ]
 
         table_columns = [str(table.id) for table in self.tables]
 
@@ -430,6 +461,256 @@ class SchedulerService:
                         if swap_found:
                             break
 
+    def _get_available_pairs(self, match_number: int) -> list[TablePair]:
+        """Get the table pairs in use for a match. Staggering splits pairs by match parity."""
+
+        assert self.pairs is not None
+        if not self.staggered:
+            return list(self.pairs)
+
+        half = len(self.pairs) // 2
+        if match_number % 2 == 1:
+            return self.pairs[:half]
+        return self.pairs[half:]
+
+    def _other_side(self, table_id: str) -> str:
+        pair = self.pair_of[table_id]
+        return pair.side_b if table_id == pair.side_a else pair.side_a
+
+    def _pair_play_count(self, team: str, pair: TablePair, stage: str) -> int:
+        """Count how many times a team played on a physical table in a stage."""
+
+        stage_matches = self.match_schedule[self.match_schedule["stage"] == stage]
+        sides = stage_matches[[pair.side_a, pair.side_b]].values
+        return int((sides == team).sum())
+
+    def _update_pair_history(self, team: str, pair: TablePair, stage: str):
+        self.team_pair_history.setdefault(stage, {}).setdefault(team, set()).add(
+            pair.key
+        )
+
+    def _consolidate_half_pairs(self, match_num: int) -> None:
+        """Merge lone teams so at most one pair in the match is half-filled."""
+
+        pairs = self._get_available_pairs(match_num)
+        stage = self.match_schedule.at[match_num, "stage"]
+
+        def half_filled() -> list[TablePair]:
+            return [
+                pair
+                for pair in pairs
+                if pd.notna(self.match_schedule.at[match_num, pair.side_a])
+                != pd.notna(self.match_schedule.at[match_num, pair.side_b])
+            ]
+
+        def lone_side(pair: TablePair) -> str:
+            if pd.notna(self.match_schedule.at[match_num, pair.side_a]):
+                return pair.side_a
+            return pair.side_b
+
+        while len(half_filled()) > 1:
+            halves = half_filled()
+            source, target = halves[-1], halves[0]
+            source_side = lone_side(source)
+            target_side = (
+                target.side_b if lone_side(target) == target.side_a else target.side_a
+            )
+            team = self.match_schedule.at[match_num, source_side]
+
+            self.match_schedule.at[match_num, target_side] = team
+            self.match_schedule.at[match_num, source_side] = pd.NA
+
+            if self._pair_play_count(team, source, stage) == 0:
+                self.team_pair_history.get(stage, {}).get(team, set()).discard(
+                    source.key
+                )
+            self._update_pair_history(team, target, stage)
+
+    def _record_opponents(self, match_num: int, stage: str) -> None:
+        for pair in self._get_available_pairs(match_num):
+            team_a = self.match_schedule.at[match_num, pair.side_a]
+            team_b = self.match_schedule.at[match_num, pair.side_b]
+            if pd.isna(team_a) or pd.isna(team_b):
+                continue
+            history = self.opponent_history.setdefault(stage, {})
+            history.setdefault(team_a, set()).add(team_b)
+            history.setdefault(team_b, set()).add(team_a)
+
+    def _count_opponent_repeats(self, stage: str) -> int:
+        """Count (team, opponent) meetings beyond the first, once per unordered pair."""
+
+        meetings: dict[frozenset, int] = {}
+        stage_matches = self.match_schedule[self.match_schedule["stage"] == stage]
+        for _, row in stage_matches.iterrows():
+            for pair in self.pairs or []:
+                team_a, team_b = row[pair.side_a], row[pair.side_b]
+                if pd.notna(team_a) and pd.notna(team_b):
+                    key = frozenset((team_a, team_b))
+                    meetings[key] = meetings.get(key, 0) + 1
+
+        return sum(count - 1 for count in meetings.values())
+
+    def _populate_paired_match_schedule(self) -> None:
+        """Populate the match schedule when tables come in pairs (two teams per table).
+
+        Same constraints as `_populate_match_schedule`, applied per physical table
+        (pair). Additionally, teams prefer opponents they have not faced yet and at
+        most one pair per match is left half-filled.
+        """
+
+        ranking_rounds = self.match_schedule[self.match_schedule["stage"] == "ranking"][
+            "round"
+        ].nunique()
+        assert self.pairs is not None
+        max_times_team_can_play_on_pair = math.ceil(len(self.pairs) / ranking_rounds)
+
+        available_teams = {team.slug for team in self.teams}
+        sorted_matches = self.match_schedule.sort_values(["start_time", "number"])
+
+        for match_num, match in sorted_matches.iterrows():
+            stage = match["stage"]
+            round_num = match["round"]
+            current_time = pd.to_datetime(match["start_time"])
+
+            pairs = self._get_available_pairs(match_num)
+            random.shuffle(pairs)
+
+            def is_half_filled(pair: TablePair) -> bool:
+                return (
+                    pd.notna(self.match_schedule.at[match_num, pair.side_a])
+                    != pd.notna(self.match_schedule.at[match_num, pair.side_b])
+                )
+
+            pairs.sort(key=lambda pair: 0 if is_half_filled(pair) else 1)
+
+            assigned_teams: dict[str, str] = {}
+            unassigned_sides: list[str] = []
+
+            for pair in pairs:
+                for side in (pair.side_a, pair.side_b):
+                    current = self.match_schedule.at[match_num, side]
+                    if pd.notna(current):
+                        assigned_teams[side] = current
+                        self._update_pair_history(current, pair, stage)
+                        continue
+
+                    eligible_teams = [
+                        team
+                        for team in available_teams
+                        if not self._did_team_play(team, stage, round_num)
+                        and self._pair_play_count(team, pair, stage)
+                        <= max_times_team_can_play_on_pair
+                    ]
+
+                    if not eligible_teams:
+                        unassigned_sides.append(side)
+                        continue
+
+                    gap_eligible_teams = [
+                        team
+                        for team in eligible_teams
+                        if self._meets_minimum_gap(team, current_time)
+                    ]
+
+                    if not gap_eligible_teams:
+                        logger.error(
+                            f"No teams meet minimum gap for match {match_num}, table {side}. "
+                            f"Eligible teams: {eligible_teams}"
+                        )
+                        raise SchedulerError(
+                            f"Cannot satisfy minimum gap constraint for match {match_num}. "
+                            "Validator should have prevented this."
+                        )
+
+                    pair_history = self.team_pair_history.get(stage, {})
+                    opponents = self.opponent_history.get(stage, {})
+                    novel_pair_teams = [
+                        team
+                        for team in gap_eligible_teams
+                        if pair.key not in pair_history.get(team, set())
+                    ]
+
+                    partner = self.match_schedule.at[match_num, self._other_side(side)]
+                    if pd.notna(partner):
+                        new_opponent_teams = [
+                            team
+                            for team in gap_eligible_teams
+                            if partner not in opponents.get(team, set())
+                        ]
+                        candidates = (
+                            [t for t in novel_pair_teams if t in new_opponent_teams]
+                            or new_opponent_teams
+                            or novel_pair_teams
+                            or gap_eligible_teams
+                        )
+                    else:
+                        candidates = novel_pair_teams or gap_eligible_teams
+
+                    waiting_times = {}
+                    for team in candidates:
+                        last_event_time = self._get_last_event_time(team, current_time)
+                        if last_event_time is None:
+                            waiting_times[team] = float("inf")
+                        else:
+                            waiting_times[team] = (
+                                current_time - last_event_time
+                            ).total_seconds()
+
+                    sorted_by_wait = sorted(
+                        waiting_times.items(), key=lambda x: x[1], reverse=True
+                    )
+                    top_candidates = [
+                        team for team, _ in sorted_by_wait[:WAIT_TIME_POOL_SIZE]
+                    ]
+
+                    if len(top_candidates) > 1:
+                        selected_team = random.choice(top_candidates)
+                    else:
+                        selected_team = top_candidates[0]
+
+                    self.match_schedule.at[match_num, side] = selected_team
+                    assigned_teams[side] = selected_team
+                    self._update_pair_history(selected_team, pair, stage)
+
+            # Second pass: Handle unassigned sides through swapping
+            for unassigned_side in unassigned_sides:
+                unplayed_teams = [
+                    team
+                    for team in available_teams
+                    if not self._did_team_play(team, stage, round_num)
+                    and team not in assigned_teams.values()
+                    and self._meets_minimum_gap(team, current_time)
+                ]
+
+                swap_found = False
+                for team in unplayed_teams:
+                    for assigned_side, assigned_team in assigned_teams.items():
+                        assigned_pair = self.pair_of[assigned_side]
+                        if (
+                            self._pair_play_count(team, assigned_pair, stage)
+                            > max_times_team_can_play_on_pair
+                        ):
+                            continue
+
+                        self.match_schedule.at[match_num, assigned_side] = team
+                        self.match_schedule.at[match_num, unassigned_side] = (
+                            assigned_team
+                        )
+                        assigned_teams[assigned_side] = team
+                        assigned_teams[unassigned_side] = assigned_team
+                        self._update_pair_history(team, assigned_pair, stage)
+                        self._update_pair_history(
+                            assigned_team, self.pair_of[unassigned_side], stage
+                        )
+                        swap_found = True
+                        break
+
+                    if swap_found:
+                        break
+
+            self._consolidate_half_pairs(match_num)
+            self._record_opponents(match_num, stage)
+
     def _ensure_constraints(self, stage: Literal["practice", "ranking"]):
         """
         Ensure that all constraints are satisfied in the match schedule.
@@ -438,6 +719,18 @@ class SchedulerService:
 
         stage_schedule = self.match_schedule[self.match_schedule["stage"] == stage]
         rounds = stage_schedule["round"].unique()
+
+        if self.paired:
+            for match_num, row in stage_schedule.iterrows():
+                half_filled = [
+                    pair
+                    for pair in self._get_available_pairs(match_num)
+                    if pd.notna(row[pair.side_a]) != pd.notna(row[pair.side_b])
+                ]
+                if len(half_filled) > 1:
+                    raise SchedulerError(
+                        f"Match {match_num} has more than one half-filled table pair"
+                    )
 
         for round_num in rounds:
             round_matches = self.match_schedule[
@@ -534,6 +827,12 @@ class SchedulerService:
                     f"{stage.capitalize()} stage - Avg unique tables: {avg_stage_unique:.2f}"
                 )
 
+        if self.paired:
+            for stage in self.match_schedule["stage"].unique():
+                repeats = self._count_opponent_repeats(stage)
+                if repeats > 0:
+                    logger.warning(f"{stage}: {repeats} opponent repeats")
+
     def create_schedule(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         """Create the schedule by populating the match schedule and ensuring constraints.
         Returns (match_schedule, session_schedule).
@@ -543,7 +842,10 @@ class SchedulerService:
         self.match_schedule = self._make_matches()
 
         self._use_constraints()
-        self._populate_match_schedule()
+        if self.paired:
+            self._populate_paired_match_schedule()
+        else:
+            self._populate_match_schedule()
 
         self._ensure_constraints("practice")
         self._ensure_constraints("ranking")

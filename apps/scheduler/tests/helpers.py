@@ -11,6 +11,7 @@ from services.scheduler_service import SchedulerService
 from tests.fakes import (
     FakeLemsRepository,
     make_founders_tables,
+    make_paired_tables,
     make_request,
     make_rooms,
     make_teams,
@@ -48,15 +49,52 @@ CASES = {
         FakeLemsRepository(make_teams(12), make_rooms(3), make_founders_tables(4)),
         make_request(stagger=False, overlap=False),
     ),
+    "paired_8": lambda: (
+        FakeLemsRepository(make_teams(8), make_rooms(2), make_paired_tables(2)),
+        make_request(stagger=False, overlap=False, cycle_seconds=900),
+    ),
+    "paired_12": lambda: (
+        FakeLemsRepository(make_teams(12), make_rooms(3), make_paired_tables(3)),
+        make_request(stagger=False, overlap=False, cycle_seconds=900),
+    ),
+    "paired_17": lambda: (
+        FakeLemsRepository(make_teams(17), make_rooms(4), make_paired_tables(4)),
+        make_request(stagger=False, overlap=False),
+    ),
+    "paired_24": lambda: (
+        FakeLemsRepository(make_teams(24), make_rooms(4), make_paired_tables(4)),
+        make_request(stagger=False, overlap=False),
+    ),
+    "paired_12_stagger_odd": lambda: (
+        FakeLemsRepository(make_teams(12), make_rooms(3), make_paired_tables(3)),
+        make_request(stagger=True, overlap=False),
+    ),
+    "paired_12_overlap": lambda: (
+        FakeLemsRepository(make_teams(12), make_rooms(3), make_paired_tables(3)),
+        make_request(stagger=False, overlap=True, cycle_seconds=900),
+    ),
 }
 
 
-def run_case(case: str, seed: int) -> dict:
+def build_service(case: str, seed: int) -> SchedulerService:
     repository, request = CASES[case]()
-    matches, sessions = SchedulerService(
-        repository, request, seed=seed
-    ).create_schedule()
+    return SchedulerService(repository, request, seed=seed)
+
+
+def run_case(case: str, seed: int) -> dict:
+    matches, sessions = build_service(case, seed).create_schedule()
     return schedule_to_json(matches, sessions)
+
+
+def pair_occupancy(service: SchedulerService) -> list[list[int]]:
+    assert service.pairs is not None
+    return [
+        [
+            int(pd.notna(row[pair.side_a])) + int(pd.notna(row[pair.side_b]))
+            for pair in service.pairs
+        ]
+        for _, row in service.match_schedule.iterrows()
+    ]
 
 
 def run_case_in_subprocess(case: str, seed: int) -> dict:

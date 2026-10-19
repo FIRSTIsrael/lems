@@ -44,9 +44,13 @@ def make_rooms(n: int) -> list[Location]:
     return [Location(f"r{i}", f"Room {i}") for i in range(1, n + 1)]
 
 
-def make_request(*, stagger: bool = False, overlap: bool = False) -> SchedulerRequest:
+def make_request(
+    *, stagger: bool = False, overlap: bool = False, cycle_seconds: int = 300
+) -> SchedulerRequest:
+    # 08:30 does not validate for 12 paired teams, so the overlap start is
+    # shifted to the first 5-minute step that does
     matches_start = (
-        datetime(2026, 1, 1, 8, 30, tzinfo=timezone.utc)
+        datetime(2026, 1, 1, 9, 35, tzinfo=timezone.utc)
         if overlap
         else datetime(2026, 1, 1, 11, 0, tzinfo=timezone.utc)
     )
@@ -56,8 +60,8 @@ def make_request(*, stagger: bool = False, overlap: bool = False) -> SchedulerRe
         practice_rounds=1,
         ranking_rounds=3,
         match_length_seconds=150,
-        practice_match_cycle_time_seconds=300,
-        ranking_match_cycle_time_seconds=300,
+        practice_match_cycle_time_seconds=cycle_seconds,
+        ranking_match_cycle_time_seconds=cycle_seconds,
         stagger_matches=stagger,
         judging_start=datetime(2026, 1, 1, 8, 0, tzinfo=timezone.utc),
         judging_session_length_seconds=1200,
