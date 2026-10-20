@@ -5,6 +5,7 @@ import authRouter from './auth';
 import seasonsRouter from './seasons';
 import teamsRouter from './teams';
 import eventsRouter from './events';
+import insightsRouter from './insights';
 
 const router = express.Router({ mergeParams: true });
 
@@ -15,5 +16,6 @@ router.use('/users', usersRouter);
 router.use('/seasons', seasonsRouter);
 router.use('/teams', teamsRouter);
 router.use('/events', eventsRouter);
+router.use('/insights', insightsRouter);
 
 export default router;
