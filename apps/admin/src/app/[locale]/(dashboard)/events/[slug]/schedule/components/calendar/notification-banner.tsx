@@ -3,7 +3,7 @@
 import { Box, Alert, Collapse } from '@mui/material';
 
 interface NotificationBannerProps {
-  variant: 'success' | 'error' | null;
+  variant: 'success' | 'error' | 'info' | null;
   message: string;
   show: boolean;
 }

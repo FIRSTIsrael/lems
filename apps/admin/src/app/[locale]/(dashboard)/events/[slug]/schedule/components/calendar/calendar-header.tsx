@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import { mutate } from 'swr';
 import { Box, Stack, Button, CircularProgress } from '@mui/material';
-import { Add, CheckCircle, Error as ErrorIcon, Send } from '@mui/icons-material';
+import { Add, CheckCircle, Error as ErrorIcon, RestartAlt, Send } from '@mui/icons-material';
 import { Division } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { useSchedule } from '../schedule-context';
@@ -21,16 +21,17 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
   const t = useTranslations('pages.events.schedule.calendar');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [notification, setNotification] = useState<NotificationState>({
-    variant: null,
-    message: '',
-    show: false
-  });
-  const [verificationPassed, setVerificationPassed] = useState(false);
-
   const calendarContext = useCalendar();
   const scheduleContext = useSchedule();
   const { addPracticeRound, addRankingRound } = calendarContext;
+  const { hasRestoredDraft, discardDraft, clearDraft } = scheduleContext;
+
+  const [notification, setNotification] = useState<NotificationState>(() =>
+    hasRestoredDraft
+      ? { variant: 'info', message: t('draft.restored'), show: true }
+      : { variant: null, message: '', show: false }
+  );
+  const [verificationPassed, setVerificationPassed] = useState(false);
 
   // Disable "Generate" after any schedule/calendar change:
   useEffect(() => {
@@ -106,6 +107,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       }
 
       setNotification({ variant: 'success', message: t('generate.success'), show: true });
+      await clearDraft().catch(error => console.error('Failed to clear schedule draft', error));
       mutate(`/admin/events/${division.eventId}/divisions`);
     } catch (error: unknown) {
       setNotification({
@@ -194,6 +196,18 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
           disabled={!verificationPassed || isGenerating}
         >
           {isGenerating ? t('generate.generating') : t('generate.generate-button')}
+        </Button>
+
+        <Button
+          size="small"
+          variant="text"
+          color="inherit"
+          startIcon={<RestartAlt />}
+          onClick={discardDraft}
+          disabled={isVerifying || isGenerating}
+          sx={{ ml: 'auto' }}
+        >
+          {t('draft.discard')}
         </Button>
       </Stack>
       <NotificationBanner
