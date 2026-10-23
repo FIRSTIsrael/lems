@@ -41,7 +41,7 @@
     "@uiw/react-signature": "^1.3.5",
     "archiver": "^8.0.0",
     "bcrypt": "^6.0.0",
-    "bullmq": "^6.3.11",
+    "bullmq": "^6.3.17",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
     "csv-parse": "^7.0.2",
