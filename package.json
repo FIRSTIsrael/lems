@@ -34,7 +34,7 @@
     "@mui/material": "^9.5.0",
     "@mui/material-nextjs": "^9.5.0",
     "@mui/stylis-plugin-rtl": "^9.5.0",
-    "@mui/x-data-grid": "^9.15.0",
+    "@mui/x-data-grid": "^9.16.0",
     "@mui/x-date-pickers": "^9.15.0",
     "@sendgrid/mail": "^8.1.6",
     "@uiw/react-color": "^2.10.3",
