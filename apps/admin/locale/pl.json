@@ -929,6 +929,7 @@
           "awards-list": "Lista nagród ({count})",
           "no-awards": "Brak skonfigurowanych nagród",
           "no-awards-help": "Użyj przycisku „Dodaj nagrodę opcjonalną”, aby dodać nagrody",
+          "co-winners-hint": "Each place is awarded to two teams",
           "add-dialog": {
             "title": "Dodaj nagrodę opcjonalną",
             "select-award": "Wybierz nagrodę",

@@ -872,6 +872,7 @@
           "awards-list": "Awards List ({count})",
           "no-awards": "No awards configured",
           "no-awards-help": "Use the \"Add Optional Award\" button to add awards",
+          "co-winners-hint": "Each place is awarded to two teams",
           "add-dialog": {
             "title": "Add Optional Award",
             "select-award": "Select Award",

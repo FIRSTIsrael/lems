@@ -92,6 +92,10 @@
       "name": "Peer",
       "description": "This award honors a team nominated by their peers for how they demonstrate the <i>FIRST</i> Core Values and Gracious Professionalism."
     },
+    "coopertition": {
+      "name": "Coopertition",
+      "description": "This award recognizes two teams who score the highest combined match score at the event, demonstrating that FIRST LEGO League teams are stronger when they work together."
+    },
     "lead-mentor": {
       "name": "Coach/Mentor",
       "description": "Coaches and mentors inspire their teams to do their best, both as individuals and together. Without them, there would be no FIRST LEGO League Challenge. This award goes to the coach or mentor whose leadership and guidance is clearly evident and best exemplifies the FIRST Core Values."

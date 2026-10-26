@@ -11,7 +11,7 @@ import {
 } from '@mui/icons-material';
 import { NumberInput } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
-import { Award, MANDATORY_AWARDS, AWARD_LIMITS } from '../types';
+import { Award, MANDATORY_AWARDS, AWARD_LIMITS, CO_WINNER_AWARDS } from '../types';
 import { useAwards } from './awards-context';
 
 interface AwardItemProps {
@@ -29,6 +29,7 @@ export function AwardItem({ award, index }: AwardItemProps) {
   const awardData = schema[award];
   const maxCount = AWARD_LIMITS[award];
   const isUnlimited = maxCount === -1;
+  const isCoWinner = (CO_WINNER_AWARDS as readonly string[]).includes(award);
 
   const handleCountChange = (value: number | null) => {
     if (value === null) {
@@ -103,15 +104,22 @@ export function AwardItem({ award, index }: AwardItemProps) {
               </Typography>
             </Box>
 
-            <NumberInput
-              min={1}
-              max={isUnlimited ? undefined : maxCount}
-              value={awardData?.count || 0}
-              onChange={(_, value) => handleCountChange(value)}
-              helperText={
-                isUnlimited ? t('limits.unlimited') : t('limits.maximum', { count: maxCount })
-              }
-            />
+            <Box sx={{ textAlign: 'center' }}>
+              <NumberInput
+                min={1}
+                max={isUnlimited ? undefined : maxCount}
+                value={awardData?.count || 0}
+                onChange={(_, value) => handleCountChange(value)}
+                helperText={
+                  isUnlimited ? t('limits.unlimited') : t('limits.maximum', { count: maxCount })
+                }
+              />
+              {isCoWinner && (
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {t('co-winners-hint')}
+                </Typography>
+              )}
+            </Box>
 
             {/* Remove Button */}
             <Box>

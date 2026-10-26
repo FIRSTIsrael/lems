@@ -92,6 +92,10 @@
       "name": "Nagroda Rówieśników",
       "description": "Ta nagroda wyróżnia drużynę nominowaną przez inne drużyny za to, jak prezentuje Wartości Podstawowe <i>FIRST</i> i Gracious Professionalism."
     },
+    "coopertition": {
+      "name": "Coopertition",
+      "description": "This award recognizes two teams who score the highest combined match score at the event, demonstrating that FIRST LEGO League teams are stronger when they work together."
+    },
     "lead-mentor": {
       "name": "Trener/Mentor",
       "description": "Trenerzy i mentorzy inspirują drużyny do działania na najwyższym poziomie, indywidualnie i jako grupa. Bez nich nie byłoby FIRST LEGO League Challenge. Nagroda trafia do mentora, którego przywództwo i wsparcie najlepiej odzwierciedlają Wartości Podstawowe FIRST."

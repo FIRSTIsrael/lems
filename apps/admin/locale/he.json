@@ -872,6 +872,7 @@
           "awards-list": "רשימת פרסים ({count})",
           "no-awards": "לא הוגדרו פרסים",
           "no-awards-help": "השתמש בכפתור \"הוסף פרס רשות\" להוספת פרסים",
+          "co-winners-hint": "Each place is awarded to two teams",
           "add-dialog": {
             "title": "הוספת פרס רשות",
             "select-award": "בחר פרס",
