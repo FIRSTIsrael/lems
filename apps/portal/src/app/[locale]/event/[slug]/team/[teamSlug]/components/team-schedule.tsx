@@ -38,7 +38,7 @@ export const TeamSchedule: React.FC = () => {
   });
 
   const t = useTranslations('pages.team-in-event');
-  const { getStage } = useMatchTranslations();
+  const { getStage, getOpponentLabel } = useMatchTranslations();
 
   if (!data) {
     return null; // Should be handled by suspense
@@ -49,12 +49,13 @@ export const TeamSchedule: React.FC = () => {
   const scheduleEntries: ScheduleEntry[] = [
     ...(matches || []).map(match => ({
       time: new Date(match.scheduledTime),
-      description: t('schedule.match-type', {
-        stage: getStage(match.stage),
-        number: match.number,
-        table: match.table.name,
-        teamNumber: team.number
-      }),
+      description:
+        t('schedule.match-type', {
+          stage: getStage(match.stage),
+          number: match.number,
+          table: match.table.name,
+          teamNumber: team.number
+        }) + (match.opponent ? ` · ${getOpponentLabel(match.opponent)}` : ''),
       location: match.table.name
     })),
     ...(judgingSession

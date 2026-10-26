@@ -23,6 +23,7 @@ import {
 import NextLink from 'next/link';
 import { RobotGameMatch } from '@lems/types/api/portal';
 import { useMatchTranslations } from '@lems/localization';
+import { groupTablesByPair, type PairableTable } from '@lems/shared/utils';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { useDivision } from '../division-data-context';
 
@@ -64,13 +65,17 @@ export const FieldScheduleTab: React.FC = () => {
   );
 
   // Extract unique tables from all matches
-  const tablesMap = new Map<string, { id: string; name: string }>();
+  const tablesMap = new Map<string, PairableTable>();
   fieldSchedule.forEach(match => {
     match.participants.forEach(participant => {
       tablesMap.set(participant.table.id, participant.table);
     });
   });
   const tables = Array.from(tablesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  const paired = tables.some(table => table.pairKey);
+  const tableGroups = groupTablesByPair(tables);
+  const orderedTables = paired ? tableGroups.flatMap(group => group.tables) : tables;
+  const headerFontSize = isMobile ? '0.75rem' : '1rem';
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -118,28 +123,53 @@ export const FieldScheduleTab: React.FC = () => {
                       </Typography>
                     </TableCell>
                   </TableRow>
+                  {paired && (
+                    <TableRow sx={{ bgcolor: 'grey.100' }}>
+                      <TableCell rowSpan={2} width={isMobile ? 60 : 80} align="center">
+                        <Typography sx={{ fontWeight: 600, fontSize: headerFontSize }}>
+                          {t('field-schedule.match')}
+                        </Typography>
+                      </TableCell>
+                      <TableCell rowSpan={2} width={isMobile ? 70 : 100} align="center">
+                        <Typography sx={{ fontWeight: 600, fontSize: headerFontSize }}>
+                          {t('field-schedule.time')}
+                        </Typography>
+                      </TableCell>
+                      {tableGroups.map(group => (
+                        <TableCell key={group.key} colSpan={group.tables.length} align="center">
+                          <Typography sx={{ fontWeight: 600, fontSize: headerFontSize }}>
+                            {group.name}
+                          </Typography>
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  )}
                   <TableRow sx={{ bgcolor: 'grey.100' }}>
-                    <TableCell width={isMobile ? 60 : 80} align="center">
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}
-                      >
-                        {t('field-schedule.match')}
-                      </Typography>
-                    </TableCell>
-                    <TableCell width={isMobile ? 70 : 100} align="center">
-                      <Typography
-                        sx={{
-                          fontWeight: 600,
-                          fontSize: isMobile ? '0.75rem' : '1rem'
-                        }}
-                      >
-                        {t('field-schedule.time')}
-                      </Typography>
-                    </TableCell>
-                    {tables.map(table => (
+                    {!paired && (
+                      <>
+                        <TableCell width={isMobile ? 60 : 80} align="center">
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: isMobile ? '0.75rem' : '1rem'
+                            }}
+                          >
+                            {t('field-schedule.match')}
+                          </Typography>
+                        </TableCell>
+                        <TableCell width={isMobile ? 70 : 100} align="center">
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              fontSize: isMobile ? '0.75rem' : '1rem'
+                            }}
+                          >
+                            {t('field-schedule.time')}
+                          </Typography>
+                        </TableCell>
+                      </>
+                    )}
+                    {orderedTables.map(table => (
                       <TableCell key={table.id} width={isMobile ? 80 : 120} align="center">
                         <Typography
                           sx={{
@@ -177,7 +207,7 @@ export const FieldScheduleTab: React.FC = () => {
                           {dayjs(match.scheduledTime).format('HH:mm')}
                         </Typography>
                       </TableCell>
-                      {tables.map(table => {
+                      {orderedTables.map(table => {
                         const participant = match.participants.find(p => p.table.id === table.id);
                         const team = participant?.team;
 

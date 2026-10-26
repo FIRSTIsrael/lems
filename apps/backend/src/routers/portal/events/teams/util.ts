@@ -3,9 +3,12 @@ import {
   RobotGameTable as DbRobotGameTable,
   JudgingSession as DbJudgingSession,
   JudgingRoom as DbJudgingRoom,
-  AgendaEvent as DbAgendaEvent
+  AgendaEvent as DbAgendaEvent,
+  Team as DbTeam
 } from '@lems/database';
+import { getOpponent } from '@lems/shared/utils';
 import { AgendaEvent, TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { makePortalTeamResponse } from '../../teams/util';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,
@@ -30,7 +33,8 @@ export const makePortalTeamJudgingSessionResponse = (
 export const makePortalTeamRobotGameMatchResponse = (
   teamId: string,
   match: DbRobotGameMatch,
-  tables: DbRobotGameTable[]
+  tables: DbRobotGameTable[],
+  teams: DbTeam[]
 ): TeamRobotGameMatch => {
   const participant = match.participants.find(p => p.team_id === teamId);
   if (!participant) {
@@ -45,13 +49,29 @@ export const makePortalTeamRobotGameMatchResponse = (
     );
   }
 
+  const opponentParticipant = getOpponent(
+    match.participants.map(p => ({ ...p, table: { id: p.table_id } })),
+    table.id,
+    tables
+  );
+  const opponentTeam = opponentParticipant?.team_id
+    ? teams.find(t => t.id === opponentParticipant.team_id)
+    : undefined;
+
   return {
     id: match.id,
     round: match.round,
     number: match.number,
     stage: match.stage,
     scheduledTime: match.scheduled_time,
-    table: { id: table.id, name: table.name }
+    table: { id: table.id, name: table.name },
+    opponent: opponentTeam
+      ? {
+          number: opponentTeam.number,
+          name: opponentTeam.name,
+          slug: makePortalTeamResponse(opponentTeam).slug
+        }
+      : null
   };
 };
 

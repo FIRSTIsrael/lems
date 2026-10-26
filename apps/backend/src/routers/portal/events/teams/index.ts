@@ -50,12 +50,13 @@ router.get(
 router.get(
   '/:teamSlug/activities',
   asHandler<PortalTeamAtEventRequest>(async (req, res: Response) => {
-    const [session, rooms, matches, tables, agendaPublic, agendaTeams, practiceAssignments] =
+    const [session, rooms, matches, tables, teams, agendaPublic, agendaTeams, practiceAssignments] =
       await Promise.all([
         db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId),
         db.rooms.byDivisionId(req.divisionId).getAll(),
         db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId),
         db.tables.byDivisionId(req.divisionId).getAll(),
+        db.teams.byDivisionId(req.divisionId).getAll(),
         db.divisions.byId(req.divisionId).agenda().getAll('public'),
         db.divisions.byId(req.divisionId).agenda().getAll('teams'),
         db.divisions.byId(req.divisionId).practiceTables().getTeamAssignments(req.teamId)
@@ -75,7 +76,7 @@ router.get(
     res.json({
       session: session ? makePortalTeamJudgingSessionResponse(req.teamId, session, rooms) : null,
       matches: matches.map(match =>
-        makePortalTeamRobotGameMatchResponse(req.teamId, match, tables)
+        makePortalTeamRobotGameMatchResponse(req.teamId, match, tables, teams)
       ),
       agenda: agenda.map(a => makeAgendaResponse(a)),
       practiceAssignments: formattedPracticeAssignments

@@ -30,7 +30,9 @@ const Team = z.object({
 
 const Location = z.object({
   id: z.string(),
-  name: z.string()
+  name: z.string(),
+  pairKey: z.string().nullable().optional(),
+  side: z.string().nullable().optional()
 });
 
 export type Award = z.infer<typeof PortalAwardResponseSchema>;
