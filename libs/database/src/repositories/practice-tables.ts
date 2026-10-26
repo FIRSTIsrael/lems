@@ -43,6 +43,20 @@ export class DivisionPracticeTablesSelector {
   }
 
   /**
+   * Whether this division has any practice table slot rows or a saved configuration
+   */
+  async hasSlots(): Promise<boolean> {
+    const slot = await this.db
+      .selectFrom('practice_tables_schedule')
+      .select('id')
+      .where('division_id', '=', this.divisionId)
+      .limit(1)
+      .executeTakeFirst();
+    if (slot) return true;
+    return (await this.getConfig()) !== null;
+  }
+
+  /**
    * Get all practice table assignments for this division with team data (only assigned slots)
    * Returns raw database columns without transformation
    */

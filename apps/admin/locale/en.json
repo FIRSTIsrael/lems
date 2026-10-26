@@ -537,6 +537,7 @@
           "future-edition": "Future edition",
           "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
           "edition-has-tables": "Delete this division's tables before changing the edition.",
+          "edition-has-practice-tables": "Clear this division's practice tables configuration before changing the edition.",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }

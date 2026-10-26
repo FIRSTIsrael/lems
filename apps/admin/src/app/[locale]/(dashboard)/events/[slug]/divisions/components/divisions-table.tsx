@@ -109,6 +109,10 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
       await onEditDivision();
     } else if ((result.error as { error?: string } | null)?.error === 'DIVISION_HAS_TABLES') {
       setEditionError(t('list.edition-has-tables'));
+    } else if (
+      (result.error as { error?: string } | null)?.error === 'DIVISION_HAS_PRACTICE_TABLES'
+    ) {
+      setEditionError(t('list.edition-has-practice-tables'));
     }
   };
 

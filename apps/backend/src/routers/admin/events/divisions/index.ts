@@ -97,6 +97,10 @@ router.put(
         res.status(400).json({ error: 'DIVISION_HAS_TABLES' });
         return;
       }
+      if (await db.divisions.byId(req.divisionId).practiceTables().hasSlots()) {
+        res.status(400).json({ error: 'DIVISION_HAS_PRACTICE_TABLES' });
+        return;
+      }
     }
 
     await db.divisions.byId(req.divisionId).update({
