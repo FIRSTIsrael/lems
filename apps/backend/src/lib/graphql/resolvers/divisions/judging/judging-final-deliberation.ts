@@ -17,6 +17,7 @@ interface FinalDeliberationGraphQL {
   robotDesign: string[];
   coreValues: string[];
   robotPerformance: string[];
+  coopertition: string[];
   optionalAwards: string;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];
@@ -51,6 +52,7 @@ export const judgingFinalDeliberationResolver: GraphQLFieldResolver<
     robotDesign: deliberation.awards['robot-design'] || [],
     coreValues: deliberation.awards['core-values'] || [],
     robotPerformance: deliberation.awards['robot-performance'] || [],
+    coopertition: deliberation.awards.coopertition || [],
     optionalAwards: JSON.stringify(deliberation.awards.optionalAwards || {}),
     coreAwardsManualEligibility: deliberation.stage_data?.['core-awards']?.manualEligibility || [],
     optionalAwardsManualEligibility:

@@ -13,6 +13,7 @@ import {
   useTheme
 } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import { STACKABLE_AWARDS } from '@lems/shared/awards';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 
 interface ManualEligibilityControlProps {
@@ -39,7 +40,7 @@ export const ManualEligibilityControl: React.FC<ManualEligibilityControlProps> =
   const awardedTeamIds = useMemo(
     () =>
       Object.entries(awards)
-        .filter(([key]) => key !== 'robot-performance')
+        .filter(([key]) => !(STACKABLE_AWARDS as readonly string[]).includes(key))
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
         .flat(),

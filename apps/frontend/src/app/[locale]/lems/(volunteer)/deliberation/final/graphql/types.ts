@@ -13,6 +13,7 @@ export interface FinalJudgingDeliberation {
   robotDesign: string[];
   coreValues: string[];
   robotPerformance: string[];
+  coopertition: string[];
   optionalAwards: Record<string, string[]>;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];

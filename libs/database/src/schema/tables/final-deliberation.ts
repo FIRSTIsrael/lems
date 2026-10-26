@@ -17,6 +17,8 @@ export interface MandatoryAwards {
   };
   /** Robot performance award winners (ordered list of team IDs) */
   'robot-performance'?: string[];
+  /** Coopertition winners, two team IDs per place (side A then side B) */
+  coopertition?: string[];
   /** Innovation Project award winners (ordered list of team IDs) */
   'innovation-project'?: string[];
   /** Robot Design award winners (ordered list of team IDs) */

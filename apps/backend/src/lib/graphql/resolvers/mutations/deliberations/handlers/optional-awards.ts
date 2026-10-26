@@ -1,5 +1,5 @@
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { isDeliberationOptionalAward } from '@lems/shared/awards';
+import { isDeliberationOptionalAward, STACKABLE_AWARDS } from '@lems/shared/awards';
 import { Award, FinalDeliberationAwards } from '@lems/database';
 import db from '../../../../../database';
 import { updateFinalDeliberationAwards } from './utils';
@@ -52,7 +52,7 @@ async function validateOptionalAwardsAssignment(
   optionalAwards: FinalDeliberationAwards['optionalAwards']
 ): Promise<void> {
   const awards = (await db.awards.byDivisionId(divisionId).getAll()).filter(
-    award => award.name !== 'robot-performance'
+    award => !(STACKABLE_AWARDS as readonly string[]).includes(award.name)
   );
   for (const [awardName, winners] of Object.entries(optionalAwards ?? {})) {
     for (const award of awards) {

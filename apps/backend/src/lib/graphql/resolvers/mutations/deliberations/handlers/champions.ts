@@ -1,6 +1,11 @@
 import { FinalDeliberationAwards, Award } from '@lems/database';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { selectAdvancingTeams } from '@lems/shared/deliberation';
+import {
+  buildCoopertitionResults,
+  computeTeamAverages,
+  selectCoopertitionWinners
+} from '@lems/shared/awards';
 import db from '../../../../../database';
 import { calculateAllTeamScores, rankTeams, updateFinalDeliberationAwards } from './utils';
 
@@ -75,6 +80,8 @@ export async function handleChampionsStageCompletion(
       .map(t => t.teamId);
     await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);
   }
+
+  await assignCoopertitionAwards(divisionId);
 
   // Filter to eligible teams for judging-based awards
   const eligibleTeams = teams.filter(t => {
@@ -173,6 +180,58 @@ const assignRobotPerformanceAwards = async (
     updatedAwards['robot-performance'] = robotPerformanceTeams;
     await db.finalDeliberations.byDivision(divisionId).update({
       awards: updatedAwards
+    });
+  }
+};
+
+/**
+ * Assigns Coopertition (two award rows per place) to the best paired matches
+ */
+export const assignCoopertitionAwards = async (divisionId: string): Promise<void> => {
+  const awards = await db.awards.byDivisionId(divisionId).get('coopertition');
+  if (awards.length === 0) return;
+
+  const rows = [...awards].sort((a, b) => a.place - b.place || a.index - b.index);
+  const places = Math.floor(rows.length / 2);
+
+  const [matches, tables, scoresheets] = await Promise.all([
+    db.robotGameMatches.byDivision(divisionId).getAll(),
+    db.tables.byDivisionId(divisionId).getAll(),
+    db.scoresheets.byDivision(divisionId).byStage('RANKING').getAll()
+  ]);
+
+  const scoresheetInputs = scoresheets.map(s => ({
+    teamId: s.teamId,
+    stage: s.stage,
+    round: s.round,
+    status: s.status,
+    score: s.data?.score ?? 0
+  }));
+
+  const results = buildCoopertitionResults(
+    matches.map(m => ({
+      matchNumber: m.number,
+      stage: m.stage,
+      round: m.round,
+      participants: m.participants.map(p => ({ teamId: p.team_id, tableId: p.table_id }))
+    })),
+    tables.map(t => ({ id: t.id, name: t.name, pairKey: t.pair_key, side: t.side })),
+    scoresheetInputs
+  );
+  const winners = selectCoopertitionWinners(results, computeTeamAverages(scoresheetInputs), places);
+
+  const winnerIds = winners.flat();
+  for (let i = 0; i < rows.length; i++) {
+    const teamId = winnerIds[i];
+    if (teamId) {
+      await db.awards.assign(rows[i].id, teamId);
+    }
+  }
+
+  const finalDeliberation = await db.finalDeliberations.byDivision(divisionId).get();
+  if (finalDeliberation) {
+    await db.finalDeliberations.byDivision(divisionId).update({
+      awards: { ...finalDeliberation.awards, coopertition: winnerIds }
     });
   }
 };

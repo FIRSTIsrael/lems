@@ -124,6 +124,7 @@ export const FinalDeliberationProvider = ({
       'innovation-project': deliberation.innovationProject || [],
       'robot-design': deliberation.robotDesign || [],
       'robot-performance': deliberation.robotPerformance || [],
+      coopertition: deliberation.coopertition || [],
       ...optionalAwards
     }),
     [deliberation, optionalAwards]
