@@ -11,6 +11,8 @@ export interface MatchParticipant {
   table: {
     id: string;
     name: string;
+    pairKey: string | null;
+    side: string | null;
   };
   queued: boolean;
   present: boolean;
@@ -35,6 +37,8 @@ export interface Match {
 export interface Table {
   id: string;
   name: string;
+  pairKey: string | null;
+  side: string | null;
 }
 
 export interface Division {

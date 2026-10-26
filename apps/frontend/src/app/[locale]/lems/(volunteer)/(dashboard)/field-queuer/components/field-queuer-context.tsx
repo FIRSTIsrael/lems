@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
+import { getOpponent } from '@lems/shared/utils';
 import type { FieldQueuerData } from '../graphql/types';
 
 export interface CalledTeam {
@@ -17,6 +18,7 @@ export interface CalledTeam {
   isReady: boolean;
   teamId: string;
   tableId: string;
+  opponent: { number: number; name: string } | null;
 }
 
 interface FieldQueuerContextType {
@@ -65,11 +67,20 @@ export function FieldQueuerProvider({
     );
 
     calledMatches.forEach(match => {
+      const participantsWithTable = match.participants.flatMap(p =>
+        p.table ? [{ ...p, table: p.table }] : []
+      );
+      const matchTables = participantsWithTable.map(p => p.table);
+      const paired = matchTables.some(table => table.pairKey);
+
       match.participants
         .filter(p => p.team && !p.queued && p.team.arrived)
         .forEach(participant => {
           if (!participant.team || !participant.table) return;
 
+          const opponent = paired
+            ? getOpponent(participantsWithTable, participant.table.id, matchTables)
+            : null;
           const isInJudging = activeSessions.some(s => s.team?.id === participant.team?.id);
           const minutesUntilMatch = currentTime.diff(dayjs(match.scheduledTime), 'minute');
           const isUrgent = minutesUntilMatch >= -10;
@@ -86,7 +97,10 @@ export function FieldQueuerProvider({
             isPresent: participant.present,
             isReady: participant.ready,
             teamId: participant.team.id,
-            tableId: participant.table.id
+            tableId: participant.table.id,
+            opponent: opponent?.team
+              ? { number: opponent.team.number, name: opponent.team.name }
+              : null
           });
         });
     });

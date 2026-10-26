@@ -32,6 +32,8 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
             table {
               id
               name
+              pairKey
+              side
             }
             queued
             present
@@ -62,6 +64,8 @@ export const GET_HEAD_REFEREE_DATA: TypedDocumentNode<HeadRefereeData, HeadRefer
       tables {
         id
         name
+        pairKey
+        side
       }
     }
   }

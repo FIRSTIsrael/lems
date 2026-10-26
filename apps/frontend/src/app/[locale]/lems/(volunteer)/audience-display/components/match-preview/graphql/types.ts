@@ -14,6 +14,8 @@ export interface MatchParticipant {
   table: {
     id: string;
     name: string;
+    pairKey: string | null;
+    side: string | null;
   };
 }
 

@@ -6,12 +6,14 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Tooltip } from '@mui/material';
 import WarningAmberRoundedIcon from '@mui/icons-material/WarningAmberRounded';
 import { red, orange } from '@mui/material/colors';
+import { useMatchTranslations } from '@lems/localization';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 
 interface TeamQueueCardProps {
   teamNumber: number;
   teamName: string;
   tableName: string;
+  opponent?: { number: number; name: string } | null;
   matchNumber: number;
   scheduledTime: string;
   isInJudging: boolean;
@@ -22,6 +24,7 @@ export function TeamQueueCard({
   teamNumber,
   teamName,
   tableName,
+  opponent,
   matchNumber,
   scheduledTime,
   isInJudging,
@@ -30,6 +33,7 @@ export function TeamQueueCard({
   const t = useTranslations('pages.field-queuer.team-card');
   const tCommon = useTranslations('pages.field-head-queuer.active-match');
   const currentTime = useTime({ interval: 1000 });
+  const { getOpponentLabel } = useMatchTranslations();
 
   const timeInfo = useMemo(() => {
     const scheduled = dayjs(scheduledTime);
@@ -103,6 +107,11 @@ export function TeamQueueCard({
           >
             {teamName}
           </Typography>
+          {opponent && (
+            <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
+              {getOpponentLabel(opponent)}
+            </Typography>
+          )}
         </Stack>
 
         <Stack

@@ -173,6 +173,7 @@ function FieldQueuerContent() {
                 teamNumber={team.teamNumber}
                 teamName={team.teamName}
                 tableName={team.tableName}
+                opponent={team.opponent}
                 matchNumber={team.matchNumber}
                 scheduledTime={team.scheduledTime}
                 isInJudging={team.isInJudging}

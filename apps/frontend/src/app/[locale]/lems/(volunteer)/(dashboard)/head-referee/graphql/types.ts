@@ -51,6 +51,8 @@ export interface TeamInfo {
 export interface Table {
   id: string;
   name: string;
+  pairKey: string | null;
+  side: string | null;
 }
 
 export interface Scoresheet {

@@ -2,6 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import { Fragment } from 'react';
 import { Paper, Stack, Typography, Chip, Box } from '@mui/material';
 import {
   PlayCircleFilled,
@@ -12,6 +13,7 @@ import {
 } from '@mui/icons-material';
 import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
+import { groupFilledParticipants } from '@lems/shared/utils';
 
 type TeamReadinessStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
@@ -26,6 +28,8 @@ interface Participant {
   table: {
     id: string;
     name: string;
+    pairKey?: string | null;
+    side?: string | null;
   };
   queued: boolean;
   present: boolean;
@@ -140,6 +144,10 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
     return match.status;
   };
 
+  const participantGroups = groupFilledParticipants(match.participants, (a, b) =>
+    a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
+  );
+
   const formatDelay = (delta: number) => {
     const minutes = Math.floor(Math.abs(delta) / 60);
     const seconds = Math.abs(delta) % 60;
@@ -243,59 +251,66 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               gap: 1
             }}
           >
-            {[...match.participants]
-              .filter(p => p.team)
-              .sort((a, b) =>
-                a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
-              )
-              .map(participant => {
-                const status = getParticipantStatus(participant);
-                return (
-                  <Stack
-                    key={participant.id}
-                    direction="row"
-                    spacing={0.5}
-                    sx={{
-                      alignItems: 'center',
-                      py: 1,
-                      px: 2,
-                      borderRadius: 1,
-                      border: '2px solid',
-                      borderColor: getStatusBorderColor(status)
-                    }}
+            {participantGroups.map(group => (
+              <Fragment key={group.key}>
+                {group.name && (
+                  <Typography
+                    variant="subtitle2"
+                    sx={{ gridColumn: '1 / -1', fontWeight: 700, color: 'text.secondary' }}
                   >
-                    <Typography
-                      variant="body2"
+                    {group.name}
+                  </Typography>
+                )}
+                {group.participants.map(participant => {
+                  const status = getParticipantStatus(participant);
+                  return (
+                    <Stack
+                      key={participant.id}
+                      direction="row"
+                      spacing={0.5}
                       sx={{
-                        fontWeight: 700,
-                        minWidth: 80,
-                        fontSize: '1.05rem'
-                      }}
-                    >
-                      {participant.table.name}:
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
-                    >
-                      {t('active-match.team-label')} {participant.team?.number} -{' '}
-                      {participant.team?.name}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 32,
-                        width: 32,
-                        height: 32
+                        py: 1,
+                        px: 2,
+                        borderRadius: 1,
+                        border: '2px solid',
+                        borderColor: getStatusBorderColor(status)
                       }}
                     >
-                      {getStatusIcon(status)}
-                    </Box>
-                  </Stack>
-                );
-              })}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 700,
+                          minWidth: 80,
+                          fontSize: '1.05rem'
+                        }}
+                      >
+                        {participant.table.name}:
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
+                      >
+                        {t('active-match.team-label')} {participant.team?.number} -{' '}
+                        {participant.team?.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: 32,
+                          width: 32,
+                          height: 32
+                        }}
+                      >
+                        {getStatusIcon(status)}
+                      </Box>
+                    </Stack>
+                  );
+                })}
+              </Fragment>
+            ))}
           </Box>
         </Box>
       </Stack>

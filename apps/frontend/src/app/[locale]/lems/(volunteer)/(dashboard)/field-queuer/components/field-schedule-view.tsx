@@ -17,6 +17,7 @@ import {
   Skeleton
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { groupTablesByPair, type PairableTable } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 import type { FieldQueuerData } from '../graphql';
 
@@ -30,17 +31,24 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
   const currentTime = useTime({ interval: 1000 });
 
   const tables = useMemo(() => {
-    const tableMap = new Map<string, { id: string; name: string }>();
+    const tableMap = new Map<string, PairableTable>();
     data.matches.forEach(match => {
       match.participants.forEach(p => {
         if (p.table && !tableMap.has(p.table.id)) {
-          tableMap.set(p.table.id, { id: p.table.id, name: p.table.name });
+          tableMap.set(p.table.id, p.table);
         }
       });
     });
     const result = Array.from(tableMap.values()).sort((a, b) => a.name.localeCompare(b.name));
     return result;
   }, [data.matches]);
+
+  const tableGroups = useMemo(() => groupTablesByPair(tables), [tables]);
+  const paired = tables.some(table => table.pairKey);
+  const orderedTables = useMemo(
+    () => (paired ? tableGroups.flatMap(group => group.tables) : tables),
+    [paired, tableGroups, tables]
+  );
 
   const upcomingMatches = useMemo(() => {
     return data.matches
@@ -104,28 +112,62 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
       >
         <Table stickyHeader size="small">
           <TableHead>
+            {paired && (
+              <TableRow>
+                <TableCell
+                  rowSpan={2}
+                  sx={{
+                    fontWeight: 600,
+                    minWidth: 60,
+                    position: 'sticky',
+                    left: 0,
+                    bgcolor: 'background.paper',
+                    zIndex: 3
+                  }}
+                >
+                  {t('match')}
+                </TableCell>
+                <TableCell rowSpan={2} sx={{ fontWeight: 600, minWidth: 70 }}>
+                  {t('time')}
+                </TableCell>
+                {tableGroups.map(group => (
+                  <TableCell
+                    key={group.key}
+                    colSpan={group.tables.length}
+                    align="center"
+                    sx={{ fontWeight: 600 }}
+                  >
+                    {group.name}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
             <TableRow>
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  minWidth: 60,
-                  position: 'sticky',
-                  left: 0,
-                  bgcolor: 'background.paper',
-                  zIndex: 3
-                }}
-              >
-                {t('match')}
-              </TableCell>
-              <TableCell
-                sx={{
-                  fontWeight: 600,
-                  minWidth: 70
-                }}
-              >
-                {t('time')}
-              </TableCell>
-              {tables.map(table => (
+              {!paired && (
+                <>
+                  <TableCell
+                    sx={{
+                      fontWeight: 600,
+                      minWidth: 60,
+                      position: 'sticky',
+                      left: 0,
+                      bgcolor: 'background.paper',
+                      zIndex: 3
+                    }}
+                  >
+                    {t('match')}
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      fontWeight: 600,
+                      minWidth: 70
+                    }}
+                  >
+                    {t('time')}
+                  </TableCell>
+                </>
+              )}
+              {orderedTables.map(table => (
                 <TableCell
                   key={table.id}
                   align="center"
@@ -184,7 +226,7 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
                       {dayjs(match.scheduledTime).format('HH:mm')}
                     </Typography>
                   </TableCell>
-                  {tables.map(table => {
+                  {orderedTables.map(table => {
                     const participant = match.participants.find(p => p.table?.id === table.id);
                     const team = participant?.team;
 

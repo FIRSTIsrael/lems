@@ -24,6 +24,8 @@ export const GET_HEAD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gql
       tables {
         id
         name
+        pairKey
+        side
       }
       field {
         divisionId
@@ -48,6 +50,8 @@ export const GET_HEAD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gql
             table {
               id
               name
+              pairKey
+              side
             }
             queued
             present

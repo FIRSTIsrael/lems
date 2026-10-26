@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { Box, Paper, alpha, Stack, Grid, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useMatchTranslations } from '@lems/localization';
+import { groupParticipantsByPair } from '@lems/shared/utils';
 import { useTranslations } from 'next-intl';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
@@ -13,6 +14,7 @@ import {
   parseMatchPreviewData
 } from './graphql';
 import { MatchParticipantCard } from './match-participant-card';
+import { MatchPairCard } from './match-pair-card';
 
 export const MatchPreviewDisplay = () => {
   const { currentDivision } = useEvent();
@@ -48,10 +50,17 @@ export const MatchPreviewDisplay = () => {
 
   const filteredParticipants = activeMatch.participants.filter(p => p.team !== null);
 
-  const columns =
-    filteredParticipants.length <= 5
-      ? filteredParticipants.length
-      : Math.ceil(filteredParticipants.length / 2);
+  // Views only have the participants' tables here, so derive the tables from them
+  const tables = activeMatch.participants.map(p => p.table);
+  const paired = tables.some(t => t.pairKey);
+  const pairGroups = paired
+    ? groupParticipantsByPair(activeMatch.participants, tables).filter(group =>
+        group.sides.some(side => side.participant?.team)
+      )
+    : [];
+
+  const itemCount = paired ? pairGroups.length : filteredParticipants.length;
+  const columns = itemCount <= 5 ? itemCount : Math.ceil(itemCount / 2);
 
   return (
     <Box
@@ -182,9 +191,13 @@ export const MatchPreviewDisplay = () => {
               justifyContent: 'center'
             }}
           >
-            {filteredParticipants.map(participant => (
-              <MatchParticipantCard key={participant?.team?.id} participant={participant} />
-            ))}
+            {paired
+              ? pairGroups.map(group => (
+                  <MatchPairCard key={group.key} name={group.name} sides={group.sides} />
+                ))
+              : filteredParticipants.map(participant => (
+                  <MatchParticipantCard key={participant?.team?.id} participant={participant} />
+                ))}
           </Grid>
         </Stack>
       </Box>

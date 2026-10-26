@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
+import { groupTablesByPair } from '@lems/shared/utils';
 import {
   Table,
   TableBody,
@@ -44,6 +45,20 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
     return Array.from(tableMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [sortedMatches]);
 
+  const paired = tables.some(table => table.pairKey);
+  const tableGroups = useMemo(() => groupTablesByPair(tables), [tables]);
+  const orderedTables = useMemo(
+    () => (paired ? tableGroups.flatMap(group => group.tables) : tables),
+    [paired, tableGroups, tables]
+  );
+
+  const headerCellSx = {
+    fontWeight: 600,
+    fontSize: '1.25rem',
+    py: 2,
+    color: 'common.white'
+  };
+
   return (
     <TableContainer
       component={Paper}
@@ -52,22 +67,48 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
     >
       <Table sx={{ borderCollapse: 'collapse' }}>
         <TableHead sx={{ backgroundColor: 'primary.main' }}>
+          {paired && (
+            <TableRow>
+              <TableCell rowSpan={2} sx={headerCellSx}>
+                {t('table.match')}
+              </TableCell>
+              <TableCell rowSpan={2} sx={{ ...headerCellSx, textAlign: 'center' }}>
+                {t('table.scheduled-time')}
+              </TableCell>
+              {tableGroups.map(group => (
+                <TableCell
+                  key={group.key}
+                  colSpan={group.tables.length}
+                  align="center"
+                  sx={headerCellSx}
+                >
+                  {group.name}
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
           <TableRow>
-            <TableCell sx={{ fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' }}>
-              {t('table.match')}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: 600,
-                fontSize: '1.25rem',
-                py: 2,
-                textAlign: 'center',
-                color: 'common.white'
-              }}
-            >
-              {t('table.scheduled-time')}
-            </TableCell>
-            {tables.map(table => (
+            {!paired && (
+              <>
+                <TableCell
+                  sx={{ fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' }}
+                >
+                  {t('table.match')}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 600,
+                    fontSize: '1.25rem',
+                    py: 2,
+                    textAlign: 'center',
+                    color: 'common.white'
+                  }}
+                >
+                  {t('table.scheduled-time')}
+                </TableCell>
+              </>
+            )}
+            {orderedTables.map(table => (
               <TableCell
                 key={table.id}
                 align="center"
@@ -83,7 +124,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
             <MatchRow
               key={match.id}
               match={match}
-              tables={tables}
+              tables={orderedTables}
               scoresheets={scoresheets}
               isActive={match.id === currentMatch?.id}
               isLoaded={match.id === data.loadedMatch}

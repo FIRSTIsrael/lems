@@ -17,9 +17,7 @@ export const makeSideTableName = (base: string, side: TableSide): string =>
 export const getPhysicalTableName = (table: PairableTable): string => {
   if (!table.side) return table.name;
   const suffix = `${PAIR_NAME_SEPARATOR}${table.side}`;
-  return table.name.endsWith(suffix)
-    ? table.name.slice(0, -suffix.length)
-    : table.name;
+  return table.name.endsWith(suffix) ? table.name.slice(0, -suffix.length) : table.name;
 };
 
 export interface TableGroup<T extends PairableTable> {
@@ -28,9 +26,7 @@ export interface TableGroup<T extends PairableTable> {
   tables: T[];
 }
 
-export const groupTablesByPair = <T extends PairableTable>(
-  tables: T[]
-): TableGroup<T>[] => {
+export const groupTablesByPair = <T extends PairableTable>(tables: T[]): TableGroup<T>[] => {
   const groups = new Map<string, T[]>();
   for (const table of tables) {
     const key = table.pairKey ?? table.id;
@@ -73,10 +69,38 @@ export const getOpponent = <P extends { table: { id: string } }>(
   tableId: string,
   tables: PairableTable[]
 ): P | null => {
-  const group = groupTablesByPair(tables).find(g =>
-    g.tables.some(t => t.id === tableId)
-  );
+  const group = groupTablesByPair(tables).find(g => g.tables.some(t => t.id === tableId));
   if (!group || group.tables.length < 2) return null;
   const other = group.tables.find(t => t.id !== tableId);
   return participants.find(p => p.table.id === other?.id) ?? null;
+};
+
+export interface FilledParticipantGroup<P> {
+  key: string;
+  name: string | null;
+  participants: P[];
+}
+
+/**
+ * Groups the participants that have a team for display. Unpaired divisions get a
+ * single unnamed group sorted by `compare`, so their rendering is unchanged.
+ */
+export const groupFilledParticipants = <P extends { table: PairableTable; team?: unknown }>(
+  participants: P[],
+  compare: (a: P, b: P) => number
+): FilledParticipantGroup<P>[] => {
+  const tables = participants.map(p => p.table);
+  if (!tables.some(table => table.pairKey)) {
+    return [
+      { key: 'all', name: null, participants: participants.filter(p => p.team).sort(compare) }
+    ];
+  }
+
+  return groupParticipantsByPair(participants, tables)
+    .map(group => ({
+      key: group.key,
+      name: group.name as string | null,
+      participants: group.sides.flatMap(side => (side.participant?.team ? [side.participant] : []))
+    }))
+    .filter(group => group.participants.length > 0);
 };

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, Fragment } from 'react';
 import dayjs from 'dayjs';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
@@ -10,6 +10,7 @@ import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 import { Flag } from '@lems/shared';
+import { groupFilledParticipants } from '@lems/shared/utils';
 import type { Match, Scoresheet } from '../graphql/types';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusButton } from './scoresheet-status-button';
@@ -77,6 +78,10 @@ function MatchCard({
 
   const scheduledTime = dayjs(match.scheduledTime).format('HH:mm');
 
+  const participantGroups = groupFilledParticipants(match.participants, (a, b) =>
+    a.table.name.localeCompare(b.table.name)
+  );
+
   return (
     <Card
       ref={cardRef}
@@ -111,231 +116,239 @@ function MatchCard({
         <Divider sx={{ mb: 2 }} />
 
         <Stack spacing={1.5}>
-          {match.participants
-            .filter(p => p.team)
-            .sort((a, b) => a.table.name.localeCompare(b.table.name))
-            .map(participant => {
-              const scoresheet = findScoresheetForTeam(
-                participant.team!.id,
-                match.stage,
-                match.round
-              );
-
-              const isFiltered = scoresheet ? scoresheets.some(s => s.id === scoresheet.id) : false;
-              const isTeamFiltered = doesTeamMatchSearch(
-                participant.team!.number,
-                participant.team!.name
-              );
-
-              if (match.status === 'completed' && scoresheet) {
-                return (
-                  <Box
-                    key={participant.id}
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      p: 1.5,
-                      backgroundColor: 'background.default',
-                      borderRadius: 1.5,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                      opacity: isTeamFiltered ? 1 : 0.35,
-                      filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                        borderColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          fontWeight: 700,
-                          color: 'text.primary',
-                          fontSize: '1.25rem',
-                          wordBreak: 'break-word'
-                        }}
-                      >
-                        {participant.table.name}
-                      </Typography>
-
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'text.secondary',
-                          fontSize: '1rem',
-                          wordBreak: 'break-word',
-                          display: 'block'
-                        }}
-                      >
-                        {participant.team!.name} #{participant.team!.number}
-                        {participant.team!.region && (
-                          <>
-                            {' '}
-                            <Box
-                              component="span"
-                              sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                verticalAlign: 'middle'
-                              }}
-                            >
-                              <Flag region={participant.team!.region} size={16} />
-                            </Box>
-                          </>
-                        )}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'text.secondary',
-                          fontSize: '1rem',
-                          wordBreak: 'break-word',
-                          display: 'block'
-                        }}
-                      >
-                        {participant.team!.affiliation && `${participant.team!.affiliation}, `}
-                        {participant.team!.city}
-                      </Typography>
-                    </Box>
-                    {match.status === 'completed' && scoresheet && (
-                      <ScoresheetStatusButton
-                        teamNumber={participant.team!.number}
-                        teamSlug={participant.team!.slug}
-                        teamName={participant.team!.name}
-                        scoresheetSlug={scoresheet.slug}
-                        status={scoresheet.status}
-                        escalated={scoresheet.escalated}
-                        score={scoresheet.data?.score}
-                        gp={scoresheet.data?.gp?.value}
-                        disabled={!participant.team!.arrived || match.status !== 'completed'}
-                        dimmed={!isFiltered}
-                      />
-                    )}
-                  </Box>
+          {participantGroups.map(group => (
+            <Fragment key={group.key}>
+              {group.name && (
+                <Typography variant="subtitle2" sx={{ fontWeight: 700, color: 'text.secondary' }}>
+                  {group.name}
+                </Typography>
+              )}
+              {group.participants.map(participant => {
+                const scoresheet = findScoresheetForTeam(
+                  participant.team!.id,
+                  match.stage,
+                  match.round
                 );
-              }
 
-              // Show participant readiness state for non-completed matches
-              const isQueued = participant.queued;
-              const isPresent = participant.present;
-              const isReady = participant.ready;
+                const isFiltered = scoresheet
+                  ? scoresheets.some(s => s.id === scoresheet.id)
+                  : false;
+                const isTeamFiltered = doesTeamMatchSearch(
+                  participant.team!.number,
+                  participant.team!.name
+                );
 
-              // Determine participant status (matching field status report logic)
-              const getParticipantStatus = () => {
-                if (!participant.team!.arrived) return 'no-show';
-                if (isReady) return 'ready';
-                if (isPresent) return 'present';
-                if (isQueued) return 'queued';
-                return 'missing';
-              };
+                if (match.status === 'completed' && scoresheet) {
+                  return (
+                    <Box
+                      key={participant.id}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        p: 1.5,
+                        backgroundColor: 'background.default',
+                        borderRadius: 1.5,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        opacity: isTeamFiltered ? 1 : 0.35,
+                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                          borderColor: 'action.hover'
+                        }
+                      }}
+                    >
+                      <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 700,
+                            color: 'text.primary',
+                            fontSize: '1.25rem',
+                            wordBreak: 'break-word'
+                          }}
+                        >
+                          {participant.table.name}
+                        </Typography>
 
-              const status = getParticipantStatus();
-
-              // Get status icon
-              const getStatusIcon = () => {
-                const iconProps = { sx: { fontSize: '1.5rem' } };
-                switch (status) {
-                  case 'ready':
-                    return <CheckCircleIcon {...iconProps} color="success" />;
-                  case 'present':
-                    return <PersonPinIcon {...iconProps} color="warning" />;
-                  case 'queued':
-                    return <HourglassEmptyIcon {...iconProps} color="info" />;
-                  case 'no-show':
-                    return <BlockIcon {...iconProps} color="error" />;
-                  case 'missing':
-                    return <HelpOutlineIcon {...iconProps} color="disabled" />;
-                  default:
-                    return null;
-                }
-              };
-
-              // Show icons only for the loaded match
-              const showIcon = isLoaded;
-
-              // Build tooltip based on status
-              let tooltipTitle = `${participant.team!.affiliation} • ${participant.team!.city}`;
-              if (isLoaded) {
-                const statuses = [];
-                if (isQueued) statuses.push(t('table.participant-queued'));
-                if (isPresent) statuses.push(t('table.participant-present'));
-                if (isReady) statuses.push(t('table.participant-ready'));
-                if (statuses.length > 0) {
-                  tooltipTitle = statuses.join(' • ');
-                } else if (status === 'no-show') {
-                  tooltipTitle = t('table.participant-no-show');
-                } else {
-                  tooltipTitle = t('table.participant-not-ready');
-                }
-              }
-
-              return (
-                <Tooltip key={participant.id} title={tooltipTitle}>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      p: 1.5,
-                      backgroundColor: 'background.default',
-                      borderRadius: 1.5,
-                      border: '1px solid',
-                      borderColor: 'divider',
-                      transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                      opacity: isTeamFiltered ? 1 : 0.35,
-                      filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
-                      '&:hover': {
-                        backgroundColor: 'action.hover',
-                        borderColor: 'action.hover'
-                      }
-                    }}
-                  >
-                    <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          fontWeight: 700,
-                          color: 'text.primary',
-                          fontSize: '1.25rem',
-                          wordBreak: 'break-word'
-                        }}
-                      >
-                        {participant.table.name}
-                      </Typography>
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'text.secondary',
-                          fontSize: '1rem',
-                          wordBreak: 'break-word',
-                          display: 'block'
-                        }}
-                      >
-                        {participant.team!.name} #{participant.team!.number}
-                        {participant.team!.region && (
-                          <>
-                            {' '}
-                            <Box
-                              component="span"
-                              sx={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                verticalAlign: 'middle'
-                              }}
-                            ></Box>
-                          </>
-                        )}
-                      </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: '1rem',
+                            wordBreak: 'break-word',
+                            display: 'block'
+                          }}
+                        >
+                          {participant.team!.name} #{participant.team!.number}
+                          {participant.team!.region && (
+                            <>
+                              {' '}
+                              <Box
+                                component="span"
+                                sx={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  verticalAlign: 'middle'
+                                }}
+                              >
+                                <Flag region={participant.team!.region} size={16} />
+                              </Box>
+                            </>
+                          )}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: '1rem',
+                            wordBreak: 'break-word',
+                            display: 'block'
+                          }}
+                        >
+                          {participant.team!.affiliation && `${participant.team!.affiliation}, `}
+                          {participant.team!.city}
+                        </Typography>
+                      </Box>
+                      {match.status === 'completed' && scoresheet && (
+                        <ScoresheetStatusButton
+                          teamNumber={participant.team!.number}
+                          teamSlug={participant.team!.slug}
+                          teamName={participant.team!.name}
+                          scoresheetSlug={scoresheet.slug}
+                          status={scoresheet.status}
+                          escalated={scoresheet.escalated}
+                          score={scoresheet.data?.score}
+                          gp={scoresheet.data?.gp?.value}
+                          disabled={!participant.team!.arrived || match.status !== 'completed'}
+                          dimmed={!isFiltered}
+                        />
+                      )}
                     </Box>
-                    {showIcon && getStatusIcon()}
-                  </Box>
-                </Tooltip>
-              );
-            })}
+                  );
+                }
+
+                // Show participant readiness state for non-completed matches
+                const isQueued = participant.queued;
+                const isPresent = participant.present;
+                const isReady = participant.ready;
+
+                // Determine participant status (matching field status report logic)
+                const getParticipantStatus = () => {
+                  if (!participant.team!.arrived) return 'no-show';
+                  if (isReady) return 'ready';
+                  if (isPresent) return 'present';
+                  if (isQueued) return 'queued';
+                  return 'missing';
+                };
+
+                const status = getParticipantStatus();
+
+                // Get status icon
+                const getStatusIcon = () => {
+                  const iconProps = { sx: { fontSize: '1.5rem' } };
+                  switch (status) {
+                    case 'ready':
+                      return <CheckCircleIcon {...iconProps} color="success" />;
+                    case 'present':
+                      return <PersonPinIcon {...iconProps} color="warning" />;
+                    case 'queued':
+                      return <HourglassEmptyIcon {...iconProps} color="info" />;
+                    case 'no-show':
+                      return <BlockIcon {...iconProps} color="error" />;
+                    case 'missing':
+                      return <HelpOutlineIcon {...iconProps} color="disabled" />;
+                    default:
+                      return null;
+                  }
+                };
+
+                // Show icons only for the loaded match
+                const showIcon = isLoaded;
+
+                // Build tooltip based on status
+                let tooltipTitle = `${participant.team!.affiliation} • ${participant.team!.city}`;
+                if (isLoaded) {
+                  const statuses = [];
+                  if (isQueued) statuses.push(t('table.participant-queued'));
+                  if (isPresent) statuses.push(t('table.participant-present'));
+                  if (isReady) statuses.push(t('table.participant-ready'));
+                  if (statuses.length > 0) {
+                    tooltipTitle = statuses.join(' • ');
+                  } else if (status === 'no-show') {
+                    tooltipTitle = t('table.participant-no-show');
+                  } else {
+                    tooltipTitle = t('table.participant-not-ready');
+                  }
+                }
+
+                return (
+                  <Tooltip key={participant.id} title={tooltipTitle}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        p: 1.5,
+                        backgroundColor: 'background.default',
+                        borderRadius: 1.5,
+                        border: '1px solid',
+                        borderColor: 'divider',
+                        transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                        opacity: isTeamFiltered ? 1 : 0.35,
+                        filter: isTeamFiltered ? 'none' : 'grayscale(0.7)',
+                        '&:hover': {
+                          backgroundColor: 'action.hover',
+                          borderColor: 'action.hover'
+                        }
+                      }}
+                    >
+                      <Box sx={{ minWidth: 0, flex: 1, overflow: 'hidden' }}>
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            fontWeight: 700,
+                            color: 'text.primary',
+                            fontSize: '1.25rem',
+                            wordBreak: 'break-word'
+                          }}
+                        >
+                          {participant.table.name}
+                        </Typography>
+                        <Typography
+                          variant="caption"
+                          sx={{
+                            color: 'text.secondary',
+                            fontSize: '1rem',
+                            wordBreak: 'break-word',
+                            display: 'block'
+                          }}
+                        >
+                          {participant.team!.name} #{participant.team!.number}
+                          {participant.team!.region && (
+                            <>
+                              {' '}
+                              <Box
+                                component="span"
+                                sx={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  verticalAlign: 'middle'
+                                }}
+                              ></Box>
+                            </>
+                          )}
+                        </Typography>
+                      </Box>
+                      {showIcon && getStatusIcon()}
+                    </Box>
+                  </Tooltip>
+                );
+              })}
+            </Fragment>
+          ))}
         </Stack>
       </CardContent>
     </Card>

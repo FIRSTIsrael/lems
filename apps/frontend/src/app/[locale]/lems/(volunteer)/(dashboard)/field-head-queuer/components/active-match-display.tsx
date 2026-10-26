@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, Fragment } from 'react';
 import { useTranslations } from 'next-intl';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
@@ -8,6 +8,7 @@ import dayjs from 'dayjs';
 import { Paper, Stack, Typography, Chip, Skeleton, Checkbox, Tooltip, Button } from '@mui/material';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import { groupParticipantsByPair } from '@lems/shared/utils';
 import { UPDATE_PARTICIPANT_STATUS_MUTATION, UPDATE_MATCH_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 import { useFieldHeadQueuer } from './field-head-queuer-context';
@@ -65,6 +66,33 @@ export function ActiveMatchDisplay() {
     },
     [divisionId, updateMatchMutation]
   );
+
+  const loadedParticipants = loadedMatch?.participants ?? [];
+  const participantsWithTable = loadedParticipants.flatMap(p =>
+    p.table ? [{ ...p, table: p.table }] : []
+  );
+  const participantGroups: {
+    key: string;
+    name: string | null;
+    participants: typeof loadedParticipants;
+  }[] = participantsWithTable.some(p => p.table.pairKey)
+    ? groupParticipantsByPair(
+        participantsWithTable,
+        participantsWithTable.map(p => p.table)
+      ).map(group => ({
+        key: group.key,
+        name: group.name,
+        participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
+      }))
+    : [
+        {
+          key: 'all',
+          name: null,
+          participants: loadedParticipants
+            .slice()
+            .sort((a, b) => (a.table?.name || '').localeCompare(b.table?.name || ''))
+        }
+      ];
 
   if (loading) {
     return (
@@ -221,102 +249,108 @@ export function ActiveMatchDisplay() {
                   {t('teams')}
                 </Typography>
                 <Stack spacing={1}>
-                  {loadedMatch.participants
-                    .slice()
-                    .sort((a, b) => (a.table?.name || '').localeCompare(b.table?.name || ''))
-                    .map(participant => {
-                      const isMarkedPresent = participant.queued;
-                      const isSignedIn = participant.team?.arrived ?? false;
-                      const teamNumber = participant.team?.number ?? '—';
-                      const tableName = participant.table?.name ?? '—';
-                      const participantId = participant.id;
+                  {participantGroups.map(group => (
+                    <Fragment key={group.key}>
+                      {group.name && (
+                        <Typography variant="caption" sx={{ opacity: 0.9, fontWeight: 700 }}>
+                          {group.name}
+                        </Typography>
+                      )}
+                      {group.participants.map(participant => {
+                        const isMarkedPresent = participant.queued;
+                        const isSignedIn = participant.team?.arrived ?? false;
+                        const teamNumber = participant.team?.number ?? '—';
+                        const tableName = participant.table?.name ?? '—';
+                        const participantId = participant.id;
 
-                      const statusKey = getStatusKey(
-                        !!participant.team,
-                        isSignedIn,
-                        isMarkedPresent
-                      );
+                        const statusKey = getStatusKey(
+                          !!participant.team,
+                          isSignedIn,
+                          isMarkedPresent
+                        );
 
-                      const statusChip = getStatusChipProps(statusKey);
+                        const statusChip = getStatusChipProps(statusKey);
 
-                      return (
-                        <Stack
-                          key={participant.id}
-                          direction="row"
-                          spacing={1}
-                          sx={{
-                            alignItems: 'center',
-                            p: 1,
-                            borderRadius: 1,
-                            bgcolor: 'rgba(255,255,255,0.08)'
-                          }}
-                        >
-                          <Chip
-                            label={tableName}
-                            size="small"
+                        return (
+                          <Stack
+                            key={participant.id}
+                            direction="row"
+                            spacing={1}
                             sx={{
-                              bgcolor: 'rgba(255,255,255,0.14)',
-                              color: 'primary.contrastText'
+                              alignItems: 'center',
+                              p: 1,
+                              borderRadius: 1,
+                              bgcolor: 'rgba(255,255,255,0.08)'
                             }}
-                          />
-                          <Chip
-                            label={teamNumber}
-                            size="small"
-                            variant="outlined"
-                            sx={{
-                              borderColor: 'rgba(255,255,255,0.6)',
-                              color: 'primary.contrastText',
-                              fontWeight: 600
-                            }}
-                          />
-                          <Chip
-                            label={t(`status.${statusKey}`)}
-                            size="small"
-                            color={statusChip.color}
-                            variant={statusChip.variant}
-                            sx={
-                              statusChip.variant === 'outlined'
-                                ? {
-                                    borderColor: 'rgba(255,255,255,0.6)',
-                                    color: 'primary.contrastText'
-                                  }
-                                : undefined
-                            }
-                          />
-                          {participant.team && (
-                            <Tooltip
-                              title={
-                                !isSignedIn
-                                  ? t('mark-disabled-not-signed-in')
-                                  : isMarkedPresent
-                                    ? t('unmark-arrived-to-match')
-                                    : t('mark-arrived-to-match')
+                          >
+                            <Chip
+                              label={tableName}
+                              size="small"
+                              sx={{
+                                bgcolor: 'rgba(255,255,255,0.14)',
+                                color: 'primary.contrastText'
+                              }}
+                            />
+                            <Chip
+                              label={teamNumber}
+                              size="small"
+                              variant="outlined"
+                              sx={{
+                                borderColor: 'rgba(255,255,255,0.6)',
+                                color: 'primary.contrastText',
+                                fontWeight: 600
+                              }}
+                            />
+                            <Chip
+                              label={t(`status.${statusKey}`)}
+                              size="small"
+                              color={statusChip.color}
+                              variant={statusChip.variant}
+                              sx={
+                                statusChip.variant === 'outlined'
+                                  ? {
+                                      borderColor: 'rgba(255,255,255,0.6)',
+                                      color: 'primary.contrastText'
+                                    }
+                                  : undefined
                               }
-                              arrow
-                            >
-                              <span>
-                                <Checkbox
-                                  checked={isMarkedPresent}
-                                  disabled={!isSignedIn}
-                                  onChange={() => {
-                                    if (!loadedMatch) return;
-                                    handleToggleArrivedToMatch(
-                                      loadedMatch.id,
-                                      participantId,
-                                      !isMarkedPresent
-                                    );
-                                  }}
-                                  sx={{
-                                    color: 'rgba(255,255,255,0.75)',
-                                    '&.Mui-checked': { color: 'success.light' }
-                                  }}
-                                />
-                              </span>
-                            </Tooltip>
-                          )}
-                        </Stack>
-                      );
-                    })}
+                            />
+                            {participant.team && (
+                              <Tooltip
+                                title={
+                                  !isSignedIn
+                                    ? t('mark-disabled-not-signed-in')
+                                    : isMarkedPresent
+                                      ? t('unmark-arrived-to-match')
+                                      : t('mark-arrived-to-match')
+                                }
+                                arrow
+                              >
+                                <span>
+                                  <Checkbox
+                                    checked={isMarkedPresent}
+                                    disabled={!isSignedIn}
+                                    onChange={() => {
+                                      if (!loadedMatch) return;
+                                      handleToggleArrivedToMatch(
+                                        loadedMatch.id,
+                                        participantId,
+                                        !isMarkedPresent
+                                      );
+                                    }}
+                                    sx={{
+                                      color: 'rgba(255,255,255,0.75)',
+                                      '&.Mui-checked': { color: 'success.light' }
+                                    }}
+                                  />
+                                </span>
+                              </Tooltip>
+                            )}
+                          </Stack>
+                        );
+                      })}
+                    </Fragment>
+                  ))}
                 </Stack>
               </Stack>
             </>

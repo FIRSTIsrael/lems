@@ -22,6 +22,7 @@ import {
   Typography,
   Skeleton
 } from '@mui/material';
+import { groupTablesByPair } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 import { UPDATE_MATCH_MUTATION, UPDATE_PARTICIPANT_STATUS_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
@@ -52,6 +53,14 @@ function getStatusChipVariant(
 ): 'outlined' | 'filled' {
   return statusKey === 'unknown_team' ? 'outlined' : 'filled';
 }
+
+const stickyHeaderSx = {
+  fontWeight: 600,
+  position: 'sticky',
+  top: 0,
+  bgcolor: 'background.paper',
+  zIndex: 10
+} as const;
 
 export function FieldSchedule() {
   const t = useTranslations('pages.field-head-queuer.field-schedule');
@@ -87,6 +96,13 @@ export function FieldSchedule() {
       });
     },
     [divisionId, updateParticipantMutation]
+  );
+
+  const paired = tables.some(table => table.pairKey);
+  const tableGroups = useMemo(() => groupTablesByPair(tables), [tables]);
+  const orderedTables = useMemo(
+    () => (paired ? tableGroups.flatMap(group => group.tables) : tables),
+    [paired, tableGroups, tables]
   );
 
   const availableMatches = useMemo(() => {
@@ -148,32 +164,59 @@ export function FieldSchedule() {
       </Box>
       <Table>
         <TableHead>
+          {paired && (
+            <TableRow>
+              <TableCell rowSpan={2} align="center" sx={{ ...stickyHeaderSx, left: 0, zIndex: 20 }}>
+                {t('match-number')}
+              </TableCell>
+              <TableCell rowSpan={2} sx={stickyHeaderSx}>
+                {t('time')}
+              </TableCell>
+              {tableGroups.map(group => (
+                <TableCell
+                  key={group.key}
+                  colSpan={group.tables.length}
+                  align="center"
+                  sx={stickyHeaderSx}
+                >
+                  {group.name}
+                </TableCell>
+              ))}
+              <TableCell rowSpan={2} sx={stickyHeaderSx}>
+                {t('actions')}
+              </TableCell>
+            </TableRow>
+          )}
           <TableRow>
-            <TableCell
-              align="center"
-              sx={{
-                fontWeight: 600,
-                position: 'sticky',
-                left: 0,
-                top: 0,
-                bgcolor: 'background.paper',
-                zIndex: 20
-              }}
-            >
-              {t('match-number')}
-            </TableCell>
-            <TableCell
-              sx={{
-                fontWeight: 600,
-                position: 'sticky',
-                top: 0,
-                bgcolor: 'background.paper',
-                zIndex: 10
-              }}
-            >
-              {t('time')}
-            </TableCell>
-            {tables.map(table => (
+            {!paired && (
+              <>
+                <TableCell
+                  align="center"
+                  sx={{
+                    fontWeight: 600,
+                    position: 'sticky',
+                    left: 0,
+                    top: 0,
+                    bgcolor: 'background.paper',
+                    zIndex: 20
+                  }}
+                >
+                  {t('match-number')}
+                </TableCell>
+                <TableCell
+                  sx={{
+                    fontWeight: 600,
+                    position: 'sticky',
+                    top: 0,
+                    bgcolor: 'background.paper',
+                    zIndex: 10
+                  }}
+                >
+                  {t('time')}
+                </TableCell>
+              </>
+            )}
+            {orderedTables.map(table => (
               <TableCell
                 key={table.id}
                 align="center"
@@ -188,17 +231,19 @@ export function FieldSchedule() {
                 {table.name}
               </TableCell>
             ))}
-            <TableCell
-              sx={{
-                fontWeight: 600,
-                position: 'sticky',
-                top: 0,
-                bgcolor: 'background.paper',
-                zIndex: 10
-              }}
-            >
-              {t('actions')}
-            </TableCell>
+            {!paired && (
+              <TableCell
+                sx={{
+                  fontWeight: 600,
+                  position: 'sticky',
+                  top: 0,
+                  bgcolor: 'background.paper',
+                  zIndex: 10
+                }}
+              >
+                {t('actions')}
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -233,7 +278,7 @@ export function FieldSchedule() {
                   {dayjs(match.scheduledTime).format('HH:mm')}
                 </Typography>
               </TableCell>
-              {tables.map(table => {
+              {orderedTables.map(table => {
                 const participant = match.participants.find(p => p.table?.id === table.id);
                 const team = participant?.team ?? null;
                 const isSignedIn = team?.arrived ?? false;

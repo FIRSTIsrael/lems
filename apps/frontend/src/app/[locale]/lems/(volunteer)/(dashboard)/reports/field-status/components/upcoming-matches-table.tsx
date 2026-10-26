@@ -14,6 +14,7 @@ import {
   Box
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
+import { groupFilledParticipants } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import type { Match } from '../graphql';
 
@@ -22,6 +23,42 @@ interface TeamsCellProps {
 }
 
 const TeamsCell = ({ participants }: TeamsCellProps) => {
+  const { getVersus } = useMatchTranslations();
+
+  if (participants.some(p => p.table.pairKey)) {
+    const groups = groupFilledParticipants(participants, () => 0);
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 3,
+          alignItems: 'center',
+          flexWrap: 'wrap'
+        }}
+      >
+        {groups.map(group => (
+          <Box key={group.key} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
+            >
+              {group.name}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ fontWeight: 500, fontFamily: 'monospace', fontSize: '1.1rem' }}
+            >
+              {group.participants
+                .map(({ team }) => `#${team?.number} ${team?.name}`)
+                .join(` ${getVersus()} `)}
+            </Typography>
+          </Box>
+        ))}
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
