@@ -143,6 +143,17 @@ export class Database {
     this.awards = new AwardsRepository(this.kysely);
   }
 
+  /**
+   * Runs `fn` in a single PostgreSQL transaction with transaction-bound repositories.
+   */
+  async withTransaction<T>(
+    fn: (repos: { tables: TablesRepository; eventUsers: EventUsersRepository }) => Promise<T>
+  ): Promise<T> {
+    return await this.kysely.transaction().execute(trx =>
+      fn({ tables: new TablesRepository(trx), eventUsers: new EventUsersRepository(trx) })
+    );
+  }
+
   async connect(): Promise<void> {
     try {
       // Test PostgreSQL connection

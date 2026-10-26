@@ -39,22 +39,24 @@ router.post(
       return;
     }
 
-    const tables =
-      getEdition(division) === 'future'
-        ? await db.tables.createPair(req.divisionId, name)
-        : [await db.tables.create({ division_id: req.divisionId, name })];
+    await db.withTransaction(async ({ tables: tablesRepo, eventUsers }) => {
+      const tables =
+        getEdition(division) === 'future'
+          ? await tablesRepo.createPair(req.divisionId, name)
+          : [await tablesRepo.create({ division_id: req.divisionId, name })];
 
-    for (const table of tables) {
-      const eventUser = await db.eventUsers.create({
-        event_id: division.event_id,
-        role: 'referee',
-        role_info: { tableId: table.id },
-        identifier: null,
-        password: generateVolunteerPassword()
-      });
+      for (const table of tables) {
+        const eventUser = await eventUsers.create({
+          event_id: division.event_id,
+          role: 'referee',
+          role_info: { tableId: table.id },
+          identifier: null,
+          password: generateVolunteerPassword()
+        });
 
-      await db.eventUsers.assignUserToDivisions(eventUser.id, [req.divisionId]);
-    }
+        await eventUsers.assignUserToDivisions(eventUser.id, [req.divisionId]);
+      }
+    });
 
     res.status(201).end();
   })
@@ -89,7 +91,12 @@ router.put(
     }
 
     const table = await db.tables.byId(tableId).get();
-    if (table?.pair_key) {
+    if (!table || table.division_id !== req.divisionId) {
+      res.status(404).json({ error: 'Table not found' });
+      return;
+    }
+
+    if (table.pair_key) {
       await db.tables.byPairKey(table.pair_key).rename(name);
     } else {
       await db.tables.byId(tableId).update({ name });
@@ -121,21 +128,28 @@ router.delete(
     }
 
     const table = await db.tables.byId(tableId).get();
-    const deletedIds = table?.pair_key
-      ? await db.tables.byPairKey(table.pair_key).delete()
-      : [tableId];
-
-    if (!table?.pair_key) {
-      await db.tables.byId(tableId).delete();
+    if (!table || table.division_id !== req.divisionId) {
+      res.status(404).json({ error: 'Table not found' });
+      return;
     }
 
-    for (const id of deletedIds) {
-      const tableEventUser = await db.eventUsers.byRoleInfo('tableId', id).get();
+    await db.withTransaction(async ({ tables, eventUsers }) => {
+      const deletedIds = table.pair_key
+        ? await tables.byPairKey(table.pair_key).delete()
+        : [tableId];
 
-      if (tableEventUser) {
-        await db.eventUsers.delete(tableEventUser.id);
+      if (!table.pair_key) {
+        await tables.byId(tableId).delete();
       }
-    }
+
+      for (const id of deletedIds) {
+        const tableEventUser = await eventUsers.byRoleInfo('tableId', id).get();
+
+        if (tableEventUser) {
+          await eventUsers.delete(tableEventUser.id);
+        }
+      }
+    });
 
     res.status(204).end();
   })
