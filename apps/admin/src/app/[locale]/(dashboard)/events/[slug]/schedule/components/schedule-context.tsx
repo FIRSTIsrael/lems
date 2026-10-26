@@ -5,6 +5,8 @@ import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import type { Edition } from '@lems/shared/edition';
 import { JUDGING_DEFAULTS } from '@lems/shared/judging';
+import { groupTablesByPair } from '@lems/shared/utils';
+import type { RobotGameTable } from '@lems/types/api/admin';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
 
@@ -36,6 +38,8 @@ export interface ScheduleContextType {
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
+  physicalTablesCount: number;
+  edition: Edition;
 
   practiceRounds: number;
   rankingRounds: number;
@@ -96,12 +100,15 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     { suspense: true }
   );
 
-  const { data: tables = [] } = useSWR<unknown[]>(
+  const { data: tables = [] } = useSWR<RobotGameTable[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/tables`,
     { suspense: true }
   );
 
-  const allowStagger = tables.length > 0 && tables.length % 4 === 0;
+  const physicalTablesCount = groupTablesByPair(tables).length;
+
+  const allowStagger =
+    edition === 'future' ? physicalTablesCount >= 2 : tables.length > 0 && tables.length % 4 === 0;
 
   const [staggerMatches, setStaggerMatchesState] = useState(allowStagger);
   const [practiceRounds, setPracticeRounds] = useState(DEFAULT_PRACTICE_ROUNDS);
@@ -158,6 +165,8 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     teamsCount: teams.length,
     roomsCount: rooms.length,
     tablesCount: tables.length,
+    physicalTablesCount,
+    edition,
 
     practiceRounds,
     rankingRounds,

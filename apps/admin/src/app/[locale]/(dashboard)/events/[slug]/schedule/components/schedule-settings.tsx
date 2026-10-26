@@ -34,6 +34,8 @@ export const ScheduleSettings: React.FC = () => {
     teamsCount,
     roomsCount,
     tablesCount,
+    physicalTablesCount,
+    edition,
     staggerMatches,
     practiceCycleTime,
     rankingCycleTime,
@@ -137,7 +139,12 @@ export const ScheduleSettings: React.FC = () => {
             >
               <TableRestaurant color="primary" />
               <Typography variant="body2">
-                {t('information.tables')}: {tablesCount}
+                {edition === 'future'
+                  ? t('information.tables-paired', {
+                      count: physicalTablesCount,
+                      sides: tablesCount
+                    })
+                  : `${t('information.tables')}: ${tablesCount}`}
               </Typography>
             </Stack>
           </Stack>

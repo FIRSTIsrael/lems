@@ -757,6 +757,7 @@
             "teams": "קבוצות",
             "rooms": "חדרים",
             "tables": "שולחנות",
+            "tables-paired": "{count} tables ({sides} sides)",
             "total-matches": "סה\"כ מקצים",
             "total-sessions": "סה\"כ סבבי שיפוט",
             "practice-rounds": "סבבי אימונים",

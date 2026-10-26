@@ -813,6 +813,7 @@
             "teams": "Drużyny",
             "rooms": "Sale",
             "tables": "Stoły",
+            "tables-paired": "{count} tables ({sides} sides)",
             "total-matches": "Łączna liczba meczów",
             "total-sessions": "Łączna liczba sesji sędziowskich",
             "practice-rounds": "Rundy treningowe",

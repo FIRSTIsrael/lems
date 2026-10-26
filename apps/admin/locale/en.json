@@ -757,6 +757,7 @@
             "teams": "Teams",
             "rooms": "Rooms",
             "tables": "Tables",
+            "tables-paired": "{count} tables ({sides} sides)",
             "total-matches": "Total Matches",
             "total-sessions": "Total Judging Sessions",
             "practice-rounds": "Practice Rounds",
