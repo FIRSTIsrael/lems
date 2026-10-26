@@ -49,10 +49,16 @@ export const makePortalTeamRobotGameMatchResponse = (
     );
   }
 
+  const pairableTables = tables.map(t => ({
+    id: t.id,
+    name: t.name,
+    pairKey: t.pair_key,
+    side: t.side
+  }));
   const opponentParticipant = getOpponent(
     match.participants.map(p => ({ ...p, table: { id: p.table_id } })),
     table.id,
-    tables
+    pairableTables
   );
   const opponentTeam = opponentParticipant?.team_id
     ? teams.find(t => t.id === opponentParticipant.team_id)
