@@ -221,6 +221,9 @@ export const assignCoopertitionAwards = async (divisionId: string): Promise<void
   const winners = selectCoopertitionWinners(results, computeTeamAverages(scoresheetInputs), places);
 
   const winnerIds = winners.flat();
+  for (const row of rows) {
+    await db.awards.clearWinner(row.id);
+  }
   for (let i = 0; i < rows.length; i++) {
     const teamId = winnerIds[i];
     if (teamId) {
