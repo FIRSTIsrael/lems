@@ -33,6 +33,7 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
       id
       divisionId
       tableIndex
+      side
       startTime
       endTime
       team {

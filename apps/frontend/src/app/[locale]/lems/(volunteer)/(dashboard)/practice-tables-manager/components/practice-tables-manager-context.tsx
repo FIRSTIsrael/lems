@@ -1,6 +1,8 @@
 'use client';
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
+import type { TableSide } from '@lems/shared/utils';
+import { positionKey } from '../hooks/use-practice-tables-schedule';
 
 interface Team {
   id: string;
@@ -14,6 +16,7 @@ interface PracticeTableAssignment {
   divisionId: string;
   team: Team;
   tableIndex: number;
+  side: TableSide | null;
   startTime: string; // ISO 8601 datetime
   endTime: string; // ISO 8601 datetime
 }
@@ -40,7 +43,7 @@ interface PracticeTablesManagerContextType {
   config: PracticeTablesConfig | null;
   teams: Team[];
   assignments: PracticeTableAssignment[];
-  assignmentsMap: Record<string, Record<string, Team>>; // tableIndex -> time -> Team
+  assignmentsMap: Record<string, Record<string, Team>>; // positionKey -> time -> Team
   loading: boolean;
 }
 
@@ -72,12 +75,12 @@ export function PracticeTablesManagerProvider({
     const map: Record<string, Record<string, Team>> = {};
 
     assignments.forEach(assignment => {
-      const tableIndex = assignment.tableIndex.toString();
-      if (!map[tableIndex]) {
-        map[tableIndex] = {};
+      const key = positionKey(assignment.tableIndex, assignment.side);
+      if (!map[key]) {
+        map[key] = {};
       }
 
-      map[tableIndex][assignment.startTime] = assignment.team;
+      map[key][assignment.startTime] = assignment.team;
     });
 
     return map;
@@ -107,9 +110,7 @@ export function PracticeTablesManagerProvider({
 export function usePracticeTablesManager() {
   const context = useContext(PracticeTablesManagerContext);
   if (!context) {
-    throw new Error(
-      'usePracticeTablesManager must be used within a PracticeTablesManagerProvider'
-    );
+    throw new Error('usePracticeTablesManager must be used within a PracticeTablesManagerProvider');
   }
   return context;
 }

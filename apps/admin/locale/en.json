@@ -1140,6 +1140,7 @@
       "practice-tables": {
         "title": "Practice Tables Configuration",
         "description": "Configure practice table settings for each division",
+        "teams-per-slot": "Teams per slot",
         "fields": {
           "division": "Division",
           "table-count": "Number of Practice Tables",

@@ -1,3 +1,5 @@
+import type { TableSide } from '@lems/shared/utils';
+
 export interface Team {
   id: string;
   number: number;
@@ -25,6 +27,7 @@ export interface PracticeTableAssignment {
   divisionId: string;
   team: Team;
   tableIndex: number;
+  side: TableSide | null;
   startTime: string; // ISO 8601 datetime
   endTime: string; // ISO 8601 datetime
 }
@@ -68,6 +71,7 @@ export interface UpdateAssignmentVars {
     divisionId: string;
     teamId: string | null;
     tableIndex: number;
+    side: TableSide | null;
     startTime: string;
   };
 }

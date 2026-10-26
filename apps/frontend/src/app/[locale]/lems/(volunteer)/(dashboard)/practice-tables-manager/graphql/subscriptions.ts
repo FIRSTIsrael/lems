@@ -21,6 +21,7 @@ export const PRACTICE_TABLE_ASSIGNMENTS_SUBSCRIPTION: TypedDocumentNode<
         affiliation
       }
       tableIndex
+      side
       startTime
       endTime
     }

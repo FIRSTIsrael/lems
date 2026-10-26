@@ -1,9 +1,19 @@
 import { useMemo } from 'react';
 import {
   generatePracticeTableTimeSlots,
-  isTimeSlotBlocked as checkTimeSlotBlocked
+  isTimeSlotBlocked as checkTimeSlotBlocked,
+  TABLE_SIDES,
+  type TableSide
 } from '@lems/shared/utils';
 import type { Team, PracticeTableAssignment, PracticeTablesConfig } from '../graphql/types';
+
+export interface PracticePosition {
+  tableIndex: number;
+  side: TableSide | null;
+}
+
+export const positionKey = (tableIndex: number, side: TableSide | null) =>
+  `${tableIndex}:${side ?? ''}`;
 
 export interface BlockedSlotInfo {
   reason?: string;
@@ -13,22 +23,33 @@ export interface BlockedSlotInfo {
 
 export interface UsePracticeTablesScheduleResult {
   timeSlots: string[];
-  assignmentsMap: Record<number, Record<string, Team>>;
+  positions: PracticePosition[];
+  assignmentsMap: Record<string, Record<string, Team>>;
   isBlocked: (time: string) => boolean;
   getBlockedSlotInfo: (time: string) => BlockedSlotInfo | null;
-  getAssignment: (tableIndex: number, time: string) => Team | null;
+  getAssignment: (tableIndex: number, time: string, side: TableSide | null) => Team | null;
 }
 
 /**
  * Hook to manage practice tables schedule data and operations
  * @param config - Practice tables configuration
  * @param assignments - Array of practice table assignments
+ * @param paired - Whether each table slot has two positions (sides A and B)
  * @returns Schedule utilities and data structures
  */
 export function usePracticeTablesSchedule(
   config: PracticeTablesConfig,
-  assignments: PracticeTableAssignment[]
+  assignments: PracticeTableAssignment[],
+  paired: boolean
 ): UsePracticeTablesScheduleResult {
+  const positions = useMemo(
+    () =>
+      Array.from({ length: config.tableCount }, (_, tableIndex) =>
+        (paired ? TABLE_SIDES : [null]).map(side => ({ tableIndex, side }))
+      ).flat(),
+    [config.tableCount, paired]
+  );
+
   // Generate time slots using shared utility
   const timeSlots = useMemo(
     () =>
@@ -38,16 +59,16 @@ export function usePracticeTablesSchedule(
 
   // Create assignments map indexed by table and time
   const assignmentsMap = useMemo(() => {
-    const map: Record<number, Record<string, Team>> = {};
+    const map: Record<string, Record<string, Team>> = {};
 
     assignments.forEach(assignment => {
-      const tableIndex = assignment.tableIndex;
-      if (!map[tableIndex]) {
-        map[tableIndex] = {};
+      const key = positionKey(assignment.tableIndex, assignment.side);
+      if (!map[key]) {
+        map[key] = {};
       }
 
       // Use the full ISO datetime as the key
-      map[tableIndex][assignment.startTime] = assignment.team;
+      map[key][assignment.startTime] = assignment.team;
     });
 
     return map;
@@ -91,14 +112,15 @@ export function usePracticeTablesSchedule(
   // Get assignment for a specific table and time
   const getAssignment = useMemo(
     () =>
-      (tableIndex: number, time: string): Team | null => {
-        return assignmentsMap[tableIndex]?.[time] || null;
+      (tableIndex: number, time: string, side: TableSide | null): Team | null => {
+        return assignmentsMap[positionKey(tableIndex, side)]?.[time] || null;
       },
     [assignmentsMap]
   );
 
   return {
     timeSlots,
+    positions,
     assignmentsMap,
     isBlocked,
     getBlockedSlotInfo,

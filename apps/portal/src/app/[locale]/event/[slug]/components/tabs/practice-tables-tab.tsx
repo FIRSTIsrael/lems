@@ -20,8 +20,11 @@ import {
 import {
   generatePracticeTableTimeSlots,
   isTimeSlotBlocked,
-  formatTimeOnly
+  formatTimeOnly,
+  TABLE_SIDES,
+  type TableSide
 } from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { useDivision } from '../division-data-context';
 
@@ -52,6 +55,7 @@ interface PracticeTableAssignment {
   id: string;
   team: Team;
   tableIndex: number;
+  side?: TableSide | null;
   startTime: string; // ISO 8601 datetime
   endTime: string; // ISO 8601 datetime
 }
@@ -88,6 +92,10 @@ export const PracticeTablesTab: React.FC = () => {
   }
 
   const { config, assignments } = data;
+  const paired = getEdition(division) === 'future';
+  const positions = Array.from({ length: config.tableCount }, (_, tableIndex) =>
+    (paired ? TABLE_SIDES : [null]).map(side => ({ tableIndex, side }))
+  ).flat();
 
   // Generate time slots using shared utility
   const timeSlots = generatePracticeTableTimeSlots(
@@ -123,9 +131,11 @@ export const PracticeTablesTab: React.FC = () => {
     };
   };
 
-  // Get assignment for a specific table and time
-  const getAssignment = (tableIndex: number, time: string) => {
-    return assignments?.find(a => a.tableIndex === tableIndex && a.startTime === time);
+  // Get assignment for a specific table, side and time
+  const getAssignment = (tableIndex: number, time: string, side: TableSide | null) => {
+    return assignments?.find(
+      a => a.tableIndex === tableIndex && (a.side ?? null) === side && a.startTime === time
+    );
   };
 
   return (
@@ -147,13 +157,34 @@ export const PracticeTablesTab: React.FC = () => {
         <Table size="small" sx={{ minWidth: 650 }}>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 600, minWidth: 80 }}>{t('time')}</TableCell>
+              <TableCell rowSpan={paired ? 2 : 1} sx={{ fontWeight: 600, minWidth: 80 }}>
+                {t('time')}
+              </TableCell>
               {Array.from({ length: config.tableCount }, (_, i) => (
-                <TableCell key={i} align="center" sx={{ fontWeight: 600, minWidth: 120 }}>
+                <TableCell
+                  key={i}
+                  align="center"
+                  colSpan={paired ? TABLE_SIDES.length : 1}
+                  sx={{ fontWeight: 600, minWidth: 120 }}
+                >
                   {t('table')} {i + 1}
                 </TableCell>
               ))}
             </TableRow>
+            {paired && (
+              <TableRow>
+                {positions.map(({ tableIndex, side }) => (
+                  <TableCell
+                    key={`${tableIndex}:${side}`}
+                    align="center"
+                    title={t('side', { side: side ?? '' })}
+                    sx={{ fontWeight: 600 }}
+                  >
+                    {side}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
           </TableHead>
           <TableBody>
             {timeSlots.map(time => {
@@ -175,16 +206,17 @@ export const PracticeTablesTab: React.FC = () => {
                   >
                     {formatTimeOnly(time)}
                   </TableCell>
-                  {Array.from({ length: config.tableCount }, (_, tableIndex) => {
-                    const assignment = getAssignment(tableIndex, time);
+                  {positions.map(({ tableIndex, side }, positionIndex) => {
+                    const key = `${tableIndex}:${side ?? ''}`;
+                    const assignment = getAssignment(tableIndex, time, side);
 
                     if (blocked && blockedInfo) {
-                      // Only render the merged cell on the first table column and first time slot of the blocked range
-                      if (tableIndex === 0 && isFirstBlockedSlot) {
+                      // Only render the merged cell on the first position column and first time slot of the blocked range
+                      if (positionIndex === 0 && isFirstBlockedSlot) {
                         return (
                           <TableCell
-                            key={tableIndex}
-                            colSpan={config.tableCount}
+                            key={key}
+                            colSpan={positions.length}
                             rowSpan={blockedInfo.rowSpan}
                             align="center"
                             sx={{
@@ -206,7 +238,7 @@ export const PracticeTablesTab: React.FC = () => {
                       const href = `/event/${eventSlug}/team/${assignment.team.slug}`;
 
                       return (
-                        <TableCell key={tableIndex} align="center" sx={{ p: 0 }}>
+                        <TableCell key={key} align="center" sx={{ p: 0 }}>
                           <Link
                             href={href}
                             style={{
@@ -238,7 +270,7 @@ export const PracticeTablesTab: React.FC = () => {
                     }
 
                     return (
-                      <TableCell key={tableIndex} align="center">
+                      <TableCell key={key} align="center">
                         <Typography variant="caption" color="text.secondary">
                           {t('available')}
                         </Typography>

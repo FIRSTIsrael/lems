@@ -16,7 +16,7 @@ import {
   Skeleton
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { formatTimeOnly } from '@lems/shared/utils';
+import { formatTimeOnly, type TableSide } from '@lems/shared/utils';
 
 interface Team {
   id: string;
@@ -28,12 +28,13 @@ interface Team {
 
 interface TeamSearchBarProps {
   teams: Team[];
-  selectedCell: { tableIndex: number; time: string } | null;
+  selectedCell: { tableIndex: number; side: TableSide | null; time: string } | null;
   onAssign: (team: Team) => void;
 }
 
 export function TeamSearchBar({ teams, selectedCell, onAssign }: TeamSearchBarProps) {
   const t = useTranslations('pages.practice-tables-manager.search');
+  const tSchedule = useTranslations('pages.practice-tables-manager.schedule');
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredTeams = teams.filter(team => {
@@ -74,6 +75,7 @@ export function TeamSearchBar({ teams, selectedCell, onAssign }: TeamSearchBarPr
                 table: selectedCell.tableIndex + 1,
                 time: formatTimeOnly(selectedCell.time)
               })}
+              {selectedCell.side && `, ${tSchedule('side', { side: selectedCell.side })}`}
             </Typography>
           )}
         </Box>

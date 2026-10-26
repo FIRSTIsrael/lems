@@ -11,8 +11,12 @@ import {
   Chip,
   Box
 } from '@mui/material';
-import { formatTimeOnly } from '@lems/shared/utils';
-import { usePracticeTablesSchedule } from '../../../practice-tables-manager/hooks/use-practice-tables-schedule';
+import { formatTimeOnly, TABLE_SIDES } from '@lems/shared/utils';
+import { useEdition } from '../../../../hooks/use-edition';
+import {
+  usePracticeTablesSchedule,
+  positionKey
+} from '../../../practice-tables-manager/hooks/use-practice-tables-schedule';
 import type {
   PracticeTablesConfig,
   PracticeTableAssignment
@@ -26,11 +30,11 @@ interface Props {
 export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments }) => {
   const t = useTranslations('pages.reports.practice-tables');
 
+  const paired = useEdition() === 'future';
+
   // Use hook to manage schedule data and operations
-  const { timeSlots, isBlocked, getBlockedSlotInfo, getAssignment } = usePracticeTablesSchedule(
-    config,
-    assignments
-  );
+  const { timeSlots, positions, isBlocked, getBlockedSlotInfo, getAssignment } =
+    usePracticeTablesSchedule(config, assignments, paired);
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
@@ -38,13 +42,34 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
         <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell sx={{ fontWeight: 'bold', minWidth: 80 }}>{t('time')}</TableCell>
+              <TableCell rowSpan={paired ? 2 : 1} sx={{ fontWeight: 'bold', minWidth: 80 }}>
+                {t('time')}
+              </TableCell>
               {Array.from({ length: config.tableCount }, (_, i) => (
-                <TableCell key={i} align="center" sx={{ fontWeight: 'bold', minWidth: 120 }}>
+                <TableCell
+                  key={i}
+                  align="center"
+                  colSpan={paired ? TABLE_SIDES.length : 1}
+                  sx={{ fontWeight: 'bold', minWidth: 120 }}
+                >
                   {t('table', { number: i + 1 })}
                 </TableCell>
               ))}
             </TableRow>
+            {paired && (
+              <TableRow>
+                {positions.map(({ tableIndex, side }) => (
+                  <TableCell
+                    key={positionKey(tableIndex, side)}
+                    align="center"
+                    title={t('side', { side: side ?? '' })}
+                    sx={{ fontWeight: 'bold', top: 57 }}
+                  >
+                    {side}
+                  </TableCell>
+                ))}
+              </TableRow>
+            )}
           </TableHead>
           <TableBody>
             {timeSlots.map(time => {
@@ -63,16 +88,17 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
                   >
                     {formatTimeOnly(time)}
                   </TableCell>
-                  {Array.from({ length: config.tableCount }, (_, tableIndex) => {
-                    const assignment = getAssignment(tableIndex, time);
+                  {positions.map(({ tableIndex, side }, positionIndex) => {
+                    const key = positionKey(tableIndex, side);
+                    const assignment = getAssignment(tableIndex, time, side);
 
                     if (blocked && blockedInfo) {
-                      // Only render the merged cell on the first table column and first time slot of the blocked range
-                      if (tableIndex === 0 && isFirstBlockedSlot) {
+                      // Only render the merged cell on the first position column and first time slot of the blocked range
+                      if (positionIndex === 0 && isFirstBlockedSlot) {
                         return (
                           <TableCell
-                            key={tableIndex}
-                            colSpan={config.tableCount}
+                            key={key}
+                            colSpan={positions.length}
                             rowSpan={blockedInfo.rowSpan}
                             align="center"
                             sx={{
@@ -92,7 +118,7 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
 
                     if (assignment) {
                       return (
-                        <TableCell key={tableIndex} align="center">
+                        <TableCell key={key} align="center">
                           <Box>
                             <Chip
                               label={`#${assignment.number}`}
@@ -113,7 +139,7 @@ export const PracticeTablesSchedule: React.FC<Props> = ({ config, assignments })
                     }
 
                     return (
-                      <TableCell key={tableIndex} align="center">
+                      <TableCell key={key} align="center">
                         <Typography variant="caption" color="text.secondary">
                           {t('available')}
                         </Typography>

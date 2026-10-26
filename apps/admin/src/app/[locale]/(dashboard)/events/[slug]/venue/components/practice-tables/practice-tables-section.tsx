@@ -6,6 +6,8 @@ import { Typography, Alert, Paper } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { Division } from '@lems/types/api/admin';
 import { getApiBase } from '@lems/shared';
+import { getEdition } from '@lems/shared/edition';
+import { TABLE_SIDES } from '@lems/shared/utils';
 import { useEvent } from '../../../components/event-context';
 import { ConfigurationForm, PracticeTablesConfig } from './configuration-form';
 
@@ -97,6 +99,11 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
       )}
 
       <ConfigurationForm config={config} onChange={setConfig} onSave={handleSave} saving={saving} />
+      {getEdition(division) === 'future' && (
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          {t('teams-per-slot')}: {config.tableCount * TABLE_SIDES.length}
+        </Typography>
+      )}
     </Paper>
   );
 };

@@ -15,8 +15,8 @@ import {
 } from '@mui/material';
 import { Add as AddIcon, Clear as ClearIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
-import { formatTimeOnly } from '@lems/shared/utils';
-import { usePracticeTablesSchedule } from '../hooks/use-practice-tables-schedule';
+import { formatTimeOnly, TABLE_SIDES, type TableSide } from '@lems/shared/utils';
+import { usePracticeTablesSchedule, positionKey } from '../hooks/use-practice-tables-schedule';
 
 interface Team {
   id: string;
@@ -37,10 +37,11 @@ interface ScheduleGridProps {
   blockedTimeSlots: BlockedTimeSlot[];
   startTime: string; // ISO 8601 datetime
   endTime: string; // ISO 8601 datetime
-  selectedCell: { tableIndex: number; time: string } | null;
-  onCellSelect: (tableIndex: number, time: string) => void;
+  selectedCell: { tableIndex: number; side: TableSide | null; time: string } | null;
+  onCellSelect: (tableIndex: number, side: TableSide | null, time: string) => void;
   assignments: Record<string, Record<string, Team>>;
-  onClearAssignment: (tableIndex: number, time: string) => void;
+  onClearAssignment: (tableIndex: number, side: TableSide | null, time: string) => void;
+  paired: boolean;
 }
 
 export function ScheduleGrid({
@@ -52,12 +53,13 @@ export function ScheduleGrid({
   selectedCell,
   onCellSelect,
   assignments,
-  onClearAssignment
+  onClearAssignment,
+  paired
 }: ScheduleGridProps) {
   const t = useTranslations('pages.practice-tables-manager.schedule');
 
   // Use shared hook to manage schedule logic
-  const { timeSlots, isBlocked, getBlockedSlotInfo } = usePracticeTablesSchedule(
+  const { timeSlots, positions, isBlocked, getBlockedSlotInfo } = usePracticeTablesSchedule(
     {
       divisionId: '', // Not needed for this use case
       tableCount,
@@ -66,16 +68,26 @@ export function ScheduleGrid({
       endTime,
       blockedTimeSlots
     },
-    [] // No assignments needed - we get them from props
+    [], // No assignments needed - we get them from props
+    paired
   );
 
-  const isCellSelected = (tableIndex: number, time: string) => {
-    return selectedCell?.tableIndex === tableIndex && selectedCell?.time === time;
+  const isCellSelected = (tableIndex: number, side: TableSide | null, time: string) => {
+    return (
+      selectedCell?.tableIndex === tableIndex &&
+      selectedCell?.side === side &&
+      selectedCell?.time === time
+    );
   };
 
-  const handleClearClick = (tableIndex: number, time: string, e: React.MouseEvent) => {
+  const handleClearClick = (
+    tableIndex: number,
+    side: TableSide | null,
+    time: string,
+    e: React.MouseEvent
+  ) => {
     e.stopPropagation();
-    onClearAssignment(tableIndex, time);
+    onClearAssignment(tableIndex, side, time);
   };
 
   return (
@@ -83,13 +95,34 @@ export function ScheduleGrid({
       <Table stickyHeader size="small">
         <TableHead>
           <TableRow>
-            <TableCell sx={{ fontWeight: 'bold', minWidth: 80 }}>{t('time')}</TableCell>
+            <TableCell rowSpan={paired ? 2 : 1} sx={{ fontWeight: 'bold', minWidth: 80 }}>
+              {t('time')}
+            </TableCell>
             {Array.from({ length: tableCount }, (_, i) => (
-              <TableCell key={i} align="center" sx={{ fontWeight: 'bold', minWidth: 120 }}>
+              <TableCell
+                key={i}
+                align="center"
+                colSpan={paired ? TABLE_SIDES.length : 1}
+                sx={{ fontWeight: 'bold', minWidth: 120 }}
+              >
                 {t('table')} {i + 1}
               </TableCell>
             ))}
           </TableRow>
+          {paired && (
+            <TableRow>
+              {positions.map(({ tableIndex, side }) => (
+                <TableCell
+                  key={positionKey(tableIndex, side)}
+                  align="center"
+                  title={t('side', { side: side ?? '' })}
+                  sx={{ fontWeight: 'bold', top: 37 }}
+                >
+                  {side}
+                </TableCell>
+              ))}
+            </TableRow>
+          )}
         </TableHead>
         <TableBody>
           {timeSlots.map(time => {
@@ -113,17 +146,18 @@ export function ScheduleGrid({
                 >
                   {displayTime}
                 </TableCell>
-                {Array.from({ length: tableCount }, (_, tableIndex) => {
-                  const assignment = assignments[tableIndex]?.[time];
-                  const isSelected = isCellSelected(tableIndex, time);
+                {positions.map(({ tableIndex, side }, positionIndex) => {
+                  const key = positionKey(tableIndex, side);
+                  const assignment = assignments[key]?.[time];
+                  const isSelected = isCellSelected(tableIndex, side, time);
 
                   if (blocked && blockedInfo) {
-                    // Only render the merged cell on the first table column and first time slot of the blocked range
-                    if (tableIndex === 0 && isFirstBlockedSlot) {
+                    // Only render the merged cell on the first position column and first time slot of the blocked range
+                    if (positionIndex === 0 && isFirstBlockedSlot) {
                       return (
                         <TableCell
-                          key={tableIndex}
-                          colSpan={tableCount}
+                          key={key}
+                          colSpan={positions.length}
                           rowSpan={blockedInfo.rowSpan}
                           align="center"
                           sx={{
@@ -143,9 +177,9 @@ export function ScheduleGrid({
 
                   return (
                     <TableCell
-                      key={tableIndex}
+                      key={key}
                       align="center"
-                      onClick={() => onCellSelect(tableIndex, time)}
+                      onClick={() => onCellSelect(tableIndex, side, time)}
                       sx={{
                         cursor: 'pointer',
                         position: 'relative',
@@ -160,7 +194,7 @@ export function ScheduleGrid({
                           <Chip
                             label={`#${assignment.number}`}
                             size="small"
-                            onDelete={e => handleClearClick(tableIndex, time, e)}
+                            onDelete={e => handleClearClick(tableIndex, side, time, e)}
                             deleteIcon={<ClearIcon />}
                             color="primary"
                             sx={{ mb: 0.5 }}

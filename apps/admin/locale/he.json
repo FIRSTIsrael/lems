@@ -1140,6 +1140,7 @@
       "practice-tables": {
         "title": "הגדרות שולחנות אימונים",
         "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "teams-per-slot": "Teams per slot",
         "fields": {
           "division": "בית",
           "table-count": "מספר שולחנות אימונים",

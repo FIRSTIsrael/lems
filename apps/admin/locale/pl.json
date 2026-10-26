@@ -638,6 +638,7 @@
         "practice-tables": {
           "title": "Konfiguracja Stołów Treningowych",
           "description": "Skonfiguruj ustawienia stołów treningowych dla każdej dywizji",
+          "teams-per-slot": "Teams per slot",
           "fields": {
             "division": "Dywizja",
             "table-count": "Liczba Stołów Treningowych",
