@@ -8,6 +8,7 @@ export interface PracticeTablesScheduleTable {
   table_number: number; // Table index (0-based)
   start_time: Date; // Start time of the practice slot (full datetime)
   end_time: Date; // End time of the practice slot (full datetime)
+  side: ColumnType<'A' | 'B' | null, 'A' | 'B' | null | undefined, 'A' | 'B' | null>; // Position at the table (Future edition); null in Founders
   created_at: ColumnType<Date, never, never>; // Timestamp when the assignment was created
 }
 

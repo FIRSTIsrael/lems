@@ -19,6 +19,7 @@ export const practiceTablesScheduleResolver: GraphQLFieldResolver<
     tableIndex: assignment.table_number,
     startTime: assignment.start_time.toISOString(),
     endTime: assignment.end_time.toISOString(),
+    side: assignment.side,
     createdAt: assignment.created_at.toISOString()
   }));
 };

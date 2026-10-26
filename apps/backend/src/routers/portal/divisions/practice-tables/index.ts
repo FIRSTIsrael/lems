@@ -27,6 +27,7 @@ router.get(
       tableIndex: a.table_number,
       startTime: a.start_time.toISOString(),
       endTime: a.end_time.toISOString(),
+      side: a.side,
       team: {
         id: a.team_id,
         number: a.number,

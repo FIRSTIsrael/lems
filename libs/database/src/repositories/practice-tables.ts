@@ -14,6 +14,7 @@ export interface PracticeTableAssignmentWithTeam {
   start_time: Date;
   end_time: Date;
   created_at: Date;
+  side: 'A' | 'B' | null;
   team_id: string;
   number: number;
   name: string;
@@ -58,6 +59,7 @@ export class DivisionPracticeTablesSelector {
         'pts.start_time',
         'pts.end_time',
         'pts.created_at',
+        'pts.side',
         't.id as team_id',
         't.number',
         't.name',
@@ -89,13 +91,15 @@ export class DivisionPracticeTablesSelector {
    */
   async getAssignment(
     tableIndex: number,
-    startTime: Date
+    startTime: Date,
+    side: 'A' | 'B' | null
   ): Promise<PracticeTablesSchedule | undefined> {
     const result = await this.db
       .selectFrom('practice_tables_schedule')
       .where('division_id', '=', this.divisionId)
       .where('table_number', '=', tableIndex)
       .where('start_time', '=', startTime)
+      .where(eb => (side === null ? eb('side', 'is', null) : eb('side', '=', side)))
       .selectAll()
       .executeTakeFirst();
 
@@ -145,6 +149,7 @@ export class DivisionPracticeTablesSelector {
   async updateAssignment(
     tableIndex: number,
     startTime: Date,
+    side: 'A' | 'B' | null,
     updates: UpdateablePracticeTablesSchedule
   ): Promise<PracticeTablesSchedule | undefined> {
     const result = await this.db
@@ -153,6 +158,7 @@ export class DivisionPracticeTablesSelector {
       .where('division_id', '=', this.divisionId)
       .where('table_number', '=', tableIndex)
       .where('start_time', '=', startTime)
+      .where(eb => (side === null ? eb('side', 'is', null) : eb('side', '=', side)))
       .returningAll()
       .executeTakeFirst();
 
@@ -162,12 +168,17 @@ export class DivisionPracticeTablesSelector {
   /**
    * Delete a practice table assignment in this division
    */
-  async deleteAssignment(tableIndex: number, startTime: Date): Promise<boolean> {
+  async deleteAssignment(
+    tableIndex: number,
+    startTime: Date,
+    side: 'A' | 'B' | null
+  ): Promise<boolean> {
     const result = await this.db
       .deleteFrom('practice_tables_schedule')
       .where('division_id', '=', this.divisionId)
       .where('table_number', '=', tableIndex)
       .where('start_time', '=', startTime)
+      .where(eb => (side === null ? eb('side', 'is', null) : eb('side', '=', side)))
       .execute();
 
     return result.length > 0;
