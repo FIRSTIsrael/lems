@@ -32,6 +32,7 @@ export interface AwardWinnerSlideAward {
   name: string;
   place?: number;
   winner?: TeamWinner | PersonalWinner;
+  coWinner?: TeamWinner;
   divisionColor?: string;
 }
 
@@ -51,6 +52,10 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, editi
   const isTeamWinner = 'number' in award.winner;
   const winner = award.winner as TeamWinner | PersonalWinner;
   const localizedAwardName = getName(award.name);
+  const hasCoWinner = isTeamWinner && !!award.coWinner;
+  const teamWinners = hasCoWinner
+    ? [winner as TeamWinner, award.coWinner as TeamWinner]
+    : [winner as TeamWinner];
 
   console.log('Rendering AwardWinnerSlide for award:', award);
 
@@ -87,7 +92,7 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, editi
             px: 10,
             py: 8,
             width: '90%',
-            maxWidth: '900px',
+            maxWidth: hasCoWinner ? '1600px' : '900px',
             backgroundColor: 'white',
             boxShadow: award.divisionColor
               ? `0 20px 40px ${award.divisionColor}40, 0 0 60px ${award.divisionColor}20`
@@ -110,37 +115,50 @@ export const AwardWinnerSlide: React.FC<AwardWinnerSlideProps> = ({ award, editi
                 {isTeamWinner ? t('awarded-to-team') : t('awarded-to')}
               </Typography>
               {isTeamWinner ? (
-                <>
-                  <Stack direction="column" spacing={2}>
-                    <Typography
-                      sx={{
-                        fontSize: '4.5rem',
-                        fontWeight: 900,
-                        color: award.divisionColor || 'primary.main',
-                        letterSpacing: '-0.02em'
-                      }}
+                <Stack
+                  direction={hasCoWinner ? 'row' : 'column'}
+                  spacing={hasCoWinner ? 6 : 3}
+                  sx={{ justifyContent: 'center' }}
+                >
+                  {teamWinners.map(team => (
+                    <Stack
+                      key={team.id}
+                      direction="column"
+                      spacing={3}
+                      sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}
                     >
-                      #{(winner as TeamWinner).number}
-                    </Typography>
-                    <Typography
-                      sx={{
-                        fontSize: '3.5rem',
-                        fontWeight: 700,
-                        color: 'text.primary',
-                        lineHeight: 1.2
-                      }}
-                    >
-                      {(winner as TeamWinner).name}
-                    </Typography>
-                  </Stack>
-                  {(winner as TeamWinner).affiliation && (
-                    <Typography
-                      sx={{ fontSize: '1.75rem', color: 'text.secondary', fontWeight: 500 }}
-                    >
-                      {(winner as TeamWinner).affiliation}, {(winner as TeamWinner).city}
-                    </Typography>
-                  )}
-                </>
+                      <Stack direction="column" spacing={2}>
+                        <Typography
+                          sx={{
+                            fontSize: hasCoWinner ? '3.5rem' : '4.5rem',
+                            fontWeight: 900,
+                            color: award.divisionColor || 'primary.main',
+                            letterSpacing: '-0.02em'
+                          }}
+                        >
+                          #{team.number}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            fontSize: hasCoWinner ? '2.75rem' : '3.5rem',
+                            fontWeight: 700,
+                            color: 'text.primary',
+                            lineHeight: 1.2
+                          }}
+                        >
+                          {team.name}
+                        </Typography>
+                      </Stack>
+                      {team.affiliation && (
+                        <Typography
+                          sx={{ fontSize: '1.75rem', color: 'text.secondary', fontWeight: 500 }}
+                        >
+                          {team.affiliation}, {team.city}
+                        </Typography>
+                      )}
+                    </Stack>
+                  ))}
+                </Stack>
               ) : (
                 <>
                   <Typography

@@ -114,7 +114,7 @@ export function buildAwardsSlides(
     if (awardGroup.length === 0) return;
 
     const firstAward = awardGroup[0];
-    const showPlace = awardGroup.length > 1;
+    const showPlace = new Set(awardGroup.map(a => a.place)).size > 1;
 
     // Get award display name
     const awardDisplayName = getAwardName ? getAwardName(firstAward.name) : firstAward.name;
@@ -158,37 +158,58 @@ export function buildAwardsSlides(
     }
 
     // Add winner slides based on style
-    awardGroup
+    // Rows sharing a place (co-winners) are revealed together on one slide
+    const placeEntries: {
+      award: (typeof awardGroup)[number];
+      coAward?: (typeof awardGroup)[number];
+    }[] = [];
+    [...awardGroup]
       .sort((a, b) => b.place - a.place)
       .forEach(award => {
-        const awardWithPlace: AwardWinnerSlideAward = {
-          id: award.id,
-          name: award.name,
-          place: showPlace ? award.place : undefined,
-          divisionColor: color,
-          winner: award.winner as AwardWinnerSlideAward['winner']
-        };
-
-        if (['chroma', 'both'].includes(style)) {
-          slides.push(
-            React.createElement(AwardWinnerChromaSlide, {
-              key: `chroma-${award.id}`,
-              award: awardWithPlace,
-              edition
-            })
-          );
-        }
-
-        if (['full', 'both'].includes(style)) {
-          slides.push(
-            React.createElement(AwardWinnerSlide, {
-              key: `full-${award.id}`,
-              award: awardWithPlace,
-              edition
-            })
-          );
+        const existing = placeEntries.find(entry => entry.award.place === award.place);
+        const isTeam = (w: unknown) => !!w && typeof w === 'object' && 'number' in w;
+        if (
+          existing &&
+          !existing.coAward &&
+          isTeam(existing.award.winner) &&
+          isTeam(award.winner)
+        ) {
+          existing.coAward = award;
+        } else {
+          placeEntries.push({ award });
         }
       });
+
+    placeEntries.forEach(({ award, coAward }) => {
+      const awardWithPlace: AwardWinnerSlideAward = {
+        id: award.id,
+        name: award.name,
+        place: showPlace ? award.place : undefined,
+        divisionColor: color,
+        winner: award.winner as AwardWinnerSlideAward['winner'],
+        coWinner: coAward?.winner as AwardWinnerSlideAward['coWinner']
+      };
+
+      if (['chroma', 'both'].includes(style)) {
+        slides.push(
+          React.createElement(AwardWinnerChromaSlide, {
+            key: `chroma-${award.id}`,
+            award: awardWithPlace,
+            edition
+          })
+        );
+      }
+
+      if (['full', 'both'].includes(style)) {
+        slides.push(
+          React.createElement(AwardWinnerSlide, {
+            key: `full-${award.id}`,
+            award: awardWithPlace,
+            edition
+          })
+        );
+      }
+    });
   });
 
   return slides;
