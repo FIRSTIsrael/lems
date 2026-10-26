@@ -63,7 +63,7 @@ class TablePairSelector {
   async rename(baseName: string): Promise<void> {
     await this.db
       .updateTable('robot_game_tables')
-      .set({ name: sql<string>`${baseName} || ${PAIR_NAME_SEPARATOR} || side` })
+      .set({ name: sql<string>`${baseName}::text || ${PAIR_NAME_SEPARATOR}::text || side` })
       .where('pair_key', '=', this.pairKey)
       .execute();
   }
