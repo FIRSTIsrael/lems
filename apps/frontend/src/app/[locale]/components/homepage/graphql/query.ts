@@ -25,6 +25,7 @@ export const GET_EVENTS_QUERY: TypedDocumentNode<GetEventsQuery, GetEventsQueryV
       region
       seasonName
       official
+      futureEdition
     }
   }
 `;

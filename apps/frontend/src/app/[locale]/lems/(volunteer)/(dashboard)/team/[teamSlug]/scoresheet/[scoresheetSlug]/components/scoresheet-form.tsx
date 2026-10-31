@@ -1,8 +1,8 @@
 'use client';
 
 import { Stack, Alert, Typography } from '@mui/material';
-import { scoresheet } from '@lems/shared/scoresheet';
 import { useScoresheetTranslations } from '@lems/localization';
+import { useScoresheetSchema } from '../../../../../../hooks/use-scoresheet-schema';
 import { useScoresheet } from '../scoresheet-context';
 import ScoresheetMission from './scoresheet-mission';
 import { ScoresheetIncompleteAlert } from './scoresheet-alert';
@@ -14,8 +14,9 @@ interface ScoresheetFormProps {
 }
 
 export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false }) => {
+  const scoresheet = useScoresheetSchema();
   const { validation } = useScoresheet();
-  const { getError } = useScoresheetTranslations();
+  const { getError } = useScoresheetTranslations(scoresheet.season);
 
   return (
     <Stack
@@ -29,7 +30,8 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
         <ScoresheetMission
           key={mission.id}
           missionIndex={index}
-          src={`/assets/scoresheet/missions/${mission.id}.webp`}
+          season={scoresheet.season}
+          src={`/assets/scoresheet/missions/${scoresheet.season}/${mission.id}.webp`}
           mission={mission}
           missionErrors={validation.missionErrors.get(mission.id)?.errors}
           disabled={disabled}

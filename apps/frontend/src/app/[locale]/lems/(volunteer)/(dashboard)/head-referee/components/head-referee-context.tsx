@@ -2,19 +2,21 @@
 
 import { createContext, useContext, useMemo, useState, useEffect, ReactNode } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
-import type { FieldData, Scoresheet, ScoresheetStatus } from '../graphql/types';
+import type { FieldData, Match, Scoresheet, ScoresheetStatus } from '../graphql/types';
 import {
   groupByRound,
   filterScoresheets,
   filterMatchesByScoresheets,
   getEscalatedScoresheets,
   findScoresheetForTeam,
+  findCurrentMatch,
   type RoundGroup,
   type FilterOptions
 } from './utils';
 
 interface HeadRefereeContextType {
   data: FieldData;
+  currentMatch: Match | null;
   roundGroups: RoundGroup[];
   escalatedScoresheets: Scoresheet[];
   filterOptions: FilterOptions;
@@ -107,9 +109,11 @@ export function HeadRefereeProvider({ data, children }: HeadRefereeProviderProps
 
     // Group by round
     const roundGroups = groupByRound(filteredMatches, filteredScoresheets);
+    const currentMatch = findCurrentMatch(data.matches, data.activeMatch, data.loadedMatch);
 
     return {
       data,
+      currentMatch,
       roundGroups,
       escalatedScoresheets,
       filterOptions,

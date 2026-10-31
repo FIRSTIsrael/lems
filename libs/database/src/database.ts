@@ -154,7 +154,7 @@ export class Database {
       console.log(`🐘 PostgreSQL connected successfully with ${tables.length} tables.`);
     } catch (error) {
       console.error('❌ Failed to connect to PostgreSQL:', error);
-      throw new Error(`PostgreSQL connection failed: ${error}`);
+      throw new Error(`PostgreSQL connection failed: ${error}`, { cause: error });
     }
 
     try {
@@ -164,7 +164,7 @@ export class Database {
       console.log('🌲 MongoDB connected successfully');
     } catch (error) {
       console.error('❌ Failed to connect to MongoDB:', error);
-      throw new Error(`MongoDB connection failed: ${error}`);
+      throw new Error(`MongoDB connection failed: ${error}`, { cause: error });
     }
 
     console.log('🚀 Database connections established successfully');

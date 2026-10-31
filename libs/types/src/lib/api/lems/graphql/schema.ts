@@ -26,7 +26,8 @@ export function loadLemsGraphQLSchema(): string[] {
     'award',
     'scoresheet',
     'deliberations',
-    'final-deliberations'
+    'final-deliberations',
+    'practice-tables'
   ];
   const schemaDir = getLemsGraphQLSchemaDir();
 
@@ -34,7 +35,9 @@ export function loadLemsGraphQLSchema(): string[] {
     try {
       return readFileSync(join(schemaDir, `${filename}.graphql`), 'utf-8');
     } catch (error) {
-      throw new Error(`Failed to load LEMS GraphQL schema file: ${filename}.graphql - ${error}`);
+      throw new Error(`Failed to load LEMS GraphQL schema file: ${filename}.graphql - ${error}`, {
+        cause: error
+      });
     }
   });
 }

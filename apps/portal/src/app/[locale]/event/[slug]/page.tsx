@@ -1,11 +1,13 @@
 'use client';
 
+import { useState } from 'react';
 import useSWR from 'swr';
 import { useParams, useSearchParams, useRouter } from 'next/navigation';
-import { Container } from '@mui/material';
+import { Collapse, Container } from '@mui/material';
 import { EventDetails } from '@lems/types/api/portal';
 import { DivisionSelector } from './components/division-selector';
 import { EventHeader } from './components/event-header';
+import { EventLocationCard } from './components/event-location-card';
 import { DivisionTabBar } from './components/division-tab-bar';
 
 const EventPage = () => {
@@ -18,6 +20,7 @@ const EventPage = () => {
     suspense: true,
     fallbackData: null
   });
+  const [isLocationOpen, setIsLocationOpen] = useState(true);
 
   if (error) throw new Error(`Failed to load event data. Status: ${error.status || 500}`);
 
@@ -36,7 +39,23 @@ const EventPage = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <EventHeader eventData={eventData} />
+      <EventHeader
+        eventData={eventData}
+        onShowLocation={
+          eventData.coordinates && !isLocationOpen ? () => setIsLocationOpen(true) : undefined
+        }
+      />
+
+      {eventData.coordinates && (
+        <Collapse in={isLocationOpen} unmountOnExit>
+          <EventLocationCard
+            coordinates={eventData.coordinates}
+            location={eventData.location}
+            region={eventData.region}
+            onClose={() => setIsLocationOpen(false)}
+          />
+        </Collapse>
+      )}
 
       <DivisionSelector divisions={eventData.divisions} />
 

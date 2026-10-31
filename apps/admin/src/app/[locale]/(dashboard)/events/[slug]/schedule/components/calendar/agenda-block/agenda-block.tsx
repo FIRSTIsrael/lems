@@ -5,7 +5,7 @@ import { Dayjs } from 'dayjs';
 import { Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { BLOCK_COLORS, AgendaBlockVisibility, AgendaBlock } from '../calendar-types';
-import { calculateBlockPosition } from '../calendar-utils';
+import { calculateBlockPosition, BlockOverlapInfo } from '../calendar-utils';
 import { useCalendar } from '../calendar-context';
 import { EditAgendaDialog } from './dialog/edit-agenda-dialog';
 import { ResizeHandles } from './resize-handles';
@@ -19,6 +19,7 @@ interface AgendaBlockProps {
   draggedPosition: number;
   draggedDuration?: number; // For bottom-edge resize preview
   draggedStartTime?: Dayjs; // For top-edge resize preview
+  overlapInfo?: BlockOverlapInfo; // Layout info for overlapping blocks
   onDragStartBody: (block: AgendaBlock, startY: number) => void;
   onDragStartTopEdge: (block: AgendaBlock, startY: number) => void;
   onDragStartBottomEdge: (block: AgendaBlock, startY: number) => void;
@@ -32,6 +33,7 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
   draggedPosition,
   draggedDuration,
   draggedStartTime,
+  overlapInfo,
   onDragStartBody,
   onDragStartTopEdge,
   onDragStartBottomEdge
@@ -117,13 +119,29 @@ export const AgendaBlockComponent: React.FC<AgendaBlockProps> = ({
     setEditingBlockId(null);
   };
 
+  const horizontalPosition = useMemo(() => {
+    if (!overlapInfo || overlapInfo.totalColumns === 1) {
+      return { left: 8, right: 8 };
+    }
+
+    const columnWidth = 100 / overlapInfo.totalColumns;
+    const leftPercent = columnWidth * overlapInfo.column;
+    const rightPercent = 100 - (leftPercent + columnWidth);
+    const gap = 2;
+
+    return {
+      left: `calc(${leftPercent}% + ${gap}px)`,
+      right: `calc(${rightPercent}% + ${gap}px)`
+    };
+  }, [overlapInfo]);
+
   return (
     <Box
       sx={{
         position: 'absolute',
         top: finalTop,
-        left: 8,
-        right: 8,
+        left: horizontalPosition.left,
+        right: horizontalPosition.right,
         height: finalHeight,
         backgroundColor: BLOCK_COLORS[block.type],
         border: '1px solid rgba(0,0,0,0.1)',

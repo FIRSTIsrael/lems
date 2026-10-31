@@ -10,6 +10,7 @@ export interface Team {
 
 export interface TeamEvent {
   teamId: string;
+  arrived: boolean;
 }
 
 export type QueryData = { division?: { id: string; teams: Team[] } | null };

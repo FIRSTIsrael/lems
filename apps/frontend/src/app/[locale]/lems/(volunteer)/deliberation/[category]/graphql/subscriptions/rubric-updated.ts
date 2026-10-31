@@ -1,6 +1,7 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
 import { merge, type Reconciler, underscoresToHyphens } from '@lems/shared/utils';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import type { CategoryDeliberationData } from '../types';
 
@@ -88,8 +89,8 @@ export const RUBRIC_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-const getEmptyRubric = (category: JudgingCategory) => {
-  const schema = rubrics[category];
+const getEmptyRubric = (edition: Edition, category: JudgingCategory) => {
+  const schema = getRubrics(edition)[category];
 
   const awards: { [awardId: string]: boolean } = {};
 
@@ -108,81 +109,80 @@ const getEmptyRubric = (category: JudgingCategory) => {
   return { awards, fields, feedback };
 };
 
-const rubricUpdatedReconciler: Reconciler<CategoryDeliberationData, SubscriptionResult> = (
-  prev,
-  { data }
-) => {
-  if (!data?.rubricUpdated) {
-    return prev;
-  }
-
-  const event = data.rubricUpdated;
-  const { rubricId } = event;
-
-  const updatedTeams = prev.division.teams.map(team => {
-    const rubricEntry = Object.entries(team.rubrics).find(([, r]) => r?.id === rubricId);
-    if (!rubricEntry) return team;
-
-    const [rubricType, rubric] = rubricEntry;
-    if (!rubric) return team;
-
-    const category = underscoresToHyphens(rubric.category) as JudgingCategory;
-
-    let updatedRubric = { ...rubric };
-
-    if (event.__typename === 'RubricValueUpdated') {
-      updatedRubric = merge(rubric, {
-        data: merge(rubric.data || getEmptyRubric(category), {
-          fields: {
-            ...(rubric.data?.fields || {}),
-            [event.fieldId]: event.value
-          }
-        })
-      });
-    } else if (event.__typename === 'RubricFeedbackUpdated') {
-      updatedRubric = merge(rubric, {
-        data: merge(rubric.data || getEmptyRubric(category), {
-          feedback: event.feedback
-        })
-      });
-    } else if (event.__typename === 'RubricStatusUpdated') {
-      updatedRubric = merge(rubric, {
-        status: event.status
-      });
-    } else if (event.__typename === 'RubricAwardsUpdated') {
-      updatedRubric = merge(rubric, {
-        data: merge(rubric.data || getEmptyRubric(category), {
-          awards: event.awards
-        })
-      });
-    } else if (event.__typename === 'RubricReset') {
-      if (!event.reset) return team;
-      updatedRubric = merge(rubric, {
-        data: null
-      });
+const rubricUpdatedReconciler =
+  (edition: Edition): Reconciler<CategoryDeliberationData, SubscriptionResult> =>
+  (prev, { data }) => {
+    if (!data?.rubricUpdated) {
+      return prev;
     }
 
-    return {
-      ...team,
-      rubrics: {
-        ...team.rubrics,
-        [rubricType]: updatedRubric
+    const event = data.rubricUpdated;
+    const { rubricId } = event;
+
+    const updatedTeams = prev.division.teams.map(team => {
+      const rubricEntry = Object.entries(team.rubrics).find(([, r]) => r?.id === rubricId);
+      if (!rubricEntry) return team;
+
+      const [rubricType, rubric] = rubricEntry;
+      if (!rubric) return team;
+
+      const category = underscoresToHyphens(rubric.category) as JudgingCategory;
+
+      let updatedRubric = { ...rubric };
+
+      if (event.__typename === 'RubricValueUpdated') {
+        updatedRubric = merge(rubric, {
+          data: merge(rubric.data || getEmptyRubric(edition, category), {
+            fields: {
+              ...(rubric.data?.fields || {}),
+              [event.fieldId]: event.value
+            }
+          })
+        });
+      } else if (event.__typename === 'RubricFeedbackUpdated') {
+        updatedRubric = merge(rubric, {
+          data: merge(rubric.data || getEmptyRubric(edition, category), {
+            feedback: event.feedback
+          })
+        });
+      } else if (event.__typename === 'RubricStatusUpdated') {
+        updatedRubric = merge(rubric, {
+          status: event.status
+        });
+      } else if (event.__typename === 'RubricAwardsUpdated') {
+        updatedRubric = merge(rubric, {
+          data: merge(rubric.data || getEmptyRubric(edition, category), {
+            awards: event.awards
+          })
+        });
+      } else if (event.__typename === 'RubricReset') {
+        if (!event.reset) return team;
+        updatedRubric = merge(rubric, {
+          data: null
+        });
       }
-    };
-  });
 
-  return merge(prev, {
-    division: {
-      teams: updatedTeams
-    }
-  });
-};
+      return {
+        ...team,
+        rubrics: {
+          ...team.rubrics,
+          [rubricType]: updatedRubric
+        }
+      };
+    });
 
-export function createRubricUpdatedSubscription(divisionId: string) {
+    return merge(prev, {
+      division: {
+        teams: updatedTeams
+      }
+    });
+  };
+
+export function createRubricUpdatedSubscription(edition: Edition, divisionId: string) {
   return {
     subscription: RUBRIC_UPDATED_SUBSCRIPTION,
     subscriptionVariables: { divisionId },
-    updateQuery: rubricUpdatedReconciler as (
+    updateQuery: rubricUpdatedReconciler(edition) as (
       prev: CategoryDeliberationData,
       subscriptionData: { data?: unknown }
     ) => CategoryDeliberationData

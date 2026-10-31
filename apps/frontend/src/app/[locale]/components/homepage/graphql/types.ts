@@ -8,6 +8,7 @@ export interface HomepageEvent {
   region: string;
   seasonName: string;
   official: boolean;
+  futureEdition: boolean;
 }
 
 export type GetEventsQuery = {

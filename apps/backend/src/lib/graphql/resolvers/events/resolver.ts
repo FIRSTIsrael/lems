@@ -7,11 +7,13 @@ export interface EventGraphQL {
   id: string;
   slug: string;
   name: string;
+  seasonId: string;
   startDate: string;
   endDate: string;
   region: string;
   timezone: string;
   isFullySetUp?: boolean;
+  futureEdition?: boolean;
   official: boolean;
 }
 
@@ -32,11 +34,13 @@ interface EventRow {
   id: string;
   name: string;
   slug: string;
+  season_id: string;
   start_date: Date;
   end_date: Date;
   region: string;
   timezone: string;
   is_fully_set_up?: boolean;
+  future_edition?: boolean;
   official?: boolean | null;
 }
 
@@ -83,6 +87,7 @@ function buildEventQuery(args: EventsArgs) {
       'events.id',
       'events.slug',
       'events.name',
+      'events.season_id',
       'events.start_date',
       'events.end_date',
       'events.region',
@@ -93,11 +98,13 @@ function buildEventQuery(args: EventsArgs) {
         'is_fully_set_up'
       )
     )
+    .select(sql<boolean>`COALESCE(BOOL_OR(divisions.future_edition), false)`.as('future_edition'))
     .select('event_settings.official')
     .groupBy([
       'events.id',
       'events.slug',
       'events.name',
+      'events.season_id',
       'events.start_date',
       'events.end_date',
       'events.region',
@@ -140,11 +147,13 @@ function buildResult(event: EventRow): EventGraphQL {
     id: event.id,
     slug: event.slug,
     name: event.name,
+    seasonId: event.season_id,
     startDate: dayjs(event.start_date).toISOString(),
     endDate: dayjs(event.end_date).toISOString(),
     region: event.region,
     timezone: event.timezone,
     isFullySetUp: event.is_fully_set_up,
+    futureEdition: event.future_edition,
     official: event.official ?? true
   };
 }

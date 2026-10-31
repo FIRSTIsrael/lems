@@ -45,7 +45,7 @@ export const IntegrationGrid: React.FC = () => {
   );
 
   const handleAddIntegration = useCallback(() => {
-    const AddIntegrationDialogWrapper: React.FC<DialogComponentProps> = ({ close }) => (
+    showDialog(({ close }: DialogComponentProps) => (
       <AddIntegrationDialog
         close={close}
         availableIntegrations={availableIntegrations}
@@ -76,9 +76,7 @@ export const IntegrationGrid: React.FC = () => {
           }
         }}
       />
-    );
-
-    showDialog(AddIntegrationDialogWrapper);
+    ));
   }, [apiPath, availableIntegrations, showDialog, t]);
 
   const handleDeleteIntegration = useCallback(

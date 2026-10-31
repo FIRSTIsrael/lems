@@ -1,8 +1,9 @@
+import type { Edition } from '../edition';
 import { RubricsSchema } from './types';
 
 export const rubricColumns = ['beginning', 'developing', 'accomplished', 'exceeds'] as const;
 
-export const rubrics: RubricsSchema = {
+const rubrics: RubricsSchema = {
   _version: '2025-11-23',
   'core-values': {
     awards: true,
@@ -64,5 +65,15 @@ export const rubrics: RubricsSchema = {
       }
     ],
     feedback: true
+  }
+};
+
+export const getRubrics = (edition: Edition): RubricsSchema => {
+  switch (edition) {
+    case 'future':
+      // TODO(future-edition): replace with Future content (phase 3)
+      return rubrics;
+    case 'founders':
+      return rubrics;
   }
 };

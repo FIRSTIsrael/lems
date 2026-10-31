@@ -9,6 +9,20 @@ export interface DivisionScheduleSettings {
   timezone?: string; // IANA timezone identifier (e.g., 'Europe/Warsaw')
 }
 
+export interface BlockedTimeSlot {
+  start: string; // ISO 8601 datetime string (e.g., "2024-01-15T12:00:00.000Z")
+  end: string; // ISO 8601 datetime string (e.g., "2024-01-15T12:30:00.000Z")
+  reason?: string; // Optional reason (e.g., "Lunch break")
+}
+
+export interface PracticeTablesSettings {
+  tableCount: number; // Number of practice tables available
+  slotDurationMinutes: number; // Duration of each practice slot in minutes
+  startTime: string; // ISO 8601 datetime string (e.g., "2024-01-15T07:00:00.000Z")
+  endTime: string; // ISO 8601 datetime string (e.g., "2024-01-15T19:00:00.000Z")
+  blockedTimeSlots: BlockedTimeSlot[]; // Array of blocked time slots
+}
+
 export type AudienceDisplayScreen =
   'scoreboard' | 'match_preview' | 'sponsors' | 'logo' | 'message' | 'awards';
 
@@ -44,6 +58,7 @@ export interface DivisionsTable {
   has_users: Generated<boolean>; // Default false
   awards_assigned: Generated<boolean>; // Default false
   schedule_settings: DivisionScheduleSettings | null;
+  practice_tables_settings: PracticeTablesSettings | null;
   state: Generated<DivisionState>;
   future_edition: Generated<boolean>; // Default false
 }

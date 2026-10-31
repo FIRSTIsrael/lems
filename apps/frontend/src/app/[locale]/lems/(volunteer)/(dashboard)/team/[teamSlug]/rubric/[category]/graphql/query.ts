@@ -1,6 +1,7 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
+import type { Edition } from '@lems/shared/edition';
 import { getEmptyRubric } from '../rubric-utils';
 import type {
   QueryResult,
@@ -61,7 +62,7 @@ export const GET_TEAM_SESSION_QUERY: TypedDocumentNode<
   }
 `;
 
-export function parseRubricData(queryData: QueryResult): PageData {
+export function parseRubricData(edition: Edition, queryData: QueryResult): PageData {
   const judging = queryData.division.judging;
 
   if (!judging.rubrics || judging.rubrics.length === 0) {
@@ -73,7 +74,10 @@ export function parseRubricData(queryData: QueryResult): PageData {
       awards: judging.awards,
       rubric: {
         ...judging.rubrics[0],
-        data: getEmptyRubric(underscoresToHyphens(judging.rubrics[0].category) as JudgingCategory)
+        data: getEmptyRubric(
+          edition,
+          underscoresToHyphens(judging.rubrics[0].category) as JudgingCategory
+        )
       }
     };
   }

@@ -1,10 +1,12 @@
 import type { ApolloCache } from '@apollo/client';
+import type { Edition } from '@lems/shared/edition';
 import { merge, updateById, underscoresToHyphens } from '@lems/shared/utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { getEmptyRubric } from '../rubric-utils';
 import type { RubricItem } from './types';
 
 export function createUpdateRubricValueCacheUpdate(
+  edition: Edition,
   rubricId: string,
   fieldId: string,
   fieldValue: { value: number; notes?: string }
@@ -26,7 +28,10 @@ export function createUpdateRubricValueCacheUpdate(
                 merge(rubric, {
                   data: merge(
                     rubric.data ||
-                      getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                      getEmptyRubric(
+                        edition,
+                        underscoresToHyphens(rubric.category) as JudgingCategory
+                      ),
                     {
                       fields: {
                         ...(rubric.data?.fields || {}),
@@ -45,6 +50,7 @@ export function createUpdateRubricValueCacheUpdate(
 }
 
 export function createUpdateRubricFeedbackCacheUpdate(
+  edition: Edition,
   rubricId: string,
   feedback: { greatJob: string; thinkAbout: string }
 ) {
@@ -65,7 +71,10 @@ export function createUpdateRubricFeedbackCacheUpdate(
                 merge(rubric, {
                   data: merge(
                     rubric.data ||
-                      getEmptyRubric(underscoresToHyphens(rubric.category) as JudgingCategory),
+                      getEmptyRubric(
+                        edition,
+                        underscoresToHyphens(rubric.category) as JudgingCategory
+                      ),
                     {
                       feedback
                     }

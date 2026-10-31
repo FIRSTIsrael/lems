@@ -1,6 +1,9 @@
+import type { Edition } from '../edition';
 import { ScoresheetSchema, ScoresheetError } from './types';
+import { scoresheet as unearthed } from './past-seasons/unearthed';
 
-export const scoresheet: ScoresheetSchema = {
+const scoresheet: ScoresheetSchema = {
+  season: 'bioglow',
   _version: '2026-08-04',
   missions: [
     {
@@ -227,4 +230,29 @@ export const scoresheet: ScoresheetSchema = {
       if (supply < Number(missions['m14'][0])) throw new ScoresheetError('e1');
     }
   ]
+};
+
+const SCORESHEETS: Record<string, ScoresheetSchema> = {
+  [scoresheet.season]: scoresheet,
+  [unearthed.season]: unearthed
+};
+
+/** Season slugs that have a scoresheet, newest first. Matched against `seasons.slug` in the DB. */
+export const SCORESHEET_SEASONS: readonly string[] = Object.keys(SCORESHEETS);
+
+export const DEFAULT_SCORESHEET_SEASON = scoresheet.season;
+
+export const hasScoresheet = (season: string | null | undefined): season is string =>
+  !!season && Object.hasOwn(SCORESHEETS, season);
+
+/** Seasons without a scoresheet (or no season at all) fall back to the current season. */
+export const getScoresheet = (edition: Edition, season?: string | null): ScoresheetSchema => {
+  if (hasScoresheet(season) && season !== DEFAULT_SCORESHEET_SEASON) return SCORESHEETS[season];
+  switch (edition) {
+    case 'future':
+      // TODO(future-edition): replace with Future content (phase 2)
+      return scoresheet;
+    case 'founders':
+      return scoresheet;
+  }
 };

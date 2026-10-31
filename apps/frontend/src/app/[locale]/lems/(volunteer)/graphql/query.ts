@@ -9,11 +9,13 @@ export const GET_VOLUNTEER_EVENT_DATA_QUERY: TypedDocumentNode<
     event(id: $eventId) {
       id
       name
+      seasonSlug
       volunteers(id: $userId) {
         divisions {
           id
           name
           color
+          futureEdition
         }
       }
     }

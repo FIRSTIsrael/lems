@@ -3,10 +3,12 @@
 import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Typography, Grid, Paper } from '@mui/material';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { JudgingCategory } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import type { Team } from '../graphql/types';
+import { useEdition } from '../../../hooks/use-edition';
 import { useCompareContext } from '../compare-context';
 import {
   getCategoryColor,
@@ -26,6 +28,7 @@ interface SectionFields {
     fieldId: string;
     value: number | null;
     color: 'success' | 'error' | 'default';
+    notes?: string;
   }>;
 }
 
@@ -34,12 +37,14 @@ interface FieldsByCategories {
 }
 
 const processFieldsBySections = (
+  edition: Edition,
   team: Team,
   fieldComparisons: FieldComparisons,
   category?: string
 ): FieldsByCategories => {
   const categories = category ? [category] : ['innovation-project', 'robot-design', 'core-values'];
   const result: FieldsByCategories = {};
+  const rubrics = getRubrics(edition);
 
   categories.forEach(cat => {
     if (cat === 'core-values') {
@@ -54,7 +59,8 @@ const processFieldsBySections = (
             fieldId: id,
             category: 'innovation-project' as const,
             value: field.value,
-            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip')
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'ip'),
+            notes: field.notes
           })),
         ...Object.entries(team.rubrics.robot_design?.data?.fields || {})
           .filter(([id]) =>
@@ -66,7 +72,8 @@ const processFieldsBySections = (
             fieldId: id,
             category: 'robot-design' as const,
             value: field.value,
-            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd')
+            color: getFieldComparisonColor(id, team.id, fieldComparisons, 'rd'),
+            notes: field.notes
           }))
       ];
       if (fields.length > 0) result[cat] = { 'core-values': fields };
@@ -83,7 +90,8 @@ const processFieldsBySections = (
               fieldId: field.id,
               category: cat,
               value: rubricData.fields[field.id].value,
-              color: getFieldComparisonColor(field.id, team.id, fieldComparisons)
+              color: getFieldComparisonColor(field.id, team.id, fieldComparisons),
+              notes: rubricData.fields[field.id].notes
             }));
           if (sectionFields.length > 0) sections[section.id] = sectionFields;
         });
@@ -142,10 +150,11 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
   const t = useTranslations('layouts.deliberation.compare');
   const { getCategory } = useJudgingCategoryTranslations();
   const { fieldComparisons, category } = useCompareContext();
+  const edition = useEdition();
 
   const fieldsBySections = useMemo(
-    () => processFieldsBySections(team, fieldComparisons, category),
-    [team, fieldComparisons, category]
+    () => processFieldsBySections(edition, team, fieldComparisons, category),
+    [edition, team, fieldComparisons, category]
   );
 
   const hasAnyFields = Object.values(fieldsBySections).some(sections =>

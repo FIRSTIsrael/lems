@@ -21,7 +21,8 @@ export const makePortalDivisionResponse = (division: DbDivision): Division => {
   return {
     id: division.id,
     name: division.name,
-    color: division.color
+    color: division.color,
+    futureEdition: division.future_edition
   };
 };
 

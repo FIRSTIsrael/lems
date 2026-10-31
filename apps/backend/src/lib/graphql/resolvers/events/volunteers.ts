@@ -33,6 +33,7 @@ export interface DivisionGraphQL {
   id: string;
   name?: string | null;
   color?: string | null;
+  futureEdition: boolean;
 }
 
 /**
@@ -50,13 +51,14 @@ export const volunteerDivisionsResolver: GraphQLFieldResolver<
       .selectFrom('event_user_divisions')
       .innerJoin('divisions', 'divisions.id', 'event_user_divisions.division_id')
       .where('event_user_divisions.user_id', '=', volunteer.id)
-      .select(['divisions.id', 'divisions.name', 'divisions.color'])
+      .select(['divisions.id', 'divisions.name', 'divisions.color', 'divisions.future_edition'])
       .execute();
 
     return divisions.map(d => ({
       id: d.id,
       name: d.name,
-      color: d.color
+      color: d.color,
+      futureEdition: d.future_edition
     }));
   } catch (error) {
     console.error('Error fetching divisions for volunteer:', volunteer.id, error);

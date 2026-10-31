@@ -86,7 +86,7 @@ export const SessionCard: React.FC<SessionCardProps> = ({
                       sx={{ ml: 0.5 }}
                     >
                       ({session.startDelta > 0 ? '+' : ''}
-                      {Math.round(session.startDelta / 1000)}s)
+                      {session.startDelta}s)
                     </Typography>
                   )}
                 </Typography>

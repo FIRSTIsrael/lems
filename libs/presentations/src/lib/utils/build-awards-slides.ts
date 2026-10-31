@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import type { Edition } from '@lems/shared/edition';
 import { TitleSlide } from '../components/slides/title-slide';
 import { ImageSlide } from '../components/slides/image-slide';
 import {
@@ -30,6 +31,7 @@ export interface BuildAwardsSlidesOptions {
   divisionColor?: string;
   awardTranslation: (name: string) => string;
   awardSectionTitle?: string;
+  edition?: Edition;
 }
 
 /**
@@ -60,8 +62,14 @@ export function buildAwardsSlides(
     })
   );
 
-  const { getAwardName, getAwardDescription, awardTranslation, divisionColor, awardSectionTitle } =
-    options || {};
+  const {
+    getAwardName,
+    getAwardDescription,
+    awardTranslation,
+    divisionColor,
+    awardSectionTitle,
+    edition
+  } = options || {};
 
   // Add title slide after logo
   slides.push(
@@ -165,7 +173,8 @@ export function buildAwardsSlides(
           slides.push(
             React.createElement(AwardWinnerChromaSlide, {
               key: `chroma-${award.id}`,
-              award: awardWithPlace
+              award: awardWithPlace,
+              edition
             })
           );
         }
@@ -174,7 +183,8 @@ export function buildAwardsSlides(
           slides.push(
             React.createElement(AwardWinnerSlide, {
               key: `full-${award.id}`,
-              award: awardWithPlace
+              award: awardWithPlace,
+              edition
             })
           );
         }

@@ -22,8 +22,8 @@ interface AwardItemProps {
 export function AwardItem({ award, index }: AwardItemProps) {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.editor');
-  const { getName, getDescription } = useAwardTranslations();
-  const { schema, updateAwardCount, removeAward } = useAwards();
+  const { schema, edition, updateAwardCount, removeAward } = useAwards();
+  const { getName, getDescription } = useAwardTranslations(edition);
 
   const isMandatory = (MANDATORY_AWARDS as readonly string[]).includes(award);
   const awardData = schema[award];

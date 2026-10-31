@@ -23,6 +23,8 @@ import {
 } from '@mui/material';
 import { Verified } from '@mui/icons-material';
 import FilterAltOffIcon from '@mui/icons-material/FilterAltOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { hyphensToUnderscores } from '@lems/shared/utils';
@@ -51,6 +53,8 @@ export const RubricStatusGrid = () => {
     setSessionNumberFilter,
     sortBy,
     setSortBy,
+    showBlocked,
+    setShowBlocked,
     clearFilters
   } = useFilters();
 
@@ -179,6 +183,17 @@ export const RubricStatusGrid = () => {
               {t('sort.session')}
             </Button>
           </ButtonGroup>
+          <Tooltip title={showBlocked ? t('filter.hide-blocked') : t('filter.show-blocked')}>
+            <Button
+              size="small"
+              variant={showBlocked ? 'contained' : 'outlined'}
+              onClick={() => setShowBlocked(!showBlocked)}
+              startIcon={showBlocked ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              sx={{ whiteSpace: 'nowrap' }}
+            >
+              {showBlocked ? t('filter.hide-blocked') : t('filter.show-blocked')}
+            </Button>
+          </Tooltip>
           <Tooltip title={t('filter.clear')}>
             <span>
               <IconButton

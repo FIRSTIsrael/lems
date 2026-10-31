@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useUser } from '../../../../../components/user-context';
+import { useScoresheetSchema } from '../../../../../hooks/use-scoresheet-schema';
 import type { ScoresheetItem } from './graphql';
 import { validateScoresheet, type ScoresheetValidationResult } from './scoresheet-validation';
 
@@ -32,10 +33,11 @@ export const ScoresheetProvider: React.FC<ScoresheetProviderProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const user = useUser();
+  const scoresheetSchema = useScoresheetSchema();
 
   const validation = useMemo(() => {
-    return validateScoresheet(scoresheet.data);
-  }, [scoresheet.data]);
+    return validateScoresheet(scoresheetSchema, scoresheet.data);
+  }, [scoresheetSchema, scoresheet.data]);
 
   // Compute desired view mode based on status and URL override
   const viewMode: ScoresheetView = useMemo(() => {

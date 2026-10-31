@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useTranslations } from 'next-intl';
 import { Typography, Box, Stack } from '@mui/material';
 import { useAwardTranslations } from '@lems/localization';
+import type { Edition } from '@lems/shared/edition';
 import { Appear } from '../appear';
 import { Slide } from '../slide';
 
@@ -37,10 +38,11 @@ export interface AwardWinnerChromaSlideAward {
 
 interface AwardWinnerChromaSlideProps {
   award: AwardWinnerChromaSlideAward;
+  edition?: Edition;
 }
 
-const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award }) => {
-  const { getName } = useAwardTranslations();
+const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award, edition }) => {
+  const { getName } = useAwardTranslations(edition);
   const t = useTranslations('awards-presentation');
 
   if (!award.winner) {
@@ -74,7 +76,10 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award }
           <Typography variant="h2" sx={{ fontSize: '2.5rem', fontWeight: 700, color: 'black' }}>
             {localizedAwardName} {award.place && `| ${t('place', { place: award.place })}`}
           </Typography>
-          <Appear activeStyle={{ opacity: 1, scale: 1 }} inactiveStyle={{ opacity: 0, scale: 0.95 }}>
+          <Appear
+            activeStyle={{ opacity: 1, scale: 1 }}
+            inactiveStyle={{ opacity: 0, scale: 0.95 }}
+          >
             <Stack direction="column" spacing={1}>
               {isTeamWinner ? (
                 <>

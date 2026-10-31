@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CoordinatesSchema } from '../coordinates';
 
 export const PortalEventResponseSchema = z.object({
   id: z.string(),
@@ -9,7 +10,7 @@ export const PortalEventResponseSchema = z.object({
   location: z.string(),
   region: z.string(),
   timezone: z.string(),
-  coordinates: z.string().nullable().optional(),
+  coordinates: CoordinatesSchema.nullable().optional(),
   seasonId: z.string()
 });
 
@@ -22,7 +23,8 @@ export const PortalEventSummaryResponseSchema = z.object({
   teamsRegistered: z.number(),
   status: z.enum(['upcoming', 'active', 'past']),
   completed: z.boolean(),
-  official: z.boolean()
+  official: z.boolean(),
+  futureEdition: z.boolean()
 });
 
 export type EventSummary = z.infer<typeof PortalEventSummaryResponseSchema>;
@@ -33,7 +35,8 @@ export const PortalEventDetailsDivisionSchema = z.object({
   id: z.string(),
   name: z.string(),
   color: z.string(),
-  teamCount: z.number()
+  teamCount: z.number(),
+  futureEdition: z.boolean()
 });
 
 export type EventDetailsDivision = z.infer<typeof PortalEventDetailsDivisionSchema>;

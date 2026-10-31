@@ -1,4 +1,5 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
+import type { ScoresheetSchema } from '@lems/shared/scoresheet';
 import { merge, updateById, type Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../../../hooks/use-page-data';
 import type { QueryResult, SubscriptionResult, SubscriptionVariables } from '../types';
@@ -37,72 +38,72 @@ export const SCORESHEET_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   }
 `;
 
-const scoresheetUpdatedReconciler: Reconciler<QueryResult, SubscriptionResult> = (
-  prev,
-  { data }
-) => {
-  if (!data?.scoresheetUpdated) return prev;
+const scoresheetUpdatedReconciler =
+  (scoresheetSchema: ScoresheetSchema): Reconciler<QueryResult, SubscriptionResult> =>
+  (prev, { data }) => {
+    if (!data?.scoresheetUpdated) return prev;
 
-  const event = data.scoresheetUpdated;
-  const { scoresheetId } = event;
+    const event = data.scoresheetUpdated;
+    const { scoresheetId } = event;
 
-  return merge(prev, {
-    division: {
-      field: {
-        scoresheets: updateById(prev.division.field.scoresheets, scoresheetId, scoresheet => {
-          if (event.__typename === 'ScoresheetMissionClauseUpdated') {
-            return merge(scoresheet, {
-              data: merge(scoresheet.data || getEmptyScoresheet(), {
-                missions: {
-                  ...(scoresheet.data?.missions || {}),
-                  [event.missionId]: {
-                    ...(scoresheet.data?.missions?.[event.missionId] || {}),
-                    [event.clauseIndex]: event.clauseValue
+    return merge(prev, {
+      division: {
+        field: {
+          scoresheets: updateById(prev.division.field.scoresheets, scoresheetId, scoresheet => {
+            if (event.__typename === 'ScoresheetMissionClauseUpdated') {
+              return merge(scoresheet, {
+                data: merge(scoresheet.data || getEmptyScoresheet(scoresheetSchema), {
+                  missions: {
+                    ...(scoresheet.data?.missions || {}),
+                    [event.missionId]: {
+                      ...(scoresheet.data?.missions?.[event.missionId] || {}),
+                      [event.clauseIndex]: event.clauseValue
+                    }
                   }
-                }
-              })
-            });
-          }
+                })
+              });
+            }
 
-          if (event.__typename === 'ScoresheetStatusUpdated') {
-            return merge(scoresheet, {
-              status: event.status
-            });
-          }
+            if (event.__typename === 'ScoresheetStatusUpdated') {
+              return merge(scoresheet, {
+                status: event.status
+              });
+            }
 
-          if (event.__typename === 'ScoresheetGPUpdated') {
-            return merge(scoresheet, {
-              data: merge(scoresheet.data || getEmptyScoresheet(), {
-                gp: {
-                  value: event.gpValue,
-                  notes: event.notes
-                }
-              })
-            });
-          }
+            if (event.__typename === 'ScoresheetGPUpdated') {
+              return merge(scoresheet, {
+                data: merge(scoresheet.data || getEmptyScoresheet(scoresheetSchema), {
+                  gp: {
+                    value: event.gpValue,
+                    notes: event.notes
+                  }
+                })
+              });
+            }
 
-          if (event.__typename === 'ScoresheetEscalatedUpdated') {
-            return merge(scoresheet, {
-              escalated: event.escalated
-            });
-          }
+            if (event.__typename === 'ScoresheetEscalatedUpdated') {
+              return merge(scoresheet, {
+                escalated: event.escalated
+              });
+            }
 
-          if (event.__typename === 'ScoresheetResetEvent') {
-            return {
-              ...scoresheet,
-              status: event.status,
-              data: getEmptyScoresheet()
-            };
-          }
+            if (event.__typename === 'ScoresheetResetEvent') {
+              return {
+                ...scoresheet,
+                status: event.status,
+                data: getEmptyScoresheet(scoresheetSchema)
+              };
+            }
 
-          return scoresheet;
-        })
+            return scoresheet;
+          })
+        }
       }
-    }
-  });
-};
+    });
+  };
 
 export function createScoresheetUpdatedSubscription(
+  scoresheetSchema: ScoresheetSchema,
   divisionId: string
 ): SubscriptionConfig<unknown, QueryResult, SubscriptionVariables> {
   return {
@@ -110,7 +111,7 @@ export function createScoresheetUpdatedSubscription(
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: scoresheetUpdatedReconciler as (
+    updateQuery: scoresheetUpdatedReconciler(scoresheetSchema) as (
       prev: QueryResult,
       subscriptionData: { data?: unknown }
     ) => QueryResult

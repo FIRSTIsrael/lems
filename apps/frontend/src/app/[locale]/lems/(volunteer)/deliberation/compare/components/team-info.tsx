@@ -36,7 +36,7 @@ export function TeamInfo({ team }: TeamInfoProps) {
   }, [team.rubrics]);
 
   return (
-    <Box sx={{ flexShrink: 0, textAlign: 'left', order: 1 }}>
+    <Box sx={{ flex: '0 1 auto', minWidth: 0, textAlign: 'left', order: 1 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
         <Typography
           variant="h6"

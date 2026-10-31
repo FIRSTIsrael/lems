@@ -3,11 +3,14 @@
 import { createContext, useContext } from 'react';
 import { useSearchParams } from 'next/navigation';
 
+type VolunteerDivision = { id: string; name: string; color: string; futureEdition: boolean };
+
 interface EventContextType {
   eventId: string;
   eventName: string;
-  currentDivision: { id: string; name: string; color: string };
-  availableDivisions: { id: string; name: string; color: string }[];
+  seasonSlug: string | null;
+  currentDivision: VolunteerDivision;
+  availableDivisions: VolunteerDivision[];
   canSwitchDivisions: boolean;
 }
 
@@ -17,17 +20,19 @@ export function EventProvider({
   children,
   eventId,
   eventName,
+  seasonSlug,
   divisions
 }: {
   children: React.ReactNode;
   eventId: string;
   eventName: string;
-  divisions: { id: string; name: string; color: string }[];
+  seasonSlug: string | null;
+  divisions: VolunteerDivision[];
 }) {
   const searchParams = useSearchParams();
   const divisionId = searchParams.get('division');
 
-  let currentDivision: { id: string; name: string; color: string };
+  let currentDivision: VolunteerDivision;
 
   if (divisionId) {
     const selectedDivision = divisions.find(d => d.id === divisionId);
@@ -44,6 +49,7 @@ export function EventProvider({
   const eventContext = {
     eventId,
     eventName,
+    seasonSlug,
     currentDivision,
     availableDivisions: divisions,
     canSwitchDivisions: divisions.length > 1

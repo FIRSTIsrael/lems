@@ -1,8 +1,10 @@
 import { Scoresheet, JudgingCategory } from '@lems/database';
-import { rubrics } from '@lems/shared/rubrics';
+import { getRubrics } from '@lems/shared/rubrics';
+import { Edition } from '@lems/shared/edition';
 import { calculateTeamRanks, TeamWithRanks } from '@lems/shared/deliberation';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
+import { getDivisionEdition } from '../../../../utils/division-edition';
 import { getRedisPubSub } from '../../../../../redis/redis-pubsub';
 
 interface TeamData {
@@ -27,11 +29,12 @@ export async function calculateAllTeamScores(
 ): Promise<TeamScoreData[]> {
   const rubrics = await db.rubrics.byDivision(divisionId).getAll();
   const scoresheets = await db.scoresheets.byDivision(divisionId).getAll();
+  const edition = await getDivisionEdition(divisionId);
 
   return teams.map(team => ({
     teamId: team.id,
     teamNumber: team.number,
-    rubricScores: calculateRubricScores(team.id, rubrics),
+    rubricScores: calculateRubricScores(team.id, rubrics, edition),
     gpScore: calculateGPScore(team.id, scoresheets),
     robotGameScores: scoresheets
       .filter(s => s.teamId === team.id && s.stage === 'RANKING' && s.status === 'submitted')
@@ -43,7 +46,8 @@ export async function calculateAllTeamScores(
  * Returns core values field names
  */
 
-function getCoreValuesFieldNames(): string[] {
+function getCoreValuesFieldNames(edition: Edition): string[] {
+  const rubrics = getRubrics(edition);
   const innovationProjectSchema = rubrics['innovation-project'];
   const robotDesignSchema = rubrics['robot-design'];
   const coreValuesFields: string[] = [];
@@ -70,7 +74,8 @@ function calculateRubricScores(
     teamId: string;
     data?: { fields?: Record<string, { value?: number | null }> };
     category: JudgingCategory;
-  }>
+  }>,
+  edition: Edition
 ): Record<JudgingCategory, number> {
   const rubricScores: Record<JudgingCategory, number> = {
     'innovation-project': 0,
@@ -84,7 +89,7 @@ function calculateRubricScores(
       let coreValuesScore = 0;
       const innovationProjectRubric = rubricsForTeam.find(r => r.category === 'innovation-project');
       const robotDesignRubric = rubricsForTeam.find(r => r.category === 'robot-design');
-      const coreValuesFieldNames = getCoreValuesFieldNames();
+      const coreValuesFieldNames = getCoreValuesFieldNames(edition);
 
       if (innovationProjectRubric?.data?.fields) {
         Object.entries(innovationProjectRubric.data.fields).forEach(([key, field]) => {

@@ -10,6 +10,7 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
   subscription TeamArrivalUpdated($divisionId: String!) {
     teamArrivalUpdated(divisionId: $divisionId) {
       teamId
+      arrived
     }
   }
 `;
@@ -17,13 +18,13 @@ export const TEAM_ARRIVAL_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 const teamRegistrationReconciler: Reconciler<QueryData, SubscriptionData> = (prev, { data }) => {
   if (!data) return prev;
 
-  const { teamId } = data.teamArrivalUpdated;
+  const { teamId, arrived } = data.teamArrivalUpdated;
 
   if (prev.division) {
     return merge(prev, {
       division: {
         id: prev.division.id,
-        teams: updateById(prev.division.teams, teamId, team => merge(team, { arrived: true }))
+        teams: updateById(prev.division.teams, teamId, team => merge(team, { arrived }))
       }
     });
   }

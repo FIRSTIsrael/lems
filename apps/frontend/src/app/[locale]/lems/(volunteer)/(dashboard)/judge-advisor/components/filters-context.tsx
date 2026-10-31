@@ -14,6 +14,8 @@ interface FiltersContextType {
   setSessionNumberFilter: (value: number[]) => void;
   sortBy: 'room' | 'session';
   setSortBy: (value: 'room' | 'session') => void;
+  showBlocked: boolean;
+  setShowBlocked: (value: boolean) => void;
   clearFilters: () => void;
 }
 
@@ -43,6 +45,7 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
         .map(s => parseInt(s, 10))
     : [];
   const sortBy = (searchParams.get('sortBy') || 'room') as 'room' | 'session';
+  const showBlocked = searchParams.get('showBlocked') === 'true';
 
   const updateUrl = useCallback(
     (updates: Partial<FiltersContextType>) => {
@@ -82,6 +85,14 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
 
       if ('sortBy' in updates && updates.sortBy) {
         newParams.set('sortBy', updates.sortBy);
+      }
+
+      if ('showBlocked' in updates) {
+        if (updates.showBlocked) {
+          newParams.set('showBlocked', 'true');
+        } else {
+          newParams.delete('showBlocked');
+        }
       }
 
       const queryString = newParams.toString();
@@ -125,6 +136,13 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
     [updateUrl]
   );
 
+  const setShowBlocked = useCallback(
+    (value: boolean) => {
+      updateUrl({ showBlocked: value });
+    },
+    [updateUrl]
+  );
+
   const clearFilters = useCallback(() => {
     router.push('?');
   }, [router]);
@@ -140,6 +158,8 @@ export const FiltersProvider: React.FC<FiltersProviderProps> = ({ children }) =>
     setSessionNumberFilter,
     sortBy,
     setSortBy,
+    showBlocked,
+    setShowBlocked,
     clearFilters
   };
 

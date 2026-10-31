@@ -1,3 +1,5 @@
+import type { Edition } from '../edition';
+
 /**
  * Award type constants and configurations.
  * Shared across admin and volunteer applications.
@@ -22,8 +24,8 @@ export const PERSONAL_AWARDS = ['lead-mentor', 'volunteer-of-the-year'] as const
 export type PersonalAward = (typeof PERSONAL_AWARDS)[number];
 
 /**
- * IDs of awards that are automatically assigned during final deliberation.
- * These awards will be available in the optional awards stage of final deliberation.
+ * IDs of awards that are assigned by the system during final deliberation,
+ * rather than picked by judges in the optional-awards stage.
  */
 export const AUTOMATIC_ASSIGNMENT_AWARDS = [
   'excellence-in-engineering',
@@ -57,6 +59,19 @@ export const AWARDS = [...MANDATORY_AWARDS, ...OPTIONAL_AWARDS, 'advancement'] a
 export type Award = (typeof AWARDS)[number];
 
 /**
+ * Team awards judges assign during the optional-awards deliberation stage.
+ * Personal awards are optional but assigned outside deliberation.
+ * Automatically assigned awards, such as excellence in engineering, are filled in earlier.
+ */
+export function isDeliberationOptionalAward(award: {
+  type: string;
+  isOptional: boolean;
+  automaticAssignment: boolean;
+}): boolean {
+  return award.type === 'TEAM' && award.isOptional && !award.automaticAssignment;
+}
+
+/**
  * Schema defining the maximum number of each award to be given out at an event.
  */
 export const AWARD_LIMITS: { [key in Award]: number } = {
@@ -74,4 +89,15 @@ export const AWARD_LIMITS: { [key in Award]: number } = {
   'lead-mentor': -1, // Unlimited
   'volunteer-of-the-year': -1, // Unlimited
   advancement: -1 // Unlimited
+};
+
+/** Returns the translation key id for an award under the given edition. */
+export const getAwardLabelKey = (award: string, edition: Edition): string => {
+  switch (edition) {
+    case 'future':
+      // TODO(future-edition): apply Future renames (phase 3)
+      return award;
+    case 'founders':
+      return award;
+  }
 };

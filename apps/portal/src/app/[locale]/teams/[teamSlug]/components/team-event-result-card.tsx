@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { TeamEventResult } from '@lems/types/api/portal';
 import { Flag } from '@lems/shared';
 import { useAwardTranslations } from '@lems/localization';
+import { getEdition } from '@lems/shared/edition';
 import { Element } from 'react-scroll';
 import { useTeam } from './team-context';
 import { UnpublishedEventCard } from './unpublished-event-card';
@@ -17,7 +18,9 @@ interface TeamEventResultCardProps {
 
 export const TeamEventResultCard: React.FC<TeamEventResultCardProps> = ({ eventResult }) => {
   const t = useTranslations('pages.team.events');
-  const { getName } = useAwardTranslations();
+  const { getName } = useAwardTranslations(
+    getEdition({ futureEdition: eventResult.results?.futureEdition })
+  );
   const team = useTeam();
 
   const getAwardIcon = (award: { name: string; place: number | null }) => {

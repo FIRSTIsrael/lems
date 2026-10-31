@@ -12,8 +12,10 @@ import {
   getFieldDisplayLabels,
   computeNormalizedScores,
   getOrganizedRubricFields,
+  getOrganizedRubricFieldNotes,
   getGPScores
 } from '../utils';
+import { useEdition } from '../../hooks/use-edition';
 import type { DeliberationContextValue, EnrichedTeam } from './types';
 import type { Division } from './graphql/types';
 import {
@@ -42,6 +44,7 @@ export function CategoryDeliberationProvider({
   const deliberation = division.judging.deliberation;
   const t = useTranslations('pages.deliberations.category.picklist');
   const hypenatedCategory = underscoresToHyphens(category) as JudgingCategory;
+  const edition = useEdition();
 
   const picklistLimit = Math.min(
     MAX_PICKLIST_LIMIT,
@@ -103,7 +106,7 @@ export function CategoryDeliberationProvider({
 
   const value = useMemo<DeliberationContextValue>(() => {
     // Step 1: Compute base team scores (category scores and GP)
-    const teamScores = division.teams.map(team => computeTeamScores(team));
+    const teamScores = division.teams.map(team => computeTeamScores(edition, team));
 
     // Step 2: Compute room metrics (aggregated scores per room)
     const roomMetrics = computeRoomMetrics(
@@ -112,7 +115,7 @@ export function CategoryDeliberationProvider({
     );
 
     // Step 2a: Get field display labels for this category
-    const fieldDisplayLabels = getFieldDisplayLabels(category);
+    const fieldDisplayLabels = getFieldDisplayLabels(edition, category);
 
     // Step 3: Compute normalized scores and ranks
     const enrichedTeams = division.teams
@@ -125,7 +128,8 @@ export function CategoryDeliberationProvider({
         );
         const rank = computeRank(scores, teamScores, category);
         const isEligible = computeEligibility(team, deliberation);
-        const rubricFields = getOrganizedRubricFields(team, category);
+        const rubricFields = getOrganizedRubricFields(edition, team, category);
+        const rubricFieldNotes = getOrganizedRubricFieldNotes(edition, team, category);
         const gpScores = getGPScores(team);
 
         return {
@@ -142,6 +146,7 @@ export function CategoryDeliberationProvider({
           rank,
           eligible: isEligible,
           rubricFields,
+          rubricFieldNotes,
           gpScores,
           rubricId: team.rubrics[hypenatedCategory as keyof typeof team.rubrics]?.id ?? null,
           awardNominations: team.rubrics.core_values?.data?.awards ?? {}
@@ -208,6 +213,7 @@ export function CategoryDeliberationProvider({
     division,
     deliberation,
     category,
+    edition,
     picklistLimit,
     hypenatedCategory,
     handleStartDeliberation,

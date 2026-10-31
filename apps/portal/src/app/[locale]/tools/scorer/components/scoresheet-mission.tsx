@@ -11,15 +11,24 @@ import MissionClause from './mission-clause';
 import { useMission } from './mission-context';
 
 interface ScoresheetMissionProps {
+  season: string;
   missionIndex: number;
   mission: MissionSchema;
   src: string;
 }
 
-const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mission, src }) => {
+const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  season,
+  missionIndex,
+  mission,
+  src
+}) => {
   const theme = useTheme();
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
-  const { title, description, remarks, getError } = useScoresheetMissionTranslations(mission.id);
+  const { title, description, remarks, getError } = useScoresheetMissionTranslations(
+    season,
+    mission.id
+  );
   const [missionWidth, setMissionWidth] = useState(0);
 
   // Use callback ref to measure width when element mounts
@@ -109,6 +118,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({ missionIndex, mis
           return (
             <MissionClause
               key={index}
+              season={season}
               missionId={mission.id}
               missionIndex={missionIndex}
               clauseIndex={index}

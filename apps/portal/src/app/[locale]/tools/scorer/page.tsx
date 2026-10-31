@@ -6,6 +6,7 @@ import { MissionProvider } from './components/mission-context';
 import { ScoreFloater } from './components/score-floater';
 import { FieldTimer } from './components/field-timer';
 import { ScoresheetForm } from './components/scoresheet-form';
+import { ScorerOptions } from './components/scorer-options';
 
 export default async function ScorerPage() {
   const t = await getTranslations('pages.tools.scorer');
@@ -42,6 +43,8 @@ export default async function ScorerPage() {
               <Typography>{t('no-equipment-constraint')}</Typography>
             </Stack>
           </Stack>
+
+          <ScorerOptions />
 
           <ScoresheetForm />
         </Box>
