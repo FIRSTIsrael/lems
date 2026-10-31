@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
+  TextField,
+  InputAdornment,
   Select,
   MenuItem,
   FormControl,
@@ -19,7 +21,7 @@ import {
   DialogActions,
   Button
 } from '@mui/material';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, Search as SearchIcon } from '@mui/icons-material';
 import { Team, Division, TeamWithDivision } from '@lems/types/api/admin';
 import { Flag } from '@lems/shared';
 
@@ -45,6 +47,26 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
   const [availableTeams, setAvailableTeams] = useState<Team[]>(teams);
   const [registeredTeams, setRegisteredTeams] = useState<TeamWithDivision[]>([]);
   const [nextDivisionIndex, setNextDivisionIndex] = useState(0);
+  const [searchValue, setSearchValue] = useState('');
+  const [selectedRegion, setSelectedRegion] = useState<string>('all');
+  const regions = useMemo(
+    () => [...new Set(teams.map(team => team.region?.toUpperCase()).filter(Boolean))].sort(),
+    [teams]
+  );
+
+  const filteredAvailableTeams = useMemo(() => {
+    const searchLower = searchValue.trim().toLowerCase();
+    return availableTeams.filter(team => {
+      if (selectedRegion !== 'all' && team.region?.toUpperCase() !== selectedRegion) return false;
+      if (!searchLower) return true;
+      return (
+        team.number.toString().includes(searchLower) ||
+        team.name.toLowerCase().includes(searchLower) ||
+        team.affiliation?.toLowerCase().includes(searchLower) ||
+        team.city?.toLowerCase().includes(searchLower)
+      );
+    });
+  }, [availableTeams, searchValue, selectedRegion]);
 
   const selectedDivision =
     selectedDivisionId === 'random'
@@ -123,6 +145,44 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
             <Typography variant="h6" gutterBottom>
               {t('available-teams')}
             </Typography>
+            <Box sx={{ display: 'flex', gap: 1, mb: 1 }}>
+              <TextField
+                size="small"
+                fullWidth
+                placeholder={t('search-placeholder')}
+                value={searchValue}
+                onChange={e => setSearchValue(e.target.value)}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon fontSize="small" />
+                      </InputAdornment>
+                    )
+                  }
+                }}
+              />
+              {regions.length > 1 && (
+                <FormControl size="small" sx={{ minWidth: 150 }}>
+                  <InputLabel>{t('country')}</InputLabel>
+                  <Select
+                    value={selectedRegion}
+                    label={t('country')}
+                    onChange={e => setSelectedRegion(e.target.value)}
+                  >
+                    <MenuItem value="all">{t('all-countries')}</MenuItem>
+                    {regions.map(region => (
+                      <MenuItem key={region} value={region}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Flag region={region} size={16} />
+                          {region}
+                        </Box>
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </Box>
             <Box
               sx={{
                 border: 1,
@@ -134,7 +194,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
               }}
             >
               <List dense>
-                {availableTeams.map(team => (
+                {filteredAvailableTeams.map(team => (
                   <ListItem
                     key={team.id}
                     secondaryAction={
@@ -143,13 +203,28 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                       </IconButton>
                     }
                   >
-                    <ListItemText primary={`#${team.number}`} secondary={team.name} />
+                    <ListItemText
+                      primary={`#${team.number}`}
+                      secondary={
+                        <>
+                          <Box component="span" sx={{ fontWeight: 'bold' }}>
+                            {team.name}
+                          </Box>
+                          {(team.affiliation || team.city) && (
+                            <>
+                              <br />
+                              {[team.affiliation, team.city].filter(Boolean).join(', ')}
+                            </>
+                          )}
+                        </>
+                      }
+                    />
                     <Box sx={{ ml: 1, display: 'flex', alignItems: 'center' }}>
                       <Flag region={team.region} size={16} />
                     </Box>
                   </ListItem>
                 ))}
-                {availableTeams.length === 0 && (
+                {filteredAvailableTeams.length === 0 && (
                   <ListItem>
                     <ListItemText
                       primary={t('no-available-teams')}
