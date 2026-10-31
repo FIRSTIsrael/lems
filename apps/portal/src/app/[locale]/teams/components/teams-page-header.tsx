@@ -32,22 +32,17 @@ export const TeamsPageHeader: React.FC = () => {
   };
 
   const handleSearchChange = (searchValue: string) => {
-    const params = new URLSearchParams(searchParams.toString());
+    const params = new URLSearchParams(window.location.search);
     if (searchValue.trim()) {
       params.set('search', searchValue.trim());
     } else {
       params.delete('search');
     }
     params.set('page', '1');
-    router.replace(`?${params.toString()}`, { scroll: false });
+    window.history.replaceState(null, '', `?${params.toString()}`);
   };
 
-  const handleClearSearch = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    params.delete('search');
-    params.set('page', '1');
-    router.replace(`?${params.toString()}`, { scroll: false });
-  };
+  const handleClearSearch = () => handleSearchChange('');
 
   return (
     <Stack spacing={3} sx={{ mb: 4 }}>
@@ -76,7 +71,6 @@ export const TeamsPageHeader: React.FC = () => {
             placeholder={t('search.placeholder')}
             onSearchChange={handleSearchChange}
             onClear={handleClearSearch}
-            showClearButton={!!search}
           />
         </Box>
 

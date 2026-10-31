@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { TextField, InputAdornment, IconButton } from '@mui/material';
 import { Search as SearchIcon, Clear as ClearIcon } from '@mui/icons-material';
 
@@ -9,38 +9,30 @@ interface TeamSearchInputProps {
   placeholder: string;
   onSearchChange: (value: string) => void;
   onClear: () => void;
-  showClearButton: boolean;
 }
 
 export const TeamSearchInput: React.FC<TeamSearchInputProps> = ({
   initialValue,
   placeholder,
   onSearchChange,
-  onClear,
-  showClearButton
+  onClear
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState(initialValue);
   const debounceTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  useEffect(() => {
-    if (inputRef.current && inputRef.current.value !== initialValue) {
-      inputRef.current.value = initialValue;
-    }
-  }, [initialValue]);
+  useEffect(() => () => clearTimeout(debounceTimerRef.current), []);
 
-  const handleInput = (value: string) => {
-    if (debounceTimerRef.current) {
-      clearTimeout(debounceTimerRef.current);
-    }
+  const handleInput = (newValue: string) => {
+    setValue(newValue);
+    clearTimeout(debounceTimerRef.current);
     debounceTimerRef.current = setTimeout(() => {
-      onSearchChange(value);
+      onSearchChange(newValue);
     }, 300);
   };
 
   const handleClear = () => {
-    if (inputRef.current) {
-      inputRef.current.value = '';
-    }
+    clearTimeout(debounceTimerRef.current);
+    setValue('');
     onClear();
   };
 
@@ -49,9 +41,8 @@ export const TeamSearchInput: React.FC<TeamSearchInputProps> = ({
       fullWidth
       size="small"
       placeholder={placeholder}
-      defaultValue={initialValue}
+      value={value}
       onChange={e => handleInput(e.target.value)}
-      inputRef={inputRef}
       slotProps={{
         input: {
           startAdornment: (
@@ -59,7 +50,7 @@ export const TeamSearchInput: React.FC<TeamSearchInputProps> = ({
               <SearchIcon />
             </InputAdornment>
           ),
-          endAdornment: showClearButton && (
+          endAdornment: value && (
             <InputAdornment position="end">
               <IconButton size="small" onClick={handleClear} edge="end">
                 <ClearIcon />
