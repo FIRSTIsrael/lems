@@ -432,6 +432,9 @@
           "random": "Losowo",
           "available-teams": "Dostępne drużyny",
           "no-available-teams": "Brak dostępnych drużyn",
+          "search-placeholder": "Szukaj po numerze, nazwie, instytucji lub mieście",
+          "country": "Kraj",
+          "all-countries": "Wszystkie kraje",
           "registered-teams": "Drużyny do rejestracji ({count})",
           "actions": {
             "register": "Zarejestruj {count} {count, plural, =1 {drużynę} other {drużyny}}",
