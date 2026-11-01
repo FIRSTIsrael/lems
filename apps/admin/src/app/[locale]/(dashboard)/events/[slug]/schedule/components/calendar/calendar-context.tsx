@@ -15,6 +15,8 @@ import {
 } from './calendar-types';
 import { getDuration } from './calendar-utils';
 
+const DRAFT_SAVE_DEBOUNCE_MS = 300;
+
 const createBlock = (
   type: ScheduleBlockType,
   startTime: Dayjs,
@@ -107,10 +109,14 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     judgingSessions,
     judgingSessionCycleTime,
     setPracticeRounds,
-    setRankingRounds
+    setRankingRounds,
+    initialBlocks,
+    saveDraft
   } = useSchedule();
 
   const [blocks, setBlocks] = useState<BlocksByType>(() => {
+    if (initialBlocks) return initialBlocks;
+
     let judgingBlocks: ScheduleBlock[] = [];
     let fieldBlocks: ScheduleBlock[] = [];
     const agendaBlocks: AgendaBlock[] = [];
@@ -214,6 +220,15 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fieldStart, matchesPerRound, practiceCycleTime, rankingCycleTime]);
+
+  /**
+   * Persist the draft schedule (settings + blocks) to IndexedDB so it survives a refresh.
+   * saveDraft changes identity whenever a setting changes, so this covers both.
+   */
+  useEffect(() => {
+    const timeout = setTimeout(() => saveDraft(blocks), DRAFT_SAVE_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [blocks, saveDraft]);
 
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,

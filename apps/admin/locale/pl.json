@@ -881,6 +881,10 @@
             "success": "Harmonogram wygenerowano pomyślnie!",
             "error": "Nie udało się wygenerować harmonogramu: {error}",
             "generating": "Generowanie..."
+          },
+          "draft": {
+            "restored": "Przywrócono niezapisany szkic harmonogramu z tej przeglądarki.",
+            "discard": "Odrzuć szkic"
           }
         },
         "team-swap": {

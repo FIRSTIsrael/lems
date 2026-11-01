@@ -825,6 +825,10 @@
             "success": "Schedule generated successfully!",
             "error": "Failed to generate schedule: {error}",
             "generating": "Generating..."
+          },
+          "draft": {
+            "restored": "Restored your unsaved draft schedule.",
+            "discard": "Discard Draft"
           }
         },
         "team-swap": {
