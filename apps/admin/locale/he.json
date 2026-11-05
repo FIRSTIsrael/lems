@@ -658,7 +658,9 @@
           "official": "סוג אירוע",
           "official-description": "האם אירוע זה הוא אירוע רשמי",
           "open-rubrics-during-session": "פתיחת מחווני שיפוט במהלך מפגש השיפוט",
-          "open-rubrics-during-session-description": "אפשר לשופטים לפתוח את המחוון כשמפגש השיפוט בעיצומו"
+          "open-rubrics-during-session-description": "אפשר לשופטים לפתוח את המחוון כשמפגש השיפוט בעיצומו",
+          "zero-gp-for-no-shows": "אפס ניקוד GP לקבוצות שלא הגיעו",
+          "zero-gp-for-no-shows-description": "אפס אוטומטית את ניקוד האחריות החברתית (GP) לקבוצות שסומנו כלא הגיעו בעת דירוג"
         },
         "event-actions": {
           "title": "פעולות אירוע",

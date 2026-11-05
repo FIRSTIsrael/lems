@@ -4,9 +4,11 @@ import { useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Stack, Container, Box } from '@mui/material';
 import { ResponsiveComponent } from '@lems/shared';
+import { getRankingStrategy } from '@lems/shared/utils';
 import { PageHeader } from '../../components/page-header';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
+import { useEdition } from '../../../hooks/use-edition';
 import { GET_SCOREBOARD, parseScoreboard } from './graphql/query';
 import { createScoresheetStatusChangedSubscription } from './graphql/subscriptions/scoresheet-status-changed';
 import { createScoresheetUpdatedSubscription } from './graphql/subscriptions/scoresheet-updated';
@@ -18,6 +20,7 @@ import { ErrorState } from './components/error-state';
 export default function ScoreboardPage() {
   const t = useTranslations('pages.reports.scoreboard');
   const { currentDivision } = useEvent();
+  const rankingStrategy = getRankingStrategy(useEdition());
 
   const subscriptions = useMemo(
     () => [
@@ -57,8 +60,20 @@ export default function ScoreboardPage() {
 
           {!error && !loading && (
             <ResponsiveComponent
-              desktop={<ScoreboardTable data={scoreboard} matchesPerTeam={matchesPerTeam} />}
-              mobile={<MobileScoreboard data={scoreboard} matchesPerTeam={matchesPerTeam} />}
+              desktop={
+                <ScoreboardTable
+                  data={scoreboard}
+                  matchesPerTeam={matchesPerTeam}
+                  rankingStrategy={rankingStrategy}
+                />
+              }
+              mobile={
+                <MobileScoreboard
+                  data={scoreboard}
+                  matchesPerTeam={matchesPerTeam}
+                  rankingStrategy={rankingStrategy}
+                />
+              }
             />
           )}
         </Box>

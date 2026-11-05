@@ -18,8 +18,8 @@ interface ClausePickerProps<T> {
   onChange: (value: T) => void;
 }
 
-const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange }) => {
-  const { yes, no } = useScoresheetGeneralTranslations();
+const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange, season }) => {
+  const { yes, no } = useScoresheetGeneralTranslations(season);
 
   return (
     <ToggleButtonGroup

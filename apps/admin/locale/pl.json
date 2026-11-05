@@ -714,7 +714,9 @@
           "official": "Wydarzenie oficjalne",
           "official-description": "Czy wydarzenie ma status oficjalny",
           "open-rubrics-during-session": "Otwórz rubryki podczas sesji",
-          "open-rubrics-during-session-description": "Pozwól sędziom otwierać rubryki podczas trwającej sesji"
+          "open-rubrics-during-session-description": "Pozwól sędziom otwierać rubryki podczas trwającej sesji",
+          "zero-gp-for-no-shows": "Zeruj GP dla nieobecnych",
+          "zero-gp-for-no-shows-description": "Automatycznie ustaw GP (Gracious Professionalism) na 0 dla zespołów oznaczonych jako nieobecne podczas rankingu"
         },
         "event-actions": {
           "title": "Akcje wydarzenia",

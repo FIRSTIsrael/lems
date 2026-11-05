@@ -658,7 +658,9 @@
           "official": "Official Event",
           "official-description": "Whether this event is official",
           "open-rubrics-during-session": "Open Rubrics During Session",
-          "open-rubrics-during-session-description": "Allow judges to open rubrics while sessions are in progress"
+          "open-rubrics-during-session-description": "Allow judges to open rubrics while sessions are in progress",
+          "zero-gp-for-no-shows": "Zero GP for No-Shows",
+          "zero-gp-for-no-shows-description": "Automatically set Gracious Professionalism to 0 for teams marked as no-show when ranking"
         },
         "event-actions": {
           "title": "Event Actions",
