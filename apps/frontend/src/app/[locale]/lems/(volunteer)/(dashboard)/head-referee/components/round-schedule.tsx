@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { Accordion, AccordionSummary, AccordionDetails, Typography, useTheme } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -14,10 +14,19 @@ interface RoundScheduleProps {
   defaultExpanded?: boolean;
 }
 
-export function RoundSchedule({ roundGroup, defaultExpanded = true }: RoundScheduleProps) {
+export function RoundSchedule({ roundGroup, defaultExpanded = false }: RoundScheduleProps) {
   const t = useTranslations('pages.head-referee');
   const theme = useTheme();
   const [expanded, setExpanded] = useState(defaultExpanded);
+  const [trackedDefaultExpanded, setTrackedDefaultExpanded] = useState(defaultExpanded);
+  const userToggledRef = useRef(false);
+
+  if (trackedDefaultExpanded !== defaultExpanded) {
+    setTrackedDefaultExpanded(defaultExpanded);
+    if (defaultExpanded || !userToggledRef.current) {
+      setExpanded(defaultExpanded);
+    }
+  }
 
   const { stage, round, matches, scoresheets } = roundGroup;
 
@@ -27,7 +36,10 @@ export function RoundSchedule({ roundGroup, defaultExpanded = true }: RoundSched
   return (
     <Accordion
       expanded={expanded}
-      onChange={(_, isExpanded) => setExpanded(isExpanded)}
+      onChange={(_, isExpanded) => {
+        userToggledRef.current = true;
+        setExpanded(isExpanded);
+      }}
       elevation={2}
       sx={{
         backgroundColor: 'background.paper',

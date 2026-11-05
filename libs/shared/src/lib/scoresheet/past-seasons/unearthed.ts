@@ -2,6 +2,7 @@ import { ensureArray } from '../../utils/arrays';
 import { ScoresheetSchema, ScoresheetError } from '../types';
 
 export const scoresheet: ScoresheetSchema = {
+  season: 'unearthed',
   _version: '2025-11-23',
   missions: [
     {

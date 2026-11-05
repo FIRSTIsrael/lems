@@ -29,6 +29,7 @@ export interface MissionSchema {
 export type MissionValues = Record<string, ScoresheetClauseValue[]>;
 
 export interface ScoresheetSchema {
+  season: string;
   _version: string;
   missions: Array<MissionSchema>;
   validators: Array<(missions: MissionValues) => void>;

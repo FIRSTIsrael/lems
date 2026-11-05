@@ -280,7 +280,8 @@
         "title": "Punktator Robot Game",
         "no-equipment-constraint-title": "Brak ograniczenia sprzętu:",
         "no-equipment-constraint": "Gdy ten symbol pojawia się w prawym górnym rogu misji, obowiązuje następujące ograniczenie: \u201eNa końcu meczu żaden sprzęt nie może dotykać żadnej części modelu misji, aby zaliczyć tę misję.\u201d",
-        "score": "{points} pkt"
+        "score": "{points} pkt",
+        "season": "Sezon"
       },
       "rubrics": {
         "title": "Rubryki",

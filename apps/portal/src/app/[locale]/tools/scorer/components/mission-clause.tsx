@@ -3,7 +3,6 @@
 import React from 'react';
 import { Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { MissionClauseSchema } from '@lems/shared/scoresheet';
-import type { Edition } from '@lems/shared/edition';
 import {
   useScoresheetGeneralTranslations,
   useScoresheetClauseTranslations
@@ -12,15 +11,15 @@ import { NumberInput } from '@lems/shared';
 import { ensureArray } from '@lems/shared/utils';
 
 interface ClausePickerProps<T> {
+  season: string;
   missionId: string;
   clauseIndex: number;
   value: T | null;
   onChange: (value: T) => void;
-  edition: Edition;
 }
 
-const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange, edition }) => {
-  const { yes, no } = useScoresheetGeneralTranslations(edition);
+const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange, season }) => {
+  const { yes, no } = useScoresheetGeneralTranslations(season);
 
   return (
     <ToggleButtonGroup
@@ -45,17 +44,17 @@ interface EnumClauseProps extends ClausePickerProps<string> {
 }
 
 const EnumClause: React.FC<EnumClauseProps> = ({
+  season,
   missionId,
   clauseIndex,
   value,
   onChange,
   values,
   maxWidth,
-  multiSelect,
-  edition
+  multiSelect
 }) => {
   const buttonMinWidth = `${Math.min(80, maxWidth / values.length)}px`;
-  const { getLabel } = useScoresheetClauseTranslations(edition, missionId, clauseIndex);
+  const { getLabel } = useScoresheetClauseTranslations(season, missionId, clauseIndex);
 
   return (
     <ToggleButtonGroup
@@ -100,6 +99,7 @@ const NumericClause: React.FC<NumericClauseProps> = ({ min, max, value, onChange
 };
 
 interface MissionClauseProps {
+  season: string;
   missionId: string;
   missionIndex: number;
   clauseIndex: number;
@@ -107,20 +107,19 @@ interface MissionClauseProps {
   value: string | number | boolean | null;
   setValue: (value: string | number | boolean | null) => void;
   maxWidth?: number;
-  edition: Edition;
 }
 
 const MissionClause: React.FC<MissionClauseProps> = ({
+  season,
   missionId,
   missionIndex,
   clauseIndex,
   clause,
   value,
   setValue,
-  maxWidth = 550,
-  edition
+  maxWidth = 550
 }) => {
-  const { description } = useScoresheetClauseTranslations(edition, missionId, clauseIndex);
+  const { description } = useScoresheetClauseTranslations(season, missionId, clauseIndex);
 
   return (
     <React.Fragment key={missionIndex}>
@@ -140,14 +139,15 @@ const MissionClause: React.FC<MissionClauseProps> = ({
       >
         {clause.type === 'boolean' ? (
           <BooleanClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             value={value as boolean | null}
             onChange={setValue}
-            edition={edition}
           />
         ) : clause.type === 'enum' ? (
           <EnumClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             value={value as string | null}
@@ -155,17 +155,16 @@ const MissionClause: React.FC<MissionClauseProps> = ({
             values={clause.options || []}
             multiSelect={!!clause.multiSelect}
             maxWidth={maxWidth}
-            edition={edition}
           />
         ) : (
           <NumericClause
+            season={season}
             missionId={missionId}
             clauseIndex={clauseIndex}
             min={clause.min || 0}
             max={clause.max || 0}
             value={value as number | null}
             onChange={setValue}
-            edition={edition}
           />
         )}
       </Grid>

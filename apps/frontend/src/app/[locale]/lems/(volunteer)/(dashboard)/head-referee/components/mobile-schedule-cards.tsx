@@ -1,18 +1,19 @@
 'use client';
 
-import { useMemo, useEffect, useRef } from 'react';
+import { useMemo } from 'react';
 import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import { useTranslations } from 'next-intl';
 import { Card, CardContent, Stack, Typography, Box, Divider, Chip, Tooltip } from '@mui/material';
-import { Cancel, CheckCircleSharp } from '@mui/icons-material';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import PersonPinIcon from '@mui/icons-material/PersonPin';
+import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
+import BlockIcon from '@mui/icons-material/Block';
 import { Flag } from '@lems/shared';
 import type { Match, Scoresheet } from '../graphql/types';
-import { useTime } from '../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusButton } from './scoresheet-status-button';
-
-dayjs.extend(isBetween);
+import { useScrollToCurrent } from './use-scroll-to-current';
 
 interface MobileScheduleCardsProps {
   matches: Match[];
@@ -20,8 +21,7 @@ interface MobileScheduleCardsProps {
 }
 
 export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCardsProps) {
-  const { data, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
-  const currentTime = useTime({ interval: 1000 });
+  const { data, currentMatch, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
 
   // Sort matches by scheduled time
   const sortedMatches = useMemo(() => {
@@ -30,18 +30,6 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
     );
   }, [matches]);
 
-  // Find active match
-  const activeMatchId = useMemo(() => {
-    return sortedMatches.find(match => {
-      if (match.status !== 'in-progress') return false;
-      if (!match.startTime) return false;
-
-      const startTime = dayjs(match.startTime);
-      const endTime = startTime.add(data.matchLength || 150, 'second');
-      return currentTime.isBetween(startTime, endTime);
-    })?.id;
-  }, [sortedMatches, currentTime, data.matchLength]);
-
   return (
     <Stack spacing={2}>
       {sortedMatches.map(match => (
@@ -49,7 +37,7 @@ export function MobileScheduleCards({ matches, scoresheets }: MobileScheduleCard
           key={match.id}
           match={match}
           scoresheets={scoresheets}
-          isActive={match.id === activeMatchId}
+          isActive={match.id === currentMatch?.id}
           isLoaded={match.id === data.loadedMatch}
           findScoresheetForTeam={findScoresheetForTeam}
           searchQuery={filterOptions.searchQuery}
@@ -77,7 +65,7 @@ function MatchCard({
   searchQuery
 }: MatchCardProps) {
   const t = useTranslations('pages.head-referee');
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useScrollToCurrent<HTMLDivElement>(isActive);
 
   // Check if a team matches the search query
   const doesTeamMatchSearch = (teamNumber: string, teamName: string): boolean => {
@@ -86,13 +74,6 @@ function MatchCard({
     const regex = new RegExp(escapedQuery, 'i');
     return regex.test(teamNumber) || regex.test(teamName);
   };
-
-  // Auto-scroll to active match
-  useEffect(() => {
-    if (isActive && cardRef.current) {
-      cardRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  }, [isActive]);
 
   const scheduledTime = dayjs(match.scheduledTime).format('HH:mm');
 
@@ -239,22 +220,61 @@ function MatchCard({
               }
 
               // Show participant readiness state for non-completed matches
+              const isQueued = participant.queued;
+              const isPresent = participant.present;
               const isReady = participant.ready;
+
+              // Determine participant status (matching field status report logic)
+              const getParticipantStatus = () => {
+                if (!participant.team!.arrived) return 'no-show';
+                if (isReady) return 'ready';
+                if (isPresent) return 'present';
+                if (isQueued) return 'queued';
+                return 'missing';
+              };
+
+              const status = getParticipantStatus();
+
+              // Get status icon
+              const getStatusIcon = () => {
+                const iconProps = { sx: { fontSize: '1.5rem' } };
+                switch (status) {
+                  case 'ready':
+                    return <CheckCircleIcon {...iconProps} color="success" />;
+                  case 'present':
+                    return <PersonPinIcon {...iconProps} color="warning" />;
+                  case 'queued':
+                    return <HourglassEmptyIcon {...iconProps} color="info" />;
+                  case 'no-show':
+                    return <BlockIcon {...iconProps} color="error" />;
+                  case 'missing':
+                    return <HelpOutlineIcon {...iconProps} color="disabled" />;
+                  default:
+                    return null;
+                }
+              };
 
               // Show icons only for the loaded match
               const showIcon = isLoaded;
 
+              // Build tooltip based on status
+              let tooltipTitle = `${participant.team!.affiliation} • ${participant.team!.city}`;
+              if (isLoaded) {
+                const statuses = [];
+                if (isQueued) statuses.push(t('table.participant-queued'));
+                if (isPresent) statuses.push(t('table.participant-present'));
+                if (isReady) statuses.push(t('table.participant-ready'));
+                if (statuses.length > 0) {
+                  tooltipTitle = statuses.join(' • ');
+                } else if (status === 'no-show') {
+                  tooltipTitle = t('table.participant-no-show');
+                } else {
+                  tooltipTitle = t('table.participant-not-ready');
+                }
+              }
+
               return (
-                <Tooltip
-                  key={participant.id}
-                  title={
-                    isLoaded && isReady
-                      ? t('table.participant-ready')
-                      : isLoaded && !isReady
-                        ? t('table.participant-not-ready')
-                        : ''
-                  }
-                >
+                <Tooltip key={participant.id} title={tooltipTitle}>
                   <Box
                     sx={{
                       display: 'flex',
@@ -295,25 +315,23 @@ function MatchCard({
                           display: 'block'
                         }}
                       >
-                        {participant.team!.name}
+                        {participant.team!.name} #{participant.team!.number}
+                        {participant.team!.region && (
+                          <>
+                            {' '}
+                            <Box
+                              component="span"
+                              sx={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                verticalAlign: 'middle'
+                              }}
+                            ></Box>
+                          </>
+                        )}
                       </Typography>
                     </Box>
-                    {showIcon &&
-                      (isReady ? (
-                        <CheckCircleSharp
-                          color="success"
-                          sx={{
-                            fontSize: '1.5rem'
-                          }}
-                        />
-                      ) : (
-                        <Cancel
-                          color="error"
-                          sx={{
-                            fontSize: '1.5rem'
-                          }}
-                        />
-                      ))}
+                    {showIcon && getStatusIcon()}
                   </Box>
                 </Tooltip>
               );

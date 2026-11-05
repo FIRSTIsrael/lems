@@ -6,28 +6,27 @@ import { Paper, Stack, Typography, Grid } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema } from '@lems/shared/scoresheet';
-import type { Edition } from '@lems/shared/edition';
 import NoEquipmentImage from '../../../../../../public/assets/scoresheet/no-equipment.svg';
 import MissionClause from './mission-clause';
 import { useMission } from './mission-context';
 
 interface ScoresheetMissionProps {
+  season: string;
   missionIndex: number;
   mission: MissionSchema;
   src: string;
-  edition: Edition;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  season,
   missionIndex,
   mission,
-  src,
-  edition
+  src
 }) => {
   const theme = useTheme();
   const { mission: missionData, errors, updateClause } = useMission(missionIndex);
   const { title, description, remarks, getError } = useScoresheetMissionTranslations(
-    edition,
+    season,
     mission.id
   );
   const [missionWidth, setMissionWidth] = useState(0);
@@ -119,6 +118,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           return (
             <MissionClause
               key={index}
+              season={season}
               missionId={mission.id}
               missionIndex={missionIndex}
               clauseIndex={index}
@@ -126,7 +126,6 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               maxWidth={missionWidth * 0.9}
               value={value}
               setValue={setValue}
-              edition={edition}
             />
           );
         })}

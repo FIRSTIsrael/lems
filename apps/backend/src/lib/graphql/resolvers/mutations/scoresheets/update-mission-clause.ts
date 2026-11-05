@@ -2,18 +2,16 @@ import { GraphQLFieldResolver } from 'graphql';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import {
-  getScoresheet,
   calculateScoresheetScore,
-  ScoresheetClauseValue
+  ScoresheetClauseValue,
+  ScoresheetSchema
 } from '@lems/shared/scoresheet';
 import { Scoresheet } from '@lems/database';
 import type { GraphQLContext } from '../../../apollo-server';
 import db from '../../../../database';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub';
-import { getDivisionEdition } from '../../../utils/division-edition';
+import { getDivisionScoresheet } from '../../../utils/division-scoresheet';
 import { authorizeScoresheetAccess, assertScoresheetEditable } from './utils';
-
-type ScoresheetSchema = ReturnType<typeof getScoresheet>;
 
 type ScoresheetMissionClauseUpdatedEvent = {
   scoresheetId: string;
@@ -51,7 +49,7 @@ export const updateScoresheetMissionClauseResolver: GraphQLFieldResolver<
   const status = (dbScoresheet.status as string) || 'empty';
   assertScoresheetEditable(status, context.user?.role);
 
-  const scoresheet = getScoresheet(await getDivisionEdition(divisionId));
+  const scoresheet = await getDivisionScoresheet(divisionId);
 
   const mission = scoresheet.missions.find(m => m.id === missionId);
   if (!mission) {
