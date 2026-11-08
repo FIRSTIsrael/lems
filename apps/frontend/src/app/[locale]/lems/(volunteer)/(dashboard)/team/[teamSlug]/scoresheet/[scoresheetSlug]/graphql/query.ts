@@ -1,5 +1,5 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
-import type { Edition } from '@lems/shared/edition';
+import type { ScoresheetSchema } from '@lems/shared/scoresheet';
 import { getEmptyScoresheet } from '../scoresheet-utils';
 import type {
   QueryResult,
@@ -47,7 +47,10 @@ export const GET_SCORESHEET_QUERY: TypedDocumentNode<QueryResult, QueryVariables
   }
 `;
 
-export function parseScoresheetData(edition: Edition, queryData: QueryResult): ScoresheetItem {
+export function parseScoresheetData(
+  scoresheetSchema: ScoresheetSchema,
+  queryData: QueryResult
+): ScoresheetItem {
   const scoresheet = queryData.division.field.scoresheets[0];
 
   if (!scoresheet) {
@@ -57,7 +60,7 @@ export function parseScoresheetData(edition: Edition, queryData: QueryResult): S
   if (!scoresheet.data) {
     return {
       ...scoresheet,
-      data: getEmptyScoresheet(edition)
+      data: getEmptyScoresheet(scoresheetSchema)
     };
   }
 

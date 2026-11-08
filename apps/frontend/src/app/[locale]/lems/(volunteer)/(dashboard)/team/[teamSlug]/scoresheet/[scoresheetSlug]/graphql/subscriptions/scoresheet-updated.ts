@@ -1,5 +1,5 @@
 import { gql, type TypedDocumentNode } from '@apollo/client';
-import type { Edition } from '@lems/shared/edition';
+import type { ScoresheetSchema } from '@lems/shared/scoresheet';
 import { merge, updateById, type Reconciler } from '@lems/shared/utils';
 import type { SubscriptionConfig } from '../../../../../../../hooks/use-page-data';
 import type { QueryResult, SubscriptionResult, SubscriptionVariables } from '../types';
@@ -39,7 +39,7 @@ export const SCORESHEET_UPDATED_SUBSCRIPTION: TypedDocumentNode<
 `;
 
 const scoresheetUpdatedReconciler =
-  (edition: Edition): Reconciler<QueryResult, SubscriptionResult> =>
+  (scoresheetSchema: ScoresheetSchema): Reconciler<QueryResult, SubscriptionResult> =>
   (prev, { data }) => {
     if (!data?.scoresheetUpdated) return prev;
 
@@ -52,7 +52,7 @@ const scoresheetUpdatedReconciler =
           scoresheets: updateById(prev.division.field.scoresheets, scoresheetId, scoresheet => {
             if (event.__typename === 'ScoresheetMissionClauseUpdated') {
               return merge(scoresheet, {
-                data: merge(scoresheet.data || getEmptyScoresheet(edition), {
+                data: merge(scoresheet.data || getEmptyScoresheet(scoresheetSchema), {
                   missions: {
                     ...(scoresheet.data?.missions || {}),
                     [event.missionId]: {
@@ -72,7 +72,7 @@ const scoresheetUpdatedReconciler =
 
             if (event.__typename === 'ScoresheetGPUpdated') {
               return merge(scoresheet, {
-                data: merge(scoresheet.data || getEmptyScoresheet(edition), {
+                data: merge(scoresheet.data || getEmptyScoresheet(scoresheetSchema), {
                   gp: {
                     value: event.gpValue,
                     notes: event.notes
@@ -91,7 +91,7 @@ const scoresheetUpdatedReconciler =
               return {
                 ...scoresheet,
                 status: event.status,
-                data: getEmptyScoresheet(edition)
+                data: getEmptyScoresheet(scoresheetSchema)
               };
             }
 
@@ -103,7 +103,7 @@ const scoresheetUpdatedReconciler =
   };
 
 export function createScoresheetUpdatedSubscription(
-  edition: Edition,
+  scoresheetSchema: ScoresheetSchema,
   divisionId: string
 ): SubscriptionConfig<unknown, QueryResult, SubscriptionVariables> {
   return {
@@ -111,7 +111,7 @@ export function createScoresheetUpdatedSubscription(
     subscriptionVariables: {
       divisionId
     },
-    updateQuery: scoresheetUpdatedReconciler(edition) as (
+    updateQuery: scoresheetUpdatedReconciler(scoresheetSchema) as (
       prev: QueryResult,
       subscriptionData: { data?: unknown }
     ) => QueryResult

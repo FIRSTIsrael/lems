@@ -108,6 +108,7 @@ router.get(
       eventName: event.name,
       divisionName: division.name,
       seasonName: season.name,
+      seasonSlug: season.slug,
       futureEdition: division.future_edition,
       scoresheets: scoresheets.map(s => {
         // Gracefully handle missing data object

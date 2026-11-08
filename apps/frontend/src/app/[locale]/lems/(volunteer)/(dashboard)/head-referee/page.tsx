@@ -15,7 +15,9 @@ import {
   GET_HEAD_REFEREE_DATA,
   parseHeadRefereeData,
   createMatchLoadedSubscription,
+  createMatchStartedSubscription,
   createMatchCompletedSubscription,
+  createMatchAbortedSubscription,
   createParticipantStatusUpdatedSubscription,
   createScoresheetUpdatedSubscription
 } from './graphql';
@@ -28,7 +30,9 @@ export default function HeadRefereePage() {
   const subscriptions = useMemo(
     () => [
       createMatchLoadedSubscription(currentDivision.id),
+      createMatchStartedSubscription(currentDivision.id),
       createMatchCompletedSubscription(currentDivision.id),
+      createMatchAbortedSubscription(currentDivision.id),
       createParticipantStatusUpdatedSubscription(currentDivision.id),
       createScoresheetUpdatedSubscription(currentDivision.id)
     ],

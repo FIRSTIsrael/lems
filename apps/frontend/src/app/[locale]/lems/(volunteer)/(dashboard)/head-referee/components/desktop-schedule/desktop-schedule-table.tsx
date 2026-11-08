@@ -11,14 +11,9 @@ import {
   TableRow,
   Paper
 } from '@mui/material';
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
-import { useTime } from '../../../../../../../../lib/time/hooks';
 import { useHeadRefereeData } from '../head-referee-context';
 import { MatchRow } from './match-row';
-
-dayjs.extend(isBetween);
 
 interface DesktopScheduleTableProps {
   matches: Match[];
@@ -27,8 +22,7 @@ interface DesktopScheduleTableProps {
 
 export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTableProps) {
   const t = useTranslations('pages.head-referee');
-  const { data, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
-  const currentTime = useTime({ interval: 1000 });
+  const { data, currentMatch, findScoresheetForTeam, filterOptions } = useHeadRefereeData();
 
   // Sort matches by scheduled time
   const sortedMatches = useMemo(() => {
@@ -49,18 +43,6 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
     });
     return Array.from(tableMap.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, [sortedMatches]);
-
-  // Find active match (in progress and within match time)
-  const activeMatchId = useMemo(() => {
-    return sortedMatches.find(match => {
-      if (match.status !== 'in-progress') return false;
-      if (!match.startTime) return false;
-
-      const startTime = dayjs(match.startTime);
-      const endTime = startTime.add(data.matchLength || 150, 'second');
-      return currentTime.isBetween(startTime, endTime);
-    })?.id;
-  }, [sortedMatches, currentTime, data.matchLength]);
 
   return (
     <TableContainer
@@ -103,7 +85,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               match={match}
               tables={tables}
               scoresheets={scoresheets}
-              isActive={match.id === activeMatchId}
+              isActive={match.id === currentMatch?.id}
               isLoaded={match.id === data.loadedMatch}
               findScoresheetForTeam={findScoresheetForTeam}
               searchQuery={filterOptions.searchQuery}

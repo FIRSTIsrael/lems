@@ -9,28 +9,27 @@ import { useTheme } from '@mui/material/styles';
 import { useMutation } from '@apollo/client/react';
 import { useScoresheetMissionTranslations } from '@lems/localization';
 import { MissionSchema, ScoresheetClauseValue } from '@lems/shared/scoresheet';
-import type { Edition } from '@lems/shared/edition';
 import { useScoresheet } from '../scoresheet-context';
 import { useEvent } from '../../../../../../components/event-context';
 import { UPDATE_SCORESHEET_MISSION_CLAUSE_MUTATION } from '../graphql';
 import { MissionClause } from './mission-clause';
 
 interface ScoresheetMissionProps {
+  season: string;
   missionIndex: number;
   mission: MissionSchema;
   src: string;
   missionErrors?: string[];
   disabled?: boolean;
-  edition: Edition;
 }
 
 const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
+  season,
   missionIndex,
   mission,
   src,
   missionErrors,
-  disabled = false,
-  edition
+  disabled = false
 }) => {
   const t = useTranslations('layouts.scoresheet');
   const theme = useTheme();
@@ -38,7 +37,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
   const { scoresheet } = useScoresheet();
   const { currentDivision } = useEvent();
   const { title, description, remarks, getError } = useScoresheetMissionTranslations(
-    edition,
+    season,
     mission.id
   );
   const [missionWidth, setMissionWidth] = useState(0);
@@ -160,6 +159,7 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
           return (
             <MissionClause
               key={index}
+              season={season}
               missionId={mission.id}
               missionIndex={missionIndex}
               clauseIndex={index}
@@ -167,7 +167,6 @@ const ScoresheetMission: React.FC<ScoresheetMissionProps> = ({
               maxWidth={missionWidth * 0.9}
               value={value}
               disabled={disabled}
-              edition={edition}
               onChange={newValue => handleClauseChange(index, newValue)}
             />
           );
