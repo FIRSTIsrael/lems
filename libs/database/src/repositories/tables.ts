@@ -53,7 +53,7 @@ class TablesSelector {
       .selectFrom('robot_game_tables')
       .selectAll()
       .where('division_id', '=', this.divisionId)
-      .orderBy('pk', 'asc')
+      .orderBy('name', 'asc')
       .execute();
   }
 

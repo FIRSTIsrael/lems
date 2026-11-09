@@ -51,6 +51,12 @@ type Table {
 
   "Display name of the table (e.g., 'Table 1', 'Main Arena')"
   name: String!
+
+  "Shared by the two tables of one pair"
+  pairKey: String!
+
+  "'A' or 'B' within the pair"
+  side: String!
 }
 
 """
