@@ -1,28 +1,25 @@
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import { openDB, DBSchema } from 'idb';
-import {
-  AgendaBlock,
-  BlocksByType,
-  ScheduleBlock,
-  ScheduleColumn
-} from './calendar/calendar-types';
+import type { ScheduleContextType } from './schedule-context';
+import { BlocksByType, ScheduleBlock, ScheduleColumn } from './calendar/calendar-types';
 
 const DB_NAME = 'admin-schedule-drafts';
 const DB_VERSION = 1;
 const DRAFT_VERSION = 1;
 
-export interface ScheduleDraftSettings {
-  staggerMatches: boolean;
-  practiceRounds: number;
-  rankingRounds: number;
-  practiceCycleTime: Dayjs;
-  rankingCycleTime: Dayjs;
-  judgingSessionCycleTime: Dayjs;
-  matchLength: Dayjs;
-  judgingSessionLength: Dayjs;
-  fieldStart: Dayjs;
-  judgingStart: Dayjs;
-}
+export type ScheduleDraftSettings = Pick<
+  ScheduleContextType,
+  | 'staggerMatches'
+  | 'practiceRounds'
+  | 'rankingRounds'
+  | 'practiceCycleTime'
+  | 'rankingCycleTime'
+  | 'judgingSessionCycleTime'
+  | 'matchLength'
+  | 'judgingSessionLength'
+  | 'fieldStart'
+  | 'judgingStart'
+>;
 
 /**
  * Identifies the division setup a draft was created for.
@@ -40,16 +37,12 @@ export interface ScheduleDraft {
   blocks: BlocksByType;
 }
 
-type SerializedBlock = Omit<ScheduleBlock, 'startTime'> &
-  Partial<Omit<AgendaBlock, 'startTime' | 'type'>> & { startTime: string };
-
 interface StoredScheduleDraft {
   divisionId: string;
   version: number;
-  savedAt: string;
   fingerprint: ScheduleDraftFingerprint;
   settings: Record<keyof ScheduleDraftSettings, string | number | boolean>;
-  blocks: Record<ScheduleColumn, SerializedBlock[]>;
+  blocks: Record<ScheduleColumn, (Omit<ScheduleBlock, 'startTime'> & { startTime: string })[]>;
 }
 
 interface ScheduleDraftsDb extends DBSchema {
@@ -59,18 +52,6 @@ interface ScheduleDraftsDb extends DBSchema {
   };
 }
 
-const TIME_SETTINGS = [
-  'practiceCycleTime',
-  'rankingCycleTime',
-  'judgingSessionCycleTime',
-  'matchLength',
-  'judgingSessionLength',
-  'fieldStart',
-  'judgingStart'
-] as const;
-
-const COLUMNS: ScheduleColumn[] = ['judging', 'field', 'agenda'];
-
 const getDb = () =>
   openDB<ScheduleDraftsDb>(DB_NAME, DB_VERSION, {
     upgrade(db) {
@@ -78,31 +59,8 @@ const getDb = () =>
     }
   });
 
-const isSameFingerprint = (a: ScheduleDraftFingerprint, b: ScheduleDraftFingerprint) =>
-  a.eventStartDate === b.eventStartDate &&
-  a.teamsCount === b.teamsCount &&
-  a.roomsCount === b.roomsCount &&
-  a.tablesCount === b.tablesCount;
-
-const serializeBlocks = (blocks: BlocksByType) =>
-  Object.fromEntries(
-    COLUMNS.map(column => [
-      column,
-      blocks[column].map(block => ({
-        ...block,
-        isDragging: undefined,
-        startTime: block.startTime.toISOString()
-      }))
-    ])
-  ) as StoredScheduleDraft['blocks'];
-
-const deserializeBlocks = (blocks: StoredScheduleDraft['blocks']) =>
-  Object.fromEntries(
-    COLUMNS.map(column => [
-      column,
-      (blocks[column] ?? []).map(block => ({ ...block, startTime: dayjs(block.startTime) }))
-    ])
-  ) as BlocksByType;
+const mapValues = <T, U>(record: Record<string, T>, fn: (value: T) => U) =>
+  Object.fromEntries(Object.entries(record).map(([key, value]) => [key, fn(value)]));
 
 export const loadScheduleDraft = async (
   divisionId: string,
@@ -112,19 +70,22 @@ export const loadScheduleDraft = async (
   const stored = await db.get('drafts', divisionId);
   if (!stored) return null;
 
-  if (stored.version !== DRAFT_VERSION || !isSameFingerprint(stored.fingerprint, fingerprint)) {
+  if (
+    stored.version !== DRAFT_VERSION ||
+    JSON.stringify(stored.fingerprint) !== JSON.stringify(fingerprint)
+  ) {
     await db.delete('drafts', divisionId);
     return null;
   }
 
-  const settings = { ...stored.settings } as Record<string, unknown>;
-  for (const key of TIME_SETTINGS) {
-    settings[key] = dayjs(stored.settings[key] as string);
-  }
-
   return {
-    settings: settings as unknown as ScheduleDraftSettings,
-    blocks: deserializeBlocks(stored.blocks)
+    // Time settings are the only Dayjs values, and the only ones stored as strings
+    settings: mapValues(stored.settings, value =>
+      typeof value === 'string' ? dayjs(value) : value
+    ) as ScheduleDraftSettings,
+    blocks: mapValues(stored.blocks, blocks =>
+      blocks.map(block => ({ ...block, startTime: dayjs(block.startTime) }))
+    ) as BlocksByType
   };
 };
 
@@ -133,19 +94,21 @@ export const saveScheduleDraft = async (
   fingerprint: ScheduleDraftFingerprint,
   draft: ScheduleDraft
 ) => {
-  const settings = { ...draft.settings } as Record<string, unknown>;
-  for (const key of TIME_SETTINGS) {
-    settings[key] = draft.settings[key].toISOString();
-  }
-
   const db = await getDb();
   await db.put('drafts', {
     divisionId,
     version: DRAFT_VERSION,
-    savedAt: new Date().toISOString(),
     fingerprint,
-    settings: settings as StoredScheduleDraft['settings'],
-    blocks: serializeBlocks(draft.blocks)
+    settings: mapValues(draft.settings, value =>
+      dayjs.isDayjs(value) ? value.toISOString() : value
+    ) as StoredScheduleDraft['settings'],
+    blocks: mapValues(draft.blocks, blocks =>
+      blocks.map(block => ({
+        ...block,
+        isDragging: undefined,
+        startTime: block.startTime.toISOString()
+      }))
+    ) as StoredScheduleDraft['blocks']
   });
 };
 

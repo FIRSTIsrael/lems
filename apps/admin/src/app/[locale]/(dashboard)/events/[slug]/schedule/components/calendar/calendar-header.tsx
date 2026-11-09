@@ -24,10 +24,10 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
   const calendarContext = useCalendar();
   const scheduleContext = useSchedule();
   const { addPracticeRound, addRankingRound } = calendarContext;
-  const { hasRestoredDraft, discardDraft, clearDraft } = scheduleContext;
+  const { initialBlocks, discardDraft, clearDraft } = scheduleContext;
 
   const [notification, setNotification] = useState<NotificationState>(() =>
-    hasRestoredDraft
+    initialBlocks
       ? { variant: 'info', message: t('draft.restored'), show: true }
       : { variant: null, message: '', show: false }
   );
@@ -107,7 +107,7 @@ export const CalendarHeader: React.FC<{ division: Division }> = ({ division }) =
       }
 
       setNotification({ variant: 'success', message: t('generate.success'), show: true });
-      await clearDraft().catch(error => console.error('Failed to clear schedule draft', error));
+      await clearDraft();
       mutate(`/admin/events/${division.eventId}/divisions`);
     } catch (error: unknown) {
       setNotification({
