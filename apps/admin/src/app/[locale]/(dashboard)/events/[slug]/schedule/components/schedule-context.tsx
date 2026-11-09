@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import type { Edition } from '@lems/shared/edition';
+import { groupTablesByPair } from '@lems/shared/utils';
+import type { RobotGameTable } from '@lems/types/api/admin';
 import { JUDGING_DEFAULTS, getMinimumJudgingSessionLength } from '@lems/shared/judging';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
@@ -39,6 +41,7 @@ export interface ScheduleContextType {
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
+  pairsCount: number;
 
   practiceRounds: number;
   rankingRounds: number;
@@ -101,7 +104,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     { suspense: true }
   );
 
-  const { data: tables = [] } = useSWR<unknown[]>(
+  const { data: tables = [] } = useSWR<RobotGameTable[]>(
     `/admin/events/${eventId}/divisions/${divisionId}/tables`,
     { suspense: true }
   );
@@ -163,6 +166,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     teamsCount: teams.length,
     roomsCount: rooms.length,
     tablesCount: tables.length,
+    pairsCount: groupTablesByPair(tables).length,
 
     practiceRounds,
     rankingRounds,
