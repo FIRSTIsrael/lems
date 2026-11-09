@@ -1,4 +1,4 @@
-import { Scoresheet as DbScoresheet } from '@lems/database';
+import { Scoresheet as DbScoresheet, buildNoShowKey } from '@lems/database';
 import { ScoresheetClauseValue } from '@lems/shared/scoresheet';
 import { WithId } from 'mongodb';
 
@@ -34,6 +34,7 @@ export interface ScoresheetGraphQL {
     gp?: { value: 2 | 3 | 4 | null; notes?: string };
     score: number;
   };
+  isNoShow?: boolean;
 }
 
 /**
@@ -51,4 +52,21 @@ export function buildScoresheetResult(scoresheet: WithId<DbScoresheet>): Scoresh
     escalated: scoresheet.escalated,
     data: scoresheet.data
   };
+}
+
+/**
+ * Attaches the `isNoShow` flag to a list of scoresheets using a pre-computed
+ * (batched, division-wide) set of no-show keys. Only RANKING scoresheets can be
+ * no-shows; PRACTICE scoresheets always resolve to `false`.
+ */
+export function attachNoShowFlags(
+  scoresheets: ScoresheetGraphQL[],
+  noShows: Set<string>
+): ScoresheetGraphQL[] {
+  return scoresheets.map(scoresheet => ({
+    ...scoresheet,
+    isNoShow:
+      scoresheet.stage === 'RANKING' &&
+      noShows.has(buildNoShowKey(scoresheet.teamId, scoresheet.round))
+  }));
 }

@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import { openDB, DBSchema } from 'idb';
+import type { Edition } from '@lems/shared/edition';
 import type { ScheduleContextType } from './schedule-context';
 import { BlocksByType, ScheduleBlock, ScheduleColumn } from './calendar/calendar-types';
 
@@ -27,6 +28,7 @@ export type ScheduleDraftSettings = Pick<
  */
 export interface ScheduleDraftFingerprint {
   eventStartDate: string;
+  edition: Edition;
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;

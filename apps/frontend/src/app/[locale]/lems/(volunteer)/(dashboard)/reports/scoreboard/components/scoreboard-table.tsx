@@ -3,15 +3,18 @@
 import { useTranslations } from 'next-intl';
 import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 import type { ScoreboardTeam } from '../graphql/types';
 
 interface ScoreboardTableProps {
   data: ScoreboardTeam[];
   matchesPerTeam: number;
+  rankingStrategy: RankingStrategy;
 }
 
-export function ScoreboardTable({ data, matchesPerTeam }: ScoreboardTableProps) {
+export function ScoreboardTable({ data, matchesPerTeam, rankingStrategy }: ScoreboardTableProps) {
   const t = useTranslations('pages.reports.scoreboard');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const theme = useTheme();
 
   const columns: GridColDef<ScoreboardTeam>[] = [
@@ -34,10 +37,13 @@ export function ScoreboardTable({ data, matchesPerTeam }: ScoreboardTableProps) 
     },
     {
       field: 'maxScore',
-      headerName: t('best-score'),
+      headerName: headlineScoreT(rankingStrategy),
       width: 120,
       valueGetter: (_, row) => row.maxScore ?? -1,
-      renderCell: params => (params.row.maxScore !== null ? params.row.maxScore : '-')
+      renderCell: params =>
+        params.row.maxScore !== null
+          ? formatHeadlineScore(params.row.maxScore, rankingStrategy)
+          : '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,

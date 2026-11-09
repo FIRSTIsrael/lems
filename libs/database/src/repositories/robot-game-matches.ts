@@ -44,6 +44,14 @@ export class RobotGameMatchSelector {
   }
 }
 
+/**
+ * Builds the lookup key used to identify a team's no-show status for a specific
+ * ranking round (team ID + round number).
+ */
+export function buildNoShowKey(teamId: string, round: number): string {
+  return `${teamId}:${round}`;
+}
+
 class RobotGameMatchesSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -137,6 +145,54 @@ class RobotGameMatchesSelector {
     }
 
     return matchIds.length;
+  }
+
+  /**
+   * Returns a set of `${teamId}:${round}` keys identifying every team that is a
+   * no-show for a completed RANKING match in this division, i.e. the team's
+   * `robot_game_match_participants` row has `present IS NULL` once the match
+   * reaches `status = 'completed'`.
+   *
+   * This is computed with a single batched query so it can be reused across an
+   * entire division (e.g. deliberations) without a query per team/scoresheet.
+   */
+  /**
+   * Returns the number of RANKING-stage rounds configured for this division, i.e.
+   * `MAX(round)` across `robot_game_matches` with `stage = 'RANKING'`. Divisions with
+   * no ranking matches yet resolve to `0` (treated as empty rankings by callers).
+   */
+  async getRankingRoundCount(): Promise<number> {
+    const result = await this.db
+      .selectFrom('robot_game_matches')
+      .select(({ fn }) => fn.max('round').as('maxRound'))
+      .where('division_id', '=', this.divisionId)
+      .where('stage', '=', 'RANKING')
+      .executeTakeFirst();
+
+    return result?.maxRound ?? 0;
+  }
+
+  async getRankingNoShows(): Promise<Set<string>> {
+    const rows = await this.db
+      .selectFrom('robot_game_match_participants')
+      .innerJoin(
+        'robot_game_matches',
+        'robot_game_matches.id',
+        'robot_game_match_participants.match_id'
+      )
+      .select(['robot_game_match_participants.team_id as teamId', 'robot_game_matches.round'])
+      .where('robot_game_matches.division_id', '=', this.divisionId)
+      .where('robot_game_matches.stage', '=', 'RANKING')
+      .where('robot_game_matches.status', '=', 'completed')
+      .where('robot_game_match_participants.present', 'is', null)
+      .where('robot_game_match_participants.team_id', 'is not', null)
+      .execute();
+
+    return new Set(
+      rows
+        .filter((row): row is typeof row & { teamId: string } => row.teamId !== null)
+        .map(row => buildNoShowKey(row.teamId, row.round))
+    );
   }
 }
 

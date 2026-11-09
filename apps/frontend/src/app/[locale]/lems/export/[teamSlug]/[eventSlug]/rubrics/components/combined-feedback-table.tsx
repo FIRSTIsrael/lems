@@ -3,23 +3,30 @@
 import React from 'react';
 import { Typography, Table, TableBody, TableRow, TableCell, Box } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { useRubricsGeneralTranslations } from '@lems/localization';
-import { JUDGING_CATEGORIES } from '@lems/types/judging';
+import { useRubricsGeneralTranslations, useJudgingCategoryTranslations } from '@lems/localization';
+import { JUDGING_CATEGORIES, type JudgingCategory } from '@lems/types/judging';
+import { getRubricColors } from '@lems/shared/rubrics';
+import type { Edition } from '@lems/shared/edition';
 import { Rubric } from '../types';
 
-const categoryColors = {
-  'core-values': '#EBB3AA',
-  'innovation-project': '#D3DAEC',
-  'robot-design': '#DDE8D9'
+// Core Values uses a stronger tint than its section colour to match the printed rubric.
+const getFeedbackHeaderColor = (category: JudgingCategory, edition: Edition) => {
+  const colors = getRubricColors(edition, category);
+  return category === 'core-values' ? colors.columns[2] : colors.section;
 };
 
 interface CombinedFeedbackTableProps {
   rubrics: Rubric[];
+  edition: Edition;
 }
 
-export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ rubrics }) => {
+export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({
+  rubrics,
+  edition
+}) => {
   const t = useTranslations('pages.exports.rubrics.feedback');
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
 
   const getFeedback = (category: string) => {
     const rubric = rubrics.find(r => r.category === category);
@@ -137,7 +144,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                     colSpan={2}
                     align="left"
                     sx={{
-                      backgroundColor: categoryColors[category],
+                      backgroundColor: getFeedbackHeaderColor(category, edition),
                       border: '1px solid #000',
                       boxSizing: 'border-box',
                       fontSize: '0.95em',
@@ -175,7 +182,7 @@ export const CombinedFeedbackTable: React.FC<CombinedFeedbackTableProps> = ({ ru
                           }
                         }}
                       >
-                        {t(`categories.${category}`)}
+                        {getCategory(category)}
                       </Box>
                       <Box
                         component="span"

@@ -13,6 +13,8 @@ import React, {
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import { Box, CircularProgress } from '@mui/material';
+import type { Edition } from '@lems/shared/edition';
+import { JUDGING_DEFAULTS, getMinimumJudgingSessionLength } from '@lems/shared/judging';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
 import { BlocksByType } from './calendar/calendar-types';
@@ -34,8 +36,12 @@ const DEFAULT_PRACTICE_CYCLE_TIME = dayjs().hour(0).minute(6).second(0);
 const DEFAULT_RANKING_ROUNDS = 3;
 const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
 
-const DEFAULT_JUDGING_SESSION_LENGTH = dayjs().hour(0).minute(30).second(0);
-const DEFAULT_JUDGING_SESSION_CYCLE_TIME = dayjs().hour(0).minute(45).second(0);
+const secondsToTime = (seconds: number) =>
+  dayjs()
+    .hour(0)
+    .minute(Math.floor(seconds / 60))
+    .second(seconds % 60);
+
 const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
 const multiplyCycleTime = (cycleTime: Dayjs, multiplier: number) => {
@@ -65,6 +71,8 @@ export interface ScheduleContextType {
   judgingSessionCycleTime: Dayjs;
   matchLength: Dayjs;
   judgingSessionLength: Dayjs;
+  /** Shortest judging session that fits the edition's fixed judging stages. */
+  minJudgingSessionLength: Dayjs;
 
   judgingStart: Dayjs;
   fieldStart: Dayjs;
@@ -98,11 +106,13 @@ export interface ScheduleProviderProps {
   children: ReactNode;
   eventId: string;
   divisionId: string;
+  edition: Edition;
 }
 
 interface ScheduleStateProviderProps {
   children: ReactNode;
   divisionId: string;
+  edition: Edition;
   fingerprint: ScheduleDraftFingerprint;
   draft: ScheduleDraft | null;
   /** Remount the schedule state with its defaults */
@@ -112,11 +122,13 @@ interface ScheduleStateProviderProps {
 const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
   children,
   divisionId,
+  edition,
   fingerprint,
   draft,
   onReset
 }) => {
   const event = useEvent();
+  const judgingDefaults = JUDGING_DEFAULTS[edition];
   const { teamsCount, roomsCount, tablesCount } = fingerprint;
 
   const allowStagger = tablesCount > 0 && tablesCount % 4 === 0;
@@ -127,9 +139,9 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
     rankingRounds: DEFAULT_RANKING_ROUNDS,
     practiceCycleTime: DEFAULT_PRACTICE_CYCLE_TIME,
     rankingCycleTime: DEFAULT_RANKING_CYCLE_TIME,
-    judgingSessionCycleTime: DEFAULT_JUDGING_SESSION_CYCLE_TIME,
+    judgingSessionCycleTime: secondsToTime(judgingDefaults.cycleTimeSeconds),
     matchLength: DEFAULT_MATCH_LENGTH,
-    judgingSessionLength: DEFAULT_JUDGING_SESSION_LENGTH,
+    judgingSessionLength: secondsToTime(judgingDefaults.sessionLengthSeconds),
     fieldStart: getFieldStart(event.startDate),
     judgingStart: getJudgingStart(event.startDate)
   };
@@ -237,9 +249,9 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
     setRankingRounds(DEFAULT_RANKING_ROUNDS);
     setPracticeCycleTime(DEFAULT_PRACTICE_CYCLE_TIME);
     setRankingCycleTime(DEFAULT_RANKING_CYCLE_TIME);
-    setJudgingSessionCycleTime(DEFAULT_JUDGING_SESSION_CYCLE_TIME);
+    setJudgingSessionCycleTime(secondsToTime(judgingDefaults.cycleTimeSeconds));
     setMatchLength(DEFAULT_MATCH_LENGTH);
-    setJudgingSessionLength(DEFAULT_JUDGING_SESSION_LENGTH);
+    setJudgingSessionLength(secondsToTime(judgingDefaults.sessionLengthSeconds));
     setFieldStart(getFieldStart(event.startDate));
     setJudgingStart(getJudgingStart(event.startDate));
   };
@@ -260,6 +272,7 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
     judgingSessionCycleTime,
     matchLength,
     judgingSessionLength,
+    minJudgingSessionLength: secondsToTime(getMinimumJudgingSessionLength(edition)),
     matchesPerRound: Math.ceil((teamsCount / tablesCount) * (staggerMatches ? 2 : 1)),
 
     judgingStart,
@@ -292,7 +305,8 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
 export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   children,
   eventId,
-  divisionId
+  divisionId,
+  edition
 }) => {
   const event = useEvent();
 
@@ -315,11 +329,12 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   const fingerprint = useMemo<ScheduleDraftFingerprint>(
     () => ({
       eventStartDate,
+      edition,
       teamsCount: teams.length,
       roomsCount: rooms.length,
       tablesCount: tables.length
     }),
-    [eventStartDate, teams.length, rooms.length, tables.length]
+    [eventStartDate, edition, teams.length, rooms.length, tables.length]
   );
 
   const [draftState, setDraftState] = useState<{
@@ -361,6 +376,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     <ScheduleStateProvider
       key={`${JSON.stringify(fingerprint)}-${resetCount}`}
       divisionId={divisionId}
+      edition={edition}
       fingerprint={fingerprint}
       draft={draftState.draft}
       onReset={onReset}

@@ -66,7 +66,9 @@ export const getCategoryRadarColor = (category: string): string => {
 export const processCoreValuesRadarData = (
   edition: Edition,
   team: Team,
-  getSectionTitle: (sectionId: string) => string
+  getIpSectionTitle: (sectionId: string) => string,
+  getRdSectionTitle: (sectionId: string) => string,
+  getCategory: (category: string) => string
 ): RadarChartDataPoint[] => {
   const ipRubric = team.rubrics.innovation_project;
   const rdRubric = team.rubrics.robot_design;
@@ -74,16 +76,66 @@ export const processCoreValuesRadarData = (
 
   const rubrics = getRubrics(edition);
   const ipSchema = rubrics['innovation-project'];
+  const rdSchema = rubrics['robot-design'];
   const ipSectionScores = extractCoreValuesBySection(ipRubric, ipSchema);
-  const rdSectionScores = extractCoreValuesBySection(rdRubric, rubrics['robot-design']);
+  const rdSectionScores = extractCoreValuesBySection(rdRubric, rdSchema);
 
-  return ipSchema.sections.map(section => ({
-    field: getSectionTitle(section.id),
+  const mergedSectionPoint = (sectionId: string, getTitle: (sectionId: string) => string) => ({
+    field: getTitle(sectionId),
     score: calculateAverage([
-      ...(ipSectionScores[section.id] || []),
-      ...(rdSectionScores[section.id] || [])
+      ...(ipSectionScores[sectionId] || []),
+      ...(rdSectionScores[sectionId] || [])
     ])
-  }));
+  });
+
+  const ipSectionIds = ipSchema.sections.map(section => section.id);
+  const sharesSectionIds =
+    ipSectionIds.length === rdSchema.sections.length &&
+    rdSchema.sections.every(section => ipSectionIds.includes(section.id));
+  if (sharesSectionIds) {
+    return ipSectionIds.map(sectionId => mergedSectionPoint(sectionId, getIpSectionTitle));
+  }
+
+  // Editions whose IP and RD sections differ: each rubric's Core Values sections get their own
+  // point, scored only from that rubric, even when a section id appears in both rubrics.
+  const hasCoreValues = (section: (typeof ipSchema.sections)[number]) =>
+    section.fields.some(field => field.coreValues);
+  const ipCvSections = ipSchema.sections.filter(hasCoreValues);
+  const rdCvSections = rdSchema.sections.filter(hasCoreValues);
+  const rdCvSectionIds = rdCvSections.map(section => section.id);
+  const ipCvSectionIds = ipCvSections.map(section => section.id);
+
+  const sectionPoint = (
+    sectionId: string,
+    scores: Record<string, number[]>,
+    getTitle: (sectionId: string) => string,
+    category: string,
+    isShared: boolean
+  ) => ({
+    field: isShared ? `${getTitle(sectionId)} (${getCategory(category)})` : getTitle(sectionId),
+    score: calculateAverage(scores[sectionId] || [])
+  });
+
+  return [
+    ...ipCvSections.map(section =>
+      sectionPoint(
+        section.id,
+        ipSectionScores,
+        getIpSectionTitle,
+        'innovation-project',
+        rdCvSectionIds.includes(section.id)
+      )
+    ),
+    ...rdCvSections.map(section =>
+      sectionPoint(
+        section.id,
+        rdSectionScores,
+        getRdSectionTitle,
+        'robot-design',
+        ipCvSectionIds.includes(section.id)
+      )
+    )
+  ];
 };
 
 export const processRubricRadarData = (

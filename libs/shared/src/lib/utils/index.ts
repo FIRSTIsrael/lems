@@ -1,4 +1,5 @@
 export * from './arrays';
+export * from './robot-game-ranking';
 export * from './timezones';
 export * from './regions';
 export * from './merge';
