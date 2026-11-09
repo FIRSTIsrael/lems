@@ -21,6 +21,8 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
       tables {
         id
         name
+        pairKey
+        side
       }
       rooms {
         id
@@ -50,6 +52,8 @@ export const GET_TOURNAMENT_MANAGER_DATA: TypedDocumentNode<
             table {
               id
               name
+              pairKey
+              side
             }
           }
         }

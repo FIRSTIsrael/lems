@@ -11,6 +11,8 @@ import {
   TableRow,
   Paper
 } from '@mui/material';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { useHeadRefereeData } from '../head-referee-context';
 import { MatchRow } from './match-row';
@@ -41,8 +43,9 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
         }
       });
     });
-    return Array.from(tableMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+    return orderTablesByPair(Array.from(tableMap.values()));
   }, [sortedMatches]);
+  const pairStarts = useMemo(() => getPairStartIds(tables), [tables]);
 
   return (
     <TableContainer
@@ -71,7 +74,10 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               <TableCell
                 key={table.id}
                 align="center"
-                sx={{ fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' }}
+                sx={[
+                  { fontWeight: 600, fontSize: '1.25rem', py: 2, color: 'common.white' },
+                  pairStarts.has(table.id) && pairDividerSx
+                ]}
               >
                 {table.name}
               </TableCell>
@@ -84,6 +90,7 @@ export function DesktopScheduleTable({ matches, scoresheets }: DesktopScheduleTa
               key={match.id}
               match={match}
               tables={tables}
+              pairStarts={pairStarts}
               scoresheets={scoresheets}
               isActive={match.id === currentMatch?.id}
               isLoaded={match.id === data.loadedMatch}

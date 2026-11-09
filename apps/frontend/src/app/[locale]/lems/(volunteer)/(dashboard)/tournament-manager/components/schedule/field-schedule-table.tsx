@@ -15,6 +15,8 @@ import { useState, useEffect, useMemo, useCallback, memo } from 'react';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
 import { useMatchTranslations } from '@lems/localization';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import type { MatchStatus, TournamentManagerData } from '../../graphql';
 import { TeamSlot } from '../team-slot';
 import { StatusChip } from '../status-chip';
@@ -42,7 +44,8 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
   const { handleSlotClick: handleSlotClickOperation } = useSlotOperations(division, dispatch);
 
   const matches = division.field.matches;
-  const tables = division.tables ?? [];
+  const tables = useMemo(() => orderTablesByPair(division.tables ?? []), [division.tables]);
+  const pairStarts = useMemo(() => getPairStartIds(tables), [tables]);
 
   // Group matches by stage and round
   const roundOptions = useMemo(() => {
@@ -206,7 +209,11 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                 </Typography>
               </TableCell>
               {tables.map(table => (
-                <TableCell key={table.id} align="center">
+                <TableCell
+                  key={table.id}
+                  align="center"
+                  sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                >
                   <Typography
                     sx={{
                       fontWeight: 600,
@@ -285,7 +292,11 @@ function FieldScheduleTableComponent({ isMobile }: FieldScheduleTableProps) {
                     );
 
                     return (
-                      <TableCell key={table.id} align="center">
+                      <TableCell
+                        key={table.id}
+                        align="center"
+                        sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                      >
                         <TeamSlot
                           team={team ?? null}
                           isSelected={isCurrentSlot}

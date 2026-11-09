@@ -3,7 +3,11 @@
 import { Box, type SxProps, type Theme } from '@mui/material';
 import type { ReactNode } from 'react';
 
-export const pairDividerSx: SxProps<Theme> = {
+// A plain style object (not an array/function) so it can be an element of an sx array.
+export const pairDividerSx: Exclude<
+  SxProps<Theme>,
+  ReadonlyArray<unknown> | ((theme: Theme) => unknown)
+> = {
   borderInlineStartWidth: 2,
   borderInlineStartStyle: 'solid',
   borderInlineStartColor: 'divider'

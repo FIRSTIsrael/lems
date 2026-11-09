@@ -18,6 +18,8 @@ export const GET_FIELD_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql`
       tables {
         id
         name
+        pairKey
+        side
       }
       agenda(visibility: ["public", "field"]) {
         id
@@ -47,6 +49,8 @@ export const GET_FIELD_SCHEDULE: TypedDocumentNode<QueryData, QueryVars> = gql`
             table {
               id
               name
+              pairKey
+              side
             }
             present
             queued
