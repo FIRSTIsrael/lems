@@ -1,17 +1,7 @@
 /* eslint-disable @typescript-eslint/no-require-imports */
 //@ts-check
-const { composePlugins, withNx } = require('@nx/next');
 const createNextIntlPlugin = require('next-intl/plugin');
-const configValues = {
-  default: {},
-  development: {}
-};
 const configuration = process.env.NX_TASK_TARGET_CONFIGURATION || 'default';
-const options = {
-  ...configValues.default,
-  // @ts-expect-error: Ignore TypeScript error for indexing configValues with a dynamic key
-  ...configValues[configuration]
-};
 // The removed @nx/next:build executor wrote production builds to
 // dist/apps/portal/.next (read by the Dockerfile and deploy workflows), while
 // development builds and `next dev` used the in-project .next directory.
@@ -20,10 +10,9 @@ const distDir =
     ? '.next'
     : '../../dist/apps/portal/.next';
 /**
- * @type {import('@nx/next/plugins/with-nx').WithNxOptions}
+ * @type {import('next').NextConfig}
  **/
 const nextConfig = {
-  nx: { ...options },
   distDir,
   output: 'standalone',
   reactStrictMode: true,
@@ -50,9 +39,5 @@ const nextConfig = {
   },
   reactCompiler: true
 };
-const plugins = [
-  // Add more Next.js plugins to this list if needed.
-  withNx,
-  createNextIntlPlugin()
-];
-module.exports = composePlugins(...plugins)(nextConfig);
+const withNextIntl = createNextIntlPlugin();
+module.exports = withNextIntl(nextConfig);
