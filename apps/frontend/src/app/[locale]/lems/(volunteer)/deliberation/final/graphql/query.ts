@@ -145,6 +145,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           coreValues
           optionalAwards
           robotPerformance
+          coopertition
           coreAwardsManualEligibility
           optionalAwardsManualEligibility
         }
