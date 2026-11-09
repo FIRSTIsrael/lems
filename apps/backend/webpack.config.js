@@ -1,5 +1,5 @@
 const { NxAppWebpackPlugin } = require('@nx/webpack/app-plugin');
-const { useLegacyNxPlugin } = require('@nx/webpack');
+const { PinoWebpackPlugin } = require('pino-webpack-plugin');
 
 // These options were migrated by @nx/webpack:convert-to-inferred from
 // the project.json file and merged with the options in this file
@@ -11,6 +11,11 @@ const configValues = {
       outputPath: '../../dist/apps/backend',
       main: './src/main.ts',
       tsConfig: './tsconfig.app.json',
+      // Match the removed @nx/webpack:webpack executor output: an unhashed,
+      // unminified main.js without source maps (the Dockerfile runs main.js).
+      outputHashing: 'none',
+      optimization: false,
+      sourceMap: false,
       assets: [
         './src/assets',
         {
@@ -38,11 +43,6 @@ const buildOptions = {
 module.exports = async () => ({
   plugins: [
     new NxAppWebpackPlugin(buildOptions),
-    // NOTE: useLegacyNxPlugin ensures that the non-standard Webpack configuration file previously used still works.
-    // To remove its usage, move options such as "plugins" into this file as standard Webpack configuration options.
-    // To enhance configurations after Nx plugins have applied, you can add a new plugin with the \`apply\` method.
-    // e.g. \`{ apply: (compiler) => { /* modify compiler.options */ }\`
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    await useLegacyNxPlugin(require('./webpack.config.old.js'), buildOptions)
+    new PinoWebpackPlugin({ transports: ['pino-pretty'] })
   ]
 });
