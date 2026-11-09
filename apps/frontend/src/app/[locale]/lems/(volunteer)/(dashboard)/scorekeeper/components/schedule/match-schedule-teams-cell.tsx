@@ -2,7 +2,7 @@
 
 import { Typography, Box, Tooltip } from '@mui/material';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { Match } from '../../graphql';
 
 interface TeamsCellProps {
@@ -10,15 +10,10 @@ interface TeamsCellProps {
 }
 
 export const TeamsCell = ({ participants }: TeamsCellProps) => {
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     participants,
     participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   return (
     <Box

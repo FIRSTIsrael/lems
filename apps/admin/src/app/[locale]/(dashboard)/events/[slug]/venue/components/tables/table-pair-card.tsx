@@ -27,8 +27,6 @@ interface TablePairCardProps {
   group: TableGroup<RobotGameTable>;
   groups: TableGroup<RobotGameTable>[];
   basePath: string;
-  label?: string;
-  readOnly?: boolean;
   onChanged: () => void;
   onSuccess: (message?: 'save-success' | 'delete-success') => void;
 }
@@ -38,8 +36,6 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
   group,
   groups,
   basePath,
-  label,
-  readOnly = false,
   onChanged,
   onSuccess
 }) => {
@@ -73,23 +69,21 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
     <TablePairOutline sx={{ flexDirection: 'column' }}>
       <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', px: 1 }}>
         <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          {label ?? t('tables.pair-label', { index })}
+          {t('tables.pair-label', { index })}
         </Typography>
-        {!readOnly && (
-          <IconButton
-            size="small"
-            color="error"
-            title={t('tables.delete-pair')}
-            aria-label={t('tables.delete-pair')}
-            onClick={() => {
-              setError('');
-              setConfirmOpen(true);
-            }}
-            disabled={deleting}
-          >
-            {deleting ? <CircularProgress size={16} /> : <Delete />}
-          </IconButton>
-        )}
+        <IconButton
+          size="small"
+          color="error"
+          title={t('tables.delete-pair')}
+          aria-label={t('tables.delete-pair')}
+          onClick={() => {
+            setError('');
+            setConfirmOpen(true);
+          }}
+          disabled={deleting}
+        >
+          {deleting ? <CircularProgress size={16} /> : <Delete />}
+        </IconButton>
       </Stack>
       <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} sx={{ p: 0.5 }}>
         {group.tables.map(table => (
@@ -98,7 +92,6 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
             table={table}
             groups={groups}
             basePath={basePath}
-            readOnly={readOnly}
             onChanged={onChanged}
             onSuccess={onSuccess}
           />

@@ -51,28 +51,25 @@ export const TablePairsManager: React.FC<TablePairsManagerProps> = ({ division }
   }
 
   const groups = groupTablesByPair(tables);
-  const readOnly = division.hasSchedule;
 
   return (
     <Paper sx={{ p: 3, height: '100%' }}>
       <Typography variant="h6" gutterBottom>
         {t('tables.title')}
       </Typography>
-      {!readOnly && (
-        <Box sx={{ mb: 3 }}>
-          <AddPairForm
-            tables={tables}
-            basePath={basePath}
-            onChanged={() => mutate()}
-            onSuccess={showSuccess}
-          />
-          {successMessage && (
-            <Alert severity="success" sx={{ mt: 2 }}>
-              {successMessage}
-            </Alert>
-          )}
-        </Box>
-      )}
+      <Box sx={{ mb: 3 }}>
+        <AddPairForm
+          tables={tables}
+          basePath={basePath}
+          onChanged={() => mutate()}
+          onSuccess={showSuccess}
+        />
+        {successMessage && (
+          <Alert severity="success" sx={{ mt: 2 }}>
+            {successMessage}
+          </Alert>
+        )}
+      </Box>
       {groups.length === 0 ? (
         <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', py: 4 }}>
           {t('tables.empty-state')}
@@ -90,7 +87,6 @@ export const TablePairsManager: React.FC<TablePairsManagerProps> = ({ division }
                 group={group}
                 groups={groups}
                 basePath={basePath}
-                readOnly={readOnly}
                 onChanged={() => mutate()}
                 onSuccess={showSuccess}
               />

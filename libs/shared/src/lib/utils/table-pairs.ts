@@ -79,18 +79,23 @@ export function groupParticipantsByPair<P extends { table: { id: string } }>(
   }));
 }
 
+export interface FilledPairGroup<P> {
+  key: string;
+  participants: P[];
+}
+
 /**
- * Returns the participant at the other table of the given table's pair, or null.
+ * Groups participants by their table's pair, in pair order. Empty sides are dropped,
+ * and so are pairs with no participants.
  */
-export function getPairedParticipant<P extends { table: { id: string } }>(
+export function groupFilledParticipantsByPair<P extends { table: { id: string } }>(
   participants: P[],
-  tableId: string,
   tables: PairableTable[]
-): P | null {
-  const group = groupTablesByPair(orderTablesByPair(tables)).find(g =>
-    g.tables.some(table => table.id === tableId)
-  );
-  const partner = group?.tables.find(table => table.id !== tableId);
-  if (!partner) return null;
-  return participants.find(participant => participant.table.id === partner.id) ?? null;
+): FilledPairGroup<P>[] {
+  return groupParticipantsByPair(participants, tables)
+    .map(group => ({
+      key: group.key,
+      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
+    }))
+    .filter(group => group.participants.length > 0);
 }

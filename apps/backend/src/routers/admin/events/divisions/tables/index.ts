@@ -183,10 +183,7 @@ router.delete(
       const deletedIds = await tables.byPairKey(pairKey).delete();
 
       for (const tableId of deletedIds) {
-        const tableEventUser = await eventUsers.byRoleInfo('tableId', tableId).get();
-        if (tableEventUser) {
-          await eventUsers.delete(tableEventUser.id);
-        }
+        await eventUsers.byRoleInfo('tableId', tableId).delete();
       }
     });
 

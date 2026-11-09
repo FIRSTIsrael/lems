@@ -594,14 +594,8 @@
         },
         "tables": {
           "title": "Robot Game Tables",
-          "add-button": "Add Table",
-          "name-placeholder": "Table name",
           "save-button": "Save",
-          "delete-button": "Delete",
           "empty-state": "No tables added yet",
-          "validation": {
-            "name-required": "Table name is required"
-          },
           "pair-label": "Pair {index}",
           "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
           "add-pair": "Add pair",

@@ -62,15 +62,15 @@ export function RoleInfoStep() {
         options={availableOptions}
         getOptionLabel={option => option.name}
         value={selectedOption}
-        renderOption={(props, option) => {
-          const { key, ...optionProps } = props;
-          return (
-            <Fragment key={key}>
-              {option.startsPair && <Divider component="li" />}
-              <li {...optionProps}>{option.name}</li>
-            </Fragment>
-          );
-        }}
+        // Grouping by pair puts a divider between pairs. MUI groups the filtered options, and a
+        // group's key is the index of its first option, so key 0 is the first group shown.
+        groupBy={roleInfoType === 'table' ? option => option.pairKey ?? '' : undefined}
+        renderGroup={params => (
+          <Fragment key={params.key}>
+            {params.key > 0 && <Divider component="li" />}
+            {params.children}
+          </Fragment>
+        )}
         onChange={(_, newValue) => {
           setFieldValue('roleInfoValue', newValue || { id: '', name: '' });
         }}
