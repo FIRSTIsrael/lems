@@ -12,6 +12,7 @@ import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
 import { TeamComparisonDialog } from '../../../components/team-comparison-dialog';
+import { useEdition } from '../../../../hooks/use-edition';
 
 const FIELD_COLUMN_WIDTH = 130;
 
@@ -19,7 +20,8 @@ export function CoreAwardsDataGrid() {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.core-awards');
   const tTable = useTranslations('pages.deliberations.category.table');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { teams, eligibleTeams, categoryPicklists, deliberation, awards, updateAward } =
     useFinalDeliberation();
 

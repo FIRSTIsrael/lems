@@ -535,6 +535,7 @@
             "deleting": "Deleting..."
           },
           "future-edition": "Future edition",
+          "save-failed": "Could not save the division. If you changed the edition, first remove any awards the new edition does not support.",
           "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
@@ -903,11 +904,11 @@
           },
           "minimum": {
             "title": "Minimum Awards",
-            "description": "Non-personal awards excluding robot performance and advancement"
+            "description": "Non-personal awards excluding {award} and advancement"
           },
           "maximum": {
             "title": "Maximum Awards",
-            "description": "Minimum awards plus robot performance awards"
+            "description": "Minimum awards plus {award} awards"
           },
           "rules": {
             "title": "Validation Rules",
@@ -919,7 +920,8 @@
             "title": "Validation Issues",
             "no-teams": "No teams registered for this event",
             "not-enough-awards": "Not enough awards configured ({count}%)",
-            "too-many-awards": "Too many awards configured ({count}%)"
+            "too-many-awards": "Too many awards configured ({count}%)",
+            "unavailable-awards": "{count, plural, one {# configured award is} other {# configured awards are}} not available in this division's edition"
           },
           "success": {
             "title": "Awards Configuration Valid",

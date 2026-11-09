@@ -14,11 +14,6 @@
           "think-about": "חשבו על",
           "great-job-placeholder": "ציינו את הדברים שהקבוצה עשתה בצורה מצוינת...",
           "think-about-placeholder": "דברים שעל הקבוצה לחשוב עליהם או לשפר...",
-          "categories": {
-            "core-values": "ערכי הליבה",
-            "innovation-project": "פרויקט החדשנות",
-            "robot-design": "תכנון הרובוט"
-          },
           "category-descriptions": {
             "core-values": "כיצד הקבוצה הדגימה עבודת צוות, גילוי, הכלה, חדשנות, השפעה והנאה בעבודתה?",
             "innovation-project": "כיצד הקבוצה זיהתה בעיה הקשורה לנושא של עונה וניגשה לפתור אותה?",
@@ -328,11 +323,6 @@
         "session-completed": "הושלם",
         "profile-document-tooltip": "צפה במסמך הקבוצה",
         "profile-document-button-label": "פרופיל",
-        "rubric-labels": {
-          "core-values": "ערכי הליבה",
-          "innovation-project": "פרויקט החדשנות",
-          "robot-design": "תכנון הרובוט"
-        },
         "status-glossary": {
           "title": "מדריך סטטוס מחוונים",
           "aria-label": "הצג מדריך סטטוס מחוונים",
@@ -1363,9 +1353,6 @@
       "scores-chart": {
         "room-scores-distribution": "התפלגות ניקוד חדרים",
         "no-data-available": "אין נתונים זמינים",
-        "innovation-project": "פרויקט חדשנות",
-        "robot-design": "עיצוב רובוט",
-        "core-values": "ערכי ליבה",
         "aggregate-average": "ממוצע כללי"
       },
       "compare": {
@@ -1456,9 +1443,7 @@
           "table-team": "קבוצה",
           "table-room": "חדר",
           "table-score": "ציון כולל",
-          "table-innovation-project-rank": "דירוג פרויקט חדשנות",
-          "table-robot-design-rank": "דירוג עיצוב רובוט",
-          "table-core-values-rank": "דירוג ערכי הליבה",
+          "table-category-rank": "דירוג {category}",
           "table-robot-game-rank": "דירוג משחק הרובוט",
           "save": "שמור אליפות",
           "advance": "המשך לפרסי חובה",
@@ -1533,10 +1518,7 @@
           "alert-title": "אנומליות בדירוג זוהו",
           "alert-description": "לכמה קבוצות יש הבדלים משמעותיים בין מיקום הרשימה שלהן לדירוג המחושב.",
           "higher": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר בתחום {category}",
-          "lower": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר בתחום {category}",
-          "core-values": "ערכים ליבה",
-          "innovation-project": "פרויקט חדשנות",
-          "robot-design": "עיצוב רובוט"
+          "lower": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר בתחום {category}"
         }
       }
     },

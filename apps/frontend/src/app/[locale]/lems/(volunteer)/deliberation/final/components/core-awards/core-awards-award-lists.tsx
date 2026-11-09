@@ -9,6 +9,7 @@ import { JudgingCategory } from '@lems/database';
 import { Award } from '@lems/shared';
 import { useFinalDeliberation } from '../../final-deliberation-context';
 import type { EnrichedTeam } from '../../types';
+import { useEdition } from '../../../../hooks/use-edition';
 
 const CATEGORIES: JudgingCategory[] = ['robot-design', 'innovation-project', 'core-values'];
 
@@ -111,7 +112,8 @@ const AwardListItem: React.FC<AwardListItemProps> = ({ team, index, onRemove }) 
 export const CoreAwardsAwardLists: React.FC = () => {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.final.core-awards');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { teams, awards, awardCounts, updateAward } = useFinalDeliberation();
 
   const handleRemoveAward = useCallback(

@@ -7,6 +7,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { RubricStatus } from '@lems/database';
 import { getRubricColor, getRubricIcon } from '@lems/shared/rubrics/rubric-utils';
 import { useTranslations } from 'next-intl';
+import { useEdition } from '../../../hooks/use-edition';
 
 interface RubricStatusButtonProps {
   category: JudgingCategory;
@@ -24,8 +25,9 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
 }) => {
   const t = useTranslations('pages.judge-advisor.grid.rubric-status');
   const theme = useTheme();
+  const edition = useEdition();
   const searchParams = useSearchParams();
-  const rubricColor = getRubricColor(category);
+  const rubricColor = getRubricColor(category, edition);
   const statusIcon = getRubricIcon(status, rubricColor);
 
   const isCompleted = status === 'completed';

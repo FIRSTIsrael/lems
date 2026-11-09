@@ -19,9 +19,9 @@ interface StageTimelineProps {
 
 export const StageTimeline = ({ timerState }: StageTimelineProps) => {
   const t = useTranslations('pages.judge');
-  const { getStage } = useJudgingSessionStageTranslations();
-  const { session, sessionLength } = useSession();
   const edition = useEdition();
+  const { getStage } = useJudgingSessionStageTranslations(edition);
+  const { session, sessionLength } = useSession();
   const { judgingStages } = useJudgingSessionTimer(session.startTime!, sessionLength, edition);
   const { currentStageIndex, stageTimeRemaining } = timerState;
 

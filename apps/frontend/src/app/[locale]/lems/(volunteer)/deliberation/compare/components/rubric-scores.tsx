@@ -106,14 +106,15 @@ interface CategoryScoreCardProps {
   cat: string;
   sections: SectionFields;
   getCategory: (category: string) => string;
+  edition: Edition;
 }
 
-const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProps) => (
+const CategoryScoreCard = ({ cat, sections, getCategory, edition }: CategoryScoreCardProps) => (
   <Paper
     sx={{
       p: 1.5,
-      bgcolor: getCategoryBgColor(cat),
-      border: `2px solid ${getCategoryColor(cat)}`,
+      bgcolor: getCategoryBgColor(cat, edition),
+      border: `2px solid ${getCategoryColor(cat, edition)}`,
       borderRadius: 2,
       height: '100%'
     }}
@@ -123,7 +124,7 @@ const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProp
       sx={{
         fontSize: '0.95rem',
         fontWeight: 700,
-        color: getCategoryColor(cat),
+        color: getCategoryColor(cat, edition),
         textAlign: 'center',
         mb: 1,
         display: 'block'
@@ -148,9 +149,9 @@ const CategoryScoreCard = ({ cat, sections, getCategory }: CategoryScoreCardProp
 
 export const RubricScores = ({ team }: RubricScoresProps) => {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
-  const { fieldComparisons, category } = useCompareContext();
   const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
+  const { fieldComparisons, category } = useCompareContext();
 
   const fieldsBySections = useMemo(
     () => processFieldsBySections(edition, team, fieldComparisons, category),
@@ -192,8 +193,8 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
         <Paper
           sx={{
             p: 1.5,
-            bgcolor: getCategoryBgColor(category),
-            border: `2px solid ${getCategoryColor(category)}`,
+            bgcolor: getCategoryBgColor(category, edition),
+            border: `2px solid ${getCategoryColor(category, edition)}`,
             borderRadius: 2,
             maxHeight: 300,
             overflowY: 'auto'
@@ -225,7 +226,12 @@ export const RubricScores = ({ team }: RubricScoresProps) => {
             const typedSections = sections as SectionFields;
             return Object.keys(typedSections).length > 0 ? (
               <Grid size={4} key={cat}>
-                <CategoryScoreCard cat={cat} sections={typedSections} getCategory={getCategory} />
+                <CategoryScoreCard
+                  cat={cat}
+                  sections={typedSections}
+                  getCategory={getCategory}
+                  edition={edition}
+                />
               </Grid>
             ) : null;
           })}

@@ -6,6 +6,8 @@ import { useRubricsGeneralTranslations, useJudgingCategoryTranslations } from '@
 import { Stack, Typography, Box, Grid, Paper } from '@mui/material';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
+import { useEdition } from '../../../hooks/use-edition';
+import { getCategoryColor, getCategoryBgColor } from './rubric-scores-utils';
 
 interface FeedbackProps {
   team: Team;
@@ -20,7 +22,7 @@ function FeedbackItem({
   content: string;
   compact?: boolean;
 }) {
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(useEdition());
 
   return (
     <Box>
@@ -61,26 +63,14 @@ function CategoryFeedbackCard({
   feedback: { categoryName: string; greatJob?: string; thinkAbout?: string };
   compact?: boolean;
 }) {
-  const categoryColors = {
-    'innovation-project': { main: '#1976d2', bg: '#e3f2fd' },
-    'robot-design': { main: '#388e3c', bg: '#e8f5e8' },
-    'core-values': { main: '#d32f2f', bg: '#ffebee' }
-  } as const;
-
-  const getCategoryColor = (cat: string) =>
-    categoryColors[cat as keyof typeof categoryColors]?.main ||
-    categoryColors['innovation-project'].main;
-
-  const getCategoryBgColor = (cat: string) =>
-    categoryColors[cat as keyof typeof categoryColors]?.bg ||
-    categoryColors['innovation-project'].bg;
+  const edition = useEdition();
 
   return (
     <Paper
       sx={{
         p: 1.5,
-        bgcolor: getCategoryBgColor(category),
-        border: `2px solid ${getCategoryColor(category)}`,
+        bgcolor: getCategoryBgColor(category, edition),
+        border: `2px solid ${getCategoryColor(category, edition)}`,
         borderRadius: 2,
         height: 180,
         overflowY: 'auto'
@@ -91,7 +81,7 @@ function CategoryFeedbackCard({
         sx={{
           fontSize: '0.75rem',
           fontWeight: 700,
-          color: getCategoryColor(category),
+          color: getCategoryColor(category, edition),
           textAlign: 'center',
           mb: 1,
           display: 'block'
@@ -114,7 +104,8 @@ function CategoryFeedbackCard({
 
 export function Feedback({ team }: FeedbackProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { category } = useCompareContext();
 
   const feedbacksByCategory = useMemo(() => {

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { useEdition } from '../../../../../../hooks/use-edition';
 import { useRubric } from '../rubric-context';
 
 interface FeedbackRowProps {
@@ -24,7 +25,7 @@ const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
   const t = useTranslations('pages.rubric');
 
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(useEdition());
   const { rubric, updateFeedback } = useRubric();
 
   const [feedback, setFeedback] = useState(

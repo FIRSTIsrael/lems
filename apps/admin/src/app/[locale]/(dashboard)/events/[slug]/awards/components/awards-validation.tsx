@@ -18,13 +18,15 @@ import {
   Error as ErrorIcon,
   Info as InfoIcon
 } from '@mui/icons-material';
+import { useAwardTranslations } from '@lems/localization';
 import { useAwards } from './awards-context';
 
 export const AwardsValidation = () => {
   const theme = useTheme();
   const t = useTranslations('pages.events.awards.validation');
 
-  const { validation, teamCount } = useAwards();
+  const { validation, teamCount, edition } = useAwards();
+  const { getName } = useAwardTranslations(edition);
 
   const { minimumAwards, maximumAwards, minimumPercentage, maximumPercentage, isValid, reasons } =
     validation;
@@ -107,7 +109,7 @@ export const AwardsValidation = () => {
                 display: 'block'
               }}
             >
-              {t('minimum.description')}
+              {t('minimum.description', { award: getName('robot-performance') })}
             </Typography>
           </Box>
 
@@ -155,7 +157,7 @@ export const AwardsValidation = () => {
                 display: 'block'
               }}
             >
-              {t('maximum.description')}
+              {t('maximum.description', { award: getName('robot-performance') })}
             </Typography>
           </Box>
         </Stack>

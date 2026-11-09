@@ -3,26 +3,23 @@
 import { TableRow, TableCell, Typography, Box, Stack } from '@mui/material';
 import { JudgingCategory } from '@lems/types/judging';
 import { useRubricsTranslations } from '@lems/localization';
+import { getRubricColors } from '@lems/shared/rubrics';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 
 interface SectionTitleRowProps {
   sectionId: string;
   category: JudgingCategory;
 }
 
-const sectionColors: { [K in JudgingCategory]: string } = {
-  'core-values': '#F5DAD4',
-  'innovation-project': '#D3DAED',
-  'robot-design': '#DAE8D8'
-};
-
 export const SectionTitleRow: React.FC<SectionTitleRowProps> = ({ sectionId, category }) => {
-  const { getSectionTitle, getSectionDescription } = useRubricsTranslations(category);
+  const edition = useToolEdition();
+  const { getSectionTitle, getSectionDescription } = useRubricsTranslations(category, edition);
 
   return (
     <TableRow>
       <TableCell
         sx={{
-          bgcolor: sectionColors[category],
+          bgcolor: getRubricColors(edition, category).section,
           py: '0.75em',
           px: '1.5em',
           textAlign: 'start',

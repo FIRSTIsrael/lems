@@ -15,7 +15,9 @@ import {
   Box,
   useTheme
 } from '@mui/material';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingSession } from '../../graphql';
+import { useEdition } from '../../../../hooks/use-edition';
 import { RubricStatusButton } from './rubric-status-button';
 import { TeamInfoCell } from './team-info-cell';
 import { StartSessionButton } from './start-session-button';
@@ -34,6 +36,8 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
   loading = false
 }) => {
   const t = useTranslations('pages.judge.schedule');
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
 
   const sortedSessions = useMemo(() => {
@@ -214,21 +218,21 @@ export const RoomScheduleTable: React.FC<RoomScheduleTableProps> = ({
                     <RubricStatusButton
                       category="innovation-project"
                       status={session.rubrics?.innovation_project?.status}
-                      label={t('rubric-labels.innovation-project')}
+                      label={getCategory('innovation-project')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
                       category="robot-design"
                       status={session.rubrics?.robot_design?.status}
-                      label={t('rubric-labels.robot-design')}
+                      label={getCategory('robot-design')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}
                     />
                     <RubricStatusButton
                       category="core-values"
                       status={session.rubrics?.core_values?.status}
-                      label={t('rubric-labels.core-values')}
+                      label={getCategory('core-values')}
                       disabled={session.status !== 'completed'}
                       teamSlug={session.team.slug}
                     />
