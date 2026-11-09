@@ -612,7 +612,11 @@
           "swap": "Swap…",
           "swap-title": "Swap {name} with",
           "position": "Pair {index} · {side}: {name}",
-          "cancel": "Cancel"
+          "cancel": "Cancel",
+          "physical-table-label": "Table {index}",
+          "summary-future": "{pairs, plural, one {# table} other {# tables}} · {tables} sides",
+          "add-physical-table": "Add table",
+          "future-hint": "In Future Edition each table seats two teams, with one referee per side."
         },
         "pit-map": {
           "title": "מפת פיטים",
@@ -774,7 +778,8 @@
             "judging-start": "תחילת שיפוט",
             "field-start": "תחילת זירה",
             "matches-per-round": "מקצים בכל סבב",
-            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})"
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})",
+            "tables-pairs-future": "{pairs, plural, one {# table} other {# tables}} ({tables} sides)"
           },
           "settings": {
             "title": "הגדרות",

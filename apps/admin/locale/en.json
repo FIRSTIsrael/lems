@@ -612,7 +612,11 @@
           "swap": "Swap…",
           "swap-title": "Swap {name} with",
           "position": "Pair {index} · {side}: {name}",
-          "cancel": "Cancel"
+          "cancel": "Cancel",
+          "physical-table-label": "Table {index}",
+          "summary-future": "{pairs, plural, one {# table} other {# tables}} · {tables} sides",
+          "add-physical-table": "Add table",
+          "future-hint": "In Future Edition each table seats two teams, with one referee per side."
         },
         "pit-map": {
           "title": "Pit Map",
@@ -774,7 +778,8 @@
             "judging-start": "Judging start time",
             "field-start": "Field start time",
             "matches-per-round": "Matches per round",
-            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})"
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})",
+            "tables-pairs-future": "{pairs, plural, one {# table} other {# tables}} ({tables} sides)"
           },
           "settings": {
             "title": "Settings",

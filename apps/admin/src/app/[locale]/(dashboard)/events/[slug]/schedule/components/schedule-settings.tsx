@@ -31,6 +31,7 @@ import { getDuration } from './calendar/calendar-utils';
 export const ScheduleSettings: React.FC = () => {
   const t = useTranslations('pages.events.schedule.settings');
   const {
+    edition,
     teamsCount,
     roomsCount,
     tablesCount,
@@ -139,7 +140,9 @@ export const ScheduleSettings: React.FC = () => {
             >
               <TableRestaurant color="primary" />
               <Typography variant="body2">
-                {t('information.tables-pairs', { pairs: pairsCount, tables: tablesCount })}
+                {edition === 'future'
+                  ? t('information.tables-pairs-future', { pairs: pairsCount, tables: tablesCount })
+                  : t('information.tables-pairs', { pairs: pairsCount, tables: tablesCount })}
               </Typography>
             </Stack>
           </Stack>

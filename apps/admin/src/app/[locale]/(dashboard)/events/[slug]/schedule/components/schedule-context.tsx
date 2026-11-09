@@ -38,6 +38,7 @@ const multiplyCycleTime = (cycleTime: Dayjs, multiplier: number) => {
 };
 
 export interface ScheduleContextType {
+  edition: Edition;
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
@@ -163,6 +164,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   };
 
   const contextValue: ScheduleContextType = {
+    edition,
     teamsCount: teams.length,
     roomsCount: rooms.length,
     tablesCount: tables.length,
