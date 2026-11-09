@@ -77,7 +77,7 @@ export const MatchScheduleTable: React.FC = () => {
           <TableBody>
             {currentStageMatches.map(match => {
               const pairGroups = groupParticipantsByPair(
-                match.participants.filter(p => p.team),
+                match.participants,
                 match.participants.map(p => p.table)
               )
                 .map(group => ({

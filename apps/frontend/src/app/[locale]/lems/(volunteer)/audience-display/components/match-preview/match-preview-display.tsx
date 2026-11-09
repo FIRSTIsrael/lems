@@ -191,7 +191,7 @@ export const MatchPreviewDisplay = () => {
           >
             {pairGroups.map(group => (
               <Grid key={group.key} size={1} sx={{ display: 'flex' }}>
-                <TablePairOutline sx={{ flex: 1, minWidth: 0 }}>
+                <TablePairOutline sx={{ flex: 1, minWidth: 0, flexDirection: 'column' }}>
                   {group.participants.map(participant => (
                     <MatchParticipantCard key={participant.team?.id} participant={participant} />
                   ))}

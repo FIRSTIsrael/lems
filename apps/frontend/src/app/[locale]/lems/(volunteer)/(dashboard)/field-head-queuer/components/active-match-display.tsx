@@ -34,6 +34,23 @@ function getStatusChipProps(
   return { color: 'default', variant: 'outlined' };
 }
 
+function ParticipantGroup({
+  outlined,
+  children
+}: {
+  outlined: boolean;
+  children: React.ReactNode;
+}) {
+  if (!outlined) return <Stack spacing={1}>{children}</Stack>;
+  return (
+    <TablePairOutline
+      sx={{ flexDirection: 'column', gap: 1, borderColor: 'rgba(255,255,255,0.4)' }}
+    >
+      {children}
+    </TablePairOutline>
+  );
+}
+
 export function ActiveMatchDisplay() {
   const t = useTranslations('pages.field-head-queuer.active-match');
   const { divisionId, activeMatch, loadedMatch, loading } = useFieldHeadQueuer();
@@ -68,19 +85,25 @@ export function ActiveMatchDisplay() {
     [divisionId, updateMatchMutation]
   );
 
-  const teamParticipants =
-    loadedMatch?.participants.filter(
-      (p): p is typeof p & { table: NonNullable<typeof p.table> } => !!p.team && !!p.table
-    ) ?? [];
-  const pairGroups = groupParticipantsByPair(
-    teamParticipants,
-    teamParticipants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  const participants = loadedMatch?.participants ?? [];
+  const pairable = participants.filter(
+    (p): p is typeof p & { table: NonNullable<typeof p.table> } => !!p.table
+  );
+  // Participants without a table can't be paired; they are listed after the pairs.
+  const participantGroups: { key: string; outlined: boolean; participants: typeof participants }[] =
+    [
+      ...groupParticipantsByPair(
+        pairable,
+        pairable.map(p => p.table)
+      )
+        .map(group => ({
+          key: group.key,
+          outlined: true,
+          participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
+        }))
+        .filter(group => group.participants.length > 0),
+      { key: 'no-table', outlined: false, participants: participants.filter(p => !p.table) }
+    ].filter(group => group.participants.length > 0);
 
   if (loading) {
     return (
@@ -237,11 +260,8 @@ export function ActiveMatchDisplay() {
                   {t('teams')}
                 </Typography>
                 <Stack spacing={1}>
-                  {pairGroups.map(group => (
-                    <TablePairOutline
-                      key={group.key}
-                      sx={{ flexDirection: 'column', gap: 1, borderColor: 'rgba(255,255,255,0.4)' }}
-                    >
+                  {participantGroups.map(group => (
+                    <ParticipantGroup key={group.key} outlined={group.outlined}>
                       {group.participants.map(participant => {
                         const isMarkedPresent = participant.queued;
                         const isSignedIn = participant.team?.arrived ?? false;
@@ -335,7 +355,7 @@ export function ActiveMatchDisplay() {
                           </Stack>
                         );
                       })}
-                    </TablePairOutline>
+                    </ParticipantGroup>
                   ))}
                 </Stack>
               </Stack>

@@ -36,7 +36,7 @@ export const CurrentMatchHero: React.FC = () => {
   }
 
   const pairGroups = groupParticipantsByPair(
-    match.participants.filter(p => p.team),
+    match.participants,
     match.participants.map(p => p.table)
   )
     .map(group => ({

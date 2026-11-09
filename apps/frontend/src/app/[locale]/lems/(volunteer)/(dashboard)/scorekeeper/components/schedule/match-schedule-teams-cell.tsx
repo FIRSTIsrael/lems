@@ -11,7 +11,7 @@ interface TeamsCellProps {
 
 export const TeamsCell = ({ participants }: TeamsCellProps) => {
   const pairGroups = groupParticipantsByPair(
-    participants.filter(p => p.team),
+    participants,
     participants.map(p => p.table)
   )
     .map(group => ({

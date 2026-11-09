@@ -15,7 +15,7 @@ export function LoadedMatchTeams() {
   if (!match) return null;
 
   const pairGroups = groupParticipantsByPair(
-    match.participants.filter(p => p.team),
+    match.participants,
     match.participants.map(p => p.table)
   )
     .map(group => ({
