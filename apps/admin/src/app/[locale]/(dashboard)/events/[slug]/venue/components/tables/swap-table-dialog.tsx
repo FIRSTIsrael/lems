@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogTitle,
   FormControl,
+  InputLabel,
   MenuItem,
   Select
 } from '@mui/material';
@@ -74,7 +75,12 @@ export const SwapTableDialog: React.FC<SwapTableDialogProps> = ({
       <DialogTitle>{t('tables.swap-title', { name: table.name })}</DialogTitle>
       <DialogContent>
         <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+          <InputLabel id="swap-table-label">
+            {t('tables.swap-title', { name: table.name })}
+          </InputLabel>
           <Select
+            labelId="swap-table-label"
+            label={t('tables.swap-title', { name: table.name })}
             value={otherTableId}
             onChange={e => setOtherTableId(e.target.value)}
             disabled={saving}

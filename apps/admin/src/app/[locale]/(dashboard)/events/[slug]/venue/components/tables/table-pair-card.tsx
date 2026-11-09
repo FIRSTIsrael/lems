@@ -2,7 +2,19 @@
 
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
-import { Box, CircularProgress, IconButton, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  Stack,
+  Typography
+} from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import { RobotGameTable } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
@@ -18,7 +30,7 @@ interface TablePairCardProps {
   label?: string;
   readOnly?: boolean;
   onChanged: () => void;
-  onSuccess: () => void;
+  onSuccess: (message?: 'save-success' | 'delete-success') => void;
 }
 
 export const TablePairCard: React.FC<TablePairCardProps> = ({
@@ -32,19 +44,19 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
   onSuccess
 }) => {
   const t = useTranslations('pages.events.venue');
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
 
   const handleDelete = async () => {
-    if (!window.confirm(t('tables.delete-pair-confirm'))) return;
-
     setDeleting(true);
     setError('');
     try {
       const result = await apiFetch(`${basePath}/pairs/${group.key}`, { method: 'DELETE' });
 
       if (result.ok) {
-        onSuccess();
+        setConfirmOpen(false);
+        onSuccess('delete-success');
         onChanged();
       } else {
         setError(t('messages.delete-error'));
@@ -68,7 +80,7 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
             color="error"
             title={t('tables.delete-pair')}
             aria-label={t('tables.delete-pair')}
-            onClick={handleDelete}
+            onClick={() => setConfirmOpen(true)}
             disabled={deleting}
           >
             {deleting ? <CircularProgress size={16} /> : <Delete />}
@@ -95,6 +107,26 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
           </Typography>
         </Box>
       )}
+      <Dialog open={confirmOpen} onClose={deleting ? undefined : () => setConfirmOpen(false)}>
+        <DialogTitle>{t('tables.delete-pair')}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>{t('tables.delete-pair-confirm')}</DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)} disabled={deleting}>
+            {t('tables.cancel')}
+          </Button>
+          <Button
+            onClick={handleDelete}
+            color="error"
+            variant="contained"
+            disabled={deleting}
+            startIcon={deleting ? <CircularProgress size={16} /> : <Delete />}
+          >
+            {t('tables.delete-pair')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </TablePairOutline>
   );
 };

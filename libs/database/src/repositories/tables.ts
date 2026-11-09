@@ -2,7 +2,6 @@ import { randomUUID } from 'node:crypto';
 import { Kysely } from 'kysely';
 import { KyselyDatabaseSchema } from '../schema/kysely';
 import {
-  InsertableRobotGameTable,
   RobotGameTable,
   UpdateableRobotGameTable
 } from '../schema/tables/robot-game-tables';
@@ -35,10 +34,6 @@ class TableSelector {
     }
 
     return updatedTable;
-  }
-
-  async delete(): Promise<void> {
-    await this.db.deleteFrom('robot_game_tables').where('id', '=', this.id).execute();
   }
 }
 
@@ -139,7 +134,16 @@ export class TablesRepository {
   async swap(tableId: string, otherTableId: string): Promise<void> {
     if (tableId === otherTableId) return;
 
-    const [x, y] = await Promise.all([this.byId(tableId).get(), this.byId(otherTableId).get()]);
+    // Lock both rows so a concurrent swap can't work from a stale snapshot.
+    const rows = await this.db
+      .selectFrom('robot_game_tables')
+      .selectAll()
+      .where('id', 'in', [tableId, otherTableId])
+      .orderBy('id')
+      .forUpdate()
+      .execute();
+    const x = rows.find(row => row.id === tableId);
+    const y = rows.find(row => row.id === otherTableId);
     if (!x || !y) {
       throw new Error('Table not found');
     }

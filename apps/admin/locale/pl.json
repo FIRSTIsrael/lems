@@ -603,7 +603,7 @@
             "name-required": "Nazwa stołu jest wymagana"
           },
           "pair-label": "Pair {index}",
-          "summary": "{pairs} pairs · {tables} tables",
+          "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
           "add-pair": "Add pair",
           "side-a": "Side A",
           "side-b": "Side B",
@@ -830,7 +830,7 @@
             "judging-start": "Czas rozpoczęcia sesji sędziowskich",
             "field-start": "Czas rozpoczęcia meczów na polu",
             "matches-per-round": "Liczba meczów na rundę",
-            "tables-pairs": "{pairs} pairs ({tables} tables)"
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})"
           },
           "settings": {
             "title": "Ustawienia",

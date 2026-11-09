@@ -12,7 +12,7 @@ export async function up(db: Kysely<any>): Promise<void> {
   await db.schema
     .alterTable('robot_game_tables')
     .addColumn('pair_key', 'uuid')
-    .addColumn('side', 'varchar(1)')
+    .addColumn('side', 'char(1)')
     .execute();
 
   // Pair tables in pk order per division: (1st, 2nd), (3rd, 4th), ...

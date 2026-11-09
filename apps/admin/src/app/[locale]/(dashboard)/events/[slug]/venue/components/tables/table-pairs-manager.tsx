@@ -29,8 +29,8 @@ export const TablePairsManager: React.FC<TablePairsManagerProps> = ({ division }
     revalidateOnReconnect: true
   });
 
-  const showSuccess = () => {
-    setSuccessMessage(t('messages.save-success'));
+  const showSuccess = (message: 'save-success' | 'delete-success' = 'save-success') => {
+    setSuccessMessage(t(`messages.${message}`));
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
