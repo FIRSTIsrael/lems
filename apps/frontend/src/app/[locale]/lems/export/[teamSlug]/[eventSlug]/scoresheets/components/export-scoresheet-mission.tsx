@@ -23,7 +23,7 @@ export const ExportScoresheetMission: React.FC<ExportScoresheetMissionProps> = (
 }) => {
   const { title, description, getClauseDescription, getClauseLabel } =
     useScoresheetMissionTranslations(season, mission.id);
-  const { yes, no } = useScoresheetGeneralTranslations();
+  const { yes, no } = useScoresheetGeneralTranslations(season);
 
   const getClauseValueDisplay = (clauseIndex: number) => {
     const clause = mission.clauses[clauseIndex];

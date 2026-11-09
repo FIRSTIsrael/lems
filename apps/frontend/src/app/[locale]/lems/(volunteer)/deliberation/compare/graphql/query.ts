@@ -36,6 +36,7 @@ export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, Unifie
                 notes
               }
             }
+            isNoShow
           }
           rubrics {
             innovation_project {
@@ -90,6 +91,7 @@ export const GET_UNIFIED_DIVISION: TypedDocumentNode<UnifiedDivisionData, Unifie
             name
             place
           }
+          zeroGpForNoShows
         }
       }
     }

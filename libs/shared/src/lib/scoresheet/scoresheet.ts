@@ -1,6 +1,7 @@
 import type { Edition } from '../edition';
 import { ScoresheetSchema, ScoresheetError } from './types';
 import { scoresheet as unearthed } from './past-seasons/unearthed';
+import { futureScoresheet } from './future';
 
 const scoresheet: ScoresheetSchema = {
   season: 'bioglow',
@@ -250,8 +251,7 @@ export const getScoresheet = (edition: Edition, season?: string | null): Scoresh
   if (hasScoresheet(season) && season !== DEFAULT_SCORESHEET_SEASON) return SCORESHEETS[season];
   switch (edition) {
     case 'future':
-      // TODO(future-edition): replace with Future content (phase 2)
-      return scoresheet;
+      return futureScoresheet;
     case 'founders':
       return scoresheet;
   }

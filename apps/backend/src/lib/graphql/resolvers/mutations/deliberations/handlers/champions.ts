@@ -70,7 +70,7 @@ export async function handleChampionsStageCompletion(
   const robotPerformanceAwards = await db.awards.byDivisionId(divisionId).get('robot-performance');
   if (robotPerformanceAwards.length > 0) {
     const robotPerformanceWinners = allTeamsWithRanks
-      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
+      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'] || a.teamNumber - b.teamNumber)
       .slice(0, robotPerformanceAwards.length)
       .map(t => t.teamId);
     await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);

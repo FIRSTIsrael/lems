@@ -93,8 +93,11 @@ export const formatTime = (seconds: number): string => {
  * Get stage color based on stage id
  */
 export const getStageColor = (stageId: string): string => {
-  if (stageId === 'setup' || stageId === 'final-thoughts') {
+  if (stageId === 'setup' || stageId === 'final-thoughts' || stageId === 'judging-feedback') {
     return '#9c27b0'; // purple
+  }
+  if (stageId === 'core-values-questions') {
+    return '#f44336'; // red
   }
   if (stageId.includes('innovation')) {
     return '#2196f3'; // blue

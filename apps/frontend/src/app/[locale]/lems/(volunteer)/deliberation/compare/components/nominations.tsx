@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { Stack, Typography, Box } from '@mui/material';
 import { Check, Close } from '@mui/icons-material';
 import { useAwardTranslations } from '@lems/localization';
+import { getCoreValuesAwards } from '@lems/shared/awards';
 import { useEdition } from '../../../hooks/use-edition';
 import { useCompareContext } from '../compare-context';
 import type { Team } from '../graphql/types';
@@ -12,14 +13,6 @@ import type { Team } from '../graphql/types';
 interface NominationsProps {
   team: Team;
 }
-
-const CORE_VALUES_AWARDS = [
-  'breakthrough',
-  'rising-all-star',
-  'judges-award',
-  'motivate',
-  'impact'
-] as const;
 
 export function Nominations({ team }: NominationsProps) {
   const t = useTranslations('layouts.deliberation.compare');
@@ -55,7 +48,7 @@ export function Nominations({ team }: NominationsProps) {
         {t('nominations')}
       </Typography>
       <Stack spacing={0.5}>
-        {CORE_VALUES_AWARDS.map(award => {
+        {getCoreValuesAwards(edition).map(award => {
           const isNominated = nominations[award];
           if (!isNominated) return null;
 

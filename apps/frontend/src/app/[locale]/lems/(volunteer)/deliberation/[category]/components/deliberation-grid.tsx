@@ -7,6 +7,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { underscoresToHyphens } from '@lems/shared/utils';
 import { useCategoryDeliberation } from '../deliberation-context';
+import { useEdition } from '../../../hooks/use-edition';
 import { DeliberationTable } from './deliberation-table';
 import { PicklistPanel } from './picklist-panel';
 import { ControlsPanel } from './controls-panel';
@@ -15,7 +16,8 @@ import { Metrics } from './metrics';
 export const DeliberationGrid: React.FC = () => {
   const router = useRouter();
   const t = useTranslations('pages.deliberations.category');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { deliberation } = useCategoryDeliberation();
 
   return (

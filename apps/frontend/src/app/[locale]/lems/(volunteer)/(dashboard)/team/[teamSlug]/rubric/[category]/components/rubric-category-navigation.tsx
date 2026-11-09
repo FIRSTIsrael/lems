@@ -6,10 +6,12 @@ import { useTranslations } from 'next-intl';
 import { useJudgingCategoryTranslations } from '@lems/localization';
 import { JudgingCategory, JUDGING_CATEGORIES } from '@lems/types/judging';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
+import { useEdition } from '../../../../../../hooks/use-edition';
 
 export const RubricCategoryNavigation: React.FC = () => {
   const t = useTranslations('pages.rubric.navigation');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
 
   const router = useRouter();
   const theme = useTheme();
@@ -68,7 +70,7 @@ export const RubricCategoryNavigation: React.FC = () => {
           >
             {JUDGING_CATEGORIES.map(category => {
               const isActive = category === currentCategory;
-              const color = getRubricColor(category);
+              const color = getRubricColor(category, edition);
 
               return (
                 <Box

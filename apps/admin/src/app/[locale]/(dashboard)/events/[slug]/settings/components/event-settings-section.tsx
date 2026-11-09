@@ -49,6 +49,9 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
   const [openRubricsDuringSession, setOpenRubricsDuringSession] = useState<boolean>(
     settings.openRubricsDuringSession || false
   );
+  const [zeroGpForNoShows, setZeroGpForNoShows] = useState<boolean>(
+    settings.zeroGpForNoShows ?? true
+  );
 
   const { advancingTeams, totalTeams } = useMemo(() => {
     const total = allTeams.length;
@@ -73,6 +76,7 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
       setVisible(settings.visible);
       setOfficial(settings.official);
       setOpenRubricsDuringSession(settings.openRubricsDuringSession);
+      setZeroGpForNoShows(settings.zeroGpForNoShows ?? true);
     }
   }, [settings]);
 
@@ -91,7 +95,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
           advancementPercent,
           visible,
           official,
-          openRubricsDuringSession
+          openRubricsDuringSession,
+          zeroGpForNoShows
         })
       });
 
@@ -177,6 +182,26 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
             >
               {t('event-settings.open-rubrics-during-session-description')}
             </Typography>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={zeroGpForNoShows}
+                  onChange={(_, checked) => setZeroGpForNoShows(checked)}
+                  color="primary"
+                />
+              }
+              sx={{ mt: 2 }}
+              label={t('event-settings.zero-gp-for-no-shows')}
+            />
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'text.secondary',
+                display: 'block'
+              }}
+            >
+              {t('event-settings.zero-gp-for-no-shows-description')}
+            </Typography>
           </Grid>
 
           <Grid
@@ -240,7 +265,8 @@ export const EventSettingsSection: React.FC<EventSettingsSectionProps> = ({
               (advancementPercent === settings.advancementPercent &&
                 visible === settings.visible &&
                 official === settings.official &&
-                openRubricsDuringSession === settings.openRubricsDuringSession)
+                openRubricsDuringSession === settings.openRubricsDuringSession &&
+                zeroGpForNoShows === settings.zeroGpForNoShows)
             }
             startIcon={isSaving ? <CircularProgress size={16} /> : undefined}
           >

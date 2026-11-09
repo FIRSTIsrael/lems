@@ -73,6 +73,7 @@ export interface FieldData {
   loadedMatch: string | null;
   activeMatch: string | null;
   matchLength: number;
+  rankingRoundCount: number;
 }
 
 export interface ScoreboardData {
