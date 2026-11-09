@@ -243,8 +243,8 @@
     },
     "events": {
       "practice-tables": {
-        "teams-per-slot": "Teams per slot",
-        "teams-per-slot-count": "Teams per slot: {count}"
+        "teams-per-slot": "Drużyn w jednym terminie",
+        "teams-per-slot-count": "Drużyn w jednym terminie: {count}"
       },
       "title": "Wydarzenia",
       "layout": {
@@ -541,7 +541,7 @@
           "future-edition": "Edycja przyszłości",
           "save-failed": "Nie udało się zapisać dywizji. Jeśli zmieniono edycję, najpierw usuń nagrody nieobsługiwane w nowej edycji.",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
-          "edition-has-practice-tables": "Delete this division's practice tables before changing the edition.",
+          "edition-has-practice-tables": "Przed zmianą edycji usuń stoły treningowe tej dywizji.",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -607,21 +607,21 @@
           "validation": {
             "name-required": "Nazwa stołu jest wymagana"
           },
-          "pair-label": "Pair {index}",
-          "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
-          "add-pair": "Add pair",
-          "side-a": "Side A",
-          "side-b": "Side B",
-          "delete-pair": "Delete pair",
-          "delete-pair-confirm": "Delete both tables of this pair and their referees?",
-          "swap": "Swap…",
-          "swap-title": "Swap {name} with",
-          "position": "Pair {index} · {side}: {name}",
-          "cancel": "Cancel",
-          "physical-table-label": "Table {index}",
-          "summary-future": "{pairs, plural, one {# table} other {# tables}} · {tables} sides",
-          "add-physical-table": "Add table",
-          "future-hint": "In Future Edition each table seats two teams, with one referee per side."
+          "pair-label": "Para {index}",
+          "summary": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} · {tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}}",
+          "add-pair": "Dodaj parę",
+          "side-a": "Strona A",
+          "side-b": "Strona B",
+          "delete-pair": "Usuń parę",
+          "delete-pair-confirm": "Usunąć oba stoły tej pary i ich sędziów?",
+          "swap": "Zamień…",
+          "swap-title": "Zamień {name} z",
+          "position": "Para {index} · {side}: {name}",
+          "cancel": "Anuluj",
+          "physical-table-label": "Stół {index}",
+          "summary-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} · strony: {tables}",
+          "add-physical-table": "Dodaj stół",
+          "future-hint": "W Edycji przyszłości przy każdym stole grają dwie drużyny, a każda strona ma jednego sędziego."
         },
         "pit-map": {
           "title": "Mapa Pit",
@@ -839,8 +839,8 @@
             "judging-start": "Czas rozpoczęcia sesji sędziowskich",
             "field-start": "Czas rozpoczęcia meczów na polu",
             "matches-per-round": "Liczba meczów na rundę",
-            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})",
-            "tables-pairs-future": "{pairs, plural, one {# table} other {# tables}} ({tables} sides)"
+            "tables-pairs": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} ({tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}})",
+            "tables-pairs-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} (strony: {tables})"
           },
           "settings": {
             "title": "Ustawienia",
@@ -948,7 +948,7 @@
           "awards-list": "Lista nagród ({count})",
           "no-awards": "Brak skonfigurowanych nagród",
           "no-awards-help": "Użyj przycisku „Dodaj nagrodę opcjonalną”, aby dodać nagrody",
-          "co-winners-hint": "Each place is awarded to two teams",
+          "co-winners-hint": "Każde miejsce przyznawane jest dwóm drużynom",
           "add-dialog": {
             "title": "Dodaj nagrodę opcjonalną",
             "select-award": "Wybierz nagrodę",

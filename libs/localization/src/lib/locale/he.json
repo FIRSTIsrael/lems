@@ -10,7 +10,7 @@
       "in-progress": "בתהליך",
       "completed": "הושלם"
     },
-    "with-team": "with #{number}"
+    "with-team": "עם #{number}"
   },
   "judging-sessions": {
     "status": {
@@ -104,8 +104,8 @@
       "description": "פרס זה מוענק לקבוצה שנבחרה על ידי עמיתיה בזכות האופן שבו היא מדגימה את ערכי הליבה של <i>FIRST</i> ומקצועיות אדיבה."
     },
     "coopertition": {
-      "name": "Coopertition",
-      "description": "This award recognizes two teams who score the highest combined match score at the event, demonstrating that FIRST LEGO League teams are stronger when they work together."
+      "name": "קואופרטישן",
+      "description": "פרס זה מוענק לשתי קבוצות שהשיגו את הציון המשותף הגבוה ביותר במקצים באירוע, ומדגימות שקבוצות <i>FIRST</i> LEGO League חזקות יותר כאשר הן פועלות יחד."
     },
     "motivate": {
       "name": "המניעים",

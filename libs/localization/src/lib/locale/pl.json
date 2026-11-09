@@ -10,7 +10,7 @@
       "in-progress": "W toku",
       "completed": "Zakończono"
     },
-    "with-team": "with #{number}"
+    "with-team": "z #{number}"
   },
   "judging-sessions": {
     "status": {
@@ -93,7 +93,7 @@
     },
     "coopertition": {
       "name": "Coopertition",
-      "description": "This award recognizes two teams who score the highest combined match score at the event, demonstrating that FIRST LEGO League teams are stronger when they work together."
+      "description": "Ta nagroda wyróżnia dwie drużyny, które uzyskały najwyższy łączny wynik meczów podczas wydarzenia, pokazując, że drużyny <i>FIRST</i> LEGO League są silniejsze, gdy współpracują."
     },
     "lead-mentor": {
       "name": "Trener/Mentor",
