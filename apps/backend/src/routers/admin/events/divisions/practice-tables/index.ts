@@ -1,4 +1,6 @@
 import express from 'express';
+import { getEdition } from '@lems/shared/edition';
+import { TABLE_SIDES, TableSide } from '@lems/shared/utils';
 import db from '../../../../../lib/database.js';
 import { requirePermission } from '../../../middleware/require-permission.js';
 import { AdminDivisionRequest } from '../../../../../types/express.js';
@@ -57,7 +59,20 @@ router.put(
     }
 
     // Generate all time slots using full ISO datetimes
-    const slots: Array<{ tableIndex: number; startTime: Date; endTime: Date }> = [];
+    const slots: Array<{
+      tableIndex: number;
+      side: TableSide | null;
+      startTime: Date;
+      endTime: Date;
+    }> = [];
+
+    const division = await db.divisions.byId(req.divisionId).get();
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+    const sides: ReadonlyArray<TableSide | null> =
+      getEdition(division) === 'future' ? TABLE_SIDES : [null];
 
     let currentSlotStart = new Date(startDate);
     while (currentSlotStart < endDate) {
@@ -73,11 +88,14 @@ router.put(
       // Only create slots that are not blocked
       if (!isBlocked) {
         for (let tableIdx = 0; tableIdx < tableCount; tableIdx++) {
-          slots.push({
-            tableIndex: tableIdx,
-            startTime: new Date(currentSlotStart),
-            endTime: new Date(currentSlotEnd)
-          });
+          for (const side of sides) {
+            slots.push({
+              tableIndex: tableIdx,
+              side,
+              startTime: new Date(currentSlotStart),
+              endTime: new Date(currentSlotEnd)
+            });
+          }
         }
       }
 
@@ -106,6 +124,7 @@ router.put(
         slots.map(slot => ({
           team_id: null,
           table_number: slot.tableIndex,
+          side: slot.side,
           start_time: slot.startTime,
           end_time: slot.endTime
         }))

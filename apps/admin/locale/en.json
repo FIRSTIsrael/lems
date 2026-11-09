@@ -537,6 +537,7 @@
           "future-edition": "Future edition",
           "save-failed": "Could not save the division. If you changed the edition, first remove any awards the new edition does not support.",
           "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
+          "edition-has-practice-tables": "Delete this division's practice tables before changing the edition.",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }

@@ -68,7 +68,8 @@ router.get(
       id: a.id,
       tableNumber: a.table_number,
       startTime: a.start_time.toISOString(),
-      endTime: a.end_time.toISOString()
+      endTime: a.end_time.toISOString(),
+      side: a.side
     }));
 
     res.json({
