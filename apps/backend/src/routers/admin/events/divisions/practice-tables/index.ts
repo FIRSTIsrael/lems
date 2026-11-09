@@ -1,7 +1,7 @@
 import express from 'express';
-import { getEdition } from '@lems/shared/edition';
 import { TABLE_SIDES, TableSide } from '@lems/shared/utils';
 import db from '../../../../../lib/database.js';
+import { getDivisionEdition } from '../../../../../lib/graphql/utils/division-edition.js';
 import { requirePermission } from '../../../middleware/require-permission.js';
 import { AdminDivisionRequest } from '../../../../../types/express.js';
 import { asHandler } from '../../../../../types/express-handlers.js';
@@ -42,6 +42,11 @@ router.put(
       return;
     }
 
+    if (!Number.isFinite(slotDurationMinutes) || slotDurationMinutes <= 0) {
+      res.status(400).json({ error: 'Slot duration must be a positive number' });
+      return;
+    }
+
     // Parse ISO datetime strings
     const startDate = new Date(startTime);
     const endDate = new Date(endTime);
@@ -66,13 +71,8 @@ router.put(
       endTime: Date;
     }> = [];
 
-    const division = await db.divisions.byId(req.divisionId).get();
-    if (!division) {
-      res.status(404).json({ error: 'Division not found' });
-      return;
-    }
     const sides: ReadonlyArray<TableSide | null> =
-      getEdition(division) === 'future' ? TABLE_SIDES : [null];
+      (await getDivisionEdition(req.divisionId)) === 'future' ? TABLE_SIDES : [null];
 
     let currentSlotStart = new Date(startDate);
     while (currentSlotStart < endDate) {

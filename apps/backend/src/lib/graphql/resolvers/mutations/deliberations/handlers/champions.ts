@@ -113,11 +113,9 @@ export async function handleChampionsStageCompletion(
     teams.length
   );
 
-  if (advancingTeamIds.length === 0) {
-    return;
+  if (advancingTeamIds.length > 0) {
+    await createAdvancementAwards(divisionId, advancingTeamIds);
   }
-
-  await createAdvancementAwards(divisionId, advancingTeamIds);
   await updateFinalDeliberationAwards(divisionId);
 }
 
@@ -222,22 +220,44 @@ export const assignCoopertitionAwards = async (divisionId: string): Promise<void
   const winners = selectCoopertitionWinners(results, computeTeamAverages(scoresheetInputs), places);
 
   const winnerIds = winners.flat();
-  for (const row of rows) {
-    await db.awards.clearWinner(row.id);
-  }
-  for (let i = 0; i < rows.length; i++) {
-    const teamId = winnerIds[i];
-    if (teamId) {
-      await db.awards.assign(rows[i].id, teamId);
-    }
-  }
 
-  const finalDeliberation = await db.finalDeliberations.byDivision(divisionId).get();
-  if (finalDeliberation) {
-    await db.finalDeliberations.byDivision(divisionId).update({
-      awards: { ...finalDeliberation.awards, coopertition: winnerIds }
-    });
-  }
+  // Clear, re-assign and record the winners atomically so a partial failure
+  // cannot leave the awards table out of sync with the final deliberation.
+  await db.raw.sql.transaction().execute(async trx => {
+    await trx
+      .updateTable('awards')
+      .set({ winner_id: null, winner_name: null })
+      .where(
+        'id',
+        'in',
+        rows.map(row => row.id)
+      )
+      .execute();
+
+    for (let i = 0; i < rows.length; i++) {
+      const teamId = winnerIds[i];
+      if (teamId) {
+        await trx
+          .updateTable('awards')
+          .set({ winner_id: teamId, winner_name: null })
+          .where('id', '=', rows[i].id)
+          .execute();
+      }
+    }
+
+    const finalDeliberation = await trx
+      .selectFrom('final_deliberations')
+      .select('awards')
+      .where('division_id', '=', divisionId)
+      .executeTakeFirst();
+    if (finalDeliberation) {
+      await trx
+        .updateTable('final_deliberations')
+        .set({ awards: { ...finalDeliberation.awards, coopertition: winnerIds } })
+        .where('division_id', '=', divisionId)
+        .execute();
+    }
+  });
 };
 
 /**

@@ -30,6 +30,14 @@ export const buildCoopertitionResults = (
   const pairs = groupTablesByPair(tables).filter(group => group.tables.length === 2);
   const results: CoopertitionResult[] = [];
 
+  const sheetKey = (teamId: string, stage: string, round: number) => `${teamId}:${stage}:${round}`;
+  const submittedSheets = new Map<string, CoopertitionScoresheetInput>();
+  for (const sheet of scoresheets) {
+    if (sheet.status !== 'submitted') continue;
+    const key = sheetKey(sheet.teamId, sheet.stage, sheet.round);
+    if (!submittedSheets.has(key)) submittedSheets.set(key, sheet);
+  }
+
   for (const match of matches) {
     if (match.stage !== 'RANKING') continue;
 
@@ -40,13 +48,7 @@ export const buildCoopertitionResults = (
       if (!teamA || !teamB) continue;
 
       const [sheetA, sheetB] = [teamA, teamB].map(teamId =>
-        scoresheets.find(
-          s =>
-            s.teamId === teamId &&
-            s.stage === match.stage &&
-            s.round === match.round &&
-            s.status === 'submitted'
-        )
+        submittedSheets.get(sheetKey(teamId, match.stage, match.round))
       );
       if (!sheetA || !sheetB) continue;
 

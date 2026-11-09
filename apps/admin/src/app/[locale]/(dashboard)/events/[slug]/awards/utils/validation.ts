@@ -1,5 +1,5 @@
 import type { Edition } from '@lems/shared/edition';
-import { AwardSchema, PERSONAL_AWARDS, isAwardAvailable } from '../types';
+import { AwardSchema, PERSONAL_AWARDS, getAwardRowsPerPlace, isAwardAvailable } from '../types';
 
 export interface ValidationResult {
   minimumAwards: number;
@@ -17,7 +17,7 @@ export interface ValidationResult {
  *
  * Rules:
  * - Minimum calculation: All non-personal awards except 'advancement', 'robot-performance' and 'coopertition'
- * - Maximum calculation: Minimum + robot-performance awards
+ * - Maximum calculation: Minimum + robot-performance awards + coopertition winners (two per place)
  * - Valid if minimum >= 30% and maximum <= 50% of team count
  * - Invalid if any configured award is not available in the division's edition
  *
@@ -52,10 +52,12 @@ export function validateAwardsSchema(
     return total;
   }, 0);
 
-  /** Maximum awards to be given out. This assumes all robot-performance awards
-   * are given out to teams that did not win any other awards. */
+  /** Maximum awards to be given out. This assumes all robot-performance and coopertition
+   * awards are given out to teams that did not win any other awards. */
   const robotPerformanceCount = schema['robot-performance']?.count || 0;
-  const maximumAwards = minimumAwards + robotPerformanceCount;
+  const coopertitionWinners =
+    (schema['coopertition']?.count || 0) * getAwardRowsPerPlace('coopertition');
+  const maximumAwards = minimumAwards + robotPerformanceCount + coopertitionWinners;
 
   const unavailableAwards = Object.entries(schema).filter(
     ([award, item]) => item.count > 0 && !isAwardAvailable(award, edition)
