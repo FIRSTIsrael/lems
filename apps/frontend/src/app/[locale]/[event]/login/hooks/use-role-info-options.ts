@@ -3,6 +3,7 @@
 import { useSuspenseQuery, skipToken } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
 import { getEdition } from '@lems/shared/edition';
 import { RoleInfo } from '../graphql/volunteers';
 import { useVolunteer } from '../components/volunteer-context';
@@ -29,6 +30,8 @@ const getRoleInfoValue = (roleInfo: RoleInfo | null | undefined): string => {
 interface RoleInfoOption {
   id: string;
   name: string;
+  /** True for the first table of every pair except the first (table options only). */
+  startsPair?: boolean;
 }
 
 /**
@@ -57,7 +60,9 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     if (roleInfoType === 'table' || roleInfoType === 'room') {
       if (divisionData?.division) {
         const items =
-          roleInfoType === 'table' ? divisionData.division.tables : divisionData.division.rooms;
+          roleInfoType === 'table'
+            ? orderTablesByPair(divisionData.division.tables)
+            : divisionData.division.rooms;
         allOptions = items.map((item: { id: string; name: string }) => ({
           id: item.id,
           name: item.name
@@ -75,6 +80,14 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     const roleInfoValuesForRole = new Set(
       volunteerData.volunteers.map(v => getRoleInfoValue(v.roleInfo))
     );
-    return allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+    const options = allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+
+    if (roleInfoType !== 'table' || !divisionData?.division) return options;
+
+    const roleTables = divisionData.division.tables.filter(table =>
+      roleInfoValuesForRole.has(table.id)
+    );
+    const pairStartIds = getPairStartIds(orderTablesByPair(roleTables));
+    return options.map(opt => ({ ...opt, startsPair: pairStartIds.has(opt.id) }));
   }, [divisionData, getCategory, roleInfoType, volunteerData]);
 };

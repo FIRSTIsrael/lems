@@ -59,6 +59,8 @@ export const GET_MC_DATA: TypedDocumentNode<McData, McVars> = gql`
             table {
               id
               name
+              pairKey
+              side
             }
           }
         }

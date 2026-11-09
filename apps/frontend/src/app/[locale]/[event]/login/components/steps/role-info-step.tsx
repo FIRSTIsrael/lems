@@ -1,6 +1,7 @@
 'use client';
 
-import { Typography, Autocomplete, TextField, Box, Paper, alpha } from '@mui/material';
+import { Typography, Autocomplete, TextField, Box, Paper, Divider, alpha } from '@mui/material';
+import { Fragment } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { LoginFormValues, LoginStep } from '../../types';
@@ -61,6 +62,15 @@ export function RoleInfoStep() {
         options={availableOptions}
         getOptionLabel={option => option.name}
         value={selectedOption}
+        renderOption={(props, option) => {
+          const { key, ...optionProps } = props;
+          return (
+            <Fragment key={key}>
+              {option.startsPair && <Divider component="li" />}
+              <li {...optionProps}>{option.name}</li>
+            </Fragment>
+          );
+        }}
         onChange={(_, newValue) => {
           setFieldValue('roleInfoValue', newValue || { id: '', name: '' });
         }}

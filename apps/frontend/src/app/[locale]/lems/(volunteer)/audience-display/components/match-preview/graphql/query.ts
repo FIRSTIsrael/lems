@@ -26,6 +26,8 @@ export const GET_MATCH_PREVIEW_DATA: TypedDocumentNode<MatchPreviewData, MatchPr
             table {
               id
               name
+              pairKey
+              side
             }
           }
         }

@@ -16,6 +16,8 @@ import {
   Stack
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
+import { TablePairOutline } from '@lems/shared/components';
+import { groupParticipantsByPair } from '@lems/shared/utils';
 import type { MatchStatus } from '../graphql/types';
 import { useMc } from './mc-context';
 
@@ -73,79 +75,97 @@ export const MatchScheduleTable: React.FC = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {currentStageMatches.map(match => (
-              <TableRow
-                key={match.id}
-                sx={{
-                  '&:hover': { bgcolor: 'action.hover' }
-                }}
-              >
-                <TableCell>
-                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                    {getStage(match.stage)} #{match.number}
-                  </Typography>
-                  {match.round && (
-                    <Typography variant="body2" color="textSecondary">
-                      {t('round')} {match.round}
+            {currentStageMatches.map(match => {
+              const pairGroups = groupParticipantsByPair(
+                match.participants.filter(p => p.team),
+                match.participants.map(p => p.table)
+              )
+                .map(group => ({
+                  key: group.key,
+                  participants: group.sides.flatMap(side =>
+                    side.participant ? [side.participant] : []
+                  )
+                }))
+                .filter(group => group.participants.length > 0);
+
+              return (
+                <TableRow
+                  key={match.id}
+                  sx={{
+                    '&:hover': { bgcolor: 'action.hover' }
+                  }}
+                >
+                  <TableCell>
+                    <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                      {getStage(match.stage)} #{match.number}
                     </Typography>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <Typography variant="body1" sx={{ fontFamily: 'monospace' }}>
-                    {dayjs(match.scheduledTime).format('HH:mm')}
-                  </Typography>
-                </TableCell>
-                <TableCell>
-                  <Stack spacing={1}>
-                    {match.participants.map(participant => (
-                      <Box key={participant.id}>
-                        <Stack
-                          direction="row"
-                          spacing={1}
-                          sx={{
-                            alignItems: 'center'
-                          }}
-                        >
-                          <Chip
-                            label={participant.table.name}
-                            size="small"
-                            variant="outlined"
-                            sx={{ minWidth: 60, fontWeight: 600 }}
-                          />
-                          <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                            #{participant.team?.number || '—'}
-                          </Typography>
-                          <Typography variant="body1">
-                            {participant.team?.name || t('no-team')}
-                          </Typography>
-                          {participant.team && (
-                            <Typography variant="body1" color="textSecondary">
-                              • {participant.team.affiliation}, {participant.team.city}
-                            </Typography>
-                          )}
-                          {participant.team && !participant.team.arrived && (
-                            <Chip
-                              label={t('not-arrived')}
-                              size="small"
-                              color="warning"
-                              sx={{ ml: 1 }}
-                            />
-                          )}
-                        </Stack>
-                      </Box>
-                    ))}
-                  </Stack>
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={getStatus(match.status)}
-                    size="small"
-                    color={getStatusColor(match.status)}
-                    sx={{ fontWeight: 600 }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
+                    {match.round && (
+                      <Typography variant="body2" color="textSecondary">
+                        {t('round')} {match.round}
+                      </Typography>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body1" sx={{ fontFamily: 'monospace' }}>
+                      {dayjs(match.scheduledTime).format('HH:mm')}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Stack spacing={1}>
+                      {pairGroups.map(group => (
+                        <TablePairOutline key={group.key} sx={{ flexDirection: 'column', gap: 1 }}>
+                          {group.participants.map(participant => (
+                            <Box key={participant.id}>
+                              <Stack
+                                direction="row"
+                                spacing={1}
+                                sx={{
+                                  alignItems: 'center'
+                                }}
+                              >
+                                <Chip
+                                  label={participant.table.name}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{ minWidth: 60, fontWeight: 600 }}
+                                />
+                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                  #{participant.team?.number || '—'}
+                                </Typography>
+                                <Typography variant="body1">
+                                  {participant.team?.name || t('no-team')}
+                                </Typography>
+                                {participant.team && (
+                                  <Typography variant="body1" color="textSecondary">
+                                    • {participant.team.affiliation}, {participant.team.city}
+                                  </Typography>
+                                )}
+                                {participant.team && !participant.team.arrived && (
+                                  <Chip
+                                    label={t('not-arrived')}
+                                    size="small"
+                                    color="warning"
+                                    sx={{ ml: 1 }}
+                                  />
+                                )}
+                              </Stack>
+                            </Box>
+                          ))}
+                        </TablePairOutline>
+                      ))}
+                    </Stack>
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={getStatus(match.status)}
+                      size="small"
+                      color={getStatusColor(match.status)}
+                      sx={{ fontWeight: 600 }}
+                    />
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>
