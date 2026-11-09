@@ -16,7 +16,7 @@ export interface ValidationResult {
  * Validates the awards schema based on the number of teams at the event.
  *
  * Rules:
- * - Minimum calculation: All non-personal awards except 'advancement' and 'robot-performance'
+ * - Minimum calculation: All non-personal awards except 'advancement', 'robot-performance' and 'coopertition'
  * - Maximum calculation: Minimum + robot-performance awards
  * - Valid if minimum >= 30% and maximum <= 50% of team count
  * - Invalid if any configured award is not available in the division's edition
@@ -38,8 +38,15 @@ export function validateAwardsSchema(
     const isPersonalAward = (PERSONAL_AWARDS as readonly string[]).includes(award);
     const isAdvancement = award === 'advancement';
     const isRobotPerformance = award === 'robot-performance';
+    const isCoopertition = award === 'coopertition';
 
-    if (!isPersonalAward && !isAdvancement && !isRobotPerformance && item.count > 0) {
+    if (
+      !isPersonalAward &&
+      !isAdvancement &&
+      !isRobotPerformance &&
+      !isCoopertition &&
+      item.count > 0
+    ) {
       return total + item.count;
     }
     return total;
