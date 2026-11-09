@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
-  Box,
+  Alert,
   Button,
   CircularProgress,
   Dialog,
@@ -47,6 +47,7 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState('');
+  const titleId = useId();
 
   const handleDelete = async () => {
     setDeleting(true);
@@ -80,7 +81,10 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
             color="error"
             title={t('tables.delete-pair')}
             aria-label={t('tables.delete-pair')}
-            onClick={() => setConfirmOpen(true)}
+            onClick={() => {
+              setError('');
+              setConfirmOpen(true);
+            }}
             disabled={deleting}
           >
             {deleting ? <CircularProgress size={16} /> : <Delete />}
@@ -100,17 +104,19 @@ export const TablePairCard: React.FC<TablePairCardProps> = ({
           />
         ))}
       </Stack>
-      {error && (
-        <Box sx={{ px: 1 }}>
-          <Typography variant="caption" color="error">
-            {error}
-          </Typography>
-        </Box>
-      )}
-      <Dialog open={confirmOpen} onClose={deleting ? undefined : () => setConfirmOpen(false)}>
-        <DialogTitle>{t('tables.delete-pair')}</DialogTitle>
+      <Dialog
+        open={confirmOpen}
+        onClose={deleting ? undefined : () => setConfirmOpen(false)}
+        aria-labelledby={titleId}
+      >
+        <DialogTitle id={titleId}>{t('tables.delete-pair')}</DialogTitle>
         <DialogContent>
           <DialogContentText>{t('tables.delete-pair-confirm')}</DialogContentText>
+          {error && (
+            <Alert severity="error" sx={{ mt: 2 }}>
+              {error}
+            </Alert>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setConfirmOpen(false)} disabled={deleting}>
