@@ -9,7 +9,7 @@ import { Paper, Stack, Typography, Chip, Skeleton, Checkbox, Tooltip, Button } f
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { UPDATE_PARTICIPANT_STATUS_MUTATION, UPDATE_MATCH_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
 import { useFieldHeadQueuer } from './field-head-queuer-context';
@@ -92,16 +92,10 @@ export function ActiveMatchDisplay() {
   // Participants without a table can't be paired; they are listed after the pairs.
   const participantGroups: { key: string; outlined: boolean; participants: typeof participants }[] =
     [
-      ...groupParticipantsByPair(
+      ...groupFilledParticipantsByPair(
         pairable,
         pairable.map(p => p.table)
-      )
-        .map(group => ({
-          key: group.key,
-          outlined: true,
-          participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-        }))
-        .filter(group => group.participants.length > 0),
+      ).map(group => ({ ...group, outlined: true })),
       { key: 'no-table', outlined: false, participants: participants.filter(p => !p.table) }
     ].filter(group => group.participants.length > 0);
 

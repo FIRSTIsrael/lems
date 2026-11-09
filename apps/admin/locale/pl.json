@@ -599,14 +599,8 @@
         },
         "tables": {
           "title": "Stoły do Robot Game",
-          "add-button": "Dodaj stół",
-          "name-placeholder": "Nazwa stołu",
           "save-button": "Zapisz",
-          "delete-button": "Usuń",
           "empty-state": "Nie dodano jeszcze żadnych stołów",
-          "validation": {
-            "name-required": "Nazwa stołu jest wymagana"
-          },
           "pair-label": "Para {index}",
           "summary": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} · {tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}}",
           "add-pair": "Dodaj parę",

@@ -64,7 +64,7 @@ router.get(
   asHandler<SchedulerRequest>(async (req, res) => {
     const tables = await db.tables.byDivisionId(req.divisionId).getAll();
     const ordered = orderTablesByPair(tables.map(toPairableTable));
-    res.status(200).json(ordered.map(table => ({ id: table.id, name: table.name })));
+    res.status(200).json(ordered.map(table => makeSchedulerLocationResponse(table)));
   })
 );
 

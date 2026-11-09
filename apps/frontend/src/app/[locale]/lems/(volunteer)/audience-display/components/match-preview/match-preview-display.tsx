@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useMatchTranslations } from '@lems/localization';
 import { useTranslations } from 'next-intl';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import {
@@ -48,15 +48,10 @@ export const MatchPreviewDisplay = () => {
     return null;
   }
 
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     activeMatch.participants.filter(p => p.team !== null),
     activeMatch.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   const columns = pairGroups.length <= 5 ? pairGroups.length : Math.ceil(pairGroups.length / 2);
 

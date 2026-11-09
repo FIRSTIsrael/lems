@@ -595,14 +595,8 @@
         },
         "tables": {
           "title": "שולחנות משחק הרובוט",
-          "add-button": "הוסף שולחן",
-          "name-placeholder": "שם השולחן",
           "save-button": "שמור",
-          "delete-button": "מחק",
           "empty-state": "טרם נוספו שולחנות",
-          "validation": {
-            "name-required": "שם השולחן נדרש"
-          },
           "pair-label": "זוג {index}",
           "summary": "{pairs, plural, one {זוג אחד} two {שני זוגות} other {# זוגות}} · {tables, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}}",
           "add-pair": "הוסף זוג",

@@ -11,7 +11,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BlockIcon from '@mui/icons-material/Block';
 import { Flag } from '@lems/shared';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import type { Match, Scoresheet } from '../graphql/types';
 import { useHeadRefereeData } from './head-referee-context';
 import { ScoresheetStatusButton } from './scoresheet-status-button';
@@ -79,15 +79,10 @@ function MatchCard({
 
   const scheduledTime = dayjs(match.scheduledTime).format('HH:mm');
 
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     match.participants.filter(p => p.team),
     match.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   return (
     <Card

@@ -17,7 +17,7 @@ import {
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import type { MatchStatus } from '../graphql/types';
 import { useMc } from './mc-context';
 
@@ -76,17 +76,10 @@ export const MatchScheduleTable: React.FC = () => {
           </TableHead>
           <TableBody>
             {currentStageMatches.map(match => {
-              const pairGroups = groupParticipantsByPair(
+              const pairGroups = groupFilledParticipantsByPair(
                 match.participants,
                 match.participants.map(p => p.table)
-              )
-                .map(group => ({
-                  key: group.key,
-                  participants: group.sides.flatMap(side =>
-                    side.participant ? [side.participant] : []
-                  )
-                }))
-                .filter(group => group.participants.length > 0);
+              );
 
               return (
                 <TableRow

@@ -13,7 +13,7 @@ import {
 import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 
 type TeamReadinessStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
@@ -132,15 +132,10 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
     );
   }
 
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     match.participants.filter(p => p.team),
     match.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   const getStatusColor = () => {
     if (match.status === 'in-progress') return 'success';

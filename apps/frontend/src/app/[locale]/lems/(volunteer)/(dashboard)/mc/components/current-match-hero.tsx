@@ -5,7 +5,7 @@ import { Paper, Typography, Stack, Chip, useTheme, Box } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { Match } from '../graphql';
 import { useMc } from './mc-context';
 
@@ -35,15 +35,10 @@ export const CurrentMatchHero: React.FC = () => {
     );
   }
 
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     match.participants,
     match.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   const getStatusColor = (status: Match['status']) => {
     switch (status) {

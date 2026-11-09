@@ -3,7 +3,7 @@
 import { useSuspenseQuery, skipToken } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { useJudgingCategoryTranslations } from '@lems/localization';
-import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { orderTablesByPair } from '@lems/shared/utils';
 import { getEdition } from '@lems/shared/edition';
 import { RoleInfo } from '../graphql/volunteers';
 import { useVolunteer } from '../components/volunteer-context';
@@ -30,8 +30,8 @@ const getRoleInfoValue = (roleInfo: RoleInfo | null | undefined): string => {
 interface RoleInfoOption {
   id: string;
   name: string;
-  /** True for the first table of every pair except the first (table options only). */
-  startsPair?: boolean;
+  /** The table's pair (table options only). */
+  pairKey?: string;
 }
 
 /**
@@ -59,14 +59,14 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
 
     if (roleInfoType === 'table' || roleInfoType === 'room') {
       if (divisionData?.division) {
-        const items =
+        allOptions =
           roleInfoType === 'table'
-            ? orderTablesByPair(divisionData.division.tables)
-            : divisionData.division.rooms;
-        allOptions = items.map((item: { id: string; name: string }) => ({
-          id: item.id,
-          name: item.name
-        }));
+            ? orderTablesByPair(divisionData.division.tables).map(table => ({
+                id: table.id,
+                name: table.name,
+                pairKey: table.pairKey
+              }))
+            : divisionData.division.rooms.map(room => ({ id: room.id, name: room.name }));
       }
     } else if (roleInfoType === 'category') {
       allOptions = [
@@ -82,12 +82,6 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     );
     const options = allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
 
-    if (roleInfoType !== 'table' || !divisionData?.division) return options;
-
-    const roleTables = divisionData.division.tables.filter(table =>
-      roleInfoValuesForRole.has(table.id)
-    );
-    const pairStartIds = getPairStartIds(orderTablesByPair(roleTables));
-    return options.map(opt => ({ ...opt, startsPair: pairStartIds.has(opt.id) }));
+    return options;
   }, [divisionData, getCategory, roleInfoType, volunteerData]);
 };

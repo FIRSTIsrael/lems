@@ -10,7 +10,7 @@ import PersonPinIcon from '@mui/icons-material/PersonPin';
 import CancelIcon from '@mui/icons-material/Cancel';
 import { useMatchTranslations } from '@lems/localization';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
 interface Participant {
@@ -81,15 +81,10 @@ export function NextMatchPanel({ match }: NextMatchPanelProps) {
   }
 
   const participants = match.participants.filter(p => p.team);
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     participants,
     match.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
   const tablesReady = participants.filter(p => p.ready).length;
   const totalTables = participants.length;
 

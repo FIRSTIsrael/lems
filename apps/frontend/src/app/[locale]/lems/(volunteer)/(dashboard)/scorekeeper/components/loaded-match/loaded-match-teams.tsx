@@ -3,7 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { Stack, Box, Typography, Chip } from '@mui/material';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useScorekeeperData } from '../scorekeeper-context';
 import { TeamStatusBadge } from './team-status-badge';
 import { getTeamLabel } from './utils';
@@ -14,15 +14,10 @@ export function LoadedMatchTeams() {
 
   if (!match) return null;
 
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     match.participants,
     match.participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   return (
     <Stack spacing={0.75} sx={{ flex: 1 }}>

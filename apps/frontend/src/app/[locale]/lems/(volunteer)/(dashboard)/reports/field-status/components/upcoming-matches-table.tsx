@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
 import { TablePairOutline } from '@lems/shared/components';
-import { groupParticipantsByPair } from '@lems/shared/utils';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import type { Match } from '../graphql';
 
@@ -24,15 +24,10 @@ interface TeamsCellProps {
 }
 
 const TeamsCell = ({ participants }: TeamsCellProps) => {
-  const pairGroups = groupParticipantsByPair(
+  const pairGroups = groupFilledParticipantsByPair(
     participants,
     participants.map(p => p.table)
-  )
-    .map(group => ({
-      key: group.key,
-      participants: group.sides.flatMap(side => (side.participant ? [side.participant] : []))
-    }))
-    .filter(group => group.participants.length > 0);
+  );
 
   return (
     <Box

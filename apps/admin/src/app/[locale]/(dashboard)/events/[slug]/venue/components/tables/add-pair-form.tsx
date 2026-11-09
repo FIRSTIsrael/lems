@@ -24,20 +24,22 @@ export const AddPairForm: React.FC<AddPairFormProps> = ({
 }) => {
   const t = useTranslations('pages.events.venue');
   const [names, setNames] = useState<[string, string]>(() => suggestPairNames(tables));
+  // True once the user types; the suggestion then stops overwriting their input.
+  const [edited, setEdited] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
-  const suggestion = suggestPairNames(tables);
-  const suggestionKey = suggestion.join('\n');
+  const suggestionKey = suggestPairNames(tables).join('\n');
 
-  // Re-suggest whenever the existing tables change (e.g. after a pair is added).
+  // Follow the suggestion as the existing tables change, unless the user is typing.
   useEffect(() => {
-    setNames(suggestPairNames(tables));
+    if (!edited) setNames(suggestPairNames(tables));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [suggestionKey]);
+  }, [suggestionKey, edited]);
 
   const setName = (side: 0 | 1, value: string) => {
     setNames(prev => (side === 0 ? [value, prev[1]] : [prev[0], value]));
+    setEdited(true);
     if (error) setError('');
   };
 
@@ -58,6 +60,8 @@ export const AddPairForm: React.FC<AddPairFormProps> = ({
       });
 
       if (result.ok) {
+        // Go back to following the suggestion, which updates once the tables refetch.
+        setEdited(false);
         onSuccess();
         onChanged();
       } else {
