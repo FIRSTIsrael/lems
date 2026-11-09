@@ -50,7 +50,7 @@ export function CategoryDeliberationCard({
   const { getCategory } = useJudgingCategoryTranslations(edition);
   const { getStatus } = useJudgingDeliberationTranslations();
 
-  const color = getRubricColor(category);
+  const color = getRubricColor(category, edition);
   const label = getCategory(category as JudgingCategory);
 
   if (!deliberation) {

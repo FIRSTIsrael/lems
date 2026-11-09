@@ -1,7 +1,10 @@
 import { ScoresheetSchema, ScoresheetError } from './types';
 
+/** Season slug of the Future edition scoresheet; keys its images and translations. */
+export const FUTURE_SCORESHEET_SEASON = 'future';
+
 export const futureScoresheet: ScoresheetSchema = {
-  season: 'future',
+  season: FUTURE_SCORESHEET_SEASON,
   _version: '2026-10-11',
   missions: [
     {

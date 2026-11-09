@@ -112,8 +112,8 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                 <Paper
                   sx={{
                     p: 1.5,
-                    bgcolor: getCategoryBgColor(cat),
-                    border: `2px solid ${getCategoryColor(cat)}`,
+                    bgcolor: getCategoryBgColor(cat, edition),
+                    border: `2px solid ${getCategoryColor(cat, edition)}`,
                     borderRadius: 2,
                     height: '100%'
                   }}
@@ -123,7 +123,7 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                     sx={{
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: getCategoryColor(cat),
+                      color: getCategoryColor(cat, edition),
                       textAlign: 'center',
                       mb: 1,
                       display: 'block'

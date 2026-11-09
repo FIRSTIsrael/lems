@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
 import type { Edition } from '@lems/shared/edition';
-import { JUDGING_DEFAULTS } from '@lems/shared/judging';
+import { JUDGING_DEFAULTS, getMinimumJudgingSessionLength } from '@lems/shared/judging';
 import { groupTablesByPair } from '@lems/shared/utils';
 import type { RobotGameTable } from '@lems/types/api/admin';
 import { useEvent } from '../../components/event-context';
@@ -20,7 +20,10 @@ const DEFAULT_RANKING_ROUNDS = 3;
 const DEFAULT_RANKING_CYCLE_TIME = dayjs().hour(0).minute(5).second(0);
 
 const secondsToTime = (seconds: number) =>
-  dayjs().hour(0).minute(Math.floor(seconds / 60)).second(seconds % 60);
+  dayjs()
+    .hour(0)
+    .minute(Math.floor(seconds / 60))
+    .second(seconds % 60);
 
 const getJudgingStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
 
@@ -53,6 +56,8 @@ export interface ScheduleContextType {
   judgingSessionCycleTime: Dayjs;
   matchLength: Dayjs;
   judgingSessionLength: Dayjs;
+  /** Shortest judging session that fits the edition's fixed judging stages. */
+  minJudgingSessionLength: Dayjs;
 
   judgingStart: Dayjs;
   fieldStart: Dayjs;
@@ -179,6 +184,7 @@ export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
     judgingSessionCycleTime,
     matchLength,
     judgingSessionLength,
+    minJudgingSessionLength: secondsToTime(getMinimumJudgingSessionLength(edition)),
     matchesPerRound: Math.ceil((teams.length / tables.length) * (staggerMatches ? 2 : 1)),
 
     judgingStart,

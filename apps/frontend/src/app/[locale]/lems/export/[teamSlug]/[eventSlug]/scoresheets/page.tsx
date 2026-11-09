@@ -106,7 +106,6 @@ export default function ScoresExportPage() {
                       mission={mission}
                       clauses={missionData.clauses}
                       score={score}
-                      edition={edition}
                     />
                   );
                 } catch (error) {

@@ -4,22 +4,21 @@ import { Paper, Stack, Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { useTranslations } from 'next-intl';
 import { useScoresheetGeneralTranslations } from '@lems/localization';
-import type { Edition } from '@lems/shared/edition';
 
 interface ScoreFloaterProps {
   score: number;
   scoreOverridden?: boolean;
-  edition: Edition;
+  season: string;
 }
 
 export const ScoreFloater: React.FC<ScoreFloaterProps> = ({
   score,
   scoreOverridden = false,
-  edition
+  season
 }) => {
   const theme = useTheme();
   const t = useTranslations('layouts.scoresheet');
-  const { getTerm } = useScoresheetGeneralTranslations(edition);
+  const { getTerm } = useScoresheetGeneralTranslations(season);
 
   return (
     <Paper

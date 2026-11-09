@@ -32,9 +32,10 @@ export const MobileSection: React.FC<MobileSectionProps> = ({
   disabled = false
 }) => {
   const [expanded, setExpanded] = useState(true);
-  const { getSectionTitle } = useRubricsTranslations(category, useToolEdition());
+  const edition = useToolEdition();
+  const { getSectionTitle } = useRubricsTranslations(category, edition);
 
-  const color = getRubricColor(category);
+  const color = getRubricColor(category, edition);
   const background = lighten(color, 0.9);
 
   return (

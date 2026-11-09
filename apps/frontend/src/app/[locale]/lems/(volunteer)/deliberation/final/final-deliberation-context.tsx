@@ -311,6 +311,7 @@ export const FinalDeliberationProvider = ({
     categoryPicklists,
     awards,
     awardCounts,
+    zeroGpForNoShows,
     manualOptionalAwards,
     zeroGpForNoShows,
     handleStartFinalDeliberation,

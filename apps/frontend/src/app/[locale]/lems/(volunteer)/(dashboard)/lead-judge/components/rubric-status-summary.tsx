@@ -30,7 +30,7 @@ export const RubricStatusSummary: React.FC = () => {
   const theme = useTheme();
 
   const { sessions, category, loading } = useLeadJudge();
-  const color = getRubricColor(category as JudgingCategory);
+  const color = getRubricColor(category as JudgingCategory, edition);
 
   const stats = useMemo(
     () => getRubricStatusStats(sessions, category as JudgingCategory),

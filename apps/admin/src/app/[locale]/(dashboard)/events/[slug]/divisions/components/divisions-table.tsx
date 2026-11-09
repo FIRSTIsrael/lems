@@ -52,7 +52,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     futureEdition: false
   });
   const [nameError, setNameError] = useState<string>('');
-  const [editionError, setEditionError] = useState<string>('');
+  const [saveError, setSaveError] = useState<string>('');
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [divisionToDelete, setDivisionToDelete] = useState<Division | null>(null);
 
@@ -64,13 +64,14 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
       futureEdition: division.futureEdition
     });
     setNameError('');
+    setSaveError('');
   };
 
   const handleEditCancel = () => {
     setEditingDivision(null);
     setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
     setNameError('');
-    setEditionError('');
+    setSaveError('');
   };
 
   const handleNameChange = (value: string) => {
@@ -87,7 +88,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     }
 
     setNameError('');
-    setEditionError('');
+    setSaveError('');
 
     const result = await apiFetch(`/admin/events/${division.eventId}/divisions/${division.id}`, {
       method: 'PUT',
@@ -104,15 +105,20 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     });
 
     if (result.ok) {
+      setSaveError('');
       setEditingDivision(null);
       setEditForm({ name: '', color: hexToHsva(defaultColor), futureEdition: false });
       await onEditDivision();
-    } else if ((result.error as { error?: string } | null)?.error === 'DIVISION_HAS_TABLES') {
-      setEditionError(t('list.edition-has-tables'));
-    } else if (
-      (result.error as { error?: string } | null)?.error === 'DIVISION_HAS_PRACTICE_TABLES'
-    ) {
-      setEditionError(t('list.edition-has-practice-tables'));
+      return;
+    }
+
+    const errorCode = (result.error as { error?: string } | null)?.error;
+    if (errorCode === 'DIVISION_HAS_TABLES') {
+      setSaveError(t('list.edition-has-tables'));
+    } else if (errorCode === 'DIVISION_HAS_PRACTICE_TABLES') {
+      setSaveError(t('list.edition-has-practice-tables'));
+    } else {
+      setSaveError(t('list.save-failed'));
     }
   };
 
@@ -178,7 +184,7 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
                           />
                         </span>
                       </Tooltip>
-                      {editionError && <FormHelperText error>{editionError}</FormHelperText>}
+                      {saveError && <FormHelperText error>{saveError}</FormHelperText>}
                     </>
                   ) : (
                     <Stack direction="row" sx={{ alignItems: 'center', gap: 1 }}>

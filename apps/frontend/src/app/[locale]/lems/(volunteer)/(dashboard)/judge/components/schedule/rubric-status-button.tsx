@@ -5,6 +5,7 @@ import { JudgingCategory } from '@lems/types/judging';
 import { RubricStatus } from '@lems/database';
 import { getRubricColor, getRubricIcon } from '@lems/shared/rubrics/rubric-utils';
 import Link from 'next/link';
+import { useEdition } from '../../../../hooks/use-edition';
 
 interface RubricStatusButtonProps {
   category: JudgingCategory;
@@ -22,7 +23,8 @@ export const RubricStatusButton: React.FC<RubricStatusButtonProps> = ({
   teamSlug
 }) => {
   const theme = useTheme();
-  const rubricColor = getRubricColor(category);
+  const edition = useEdition();
+  const rubricColor = getRubricColor(category, edition);
   const statusIcon = getRubricIcon(status, rubricColor);
 
   const isCompleted = ['completed', 'locked', 'approved'].includes(status);

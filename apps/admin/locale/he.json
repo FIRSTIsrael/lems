@@ -535,6 +535,7 @@
             "deleting": "מוחק..."
           },
           "future-edition": "מהדורת העתיד",
+          "save-failed": "לא ניתן לשמור את הבית. אם שיניתם את המהדורה, הסירו תחילה פרסים שאינם נתמכים במהדורה החדשה.",
           "edition-locked-tooltip": "לא ניתן לשנות את המהדורה לאחר יצירת לוח הזמנים",
           "edition-has-tables": "Delete this division's tables before changing the edition.",
           "edition-has-practice-tables": "Clear this division's practice tables configuration before changing the edition.",

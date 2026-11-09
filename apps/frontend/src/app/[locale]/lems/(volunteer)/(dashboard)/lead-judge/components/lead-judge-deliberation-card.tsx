@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { getRubricColor } from '@lems/shared/rubrics/rubric-utils';
 import { JudgingCategory } from '@lems/types/judging';
 import { useJudgingDeliberationTranslations } from '@lems/localization';
+import { useEdition } from '../../../hooks/use-edition';
 import { useLeadJudge } from './lead-judge-context';
 import { LeadJudgeDeliberationButton } from './lead-judge-deliberation-button';
 
@@ -28,6 +29,7 @@ export function LeadJudgeDeliberationCard() {
   const t = useTranslations('pages.lead-judge.deliberation');
   const { getStatus } = useJudgingDeliberationTranslations();
   const theme = useTheme();
+  const edition = useEdition();
 
   const { category, deliberation, desiredPicklistLength, sessionLength } = useLeadJudge();
 
@@ -35,7 +37,7 @@ export function LeadJudgeDeliberationCard() {
     return null;
   }
 
-  const color = getRubricColor(category as JudgingCategory);
+  const color = getRubricColor(category as JudgingCategory, edition);
 
   return (
     <>

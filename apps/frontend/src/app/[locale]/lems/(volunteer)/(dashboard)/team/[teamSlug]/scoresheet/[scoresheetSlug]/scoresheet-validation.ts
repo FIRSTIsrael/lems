@@ -121,10 +121,11 @@ export function validateScoresheet(
     }
   }
 
-  const { total: score, scoreOverridden, rawTotal } = calculateScoresheetScore(
-    scoresheet,
-    missionsData
-  );
+  const {
+    total: score,
+    scoreOverridden,
+    rawTotal
+  } = calculateScoresheetScore(scoresheet, missionsData);
 
   const allMissionsComplete = Array.from(missionErrors.values()).every(m => m.isComplete);
   const hasErrors =

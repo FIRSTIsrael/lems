@@ -535,6 +535,7 @@
             "deleting": "Usuwanie..."
           },
           "future-edition": "Edycja przyszłości",
+          "save-failed": "Nie udało się zapisać dywizji. Jeśli zmieniono edycję, najpierw usuń nagrody nieobsługiwane w nowej edycji.",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
           "edition-has-tables": "Delete this division's tables before changing the edition.",
           "edition-has-practice-tables": "Clear this division's practice tables configuration before changing the edition.",

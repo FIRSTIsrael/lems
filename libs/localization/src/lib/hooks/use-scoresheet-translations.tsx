@@ -1,30 +1,30 @@
 import { useTranslations } from 'next-intl';
-import type { Edition } from '@lems/shared/edition';
+import { FUTURE_SCORESHEET_SEASON } from '@lems/shared/scoresheet';
 import { RichText } from '../rich-text';
 
-// The Future edition has its own (season-less) namespace, Founders strings are keyed by season.
-const getScoresheetNamespace = (season: string, edition: Edition) =>
-  edition === 'future' ? 'shared.scoresheet-future' : `shared.scoresheet.seasons.${season}`;
+const getGeneralNamespace = (season: string) =>
+  season === FUTURE_SCORESHEET_SEASON
+    ? 'shared.scoresheet-future.general'
+    : 'shared.scoresheet.general';
 
-const getGeneralNamespace = (edition: Edition) =>
-  edition === 'future' ? 'shared.scoresheet-future.general' : 'shared.scoresheet.general';
+/** The Future edition's scoresheet has its own namespace; past/current seasons live under `seasons.<slug>`. */
+const getSeasonNamespace = (season: string) =>
+  season === FUTURE_SCORESHEET_SEASON
+    ? 'shared.scoresheet-future'
+    : `shared.scoresheet.seasons.${season}`;
 
-export const useScoresheetTranslations = (season: string, edition: Edition = 'founders') => {
-  const t = useTranslations(getScoresheetNamespace(season, edition));
-  const general = useTranslations(getGeneralNamespace(edition));
+export const useScoresheetTranslations = (season: string) => {
+  const t = useTranslations(getSeasonNamespace(season));
+  const tGeneral = useTranslations(getGeneralNamespace(season));
 
   return {
     getError: (errorId: string) => t(`errors.${errorId}.description`),
-    getGeneralTerm: (term: string) => general(term)
+    getGeneralTerm: (term: string) => tGeneral(term)
   };
 };
 
-export const useScoresheetMissionTranslations = (
-  season: string,
-  edition: Edition,
-  missionId: string
-) => {
-  const t = useTranslations(`${getScoresheetNamespace(season, edition)}.missions.${missionId}`);
+export const useScoresheetMissionTranslations = (season: string, missionId: string) => {
+  const t = useTranslations(`${getSeasonNamespace(season)}.missions.${missionId}`);
 
   const getRemarks = () => {
     const remarks: string[] = [];
@@ -54,12 +54,11 @@ export const useScoresheetMissionTranslations = (
 
 export const useScoresheetClauseTranslations = (
   season: string,
-  edition: Edition,
   missionId: string,
   clauseIndex: number
 ) => {
   const t = useTranslations(
-    `${getScoresheetNamespace(season, edition)}.missions.${missionId}.clauses.${clauseIndex}`
+    `${getSeasonNamespace(season)}.missions.${missionId}.clauses.${clauseIndex}`
   );
 
   return {
@@ -70,8 +69,8 @@ export const useScoresheetClauseTranslations = (
   };
 };
 
-export const useScoresheetGeneralTranslations = (edition: Edition = 'founders') => {
-  const t = useTranslations(getGeneralNamespace(edition));
+export const useScoresheetGeneralTranslations = (season: string) => {
+  const t = useTranslations(getGeneralNamespace(season));
 
   return {
     yes: t('yes'),

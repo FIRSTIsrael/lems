@@ -64,7 +64,7 @@ export const RubricStatusSummary = () => {
       }}
     >
       {Object.entries(stats).map(([category, stat]) => {
-        const color = getRubricColor(category as JudgingCategory);
+        const color = getRubricColor(category as JudgingCategory, edition);
 
         const { empty, draft, completed, locked, approved, total } = stat;
         const label = `${getCategory(category as JudgingCategory)} (${total})`;

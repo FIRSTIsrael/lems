@@ -5,13 +5,13 @@ import { Typography, Stack, Paper, IconButton, Slide } from '@mui/material';
 import RestartAltRoundedIcon from '@mui/icons-material/RestartAltRounded';
 import { useTranslations } from 'next-intl';
 import { useScoresheetGeneralTranslations } from '@lems/localization';
-import { useToolEdition } from '../../hooks/use-tool-edition';
+import { useToolScoresheet } from '../hooks/use-tool-scoresheet';
 import { MissionContext } from './mission-context';
 
 export const ScoreFloater = () => {
   const t = useTranslations('pages.tools.scorer');
   const { points, scoreOverridden, resetScore } = useContext(MissionContext);
-  const { getTerm } = useScoresheetGeneralTranslations(useToolEdition());
+  const { getTerm } = useScoresheetGeneralTranslations(useToolScoresheet().season);
 
   return (
     <Slide direction="up" in={points > 0 || scoreOverridden} unmountOnExit>

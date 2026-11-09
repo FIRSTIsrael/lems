@@ -72,3 +72,6 @@ logs/
 .nx/migrate-runs
 # Local git worktrees
 .worktrees/
+
+# TypeScript incremental build state
+*.tsbuildinfo

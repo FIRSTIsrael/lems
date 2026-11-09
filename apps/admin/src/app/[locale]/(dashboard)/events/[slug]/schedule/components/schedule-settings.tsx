@@ -42,6 +42,7 @@ export const ScheduleSettings: React.FC = () => {
     judgingSessionCycleTime,
     matchLength,
     judgingSessionLength,
+    minJudgingSessionLength,
     setStaggerMatches,
     setPracticeCycleTime,
     setRankingCycleTime,
@@ -417,6 +418,7 @@ export const ScheduleSettings: React.FC = () => {
                     fullWidth: true
                   }
                 }}
+                minTime={minJudgingSessionLength}
                 maxTime={judgingSessionCycleTime}
               />
             </Grid>

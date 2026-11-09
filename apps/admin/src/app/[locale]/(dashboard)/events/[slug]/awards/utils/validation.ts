@@ -7,6 +7,8 @@ export interface ValidationResult {
   minimumPercentage: number;
   maximumPercentage: number;
   isValid: boolean;
+  /** Errors the backend will reject; these cannot be overridden. */
+  hasBlockingErrors: boolean;
   reasons: { key: string; count?: number }[];
 }
 
@@ -85,6 +87,7 @@ export function validateAwardsSchema(
     minimumPercentage,
     maximumPercentage,
     isValid,
+    hasBlockingErrors: unavailableAwards.length > 0,
     reasons
   };
 }

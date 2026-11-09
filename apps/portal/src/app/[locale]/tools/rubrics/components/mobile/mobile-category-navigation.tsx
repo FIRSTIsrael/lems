@@ -55,7 +55,7 @@ export const MobileCategoryNavigation: React.FC = () => {
       >
         {JUDGING_CATEGORIES.map(category => {
           const isActive = category === currentCategory;
-          const color = getRubricColor(category);
+          const color = getRubricColor(category, edition);
 
           return (
             <Box
