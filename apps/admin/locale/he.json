@@ -1158,6 +1158,7 @@
         "title": "הגדרות שולחנות אימונים",
         "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
         "teams-per-slot": "Teams per slot",
+        "teams-per-slot-count": "Teams per slot: {count}",
         "fields": {
           "division": "בית",
           "table-count": "מספר שולחנות אימונים",

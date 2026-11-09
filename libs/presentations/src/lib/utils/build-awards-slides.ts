@@ -2,6 +2,7 @@
 
 import React from 'react';
 import type { Edition } from '@lems/shared/edition';
+import { CO_WINNER_AWARDS } from '@lems/shared/awards';
 import { TitleSlide } from '../components/slides/title-slide';
 import { ImageSlide } from '../components/slides/image-slide';
 import {
@@ -86,6 +87,8 @@ export function buildAwardsSlides(
     if (award.name === 'advancement') {
       advancingAwards.push(award);
     } else if (award.index >= 0) {
+      // Co-winner awards can stay partly or fully unassigned; there is nothing to reveal for those places
+      if ((CO_WINNER_AWARDS as readonly string[]).includes(award.name) && !award.winner) return;
       if (!awardsByName.has(award.name)) {
         awardsByName.set(award.name, []);
       }

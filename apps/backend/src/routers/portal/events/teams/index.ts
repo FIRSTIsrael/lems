@@ -84,7 +84,7 @@ router.get(
     // Format practice table assignments with ISO datetime strings
     const formattedPracticeAssignments = practiceAssignments.map(a => ({
       id: a.id,
-      tableNumber: a.table_number,
+      tableNumber: a.table_number + 1, // stored 0-based; every view displays it 1-based
       startTime: a.start_time.toISOString(),
       endTime: a.end_time.toISOString(),
       side: a.side

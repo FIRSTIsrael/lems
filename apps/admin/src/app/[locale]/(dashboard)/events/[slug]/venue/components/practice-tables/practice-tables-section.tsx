@@ -101,7 +101,7 @@ export const PracticeTablesSection: React.FC<PracticeTablesSectionProps> = ({
       <ConfigurationForm config={config} onChange={setConfig} onSave={handleSave} saving={saving} />
       {getEdition(division) === 'future' && (
         <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
-          {t('teams-per-slot')}: {config.tableCount * TABLE_SIDES.length}
+          {t('teams-per-slot-count', { count: config.tableCount * TABLE_SIDES.length })}
         </Typography>
       )}
     </Paper>

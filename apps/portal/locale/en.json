@@ -267,8 +267,8 @@
         "judging-session": "Judging Session - Room {room}",
         "practice-table": "Practice Table {tableNumber}",
         "practice-table-location": "Practice Table {tableNumber}",
-        "practice-table-side": "Practice table {tableNumber} – {side}",
-        "practice-table-side-location": "Practice table {tableNumber} – {side}",
+        "practice-table-side": "Practice Table {tableNumber} – {side}",
+        "practice-table-side-location": "Practice Table {tableNumber} – {side}",
         "no-matches": "No matches scheduled",
         "no-judging": "No judging sessions scheduled",
         "no-schedule": "No schedule available"

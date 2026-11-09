@@ -21,6 +21,23 @@ export async function up(db: Kysely<any>): Promise<void> {
     .addColumn('side', sql`char(1)`)
     .execute();
 
+  // Future divisions seat two teams per slot (sides A and B). Existing slots become side A
+  // (keeping their team) and get an empty side B partner. Founders rows keep side = NULL.
+  await sql`
+    UPDATE practice_tables_schedule p
+    SET side = 'A'
+    FROM divisions d
+    WHERE d.id = p.division_id AND d.future_edition
+  `.execute(db);
+
+  await sql`
+    INSERT INTO practice_tables_schedule (division_id, team_id, table_number, start_time, end_time, side)
+    SELECT p.division_id, NULL, p.table_number, p.start_time, p.end_time, 'B'
+    FROM practice_tables_schedule p
+    JOIN divisions d ON d.id = p.division_id
+    WHERE d.future_edition AND p.side = 'A'
+  `.execute(db);
+
   await sql`
     ALTER TABLE practice_tables_schedule
     ADD CONSTRAINT ck_practice_tables_schedule_side
@@ -38,6 +55,10 @@ export async function up(db: Kysely<any>): Promise<void> {
 }
 
 export async function down(db: Kysely<any>): Promise<void> {
+  // The side-B rows created by `up` would become duplicate slots once the column is gone.
+  // Assignments on side B are lost; side A rows (and their teams) are kept.
+  await sql`DELETE FROM practice_tables_schedule WHERE side = 'B'`.execute(db);
+
   await db.schema
     .alterTable('practice_tables_schedule')
     .dropConstraint('uk_practice_tables_schedule_slot')
