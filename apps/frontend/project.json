@@ -39,9 +39,6 @@
           "dev": false
         }
       }
-    },
-    "lint": {
-      "executor": "@nx/eslint:lint"
     }
   }
 }

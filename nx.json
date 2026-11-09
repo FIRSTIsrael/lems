@@ -13,17 +13,6 @@
       ],
       "cache": true
     },
-    "@nx/eslint:lint": {
-      "inputs": [
-        "default",
-        "^default",
-        "{workspaceRoot}/.eslint.config.mjs",
-        "{workspaceRoot}/.eslintignore",
-        "{workspaceRoot}/eslint.config.mjs",
-        "{workspaceRoot}/tools/eslint-rules/**/*"
-      ],
-      "cache": true
-    },
     "@nx/next:build": {
       "cache": true,
       "dependsOn": [
@@ -40,7 +29,27 @@
         "default",
         "^production"
       ]
-    }
+    },
+    "lint": [
+      {
+        "filter": {
+          "plugin": "@nx/eslint/plugin"
+        },
+        "inputs": [
+          "default",
+          "^default",
+          "{workspaceRoot}/.eslint.config.mjs",
+          "{workspaceRoot}/.eslintignore",
+          "{workspaceRoot}/eslint.config.mjs",
+          "{workspaceRoot}/tools/eslint-rules/**/*",
+          {
+            "externalDependencies": [
+              "eslint"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "namedInputs": {
     "default": [
@@ -87,6 +96,12 @@
         "previewTargetName": "preview",
         "serveStaticTargetName": "serve-static",
         "serveTargetName": "serve"
+      }
+    },
+    {
+      "plugin": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "lint"
       }
     }
   ]

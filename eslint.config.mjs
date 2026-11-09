@@ -8,6 +8,10 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importPlugin from 'eslint-plugin-import';
 
+// Lint runs from each project directory (inferred `eslint .` tasks), so
+// workspace-relative patterns below are anchored to the workspace root.
+const workspaceRoot = import.meta.dirname;
+
 const reactFiles = [
   'apps/{frontend,admin,portal}/**/*.{js,jsx,ts,tsx}',
   'libs/{shared,presentations,localization}/**/*.{js,jsx,ts,tsx}'
@@ -55,6 +59,7 @@ const config = defineConfig([
     }
   },
   {
+    basePath: workspaceRoot,
     files: reactFiles,
     settings: {
       next: {
@@ -112,23 +117,26 @@ const config = defineConfig([
     files: ['**/*.spec.ts', '**/*.spec.tsx', '**/*.spec.js', '**/*.spec.jsx'],
     rules: {}
   },
-  globalIgnores([
-    '**/node_modules',
-    '**/.next',
-    'apps/backend/webpack.config.js',
-    './eslint.config.mjs',
-    '**/next-env.d.ts',
-    '**/dist',
-    '**/build',
-    '**/out',
-    '**/coverage',
-    '**/.turbo',
-    '**/.cache',
-    '**/.vercel',
-    '**/.idea',
-    '**/.vscode',
-    '**/.git'
-  ])
+  {
+    basePath: workspaceRoot,
+    ...globalIgnores([
+      '**/node_modules',
+      '**/.next',
+      'apps/backend/webpack.config.js',
+      './eslint.config.mjs',
+      '**/next-env.d.ts',
+      '**/dist',
+      '**/build',
+      '**/out',
+      '**/coverage',
+      '**/.turbo',
+      '**/.cache',
+      '**/.vercel',
+      '**/.idea',
+      '**/.vscode',
+      '**/.git'
+    ])
+  }
 ]);
 
 export default config;
