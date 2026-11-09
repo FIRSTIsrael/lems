@@ -10,6 +10,7 @@ import { suggestPairNames } from './suggest-pair-names';
 interface AddPairFormProps {
   tables: { name: string }[];
   basePath: string;
+  addLabel?: string;
   onChanged: () => void;
   onSuccess: () => void;
 }
@@ -17,6 +18,7 @@ interface AddPairFormProps {
 export const AddPairForm: React.FC<AddPairFormProps> = ({
   tables,
   basePath,
+  addLabel,
   onChanged,
   onSuccess
 }) => {
@@ -105,7 +107,7 @@ export const AddPairForm: React.FC<AddPairFormProps> = ({
         onClick={handleAdd}
         disabled={saving}
       >
-        {t('tables.add-pair')}
+        {addLabel ?? t('tables.add-pair')}
       </Button>
     </Stack>
   );

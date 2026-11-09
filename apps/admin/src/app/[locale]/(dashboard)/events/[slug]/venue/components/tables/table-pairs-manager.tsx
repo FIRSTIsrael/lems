@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl';
 import { Alert, Box, CircularProgress, Paper, Stack, Typography } from '@mui/material';
 import { Division, RobotGameTable } from '@lems/types/api/admin';
 import { groupTablesByPair } from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { AddPairForm } from './add-pair-form';
 import { TablePairCard } from './table-pair-card';
 
@@ -51,25 +52,35 @@ export const TablePairsManager: React.FC<TablePairsManagerProps> = ({ division }
   }
 
   const groups = groupTablesByPair(tables);
+  const readOnly = division.hasSchedule;
+  const isFuture = getEdition(division) === 'future';
 
   return (
     <Paper sx={{ p: 3, height: '100%' }}>
       <Typography variant="h6" gutterBottom>
         {t('tables.title')}
       </Typography>
-      <Box sx={{ mb: 3 }}>
-        <AddPairForm
-          tables={tables}
-          basePath={basePath}
-          onChanged={() => mutate()}
-          onSuccess={showSuccess}
-        />
-        {successMessage && (
-          <Alert severity="success" sx={{ mt: 2 }}>
-            {successMessage}
-          </Alert>
-        )}
-      </Box>
+      {isFuture && (
+        <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+          {t('tables.future-hint')}
+        </Typography>
+      )}
+      {!readOnly && (
+        <Box sx={{ mb: 3 }}>
+          <AddPairForm
+            tables={tables}
+            basePath={basePath}
+            onChanged={() => mutate()}
+            onSuccess={showSuccess}
+            addLabel={isFuture ? t('tables.add-physical-table') : undefined}
+          />
+          {successMessage && (
+            <Alert severity="success" sx={{ mt: 2 }}>
+              {successMessage}
+            </Alert>
+          )}
+        </Box>
+      )}
       {groups.length === 0 ? (
         <Typography variant="body2" sx={{ color: 'text.secondary', textAlign: 'center', py: 4 }}>
           {t('tables.empty-state')}
@@ -77,16 +88,24 @@ export const TablePairsManager: React.FC<TablePairsManagerProps> = ({ division }
       ) : (
         <>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-            {t('tables.summary', { pairs: groups.length, tables: tables.length })}
+            {isFuture
+              ? t('tables.summary-future', { pairs: groups.length, tables: tables.length })
+              : t('tables.summary', { pairs: groups.length, tables: tables.length })}
           </Typography>
           <Stack spacing={2}>
             {groups.map((group, index) => (
               <TablePairCard
                 key={group.key}
                 index={index + 1}
+                label={
+                  isFuture
+                    ? t('tables.physical-table-label', { index: index + 1 })
+                    : t('tables.pair-label', { index: index + 1 })
+                }
                 group={group}
                 groups={groups}
                 basePath={basePath}
+                readOnly={readOnly}
                 onChanged={() => mutate()}
                 onSuccess={showSuccess}
               />

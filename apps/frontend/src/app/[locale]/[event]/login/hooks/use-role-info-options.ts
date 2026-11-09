@@ -80,6 +80,8 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     const roleInfoValuesForRole = new Set(
       volunteerData.volunteers.map(v => getRoleInfoValue(v.roleInfo))
     );
-    return allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+    const options = allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+
+    return options;
   }, [divisionData, getCategory, roleInfoType, volunteerData]);
 };

@@ -104,7 +104,11 @@ export const DivisionsTable: React.FC<DivisionsTableProps> = ({ divisions, onEdi
     });
 
     if (!result.ok) {
-      setSaveError(t('list.save-failed'));
+      if ((result.error as { error?: string } | null)?.error === 'DIVISION_HAS_PRACTICE_TABLES') {
+        setSaveError(t('list.edition-has-practice-tables'));
+      } else {
+        setSaveError(t('list.save-failed'));
+      }
       return;
     }
 

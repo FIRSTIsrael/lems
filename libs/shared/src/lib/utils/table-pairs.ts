@@ -79,6 +79,22 @@ export function groupParticipantsByPair<P extends { table: { id: string } }>(
   }));
 }
 
+/**
+ * Returns the participant at the other table of the given table's pair, or null.
+ */
+export function getPairedParticipant<P extends { table: { id: string } }>(
+  participants: P[],
+  tableId: string,
+  tables: PairableTable[]
+): P | null {
+  const group = groupTablesByPair(orderTablesByPair(tables)).find(g =>
+    g.tables.some(table => table.id === tableId)
+  );
+  const partner = group?.tables.find(table => table.id !== tableId);
+  if (!partner) return null;
+  return participants.find(participant => participant.table.id === partner.id) ?? null;
+}
+
 export interface FilledPairGroup<P> {
   key: string;
   participants: P[];

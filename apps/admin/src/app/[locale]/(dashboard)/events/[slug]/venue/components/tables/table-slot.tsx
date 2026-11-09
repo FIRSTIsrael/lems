@@ -13,6 +13,7 @@ interface TableSlotProps {
   table: RobotGameTable;
   groups: TableGroup<RobotGameTable>[];
   basePath: string;
+  readOnly?: boolean;
   onChanged: () => void;
   onSuccess: () => void;
 }
@@ -21,6 +22,7 @@ export const TableSlot: React.FC<TableSlotProps> = ({
   table,
   groups,
   basePath,
+  readOnly = false,
   onChanged,
   onSuccess
 }) => {
@@ -111,24 +113,26 @@ export const TableSlot: React.FC<TableSlotProps> = ({
               borderColor: error ? 'error.main' : 'divider',
               borderRadius: 1,
               minHeight: '40px',
-              '&:hover': { backgroundColor: 'action.hover' }
+              '&:hover': { backgroundColor: readOnly ? undefined : 'action.hover' }
             }}
           >
             <Typography
               variant="body1"
-              onClick={() => setEditingValue(table.name)}
-              sx={{ cursor: 'pointer', flexGrow: 1, userSelect: 'none' }}
+              onClick={() => !readOnly && setEditingValue(table.name)}
+              sx={{ cursor: readOnly ? 'default' : 'pointer', flexGrow: 1, userSelect: 'none' }}
             >
               {table.name}
             </Typography>
-            <IconButton
-              size="small"
-              title={t('tables.swap')}
-              aria-label={t('tables.swap')}
-              onClick={() => setSwapOpen(true)}
-            >
-              <SwapHorizRounded />
-            </IconButton>
+            {!readOnly && (
+              <IconButton
+                size="small"
+                title={t('tables.swap')}
+                aria-label={t('tables.swap')}
+                onClick={() => setSwapOpen(true)}
+              >
+                <SwapHorizRounded />
+              </IconButton>
+            )}
           </Stack>
         )}
       </Stack>

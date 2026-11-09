@@ -7,9 +7,16 @@ import { useEdition } from '../../../../hooks/use-edition';
 import { EnrichedTeam } from '../../types';
 import { AwardWinnerCard } from './award-winner-card';
 
+/** One award row's winner. Co-winner awards (e.g. Coopertition) share a place across rows. */
+export interface AwardSectionWinner {
+  awardId: string;
+  place: number;
+  team: EnrichedTeam;
+}
+
 interface AwardSectionProps {
   awardName: string;
-  winners: EnrichedTeam[];
+  winners: AwardSectionWinner[];
 }
 
 export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }) => {
@@ -44,8 +51,8 @@ export const AwardSection: React.FC<AwardSectionProps> = ({ awardName, winners }
       </Box>
 
       <Stack spacing={1}>
-        {winners.map((winner, index) => (
-          <AwardWinnerCard key={winner.id} winner={winner} index={index} />
+        {winners.map(({ awardId, place, team }) => (
+          <AwardWinnerCard key={awardId} winner={team} place={place} />
         ))}
       </Stack>
     </Paper>
