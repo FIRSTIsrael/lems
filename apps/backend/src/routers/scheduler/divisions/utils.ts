@@ -1,4 +1,4 @@
-import { Team as DbTeam, JudgingRoom, RobotGameTable } from '@lems/database';
+import { Team as DbTeam } from '@lems/database';
 import { Location, Team } from '@lems/types/api/scheduler';
 
 export const makeSchedulerTeamResponse = (team: DbTeam): Team => ({
@@ -8,9 +8,10 @@ export const makeSchedulerTeamResponse = (team: DbTeam): Team => ({
   slug: `${team.region}-${team.number}`.toUpperCase()
 });
 
-export const makeSchedulerLocationResponse = (
-  location: RobotGameTable | JudgingRoom
-): Location => ({
+export const makeSchedulerLocationResponse = (location: {
+  id: string;
+  name: string;
+}): Location => ({
   id: location.id,
   name: location.name
 });

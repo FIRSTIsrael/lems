@@ -11,6 +11,9 @@ import {
   useTheme
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
+import { useMemo } from 'react';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import type { AgendaEvent, RobotGameMatch, RobotGameTable, Team } from '../graphql/types';
 import { MatchRow } from './match-row';
 import { AgendaEventRow } from './agenda-event-row';
@@ -22,10 +25,17 @@ interface RoundScheduleProps {
   rows: Array<{ type: 'match'; data: RobotGameMatch } | { type: 'event'; data: AgendaEvent }>;
 }
 
-export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, teams, rows }) => {
+export const RoundSchedule: React.FC<RoundScheduleProps> = ({
+  matches,
+  tables: unorderedTables,
+  teams,
+  rows
+}) => {
   const t = useTranslations('pages.reports.field-schedule');
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const tables = useMemo(() => orderTablesByPair(unorderedTables), [unorderedTables]);
+  const pairStarts = useMemo(() => getPairStartIds(tables), [tables]);
 
   if (matches.length === 0) return null;
 
@@ -89,7 +99,11 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
               </Typography>
             </TableCell>
             {tables.map(table => (
-              <TableCell key={table.id} align="center">
+              <TableCell
+                key={table.id}
+                align="center"
+                sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+              >
                 <Typography
                   sx={{
                     fontWeight: 600,
@@ -105,7 +119,13 @@ export const RoundSchedule: React.FC<RoundScheduleProps> = ({ matches, tables, t
         <TableBody>
           {rows.map((row, index) =>
             row.type === 'match' ? (
-              <MatchRow key={row.data.id} match={row.data} tables={tables} teams={teams} />
+              <MatchRow
+                key={row.data.id}
+                match={row.data}
+                tables={tables}
+                pairStarts={pairStarts}
+                teams={teams}
+              />
             ) : (
               <AgendaEventRow
                 key={`event-${row.data.id}-${index}`}

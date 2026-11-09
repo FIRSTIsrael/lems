@@ -10,7 +10,7 @@ export const matchParticipantTableResolver: GraphQLFieldResolver<
   MatchParticipantGraphQL,
   unknown,
   unknown,
-  Promise<{ id: string; name: string }>
+  Promise<{ id: string; name: string; pairKey: string; side: string }>
 > = async (participant: MatchParticipantGraphQL) => {
   try {
     const table = await db.tables.byId(participant.tableId).get();
@@ -21,7 +21,9 @@ export const matchParticipantTableResolver: GraphQLFieldResolver<
 
     return {
       id: table.id,
-      name: table.name
+      name: table.name,
+      pairKey: table.pair_key,
+      side: table.side
     };
   } catch (error) {
     console.error('Error fetching table for participant:', participant.tableId, error);

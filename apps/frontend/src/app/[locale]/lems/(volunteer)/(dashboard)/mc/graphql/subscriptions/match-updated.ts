@@ -43,6 +43,8 @@ export const MATCH_UPDATED_SUBSCRIPTION: TypedDocumentNode<
           table {
             id
             name
+            pairKey
+            side
           }
         }
       }

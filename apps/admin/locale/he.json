@@ -594,14 +594,19 @@
         },
         "tables": {
           "title": "שולחנות משחק הרובוט",
-          "add-button": "הוסף שולחן",
-          "name-placeholder": "שם השולחן",
           "save-button": "שמור",
-          "delete-button": "מחק",
           "empty-state": "טרם נוספו שולחנות",
-          "validation": {
-            "name-required": "שם השולחן נדרש"
-          }
+          "pair-label": "Pair {index}",
+          "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
+          "add-pair": "Add pair",
+          "side-a": "Side A",
+          "side-b": "Side B",
+          "delete-pair": "Delete pair",
+          "delete-pair-confirm": "Delete both tables of this pair and their referees?",
+          "swap": "Swap…",
+          "swap-title": "Swap {name} with",
+          "position": "Pair {index} · {side}: {name}",
+          "cancel": "Cancel"
         },
         "pit-map": {
           "title": "מפת פיטים",
@@ -762,7 +767,8 @@
             "ranking-rounds": "סבבי דירוג",
             "judging-start": "תחילת שיפוט",
             "field-start": "תחילת זירה",
-            "matches-per-round": "מקצים בכל סבב"
+            "matches-per-round": "מקצים בכל סבב",
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})"
           },
           "settings": {
             "title": "הגדרות",

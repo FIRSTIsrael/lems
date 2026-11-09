@@ -594,14 +594,19 @@
         },
         "tables": {
           "title": "Robot Game Tables",
-          "add-button": "Add Table",
-          "name-placeholder": "Table name",
           "save-button": "Save",
-          "delete-button": "Delete",
           "empty-state": "No tables added yet",
-          "validation": {
-            "name-required": "Table name is required"
-          }
+          "pair-label": "Pair {index}",
+          "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
+          "add-pair": "Add pair",
+          "side-a": "Side A",
+          "side-b": "Side B",
+          "delete-pair": "Delete pair",
+          "delete-pair-confirm": "Delete both tables of this pair and their referees?",
+          "swap": "Swap…",
+          "swap-title": "Swap {name} with",
+          "position": "Pair {index} · {side}: {name}",
+          "cancel": "Cancel"
         },
         "pit-map": {
           "title": "Pit Map",
@@ -762,7 +767,8 @@
             "ranking-rounds": "Ranking Rounds",
             "judging-start": "Judging start time",
             "field-start": "Field start time",
-            "matches-per-round": "Matches per round"
+            "matches-per-round": "Matches per round",
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})"
           },
           "settings": {
             "title": "Settings",
