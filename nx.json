@@ -3,26 +3,26 @@
   "neverConnectToCloud": true,
   "useInferencePlugins": false,
   "targetDefaults": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ],
-      "cache": true
-    },
-    "@nx/next:build": {
-      "cache": true,
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
-    },
+    "build": [
+      {
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "production",
+          "^production"
+        ],
+        "cache": true
+      },
+      {
+        "filter": {
+          "plugin": "@nx/next/plugin"
+        },
+        "configurations": {
+          "development": {}
+        }
+      }
+    ],
     "e2e": {
       "cache": true,
       "inputs": [
@@ -48,6 +48,18 @@
             ]
           }
         ]
+      }
+    ],
+    "serve": [
+      {
+        "filter": {
+          "plugin": "@nx/next/plugin"
+        },
+        "defaultConfiguration": "development",
+        "configurations": {
+          "development": {},
+          "production": {}
+        }
       }
     ]
   },
@@ -102,6 +114,15 @@
       "plugin": "@nx/eslint/plugin",
       "options": {
         "targetName": "lint"
+      }
+    },
+    {
+      "plugin": "@nx/next/plugin",
+      "options": {
+        "buildTargetName": "build",
+        "devTargetName": "serve",
+        "startTargetName": "start",
+        "serveStaticTargetName": "serve-static"
       }
     }
   ]

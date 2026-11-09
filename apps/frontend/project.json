@@ -6,38 +6,21 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/next:build",
       "outputs": [
-        "{options.outputPath}"
+        "{workspaceRoot}/dist/apps/frontend/.next/!(cache)/**/*",
+        "{workspaceRoot}/dist/apps/frontend/.next/!(cache)",
+        "{projectRoot}/.next/!(cache)/**/*",
+        "{projectRoot}/.next/!(cache)"
       ],
       "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/frontend"
-      },
       "configurations": {
-        "development": {
-          "outputPath": "apps/frontend"
-        },
+        "development": {},
         "production": {}
       }
     },
     "serve": {
-      "executor": "@nx/next:server",
-      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "frontend:build",
-        "port": 4200,
-        "dev": true
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "frontend:build:development",
-          "dev": true
-        },
-        "production": {
-          "buildTarget": "frontend:build:production",
-          "dev": false
-        }
+        "port": 4200
       }
     }
   }

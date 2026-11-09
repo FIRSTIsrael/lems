@@ -6,38 +6,21 @@
   "tags": [],
   "targets": {
     "build": {
-      "executor": "@nx/next:build",
       "outputs": [
-        "{options.outputPath}"
+        "{workspaceRoot}/dist/apps/admin/.next/!(cache)/**/*",
+        "{workspaceRoot}/dist/apps/admin/.next/!(cache)",
+        "{projectRoot}/.next/!(cache)/**/*",
+        "{projectRoot}/.next/!(cache)"
       ],
       "defaultConfiguration": "production",
-      "options": {
-        "outputPath": "dist/apps/admin"
-      },
       "configurations": {
-        "development": {
-          "outputPath": "apps/admin"
-        },
+        "development": {},
         "production": {}
       }
     },
     "serve": {
-      "executor": "@nx/next:server",
-      "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "admin:build",
-        "port": 4201,
-        "dev": true
-      },
-      "configurations": {
-        "development": {
-          "buildTarget": "admin:build:development",
-          "dev": true
-        },
-        "production": {
-          "buildTarget": "admin:build:production",
-          "dev": false
-        }
+        "port": 4201
       }
     }
   }
