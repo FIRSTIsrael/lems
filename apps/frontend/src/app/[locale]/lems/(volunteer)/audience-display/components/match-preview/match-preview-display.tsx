@@ -5,6 +5,8 @@ import { Box, Paper, alpha, Stack, Grid, Typography } from '@mui/material';
 import Image from 'next/image';
 import { useMatchTranslations } from '@lems/localization';
 import { useTranslations } from 'next-intl';
+import { TablePairOutline } from '@lems/shared/components';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useEvent } from '../../../components/event-context';
 import { usePageData } from '../../../hooks/use-page-data';
 import {
@@ -46,12 +48,12 @@ export const MatchPreviewDisplay = () => {
     return null;
   }
 
-  const filteredParticipants = activeMatch.participants.filter(p => p.team !== null);
+  const pairGroups = groupFilledParticipantsByPair(
+    activeMatch.participants.filter(p => p.team !== null),
+    activeMatch.participants.map(p => p.table)
+  );
 
-  const columns =
-    filteredParticipants.length <= 5
-      ? filteredParticipants.length
-      : Math.ceil(filteredParticipants.length / 2);
+  const columns = pairGroups.length <= 5 ? pairGroups.length : Math.ceil(pairGroups.length / 2);
 
   return (
     <Box
@@ -182,8 +184,14 @@ export const MatchPreviewDisplay = () => {
               justifyContent: 'center'
             }}
           >
-            {filteredParticipants.map(participant => (
-              <MatchParticipantCard key={participant?.team?.id} participant={participant} />
+            {pairGroups.map(group => (
+              <Grid key={group.key} size={1} sx={{ display: 'flex' }}>
+                <TablePairOutline sx={{ flex: 1, minWidth: 0, flexDirection: 'column' }}>
+                  {group.participants.map(participant => (
+                    <MatchParticipantCard key={participant.team?.id} participant={participant} />
+                  ))}
+                </TablePairOutline>
+              </Grid>
             ))}
           </Grid>
         </Stack>

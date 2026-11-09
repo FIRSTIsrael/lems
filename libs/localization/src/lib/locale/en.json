@@ -9,7 +9,8 @@
       "not-started": "Not Started",
       "in-progress": "In Progress",
       "completed": "Completed"
-    }
+    },
+    "with-team": "with #{number}"
   },
   "judging-sessions": {
     "status": {
@@ -89,6 +90,10 @@
     "peer": {
       "name": "Peer",
       "description": "This award honors a team nominated by their peers for how they demonstrate the <i>FIRST</i> Core Values and Gracious Professionalism."
+    },
+    "coopertition": {
+      "name": "Coopertition",
+      "description": "This award recognizes two teams who score the highest combined match score at the event, demonstrating that FIRST LEGO League teams are stronger when they work together."
     },
     "lead-mentor": {
       "name": "Coach/Mentor",

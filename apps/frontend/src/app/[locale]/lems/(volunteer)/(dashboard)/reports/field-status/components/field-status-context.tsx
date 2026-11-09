@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs from 'dayjs';
+import { orderTablesByPair } from '@lems/shared/utils';
 import type { Division, Field, Match, Table } from '../graphql';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 
@@ -57,7 +58,7 @@ export function FieldStatusProvider({ data, children }: FieldStatusProviderProps
       })
       .slice(0, 10);
 
-    const sortedTables = [...tables].sort((a, b) => a.name.localeCompare(b.name));
+    const sortedTables = orderTablesByPair(tables);
 
     return {
       division,

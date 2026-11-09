@@ -1,6 +1,8 @@
 export interface RobotGameTable {
   id: string;
   name: string;
+  pairKey: string;
+  side: string;
 }
 
 export interface Team {

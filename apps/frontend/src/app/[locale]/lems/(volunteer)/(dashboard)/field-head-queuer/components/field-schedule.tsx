@@ -22,6 +22,8 @@ import {
   Typography,
   Skeleton
 } from '@mui/material';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
 import { UPDATE_MATCH_MUTATION, UPDATE_PARTICIPANT_STATUS_MUTATION } from '../graphql';
 import { GET_HEAD_QUEUER_DATA } from '../graphql/query';
@@ -55,7 +57,15 @@ function getStatusChipVariant(
 
 export function FieldSchedule() {
   const t = useTranslations('pages.field-head-queuer.field-schedule');
-  const { divisionId, matches, tables, loadedMatch, loading } = useFieldHeadQueuer();
+  const {
+    divisionId,
+    matches,
+    tables: unorderedTables,
+    loadedMatch,
+    loading
+  } = useFieldHeadQueuer();
+  const tables = useMemo(() => orderTablesByPair(unorderedTables), [unorderedTables]);
+  const pairStarts = useMemo(() => getPairStartIds(tables), [tables]);
   const loadedMatchId = loadedMatch?.id;
   const currentTime = useTime({ interval: 1000 });
 
@@ -177,13 +187,16 @@ export function FieldSchedule() {
               <TableCell
                 key={table.id}
                 align="center"
-                sx={{
-                  fontWeight: 600,
-                  position: 'sticky',
-                  top: 0,
-                  bgcolor: 'background.paper',
-                  zIndex: 10
-                }}
+                sx={[
+                  {
+                    fontWeight: 600,
+                    position: 'sticky',
+                    top: 0,
+                    bgcolor: 'background.paper',
+                    zIndex: 10
+                  },
+                  pairStarts.has(table.id) && pairDividerSx
+                ]}
               >
                 {table.name}
               </TableCell>
@@ -240,7 +253,11 @@ export function FieldSchedule() {
                 const statusKey = getStatusKey(!!team, isSignedIn, participant?.queued ?? false);
 
                 return (
-                  <TableCell key={table.id} align="center">
+                  <TableCell
+                    key={table.id}
+                    align="center"
+                    sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                  >
                     <Stack
                       spacing={1}
                       sx={{

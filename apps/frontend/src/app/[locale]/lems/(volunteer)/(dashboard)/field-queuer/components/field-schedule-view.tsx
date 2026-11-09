@@ -17,8 +17,10 @@ import {
   Skeleton
 } from '@mui/material';
 import dayjs from 'dayjs';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import { useTime } from '../../../../../../../lib/time/hooks/use-time';
-import type { FieldQueuerData } from '../graphql';
+import type { FieldQueuerData, RobotGameTable } from '../graphql';
 
 interface FieldScheduleViewProps {
   data: FieldQueuerData;
@@ -30,17 +32,17 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
   const currentTime = useTime({ interval: 1000 });
 
   const tables = useMemo(() => {
-    const tableMap = new Map<string, { id: string; name: string }>();
+    const tableMap = new Map<string, RobotGameTable>();
     data.matches.forEach(match => {
       match.participants.forEach(p => {
         if (p.table && !tableMap.has(p.table.id)) {
-          tableMap.set(p.table.id, { id: p.table.id, name: p.table.name });
+          tableMap.set(p.table.id, p.table);
         }
       });
     });
-    const result = Array.from(tableMap.values()).sort((a, b) => a.name.localeCompare(b.name));
-    return result;
+    return orderTablesByPair(Array.from(tableMap.values()));
   }, [data.matches]);
+  const pairStarts = useMemo(() => getPairStartIds(tables), [tables]);
 
   const upcomingMatches = useMemo(() => {
     return data.matches
@@ -129,10 +131,13 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
                 <TableCell
                   key={table.id}
                   align="center"
-                  sx={{
-                    fontWeight: 600,
-                    minWidth: 80
-                  }}
+                  sx={[
+                    {
+                      fontWeight: 600,
+                      minWidth: 80
+                    },
+                    pairStarts.has(table.id) && pairDividerSx
+                  ]}
                 >
                   {table.name}
                 </TableCell>
@@ -189,7 +194,11 @@ export function FieldScheduleView({ data, loading }: FieldScheduleViewProps) {
                     const team = participant?.team;
 
                     return (
-                      <TableCell key={table.id} align="center">
+                      <TableCell
+                        key={table.id}
+                        align="center"
+                        sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                      >
                         {team ? (
                           <Chip
                             label={team.number}

@@ -14,6 +14,8 @@ import {
   Box
 } from '@mui/material';
 import { useMatchTranslations } from '@lems/localization';
+import { TablePairOutline } from '@lems/shared/components';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { useTime } from '../../../../../../../../lib/time/hooks';
 import type { Match } from '../graphql';
 
@@ -22,44 +24,51 @@ interface TeamsCellProps {
 }
 
 const TeamsCell = ({ participants }: TeamsCellProps) => {
+  const pairGroups = groupFilledParticipantsByPair(
+    participants,
+    participants.map(p => p.table)
+  );
+
   return (
     <Box
       sx={{
         display: 'flex',
         flexDirection: 'row',
-        gap: 3,
+        gap: 1.5,
         alignItems: 'center',
         flexWrap: 'wrap'
       }}
     >
-      {[...participants]
-        .sort((a, b) => a.table.name.localeCompare(b.table.name, undefined, { numeric: true }))
-        .map((participant, idx) => {
-          const { team, table } = participant;
-          const teamDisplay = team ? `#${team.number} ${team.name}` : '—';
+      {pairGroups.map(group => (
+        <TablePairOutline key={group.key} sx={{ gap: 2, alignItems: 'center' }}>
+          {group.participants.map((participant, idx) => {
+            const { team, table } = participant;
+            const teamDisplay = team ? `#${team.number} ${team.name}` : '—';
 
-          return (
-            <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
-              <Typography
-                variant="body2"
-                sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
-              >
-                {table?.name || 'Unknown'}
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 500,
-                  minWidth: '2.5rem',
-                  fontFamily: 'monospace',
-                  fontSize: '1.1rem'
-                }}
-              >
-                {teamDisplay}
-              </Typography>
-            </Box>
-          );
-        })}
+            return (
+              <Box key={idx} sx={{ display: 'flex', gap: 0.75, alignItems: 'center' }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: 'text.secondary', fontSize: '1.1rem', fontWeight: 500 }}
+                >
+                  {table?.name || 'Unknown'}
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    fontWeight: 500,
+                    minWidth: '2.5rem',
+                    fontFamily: 'monospace',
+                    fontSize: '1.1rem'
+                  }}
+                >
+                  {teamDisplay}
+                </Typography>
+              </Box>
+            );
+          })}
+        </TablePairOutline>
+      ))}
     </Box>
   );
 };

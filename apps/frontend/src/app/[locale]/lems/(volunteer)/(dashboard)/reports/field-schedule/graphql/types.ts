@@ -11,6 +11,8 @@ export interface Team {
 export interface RobotGameTable {
   id: string;
   name: string;
+  pairKey: string;
+  side: string;
 }
 
 export interface RobotGameMatchParticipant {
@@ -23,6 +25,8 @@ export interface RobotGameMatchParticipant {
   table: {
     id: string;
     name: string;
+    pairKey: string;
+    side: string;
   };
   present: string | null;
   queued: string | null;

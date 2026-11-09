@@ -6,10 +6,10 @@ import { EnrichedTeam } from '../../types';
 
 interface AwardWinnerCardProps {
   winner: EnrichedTeam;
-  index: number;
+  place: number;
 }
 
-export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ winner, index }) => {
+export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ winner, place }) => {
   const t = useTranslations('pages.deliberations.final.review');
   const winnerInfo = `${winner.number} | ${winner.name}`;
   return (
@@ -27,7 +27,7 @@ export const AwardWinnerCard: React.FC<AwardWinnerCardProps> = ({ winner, index 
       }}
     >
       <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 500 }}>
-        {t('place', { place: index + 1 })}
+        {t('place', { place })}
       </Typography>
       <Typography
         variant="body2"

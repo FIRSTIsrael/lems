@@ -93,6 +93,11 @@ router.put(
       return;
     }
 
+    if (editionChanged && (await db.divisions.byId(req.divisionId).practiceTables().hasSlots())) {
+      res.status(400).json({ error: 'DIVISION_HAS_PRACTICE_TABLES' });
+      return;
+    }
+
     if (editionChanged) {
       const newEdition = getEdition({ future_edition: futureEdition });
       const awards = await db.awards.byDivisionId(req.divisionId).getAll();

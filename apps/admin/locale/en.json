@@ -537,6 +537,7 @@
           "future-edition": "Future edition",
           "save-failed": "Could not save the division. If you changed the edition, first remove any awards the new edition does not support.",
           "edition-locked-tooltip": "The edition cannot be changed after the schedule has been generated",
+          "edition-has-practice-tables": "Delete this division's practice tables before changing the edition.",
           "alerts": {
             "not-enough-divisions": "This event is not split into divisions. Create a new division to split your event."
           }
@@ -594,14 +595,23 @@
         },
         "tables": {
           "title": "Robot Game Tables",
-          "add-button": "Add Table",
-          "name-placeholder": "Table name",
           "save-button": "Save",
-          "delete-button": "Delete",
           "empty-state": "No tables added yet",
-          "validation": {
-            "name-required": "Table name is required"
-          }
+          "pair-label": "Pair {index}",
+          "summary": "{pairs, plural, one {# pair} other {# pairs}} · {tables, plural, one {# table} other {# tables}}",
+          "add-pair": "Add pair",
+          "side-a": "Side A",
+          "side-b": "Side B",
+          "delete-pair": "Delete pair",
+          "delete-pair-confirm": "Delete both tables of this pair and their referees?",
+          "swap": "Swap…",
+          "swap-title": "Swap {name} with",
+          "position": "Pair {index} · {side}: {name}",
+          "cancel": "Cancel",
+          "physical-table-label": "Table {index}",
+          "summary-future": "{pairs, plural, one {# table} other {# tables}} · {tables} sides",
+          "add-physical-table": "Add table",
+          "future-hint": "In Future Edition each table seats two teams, with one referee per side."
         },
         "pit-map": {
           "title": "Pit Map",
@@ -762,7 +772,9 @@
             "ranking-rounds": "Ranking Rounds",
             "judging-start": "Judging start time",
             "field-start": "Field start time",
-            "matches-per-round": "Matches per round"
+            "matches-per-round": "Matches per round",
+            "tables-pairs": "{pairs, plural, one {# pair} other {# pairs}} ({tables, plural, one {# table} other {# tables}})",
+            "tables-pairs-future": "{pairs, plural, one {# table} other {# tables}} ({tables} sides)"
           },
           "settings": {
             "title": "Settings",
@@ -874,6 +886,7 @@
           "awards-list": "Awards List ({count})",
           "no-awards": "No awards configured",
           "no-awards-help": "Use the \"Add Optional Award\" button to add awards",
+          "co-winners-hint": "Each place is awarded to two teams",
           "add-dialog": {
             "title": "Add Optional Award",
             "select-award": "Select Award",
@@ -1142,6 +1155,8 @@
       "practice-tables": {
         "title": "Practice Tables Configuration",
         "description": "Configure practice table settings for each division",
+        "teams-per-slot": "Teams per slot",
+        "teams-per-slot-count": "Teams per slot: {count}",
         "fields": {
           "division": "Division",
           "table-count": "Number of Practice Tables",

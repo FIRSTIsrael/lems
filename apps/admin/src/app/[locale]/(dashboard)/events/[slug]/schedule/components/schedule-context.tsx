@@ -1,31 +1,12 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-  useMemo,
-  useRef,
-  ReactNode
-} from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import useSWR from 'swr';
 import dayjs, { Dayjs } from 'dayjs';
-import { Box, CircularProgress } from '@mui/material';
 import type { Edition } from '@lems/shared/edition';
 import { JUDGING_DEFAULTS, getMinimumJudgingSessionLength } from '@lems/shared/judging';
 import { useEvent } from '../../components/event-context';
 import { getDuration } from './calendar/calendar-utils';
-import { BlocksByType } from './calendar/calendar-types';
-import {
-  ScheduleDraft,
-  ScheduleDraftFingerprint,
-  ScheduleDraftSettings,
-  deleteScheduleDraft,
-  loadScheduleDraft,
-  saveScheduleDraft
-} from './schedule-draft';
 
 const DEFAULT_MATCH_LENGTH = dayjs().hour(0).minute(2).second(30);
 const getFieldStart = (date: Date) => dayjs(date).hour(8).minute(0).second(0);
@@ -90,14 +71,6 @@ export interface ScheduleContextType {
   setRankingRounds: React.Dispatch<React.SetStateAction<number>>;
 
   resetSettings: () => void;
-
-  /** Blocks restored from a saved draft, if one was found when the schedule was loaded */
-  initialBlocks: BlocksByType | null;
-  saveDraft: (blocks: BlocksByType) => void;
-  /** Delete the saved draft and reset the schedule to its defaults */
-  discardDraft: () => Promise<void>;
-  /** Delete the saved draft without resetting the current state (e.g. after generating) */
-  clearDraft: () => Promise<void>;
 }
 
 const ScheduleContext = createContext<ScheduleContextType | undefined>(undefined);
@@ -109,118 +82,48 @@ export interface ScheduleProviderProps {
   edition: Edition;
 }
 
-interface ScheduleStateProviderProps {
-  children: ReactNode;
-  divisionId: string;
-  edition: Edition;
-  fingerprint: ScheduleDraftFingerprint;
-  draft: ScheduleDraft | null;
-  /** Remount the schedule state with its defaults */
-  onReset: () => void;
-}
-
-const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
+export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
   children,
+  eventId,
   divisionId,
-  edition,
-  fingerprint,
-  draft,
-  onReset
+  edition
 }) => {
   const event = useEvent();
   const judgingDefaults = JUDGING_DEFAULTS[edition];
-  const { teamsCount, roomsCount, tablesCount } = fingerprint;
 
-  const allowStagger = tablesCount > 0 && tablesCount % 4 === 0;
+  const { data: teams = [] } = useSWR<unknown[]>(
+    `/admin/events/${eventId}/divisions/${divisionId}/teams`,
+    { suspense: true }
+  );
 
-  const initial: ScheduleDraftSettings = draft?.settings ?? {
-    staggerMatches: allowStagger,
-    practiceRounds: DEFAULT_PRACTICE_ROUNDS,
-    rankingRounds: DEFAULT_RANKING_ROUNDS,
-    practiceCycleTime: DEFAULT_PRACTICE_CYCLE_TIME,
-    rankingCycleTime: DEFAULT_RANKING_CYCLE_TIME,
-    judgingSessionCycleTime: secondsToTime(judgingDefaults.cycleTimeSeconds),
-    matchLength: DEFAULT_MATCH_LENGTH,
-    judgingSessionLength: secondsToTime(judgingDefaults.sessionLengthSeconds),
-    fieldStart: getFieldStart(event.startDate),
-    judgingStart: getJudgingStart(event.startDate)
-  };
+  const { data: rooms = [] } = useSWR<unknown[]>(
+    `/admin/events/${eventId}/divisions/${divisionId}/rooms`,
+    { suspense: true }
+  );
 
-  const [staggerMatches, setStaggerMatchesState] = useState(initial.staggerMatches);
-  const [practiceRounds, setPracticeRounds] = useState(initial.practiceRounds);
-  const [rankingRounds, setRankingRounds] = useState(initial.rankingRounds);
-  const [practiceCycleTime, setPracticeCycleTime] = useState<Dayjs>(initial.practiceCycleTime);
-  const [rankingCycleTime, setRankingCycleTime] = useState<Dayjs>(initial.rankingCycleTime);
+  const { data: tables = [] } = useSWR<unknown[]>(
+    `/admin/events/${eventId}/divisions/${divisionId}/tables`,
+    { suspense: true }
+  );
+
+  const allowStagger = tables.length > 0 && tables.length % 4 === 0;
+
+  const [staggerMatches, setStaggerMatchesState] = useState(allowStagger);
+  const [practiceRounds, setPracticeRounds] = useState(DEFAULT_PRACTICE_ROUNDS);
+  const [rankingRounds, setRankingRounds] = useState(DEFAULT_RANKING_ROUNDS);
+  const [practiceCycleTime, setPracticeCycleTime] = useState<Dayjs>(DEFAULT_PRACTICE_CYCLE_TIME);
+  const [rankingCycleTime, setRankingCycleTime] = useState<Dayjs>(DEFAULT_RANKING_CYCLE_TIME);
   const [judgingSessionCycleTime, setJudgingSessionCycleTime] = useState<Dayjs>(
-    initial.judgingSessionCycleTime
+    secondsToTime(judgingDefaults.cycleTimeSeconds)
   );
-  const [matchLength, setMatchLength] = useState<Dayjs>(initial.matchLength);
+  const [matchLength, setMatchLength] = useState<Dayjs>(DEFAULT_MATCH_LENGTH);
   const [judgingSessionLength, setJudgingSessionLength] = useState<Dayjs>(
-    initial.judgingSessionLength
+    secondsToTime(judgingDefaults.sessionLengthSeconds)
   );
 
-  const [fieldStart, setFieldStart] = useState<Dayjs>(initial.fieldStart);
-  const [judgingStart, setJudgingStart] = useState<Dayjs>(initial.judgingStart);
+  const [fieldStart, setFieldStart] = useState<Dayjs>(getFieldStart(event.startDate));
+  const [judgingStart, setJudgingStart] = useState<Dayjs>(getJudgingStart(event.startDate));
   const timezone = event.timezone;
-
-  const settings = useMemo<ScheduleDraftSettings>(
-    () => ({
-      staggerMatches,
-      practiceRounds,
-      rankingRounds,
-      practiceCycleTime,
-      rankingCycleTime,
-      judgingSessionCycleTime,
-      matchLength,
-      judgingSessionLength,
-      fieldStart,
-      judgingStart
-    }),
-    [
-      staggerMatches,
-      practiceRounds,
-      rankingRounds,
-      practiceCycleTime,
-      rankingCycleTime,
-      judgingSessionCycleTime,
-      matchLength,
-      judgingSessionLength,
-      fieldStart,
-      judgingStart
-    ]
-  );
-
-  const draftClearedRef = useRef(false);
-  const initialSnapshotRef = useRef<string>(undefined);
-
-  const saveDraft = useCallback(
-    (blocks: BlocksByType) => {
-      if (draftClearedRef.current) return;
-
-      // Don't save until something changed from the state on load, so an untouched schedule isn't saved as a draft
-      const snapshot = JSON.stringify({ settings, blocks });
-      initialSnapshotRef.current ??= snapshot;
-      if (snapshot === initialSnapshotRef.current) return;
-      initialSnapshotRef.current = '';
-
-      saveScheduleDraft(divisionId, fingerprint, { settings, blocks }).catch(error =>
-        console.error('Failed to save schedule draft', error)
-      );
-    },
-    [divisionId, fingerprint, settings]
-  );
-
-  const clearDraft = useCallback(async () => {
-    draftClearedRef.current = true;
-    await deleteScheduleDraft(divisionId).catch(error =>
-      console.error('Failed to delete schedule draft', error)
-    );
-  }, [divisionId]);
-
-  const discardDraft = useCallback(async () => {
-    await clearDraft();
-    onReset();
-  }, [clearDraft, onReset]);
 
   useEffect(() => {
     if (!allowStagger && staggerMatches) {
@@ -257,13 +160,13 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
   };
 
   const contextValue: ScheduleContextType = {
-    teamsCount,
-    roomsCount,
-    tablesCount,
+    teamsCount: teams.length,
+    roomsCount: rooms.length,
+    tablesCount: tables.length,
 
     practiceRounds,
     rankingRounds,
-    judgingSessions: Math.ceil(teamsCount / roomsCount),
+    judgingSessions: Math.ceil(teams.length / rooms.length),
 
     allowStagger,
     staggerMatches,
@@ -273,7 +176,7 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
     matchLength,
     judgingSessionLength,
     minJudgingSessionLength: secondsToTime(getMinimumJudgingSessionLength(edition)),
-    matchesPerRound: Math.ceil((teamsCount / tablesCount) * (staggerMatches ? 2 : 1)),
+    matchesPerRound: Math.ceil((teams.length / tables.length) * (staggerMatches ? 2 : 1)),
 
     judgingStart,
     fieldStart,
@@ -291,99 +194,10 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
     setJudgingSessionLength,
     setJudgingSessionCycleTime,
 
-    resetSettings,
-
-    initialBlocks: draft?.blocks ?? null,
-    saveDraft,
-    discardDraft,
-    clearDraft
+    resetSettings
   };
 
   return <ScheduleContext.Provider value={contextValue}>{children}</ScheduleContext.Provider>;
-};
-
-export const ScheduleProvider: React.FC<ScheduleProviderProps> = ({
-  children,
-  eventId,
-  divisionId,
-  edition
-}) => {
-  const event = useEvent();
-
-  const { data: teams = [] } = useSWR<unknown[]>(
-    `/admin/events/${eventId}/divisions/${divisionId}/teams`,
-    { suspense: true }
-  );
-
-  const { data: rooms = [] } = useSWR<unknown[]>(
-    `/admin/events/${eventId}/divisions/${divisionId}/rooms`,
-    { suspense: true }
-  );
-
-  const { data: tables = [] } = useSWR<unknown[]>(
-    `/admin/events/${eventId}/divisions/${divisionId}/tables`,
-    { suspense: true }
-  );
-
-  const eventStartDate = dayjs(event.startDate).toISOString();
-  const fingerprint = useMemo<ScheduleDraftFingerprint>(
-    () => ({
-      eventStartDate,
-      edition,
-      teamsCount: teams.length,
-      roomsCount: rooms.length,
-      tablesCount: tables.length
-    }),
-    [eventStartDate, edition, teams.length, rooms.length, tables.length]
-  );
-
-  const [draftState, setDraftState] = useState<{
-    fingerprint: ScheduleDraftFingerprint;
-    draft: ScheduleDraft | null;
-  } | null>(null);
-  // Bumped to remount the schedule state with defaults after discarding a draft
-  const [resetCount, setResetCount] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    loadScheduleDraft(divisionId, fingerprint)
-      .catch(error => {
-        console.error('Failed to load schedule draft', error);
-        return null;
-      })
-      .then(draft => {
-        if (!cancelled) setDraftState({ fingerprint, draft });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [divisionId, fingerprint]);
-
-  const onReset = useCallback(() => {
-    setDraftState({ fingerprint, draft: null });
-    setResetCount(prev => prev + 1);
-  }, [fingerprint]);
-
-  if (!draftState || draftState.fingerprint !== fingerprint) {
-    return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <CircularProgress />
-      </Box>
-    );
-  }
-
-  return (
-    <ScheduleStateProvider
-      key={`${JSON.stringify(fingerprint)}-${resetCount}`}
-      divisionId={divisionId}
-      edition={edition}
-      fingerprint={fingerprint}
-      draft={draftState.draft}
-      onReset={onReset}
-    >
-      {children}
-    </ScheduleStateProvider>
-  );
 };
 
 export const useSchedule = (): ScheduleContextType => {

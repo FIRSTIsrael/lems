@@ -2,6 +2,8 @@
 
 import { createContext, useContext, useMemo, ReactNode } from 'react';
 import dayjs, { Dayjs } from 'dayjs';
+import { getPairedParticipant, type PairableTable } from '@lems/shared/utils';
+import { useEdition } from '../../../hooks/use-edition';
 import type { FieldQueuerData } from '../graphql/types';
 
 export interface CalledTeam {
@@ -17,6 +19,7 @@ export interface CalledTeam {
   isReady: boolean;
   teamId: string;
   tableId: string;
+  tablePartner: { number: number; name: string } | null;
 }
 
 interface FieldQueuerContextType {
@@ -45,6 +48,18 @@ export function FieldQueuerProvider({
   currentTime,
   children
 }: FieldQueuerProviderProps) {
+  const edition = useEdition();
+
+  const pairableTables = useMemo(() => {
+    const tableMap = new Map<string, PairableTable>();
+    data.matches.forEach(match => {
+      match.participants.forEach(p => {
+        if (p.table && !tableMap.has(p.table.id)) tableMap.set(p.table.id, p.table);
+      });
+    });
+    return Array.from(tableMap.values());
+  }, [data.matches]);
+
   const tables = useMemo(() => {
     const tableSet = new Set<string>();
     data.matches.forEach(match => {
@@ -65,11 +80,19 @@ export function FieldQueuerProvider({
     );
 
     calledMatches.forEach(match => {
+      const participantsWithTable = match.participants.flatMap(p =>
+        p.table ? [{ ...p, table: p.table }] : []
+      );
+
       match.participants
         .filter(p => p.team && !p.queued && p.team.arrived)
         .forEach(participant => {
           if (!participant.team || !participant.table) return;
 
+          const partner =
+            edition === 'future'
+              ? getPairedParticipant(participantsWithTable, participant.table.id, pairableTables)
+              : null;
           const isInJudging = activeSessions.some(s => s.team?.id === participant.team?.id);
           const minutesUntilMatch = currentTime.diff(dayjs(match.scheduledTime), 'minute');
           const isUrgent = minutesUntilMatch >= -10;
@@ -86,7 +109,10 @@ export function FieldQueuerProvider({
             isPresent: participant.present,
             isReady: participant.ready,
             teamId: participant.team.id,
-            tableId: participant.table.id
+            tableId: participant.table.id,
+            tablePartner: partner?.team
+              ? { number: partner.team.number, name: partner.team.name }
+              : null
           });
         });
     });
@@ -98,7 +124,7 @@ export function FieldQueuerProvider({
     });
 
     return teams;
-  }, [data.matches, data.sessions, currentTime]);
+  }, [data.matches, data.sessions, currentTime, edition, pairableTables]);
 
   const value = useMemo<FieldQueuerContextType>(
     () => ({

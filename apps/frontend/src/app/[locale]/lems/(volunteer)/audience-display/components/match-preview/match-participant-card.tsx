@@ -1,4 +1,4 @@
-import { Grid, Stack, alpha, Box, Avatar, Typography } from '@mui/material';
+import { Stack, alpha, Box, Avatar, Typography } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import { MatchParticipant } from './graphql';
 
@@ -14,11 +14,12 @@ export const MatchParticipantCard: React.FC<MatchParticipantCardProps> = ({ part
   }
 
   return (
-    <Grid
+    <Box
       key={participant.team.id}
-      size={1}
       sx={{
-        display: 'flex'
+        display: 'flex',
+        flex: 1,
+        minWidth: 0
       }}
     >
       <Stack
@@ -96,6 +97,6 @@ export const MatchParticipantCard: React.FC<MatchParticipantCardProps> = ({ part
           {t('table')} {participant.table.name}
         </Typography>
       </Stack>
-    </Grid>
+    </Box>
   );
 };

@@ -14,15 +14,15 @@ import {
   CircularProgress
 } from '@mui/material';
 import { AddRounded } from '@mui/icons-material';
-import { Division, JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
+import { Division, JudgingRoom } from '@lems/types/api/admin';
 import { apiFetch } from '@lems/shared';
 import { AssetCell } from './asset-cell';
 
-type AssetType = JudgingRoom | RobotGameTable;
+type AssetType = JudgingRoom;
 
 interface AssetManagerProps {
   division: Division;
-  assetType: 'rooms' | 'tables';
+  assetType: 'rooms';
 }
 
 export const AssetManager = <T extends AssetType>({ division, assetType }: AssetManagerProps) => {

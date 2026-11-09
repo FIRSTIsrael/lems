@@ -32,6 +32,7 @@ export interface ScheduleDraftFingerprint {
   teamsCount: number;
   roomsCount: number;
   tablesCount: number;
+  pairsCount: number;
 }
 
 export interface ScheduleDraft {

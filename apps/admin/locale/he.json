@@ -537,6 +537,7 @@
           "future-edition": "מהדורת העתיד",
           "save-failed": "לא ניתן לשמור את הבית. אם שיניתם את המהדורה, הסירו תחילה פרסים שאינם נתמכים במהדורה החדשה.",
           "edition-locked-tooltip": "לא ניתן לשנות את המהדורה לאחר יצירת לוח הזמנים",
+          "edition-has-practice-tables": "יש למחוק את שולחנות האימונים של הבית לפני שינוי המהדורה.",
           "alerts": {
             "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
           }
@@ -594,14 +595,23 @@
         },
         "tables": {
           "title": "שולחנות משחק הרובוט",
-          "add-button": "הוסף שולחן",
-          "name-placeholder": "שם השולחן",
           "save-button": "שמור",
-          "delete-button": "מחק",
           "empty-state": "טרם נוספו שולחנות",
-          "validation": {
-            "name-required": "שם השולחן נדרש"
-          }
+          "pair-label": "זוג {index}",
+          "summary": "{pairs, plural, one {זוג אחד} two {שני זוגות} other {# זוגות}} · {tables, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}}",
+          "add-pair": "הוסף זוג",
+          "side-a": "צד A",
+          "side-b": "צד B",
+          "delete-pair": "מחק זוג",
+          "delete-pair-confirm": "למחוק את שני השולחנות של הזוג הזה ואת השופטים שלהם?",
+          "swap": "החלפה…",
+          "swap-title": "החלפת {name} עם",
+          "position": "זוג {index} · {side}: {name}",
+          "cancel": "ביטול",
+          "physical-table-label": "שולחן {index}",
+          "summary-future": "{pairs, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}} · {tables} צדדים",
+          "add-physical-table": "הוסף שולחן",
+          "future-hint": "במהדורת העתיד כל שולחן מארח שתי קבוצות, עם שופט אחד בכל צד."
         },
         "pit-map": {
           "title": "מפת פיטים",
@@ -762,7 +772,9 @@
             "ranking-rounds": "סבבי דירוג",
             "judging-start": "תחילת שיפוט",
             "field-start": "תחילת זירה",
-            "matches-per-round": "מקצים בכל סבב"
+            "matches-per-round": "מקצים בכל סבב",
+            "tables-pairs": "{pairs, plural, one {זוג אחד} two {שני זוגות} other {# זוגות}} ({tables, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}})",
+            "tables-pairs-future": "{pairs, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}} ({tables} צדדים)"
           },
           "settings": {
             "title": "הגדרות",
@@ -874,6 +886,7 @@
           "awards-list": "רשימת פרסים ({count})",
           "no-awards": "לא הוגדרו פרסים",
           "no-awards-help": "השתמש בכפתור \"הוסף פרס רשות\" להוספת פרסים",
+          "co-winners-hint": "כל מקום מוענק לשתי קבוצות",
           "add-dialog": {
             "title": "הוספת פרס רשות",
             "select-award": "בחר פרס",
@@ -1142,6 +1155,8 @@
       "practice-tables": {
         "title": "הגדרות שולחנות אימונים",
         "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "teams-per-slot": "קבוצות בכל משבצת",
+        "teams-per-slot-count": "קבוצות בכל משבצת: {count}",
         "fields": {
           "division": "בית",
           "table-count": "מספר שולחנות אימונים",

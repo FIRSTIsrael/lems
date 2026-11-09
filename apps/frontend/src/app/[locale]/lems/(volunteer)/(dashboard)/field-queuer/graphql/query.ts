@@ -44,6 +44,8 @@ export const GET_FIELD_QUEUER_DATA: TypedDocumentNode<QueryData, QueryVars> = gq
             table {
               id
               name
+              pairKey
+              side
             }
             queued
             present

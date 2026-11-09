@@ -1,6 +1,7 @@
 import { GraphQLFieldResolver } from 'graphql';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../database';
+import { getDivisionEdition } from '../../../utils/division-edition';
 import type { GraphQLContext } from '../../../apollo-server';
 import { getRedisPubSub } from '../../../../redis/redis-pubsub.js';
 import { practiceTablesScheduleResolver } from '../../practice-tables/schedule.js';
@@ -10,6 +11,7 @@ interface UpdatePracticeTableSlotInput {
   teamId: string | null;
   tableIndex: number;
   startTime: string;
+  side?: string | null;
 }
 
 interface UpdatePracticeTableAssignmentArgs {
@@ -23,17 +25,27 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
 > = async (_parent, { input }, context) => {
   const { divisionId, teamId, tableIndex, startTime } = input;
 
+  const edition = await getDivisionEdition(divisionId);
+  const side = input.side ?? null;
+  if (edition === 'future') {
+    if (side !== 'A' && side !== 'B') {
+      throw new Error('A side (A or B) is required in Future divisions');
+    }
+  } else if (side !== null) {
+    throw new Error('Founders practice tables have no sides');
+  }
+
   const practiceTablesRepo = db.divisions.byId(divisionId).practiceTables();
 
   // Find or create the slot
   const startDate = new Date(startTime);
-  const existingSlot = await practiceTablesRepo.getAssignment(tableIndex, startDate);
+  const existingSlot = await practiceTablesRepo.getAssignment(tableIndex, startDate, side);
 
   let result;
 
   if (existingSlot) {
     // Update existing slot
-    result = await practiceTablesRepo.updateAssignment(tableIndex, startDate, {
+    result = await practiceTablesRepo.updateAssignment(tableIndex, startDate, side, {
       team_id: teamId
     });
     if (!result) {
@@ -56,6 +68,7 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
     result = await practiceTablesRepo.createAssignment({
       team_id: teamId,
       table_number: tableIndex,
+      side,
       start_time: startDate,
       end_time: endDate
     });
@@ -68,6 +81,7 @@ export const updatePracticeTableAssignmentResolver: GraphQLFieldResolver<
     tableIndex: result.table_number,
     startTime: result.start_time.toISOString(),
     endTime: result.end_time.toISOString(),
+    side: result.side,
     createdAt: result.created_at.toISOString()
   };
 
