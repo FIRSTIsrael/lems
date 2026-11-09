@@ -26,7 +26,7 @@ export const TeamSessionCard: React.FC<TeamSessionCardProps> = ({
   const edition = useEdition();
   const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
-  const rubricColor = getRubricColor(category);
+  const rubricColor = getRubricColor(category, edition);
 
   const getSessionStatusColor = (status: string) => {
     switch (status) {

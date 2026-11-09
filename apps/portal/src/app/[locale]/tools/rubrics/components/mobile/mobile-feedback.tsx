@@ -24,11 +24,12 @@ interface MobileFeedbackProps {
 
 export const MobileFeedback: React.FC<MobileFeedbackProps> = ({ category, disabled = false }) => {
   const t = useTranslations('pages.tools.rubrics');
-  const { getFeedbackTitle } = useRubricsGeneralTranslations(useToolEdition());
+  const edition = useToolEdition();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
   const { rubric, updateRubric } = useRubricContext();
   const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
-  const color = getRubricColor(category);
+  const color = getRubricColor(category, edition);
   const background = lighten(color, 0.9);
 
   const handleFeedbackChange = async (field: 'greatJob' | 'thinkAbout', value: string) => {

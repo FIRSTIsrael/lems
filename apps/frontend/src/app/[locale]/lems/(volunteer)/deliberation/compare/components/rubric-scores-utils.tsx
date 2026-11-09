@@ -1,4 +1,5 @@
-import { getRubrics } from '@lems/shared/rubrics';
+import { getRubrics, getRubricColors } from '@lems/shared/rubrics';
+import { JUDGING_CATEGORIES, type JudgingCategory } from '@lems/types/judging';
 import type { Edition } from '@lems/shared/edition';
 import type { RubricCategorySchema } from '@lems/shared/rubrics';
 import type { Team, Rubric, RubricFieldValue } from '../graphql/types';
@@ -86,19 +87,19 @@ export const extractRubricFields = (
   }));
 };
 
-const categoryColors = {
-  'innovation-project': { main: '#2196f3', bg: '#e3f2fd' },
-  'robot-design': { main: '#4caf50', bg: '#e8f5e8' },
-  'core-values': { main: '#f44336', bg: '#ffebee' }
-} as const;
+const getCategoryColors = (category: string, edition: Edition) =>
+  getRubricColors(
+    edition,
+    (JUDGING_CATEGORIES as readonly string[]).includes(category)
+      ? (category as JudgingCategory)
+      : 'innovation-project'
+  );
 
-export const getCategoryColor = (category: string) =>
-  categoryColors[category as keyof typeof categoryColors]?.main ||
-  categoryColors['innovation-project'].main;
+export const getCategoryColor = (category: string, edition: Edition) =>
+  getCategoryColors(category, edition).main;
 
-export const getCategoryBgColor = (category: string) =>
-  categoryColors[category as keyof typeof categoryColors]?.bg ||
-  categoryColors['innovation-project'].bg;
+export const getCategoryBgColor = (category: string, edition: Edition) =>
+  getCategoryColors(category, edition).columns[0];
 
 export const processFieldsByCategory = (
   edition: Edition,

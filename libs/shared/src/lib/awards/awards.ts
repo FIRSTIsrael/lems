@@ -117,9 +117,6 @@ export const FUTURE_ONLY_AWARDS = ['inspiration', 'peer'] as const satisfies rea
 const isInEdition = (award: string, edition: Edition): boolean =>
   edition === 'future' || !(FUTURE_ONLY_AWARDS as readonly string[]).includes(award);
 
-export const getAvailableAwards = (edition: Edition): readonly Award[] =>
-  AWARDS.filter(award => isInEdition(award, edition));
-
 export const getOptionalAwards = (edition: Edition): readonly OptionalAwards[] =>
   OPTIONAL_AWARDS.filter(award => isInEdition(award, edition));
 

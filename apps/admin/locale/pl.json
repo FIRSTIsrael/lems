@@ -535,6 +535,7 @@
             "deleting": "Usuwanie..."
           },
           "future-edition": "Edycja przyszłości",
+          "save-failed": "Nie udało się zapisać dywizji. Jeśli zmieniono edycję, najpierw usuń nagrody nieobsługiwane w nowej edycji.",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."

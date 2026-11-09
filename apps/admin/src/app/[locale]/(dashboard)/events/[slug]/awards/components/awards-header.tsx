@@ -45,14 +45,16 @@ export const AwardsHeader = () => {
   const availableAwards = getOptionalAwards(edition).filter(award => !awards.includes(award));
 
   const handleSaveClick = useCallback(() => {
+    if (validation.hasBlockingErrors) return;
     if (!validation.isValid) {
       setOverrideDialogOpen(true);
     } else {
-      saveSchema();
+      // Errors are logged by the context
+      saveSchema().catch(() => undefined);
     }
-  }, [validation.isValid, setOverrideDialogOpen, saveSchema]);
+  }, [validation.hasBlockingErrors, validation.isValid, setOverrideDialogOpen, saveSchema]);
 
-  const isSaveDisabled = (!isDirty && !isNew) || isLoading;
+  const isSaveDisabled = (!isDirty && !isNew) || isLoading || validation.hasBlockingErrors;
   const saveButtonColor = !validation.isValid ? 'error' : 'primary';
 
   return (

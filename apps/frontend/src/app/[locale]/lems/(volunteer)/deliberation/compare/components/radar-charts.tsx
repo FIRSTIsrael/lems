@@ -126,13 +126,20 @@ export const CategoryRadarChart = ({ team, category }: CategoryRadarChartProps) 
   );
   const { getSectionTitle: getRdSectionTitle } = useRubricsTranslations('robot-design', edition);
   const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory, edition);
+  const { getCategory } = useJudgingCategoryTranslations(edition);
 
   const data = useMemo(() => {
     if (category === 'core-values')
-      return processCoreValuesRadarData(edition, team, getIpSectionTitle, getRdSectionTitle);
+      return processCoreValuesRadarData(
+        edition,
+        team,
+        getIpSectionTitle,
+        getRdSectionTitle,
+        getCategory
+      );
     const rubric = team.rubrics[category.replace('-', '_') as keyof typeof team.rubrics];
     return processRubricRadarData(edition, rubric, category, getSectionTitle);
-  }, [edition, team, category, getSectionTitle, getIpSectionTitle, getRdSectionTitle]);
+  }, [edition, team, category, getSectionTitle, getIpSectionTitle, getRdSectionTitle, getCategory]);
 
   if (data.length === 0) {
     return (

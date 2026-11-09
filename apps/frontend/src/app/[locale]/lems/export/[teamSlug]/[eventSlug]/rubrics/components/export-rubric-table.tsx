@@ -16,6 +16,7 @@ import { CircleOutlined, TaskAltRounded } from '@mui/icons-material';
 import { CoreValuesFieldCheckedIcon, CoreValuesFieldUncheckedIcon } from '@lems/shared/icons';
 import { JudgingCategory } from '@lems/types/judging';
 import { RubricsSchema, rubricColumns, getRubricColors, getRubrics } from '@lems/shared/rubrics';
+import { RubricCriterionRow } from '@lems/shared/rubrics/rubric-field-rows';
 import { useRubricsGeneralTranslations, useRubricsTranslations } from '@lems/localization';
 import { useTranslations } from 'next-intl';
 import type { Edition } from '@lems/shared/edition';
@@ -159,24 +160,10 @@ export const ExportRubricTable: React.FC<ExportRubricTableProps> = ({
                   return (
                     <React.Fragment key={field.id}>
                       {isCriteria && (
-                        <TableRow>
-                          <TableCell
-                            colSpan={4}
-                            sx={{
-                              borderTop: '1px solid #000',
-                              borderBottom: 'none',
-                              backgroundColor: '#fff',
-                              fontSize: '0.75em',
-                              px: '0.6em',
-                              pt: '0.4em',
-                              pb: 0
-                            }}
-                          >
-                            <Typography sx={{ fontSize: '0.95em', fontWeight: 500 }}>
-                              {getFieldCriterion(section.id, field.id)}
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
+                        <RubricCriterionRow
+                          criterion={getFieldCriterion(section.id, field.id)}
+                          sx={{ fontSize: '0.75em', px: '0.6em', pt: '0.4em' }}
+                        />
                       )}
                       <TableRow>
                         {rubricColumns.map((level, levelIndex) => {

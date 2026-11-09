@@ -67,7 +67,8 @@ export const processCoreValuesRadarData = (
   edition: Edition,
   team: Team,
   getIpSectionTitle: (sectionId: string) => string,
-  getRdSectionTitle: (sectionId: string) => string
+  getRdSectionTitle: (sectionId: string) => string,
+  getCategory: (category: string) => string
 ): RadarChartDataPoint[] => {
   const ipRubric = team.rubrics.innovation_project;
   const rdRubric = team.rubrics.robot_design;
@@ -95,15 +96,45 @@ export const processCoreValuesRadarData = (
     return ipSectionIds.map(sectionId => mergedSectionPoint(sectionId, getIpSectionTitle));
   }
 
-  // Editions whose IP and RD sections differ: IP sections first, then RD-only sections
-  // that carry Core Values fields, each labelled with its own category's title.
-  const rdOnlyCvSections = rdSchema.sections.filter(
-    section =>
-      !ipSectionIds.includes(section.id) && section.fields.some(field => field.coreValues)
-  );
+  // Editions whose IP and RD sections differ: each rubric's Core Values sections get their own
+  // point, scored only from that rubric, even when a section id appears in both rubrics.
+  const hasCoreValues = (section: (typeof ipSchema.sections)[number]) =>
+    section.fields.some(field => field.coreValues);
+  const ipCvSections = ipSchema.sections.filter(hasCoreValues);
+  const rdCvSections = rdSchema.sections.filter(hasCoreValues);
+  const rdCvSectionIds = rdCvSections.map(section => section.id);
+  const ipCvSectionIds = ipCvSections.map(section => section.id);
+
+  const sectionPoint = (
+    sectionId: string,
+    scores: Record<string, number[]>,
+    getTitle: (sectionId: string) => string,
+    category: string,
+    isShared: boolean
+  ) => ({
+    field: isShared ? `${getTitle(sectionId)} (${getCategory(category)})` : getTitle(sectionId),
+    score: calculateAverage(scores[sectionId] || [])
+  });
+
   return [
-    ...ipSectionIds.map(sectionId => mergedSectionPoint(sectionId, getIpSectionTitle)),
-    ...rdOnlyCvSections.map(section => mergedSectionPoint(section.id, getRdSectionTitle))
+    ...ipCvSections.map(section =>
+      sectionPoint(
+        section.id,
+        ipSectionScores,
+        getIpSectionTitle,
+        'innovation-project',
+        rdCvSectionIds.includes(section.id)
+      )
+    ),
+    ...rdCvSections.map(section =>
+      sectionPoint(
+        section.id,
+        rdSectionScores,
+        getRdSectionTitle,
+        'robot-design',
+        ipCvSectionIds.includes(section.id)
+      )
+    )
   ];
 };
 

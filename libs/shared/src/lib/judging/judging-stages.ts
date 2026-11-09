@@ -40,23 +40,26 @@ export const getJudgingStages = (edition: Edition): JudgingStageDefinition[] => 
   }
 };
 
+const sumFixedDurations = (stages: JudgingStageDefinition[]) =>
+  stages.reduce((sum, s) => sum + (s.duration === 'remainder' ? 0 : s.duration), 0);
+
+/** The shortest judging session (in seconds) that fits every fixed stage of the edition. */
+export const getMinimumJudgingSessionLength = (edition: Edition): number =>
+  sumFixedDurations(getJudgingStages(edition));
+
 /**
  * Replaces the single 'remainder' stage with sessionLength minus the fixed stages.
  * If the session is shorter than the fixed stages, the remainder is clamped to 0.
+ * Callers that accept a session length should reject values below
+ * getMinimumJudgingSessionLength.
  */
 export const resolveJudgingStages = (
   stages: JudgingStageDefinition[],
   sessionLength: number
 ): { id: string; duration: number }[] => {
-  const fixed = stages.reduce((sum, s) => sum + (s.duration === 'remainder' ? 0 : s.duration), 0);
-  const remainder = sessionLength - fixed;
-  if (remainder < 0) {
-    console.warn(
-      `Judging session length (${sessionLength}s) is shorter than the fixed judging stages (${fixed}s); the final stage gets 0s.`
-    );
-  }
+  const remainder = Math.max(0, sessionLength - sumFixedDurations(stages));
   return stages.map(s => ({
     id: s.id,
-    duration: s.duration === 'remainder' ? Math.max(0, remainder) : s.duration
+    duration: s.duration === 'remainder' ? remainder : s.duration
   }));
 };
