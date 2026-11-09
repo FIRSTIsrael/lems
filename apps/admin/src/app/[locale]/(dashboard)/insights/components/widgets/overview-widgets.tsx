@@ -183,9 +183,9 @@ const nullsLastComparator = (direction: GridSortDirection): GridComparatorFn<num
   };
 };
 
-export const TeamsTableWidget: React.FC<WidgetProps> = ({ divisionId }) => {
+export const TeamsTableWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.teams-table');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const theme = useTheme();
   const { data, isLoading } = useOverviewInsights(divisionId);
 

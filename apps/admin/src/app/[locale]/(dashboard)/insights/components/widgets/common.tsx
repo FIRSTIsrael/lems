@@ -5,6 +5,7 @@ import { Color } from '@mui/material';
 import { blue, green, grey, red } from '@mui/material/colors';
 import { Edition } from '@lems/shared/edition';
 import { getRubrics } from '@lems/shared/rubrics';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { InsightsJudgingCategory, InsightsStage } from '@lems/types/api/admin';
 import { defaultColor } from '../../../../../../theme';
 
@@ -103,8 +104,10 @@ export const useMissionLabel = (season: string) => {
  * Core Values fields are prefixed with 'ip-' / 'rd-' and labelled with their source category.
  */
 export const useRubricFieldLabel = (edition: Edition) => {
-  const t = useTranslations('shared.rubrics.categories');
-  const tCategory = useTranslations('shared.judging-categories');
+  const t = useTranslations(
+    edition === 'future' ? 'shared.rubrics-future.categories' : 'shared.rubrics.categories'
+  );
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const rubrics = getRubrics(edition);
 
   return (category: InsightsJudgingCategory, fieldId: string): string => {
@@ -121,6 +124,6 @@ export const useRubricFieldLabel = (edition: Edition) => {
     if (!section) return fieldId;
     const index = section.fields.findIndex(f => f.id === id) + 1;
     const label = `${t(`${sourceCategory}.sections.${section.id}.title`)} ${index}`;
-    return category === 'core-values' ? `${tCategory(sourceCategory)} · ${label}` : label;
+    return category === 'core-values' ? `${getCategory(sourceCategory)} · ${label}` : label;
   };
 };

@@ -102,9 +102,9 @@ export const JudgingStatsWidget: React.FC<WidgetProps> = ({ divisionId }) => {
   );
 };
 
-export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
+export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.category-scores');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { data, isLoading } = useJudgingInsights(divisionId);
 
   const chartData = (data?.categories ?? []).map(category => ({
@@ -144,9 +144,9 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
   );
 };
 
-export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId }) => {
+export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.room-scores');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { data, isLoading } = useJudgingInsights(divisionId);
 
   const chartData = (data?.rooms ?? []).map(room => ({
@@ -242,7 +242,7 @@ const correlationStrength = (r: number) => {
 
 export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.robot-correlation');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { getName: getAwardName } = useAwardTranslations(edition);
   const robotDesign = getCategory('robot-design');
   const names = { design: robotDesign, game: getAwardName('robot-performance') };
@@ -373,8 +373,8 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
 
 export const FieldDistributionWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.field-distribution');
-  const { getCategory } = useJudgingCategoryTranslations();
-  const { getColumnTitle } = useRubricsGeneralTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
+  const { getColumnTitle } = useRubricsGeneralTranslations(edition);
   const getFieldLabel = useRubricFieldLabel(edition);
   const [category, setCategory] = useState<InsightsJudgingCategory>('innovation-project');
   const { data, isLoading } = useJudgingInsights(divisionId);

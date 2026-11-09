@@ -101,7 +101,7 @@ function SelectField<T extends string>({
 
 export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition, season }) => {
   const t = useTranslations('pages.insights.explorer');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const getStage = useStageLabel();
   const getMission = useMissionLabel(season);
   const getFieldLabel = useRubricFieldLabel(edition);
