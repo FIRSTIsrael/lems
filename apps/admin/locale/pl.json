@@ -242,6 +242,9 @@
       }
     },
     "events": {
+      "practice-tables": {
+        "teams-per-slot": "Teams per slot"
+      },
       "title": "Wydarzenia",
       "layout": {
         "event-page-title": {

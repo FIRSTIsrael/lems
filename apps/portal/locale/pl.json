@@ -213,6 +213,7 @@
         "blocked": "Niedostępne",
         "available": "Dostępne",
         "unavailable": "Niedostępne",
+        "side": "Side {side}",
         "not-configured": "Stoły treningowe nie zostały skonfigurowane dla tej dywizji."
       }
     },
@@ -266,6 +267,8 @@
         "judging-session": "Sesja sędziowska - Pokój {room}",
         "practice-table": "Stół Treningowy {tableNumber}",
         "practice-table-location": "Stół Treningowy {tableNumber}",
+        "practice-table-side": "Practice table {tableNumber} – {side}",
+        "practice-table-side-location": "Practice table {tableNumber} – {side}",
         "no-matches": "Brak zaplanowanych meczów",
         "no-judging": "Brak zaplanowanych sesji sędziowskich",
         "no-schedule": "Brak harmonogramu"

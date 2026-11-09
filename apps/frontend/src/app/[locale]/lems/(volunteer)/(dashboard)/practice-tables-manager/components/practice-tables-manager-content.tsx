@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Box, Typography, Grid } from '@mui/material';
 import { useMutation } from '@apollo/client/react';
 import { useTranslations } from 'next-intl';
+import type { TableSide } from '@lems/shared/utils';
+import { useEdition } from '../../../hooks/use-edition';
 import { UPDATE_PRACTICE_TABLE_ASSIGNMENT, GET_PRACTICE_TABLE_ASSIGNMENTS } from '../graphql';
 import { usePracticeTablesManager } from './practice-tables-manager-context';
 import { ScheduleGrid } from './schedule-grid';
@@ -13,6 +15,7 @@ import { NoTeams } from './no-teams';
 
 export function PracticeTablesManagerContent() {
   const t = useTranslations('pages.practice-tables-manager');
+  const paired = useEdition() === 'future';
   const { divisionId, eventStartDate, config, teams, assignmentsMap } = usePracticeTablesManager();
 
   const [updateAssignment] = useMutation(UPDATE_PRACTICE_TABLE_ASSIGNMENT, {
@@ -30,12 +33,14 @@ export function PracticeTablesManagerContent() {
   });
 
   // State for selected cell
-  const [selectedCell, setSelectedCell] = useState<{ tableIndex: number; time: string } | null>(
-    null
-  );
+  const [selectedCell, setSelectedCell] = useState<{
+    tableIndex: number;
+    side: TableSide | null;
+    time: string;
+  } | null>(null);
 
-  const handleCellSelect = (tableIndex: number, time: string) => {
-    setSelectedCell({ tableIndex, time });
+  const handleCellSelect = (tableIndex: number, side: TableSide | null, time: string) => {
+    setSelectedCell({ tableIndex, side, time });
   };
 
   const handleAssign = async (team: { id: string; number: number; name: string }) => {
@@ -49,6 +54,7 @@ export function PracticeTablesManagerContent() {
         divisionId,
         teamId: team.id,
         tableIndex: selectedCell.tableIndex,
+        side: selectedCell.side,
         startTime
       });
 
@@ -58,6 +64,7 @@ export function PracticeTablesManagerContent() {
             divisionId,
             teamId: team.id,
             tableIndex: selectedCell.tableIndex,
+            side: selectedCell.side,
             startTime
           }
         }
@@ -78,12 +85,16 @@ export function PracticeTablesManagerContent() {
     }
   };
 
-  const handleClearAssignment = async (tableIndex: number, time: string) => {
+  const handleClearAssignment = async (
+    tableIndex: number,
+    side: TableSide | null,
+    time: string
+  ) => {
     try {
       // time is already an ISO datetime string
       const startTime = time;
 
-      console.log('Clearing assignment:', { tableIndex, time, startTime });
+      console.log('Clearing assignment:', { tableIndex, side, time, startTime });
 
       await updateAssignment({
         variables: {
@@ -91,6 +102,7 @@ export function PracticeTablesManagerContent() {
             divisionId,
             teamId: null, // Set to null to unassign
             tableIndex,
+            side,
             startTime
           }
         }
@@ -138,6 +150,7 @@ export function PracticeTablesManagerContent() {
             onCellSelect={handleCellSelect}
             assignments={assignmentsMap}
             onClearAssignment={handleClearAssignment}
+            paired={paired}
           />
         </Grid>
       </Grid>

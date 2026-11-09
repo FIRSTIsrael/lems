@@ -6,6 +6,7 @@ import dayjs from 'dayjs';
 import { Paper, Typography, Stack, Box, ListItem, ListItemText, Divider } from '@mui/material';
 import { Schedule as ScheduleIcon } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
+import type { TableSide } from '@lems/shared/utils';
 import { TeamJudgingSession, TeamRobotGameMatch, AgendaEvent } from '@lems/types/api/portal';
 import { useRealtimeData } from '../../../../../hooks/use-realtime-data';
 import { useTeamAtEvent } from './team-at-event-context';
@@ -19,6 +20,7 @@ interface ScheduleEntry {
 interface PracticeTableAssignment {
   id: string;
   tableNumber: number;
+  side?: TableSide | null;
   startTime: string; // ISO 8601 datetime
   endTime: string; // ISO 8601 datetime
 }
@@ -66,15 +68,18 @@ export const TeamSchedule: React.FC = () => {
           }
         ]
       : []),
-    ...(practiceAssignments || []).map(assignment => ({
-      time: new Date(assignment.startTime),
-      description: t('schedule.practice-table', {
-        tableNumber: assignment.tableNumber
-      }),
-      location: t('schedule.practice-table-location', {
-        tableNumber: assignment.tableNumber
-      })
-    })),
+    ...(practiceAssignments || []).map(assignment => {
+      const values = { tableNumber: assignment.tableNumber, side: assignment.side ?? '' };
+      return {
+        time: new Date(assignment.startTime),
+        description: assignment.side
+          ? t('schedule.practice-table-side', values)
+          : t('schedule.practice-table', values),
+        location: assignment.side
+          ? t('schedule.practice-table-side-location', values)
+          : t('schedule.practice-table-location', values)
+      };
+    }),
     ...(agenda || []).map(agendaItem => ({
       time: new Date(agendaItem.startTime),
       description: agendaItem.title,

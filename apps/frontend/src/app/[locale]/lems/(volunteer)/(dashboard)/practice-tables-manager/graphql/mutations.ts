@@ -16,6 +16,7 @@ export const UPDATE_PRACTICE_TABLE_ASSIGNMENT: TypedDocumentNode<
         affiliation
       }
       tableIndex
+      side
       startTime
       endTime
     }
