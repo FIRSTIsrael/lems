@@ -1,6 +1,13 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useRef
+} from 'react';
 import { Dayjs } from 'dayjs';
 import { nanoid } from 'nanoid';
 import { useSchedule } from '../schedule-context';
@@ -111,7 +118,8 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
     setPracticeRounds,
     setRankingRounds,
     initialBlocks,
-    saveDraft
+    saveDraft,
+    captureDraftBaseline
   } = useSchedule();
 
   const [blocks, setBlocks] = useState<BlocksByType>(() => {
@@ -158,7 +166,15 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
    * 1. Judging cycle time updated
    * 2. Judging start time updated
    */
+  const judgingDepsRef = useRef<string | null>(
+    initialBlocks ? `${judgingSessionCycleTime.valueOf()}|${judgingStart.valueOf()}` : null
+  );
   useEffect(() => {
+    // Restored blocks already reflect these settings, so don't re-layout them on mount
+    const deps = `${judgingSessionCycleTime.valueOf()}|${judgingStart.valueOf()}`;
+    if (judgingDepsRef.current === deps) return;
+    judgingDepsRef.current = deps;
+
     const judgingCycleDuration = getDuration(judgingSessionCycleTime);
     const startTimeDiff = judgingStart.diff(blocks.judging[0].startTime, 'seconds');
 
@@ -182,7 +198,17 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
    * 3. Ranking cycle time changes
    * 4. Matches per round changes
    */
+  const fieldDepsRef = useRef<string | null>(
+    initialBlocks
+      ? `${fieldStart.valueOf()}|${matchesPerRound}|${practiceCycleTime.valueOf()}|${rankingCycleTime.valueOf()}`
+      : null
+  );
   useEffect(() => {
+    // Restored blocks already reflect these settings, so don't re-layout them on mount
+    const deps = `${fieldStart.valueOf()}|${matchesPerRound}|${practiceCycleTime.valueOf()}|${rankingCycleTime.valueOf()}`;
+    if (fieldDepsRef.current === deps) return;
+    fieldDepsRef.current = deps;
+
     const practiceCycleDuration = getDuration(practiceCycleTime) * matchesPerRound;
     const rankingCycleDuration = getDuration(rankingCycleTime) * matchesPerRound;
     const startTimeDiff = fieldStart.diff(blocks.field[0].startTime, 'seconds');
@@ -225,10 +251,17 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({ children }) 
    * Persist the draft schedule (settings + blocks) to IndexedDB so it survives a refresh.
    * saveDraft changes identity whenever a setting changes, so this covers both.
    */
+  const baselineCapturedRef = useRef(false);
   useEffect(() => {
+    // Synchronously on mount, so edits made right after load are still detected as changes
+    if (!baselineCapturedRef.current) {
+      baselineCapturedRef.current = true;
+      captureDraftBaseline(blocks);
+      return;
+    }
     const timeout = setTimeout(() => saveDraft(blocks), DRAFT_SAVE_DEBOUNCE_MS);
     return () => clearTimeout(timeout);
-  }, [blocks, saveDraft]);
+  }, [blocks, saveDraft, captureDraftBaseline]);
 
   const [dragState, setDragState] = useState<DragState>({
     isDragging: false,

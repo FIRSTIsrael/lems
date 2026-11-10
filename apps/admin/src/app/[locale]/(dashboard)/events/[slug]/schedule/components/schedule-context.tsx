@@ -98,6 +98,8 @@ export interface ScheduleContextType {
   /** Blocks restored from a saved draft, if one was found when the schedule was loaded */
   initialBlocks: BlocksByType | null;
   saveDraft: (blocks: BlocksByType) => void;
+  /** Record the state on load as the baseline, so only changes from it are saved as a draft */
+  captureDraftBaseline: (blocks: BlocksByType) => void;
   /** Delete the saved draft and reset the schedule to its defaults */
   discardDraft: () => Promise<void>;
   /** Delete the saved draft without resetting the current state (e.g. after generating) */
@@ -195,17 +197,25 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
   );
 
   const draftClearedRef = useRef(false);
-  const initialSnapshotRef = useRef<string>(undefined);
+  const baselineRef = useRef<{ settings: ScheduleDraftSettings; blocks: BlocksByType } | null>(
+    null
+  );
+
+  const captureDraftBaseline = useCallback(
+    (blocks: BlocksByType) => {
+      baselineRef.current = { settings, blocks };
+    },
+    [settings]
+  );
 
   const saveDraft = useCallback(
     (blocks: BlocksByType) => {
       if (draftClearedRef.current) return;
 
-      // Don't save until something changed from the state on load, so an untouched schedule isn't saved as a draft
-      const snapshot = JSON.stringify({ settings, blocks });
-      initialSnapshotRef.current ??= snapshot;
-      if (snapshot === initialSnapshotRef.current) return;
-      initialSnapshotRef.current = '';
+      // Don't save until something changed from the state on load, so an untouched schedule isn't saved as a draft.
+      // State is immutable, so a reference check is enough to detect changes.
+      const baseline = baselineRef.current;
+      if (baseline && baseline.settings === settings && baseline.blocks === blocks) return;
 
       saveScheduleDraft(divisionId, fingerprint, { settings, blocks }).catch(error =>
         console.error('Failed to save schedule draft', error)
@@ -301,6 +311,7 @@ const ScheduleStateProvider: React.FC<ScheduleStateProviderProps> = ({
 
     initialBlocks: draft?.blocks ?? null,
     saveDraft,
+    captureDraftBaseline,
     discardDraft,
     clearDraft
   };
