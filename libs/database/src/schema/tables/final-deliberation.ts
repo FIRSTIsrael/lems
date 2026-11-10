@@ -35,7 +35,6 @@ export interface FinalDeliberationAwards extends MandatoryAwards {
   /**
    * Optional awards — division awards with is_optional=true.
    * Key is the award name, value is an ordered list of team IDs.
-   * Includes automatically assigned awards such as excellence-in-engineering.
    * Examples: 'breakthrough', 'motivate', 'rising-all-star', 'judges-award', 'impact', 'excellence-in-engineering'
    */
   optionalAwards?: Record<string, string[]>;
