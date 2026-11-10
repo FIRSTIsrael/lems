@@ -127,15 +127,20 @@
     },
     "teams": {
       "title": "<i>FIRST</i> LEGO League Challenge Teams",
+      "search": {
+        "placeholder": "Search team..."
+      },
       "region": {
         "label": "Region",
-        "all": "All regions",
-        "current-all": "Showing teams from all regions",
-        "current": "Showing teams from region {region}"
+        "all": "All regions"
       },
       "no-teams": {
         "title": "No Teams to Show",
         "message": "Please check back later"
+      },
+      "no-results": {
+        "title": "No teams match your search",
+        "message": "Try different keywords or another region"
       }
     },
     "event": {
