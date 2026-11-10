@@ -1,7 +1,7 @@
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
-import { Award, FinalDeliberationAwards, JudgingCategory } from '@lems/database';
+import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
 import db from '../../../../../database';
-import { calculateAllTeamScores, rankTeams, updateFinalDeliberationAwards } from './utils';
+import { updateFinalDeliberationAwards } from './utils';
 
 const categories: JudgingCategory[] = ['innovation-project', 'robot-design', 'core-values'];
 
@@ -50,40 +50,6 @@ export async function handleCoreAwardsStageCompletion(
 
   await assignCoreAwardsToTeams(divisionId, awards);
 
-  const excellenceInEngineeringAwards = await db.awards
-    .byDivisionId(divisionId)
-    .get('excellence-in-engineering');
-
-  if (excellenceInEngineeringAwards.length === 0) {
-    await updateFinalDeliberationAwards(divisionId);
-    return;
-  }
-
-  const teamScores = await calculateAllTeamScores(divisionId, teams);
-  const teamsWithRanks = await rankTeams(teamScores, divisionId);
-
-  const innovationProjectWinners = awards['innovation-project'] ?? [];
-  const robotDesignWinners = awards['robot-design'] ?? [];
-  const coreValuesWinners = awards['core-values'] ?? [];
-
-  const excellenceInEngineeringWinners = teamsWithRanks
-    .filter(
-      t =>
-        !Object.values(awards.champions || {}).includes(t.teamId) &&
-        !innovationProjectWinners.includes(t.teamId) &&
-        !robotDesignWinners.includes(t.teamId) &&
-        !coreValuesWinners.includes(t.teamId)
-    )
-    .sort((a, b) => a.averageRank - b.averageRank)
-    .slice(0, excellenceInEngineeringAwards.length)
-    .map(t => t.teamId);
-
-  await assignExcellenceInEngineeringAwards(
-    divisionId,
-    excellenceInEngineeringWinners,
-    excellenceInEngineeringAwards
-  );
-
   await updateFinalDeliberationAwards(divisionId);
 }
 
@@ -126,29 +92,3 @@ async function assignCoreAwardsToTeams(
     }
   }
 }
-
-const assignExcellenceInEngineeringAwards = async (
-  divisionId: string,
-  excellenceInEngineeringTeams: string[],
-  excellenceInEngineeringAwards: Award[]
-): Promise<void> => {
-  for (let i = 0; i < excellenceInEngineeringAwards.length; i++) {
-    const award = excellenceInEngineeringAwards[i];
-    const teamId = excellenceInEngineeringTeams[i];
-    if (teamId) {
-      await db.awards.assign(award.id, teamId);
-    }
-  }
-
-  const finalDeliberation = await db.finalDeliberations.byDivision(divisionId).get();
-  if (finalDeliberation) {
-    const updatedAwards = { ...finalDeliberation.awards };
-    updatedAwards.optionalAwards = {
-      ...updatedAwards.optionalAwards,
-      'excellence-in-engineering': excellenceInEngineeringTeams
-    };
-    await db.finalDeliberations.byDivision(divisionId).update({
-      awards: updatedAwards
-    });
-  }
-};
