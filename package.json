@@ -121,7 +121,7 @@
     "@types/webpack-env": "^1.18.8",
     "@types/ws": "^8.18.1",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^10.3.0",
+    "eslint": "^10.14.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
