@@ -40,7 +40,7 @@ export const ValidateScheduleResponseSchema = z.object({
 });
 
 export interface NotificationState {
-  variant: 'success' | 'error' | null;
+  variant: 'success' | 'error' | 'info' | null;
   message: string;
   show: boolean;
 }
