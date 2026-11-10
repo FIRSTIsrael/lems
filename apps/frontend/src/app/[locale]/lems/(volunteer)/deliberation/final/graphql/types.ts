@@ -49,6 +49,7 @@ export interface Division {
   name: string;
   color: string;
   field?: {
+    divisionId: string;
     rankingRoundCount: number;
   };
   teams: Team[];
