@@ -1516,10 +1516,17 @@
           }
         },
         "anomalies": {
-          "alert-title": "אנומליות בדירוג זוהו",
-          "alert-description": "לכמה קבוצות יש הבדלים משמעותיים בין מיקום הרשימה שלהן לדירוג המחושב.",
-          "higher": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר בתחום {category}",
-          "lower": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר בתחום {category}"
+          "button": "הצגת אנומליות בדירוג",
+          "title": "אנומליות בדירוג",
+          "count": "{count, plural, =1 {זוהתה אנומליה אחת} other {זוהו # אנומליות}}",
+          "description": "קבוצות אלו מוקמו ברשימה במרחק של 3 מקומות או יותר מהדירוג לפי ציוני המחוון.",
+          "close": "סגירה",
+          "team": "קבוצה",
+          "picklist": "דורגו",
+          "calculated": "מחושב",
+          "difference": "הפרש",
+          "higher": "מוקמה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר מהדירוג המחושב",
+          "lower": "מוקמה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר מהדירוג המחושב"
         }
       }
     },

@@ -1518,10 +1518,17 @@
           }
         },
         "anomalies": {
-          "alert-title": "Wykryto anomalie w rankingu",
-          "alert-description": "Niektóre zespoły mają znaczące różnice między pozycją na liście a obliczonym rankingiem.",
-          "higher": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} wyżej w kategorii {category}",
-          "lower": "Zespół {teamNumber} został umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} niżej w kategorii {category}"
+          "button": "Pokaż anomalie w rankingu",
+          "title": "Anomalie w rankingu",
+          "count": "{count, plural, =1 {Wykryto 1 anomalię} few {Wykryto # anomalie} other {Wykryto # anomalii}}",
+          "description": "Te zespoły zostały umieszczone na liście o 3 lub więcej miejsc od pozycji wynikającej z ocen w arkuszu.",
+          "close": "Zamknij",
+          "team": "Zespół",
+          "picklist": "Lista",
+          "calculated": "Obliczony",
+          "difference": "Różnica",
+          "higher": "Umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} wyżej niż obliczony ranking",
+          "lower": "Umieszczony o {difference, plural, =1 {jedno miejsce} other {# miejsca}} niżej niż obliczony ranking"
         }
       }
     },
