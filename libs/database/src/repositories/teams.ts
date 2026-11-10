@@ -5,6 +5,18 @@ import { InsertableTeam, Team, UpdateableTeam } from '../schema/tables/teams';
 
 type TeamSelectorType = { type: 'id'; value: string } | { type: 'slug'; value: string };
 
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, '\\$&');
+
+const teamSearchFilter = (searchTerm: string) => {
+  const term = escapeLike(searchTerm);
+  return sql<boolean>`(
+    name ILIKE ${`%${term}%`} ESCAPE '\\'
+    OR CAST(number AS TEXT) LIKE ${`${term}%`} ESCAPE '\\'
+    OR affiliation ILIKE ${`%${term}%`} ESCAPE '\\'
+    OR city ILIKE ${`%${term}%`} ESCAPE '\\'
+  )`;
+};
+
 class TeamSelector {
   constructor(
     private db: Kysely<KyselyDatabaseSchema>,
@@ -229,14 +241,14 @@ export class TeamsRepository {
   }
 
   async numberOfPages(region?: string): Promise<number> {
-    let query = this.db.selectFrom('teams').select('id');
+    let query = this.db.selectFrom('teams').select(eb => eb.fn.countAll<number>().as('count'));
 
     if (region) {
       query = query.where('region', '=', region);
     }
 
-    const count = await query.execute();
-    return Math.ceil(count.length / this.TEAMS_PER_PAGE);
+    const result = await query.executeTakeFirst();
+    return Math.ceil(Number(result?.count ?? 0) / this.TEAMS_PER_PAGE);
   }
 
   async getRegions(): Promise<string[]> {
@@ -247,49 +259,41 @@ export class TeamsRepository {
       .where('region', 'is not', null)
       .orderBy('region', 'asc')
       .execute();
-    return regions.map(r => r.region).filter(r => r && r.trim() !== '');
+    return regions.map(r => r.region).filter((r): r is string => !!r && r.trim() !== '');
   }
 
   async search(
     searchTerm: string,
-    page?: number,
-    region?: string,
-    limit?: number
+    options: { page?: number; region?: string; limit?: number } = {}
   ): Promise<Team[]> {
+    const { page, region, limit } = options;
     const effectiveLimit = limit ?? this.TEAMS_PER_PAGE;
+    const term = escapeLike(searchTerm);
 
-    let query = this.db
-      .selectFrom('teams')
-      .selectAll()
-      .where(eb =>
-        eb.or([
-          eb('name', 'ilike', `%${searchTerm}%`),
-          sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`,
-          eb('affiliation', 'ilike', `%${searchTerm}%`),
-          eb('city', 'ilike', `%${searchTerm}%`)
-        ])
-      );
+    let query = this.db.selectFrom('teams').selectAll().where(teamSearchFilter(searchTerm));
 
     if (region) {
       query = query.where('region', '=', region);
     }
 
-    query = query.orderBy(
-      eb =>
-        eb
-          .case()
-          .when('name', 'ilike', searchTerm)
-          .then(100)
-          .when(sql<boolean>`CAST(number AS TEXT) = ${searchTerm}`)
-          .then(95)
-          .when(sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`)
-          .then(90)
-          .when('name', 'ilike', `${searchTerm}%`)
-          .then(80)
-          .else(50)
-          .end(),
-      'desc'
-    );
+    query = query
+      .orderBy(
+        eb =>
+          eb
+            .case()
+            .when(sql<boolean>`name ILIKE ${term} ESCAPE '\\'`)
+            .then(100)
+            .when(sql<boolean>`CAST(number AS TEXT) = ${searchTerm}`)
+            .then(95)
+            .when(sql<boolean>`CAST(number AS TEXT) LIKE ${`${term}%`} ESCAPE '\\'`)
+            .then(90)
+            .when(sql<boolean>`name ILIKE ${`${term}%`} ESCAPE '\\'`)
+            .then(80)
+            .else(50)
+            .end(),
+        'desc'
+      )
+      .orderBy('number', 'asc');
 
     if (page !== undefined) {
       query = query.offset((page - 1) * effectiveLimit);
@@ -300,18 +304,11 @@ export class TeamsRepository {
     return teams;
   }
 
-  async searchCount(searchTerm: string, region?: string): Promise<number> {
+  async searchNumberOfPages(searchTerm: string, region?: string): Promise<number> {
     let query = this.db
       .selectFrom('teams')
       .select(eb => eb.fn.count<number>('id').as('count'))
-      .where(eb =>
-        eb.or([
-          eb('name', 'ilike', `%${searchTerm}%`),
-          sql<boolean>`CAST(number AS TEXT) LIKE ${searchTerm + '%'}`,
-          eb('affiliation', 'ilike', `%${searchTerm}%`),
-          eb('city', 'ilike', `%${searchTerm}%`)
-        ])
-      );
+      .where(teamSearchFilter(searchTerm));
 
     if (region) {
       query = query.where('region', '=', region);
@@ -319,7 +316,7 @@ export class TeamsRepository {
 
     const result = await query.executeTakeFirst();
 
-    return Number(result?.count ?? 0);
+    return Math.ceil(Number(result?.count ?? 0) / this.TEAMS_PER_PAGE);
   }
 
   async getAllWithActiveStatus(): Promise<Array<Team & { active: boolean }>> {

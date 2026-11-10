@@ -60,7 +60,7 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
       if (selectedRegion !== 'all' && team.region?.toUpperCase() !== selectedRegion) return false;
       if (!searchLower) return true;
       return (
-        team.number.toString().includes(searchLower) ||
+        team.number.toString().startsWith(searchLower) ||
         team.name.toLowerCase().includes(searchLower) ||
         team.affiliation?.toLowerCase().includes(searchLower) ||
         team.city?.toLowerCase().includes(searchLower)
@@ -227,7 +227,11 @@ export const RegisterTeamsDialogContent: React.FC<RegisterTeamsDialogContentProp
                 {filteredAvailableTeams.length === 0 && (
                   <ListItem>
                     <ListItemText
-                      primary={t('no-available-teams')}
+                      primary={
+                        availableTeams.length === 0
+                          ? t('no-available-teams')
+                          : t('no-matching-teams')
+                      }
                       sx={{ textAlign: 'center', color: 'text.secondary', mt: 2 }}
                     />
                   </ListItem>

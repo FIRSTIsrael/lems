@@ -18,6 +18,11 @@ router.get('/', async (req: Request, res: Response) => {
   const searchQuery = search ? String(search).trim() : undefined;
   const regionFilter = region ? String(region) : undefined;
 
+  if (searchQuery && searchQuery.length < 2) {
+    res.status(400).json({ error: 'Search query must be at least 2 characters long' });
+    return;
+  }
+
   if (searchQuery) {
     const pageNumber = page ? parseInt(page as string, 10) : undefined;
 
@@ -26,11 +31,10 @@ router.get('/', async (req: Request, res: Response) => {
       return;
     }
 
-    const [teams, totalCount] = await Promise.all([
-      db.teams.search(searchQuery, pageNumber, regionFilter),
-      db.teams.searchCount(searchQuery, regionFilter)
+    const [teams, numberOfPages] = await Promise.all([
+      db.teams.search(searchQuery, { page: pageNumber, region: regionFilter }),
+      db.teams.searchNumberOfPages(searchQuery, regionFilter)
     ]);
-    const numberOfPages = Math.ceil(totalCount / 200);
     res.status(200).json({ teams: teams.map(makePortalTeamResponse), numberOfPages });
     return;
   }

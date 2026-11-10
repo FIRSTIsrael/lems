@@ -33,8 +33,8 @@ export const TeamsPageHeader: React.FC = () => {
 
   const handleSearchChange = (searchValue: string) => {
     const params = new URLSearchParams(window.location.search);
-    if (searchValue.trim()) {
-      params.set('search', searchValue.trim());
+    if (searchValue) {
+      params.set('search', searchValue);
     } else {
       params.delete('search');
     }

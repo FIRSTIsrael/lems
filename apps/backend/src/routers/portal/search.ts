@@ -26,7 +26,7 @@ router.get('/', async (req: Request<object, object, object, SearchQuery>, res: R
   try {
     if (type === 'all' || type === 'teams') {
       const teamLimit = Math.floor(resultLimit / (type === 'all' ? 2 : 1));
-      const matchingTeams = await db.teams.search(searchTerm, teamLimit);
+      const matchingTeams = await db.teams.search(searchTerm, { limit: teamLimit });
 
       const processedTeams = matchingTeams.map(team => ({
         type: 'team' as const,

@@ -137,6 +137,10 @@
       "no-teams": {
         "title": "Brak drużyn do wyświetlenia",
         "message": "Proszę sprawdzić później"
+      },
+      "no-results": {
+        "title": "Brak drużyn pasujących do wyszukiwania",
+        "message": "Spróbuj innych słów kluczowych lub innego regionu"
       }
     },
     "event": {

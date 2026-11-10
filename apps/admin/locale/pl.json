@@ -432,6 +432,7 @@
           "random": "Losowo",
           "available-teams": "Dostępne drużyny",
           "no-available-teams": "Brak dostępnych drużyn",
+          "no-matching-teams": "Brak drużyn pasujących do filtrów",
           "search-placeholder": "Szukaj po numerze, nazwie, instytucji lub mieście",
           "country": "Kraj",
           "all-countries": "Wszystkie kraje",

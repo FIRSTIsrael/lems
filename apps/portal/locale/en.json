@@ -29,7 +29,7 @@
         "title": "Search Teams & Events",
         "placeholder": "Search for teams, or events...",
         "start-typing": "Start typing to search",
-        "search-hint": "Search team...",
+        "search-hint": "Search by team name, number, city, event name, or location",
         "searching": "Searching...",
         "no-results": "No results found",
         "no-results-hint": "No results found for \"{query}\". Try different keywords.",
@@ -137,6 +137,10 @@
       "no-teams": {
         "title": "No Teams to Show",
         "message": "Please check back later"
+      },
+      "no-results": {
+        "title": "No teams match your search",
+        "message": "Try different keywords or another region"
       }
     },
     "event": {

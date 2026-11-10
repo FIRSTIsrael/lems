@@ -8,19 +8,20 @@ import { Groups as GroupsIcon } from '@mui/icons-material';
 import { Team } from '@lems/types/api/portal';
 import { TeamListItem } from './team-list-item';
 import { TeamPagination } from './team-pagination';
+import { MIN_SEARCH_LENGTH } from './team-search-input';
 
 export const TeamList: React.FC = () => {
   const t = useTranslations('pages.teams');
   const searchParams = useSearchParams();
   const pageNumber = Number(searchParams.get('page')) || 1;
   const region = searchParams.get('region') || '';
-  const search = searchParams.get('search') || '';
+  const search = (searchParams.get('search') || '').trim();
 
   const buildQuery = () => {
     const params = new URLSearchParams();
     params.set('page', pageNumber.toString());
     if (region) params.set('region', region);
-    if (search && search.length >= 2) params.set('search', search);
+    if (search.length >= MIN_SEARCH_LENGTH) params.set('search', search);
     return params.toString();
   };
 
@@ -40,6 +41,7 @@ export const TeamList: React.FC = () => {
   const numberOfPages = data.numberOfPages;
 
   if (teams.length === 0) {
+    const emptyKey = region || search.length >= MIN_SEARCH_LENGTH ? 'no-results' : 'no-teams';
     return (
       <Paper sx={{ p: 6, textAlign: 'center' }}>
         <GroupsIcon sx={{ fontSize: 80, mb: 2, opacity: 0.5, color: 'text.secondary' }} />
@@ -50,7 +52,7 @@ export const TeamList: React.FC = () => {
             color: 'text.secondary'
           }}
         >
-          {t('no-teams.title')}
+          {t(`${emptyKey}.title`)}
         </Typography>
         <Typography
           variant="body1"
@@ -58,7 +60,7 @@ export const TeamList: React.FC = () => {
             color: 'text.secondary'
           }}
         >
-          {t('no-teams.message')}
+          {t(`${emptyKey}.message`)}
         </Typography>
       </Paper>
     );
