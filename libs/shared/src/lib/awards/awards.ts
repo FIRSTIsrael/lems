@@ -28,11 +28,7 @@ export type PersonalAward = (typeof PERSONAL_AWARDS)[number];
  * IDs of awards that are assigned by the system during final deliberation,
  * rather than picked by judges in the optional-awards stage.
  */
-export const AUTOMATIC_ASSIGNMENT_AWARDS = [
-  'excellence-in-engineering',
-  'robot-performance',
-  'coopertition'
-] as const;
+export const AUTOMATIC_ASSIGNMENT_AWARDS = ['robot-performance', 'coopertition'] as const;
 export type AutomaticAssignmentAward = (typeof AUTOMATIC_ASSIGNMENT_AWARDS)[number];
 
 export const OPTIONAL_AWARDS = [
@@ -66,7 +62,7 @@ export type Award = (typeof AWARDS)[number];
 /**
  * Team awards judges assign during the optional-awards deliberation stage.
  * Personal awards are optional but assigned outside deliberation.
- * Automatically assigned awards, such as excellence in engineering, are filled in earlier.
+ * Automatically assigned awards are filled in earlier.
  */
 export function isDeliberationOptionalAward(award: {
   type: string;
