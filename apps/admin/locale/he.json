@@ -432,6 +432,10 @@
           "random": "רנדומלי",
           "available-teams": "קבוצות שנותרו",
           "no-available-teams": "לא נותרו קבוצות",
+          "no-matching-teams": "אין קבוצות שתואמות לסינון",
+          "search-placeholder": "חיפוש לפי מספר, שם, מוסד או עיר",
+          "country": "מדינה",
+          "all-countries": "כל המדינות",
           "registered-teams": "קבוצות לרישום ({count})",
           "actions": {
             "register": "רישום {count, plural, =1 {קבוצה אחת} other {# קבוצות}}",
