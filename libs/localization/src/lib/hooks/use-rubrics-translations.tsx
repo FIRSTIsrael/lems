@@ -1,19 +1,25 @@
 import { JudgingCategory } from '@lems/types/judging';
+import type { Edition } from '@lems/shared/edition';
 import { useTranslations } from 'next-intl';
 
-export const useRubricsTranslations = (category: JudgingCategory) => {
-  const t = useTranslations(`shared.rubrics.categories.${category}`);
+const getRubricsNamespace = (edition: Edition) =>
+  edition === 'future' ? 'shared.rubrics-future' : 'shared.rubrics';
+
+export const useRubricsTranslations = (category: JudgingCategory, edition: Edition) => {
+  const t = useTranslations(`${getRubricsNamespace(edition)}.categories.${category}`);
 
   return {
     getSectionTitle: (sectionId: string) => t(`sections.${sectionId}.title`),
     getSectionDescription: (sectionId: string) => t(`sections.${sectionId}.description`),
     getFieldLevel: (sectionId: string, fieldId: string, level: string) =>
-      t(`sections.${sectionId}.fields.${fieldId}.${level}`)
+      t(`sections.${sectionId}.fields.${fieldId}.${level}`),
+    getFieldCriterion: (sectionId: string, fieldId: string) =>
+      t(`sections.${sectionId}.fields.${fieldId}.criterion`)
   };
 };
 
-export const useRubricsGeneralTranslations = () => {
-  const t = useTranslations('shared.rubrics');
+export const useRubricsGeneralTranslations = (edition: Edition) => {
+  const t = useTranslations(getRubricsNamespace(edition));
 
   return {
     getFeedbackTitle: (key: 'greatJob' | 'thinkAbout') => {

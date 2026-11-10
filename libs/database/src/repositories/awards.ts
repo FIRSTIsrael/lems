@@ -52,6 +52,8 @@ class AwardsSelector {
 
   async hasUnassignedAwards(): Promise<boolean> {
     const unassignedAward = await this.getAwardsQuery()
+      // Coopertition is auto-assigned and may have fewer qualifying matches than places
+      .where('name', '!=', 'coopertition')
       .where(eb => eb.and([eb('winner_id', 'is', null), eb('winner_name', 'is', null)]))
       .executeTakeFirst();
     return !!unassignedAward;
@@ -80,6 +82,14 @@ export class AwardsRepository {
     }
 
     return await this.db.insertInto('awards').values(awards).returningAll().execute();
+  }
+
+  async clearWinner(id: string): Promise<void> {
+    await this.db
+      .updateTable('awards')
+      .set({ winner_id: null, winner_name: null })
+      .where('id', '=', id)
+      .execute();
   }
 
   async assign(id: string, winner: string): Promise<Award | null> {

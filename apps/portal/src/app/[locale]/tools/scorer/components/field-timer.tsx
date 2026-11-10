@@ -51,8 +51,8 @@ export const FieldTimer = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
-  const { points } = useContext(MissionContext);
-  const scoreFloaterShown = Boolean(points);
+  const { points, scoreOverridden } = useContext(MissionContext);
+  const scoreFloaterShown = points > 0 || scoreOverridden;
 
   const [timerState, timerControls] = useFieldTimer();
   const { timeRemaining, isRunning, matchLength } = timerState;

@@ -3,6 +3,8 @@
 import { useSuspenseQuery, skipToken } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { orderTablesByPair } from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import { RoleInfo } from '../graphql/volunteers';
 import { useVolunteer } from '../components/volunteer-context';
 import { GET_DIVISION_VENUE_QUERY } from '../graphql/venue';
@@ -28,6 +30,8 @@ const getRoleInfoValue = (roleInfo: RoleInfo | null | undefined): string => {
 interface RoleInfoOption {
   id: string;
   name: string;
+  /** The table's pair (table options only). */
+  pairKey?: string;
 }
 
 /**
@@ -37,7 +41,8 @@ interface RoleInfoOption {
  */
 export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOption[] => {
   const { volunteerData } = useVolunteer();
-  const { getCategory } = useJudgingCategoryTranslations();
+  const division = volunteerData?.divisions.find(d => d.id === divisionId);
+  const { getCategory } = useJudgingCategoryTranslations(getEdition(division ?? {}));
 
   const roleInfoType = getRoleInfoType(volunteerData?.volunteers[0].roleInfo);
   const shouldFetch = roleInfoType && roleInfoType !== 'category' && divisionId;
@@ -54,12 +59,14 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
 
     if (roleInfoType === 'table' || roleInfoType === 'room') {
       if (divisionData?.division) {
-        const items =
-          roleInfoType === 'table' ? divisionData.division.tables : divisionData.division.rooms;
-        allOptions = items.map((item: { id: string; name: string }) => ({
-          id: item.id,
-          name: item.name
-        }));
+        allOptions =
+          roleInfoType === 'table'
+            ? orderTablesByPair(divisionData.division.tables).map(table => ({
+                id: table.id,
+                name: table.name,
+                pairKey: table.pairKey
+              }))
+            : divisionData.division.rooms.map(room => ({ id: room.id, name: room.name }));
       }
     } else if (roleInfoType === 'category') {
       allOptions = [
@@ -73,6 +80,8 @@ export const useRoleInfoOptions = (divisionId: string | undefined): RoleInfoOpti
     const roleInfoValuesForRole = new Set(
       volunteerData.volunteers.map(v => getRoleInfoValue(v.roleInfo))
     );
-    return allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+    const options = allOptions.filter(opt => roleInfoValuesForRole.has(opt.id));
+
+    return options;
   }, [divisionData, getCategory, roleInfoType, volunteerData]);
 };

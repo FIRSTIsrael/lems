@@ -1,6 +1,7 @@
 import { JudgingCategory } from '@lems/database';
 import { hyphensToUnderscores, underscoresToHyphens } from '@lems/shared/utils';
 import { getRubrics } from '@lems/shared/rubrics';
+import { getEffectiveGp } from '@lems/shared/deliberation';
 import type { Edition } from '@lems/shared/edition';
 import { FieldMetadata, MetricPerCategory, RoomMetricsMap, Team } from './types';
 
@@ -22,9 +23,14 @@ export const CATEGORY_ABBREVIATIONS = {
  *
  * @param edition - The edition whose rubric schema applies
  * @param team - The team to compute scores for
+ * @param zeroGpForNoShows - Whether GP should be zeroed out for ranking no-shows
  * @returns TeamScores object with all category and total scores
  */
-export const computeTeamScores = (edition: Edition, team: Team): MetricPerCategory => {
+export const computeTeamScores = (
+  edition: Edition,
+  team: Team,
+  zeroGpForNoShows: boolean
+): MetricPerCategory => {
   // Compute innovation-project score
   const ipRubric = team.rubrics.innovation_project;
   const ipScore = ipRubric?.data?.fields
@@ -41,7 +47,8 @@ export const computeTeamScores = (edition: Edition, team: Team): MetricPerCatego
   const cvRubricValues = getOrganizedRubricFields(edition, team, 'core-values');
   const cvRubricScore = Object.values(cvRubricValues).reduce((sum, value) => sum + (value ?? 0), 0);
   const gpScoresSum = (team.scoresheets ?? []).reduce(
-    (sum, scoresheet) => sum + (scoresheet.data?.gp?.value ?? 3),
+    (sum, scoresheet) =>
+      sum + getEffectiveGp(scoresheet.data?.gp?.value, scoresheet.isNoShow ?? false, zeroGpForNoShows),
     0
   );
   const cvScore = cvRubricScore + gpScoresSum;
@@ -312,13 +319,18 @@ export function getOrganizedRubricFieldNotes(
  * Extracts GP scores with formatted keys for a team.
  *
  * @param team - The team to extract GP scores from
+ * @param zeroGpForNoShows - Whether GP should be zeroed out for ranking no-shows
  * @returns Object mapping 'GP-{round}' to score values
  */
-export function getGPScores(team: Team): Record<string, number | null> {
+export function getGPScores(
+  team: Team,
+  zeroGpForNoShows: boolean
+): Record<string, number | null> {
   const result: Record<string, number | null> = {};
 
   (team.scoresheets ?? []).forEach(scoresheet => {
-    result[`GP-${scoresheet.round}`] = scoresheet.data?.gp?.value ?? null;
+    result[`GP-${scoresheet.round}`] =
+      scoresheet.isNoShow && zeroGpForNoShows ? 0 : (scoresheet.data?.gp?.value ?? null);
   });
 
   return result;

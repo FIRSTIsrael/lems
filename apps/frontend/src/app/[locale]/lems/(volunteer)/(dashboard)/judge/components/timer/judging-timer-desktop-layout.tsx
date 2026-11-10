@@ -36,8 +36,8 @@ export const JudgingTimerDesktopLayout: React.FC<JudgingTimerDesktopLayoutProps>
   const [abortDialogOpen, setAbortDialogOpen] = useState(false);
 
   const { session, sessionLength, openRubricsDuringSession } = useSession();
-  const { getStage } = useJudgingSessionStageTranslations();
   const edition = useEdition();
+  const { getStage } = useJudgingSessionStageTranslations(edition);
   const { judgingStages, timerState } = useJudgingSessionTimer(
     session.startTime!,
     sessionLength,

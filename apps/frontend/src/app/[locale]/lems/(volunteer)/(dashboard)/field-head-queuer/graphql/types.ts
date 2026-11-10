@@ -8,6 +8,8 @@ export interface Team {
 export interface RobotGameTable {
   id: string;
   name: string;
+  pairKey: string;
+  side: string;
 }
 
 export interface MatchParticipant {

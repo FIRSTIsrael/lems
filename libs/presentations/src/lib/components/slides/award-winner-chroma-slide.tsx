@@ -33,6 +33,7 @@ export interface AwardWinnerChromaSlideAward {
   name: string;
   place?: number;
   winner?: TeamWinner | PersonalWinner;
+  coWinner?: TeamWinner;
   divisionColor?: string;
 }
 
@@ -52,6 +53,10 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award, 
   const isTeamWinner = 'number' in award.winner;
   const winner = award.winner as TeamWinner | PersonalWinner;
   const localizedAwardName = getName(award.name);
+  const hasCoWinner = isTeamWinner && !!award.coWinner;
+  const teamWinners = hasCoWinner
+    ? [winner as TeamWinner, award.coWinner as TeamWinner]
+    : [winner as TeamWinner];
 
   return (
     <Slide chromaKey>
@@ -82,54 +87,63 @@ const AwardWinnerChromaSlide: React.FC<AwardWinnerChromaSlideProps> = ({ award, 
           >
             <Stack direction="column" spacing={1}>
               {isTeamWinner ? (
-                <>
-                  <Stack
-                    direction="row"
-                    spacing={2}
-                    sx={{
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        flexShrink: 0,
-                        width: 120,
-                        height: 120,
-                        position: 'relative',
-                        overflow: 'hidden'
-                      }}
+                <Stack
+                  direction={hasCoWinner ? 'row' : 'column'}
+                  spacing={hasCoWinner ? 4 : 1}
+                  sx={{ justifyContent: 'center' }}
+                >
+                  {teamWinners.map(team => (
+                    <Stack
+                      key={team.id}
+                      direction="column"
+                      spacing={1}
+                      sx={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}
                     >
-                      <Image
-                        src={
-                          (winner as TeamWinner).logoUrl
-                            ? ((winner as TeamWinner).logoUrl as string)
-                            : '/assets/default-avatar.svg'
-                        }
-                        alt={(winner as TeamWinner).name}
-                        fill
-                        style={{ objectFit: 'contain', padding: 8 }}
-                      />
-                    </Box>
-                    <Typography
-                      sx={{
-                        fontSize: '3.5rem',
-                        fontWeight: 800,
-                        color: award.divisionColor || 'primary.main',
-                        letterSpacing: '-0.02em'
-                      }}
-                    >
-                      {(winner as TeamWinner).name} #{(winner as TeamWinner).number}
-                    </Typography>
-                  </Stack>
-                  {(winner as TeamWinner).affiliation && (
-                    <Typography
-                      sx={{ fontSize: '1.75rem', color: 'text.secondary', fontWeight: 600 }}
-                    >
-                      {(winner as TeamWinner).affiliation}, {(winner as TeamWinner).city}
-                    </Typography>
-                  )}
-                </>
+                      <Stack
+                        direction="row"
+                        spacing={2}
+                        sx={{
+                          alignItems: 'center',
+                          justifyContent: 'center'
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            flexShrink: 0,
+                            width: hasCoWinner ? 80 : 120,
+                            height: hasCoWinner ? 80 : 120,
+                            position: 'relative',
+                            overflow: 'hidden'
+                          }}
+                        >
+                          <Image
+                            src={team.logoUrl ? team.logoUrl : '/assets/default-avatar.svg'}
+                            alt={team.name}
+                            fill
+                            style={{ objectFit: 'contain', padding: 8 }}
+                          />
+                        </Box>
+                        <Typography
+                          sx={{
+                            fontSize: hasCoWinner ? '2.25rem' : '3.5rem',
+                            fontWeight: 800,
+                            color: award.divisionColor || 'primary.main',
+                            letterSpacing: '-0.02em'
+                          }}
+                        >
+                          {team.name} #{team.number}
+                        </Typography>
+                      </Stack>
+                      {team.affiliation && (
+                        <Typography
+                          sx={{ fontSize: '1.75rem', color: 'text.secondary', fontWeight: 600 }}
+                        >
+                          {team.affiliation}, {team.city}
+                        </Typography>
+                      )}
+                    </Stack>
+                  ))}
+                </Stack>
               ) : (
                 <Typography
                   sx={{

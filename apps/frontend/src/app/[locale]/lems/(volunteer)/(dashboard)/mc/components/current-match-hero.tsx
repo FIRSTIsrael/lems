@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import { Paper, Typography, Stack, Chip, useTheme, Box } from '@mui/material';
 import { EmojiEvents } from '@mui/icons-material';
 import { useMatchTranslations } from '@lems/localization';
+import { TablePairOutline } from '@lems/shared/components';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 import { Match } from '../graphql';
 import { useMc } from './mc-context';
 
@@ -32,6 +34,11 @@ export const CurrentMatchHero: React.FC = () => {
       </Paper>
     );
   }
+
+  const pairGroups = groupFilledParticipantsByPair(
+    match.participants,
+    match.participants.map(p => p.table)
+  );
 
   const getStatusColor = (status: Match['status']) => {
     switch (status) {
@@ -108,66 +115,73 @@ export const CurrentMatchHero: React.FC = () => {
           />
         </Stack>
 
-        <Stack spacing={2} direction={{ xs: 'column', md: 'row' }}>
-          {match.participants.map(participant => (
-            <Box key={participant.id} sx={{ flex: { xs: '1', md: '1 1 50%' } }}>
-              <Paper
-                sx={{
-                  p: 2.5,
-                  height: '100%',
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  opacity: participant.team ? 1 : 0.6,
-                  backgroundColor: !participant.team
-                    ? 'action.disabledBackground'
-                    : 'background.paper'
-                }}
-              >
-                <Stack spacing={1.5}>
-                  <Stack
-                    direction="row"
-                    spacing={1.5}
+        <Stack spacing={2}>
+          {pairGroups.map(group => (
+            <TablePairOutline
+              key={group.key}
+              sx={{ flexDirection: { xs: 'column', md: 'row' }, gap: 2 }}
+            >
+              {group.participants.map(participant => (
+                <Box key={participant.id} sx={{ flex: { xs: '1', md: '1 1 50%' } }}>
+                  <Paper
                     sx={{
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
+                      p: 2.5,
+                      height: '100%',
+                      border: '1px solid',
+                      borderColor: 'divider',
+                      opacity: participant.team ? 1 : 0.6,
+                      backgroundColor: !participant.team
+                        ? 'action.disabledBackground'
+                        : 'background.paper'
                     }}
                   >
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: 700,
-                        color: theme.palette.primary.main
-                      }}
-                    >
-                      {participant.team
-                        ? `${participant.team.name} #${participant.team.number}`
-                        : '-'}
-                    </Typography>
-                    <Chip
-                      label={`${t('table')} ${participant.table.name}`}
-                      size="small"
-                      variant="outlined"
-                      sx={{ fontWeight: 600 }}
-                    />
-                  </Stack>
+                    <Stack spacing={1.5}>
+                      <Stack
+                        direction="row"
+                        spacing={1.5}
+                        sx={{
+                          alignItems: 'center',
+                          justifyContent: 'space-between'
+                        }}
+                      >
+                        <Typography
+                          variant="h5"
+                          sx={{
+                            fontWeight: 700,
+                            color: theme.palette.primary.main
+                          }}
+                        >
+                          {participant.team
+                            ? `${participant.team.name} #${participant.team.number}`
+                            : '-'}
+                        </Typography>
+                        <Chip
+                          label={`${t('table')} ${participant.table.name}`}
+                          size="small"
+                          variant="outlined"
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </Stack>
 
-                  <Typography variant="h6" sx={{ fontWeight: 600 }}>
-                    {participant.team
-                      ? `${participant.team.affiliation}, ${participant.team.city}`
-                      : t('no-team')}
-                  </Typography>
+                      <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                        {participant.team
+                          ? `${participant.team.affiliation}, ${participant.team.city}`
+                          : t('no-team')}
+                      </Typography>
 
-                  {participant.team && !participant.team.arrived && (
-                    <Chip
-                      label={t('not-arrived')}
-                      size="small"
-                      color="warning"
-                      sx={{ alignSelf: 'flex-start', mt: 0.5 }}
-                    />
-                  )}
-                </Stack>
-              </Paper>
-            </Box>
+                      {participant.team && !participant.team.arrived && (
+                        <Chip
+                          label={t('not-arrived')}
+                          size="small"
+                          color="warning"
+                          sx={{ alignSelf: 'flex-start', mt: 0.5 }}
+                        />
+                      )}
+                    </Stack>
+                  </Paper>
+                </Box>
+              ))}
+            </TablePairOutline>
           ))}
         </Stack>
       </Stack>

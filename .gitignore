@@ -70,3 +70,8 @@ logs/
 .nx/polygraph
 .nx/self-healing
 .nx/migrate-runs
+# Local git worktrees
+.worktrees/
+
+# TypeScript incremental build state
+*.tsbuildinfo

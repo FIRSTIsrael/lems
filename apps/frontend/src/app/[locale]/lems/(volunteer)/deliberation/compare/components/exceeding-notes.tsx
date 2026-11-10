@@ -16,8 +16,9 @@ interface ExceedingNotesProps {
 }
 
 function SectionName({ category, fieldId }: { category: string; fieldId: string }) {
-  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory);
-  const rubrics = getRubrics(useEdition());
+  const edition = useEdition();
+  const { getSectionTitle } = useRubricsTranslations(category as JudgingCategory, edition);
+  const rubrics = getRubrics(edition);
 
   const sectionId = rubrics[category as JudgingCategory]?.sections?.find(section =>
     section.fields.some(field => field.id === fieldId)
@@ -53,7 +54,8 @@ function NoteItem({
 
 export function ExceedingNotes({ team }: ExceedingNotesProps) {
   const t = useTranslations('layouts.deliberation.compare');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { category } = useCompareContext();
 
   const exceedingNotesByCategory = useMemo(() => {
@@ -110,8 +112,8 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                 <Paper
                   sx={{
                     p: 1.5,
-                    bgcolor: getCategoryBgColor(cat),
-                    border: `2px solid ${getCategoryColor(cat)}`,
+                    bgcolor: getCategoryBgColor(cat, edition),
+                    border: `2px solid ${getCategoryColor(cat, edition)}`,
                     borderRadius: 2,
                     height: '100%'
                   }}
@@ -121,7 +123,7 @@ export function ExceedingNotes({ team }: ExceedingNotesProps) {
                     sx={{
                       fontSize: '0.75rem',
                       fontWeight: 700,
-                      color: getCategoryColor(cat),
+                      color: getCategoryColor(cat, edition),
                       textAlign: 'center',
                       mb: 1,
                       display: 'block'

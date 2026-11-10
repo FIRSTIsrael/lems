@@ -11,6 +11,8 @@ export const GET_DIVISION_VENUE_QUERY: TypedDocumentNode<
       tables {
         id
         name
+        pairKey
+        side
       }
       rooms {
         id

@@ -1,5 +1,6 @@
 import { FinalDeliberationAwards, JudgingCategory } from '@lems/database';
-import { compareScoreArrays } from '@lems/shared/utils/arrays';
+import { getRobotGameRank, RankingStrategy } from '@lems/shared/utils';
+import { STACKABLE_AWARDS } from '@lems/shared/awards';
 import { JUDGING_CATEGORIES } from '@lems/types/judging';
 import { CategorizedRubrics, MetricPerCategory, Team } from '../types';
 import { EnrichedTeam, OptionalAwardNominations, RanksPerCategory } from './types';
@@ -56,8 +57,8 @@ export function extractOptionalAwards(rubrics: CategorizedRubrics): OptionalAwar
  * @returns RanksPerCategory object with score-based ranks only
  */
 export function computeRawRank(
-  team: Team & { scores: MetricPerCategory; robotGameScores: number[] },
-  allTeams: (Team & { scores: MetricPerCategory; robotGameScores: number[] })[]
+  team: Team & { scores: MetricPerCategory; robotGameScores: (number | undefined)[] },
+  allTeams: (Team & { scores: MetricPerCategory; robotGameScores: (number | undefined)[] })[]
 ): RanksPerCategory {
   const rawRanks: RanksPerCategory = {
     'innovation-project': 0,
@@ -93,9 +94,10 @@ export function computeRawRank(
  * @returns MetricPerCategory object with ranks for each category and total
  */
 export function computeRank(
-  team: Team & { scores: MetricPerCategory; robotGameScores: number[] },
-  allTeams: (Team & { scores: MetricPerCategory; robotGameScores: number[] })[],
-  picklists: Record<JudgingCategory, string[]>
+  team: Team & { scores: MetricPerCategory; robotGameScores: (number | undefined)[] },
+  allTeams: (Team & { scores: MetricPerCategory; robotGameScores: (number | undefined)[] })[],
+  picklists: Record<JudgingCategory, string[]>,
+  rankingStrategy: RankingStrategy = 'max'
 ): RanksPerCategory {
   const ranks: RanksPerCategory = {
     'innovation-project': 0,
@@ -126,13 +128,11 @@ export function computeRank(
     ranks[category] = computeRankByCategory(category, team.scores[category]);
   });
 
-  // Compute robot-game rank using compareScoreArrays
-  const sortedTeams = [...allTeams].sort((a, b) =>
-    compareScoreArrays(a.robotGameScores, b.robotGameScores)
+  ranks['robot-game'] = getRobotGameRank(
+    team.robotGameScores,
+    allTeams.map(candidate => candidate.robotGameScores),
+    rankingStrategy
   );
-
-  const teamIndex = sortedTeams.findIndex(t => t.id === team.id);
-  ranks['robot-game'] = teamIndex >= 0 ? teamIndex + 1 : allTeams.length;
 
   ranks.total =
     (ranks['innovation-project'] +
@@ -155,7 +155,7 @@ export const computeCoreAwardsEligibility = (
   if (team.disqualified) return false;
 
   const winningTeamIds = Object.entries(awards)
-    .filter(([key]) => key !== 'robot-performance')
+    .filter(([key]) => !(STACKABLE_AWARDS as readonly string[]).includes(key))
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
     .flat();
@@ -178,7 +178,7 @@ export const computeOptionalAwardsEligibility = (
   if (team.disqualified) return false;
 
   const winningTeamIds = Object.entries(awards)
-    .filter(([key]) => key !== 'robot-performance')
+    .filter(([key]) => !(STACKABLE_AWARDS as readonly string[]).includes(key))
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .map(([_, awardList]) => (Array.isArray(awardList) ? awardList : Object.values(awardList)))
     .flat();

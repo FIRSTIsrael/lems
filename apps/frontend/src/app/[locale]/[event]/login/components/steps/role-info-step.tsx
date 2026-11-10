@@ -1,6 +1,7 @@
 'use client';
 
-import { Typography, Autocomplete, TextField, Box, Paper, alpha } from '@mui/material';
+import { Typography, Autocomplete, TextField, Box, Paper, Divider, alpha } from '@mui/material';
+import { Fragment } from 'react';
 import { useTranslations } from 'next-intl';
 import { useFormikContext } from 'formik';
 import { LoginFormValues, LoginStep } from '../../types';
@@ -61,6 +62,15 @@ export function RoleInfoStep() {
         options={availableOptions}
         getOptionLabel={option => option.name}
         value={selectedOption}
+        // Grouping by pair puts a divider between pairs. MUI groups the filtered options, and a
+        // group's key is the index of its first option, so key 0 is the first group shown.
+        groupBy={roleInfoType === 'table' ? option => option.pairKey ?? '' : undefined}
+        renderGroup={params => (
+          <Fragment key={params.key}>
+            {params.key > 0 && <Divider component="li" />}
+            {params.children}
+          </Fragment>
+        )}
         onChange={(_, newValue) => {
           setFieldValue('roleInfoValue', newValue || { id: '', name: '' });
         }}

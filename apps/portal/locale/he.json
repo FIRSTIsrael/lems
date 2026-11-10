@@ -218,6 +218,7 @@
         "blocked": "לא זמין",
         "available": "זמין",
         "unavailable": "לא זמין",
+        "side": "צד {side}",
         "not-configured": "שולחנות אימונים לא הוגדרו עבור בית זה."
       }
     },
@@ -271,6 +272,8 @@
         "judging-session": "מפגש שיפוט - חדר {room}",
         "practice-table": "שולחן אימון {tableNumber}",
         "practice-table-location": "שולחן אימון {tableNumber}",
+        "practice-table-side": "שולחן אימון {tableNumber} – {side}",
+        "practice-table-side-location": "שולחן אימון {tableNumber} – {side}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"
@@ -311,6 +314,12 @@
         "scorer": "מחשבון ניקוד",
         "rubrics": "מחווני שיפוט"
       }
+    }
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "הניקוד הגבוה ביותר",
+      "average": "ניקוד ממוצע"
     }
   }
 }

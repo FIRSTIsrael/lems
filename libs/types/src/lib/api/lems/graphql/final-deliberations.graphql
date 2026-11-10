@@ -32,6 +32,9 @@ type FinalDeliberation {
   "Robot Performance award winners (ordered list of team IDs)"
   robotPerformance: [String!]!
 
+  "Coopertition award winners (two team IDs per place, side A then side B)"
+  coopertition: [String!]!
+
   "Optional awards for this division (isOptional awards). Key is award name, value is an ordered list of team IDs. Returned as JSON."
   optionalAwards: JSON!
 

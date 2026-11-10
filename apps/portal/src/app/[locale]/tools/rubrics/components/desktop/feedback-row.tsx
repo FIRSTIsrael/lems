@@ -3,6 +3,7 @@
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
+import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
 
 interface FeedbackRowProps {
@@ -19,7 +20,7 @@ const colors: { [key: string]: string } = {
 const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) => {
-  const { getFeedbackTitle } = useRubricsGeneralTranslations();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(useToolEdition());
   const { rubric, updateRubric } = useRubricContext();
 
   const handleFeedbackUpdate = async (field: 'greatJob' | 'thinkAbout', value: string) => {

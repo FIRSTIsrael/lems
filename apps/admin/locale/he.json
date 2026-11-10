@@ -539,7 +539,9 @@
             "deleting": "מוחק..."
           },
           "future-edition": "מהדורת העתיד",
+          "save-failed": "לא ניתן לשמור את הבית. אם שיניתם את המהדורה, הסירו תחילה פרסים שאינם נתמכים במהדורה החדשה.",
           "edition-locked-tooltip": "לא ניתן לשנות את המהדורה לאחר יצירת לוח הזמנים",
+          "edition-has-practice-tables": "יש למחוק את שולחנות האימונים של הבית לפני שינוי המהדורה.",
           "alerts": {
             "not-enough-divisions": "אירוע זה לא מחולק לבתים. צרו בית חדש על מנת לחלק את האירוע."
           }
@@ -597,14 +599,23 @@
         },
         "tables": {
           "title": "שולחנות משחק הרובוט",
-          "add-button": "הוסף שולחן",
-          "name-placeholder": "שם השולחן",
           "save-button": "שמור",
-          "delete-button": "מחק",
           "empty-state": "טרם נוספו שולחנות",
-          "validation": {
-            "name-required": "שם השולחן נדרש"
-          }
+          "pair-label": "זוג {index}",
+          "summary": "{pairs, plural, one {זוג אחד} two {שני זוגות} other {# זוגות}} · {tables, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}}",
+          "add-pair": "הוסף זוג",
+          "side-a": "צד A",
+          "side-b": "צד B",
+          "delete-pair": "מחק זוג",
+          "delete-pair-confirm": "למחוק את שני השולחנות של הזוג הזה ואת השופטים שלהם?",
+          "swap": "החלפה…",
+          "swap-title": "החלפת {name} עם",
+          "position": "זוג {index} · {side}: {name}",
+          "cancel": "ביטול",
+          "physical-table-label": "שולחן {index}",
+          "summary-future": "{pairs, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}} · {tables} צדדים",
+          "add-physical-table": "הוסף שולחן",
+          "future-hint": "במהדורת העתיד כל שולחן מארח שתי קבוצות, עם שופט אחד בכל צד."
         },
         "pit-map": {
           "title": "מפת פיטים",
@@ -662,7 +673,9 @@
           "official": "סוג אירוע",
           "official-description": "האם אירוע זה הוא אירוע רשמי",
           "open-rubrics-during-session": "פתיחת מחווני שיפוט במהלך מפגש השיפוט",
-          "open-rubrics-during-session-description": "אפשר לשופטים לפתוח את המחוון כשמפגש השיפוט בעיצומו"
+          "open-rubrics-during-session-description": "אפשר לשופטים לפתוח את המחוון כשמפגש השיפוט בעיצומו",
+          "zero-gp-for-no-shows": "אפס ניקוד GP לקבוצות שלא הגיעו",
+          "zero-gp-for-no-shows-description": "אפס אוטומטית את ניקוד האחריות החברתית (GP) לקבוצות שסומנו כלא הגיעו בעת דירוג"
         },
         "event-actions": {
           "title": "פעולות אירוע",
@@ -763,7 +776,9 @@
             "ranking-rounds": "סבבי דירוג",
             "judging-start": "תחילת שיפוט",
             "field-start": "תחילת זירה",
-            "matches-per-round": "מקצים בכל סבב"
+            "matches-per-round": "מקצים בכל סבב",
+            "tables-pairs": "{pairs, plural, one {זוג אחד} two {שני זוגות} other {# זוגות}} ({tables, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}})",
+            "tables-pairs-future": "{pairs, plural, one {שולחן אחד} two {שני שולחנות} other {# שולחנות}} ({tables} צדדים)"
           },
           "settings": {
             "title": "הגדרות",
@@ -871,6 +886,7 @@
           "awards-list": "רשימת פרסים ({count})",
           "no-awards": "לא הוגדרו פרסים",
           "no-awards-help": "השתמש בכפתור \"הוסף פרס רשות\" להוספת פרסים",
+          "co-winners-hint": "כל מקום מוענק לשתי קבוצות",
           "add-dialog": {
             "title": "הוספת פרס רשות",
             "select-award": "בחר פרס",
@@ -905,11 +921,11 @@
           },
           "minimum": {
             "title": "מינימום פרסים",
-            "description": "פרסי קבוצות לא כולל ביצועי רובוט והעפלה"
+            "description": "פרסי קבוצות לא כולל {award} והעפלה"
           },
           "maximum": {
             "title": "מקסימום פרסים",
-            "description": "מינימום פרסים בתוספת פרסי ביצועי רובוט"
+            "description": "מינימום פרסים בתוספת פרסי {award}"
           },
           "rules": {
             "title": "חוקי בדיקת התקינות",
@@ -921,7 +937,8 @@
             "title": "בעיות בתקינות",
             "no-teams": "אין קבוצות רשומות לאירוע זה",
             "not-enough-awards": "לא הוגדרו מספיק פרסים ({count}%)",
-            "too-many-awards": "הוגדרו יותר מדי פרסים ({count}%)"
+            "too-many-awards": "הוגדרו יותר מדי פרסים ({count}%)",
+            "unavailable-awards": "{count, plural, one {פרס מוגדר אחד אינו זמין} other {# פרסים מוגדרים אינם זמינים}} במהדורה של בית זה"
           },
           "success": {
             "title": "הגדרת הפרסים תקינה",
@@ -1138,6 +1155,8 @@
       "practice-tables": {
         "title": "הגדרות שולחנות אימונים",
         "description": "הגדר את הגדרות שולחנות האימונים עבור כל בית",
+        "teams-per-slot": "קבוצות בכל משבצת",
+        "teams-per-slot-count": "קבוצות בכל משבצת: {count}",
         "fields": {
           "division": "בית",
           "table-count": "מספר שולחנות אימונים",

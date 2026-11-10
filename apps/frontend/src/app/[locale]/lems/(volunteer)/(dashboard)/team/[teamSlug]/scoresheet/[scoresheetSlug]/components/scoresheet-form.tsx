@@ -54,7 +54,11 @@ export const ScoresheetForm: React.FC<ScoresheetFormProps> = ({ disabled = false
       )}
       <ScoresheetIncompleteAlert validation={validation} />
       <ScoresheetSubmission />
-      <ScoreFloater score={validation.score} />
+      <ScoreFloater
+        score={validation.score}
+        scoreOverridden={validation.scoreOverridden}
+        season={scoresheet.season}
+      />
     </Stack>
   );
 };

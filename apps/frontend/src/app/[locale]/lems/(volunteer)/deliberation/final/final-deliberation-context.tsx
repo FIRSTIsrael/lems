@@ -4,6 +4,7 @@ import { Award, isDeliberationOptionalAward } from '@lems/shared';
 import { useMutation } from '@apollo/client/react';
 import toast from 'react-hot-toast';
 import { useTranslations } from 'next-intl';
+import { getRankingStrategy, indexScoresByRound } from '@lems/shared/utils';
 import {
   computeNormalizedScores,
   computeRoomMetrics,
@@ -53,6 +54,7 @@ export const FinalDeliberationProvider = ({
   const edition = useEdition();
   const deliberation = division.judging.finalDeliberation;
   const deliberationAwards = division.judging.awards.filter(award => award.type === 'TEAM');
+  const zeroGpForNoShows = division.judging.zeroGpForNoShows ?? true;
 
   // Mutations
   const [startFinalDeliberation] = useMutation(START_FINAL_DELIBERATION_MUTATION);
@@ -122,6 +124,7 @@ export const FinalDeliberationProvider = ({
       'innovation-project': deliberation.innovationProject || [],
       'robot-design': deliberation.robotDesign || [],
       'robot-performance': deliberation.robotPerformance || [],
+      coopertition: deliberation.coopertition || [],
       ...optionalAwards
     }),
     [deliberation, optionalAwards]
@@ -163,13 +166,23 @@ export const FinalDeliberationProvider = ({
   );
 
   const value = useMemo<FinalDeliberationContextValue>(() => {
+    const rankingStrategy = getRankingStrategy(edition);
+    const rankingRoundCount = division.field?.rankingRoundCount ?? 0;
+
     // Step 1: Compute base team scores (category scores and GP)
-    const teamScores = division.teams.map(team => computeTeamScores(edition, team));
+    const teamScores = division.teams.map(team =>
+      computeTeamScores(edition, team, zeroGpForNoShows)
+    );
 
     const teamsWithScores = division.teams.map((team, index) => ({
       ...team,
       scores: teamScores[index],
-      robotGameScores: team.scoresheets.map(s => s.data?.score || 0)
+      robotGameScores: indexScoresByRound(
+        team.scoresheets
+          .filter(sheet => sheet.status === 'submitted' && sheet.data != null)
+          .map(sheet => ({ round: sheet.round, score: sheet.data!.score })),
+        rankingRoundCount
+      )
     }));
 
     // Step 2: Compute room metrics (aggregated scores per room)
@@ -188,7 +201,12 @@ export const FinalDeliberationProvider = ({
       );
       const awardNominations = extractOptionalAwards(team.rubrics);
       // Compute ranks (with picklist consideration)
-      const ranks = computeRank(teamsWithScores[index], teamsWithScores, categoryPicklists);
+      const ranks = computeRank(
+        teamsWithScores[index],
+        teamsWithScores,
+        categoryPicklists,
+        rankingStrategy
+      );
       // Compute raw ranks (score-based only, for anomaly detection)
       const rawRanks = computeRawRank(teamsWithScores[index], teamsWithScores);
 
@@ -208,12 +226,12 @@ export const FinalDeliberationProvider = ({
 
       const robotGameScores = team.scoresheets.reduce<Record<string, number | null>>(
         (acc, sheet) => {
-          acc[sheet.round] = sheet.data?.score || null;
+          if (sheet.status === 'submitted') acc[sheet.round] = sheet.data?.score ?? null;
           return acc;
         },
         {}
       );
-      const gpScores = getGPScores(team);
+      const gpScores = getGPScores(team, zeroGpForNoShows);
 
       return {
         id: team.id,
@@ -293,6 +311,7 @@ export const FinalDeliberationProvider = ({
     categoryPicklists,
     awards,
     awardCounts,
+    zeroGpForNoShows,
     manualOptionalAwards,
     handleStartFinalDeliberation,
     handleUpdateFinalDeliberationAwards,

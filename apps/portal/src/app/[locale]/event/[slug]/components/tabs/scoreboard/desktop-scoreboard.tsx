@@ -6,19 +6,23 @@ import Link from 'next/link';
 import { Box, Typography, useTheme } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { ScoreboardEntry } from '@lems/types/api/portal';
+import { formatHeadlineScore, RankingStrategy } from '@lems/shared/utils';
 
 interface DesktopScoreboardProps {
   sortedData: ScoreboardEntry[];
   matchesPerTeam: number;
   eventSlug: string;
+  rankingStrategy: RankingStrategy;
 }
 
 export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
   sortedData,
   matchesPerTeam,
-  eventSlug
+  eventSlug,
+  rankingStrategy
 }) => {
   const t = useTranslations('pages.event');
+  const headlineScoreT = useTranslations('robot-game.headline-score');
   const theme = useTheme();
 
   const columns: GridColDef<ScoreboardEntry>[] = [
@@ -60,15 +64,19 @@ export const DesktopScoreboard: React.FC<DesktopScoreboardProps> = ({
     },
     {
       field: 'maxScore',
-      headerName: t('scoreboard.best-score'),
+      headerName: headlineScoreT(rankingStrategy),
       width: 120,
-      valueGetter: (_, row) => row.maxScore || '-'
+      valueGetter: (_, row) =>
+        row.maxScore != null ? formatHeadlineScore(row.maxScore, rankingStrategy) : '-'
     },
     ...Array.from({ length: matchesPerTeam }, (_, index) => ({
       field: `match${index + 1}`,
       headerName: `${t('scoreboard.match')} ${index + 1}`,
       width: 100,
-      valueGetter: (_: never, row: ScoreboardEntry) => row.scores?.[index] || '-'
+      valueGetter: (_: never, row: ScoreboardEntry) => {
+        const score = row.scores?.[index];
+        return score == null ? '-' : score;
+      }
     }))
   ];
 

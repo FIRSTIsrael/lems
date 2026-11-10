@@ -9,6 +9,7 @@ import {
   useJudgingCategoryTranslations,
   useJudgingDeliberationTranslations
 } from '@lems/localization';
+import { useEdition } from '../../../../hooks/use-edition';
 import { CategoryDeliberationButton } from './category-deliberation-button';
 
 export interface Deliberation {
@@ -45,10 +46,11 @@ export function CategoryDeliberationCard({
   desiredPicklistLength
 }: CategoryDeliberationCardProps) {
   const t = useTranslations('pages.judge-advisor.awards.deliberation');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const { getStatus } = useJudgingDeliberationTranslations();
 
-  const color = getRubricColor(category);
+  const color = getRubricColor(category, edition);
   const label = getCategory(category as JudgingCategory);
 
   if (!deliberation) {

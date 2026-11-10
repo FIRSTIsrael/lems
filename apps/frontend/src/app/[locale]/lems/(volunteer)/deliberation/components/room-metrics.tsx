@@ -14,7 +14,9 @@ import {
 } from 'recharts';
 import { Box, Paper, Typography, useTheme, alpha } from '@mui/material';
 import { blue, green, red } from '@mui/material/colors';
+import { useJudgingCategoryTranslations } from '@lems/localization';
 import { Room, RoomMetricsMap } from '../types';
+import { useEdition } from '../../hooks/use-edition';
 
 interface RoomScoresDistributionProps {
   roomMetrics: RoomMetricsMap;
@@ -24,6 +26,8 @@ interface RoomScoresDistributionProps {
 export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistributionProps) {
   const theme = useTheme();
   const t = useTranslations('pages.deliberations.scores-chart');
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
 
   // Compute room metrics with useMemo to avoid unnecessary recalculations
   const chartData = useMemo(() => {
@@ -131,21 +135,21 @@ export function RoomScoresDistribution({ roomMetrics, teams }: RoomScoresDistrib
             <Bar
               dataKey="innovation-project"
               fill={blue[400]}
-              name={t('innovation-project')}
+              name={getCategory('innovation-project')}
               barSize={16}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="robot-design"
               fill={green[400]}
-              name={t('robot-design')}
+              name={getCategory('robot-design')}
               barSize={16}
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="core-values"
               fill={red[400]}
-              name={t('core-values')}
+              name={getCategory('core-values')}
               barSize={16}
               radius={[4, 4, 0, 0]}
             />

@@ -84,6 +84,9 @@ type Judging {
 
   "Whether judges can open rubrics while sessions are in progress"
   openRubricsDuringSession: Boolean!
+
+  "Whether GP scores should be zeroed out for teams that no-showed their ranking match"
+  zeroGpForNoShows: Boolean!
 }
 
 extend type Division {

@@ -1,5 +1,7 @@
 import express from 'express';
 import { SchedulerRequest } from '@lems/types/api/scheduler';
+import { getEdition } from '@lems/shared/edition';
+import { getMinimumJudgingSessionLength } from '@lems/shared/judging';
 import db from '../../../../../lib/database';
 import { AdminDivisionRequest } from '../../../../../types/express';
 import { requirePermission } from '../../../middleware/require-permission';
@@ -18,6 +20,20 @@ if (!SCHEDULER_DOMAIN) throw new Error('SCHEDULER_URL is not configured');
 
 router.use('/agenda', agendaRouter);
 
+/** Returns an error message if the judging session cannot fit the edition's fixed stages. */
+const validateJudgingSessionLength = async (
+  divisionId: string,
+  settings: SchedulerRequest
+): Promise<string | null> => {
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) return 'Division not found';
+  const minimum = getMinimumJudgingSessionLength(getEdition(division));
+  if (settings.judging_session_length_seconds < minimum) {
+    return `Judging session length must be at least ${minimum / 60} minutes for this edition`;
+  }
+  return null;
+};
+
 router.post(
   '/validate',
   requirePermission('MANAGE_EVENT_DETAILS'),
@@ -27,6 +43,12 @@ router.post(
 
       if (!settings) {
         res.status(400).json({ error: 'Settings are required' });
+        return;
+      }
+
+      const sessionLengthError = await validateJudgingSessionLength(req.divisionId, settings);
+      if (sessionLengthError) {
+        res.status(400).json({ error: sessionLengthError });
         return;
       }
 
@@ -60,6 +82,12 @@ router.post(
 
       if (!settings) {
         res.status(400).json({ error: 'Settings are required' });
+        return;
+      }
+
+      const sessionLengthError = await validateJudgingSessionLength(req.divisionId, settings);
+      if (sessionLengthError) {
+        res.status(400).json({ error: sessionLengthError });
         return;
       }
 

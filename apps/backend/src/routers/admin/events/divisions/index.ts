@@ -1,4 +1,6 @@
 import express from 'express';
+import { getEdition } from '@lems/shared/edition';
+import { isAwardAvailable } from '@lems/shared/awards';
 import db from '../../../../lib/database';
 import { AdminDivisionRequest, AdminEventRequest } from '../../../../types/express';
 import { attachDivision } from '../../middleware/attach-division';
@@ -89,6 +91,27 @@ router.put(
         .status(400)
         .json({ error: 'Cannot change the edition after the schedule has been generated' });
       return;
+    }
+
+    if (editionChanged && (await db.divisions.byId(req.divisionId).practiceTables().hasSlots())) {
+      res.status(400).json({ error: 'DIVISION_HAS_PRACTICE_TABLES' });
+      return;
+    }
+
+    if (editionChanged) {
+      const newEdition = getEdition({ future_edition: futureEdition });
+      const awards = await db.awards.byDivisionId(req.divisionId).getAll();
+      const unavailable = [
+        ...new Set(
+          awards.map(award => award.name).filter(name => !isAwardAvailable(name, newEdition))
+        )
+      ];
+      if (unavailable.length > 0) {
+        res.status(400).json({
+          error: `Remove awards not available in the ${newEdition} edition first: ${unavailable.join(', ')}`
+        });
+        return;
+      }
     }
 
     await db.divisions.byId(req.divisionId).update({

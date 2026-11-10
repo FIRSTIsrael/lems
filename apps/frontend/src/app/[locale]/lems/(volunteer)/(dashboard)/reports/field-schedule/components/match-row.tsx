@@ -10,17 +10,19 @@ import {
 import { Block as BlockIcon } from '@mui/icons-material';
 import { useTranslations } from 'next-intl';
 import dayjs from 'dayjs';
+import { pairDividerSx } from '@lems/shared/components';
 import type { RobotGameMatch, RobotGameTable, Team } from '../graphql/types';
 
 interface MatchRowProps {
   match: RobotGameMatch;
   tables: RobotGameTable[];
+  pairStarts: Set<string>;
   teams: Team[];
 }
 
 const MATCH_LENGTH = 150; // seconds
 
-export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
+export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, pairStarts, teams }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const t = useTranslations('pages.reports.field-schedule');
@@ -75,7 +77,11 @@ export const MatchRow: React.FC<MatchRowProps> = ({ match, tables, teams }) => {
         const team = participant?.team ? teams.find(t => t.id === participant.team?.id) : null;
 
         return (
-          <TableCell key={table.id} align="center">
+          <TableCell
+            key={table.id}
+            align="center"
+            sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+          >
             {team ? (
               <Tooltip title={team.arrived ? '' : t('not-arrived')} arrow>
                 <Box

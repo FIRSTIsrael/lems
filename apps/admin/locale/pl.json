@@ -242,6 +242,10 @@
       }
     },
     "events": {
+      "practice-tables": {
+        "teams-per-slot": "Drużyn w jednym terminie",
+        "teams-per-slot-count": "Drużyn w jednym terminie: {count}"
+      },
       "title": "Wydarzenia",
       "layout": {
         "event-page-title": {
@@ -539,7 +543,9 @@
             "deleting": "Usuwanie..."
           },
           "future-edition": "Edycja przyszłości",
+          "save-failed": "Nie udało się zapisać dywizji. Jeśli zmieniono edycję, najpierw usuń nagrody nieobsługiwane w nowej edycji.",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
+          "edition-has-practice-tables": "Przed zmianą edycji usuń stoły treningowe tej dywizji.",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -597,14 +603,23 @@
         },
         "tables": {
           "title": "Stoły do Robot Game",
-          "add-button": "Dodaj stół",
-          "name-placeholder": "Nazwa stołu",
           "save-button": "Zapisz",
-          "delete-button": "Usuń",
           "empty-state": "Nie dodano jeszcze żadnych stołów",
-          "validation": {
-            "name-required": "Nazwa stołu jest wymagana"
-          }
+          "pair-label": "Para {index}",
+          "summary": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} · {tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}}",
+          "add-pair": "Dodaj parę",
+          "side-a": "Strona A",
+          "side-b": "Strona B",
+          "delete-pair": "Usuń parę",
+          "delete-pair-confirm": "Usunąć oba stoły tej pary i ich sędziów?",
+          "swap": "Zamień…",
+          "swap-title": "Zamień {name} z",
+          "position": "Para {index} · {side}: {name}",
+          "cancel": "Anuluj",
+          "physical-table-label": "Stół {index}",
+          "summary-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} · strony: {tables}",
+          "add-physical-table": "Dodaj stół",
+          "future-hint": "W Edycji przyszłości przy każdym stole grają dwie drużyny, a każda strona ma jednego sędziego."
         },
         "pit-map": {
           "title": "Mapa Pit",
@@ -718,7 +733,9 @@
           "official": "Wydarzenie oficjalne",
           "official-description": "Czy wydarzenie ma status oficjalny",
           "open-rubrics-during-session": "Otwórz rubryki podczas sesji",
-          "open-rubrics-during-session-description": "Pozwól sędziom otwierać rubryki podczas trwającej sesji"
+          "open-rubrics-during-session-description": "Pozwól sędziom otwierać rubryki podczas trwającej sesji",
+          "zero-gp-for-no-shows": "Zeruj GP dla nieobecnych",
+          "zero-gp-for-no-shows-description": "Automatycznie ustaw GP (Gracious Professionalism) na 0 dla zespołów oznaczonych jako nieobecne podczas rankingu"
         },
         "event-actions": {
           "title": "Akcje wydarzenia",
@@ -819,7 +836,9 @@
             "ranking-rounds": "Rundy rankingowe",
             "judging-start": "Czas rozpoczęcia sesji sędziowskich",
             "field-start": "Czas rozpoczęcia meczów na polu",
-            "matches-per-round": "Liczba meczów na rundę"
+            "matches-per-round": "Liczba meczów na rundę",
+            "tables-pairs": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} ({tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}})",
+            "tables-pairs-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} (strony: {tables})"
           },
           "settings": {
             "title": "Ustawienia",
@@ -927,6 +946,7 @@
           "awards-list": "Lista nagród ({count})",
           "no-awards": "Brak skonfigurowanych nagród",
           "no-awards-help": "Użyj przycisku „Dodaj nagrodę opcjonalną”, aby dodać nagrody",
+          "co-winners-hint": "Każde miejsce przyznawane jest dwóm drużynom",
           "add-dialog": {
             "title": "Dodaj nagrodę opcjonalną",
             "select-award": "Wybierz nagrodę",
@@ -961,11 +981,11 @@
           },
           "minimum": {
             "title": "Minimalna liczba nagród",
-            "description": "Nagrody nieosobiste, bez nagród za robot performance i awans"
+            "description": "Nagrody nieosobiste, bez nagród „{award}” i awansu"
           },
           "maximum": {
             "title": "Maksymalna liczba nagród",
-            "description": "Minimalna liczba nagród plus nagrody za robot performance"
+            "description": "Minimalna liczba nagród plus nagrody „{award}”"
           },
           "rules": {
             "title": "Zasady walidacji",
@@ -977,7 +997,8 @@
             "title": "Problemy z konfiguracją",
             "no-teams": "Brak zarejestrowanych drużyn",
             "not-enough-awards": "Skonfigurowano zbyt mało nagród ({count}%)",
-            "too-many-awards": "Skonfigurowano zbyt wiele nagród ({count}%)"
+            "too-many-awards": "Skonfigurowano zbyt wiele nagród ({count}%)",
+            "unavailable-awards": "{count, plural, one {# skonfigurowana nagroda nie jest dostępna} few {# skonfigurowane nagrody nie są dostępne} other {# skonfigurowanych nagród nie jest dostępnych}} w edycji tej dywizji"
           },
           "success": {
             "title": "Konfiguracja nagród poprawna",

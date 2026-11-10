@@ -71,6 +71,9 @@ type PracticeTableSlot {
   "End time of the practice slot (ISO 8601 datetime)"
   endTime: String!
 
+  "'A' or 'B' in Future divisions; null in Founders"
+  side: String
+
   "When this slot was created (ISO 8601 datetime)"
   createdAt: String!
 }
@@ -90,6 +93,9 @@ input UpdatePracticeTableSlotInput {
 
   "Start time (ISO 8601 datetime)"
   startTime: String!
+
+  "Side at the table: 'A' or 'B' in Future divisions; null in Founders"
+  side: String
 }
 
 extend type Division {

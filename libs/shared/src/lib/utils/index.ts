@@ -1,4 +1,5 @@
 export * from './arrays';
+export * from './robot-game-ranking';
 export * from './timezones';
 export * from './regions';
 export * from './merge';
@@ -6,3 +7,4 @@ export * from './reconcilers';
 export * from './strings';
 export * from './random';
 export * from './practice-tables';
+export * from './table-pairs';

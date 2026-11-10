@@ -41,6 +41,7 @@ export const GET_PRACTICE_TABLES_REPORT: TypedDocumentNode<QueryData, QueryVars>
           id
           divisionId
           tableIndex
+          side
           startTime
           endTime
           team {

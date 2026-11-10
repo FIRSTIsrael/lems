@@ -12,6 +12,8 @@ import {
 } from '@mui/icons-material';
 import BlockIcon from '@mui/icons-material/Block';
 import { useMatchTranslations } from '@lems/localization';
+import { TablePairOutline } from '@lems/shared/components';
+import { groupFilledParticipantsByPair } from '@lems/shared/utils';
 
 type TeamReadinessStatus = 'ready' | 'present' | 'queued' | 'missing' | 'no-show';
 
@@ -26,6 +28,8 @@ interface Participant {
   table: {
     id: string;
     name: string;
+    pairKey: string;
+    side: string;
   };
   queued: boolean;
   present: boolean;
@@ -127,6 +131,11 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
       </Paper>
     );
   }
+
+  const pairGroups = groupFilledParticipantsByPair(
+    match.participants.filter(p => p.team),
+    match.participants.map(p => p.table)
+  );
 
   const getStatusColor = () => {
     if (match.status === 'in-progress') return 'success';
@@ -243,59 +252,58 @@ export function ActiveMatchPanel({ match }: ActiveMatchPanelProps) {
               gap: 1
             }}
           >
-            {[...match.participants]
-              .filter(p => p.team)
-              .sort((a, b) =>
-                a.table.name.localeCompare(b.table.name, undefined, { numeric: true })
-              )
-              .map(participant => {
-                const status = getParticipantStatus(participant);
-                return (
-                  <Stack
-                    key={participant.id}
-                    direction="row"
-                    spacing={0.5}
-                    sx={{
-                      alignItems: 'center',
-                      py: 1,
-                      px: 2,
-                      borderRadius: 1,
-                      border: '2px solid',
-                      borderColor: getStatusBorderColor(status)
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
+            {pairGroups.map(group => (
+              <TablePairOutline key={group.key} sx={{ flexDirection: 'column' }}>
+                {group.participants.map(participant => {
+                  const status = getParticipantStatus(participant);
+                  return (
+                    <Stack
+                      key={participant.id}
+                      direction="row"
+                      spacing={0.5}
                       sx={{
-                        fontWeight: 700,
-                        minWidth: 80,
-                        fontSize: '1.05rem'
-                      }}
-                    >
-                      {participant.table.name}:
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
-                    >
-                      {t('active-match.team-label')} {participant.team?.number} -{' '}
-                      {participant.team?.name}
-                    </Typography>
-                    <Box
-                      sx={{
-                        display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center',
-                        minWidth: 32,
-                        width: 32,
-                        height: 32
+                        py: 1,
+                        px: 2,
+                        borderRadius: 1,
+                        border: '2px solid',
+                        borderColor: getStatusBorderColor(status)
                       }}
                     >
-                      {getStatusIcon(status)}
-                    </Box>
-                  </Stack>
-                );
-              })}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontWeight: 700,
+                          minWidth: 80,
+                          fontSize: '1.05rem'
+                        }}
+                      >
+                        {participant.table.name}:
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{ flex: 1, fontSize: '1.05rem', fontWeight: 700 }}
+                      >
+                        {t('active-match.team-label')} {participant.team?.number} -{' '}
+                        {participant.team?.name}
+                      </Typography>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          minWidth: 32,
+                          width: 32,
+                          height: 32
+                        }}
+                      >
+                        {getStatusIcon(status)}
+                      </Box>
+                    </Stack>
+                  );
+                })}
+              </TablePairOutline>
+            ))}
           </Box>
         </Box>
       </Stack>

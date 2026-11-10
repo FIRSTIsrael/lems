@@ -53,7 +53,7 @@ export const makePortalMatchResponse = (
 
     return {
       team: team ? makePortalTeamResponse(team) : null,
-      table: { id: table.id, name: table.name }
+      table: { id: table.id, name: table.name, pairKey: table.pair_key, side: table.side }
     };
   });
 

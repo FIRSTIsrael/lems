@@ -218,6 +218,7 @@
         "blocked": "Niedostępne",
         "available": "Dostępne",
         "unavailable": "Niedostępne",
+        "side": "Strona {side}",
         "not-configured": "Stoły treningowe nie zostały skonfigurowane dla tej dywizji."
       }
     },
@@ -271,6 +272,8 @@
         "judging-session": "Sesja sędziowska - Pokój {room}",
         "practice-table": "Stół Treningowy {tableNumber}",
         "practice-table-location": "Stół Treningowy {tableNumber}",
+        "practice-table-side": "Stół Treningowy {tableNumber} – {side}",
+        "practice-table-side-location": "Stół Treningowy {tableNumber} – {side}",
         "no-matches": "Brak zaplanowanych meczów",
         "no-judging": "Brak zaplanowanych sesji sędziowskich",
         "no-schedule": "Brak harmonogramu"
@@ -311,6 +314,12 @@
         "scorer": "Punktator",
         "rubrics": "Rubryki"
       }
+    }
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Najwyższy wynik",
+      "average": "Średni wynik"
     }
   }
 }

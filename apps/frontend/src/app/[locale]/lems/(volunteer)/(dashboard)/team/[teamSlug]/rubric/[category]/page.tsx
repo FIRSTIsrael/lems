@@ -26,11 +26,11 @@ import { ValidationAlert } from './components/validation-alert';
 
 export default function RubricPage() {
   const t = useTranslations('pages.rubric');
-  const { getCategory } = useJudgingCategoryTranslations();
+  const edition = useEdition();
+  const { getCategory } = useJudgingCategoryTranslations(edition);
   const team = useTeam();
   const user = useUser();
   const { currentDivision } = useEvent();
-  const edition = useEdition();
 
   const { category }: { category: JudgingCategory } = useParams();
   const schema = getRubrics(edition)[category as JudgingCategory];

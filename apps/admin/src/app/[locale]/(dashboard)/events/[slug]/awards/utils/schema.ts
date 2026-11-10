@@ -6,7 +6,8 @@ import {
   OPTIONAL_AWARDS,
   PERSONAL_AWARDS,
   AUTOMATIC_ASSIGNMENT_AWARDS,
-  HIDE_PLACES
+  HIDE_PLACES,
+  getAwardRowsPerPlace
 } from '../types';
 
 /**
@@ -45,7 +46,7 @@ export function parseApiResponseToSchema(awards: ApiAward[]): AwardSchema | null
   const finalSchema: AwardSchema = {};
   Object.entries(groupedAwards).forEach(([awardKey, data]) => {
     finalSchema[awardKey] = {
-      count: data.count,
+      count: Math.ceil(data.count / getAwardRowsPerPlace(awardKey)),
       index: Math.min(...data.indices) // Use the lowest index for ordering
     };
   });
@@ -80,17 +81,21 @@ export function parseSchemaToApiRequest(
     const automaticAssignment = (AUTOMATIC_ASSIGNMENT_AWARDS as readonly string[]).includes(award);
     const showPlaces = !(HIDE_PLACES as readonly string[]).includes(award);
 
+    const rowsPerPlace = getAwardRowsPerPlace(award);
+
     for (let place = 1; place <= schemaItem.count; place++) {
-      awards.push({
-        name: award,
-        index: globalIndex++,
-        place: place,
-        type: isPersonal ? 'PERSONAL' : 'TEAM',
-        isOptional,
-        showPlaces,
-        allowNominations,
-        automaticAssignment
-      });
+      for (let row = 0; row < rowsPerPlace; row++) {
+        awards.push({
+          name: award,
+          index: globalIndex++,
+          place: place,
+          type: isPersonal ? 'PERSONAL' : 'TEAM',
+          isOptional,
+          showPlaces,
+          allowNominations,
+          automaticAssignment
+        });
+      }
     }
   });
 

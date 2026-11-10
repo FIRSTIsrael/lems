@@ -1,14 +1,24 @@
 import { gql, TypedDocumentNode } from '@apollo/client';
-import { compareScoreArrays } from '@lems/shared/utils';
+import {
+  compareRobotGameScores,
+  getRankingStrategy,
+  getRobotGameHeadlineScore,
+  getRobotGameRank,
+  getScoreboardRoundCount,
+  indexScoresByRound
+} from '@lems/shared/utils';
+import { getEdition } from '@lems/shared/edition';
 import type { QueryData, QueryVars, ScoreboardTeam } from './types';
 
 export const GET_SCOREBOARD: TypedDocumentNode<QueryData, QueryVars> = gql`
   query GetScoreboard($divisionId: String!) {
     division(id: $divisionId) {
       id
+      futureEdition
       field {
         divisionId
         currentStage
+        rankingRoundCount
       }
       teams {
         id
@@ -33,62 +43,55 @@ export function parseScoreboard(data: QueryData): ScoreboardTeam[] {
 
   const teams = data.division.teams;
   const currentStage = data.division.field?.currentStage || 'PRACTICE';
+  const strategy = getRankingStrategy(getEdition({ futureEdition: data.division.futureEdition }));
+  const rankingRoundCount = data.division.field?.rankingRoundCount ?? 0;
 
-  // Get all submitted rounds
-  const rounds = [
-    ...new Set(
-      teams.flatMap(t =>
-        t.scoresheets
-          .filter(s => s.status === 'submitted' && s.stage === currentStage)
-          .map(s => s.round)
+  const submittedByTeam = teams.map(team =>
+    team.scoresheets.filter(s => s.status === 'submitted' && s.stage === currentStage && s.data)
+  );
+  const roundCount = getScoreboardRoundCount(
+    currentStage,
+    rankingRoundCount,
+    submittedByTeam.flat().map(scoresheet => scoresheet.round)
+  );
+
+  const indexedScores = new Map(
+    teams.map((team, index) => [
+      team.id,
+      indexScoresByRound(
+        submittedByTeam[index].map(scoresheet => ({
+          round: scoresheet.round,
+          score: scoresheet.data?.score ?? 0
+        })),
+        roundCount
       )
-    )
-  ].sort((a, b) => a - b);
+    ])
+  );
 
-  // Build team rows
   const rows: ScoreboardTeam[] = teams.map(team => {
-    const submitted = team.scoresheets.filter(
-      s => s.status === 'submitted' && s.stage === currentStage
-    );
-    const scores = rounds.map(r => submitted.find(s => s.round === r)?.data?.score ?? null);
-    const validScores = scores.filter((s): s is number => s !== null);
+    const scores = (indexedScores.get(team.id) ?? []).map(score => score ?? null);
+    const hasScore = scores.some(score => score != null);
 
     return {
       id: team.id,
       number: team.number,
       name: team.name,
       scores,
-      maxScore: validScores.length ? Math.max(...validScores) : null,
+      maxScore: hasScore ? getRobotGameHeadlineScore(scores, strategy) : null,
       rank: null
     };
   });
 
-  // Sort by scores and assign ranks
-  rows.sort((a, b) => {
-    const scoresA = a.scores.filter((s): s is number => s !== null);
-    const scoresB = b.scores.filter((s): s is number => s !== null);
-    return compareScoreArrays(scoresA, scoresB);
+  const ranked = rows.filter(team => team.maxScore !== null);
+  const unranked = rows.filter(team => team.maxScore === null);
+  ranked.sort((a, b) => compareRobotGameScores(a.scores, b.scores, strategy));
+  ranked.forEach(team => {
+    team.rank = getRobotGameRank(
+      team.scores,
+      ranked.map(candidate => candidate.scores),
+      strategy
+    );
   });
 
-  let currentRank = 1;
-  let lastRankedIndex = -1;
-
-  rows.forEach((team, i) => {
-    if (team.maxScore === null) return;
-
-    const currScores = team.scores.filter((s): s is number => s !== null);
-
-    if (lastRankedIndex === -1) {
-      team.rank = currentRank;
-    } else {
-      const prev = rows[lastRankedIndex];
-      const prevScores = prev.scores.filter((s): s is number => s !== null);
-      const tied = compareScoreArrays(prevScores, currScores) === 0;
-      team.rank = tied ? prev.rank : (currentRank = i + 1);
-    }
-
-    lastRankedIndex = i;
-  });
-
-  return rows.sort((a, b) => (a.rank ?? Infinity) - (b.rank ?? Infinity));
+  return [...ranked, ...unranked];
 }

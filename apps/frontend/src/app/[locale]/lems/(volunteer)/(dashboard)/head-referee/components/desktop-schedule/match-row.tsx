@@ -8,6 +8,7 @@ import PersonPinIcon from '@mui/icons-material/PersonPin';
 import HourglassEmptyIcon from '@mui/icons-material/HourglassEmpty';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutlineOutlined';
 import BlockIcon from '@mui/icons-material/Block';
+import { pairDividerSx } from '@lems/shared/components';
 import type { Match, Scoresheet, Table as TableType } from '../../graphql/types';
 import { ScoresheetStatusButton } from '../scoresheet-status-button';
 import { useScrollToCurrent } from '../use-scroll-to-current';
@@ -15,6 +16,7 @@ import { useScrollToCurrent } from '../use-scroll-to-current';
 interface MatchRowProps {
   match: Match;
   tables: TableType[];
+  pairStarts: Set<string>;
   scoresheets: Scoresheet[];
   isActive: boolean;
   isLoaded: boolean;
@@ -25,6 +27,7 @@ interface MatchRowProps {
 export function MatchRow({
   match,
   tables,
+  pairStarts,
   scoresheets,
   isActive,
   isLoaded,
@@ -78,10 +81,11 @@ export function MatchRow({
         </Typography>
       </TableCell>
       {tables.map(table => {
+        const cellSx = pairStarts.has(table.id) ? pairDividerSx : undefined;
         const participant = match.participants.find(p => p.table.id === table.id);
         if (!participant || !participant.team) {
           return (
-            <TableCell key={table.id} align="center">
+            <TableCell key={table.id} align="center" sx={cellSx}>
               <Typography
                 variant="body1"
                 sx={{
@@ -103,7 +107,7 @@ export function MatchRow({
           const isFiltered = scoresheets.some(s => s.id === scoresheet.id);
 
           return (
-            <TableCell key={table.id} align="center">
+            <TableCell key={table.id} align="center" sx={cellSx}>
               <ScoresheetStatusButton
                 teamNumber={participant.team.number}
                 teamSlug={participant.team.slug}
@@ -181,9 +185,7 @@ export function MatchRow({
           <TableCell
             key={table.id}
             align="center"
-            sx={{
-              cursor: 'default'
-            }}
+            sx={[{ cursor: 'default' }, pairStarts.has(table.id) && pairDividerSx]}
           >
             <Tooltip title={tooltipTitle}>
               <Stack

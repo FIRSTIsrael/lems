@@ -30,6 +30,8 @@ export const GET_SCOREKEEPER_DATA: TypedDocumentNode<ScorekeeperData, Scorekeepe
             table {
               id
               name
+              pairKey
+              side
             }
             queued
             present

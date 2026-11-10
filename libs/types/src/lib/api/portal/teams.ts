@@ -65,7 +65,15 @@ export const TeamRobotGameMatchSchema = z.object({
   table: z.object({
     id: z.string(),
     name: z.string()
-  })
+  }),
+  tablePartner: z
+    .object({
+      number: z.number(),
+      name: z.string(),
+      slug: z.string()
+    })
+    .nullable()
+    .optional()
 });
 
 export type TeamRobotGameMatch = z.infer<typeof TeamRobotGameMatchSchema>;

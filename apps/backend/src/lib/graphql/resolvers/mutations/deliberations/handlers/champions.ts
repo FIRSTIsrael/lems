@@ -1,7 +1,13 @@
 import { FinalDeliberationAwards, Award } from '@lems/database';
 import { MutationError, MutationErrorCode } from '@lems/types/api/lems';
 import { selectAdvancingTeams } from '@lems/shared/deliberation';
+import {
+  buildCoopertitionResults,
+  computeTeamAverages,
+  selectCoopertitionWinners
+} from '@lems/shared/awards';
 import db from '../../../../../database';
+import { toPairableTable } from '../../../../../table-pairs';
 import { calculateAllTeamScores, rankTeams, updateFinalDeliberationAwards } from './utils';
 
 /**
@@ -70,11 +76,13 @@ export async function handleChampionsStageCompletion(
   const robotPerformanceAwards = await db.awards.byDivisionId(divisionId).get('robot-performance');
   if (robotPerformanceAwards.length > 0) {
     const robotPerformanceWinners = allTeamsWithRanks
-      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'])
+      .sort((a, b) => a.ranks['robot-game'] - b.ranks['robot-game'] || a.teamNumber - b.teamNumber)
       .slice(0, robotPerformanceAwards.length)
       .map(t => t.teamId);
     await assignRobotPerformanceAwards(divisionId, robotPerformanceWinners, robotPerformanceAwards);
   }
+
+  await assignCoopertitionAwards(divisionId);
 
   // Filter to eligible teams for judging-based awards
   const eligibleTeams = teams.filter(t => {
@@ -105,11 +113,9 @@ export async function handleChampionsStageCompletion(
     teams.length
   );
 
-  if (advancingTeamIds.length === 0) {
-    return;
+  if (advancingTeamIds.length > 0) {
+    await createAdvancementAwards(divisionId, advancingTeamIds);
   }
-
-  await createAdvancementAwards(divisionId, advancingTeamIds);
   await updateFinalDeliberationAwards(divisionId);
 }
 
@@ -175,6 +181,83 @@ const assignRobotPerformanceAwards = async (
       awards: updatedAwards
     });
   }
+};
+
+/**
+ * Assigns Coopertition (two award rows per place) to the best paired matches
+ */
+export const assignCoopertitionAwards = async (divisionId: string): Promise<void> => {
+  const awards = await db.awards.byDivisionId(divisionId).get('coopertition');
+  if (awards.length === 0) return;
+
+  const rows = [...awards].sort((a, b) => a.place - b.place || a.index - b.index);
+  const places = Math.floor(rows.length / 2);
+
+  const [matches, tables, scoresheets] = await Promise.all([
+    db.robotGameMatches.byDivision(divisionId).getAll(),
+    db.tables.byDivisionId(divisionId).getAll(),
+    db.scoresheets.byDivision(divisionId).byStage('RANKING').getAll()
+  ]);
+
+  const scoresheetInputs = scoresheets.map(s => ({
+    teamId: s.teamId,
+    stage: s.stage,
+    round: s.round,
+    status: s.status,
+    score: s.data?.score ?? 0
+  }));
+
+  const results = buildCoopertitionResults(
+    matches.map(m => ({
+      matchNumber: m.number,
+      stage: m.stage,
+      round: m.round,
+      participants: m.participants.map(p => ({ teamId: p.team_id, tableId: p.table_id }))
+    })),
+    tables.map(toPairableTable),
+    scoresheetInputs
+  );
+  const winners = selectCoopertitionWinners(results, computeTeamAverages(scoresheetInputs), places);
+
+  const winnerIds = winners.flat();
+
+  // Clear, re-assign and record the winners atomically so a partial failure
+  // cannot leave the awards table out of sync with the final deliberation.
+  await db.raw.sql.transaction().execute(async trx => {
+    await trx
+      .updateTable('awards')
+      .set({ winner_id: null, winner_name: null })
+      .where(
+        'id',
+        'in',
+        rows.map(row => row.id)
+      )
+      .execute();
+
+    for (let i = 0; i < rows.length; i++) {
+      const teamId = winnerIds[i];
+      if (teamId) {
+        await trx
+          .updateTable('awards')
+          .set({ winner_id: teamId, winner_name: null })
+          .where('id', '=', rows[i].id)
+          .execute();
+      }
+    }
+
+    const finalDeliberation = await trx
+      .selectFrom('final_deliberations')
+      .select('awards')
+      .where('division_id', '=', divisionId)
+      .executeTakeFirst();
+    if (finalDeliberation) {
+      await trx
+        .updateTable('final_deliberations')
+        .set({ awards: { ...finalDeliberation.awards, coopertition: winnerIds } })
+        .where('division_id', '=', divisionId)
+        .execute();
+    }
+  });
 };
 
 /**

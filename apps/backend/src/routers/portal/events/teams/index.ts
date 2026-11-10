@@ -1,4 +1,5 @@
 import express, { Response } from 'express';
+import { getEdition } from '@lems/shared/edition';
 import db from '../../../../lib/database';
 import { PortalTeamAtEventRequest } from '../../../../types/express';
 import { attachTeamAtEvent } from '../../middleware/attach-team-at-event';
@@ -50,31 +51,49 @@ router.get(
 router.get(
   '/:teamSlug/activities',
   asHandler<PortalTeamAtEventRequest>(async (req, res: Response) => {
-    const [session, rooms, matches, tables, agendaPublic, agendaTeams, practiceAssignments] =
-      await Promise.all([
-        db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId),
-        db.rooms.byDivisionId(req.divisionId).getAll(),
-        db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId),
-        db.tables.byDivisionId(req.divisionId).getAll(),
-        db.divisions.byId(req.divisionId).agenda().getAll('public'),
-        db.divisions.byId(req.divisionId).agenda().getAll('teams'),
-        db.divisions.byId(req.divisionId).practiceTables().getTeamAssignments(req.teamId)
-      ]);
+    const [
+      division,
+      divisionTeams,
+      session,
+      rooms,
+      matches,
+      tables,
+      agendaPublic,
+      agendaTeams,
+      practiceAssignments
+    ] = await Promise.all([
+      db.divisions.byId(req.divisionId).get(),
+      db.teams.byDivisionId(req.divisionId).getAll(),
+      db.judgingSessions.byDivision(req.divisionId).getByTeam(req.teamId),
+      db.rooms.byDivisionId(req.divisionId).getAll(),
+      db.robotGameMatches.byDivision(req.divisionId).getByTeam(req.teamId),
+      db.tables.byDivisionId(req.divisionId).getAll(),
+      db.divisions.byId(req.divisionId).agenda().getAll('public'),
+      db.divisions.byId(req.divisionId).agenda().getAll('teams'),
+      db.divisions.byId(req.divisionId).practiceTables().getTeamAssignments(req.teamId)
+    ]);
+
+    if (!division) {
+      res.status(404).json({ error: 'Division not found' });
+      return;
+    }
+    const edition = getEdition(division);
 
     const agenda = [...agendaPublic, ...agendaTeams];
 
     // Format practice table assignments with ISO datetime strings
     const formattedPracticeAssignments = practiceAssignments.map(a => ({
       id: a.id,
-      tableNumber: a.table_number,
+      tableNumber: a.table_number + 1, // stored 0-based; every view displays it 1-based
       startTime: a.start_time.toISOString(),
-      endTime: a.end_time.toISOString()
+      endTime: a.end_time.toISOString(),
+      side: a.side
     }));
 
     res.json({
       session: session ? makePortalTeamJudgingSessionResponse(req.teamId, session, rooms) : null,
       matches: matches.map(match =>
-        makePortalTeamRobotGameMatchResponse(req.teamId, match, tables)
+        makePortalTeamRobotGameMatchResponse(req.teamId, match, tables, divisionTeams, edition)
       ),
       agenda: agenda.map(a => makeAgendaResponse(a)),
       practiceAssignments: formattedPracticeAssignments
@@ -116,12 +135,8 @@ router.get(
       return;
     }
 
-    const sortedScores = rankingData.scoresWithRounds
-      .sort((a, b) => a.round - b.round)
-      .map(s => s.score);
-
     res.status(200).json({
-      scores: sortedScores,
+      scores: rankingData.scores,
       highestScore: rankingData.maxScore,
       robotGameRank: rankingData.rank
     });

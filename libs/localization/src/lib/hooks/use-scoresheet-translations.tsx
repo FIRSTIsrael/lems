@@ -1,17 +1,30 @@
 import { useTranslations } from 'next-intl';
+import { FUTURE_SCORESHEET_SEASON } from '@lems/shared/scoresheet';
 import { RichText } from '../rich-text';
 
+const getGeneralNamespace = (season: string) =>
+  season === FUTURE_SCORESHEET_SEASON
+    ? 'shared.scoresheet-future.general'
+    : 'shared.scoresheet.general';
+
+/** The Future edition's scoresheet has its own namespace; past/current seasons live under `seasons.<slug>`. */
+const getSeasonNamespace = (season: string) =>
+  season === FUTURE_SCORESHEET_SEASON
+    ? 'shared.scoresheet-future'
+    : `shared.scoresheet.seasons.${season}`;
+
 export const useScoresheetTranslations = (season: string) => {
-  const t = useTranslations('shared.scoresheet');
+  const t = useTranslations(getSeasonNamespace(season));
+  const tGeneral = useTranslations(getGeneralNamespace(season));
 
   return {
-    getError: (errorId: string) => t(`seasons.${season}.errors.${errorId}.description`),
-    getGeneralTerm: (term: string) => t(`general.${term}`)
+    getError: (errorId: string) => t(`errors.${errorId}.description`),
+    getGeneralTerm: (term: string) => tGeneral(term)
   };
 };
 
 export const useScoresheetMissionTranslations = (season: string, missionId: string) => {
-  const t = useTranslations(`shared.scoresheet.seasons.${season}.missions.${missionId}`);
+  const t = useTranslations(`${getSeasonNamespace(season)}.missions.${missionId}`);
 
   const getRemarks = () => {
     const remarks: string[] = [];
@@ -45,7 +58,7 @@ export const useScoresheetClauseTranslations = (
   clauseIndex: number
 ) => {
   const t = useTranslations(
-    `shared.scoresheet.seasons.${season}.missions.${missionId}.clauses.${clauseIndex}`
+    `${getSeasonNamespace(season)}.missions.${missionId}.clauses.${clauseIndex}`
   );
 
   return {
@@ -56,8 +69,8 @@ export const useScoresheetClauseTranslations = (
   };
 };
 
-export const useScoresheetGeneralTranslations = () => {
-  const t = useTranslations('shared.scoresheet.general');
+export const useScoresheetGeneralTranslations = (season: string) => {
+  const t = useTranslations(getGeneralNamespace(season));
 
   return {
     yes: t('yes'),

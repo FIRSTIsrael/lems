@@ -81,6 +81,9 @@ type Scoresheet {
 
   "Scoresheet data including scores and mission values"
   data: ScoresheetData
+
+  "Whether the team was a no-show for this ranking match (present was never marked after the match completed)"
+  isNoShow: Boolean!
 }
 
 extend type Field {

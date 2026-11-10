@@ -1,7 +1,8 @@
-import { Scoresheet, JudgingCategory } from '@lems/database';
+import { Scoresheet, JudgingCategory, buildNoShowKey } from '@lems/database';
 import { getRubrics } from '@lems/shared/rubrics';
 import { Edition } from '@lems/shared/edition';
-import { calculateTeamRanks, TeamWithRanks } from '@lems/shared/deliberation';
+import { calculateTeamRanks, TeamWithRanks, getEffectiveGp } from '@lems/shared/deliberation';
+import { getRankingStrategy, indexScoresByRound } from '@lems/shared/utils';
 import { RedisEventTypes } from '@lems/types/api/lems/redis';
 import db from '../../../../../database';
 import { getDivisionEdition } from '../../../../utils/division-edition';
@@ -17,7 +18,7 @@ interface TeamScoreData {
   teamNumber: number;
   rubricScores: Record<JudgingCategory, number>;
   gpScore: number;
-  robotGameScores: number[];
+  robotGameScores: (number | undefined)[];
 }
 
 /**
@@ -30,16 +31,23 @@ export async function calculateAllTeamScores(
   const rubrics = await db.rubrics.byDivision(divisionId).getAll();
   const scoresheets = await db.scoresheets.byDivision(divisionId).getAll();
   const edition = await getDivisionEdition(divisionId);
+  const noShows = await db.robotGameMatches.byDivision(divisionId).getRankingNoShows();
+  const zeroGpForNoShows = await getZeroGpForNoShowsSetting(divisionId);
+  const rankingRoundCount = await db.robotGameMatches.byDivision(divisionId).getRankingRoundCount();
 
-  return teams.map(team => ({
-    teamId: team.id,
-    teamNumber: team.number,
-    rubricScores: calculateRubricScores(team.id, rubrics, edition),
-    gpScore: calculateGPScore(team.id, scoresheets),
-    robotGameScores: scoresheets
+  return teams.map(team => {
+    const submittedRankingScores = scoresheets
       .filter(s => s.teamId === team.id && s.stage === 'RANKING' && s.status === 'submitted')
-      .map(s => s.data?.score || 0)
-  }));
+      .map(s => ({ round: s.round, score: s.data?.score ?? 0 }));
+
+    return {
+      teamId: team.id,
+      teamNumber: team.number,
+      rubricScores: calculateRubricScores(team.id, rubrics, edition),
+      gpScore: calculateGPScore(team.id, scoresheets, noShows, zeroGpForNoShows),
+      robotGameScores: indexScoresByRound(submittedRankingScores, rankingRoundCount)
+    };
+  });
 }
 
 /**
@@ -116,13 +124,31 @@ function calculateRubricScores(
 }
 
 /**
- * Calculates GP score for a specific team
+ * Fetches whether the event is configured to zero out GP scores for ranking no-shows.
  */
-function calculateGPScore(teamId: string, scoresheets: Scoresheet[]): number {
+async function getZeroGpForNoShowsSetting(divisionId: string): Promise<boolean> {
+  const division = await db.divisions.byId(divisionId).get();
+  if (!division) return false;
+
+  const settings = await db.events.byId(division.event_id).getSettings();
+  return settings?.zero_gp_for_no_shows ?? true;
+}
+
+/**
+ * Calculates GP score for a specific team, zeroing out ranking rounds where the
+ * team was a no-show if the event's `zeroGpForNoShows` setting is enabled.
+ */
+function calculateGPScore(
+  teamId: string,
+  scoresheets: Scoresheet[],
+  noShows: Set<string>,
+  zeroGpForNoShows: boolean
+): number {
   return scoresheets
     .filter(s => s.teamId === teamId && s.stage === 'RANKING')
     .reduce((sum, sheet) => {
-      return sum + (sheet.data?.gp?.value ?? 3);
+      const isNoShow = noShows.has(buildNoShowKey(teamId, sheet.round));
+      return sum + getEffectiveGp(sheet.data?.gp?.value, isNoShow, zeroGpForNoShows);
     }, 0);
 }
 
@@ -134,6 +160,8 @@ export async function rankTeams(
   divisionId: string
 ): Promise<TeamWithRanks[]> {
   const picklists = await fetchPicklists(divisionId);
+  const edition = await getDivisionEdition(divisionId);
+  const rankingStrategy = getRankingStrategy(edition);
 
   // Calculate modified scores for all teams first (add GP score to core-values)
   const teamScoresWithGP = teamScores.map(teamData => ({
@@ -147,7 +175,7 @@ export async function rankTeams(
   return teamScoresWithGP.map(teamData => {
     const teamDataCopy = structuredClone(teamData);
     const teamScoresWithGPCopy = structuredClone(teamScoresWithGP);
-    return calculateTeamRanks(teamDataCopy, teamScoresWithGPCopy, picklists);
+    return calculateTeamRanks(teamDataCopy, teamScoresWithGPCopy, picklists, rankingStrategy);
   });
 }
 

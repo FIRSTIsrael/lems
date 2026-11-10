@@ -19,8 +19,13 @@ interface ClausePickerProps<T> {
   disabled?: boolean;
 }
 
-const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({ value, onChange, disabled }) => {
-  const { yes, no } = useScoresheetGeneralTranslations();
+const BooleanClause: React.FC<ClausePickerProps<boolean>> = ({
+  value,
+  onChange,
+  disabled,
+  season
+}) => {
+  const { yes, no } = useScoresheetGeneralTranslations(season);
 
   return (
     <ToggleButtonGroup

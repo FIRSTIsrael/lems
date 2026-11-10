@@ -16,10 +16,14 @@ export {
   AWARD_LIMITS,
   CORE_VALUES_AWARDS,
   OPTIONAL_AWARDS,
+  getOptionalAwards,
+  isAwardAvailable,
   PERSONAL_AWARDS,
   MANDATORY_AWARDS,
   AUTOMATIC_ASSIGNMENT_AWARDS,
-  HIDE_PLACES
+  HIDE_PLACES,
+  CO_WINNER_AWARDS,
+  getAwardRowsPerPlace
 } from '@lems/shared';
 
 // Utility types

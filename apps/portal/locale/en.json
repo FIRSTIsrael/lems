@@ -218,6 +218,7 @@
         "blocked": "Unavailable",
         "available": "Available",
         "unavailable": "Unavailable",
+        "side": "Side {side}",
         "not-configured": "Practice tables have not been configured for this division."
       }
     },
@@ -271,6 +272,8 @@
         "judging-session": "Judging Session - Room {room}",
         "practice-table": "Practice Table {tableNumber}",
         "practice-table-location": "Practice Table {tableNumber}",
+        "practice-table-side": "Practice Table {tableNumber} – {side}",
+        "practice-table-side-location": "Practice Table {tableNumber} – {side}",
         "no-matches": "No matches scheduled",
         "no-judging": "No judging sessions scheduled",
         "no-schedule": "No schedule available"
@@ -311,6 +314,12 @@
         "scorer": "Scorer",
         "rubrics": "Rubrics"
       }
+    }
+  },
+  "robot-game": {
+    "headline-score": {
+      "max": "Highest Score",
+      "average": "Average Score"
     }
   }
 }

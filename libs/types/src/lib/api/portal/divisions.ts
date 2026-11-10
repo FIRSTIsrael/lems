@@ -33,6 +33,11 @@ const Location = z.object({
   name: z.string()
 });
 
+const TableLocation = Location.extend({
+  pairKey: z.string(),
+  side: z.string()
+});
+
 export type Award = z.infer<typeof PortalAwardResponseSchema>;
 
 export const PortalAwardsResponseSchema = z.array(PortalAwardResponseSchema);
@@ -46,7 +51,7 @@ export const PortalDivisionRobotGameMatchSchema = z.object({
   participants: z.array(
     z.object({
       team: Team.nullable(),
-      table: Location
+      table: TableLocation
     })
   )
 });

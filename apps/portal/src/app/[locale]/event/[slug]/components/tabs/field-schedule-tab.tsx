@@ -23,6 +23,8 @@ import {
 import NextLink from 'next/link';
 import { RobotGameMatch } from '@lems/types/api/portal';
 import { useMatchTranslations } from '@lems/localization';
+import { getPairStartIds, orderTablesByPair } from '@lems/shared/utils';
+import { pairDividerSx } from '@lems/shared/components';
 import { useRealtimeData } from '../../../../hooks/use-realtime-data';
 import { useDivision } from '../division-data-context';
 
@@ -64,13 +66,14 @@ export const FieldScheduleTab: React.FC = () => {
   );
 
   // Extract unique tables from all matches
-  const tablesMap = new Map<string, { id: string; name: string }>();
+  const tablesMap = new Map<string, RobotGameMatch['participants'][number]['table']>();
   fieldSchedule.forEach(match => {
     match.participants.forEach(participant => {
       tablesMap.set(participant.table.id, participant.table);
     });
   });
-  const tables = Array.from(tablesMap.values()).sort((a, b) => a.name.localeCompare(b.name));
+  const tables = orderTablesByPair(Array.from(tablesMap.values()));
+  const pairStarts = getPairStartIds(tables);
 
   return (
     <Paper sx={{ p: 0 }}>
@@ -140,7 +143,12 @@ export const FieldScheduleTab: React.FC = () => {
                       </Typography>
                     </TableCell>
                     {tables.map(table => (
-                      <TableCell key={table.id} width={isMobile ? 80 : 120} align="center">
+                      <TableCell
+                        key={table.id}
+                        width={isMobile ? 80 : 120}
+                        align="center"
+                        sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                      >
                         <Typography
                           sx={{
                             fontWeight: 600,
@@ -182,7 +190,11 @@ export const FieldScheduleTab: React.FC = () => {
                         const team = participant?.team;
 
                         return (
-                          <TableCell key={table.id} align="center">
+                          <TableCell
+                            key={table.id}
+                            align="center"
+                            sx={pairStarts.has(table.id) ? pairDividerSx : undefined}
+                          >
                             {team ? (
                               <Tooltip title={team.name} arrow>
                                 <Link

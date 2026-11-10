@@ -43,7 +43,7 @@ export const scoresheetTableResolver: GraphQLFieldResolver<
   ScoresheetGraphQL,
   unknown,
   unknown,
-  Promise<{ id: string; name: string } | null>
+  Promise<{ id: string; name: string; pairKey: string; side: string } | null>
 > = async (scoresheet: ScoresheetGraphQL) => {
   try {
     // Find the match that corresponds to this scoresheet
@@ -78,7 +78,9 @@ export const scoresheetTableResolver: GraphQLFieldResolver<
 
     return {
       id: table.id,
-      name: table.name
+      name: table.name,
+      pairKey: table.pair_key,
+      side: table.side
     };
   } catch (error) {
     console.error('Error fetching table for scoresheet:', scoresheet.id, error);
@@ -111,5 +113,10 @@ export const scoresheetResolvers = {
   stage: ((scoresheet: ScoresheetGraphQL) => {
     // Return stage as-is (PRACTICE or RANKING)
     return scoresheet.stage;
-  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, string>
+  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, string>,
+
+  isNoShow: ((scoresheet: ScoresheetGraphQL) => {
+    // Pre-computed by the parent list resolver (batched per division)
+    return scoresheet.isNoShow ?? false;
+  }) as GraphQLFieldResolver<ScoresheetGraphQL, unknown, unknown, boolean>
 };
