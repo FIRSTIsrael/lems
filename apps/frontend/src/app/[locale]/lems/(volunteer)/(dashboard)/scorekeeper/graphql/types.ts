@@ -42,6 +42,8 @@ export interface MatchParticipant {
   table: {
     id: string;
     name: string;
+    pairKey: string;
+    side: string;
   };
   queued: boolean;
   present: boolean;

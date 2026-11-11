@@ -11,6 +11,8 @@ export interface Team {
 export interface Table {
   id: string;
   name: string;
+  pairKey: string;
+  side: string;
 }
 
 export interface Room {

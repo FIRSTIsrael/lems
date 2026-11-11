@@ -6,9 +6,8 @@ import { useTranslations } from 'next-intl';
 import { Box, Paper, Typography, Grid, Button, CircularProgress } from '@mui/material';
 import { useQuery } from '@apollo/client/react';
 import { useFinalDeliberation } from '../../final-deliberation-context';
-import { EnrichedTeam } from '../../types';
 import { GET_DIVISION_AWARDS } from '../../graphql';
-import { AwardSection } from './award-section';
+import { AwardSection, AwardSectionWinner } from './award-section';
 import { ApprovalModal } from './approval-modal';
 
 export const ReviewStage: React.FC = () => {
@@ -32,7 +31,7 @@ export const ReviewStage: React.FC = () => {
   }, [awardsError]);
 
   const mappedWinners = useMemo(() => {
-    const mapped: Record<string, EnrichedTeam[]> = {};
+    const mapped: Record<string, AwardSectionWinner[]> = {};
 
     if (!awardsData?.division?.judging?.awards) {
       return mapped;
@@ -53,7 +52,7 @@ export const ReviewStage: React.FC = () => {
         if (teamWinner.team) {
           const team = teams.find(t => t.id === teamWinner.team.id);
           if (team) {
-            mapped[award.name].push(team);
+            mapped[award.name].push({ awardId: award.id, place: award.place, team });
           }
         }
       }

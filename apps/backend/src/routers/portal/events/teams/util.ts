@@ -1,11 +1,16 @@
 import {
   RobotGameMatchWithParticipants as DbRobotGameMatch,
   RobotGameTable as DbRobotGameTable,
+  Team as DbTeam,
   JudgingSession as DbJudgingSession,
   JudgingRoom as DbJudgingRoom,
   AgendaEvent as DbAgendaEvent
 } from '@lems/database';
+import { getPairedParticipant } from '@lems/shared/utils';
+import type { Edition } from '@lems/shared/edition';
 import { AgendaEvent, TeamJudgingSession, TeamRobotGameMatch } from '@lems/types/api/portal';
+import { toPairableTable } from '../../../../lib/table-pairs';
+import { makePortalTeamResponse } from '../../teams/util';
 
 export const makePortalTeamJudgingSessionResponse = (
   teamId: string,
@@ -30,7 +35,9 @@ export const makePortalTeamJudgingSessionResponse = (
 export const makePortalTeamRobotGameMatchResponse = (
   teamId: string,
   match: DbRobotGameMatch,
-  tables: DbRobotGameTable[]
+  tables: DbRobotGameTable[],
+  teams: DbTeam[],
+  edition: Edition
 ): TeamRobotGameMatch => {
   const participant = match.participants.find(p => p.team_id === teamId);
   if (!participant) {
@@ -45,13 +52,28 @@ export const makePortalTeamRobotGameMatchResponse = (
     );
   }
 
+  let tablePartner: TeamRobotGameMatch['tablePartner'] = null;
+  if (edition === 'future') {
+    const partner = getPairedParticipant(
+      match.participants.map(p => ({ teamId: p.team_id, table: { id: p.table_id } })),
+      table.id,
+      tables.map(toPairableTable)
+    );
+    const partnerTeam = partner?.teamId ? teams.find(t => t.id === partner.teamId) : undefined;
+    if (partnerTeam) {
+      const { number, name, slug } = makePortalTeamResponse(partnerTeam);
+      tablePartner = { number, name, slug };
+    }
+  }
+
   return {
     id: match.id,
     round: match.round,
     number: match.number,
     stage: match.stage,
     scheduledTime: match.scheduled_time,
-    table: { id: table.id, name: table.name }
+    table: { id: table.id, name: table.name },
+    tablePartner
   };
 };
 

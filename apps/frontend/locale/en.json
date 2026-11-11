@@ -403,6 +403,7 @@
         "page-title": "Practice Tables Schedule",
         "time": "Time",
         "table": "Table {number}",
+        "side": "Side {side}",
         "blocked": "Blocked",
         "available": "Available",
         "unavailable": "Unavailable",
@@ -1518,10 +1519,17 @@
           }
         },
         "anomalies": {
-          "alert-title": "Ranking Anomalies Detected",
-          "alert-description": "Some teams have significant differences between their picklist position and calculated rank.",
-          "higher": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} higher in the {category} category",
-          "lower": "Team {teamNumber} was ranked {difference, plural, =1 {one place} other {# places}} lower in the {category} category"
+          "button": "View ranking anomalies",
+          "title": "Ranking Anomalies",
+          "count": "{count, plural, =1 {1 anomaly detected} other {# anomalies detected}}",
+          "description": "These teams were placed on the picklist 3 or more places away from their rubric score rank.",
+          "close": "Close",
+          "team": "Team",
+          "picklist": "Picklist",
+          "calculated": "Calculated",
+          "difference": "Difference",
+          "higher": "Placed {difference, plural, =1 {one place} other {# places}} higher than the calculated rank",
+          "lower": "Placed {difference, plural, =1 {one place} other {# places}} lower than the calculated rank"
         }
       }
     },
@@ -1548,6 +1556,7 @@
         "clear-all": "Clear All",
         "coming-soon": "Coming Soon",
         "grid-placeholder": "Schedule grid will be available here",
+        "side": "Side {side}",
         "info": "Tables: {tables} | Slot Duration: {duration} minutes",
         "time": "Time",
         "table": "Table",

@@ -59,15 +59,20 @@
     },
     "teams": {
       "title": "קבוצות <i>FIRST</i> LEGO League Challenge",
+      "search": {
+        "placeholder": "חיפוש קבוצות..."
+      },
       "region": {
         "label": "מדינה",
-        "all": "כל המדינות",
-        "current-all": "מציג קבוצות מכל המדינות",
-        "current": "מציג קבוצות מהמדינה {region}"
+        "all": "כל המדינות"
       },
       "no-teams": {
         "title": "אין קבוצות להציג",
         "message": "אנא בדקו שוב מאוחר יותר"
+      },
+      "no-results": {
+        "title": "לא נמצאו תוצאות שתואמות לחיפוש",
+        "message": "נסו לחפש במילים אחרות או לשנות את המדינה"
       }
     },
     "events": {
@@ -213,6 +218,7 @@
         "blocked": "לא זמין",
         "available": "זמין",
         "unavailable": "לא זמין",
+        "side": "צד {side}",
         "not-configured": "שולחנות אימונים לא הוגדרו עבור בית זה."
       }
     },
@@ -266,6 +272,8 @@
         "judging-session": "מפגש שיפוט - חדר {room}",
         "practice-table": "שולחן אימון {tableNumber}",
         "practice-table-location": "שולחן אימון {tableNumber}",
+        "practice-table-side": "שולחן אימון {tableNumber} – {side}",
+        "practice-table-side-location": "שולחן אימון {tableNumber} – {side}",
         "no-matches": "אין מקצים מתוכננים",
         "no-judging": "אין מפגשי שיפוט מתוכננים",
         "no-schedule": "אין לוח זמנים זמין"

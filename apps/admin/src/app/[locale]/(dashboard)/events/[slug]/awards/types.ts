@@ -21,7 +21,9 @@ export {
   PERSONAL_AWARDS,
   MANDATORY_AWARDS,
   AUTOMATIC_ASSIGNMENT_AWARDS,
-  HIDE_PLACES
+  HIDE_PLACES,
+  CO_WINNER_AWARDS,
+  getAwardRowsPerPlace
 } from '@lems/shared';
 
 // Utility types

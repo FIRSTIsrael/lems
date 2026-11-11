@@ -10,6 +10,7 @@ import { useEvent } from '../components/event-context';
 import { DivisionSelector } from '../components/division-selector';
 import { PitMapManager } from './components/pit-map-manager';
 import { AssetManager } from './components/asset-manager';
+import { TablePairsManager } from './components/tables/table-pairs-manager';
 import { ScheduleExists } from './components/schedule-exists';
 import { PracticeTablesSection } from './components/practice-tables';
 
@@ -45,7 +46,7 @@ const VenuePage: React.FC = () => {
           </Grid>
 
           <Grid size={{ xs: 12, md: 12, lg: 6, xl: 6 }}>
-            <AssetManager key="tables" division={selectedDivision} assetType="tables" />
+            <TablePairsManager key="tables" division={selectedDivision} />
           </Grid>
         </Grid>
       )}

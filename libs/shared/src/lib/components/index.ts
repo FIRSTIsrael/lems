@@ -6,6 +6,7 @@ export * from './responsive-component';
 export * from './flag';
 export * from './google-map-embed';
 export * from './edition-badge';
+export * from './table-pair-outline';
 
 // Formik helpers
 export * from './formik/formik-number-input';

@@ -13,6 +13,7 @@ export interface FinalJudgingDeliberation {
   robotDesign: string[];
   coreValues: string[];
   robotPerformance: string[];
+  coopertition: string[];
   optionalAwards: Record<string, string[]>;
   coreAwardsManualEligibility: string[];
   optionalAwardsManualEligibility: string[];
@@ -48,6 +49,7 @@ export interface Division {
   name: string;
   color: string;
   field?: {
+    divisionId: string;
     rankingRoundCount: number;
   };
   teams: Team[];

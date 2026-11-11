@@ -28,17 +28,15 @@ export type PersonalAward = (typeof PERSONAL_AWARDS)[number];
  * IDs of awards that are assigned by the system during final deliberation,
  * rather than picked by judges in the optional-awards stage.
  */
-export const AUTOMATIC_ASSIGNMENT_AWARDS = [
-  'excellence-in-engineering',
-  'robot-performance'
-] as const;
+export const AUTOMATIC_ASSIGNMENT_AWARDS = ['robot-performance', 'coopertition'] as const;
 export type AutomaticAssignmentAward = (typeof AUTOMATIC_ASSIGNMENT_AWARDS)[number];
 
 export const OPTIONAL_AWARDS = [
   'excellence-in-engineering',
   ...PERSONAL_AWARDS,
   ...CORE_VALUES_AWARDS,
-  'peer'
+  'peer',
+  'coopertition'
 ] as const;
 export type OptionalAwards = (typeof OPTIONAL_AWARDS)[number];
 
@@ -64,7 +62,7 @@ export type Award = (typeof AWARDS)[number];
 /**
  * Team awards judges assign during the optional-awards deliberation stage.
  * Personal awards are optional but assigned outside deliberation.
- * Automatically assigned awards, such as excellence in engineering, are filled in earlier.
+ * Automatically assigned awards are filled in earlier.
  */
 export function isDeliberationOptionalAward(award: {
   type: string;
@@ -91,6 +89,7 @@ export const AWARD_LIMITS: { [key in Award]: number } = {
   impact: 1,
   inspiration: 1,
   peer: 1,
+  coopertition: 4,
   'lead-mentor': -1, // Unlimited
   'volunteer-of-the-year': -1, // Unlimited
   advancement: -1 // Unlimited
@@ -112,7 +111,23 @@ export const getAwardLabelKey = (award: string, edition: Edition): string =>
   edition === 'future' && FUTURE_LABEL_OVERRIDES.includes(award) ? `future.${award}` : award;
 
 /** Awards offered only to Future Edition divisions. Every other award is available in both editions. */
-export const FUTURE_ONLY_AWARDS = ['inspiration', 'peer'] as const satisfies readonly Award[];
+export const FUTURE_ONLY_AWARDS = [
+  'inspiration',
+  'peer',
+  'coopertition'
+] as const satisfies readonly Award[];
+
+/** Awards whose winners stay eligible for other awards. */
+export const STACKABLE_AWARDS = [
+  'robot-performance',
+  'coopertition'
+] as const satisfies readonly Award[];
+
+/** Awards where each place is shared by two teams (two award rows per place). */
+export const CO_WINNER_AWARDS = ['coopertition'] as const satisfies readonly Award[];
+
+export const getAwardRowsPerPlace = (award: string): 1 | 2 =>
+  (CO_WINNER_AWARDS as readonly string[]).includes(award) ? 2 : 1;
 
 const isInEdition = (award: string, edition: Edition): boolean =>
   edition === 'future' || !(FUTURE_ONLY_AWARDS as readonly string[]).includes(award);

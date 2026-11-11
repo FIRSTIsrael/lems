@@ -3,12 +3,12 @@
 import { useTranslations } from 'next-intl';
 import { Typography, Box, TextField, IconButton, Stack, CircularProgress } from '@mui/material';
 import { Check, Close, Delete } from '@mui/icons-material';
-import { JudgingRoom, RobotGameTable } from '@lems/types/api/admin';
+import { JudgingRoom } from '@lems/types/api/admin';
 import React from 'react';
 
 interface AssetCellProps {
-  asset: RobotGameTable | JudgingRoom;
-  assetType: 'tables' | 'rooms';
+  asset: JudgingRoom;
+  assetType: 'rooms';
   index: number;
   isEditing: boolean;
   editingValue: string;

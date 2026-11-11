@@ -451,6 +451,10 @@
       }
     },
     "events": {
+      "practice-tables": {
+        "teams-per-slot": "Drużyn w jednym terminie",
+        "teams-per-slot-count": "Drużyn w jednym terminie: {count}"
+      },
       "title": "Wydarzenia",
       "layout": {
         "event-page-title": {
@@ -641,6 +645,10 @@
           "random": "Losowo",
           "available-teams": "Dostępne drużyny",
           "no-available-teams": "Brak dostępnych drużyn",
+          "no-matching-teams": "Brak drużyn pasujących do filtrów",
+          "search-placeholder": "Szukaj po numerze, nazwie, instytucji lub mieście",
+          "country": "Kraj",
+          "all-countries": "Wszystkie kraje",
           "registered-teams": "Drużyny do rejestracji ({count})",
           "actions": {
             "register": "Zarejestruj {count} {count, plural, =1 {drużynę} other {drużyny}}",
@@ -746,6 +754,7 @@
           "future-edition": "Edycja przyszłości",
           "save-failed": "Nie udało się zapisać dywizji. Jeśli zmieniono edycję, najpierw usuń nagrody nieobsługiwane w nowej edycji.",
           "edition-locked-tooltip": "Nie można zmienić edycji po wygenerowaniu harmonogramu",
+          "edition-has-practice-tables": "Przed zmianą edycji usuń stoły treningowe tej dywizji.",
           "alerts": {
             "not-enough-divisions": "To wydarzenie nie jest podzielone na dywizje. Utwórz nową dywizję, aby je podzielić."
           }
@@ -803,14 +812,23 @@
         },
         "tables": {
           "title": "Stoły do Robot Game",
-          "add-button": "Dodaj stół",
-          "name-placeholder": "Nazwa stołu",
           "save-button": "Zapisz",
-          "delete-button": "Usuń",
           "empty-state": "Nie dodano jeszcze żadnych stołów",
-          "validation": {
-            "name-required": "Nazwa stołu jest wymagana"
-          }
+          "pair-label": "Para {index}",
+          "summary": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} · {tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}}",
+          "add-pair": "Dodaj parę",
+          "side-a": "Strona A",
+          "side-b": "Strona B",
+          "delete-pair": "Usuń parę",
+          "delete-pair-confirm": "Usunąć oba stoły tej pary i ich sędziów?",
+          "swap": "Zamień…",
+          "swap-title": "Zamień {name} z",
+          "position": "Para {index} · {side}: {name}",
+          "cancel": "Anuluj",
+          "physical-table-label": "Stół {index}",
+          "summary-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} · strony: {tables}",
+          "add-physical-table": "Dodaj stół",
+          "future-hint": "W Edycji przyszłości przy każdym stole grają dwie drużyny, a każda strona ma jednego sędziego."
         },
         "pit-map": {
           "title": "Mapa Pit",
@@ -1027,7 +1045,9 @@
             "ranking-rounds": "Rundy rankingowe",
             "judging-start": "Czas rozpoczęcia sesji sędziowskich",
             "field-start": "Czas rozpoczęcia meczów na polu",
-            "matches-per-round": "Liczba meczów na rundę"
+            "matches-per-round": "Liczba meczów na rundę",
+            "tables-pairs": "{pairs, plural, one {# para} few {# pary} many {# par} other {# pary}} ({tables, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}})",
+            "tables-pairs-future": "{pairs, plural, one {# stół} few {# stoły} many {# stołów} other {# stołu}} (strony: {tables})"
           },
           "settings": {
             "title": "Ustawienia",
@@ -1093,6 +1113,10 @@
             "success": "Harmonogram wygenerowano pomyślnie!",
             "error": "Nie udało się wygenerować harmonogramu: {error}",
             "generating": "Generowanie..."
+          },
+          "draft": {
+            "restored": "Przywrócono niezapisany szkic harmonogramu z tej przeglądarki.",
+            "discard": "Odrzuć szkic"
           }
         },
         "team-swap": {
@@ -1135,6 +1159,7 @@
           "awards-list": "Lista nagród ({count})",
           "no-awards": "Brak skonfigurowanych nagród",
           "no-awards-help": "Użyj przycisku „Dodaj nagrodę opcjonalną”, aby dodać nagrody",
+          "co-winners-hint": "Każde miejsce przyznawane jest dwóm drużynom",
           "add-dialog": {
             "title": "Dodaj nagrodę opcjonalną",
             "select-award": "Wybierz nagrodę",

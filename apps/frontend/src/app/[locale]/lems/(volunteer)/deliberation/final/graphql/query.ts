@@ -18,6 +18,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
       color
 
       field {
+        divisionId
         rankingRoundCount
       }
 
@@ -145,6 +146,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
           coreValues
           optionalAwards
           robotPerformance
+          coopertition
           coreAwardsManualEligibility
           optionalAwardsManualEligibility
         }

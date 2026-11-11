@@ -336,8 +336,8 @@
               "description": "המחוון ממולא כעת"
             },
             "approved": {
-              "label": "אושר",
-              "description": "המחוון הושלם ונשלח"
+              "label": "הושלם",
+              "description": "מילוי המחוון הושלם והועבר לאישור"
             },
             "locked": {
               "label": "נעול",
@@ -401,6 +401,7 @@
         "page-title": "לוח זמנים שולחנות אימונים",
         "time": "שעה",
         "table": "שולחן {number}",
+        "side": "צד {side}",
         "blocked": "לא זמין",
         "available": "פנוי",
         "unavailable": "לא זמין",
@@ -729,8 +730,8 @@
               "description": "המחוון ממולא כעת"
             },
             "approved": {
-              "label": "אושר",
-              "description": "המחוון הושלם ונשלח"
+              "label": "הושלם",
+              "description": "מילוי המחוון הושלם והועבר לאישור"
             },
             "locked": {
               "label": "נעול",
@@ -1515,10 +1516,17 @@
           }
         },
         "anomalies": {
-          "alert-title": "אנומליות בדירוג זוהו",
-          "alert-description": "לכמה קבוצות יש הבדלים משמעותיים בין מיקום הרשימה שלהן לדירוג המחושב.",
-          "higher": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר בתחום {category}",
-          "lower": "קבוצה {teamNumber} דורגה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר בתחום {category}"
+          "button": "הצגת אנומליות בדירוג",
+          "title": "אנומליות בדירוג",
+          "count": "{count, plural, =1 {זוהתה אנומליה אחת} other {זוהו # אנומליות}}",
+          "description": "קבוצות אלו מוקמו ברשימה במרחק של 3 מקומות או יותר מהדירוג לפי ציוני המחוון.",
+          "close": "סגירה",
+          "team": "קבוצה",
+          "picklist": "דורגו",
+          "calculated": "מחושב",
+          "difference": "הפרש",
+          "higher": "מוקמה {difference, plural, =1 {מקום אחד} other {# מקומות}} גבוה יותר מהדירוג המחושב",
+          "lower": "מוקמה {difference, plural, =1 {מקום אחד} other {# מקומות}} נמוך יותר מהדירוג המחושב"
         }
       }
     },
@@ -1545,6 +1553,7 @@
         "clear-all": "נקה הכל",
         "coming-soon": "בקרוב",
         "grid-placeholder": "לוח הזמנים יהיה זמין כאן",
+        "side": "צד {side}",
         "info": "שולחנות: {tables} | משך סלוט: {duration} דקות",
         "time": "שעה",
         "table": "שולחן",

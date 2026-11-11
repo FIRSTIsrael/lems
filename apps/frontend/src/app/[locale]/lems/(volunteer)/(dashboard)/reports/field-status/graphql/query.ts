@@ -10,6 +10,8 @@ export const GET_FIELD_STATUS_DATA: TypedDocumentNode<FieldStatusData, FieldStat
       tables {
         id
         name
+        pairKey
+        side
       }
       field {
         divisionId
@@ -39,6 +41,8 @@ export const GET_FIELD_STATUS_DATA: TypedDocumentNode<FieldStatusData, FieldStat
             table {
               id
               name
+              pairKey
+              side
             }
             queued
             present
