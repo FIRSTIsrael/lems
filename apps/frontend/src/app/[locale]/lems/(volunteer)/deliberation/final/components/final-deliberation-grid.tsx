@@ -14,7 +14,7 @@ import {
   alpha
 } from '@mui/material';
 import { useTranslations } from 'next-intl';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ArrowBack } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { useFinalDeliberation } from '../final-deliberation-context';
@@ -22,7 +22,8 @@ import { ChampionsStage } from './champions/champions-stage';
 import { CoreAwardsStage } from './core-awards/core-awards-stage';
 import { OptionalAwardsStage } from './optional-awards/optional-awards-stage';
 import { ReviewStage } from './review/review-stage';
-import { AnomalyAlert } from './anomaly-alert';
+import { AnomalyPanel } from './anomalies/anomaly-panel';
+import { AnomalyToggleButton } from './anomalies/anomaly-toggle-button';
 
 const STAGES: FinalDeliberationStage[] = ['champions', 'core-awards', 'optional-awards', 'review'];
 
@@ -30,7 +31,8 @@ export const FinalDeliberationGrid: React.FC = () => {
   const t = useTranslations('pages.deliberations.final');
   const theme = useTheme();
   const router = useRouter();
-  const { deliberation, anomalies, manualOptionalAwards } = useFinalDeliberation();
+  const { deliberation, manualOptionalAwards } = useFinalDeliberation();
+  const [anomaliesOpen, setAnomaliesOpen] = useState(false);
 
   const visibleStages = useMemo(() => {
     if (!deliberation) {
@@ -72,49 +74,57 @@ export const FinalDeliberationGrid: React.FC = () => {
           <Typography variant="h6" sx={{ flex: 1, color: 'text.primary' }}>
             {t('title')}
           </Typography>
+          <AnomalyToggleButton
+            open={anomaliesOpen}
+            onToggle={() => setAnomaliesOpen(prev => !prev)}
+          />
         </Toolbar>
       </AppBar>
 
-      {/* Stepper Section - Full Width with Visual Separation */}
-      <Box
-        sx={{
-          width: '100%',
-          backgroundColor: alpha(theme.palette.primary.light, 0.1),
-          borderBottom: `1px solid ${theme.palette.divider}`,
-          py: 2,
-          px: 4,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2
-        }}
-      >
-        <Stepper
-          activeStep={currentStageIndex}
-          sx={{
-            width: '100%',
-            '& .MuiStepLabel-label': {
-              fontSize: { xs: '0.7rem', sm: '0.8rem' },
-              fontWeight: 600
-            },
-            '& .MuiStepConnector-line': {
-              minHeight: 2
-            }
-          }}
-        >
-          {visibleStages.map(stage => (
-            <Step key={stage}>
-              <StepLabel>{t(`stepper.${stage}`)}</StepLabel>
-            </Step>
-          ))}
-        </Stepper>
-        <AnomalyAlert anomalies={anomalies} />
-      </Box>
+      <Box sx={{ flex: 1, display: 'flex', minHeight: 0 }}>
+        <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+          {/* Stepper Section - Full Width with Visual Separation */}
+          <Box
+            sx={{
+              width: '100%',
+              backgroundColor: alpha(theme.palette.primary.light, 0.1),
+              borderBottom: `1px solid ${theme.palette.divider}`,
+              py: 2,
+              px: 4,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2
+            }}
+          >
+            <Stepper
+              activeStep={currentStageIndex}
+              sx={{
+                width: '100%',
+                '& .MuiStepLabel-label': {
+                  fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                  fontWeight: 600
+                },
+                '& .MuiStepConnector-line': {
+                  minHeight: 2
+                }
+              }}
+            >
+              {visibleStages.map(stage => (
+                <Step key={stage}>
+                  <StepLabel>{t(`stepper.${stage}`)}</StepLabel>
+                </Step>
+              ))}
+            </Stepper>
+          </Box>
 
-      {/* Main Content - Flex grow to fill remaining space */}
-      {deliberation?.stage === 'champions' && <ChampionsStage />}
-      {deliberation?.stage === 'core-awards' && <CoreAwardsStage />}
-      {deliberation?.stage === 'optional-awards' && <OptionalAwardsStage />}
-      {deliberation?.stage === 'review' && <ReviewStage />}
+          {/* Main Content - Flex grow to fill remaining space */}
+          {deliberation?.stage === 'champions' && <ChampionsStage />}
+          {deliberation?.stage === 'core-awards' && <CoreAwardsStage />}
+          {deliberation?.stage === 'optional-awards' && <OptionalAwardsStage />}
+          {deliberation?.stage === 'review' && <ReviewStage />}
+        </Box>
+        <AnomalyPanel open={anomaliesOpen} onClose={() => setAnomaliesOpen(false)} />
+      </Box>
     </Box>
   );
 };

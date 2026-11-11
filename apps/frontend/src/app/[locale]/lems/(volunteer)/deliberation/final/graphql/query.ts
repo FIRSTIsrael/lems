@@ -18,6 +18,7 @@ export const GET_FINAL_DELIBERATION: TypedDocumentNode<
       color
 
       field {
+        divisionId
         rankingRoundCount
       }
 
