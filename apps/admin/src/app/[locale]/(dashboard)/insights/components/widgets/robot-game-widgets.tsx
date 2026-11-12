@@ -19,6 +19,7 @@ import {
   ZAxis
 } from 'recharts';
 import { Chip, Grid, LinearProgress, Paper, Stack, Typography } from '@mui/material';
+import { getRankingStrategy } from '@lems/shared/utils';
 import { useRobotGameInsights } from '../../lib/hooks';
 import { formatDuration, formatNumber, formatPercent, round } from '../../lib/format';
 import { ChartCard, StatCard } from '../cards';
@@ -33,9 +34,10 @@ import {
 } from './common';
 
 const INSPECTION_MISSION_ID = 'eib';
-const PRECISION_TOKENS_MISSION_ID = 'pt';
+/** Precision Tokens in Founders Edition scoresheets, Penalties in the Future Edition scoresheet. */
+const PT_MISSION_ID = 'pt';
 
-export const RobotGameStatsWidget: React.FC<WidgetProps> = ({ divisionId, stage }) => {
+export const RobotGameStatsWidget: React.FC<WidgetProps> = ({ divisionId, edition, stage }) => {
   const t = useTranslations('pages.insights.widgets.robot-game-stats');
   const { data, isLoading } = useRobotGameInsights(divisionId, stage);
 
@@ -46,9 +48,9 @@ export const RobotGameStatsWidget: React.FC<WidgetProps> = ({ divisionId, stage 
       subtitle: t('median', { value: formatNumber(data?.scores.median) })
     },
     {
-      title: t('top-scores'),
-      value: formatNumber(data?.topScores.average),
-      subtitle: t('median', { value: formatNumber(data?.topScores.median) })
+      title: t(`ranking-scores.${getRankingStrategy(edition)}`),
+      value: formatNumber(data?.rankingScores.average),
+      subtitle: t('median', { value: formatNumber(data?.rankingScores.median) })
     },
     {
       title: t('highest-score'),
@@ -256,7 +258,7 @@ export const PrecisionTokensWidget: React.FC<WidgetProps> = ({ divisionId, stage
 
   return (
     <ChartCard
-      title={getMissionTitle(PRECISION_TOKENS_MISSION_ID)}
+      title={getMissionTitle(PT_MISSION_ID)}
       description={t('description')}
       loading={isLoading}
       empty={chartData.length === 0}
@@ -270,6 +272,49 @@ export const PrecisionTokensWidget: React.FC<WidgetProps> = ({ divisionId, stage
           <Tooltip
             {...tooltipStyle}
             labelFormatter={value => t('tokens', { count: Number(value) })}
+          />
+          <Legend />
+          <Bar yAxisId="count" dataKey="count" name={t('count')} fill={CHART_COLORS.primary} />
+          <Line
+            yAxisId="score"
+            dataKey="averageScore"
+            name={t('average-score')}
+            stroke={CHART_COLORS.secondary}
+            strokeWidth={2}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </ChartCard>
+  );
+};
+
+export const PenaltiesWidget: React.FC<WidgetProps> = ({ divisionId, stage, season }) => {
+  const t = useTranslations('pages.insights.widgets.penalties');
+  const getMissionTitle = useMissionTitle(season);
+  const { data, isLoading } = useRobotGameInsights(divisionId, stage);
+
+  const chartData = (data?.penalties ?? []).map(row => ({
+    penalties: row.penalties,
+    count: row.count,
+    averageScore: round(row.averageScore, 1)
+  }));
+
+  return (
+    <ChartCard
+      title={getMissionTitle(PT_MISSION_ID)}
+      description={t('description')}
+      loading={isLoading}
+      empty={chartData.length === 0}
+    >
+      <ResponsiveContainer>
+        <ComposedChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+          <XAxis dataKey="penalties" />
+          <YAxis yAxisId="count" allowDecimals={false} />
+          <YAxis yAxisId="score" orientation="right" />
+          <Tooltip
+            {...tooltipStyle}
+            labelFormatter={value => t('penalties', { count: String(value) })}
           />
           <Legend />
           <Bar yAxisId="count" dataKey="count" name={t('count')} fill={CHART_COLORS.primary} />

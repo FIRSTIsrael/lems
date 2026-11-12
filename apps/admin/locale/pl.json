@@ -67,8 +67,12 @@
       "title": "Statystyki",
       "event": "Wydarzenie",
       "division": "Dywizja",
+      "editions": {
+        "founders": "Edycja założycieli",
+        "future": "Edycja przyszłości"
+      },
       "not-completed": "Niezakończone",
-      "no-completed-events": "Nie ma jeszcze zakończonych wydarzeń. Statystyki będą dostępne po oznaczeniu wydarzenia jako zakończonego.",
+      "no-completed-events": "Nie ma jeszcze zakończonych wydarzeń ({edition}). Statystyki będą dostępne po oznaczeniu wydarzenia jako zakończonego.",
       "all-stages": "Wszystkie etapy",
       "no-data": "Brak danych",
       "errors": {
@@ -110,7 +114,10 @@
         "robot-game-stats": {
           "average": "Średni wynik",
           "median": "Mediana: {value}",
-          "top-scores": "Średni najlepszy wynik",
+          "ranking-scores": {
+            "max": "Średni najlepszy wynik",
+            "average": "Średni wynik drużyny"
+          },
           "highest-score": "Najwyższy wynik",
           "std-dev": "Odchylenie standardowe",
           "score-count": "{count, plural, one {# karta punktacji} few {# karty punktacji} other {# kart punktacji}}"
@@ -142,6 +149,12 @@
         "precision-tokens": {
           "description": "Ile żetonów precyzji pozostało na koniec meczów oraz średni wynik dla każdej liczby.",
           "tokens": "Żetony: {count}",
+          "count": "Mecze",
+          "average-score": "Średni wynik"
+        },
+        "penalties": {
+          "description": "Ile kar otrzymały drużyny w każdym meczu oraz średni wynik dla każdej liczby. Trzy lub więcej kar zeruje wynik meczu.",
+          "penalties": "Kary: {count}",
           "count": "Mecze",
           "average-score": "Średni wynik"
         },
@@ -195,8 +208,11 @@
         },
         "robot-correlation": {
           "title": "{design} a {game}",
-          "description": "Średnia ocena z arkusza {design} każdej drużyny w zestawieniu z jej najlepszym wynikiem rankingowym, wraz z linią regresji liniowej. r to współczynnik korelacji Pearsona; R² to część wariancji wyników wyjaśniona przez {design}.",
-          "robot-game": "Najlepszy wynik rankingowy",
+          "description": "Średnia ocena z arkusza {design} każdej drużyny w zestawieniu z jej wynikiem rankingowym ({score}), wraz z linią regresji liniowej. r to współczynnik korelacji Pearsona; R² to część wariancji wyników wyjaśniona przez {design}.",
+          "robot-game": {
+            "max": "Najlepszy wynik rankingowy",
+            "average": "Średni wynik rankingowy"
+          },
           "team-detail": "Projekt {design} · Wynik {score} · Reszta {residual}",
           "strength": {
             "weak": "słaba",

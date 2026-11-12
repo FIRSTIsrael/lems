@@ -52,8 +52,8 @@ import { useExplorerInsights } from '../lib/hooks';
 import { formatDuration, formatNumber, round } from '../lib/format';
 import { ChartCard } from './cards';
 import {
-  CATEGORY_COLORS,
   CHART_COLORS,
+  getCategoryColors,
   WidgetProps,
   tooltipStyle,
   useMissionLabel,
@@ -349,7 +349,8 @@ export const Explorer: React.FC<WidgetProps> = ({ divisionId, edition, season })
                     <Cell
                       key={row.key}
                       fill={
-                        CATEGORY_COLORS[row.key as InsightsJudgingCategory] ?? CHART_COLORS.primary
+                        getCategoryColors(edition)[row.key as InsightsJudgingCategory]?.main ??
+                        CHART_COLORS.primary
                       }
                     />
                   ))}

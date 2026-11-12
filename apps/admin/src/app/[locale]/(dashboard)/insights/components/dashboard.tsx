@@ -2,7 +2,7 @@
 
 import { Grid } from '@mui/material';
 import { WidgetProps } from './widgets/common';
-import { INSIGHTS_DASHBOARDS, INSIGHTS_WIDGETS, InsightsDashboardId } from './widgets/registry';
+import { getDashboardWidgets, INSIGHTS_WIDGETS, InsightsDashboardId } from './widgets/registry';
 
 interface DashboardProps extends WidgetProps {
   dashboard: InsightsDashboardId;
@@ -10,7 +10,7 @@ interface DashboardProps extends WidgetProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ dashboard, ...widgetProps }) => (
   <Grid container spacing={2}>
-    {INSIGHTS_DASHBOARDS[dashboard].map(widgetId => {
+    {getDashboardWidgets(dashboard, widgetProps.edition).map(widgetId => {
       const { component: Widget, size } = INSIGHTS_WIDGETS[widgetId];
       return (
         <Grid key={widgetId} size={size}>

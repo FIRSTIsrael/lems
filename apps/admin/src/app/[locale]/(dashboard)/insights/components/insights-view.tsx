@@ -22,8 +22,7 @@ import {
   ToggleButtonGroup,
   Typography
 } from '@mui/material';
-import { EditionBadge } from '@lems/shared';
-import { getEdition } from '@lems/shared/edition';
+import { Edition, EDITIONS, getEdition, parseEdition } from '@lems/shared/edition';
 import { getScoresheet } from '@lems/shared/scoresheet';
 import { useAwardTranslations } from '@lems/localization';
 import { INSIGHTS_STAGES, InsightsStage } from '@lems/types/api/admin';
@@ -52,9 +51,23 @@ export const InsightsView: React.FC = () => {
     router.replace(`?${params.toString()}`, { scroll: false });
   };
 
-  const completedEvents = events?.filter(event => event.completed) ?? [];
+  // Editions are not comparable (different scoresheets, rubrics and ranking), so insights are
+  // split by edition: an event is listed under every edition one of its divisions uses, and only
+  // the divisions of the selected edition are offered.
+  const editionParam = searchParams.get('edition');
+  const latestCompleted = events?.find(e => e.completed);
+  const edition: Edition = editionParam
+    ? parseEdition(editionParam)
+    : latestCompleted?.divisions[0]
+      ? getEdition(latestCompleted.divisions[0])
+      : 'founders';
+  const editionEvents = (events ?? [])
+    .map(e => ({ ...e, divisions: e.divisions.filter(d => getEdition(d) === edition) }))
+    .filter(e => e.divisions.length > 0);
+  const completedEvents = editionEvents.filter(event => event.completed);
   const event =
-    events?.find(e => e.id === searchParams.get('event') && e.completed) ?? completedEvents[0];
+    editionEvents.find(e => e.id === searchParams.get('event') && e.completed) ??
+    completedEvents[0];
   const division =
     event?.divisions.find(d => d.id === searchParams.get('division')) ?? event?.divisions[0];
   const tab: InsightsTab = TABS.find(tab => tab === searchParams.get('tab')) ?? 'overview';
@@ -63,10 +76,9 @@ export const InsightsView: React.FC = () => {
     stageParam === ALL_STAGES
       ? undefined
       : (INSIGHTS_STAGES.find(s => s === stageParam) ?? 'RANKING');
-  const edition = division ? getEdition(division) : undefined;
   const { getName: getAwardName } = useAwardTranslations(edition);
   // Resolved through the scoresheet so seasons without their own scoresheet fall back like everywhere else
-  const season = edition ? getScoresheet(edition, event?.seasonSlug).season : '';
+  const season = getScoresheet(edition, event?.seasonSlug).season;
 
   if (error) return <Alert severity="error">{t('errors.load-events')}</Alert>;
 
@@ -79,9 +91,25 @@ export const InsightsView: React.FC = () => {
           <Skeleton variant="rounded" height={40} />
         ) : (
           <Grid container spacing={2} sx={{ alignItems: 'center' }}>
+            <Grid size={{ xs: 12, md: 'auto' }}>
+              <ToggleButtonGroup
+                size="small"
+                exclusive
+                value={edition}
+                onChange={(_, value: Edition | null) =>
+                  value && setParams({ edition: value, event: null, division: null })
+                }
+              >
+                {EDITIONS.map(e => (
+                  <ToggleButton key={e} value={e}>
+                    {t(`editions.${e}`)}
+                  </ToggleButton>
+                ))}
+              </ToggleButtonGroup>
+            </Grid>
             <Grid size={{ xs: 12, md: 6, lg: 3 }}>
               <Autocomplete
-                options={events ?? []}
+                options={editionEvents}
                 value={event ?? null}
                 groupBy={option => option.seasonName ?? ''}
                 getOptionLabel={option => option.name}
@@ -120,7 +148,6 @@ export const InsightsView: React.FC = () => {
                             sx={{ width: 12, height: 12, borderRadius: '50%', bgcolor: d.color }}
                           />
                           <span>{d.name}</span>
-                          <EditionBadge isFuture={d.futureEdition} />
                         </Stack>
                       </MenuItem>
                     ))}
@@ -180,7 +207,11 @@ export const InsightsView: React.FC = () => {
         )}
       </Paper>
 
-      {!isLoading && !event && <Alert severity="info">{t('no-completed-events')}</Alert>}
+      {!isLoading && !event && (
+        <Alert severity="info">
+          {t('no-completed-events', { edition: t(`editions.${edition}`) })}
+        </Alert>
+      )}
 
       {event && division && (
         <>
@@ -188,7 +219,7 @@ export const InsightsView: React.FC = () => {
             <Explorer
               key={division.id}
               divisionId={division.id}
-              edition={getEdition(division)}
+              edition={edition}
               season={season}
             />
           ) : (
@@ -196,7 +227,7 @@ export const InsightsView: React.FC = () => {
               key={`${division.id}-${tab}`}
               dashboard={tab}
               divisionId={division.id}
-              edition={getEdition(division)}
+              edition={edition}
               season={season}
               stage={stage}
             />

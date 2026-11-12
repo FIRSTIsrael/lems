@@ -44,15 +44,14 @@ import {
   useRubricsGeneralTranslations
 } from '@lems/localization';
 import { rubricColumns } from '@lems/shared/rubrics';
+import { formatHeadlineScore, getRankingStrategy } from '@lems/shared/utils';
 import { useJudgingInsights } from '../../lib/hooks';
 import { formatDuration, formatNumber, round } from '../../lib/format';
 import { ChartCard, StatCard } from '../cards';
 import {
-  CATEGORY_COLORS,
-  CATEGORY_LEVEL_COLORS,
-  CATEGORY_LIGHT_COLORS,
   CHART_COLORS,
   categoryAxisProps,
+  getCategoryColors,
   WidgetProps,
   tooltipStyle,
   useRubricFieldLabel
@@ -105,6 +104,7 @@ export const JudgingStatsWidget: React.FC<WidgetProps> = ({ divisionId }) => {
 export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.category-scores');
   const { getCategory } = useJudgingCategoryTranslations(edition);
+  const colors = getCategoryColors(edition);
   const { data, isLoading } = useJudgingInsights(divisionId);
 
   const chartData = (data?.categories ?? []).map(category => ({
@@ -130,12 +130,12 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId, editio
           {/* Bars are colored per category; the neutral fills only key the legend (dark = average, light = median) */}
           <Bar dataKey="average" name={t('average')} fill={grey[600]} radius={[4, 4, 0, 0]}>
             {chartData.map(entry => (
-              <Cell key={entry.category} fill={CATEGORY_COLORS[entry.category]} />
+              <Cell key={entry.category} fill={colors[entry.category].main} />
             ))}
           </Bar>
           <Bar dataKey="median" name={t('median')} fill={grey[300]} radius={[4, 4, 0, 0]}>
             {chartData.map(entry => (
-              <Cell key={entry.category} fill={CATEGORY_LIGHT_COLORS[entry.category]} />
+              <Cell key={entry.category} fill={colors[entry.category].light} />
             ))}
           </Bar>
         </BarChart>
@@ -147,6 +147,7 @@ export const CategoryScoresWidget: React.FC<WidgetProps> = ({ divisionId, editio
 export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId, edition }) => {
   const t = useTranslations('pages.insights.widgets.room-scores');
   const { getCategory } = useJudgingCategoryTranslations(edition);
+  const colors = getCategoryColors(edition);
   const { data, isLoading } = useJudgingInsights(divisionId);
 
   const chartData = (data?.rooms ?? []).map(room => ({
@@ -176,7 +177,7 @@ export const RoomScoresWidget: React.FC<WidgetProps> = ({ divisionId, edition })
               key={category}
               dataKey={category}
               name={getCategory(category)}
-              fill={CATEGORY_COLORS[category]}
+              fill={colors[category].main}
               radius={[4, 4, 0, 0]}
             />
           ))}
@@ -245,9 +246,12 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
   const { getCategory } = useJudgingCategoryTranslations(edition);
   const { getName: getAwardName } = useAwardTranslations(edition);
   const robotDesign = getCategory('robot-design');
-  const names = { design: robotDesign, game: getAwardName('robot-performance') };
+  const strategy = getRankingStrategy(edition);
+  const robotGame = t(`robot-game.${strategy}`);
+  const names = { design: robotDesign, game: getAwardName('robot-performance'), score: robotGame };
   const { data, isLoading } = useJudgingInsights(divisionId);
   const points = data?.robotCorrelation.points ?? [];
+  const formatScore = (score: number) => formatHeadlineScore(score, strategy);
   const regression = data?.robotCorrelation.regression ?? null;
 
   const lineData = regression
@@ -272,7 +276,7 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
               primary={`#${team.number} ${team.name}`}
               secondary={t('team-detail', {
                 design: formatNumber(team.robotDesign, 2),
-                score: team.robotGame,
+                score: formatScore(team.robotGame),
                 residual: formatNumber(team.residual, 0)
               })}
             />
@@ -318,8 +322,8 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
               <YAxis
                 type="number"
                 dataKey="robotGame"
-                name={t('robot-game')}
-                label={{ value: t('robot-game'), angle: -90, position: 'insideLeft' }}
+                name={robotGame}
+                label={{ value: robotGame, angle: -90, position: 'insideLeft' }}
               />
               <ZAxis range={[60, 60]} />
               <Tooltip
@@ -333,7 +337,7 @@ export const RobotCorrelationWidget: React.FC<WidgetProps> = ({ divisionId, edit
                       <Typography variant="body2">
                         {t('team-detail', {
                           design: formatNumber(point.robotDesign, 2),
-                          score: point.robotGame,
+                          score: formatScore(point.robotGame),
                           residual: formatNumber(point.residual, 0)
                         })}
                       </Typography>
@@ -421,7 +425,7 @@ export const FieldDistributionWidget: React.FC<WidgetProps> = ({ divisionId, edi
               dataKey={`level${level}`}
               stackId="levels"
               name={getColumnTitle(rubricColumns[level - 1])}
-              fill={CATEGORY_LEVEL_COLORS[category][level - 1]}
+              fill={getCategoryColors(edition)[category].levels[level - 1]}
             />
           ))}
         </BarChart>

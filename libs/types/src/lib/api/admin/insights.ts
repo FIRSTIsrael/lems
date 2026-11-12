@@ -129,7 +129,11 @@ export type InsightsCycleTime = z.infer<typeof InsightsCycleTimeSchema>;
 
 export const InsightsRobotGameResponseSchema = z.object({
   scores: InsightsSummarySchema,
-  topScores: InsightsSummarySchema,
+  /**
+   * Each team's ranking score, using the division's edition strategy:
+   * best score in Founders Edition, average score in Future Edition.
+   */
+  rankingScores: InsightsSummarySchema,
   highestScore: InsightsTeamRefSchema.extend({ score: z.number() }).nullable(),
   scoresByRound: z.array(
     z.object({
@@ -165,8 +169,13 @@ export const InsightsRobotGameResponseSchema = z.object({
       failures: z.array(InsightsTeamRefSchema.extend({ count: z.number() }))
     })
     .nullable(),
+  /** Founders Edition only: precision tokens left at the end of each match. */
   precisionTokens: z
     .array(z.object({ tokens: z.number(), count: z.number(), averageScore: nullableNumber }))
+    .nullable(),
+  /** Future Edition only: penalties received in each match ('0', '1', '2', '3+'). */
+  penalties: z
+    .array(z.object({ penalties: z.string(), count: z.number(), averageScore: nullableNumber }))
     .nullable(),
   consistency: z.object({
     averageRelStdDev: nullableNumber,

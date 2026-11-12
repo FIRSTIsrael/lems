@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import { InsightsOverviewTeam } from '@lems/types/api/admin';
 import { useJudgingCategoryTranslations } from '@lems/localization';
+import { getRankingStrategy } from '@lems/shared/utils';
 import { useOverviewInsights } from '../../lib/hooks';
 import { formatDuration, formatNumber } from '../../lib/format';
 import { WidgetProps } from './common';
@@ -202,6 +203,11 @@ export const TeamsTableWidget: React.FC<WidgetProps> = ({ divisionId, edition })
     valueFormatter: (value: number | null) => formatNumber(value, digits)
   });
 
+  const scoreColumns = {
+    max: numberColumn('maxScore', t('max-score'), 0),
+    average: numberColumn('averageScore', t('average-score'), 1)
+  };
+
   const columns: GridColDef<InsightsOverviewTeam>[] = [
     {
       field: 'rank',
@@ -219,8 +225,10 @@ export const TeamsTableWidget: React.FC<WidgetProps> = ({ divisionId, edition })
     },
     { field: 'name', headerName: t('name'), flex: 1, minWidth: 160 },
     { field: 'affiliation', headerName: t('affiliation'), flex: 1, minWidth: 160 },
-    numberColumn('maxScore', t('max-score'), 0),
-    numberColumn('averageScore', t('average-score'), 1),
+    // The score the ranking is based on comes first: best score in Founders, average in Future
+    ...(getRankingStrategy(edition) === 'average'
+      ? [scoreColumns.average, scoreColumns.max]
+      : [scoreColumns.max, scoreColumns.average]),
     numberColumn('innovation-project', getCategory('innovation-project')),
     numberColumn('robot-design', getCategory('robot-design')),
     numberColumn('core-values', getCategory('core-values')),

@@ -1,4 +1,8 @@
-import { compareScoreArrays } from '@lems/shared/utils';
+import {
+  compareRobotGameScores,
+  getRankingStrategy,
+  getRobotGameHeadlineScore
+} from '@lems/shared/utils';
 import { ScoresheetError } from '@lems/shared/scoresheet';
 import { getCvFieldIds } from '@lems/shared/rubrics';
 import {
@@ -23,7 +27,10 @@ import {
 } from './stats';
 
 const INSPECTION_MISSION_ID = 'eib';
-const PRECISION_TOKENS_MISSION_ID = 'pt';
+/** Precision Tokens in Founders Edition scoresheets, Penalties in the Future Edition scoresheet. */
+const PT_MISSION_ID = 'pt';
+/** Scoresheet entries that are not missions teams attempt (inspection, tokens, penalties). */
+const NON_MISSION_IDS = [INSPECTION_MISSION_ID, PT_MISSION_ID];
 
 /**
  * Calculates the points earned in a single mission.
@@ -50,6 +57,10 @@ const filterByStage = (scoresheets: ScoresheetRecord[], stage?: InsightsStage) =
 
 const teamRef = (data: DivisionInsightsData, teamId: string) => data.teams.get(teamId)!;
 
+/** A team's ranking score: best score in Founders Edition, average score in Future Edition. */
+const rankingScore = (data: DivisionInsightsData, scores: number[]): number | null =>
+  scores.length === 0 ? null : getRobotGameHeadlineScore(scores, getRankingStrategy(data.edition));
+
 // ---------------------------------------------------------------------------
 // Overview
 // ---------------------------------------------------------------------------
@@ -59,13 +70,15 @@ export const computeOverview = (data: DivisionInsightsData): InsightsOverview =>
   const scoresByTeam = groupBy(ranking, s => s.teamId);
   const rubricsByTeam = groupBy(data.rubrics, r => r.teamId);
 
+  const strategy = getRankingStrategy(data.edition);
+  const compare = (a: number[], b: number[]) => compareRobotGameScores(a, b, strategy);
   const rankedTeams = [...scoresByTeam.entries()]
     .map(([teamId, sheets]) => ({ teamId, scores: sheets.map(s => s.score) }))
-    .sort((a, b) => compareScoreArrays(a.scores, b.scores));
+    .sort((a, b) => compare(a.scores, b.scores));
   const ranks = new Map<string, number>();
   rankedTeams.forEach((team, index) => {
     const previous = rankedTeams[index - 1];
-    const tied = previous && compareScoreArrays(team.scores, previous.scores) === 0;
+    const tied = previous && compare(team.scores, previous.scores) === 0;
     ranks.set(team.teamId, tied ? ranks.get(previous.teamId)! : index + 1);
   });
 
@@ -161,7 +174,13 @@ export const computeRobotGame = (
   const scoresheets = filterByStage(data.scoresheets, stage);
   const scoresByTeam = groupBy(scoresheets, s => s.teamId);
 
-  const topScores = [...scoresByTeam.values()].map(sheets => Math.max(...sheets.map(s => s.score)));
+  const rankingScores = [...scoresByTeam.values()].map(
+    sheets =>
+      rankingScore(
+        data,
+        sheets.map(s => s.score)
+      ) as number
+  );
   const best = scoresheets.reduce<ScoresheetRecord | null>(
     (top, s) => (!top || s.score > top.score ? s : top),
     null
@@ -192,7 +211,7 @@ export const computeRobotGame = (
     .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
 
   const missions = data.scoresheetSchema.missions
-    .filter(m => m.id.startsWith('m'))
+    .filter(m => !NON_MISSION_IDS.includes(m.id))
     .map(mission => {
       const points = scoresheets
         .map(s => getMissionPoints(data, s, mission.id))
@@ -218,21 +237,32 @@ export const computeRobotGame = (
     .sort((a, b) => b.count - a.count || a.number - b.number);
   const inspectedTeams = scoresByTeam.size;
 
-  const hasPrecisionTokens = data.scoresheetSchema.missions.some(
-    m => m.id === PRECISION_TOKENS_MISSION_ID
-  );
-  const precisionTokens = [
+  // The 'pt' entry is the same clause-per-match distribution in both editions, but it means
+  // precision tokens left in Founders Edition and penalties received in Future Edition.
+  const ptMission = data.scoresheetSchema.missions.find(m => m.id === PT_MISSION_ID);
+  const ptDistribution = [
     ...groupBy(
-      scoresheets.filter(s => s.missions[PRECISION_TOKENS_MISSION_ID]?.[0] !== null),
-      s => Number(s.missions[PRECISION_TOKENS_MISSION_ID][0])
+      scoresheets.filter(s => s.missions[PT_MISSION_ID]?.[0] != null),
+      s => String(s.missions[PT_MISSION_ID][0])
     ).entries()
-  ]
-    .map(([tokens, sheets]) => ({
-      tokens,
-      count: sheets.length,
-      averageScore: mean(sheets.map(s => s.score))
-    }))
-    .sort((a, b) => a.tokens - b.tokens);
+  ].map(([value, sheets]) => ({
+    value,
+    count: sheets.length,
+    averageScore: mean(sheets.map(s => s.score))
+  }));
+  const ptOptions = ptMission?.clauses[0]?.options ?? [];
+  const ptOrder = (value: string) =>
+    ptOptions.includes(value) ? ptOptions.indexOf(value) : Number(value);
+  ptDistribution.sort((a, b) => ptOrder(a.value) - ptOrder(b.value));
+
+  const precisionTokens =
+    ptMission && data.edition === 'founders'
+      ? ptDistribution.map(({ value, ...row }) => ({ tokens: Number(value), ...row }))
+      : null;
+  const penalties =
+    ptMission && data.edition === 'future'
+      ? ptDistribution.map(({ value, ...row }) => ({ penalties: value, ...row }))
+      : null;
 
   const consistencyRows = [...scoresByTeam.entries()]
     .map(([teamId, sheets]) => {
@@ -263,7 +293,7 @@ export const computeRobotGame = (
 
   return {
     scores: summarize(scoresheets.map(s => s.score)),
-    topScores: summarize(topScores),
+    rankingScores: summarize(rankingScores),
     highestScore: best ? { ...teamRef(data, best.teamId), score: best.score } : null,
     scoresByRound,
     tables,
@@ -277,7 +307,8 @@ export const computeRobotGame = (
           failures: inspectionFailures
         }
       : null,
-    precisionTokens: hasPrecisionTokens ? precisionTokens : null,
+    precisionTokens,
+    penalties,
     consistency: {
       averageRelStdDev: mean(
         consistencyRows.filter(r => r.relStdDev !== null).map(r => r.relStdDev as number)
@@ -346,13 +377,14 @@ export const computeJudging = (data: DivisionInsightsData): InsightsJudging => {
     for (const award of awards) awardCounts.set(award, (awardCounts.get(award) ?? 0) + 1);
   }
 
-  // Robot design (judging) -> robot game (field) correlation, using each team's best ranking score
+  // Robot design (judging) -> robot game (field) correlation, using each team's ranking score
   const correlationBase = [...data.teams.values()]
     .map(team => {
       const robotDesign = data.rubrics.find(
         r => r.teamId === team.teamId && r.category === 'robot-design'
       )?.average;
-      const robotGame = max(
+      const robotGame = rankingScore(
+        data,
         data.scoresheets
           .filter(s => s.teamId === team.teamId && s.stage === 'RANKING')
           .map(s => s.score)

@@ -2,7 +2,7 @@
 
 import { useTranslations } from 'next-intl';
 import { Color } from '@mui/material';
-import { blue, green, grey, red } from '@mui/material/colors';
+import { blue, green, grey, orange, red } from '@mui/material/colors';
 import { Edition } from '@lems/shared/edition';
 import { getRubrics } from '@lems/shared/rubrics';
 import { useJudgingCategoryTranslations } from '@lems/localization';
@@ -19,31 +19,40 @@ export interface WidgetProps {
 }
 
 /**
- * Judging categories keep their established colors across LEMS (Innovation Project - blue,
- * Robot Design - green, Core Values - red), so category charts can be read without a legend.
+ * Judging categories keep their established colors across LEMS, so category charts can be read
+ * without a legend: Innovation Project - blue, Core Values - red, and Robot Design - green in
+ * Founders Edition / Engineering Design - orange in Future Edition (matching `getRubricColors`).
  */
-const CATEGORY_HUES: Record<InsightsJudgingCategory, Color> = {
-  'innovation-project': blue,
-  'robot-design': green,
-  'core-values': red
+const CATEGORY_HUES: Record<Edition, Record<InsightsJudgingCategory, Color>> = {
+  founders: { 'innovation-project': blue, 'robot-design': green, 'core-values': red },
+  future: { 'innovation-project': blue, 'robot-design': orange, 'core-values': red }
 };
 
-const mapCategories = (getColor: (hue: Color) => string) =>
-  Object.fromEntries(
-    Object.entries(CATEGORY_HUES).map(([category, hue]) => [category, getColor(hue)])
-  ) as Record<InsightsJudgingCategory, string>;
+export interface CategoryColors {
+  /** Primary data color (e.g. averages). */
+  main: string;
+  /** Secondary data color (e.g. medians). */
+  light: string;
+  /** Sequential scale from Beginning (lightest) to Exceeds (darkest). */
+  levels: [string, string, string, string];
+}
 
-export const CATEGORY_COLORS = mapCategories(hue => hue[400]);
+const buildCategoryColors = (hue: Color): CategoryColors => ({
+  main: hue[400],
+  light: hue[200],
+  levels: [hue[100], hue[300], hue[500], hue[800]]
+});
 
-export const CATEGORY_LIGHT_COLORS = mapCategories(hue => hue[200]);
-
-/** Sequential scale per category, from Beginning (lightest) to Exceeds (darkest). */
-export const CATEGORY_LEVEL_COLORS = Object.fromEntries(
-  Object.entries(CATEGORY_HUES).map(([category, hue]) => [
-    category,
-    [hue[100], hue[300], hue[500], hue[800]]
-  ])
-) as Record<InsightsJudgingCategory, string[]>;
+export const getCategoryColors = (
+  edition: Edition
+): Record<InsightsJudgingCategory, CategoryColors> => {
+  const hues = CATEGORY_HUES[edition];
+  return {
+    'innovation-project': buildCategoryColors(hues['innovation-project']),
+    'robot-design': buildCategoryColors(hues['robot-design']),
+    'core-values': buildCategoryColors(hues['core-values'])
+  };
+};
 
 /**
  * Generic data colors, built from the admin theme's primary color so charts match the rest of the app.

@@ -67,8 +67,12 @@
       "title": "Insights",
       "event": "Event",
       "division": "Division",
+      "editions": {
+        "founders": "Founders Edition",
+        "future": "Future Edition"
+      },
       "not-completed": "Not completed",
-      "no-completed-events": "There are no completed events yet. Insights become available once an event is marked as completed.",
+      "no-completed-events": "There are no completed {edition} events yet. Insights become available once an event is marked as completed.",
       "all-stages": "All stages",
       "no-data": "No data available",
       "errors": {
@@ -110,7 +114,10 @@
         "robot-game-stats": {
           "average": "Average score",
           "median": "Median: {value}",
-          "top-scores": "Average top score",
+          "ranking-scores": {
+            "max": "Average best score",
+            "average": "Average team score"
+          },
           "highest-score": "Highest score",
           "std-dev": "Standard deviation",
           "score-count": "{count, plural, one {# scoresheet} other {# scoresheets}}"
@@ -142,6 +149,12 @@
         "precision-tokens": {
           "description": "How many precision tokens were left at the end of matches, and the average score for each.",
           "tokens": "{count} tokens",
+          "count": "Matches",
+          "average-score": "Average score"
+        },
+        "penalties": {
+          "description": "How many penalties teams received in each match, and the average score for each. Three or more penalties reduce the match score to 0.",
+          "penalties": "Penalties: {count}",
           "count": "Matches",
           "average-score": "Average score"
         },
@@ -195,8 +208,11 @@
         },
         "robot-correlation": {
           "title": "{design} vs. {game}",
-          "description": "Each team's average {design} rubric score vs. its best ranking score, with a linear regression line. r is the Pearson correlation; R² is the share of score variance explained by {design}.",
-          "robot-game": "Best ranking score",
+          "description": "Each team's average {design} rubric score vs. its ranking score ({score}), with a linear regression line. r is the Pearson correlation; R² is the share of score variance explained by {design}.",
+          "robot-game": {
+            "max": "Best ranking score",
+            "average": "Average ranking score"
+          },
           "team-detail": "Design {design} · Score {score} · Residual {residual}",
           "strength": {
             "weak": "weak",

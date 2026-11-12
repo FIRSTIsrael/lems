@@ -1,6 +1,7 @@
 'use client';
 
 import { GridSize } from '@mui/material';
+import { Edition } from '@lems/shared/edition';
 import { WidgetProps } from './common';
 import { OverviewStatsWidget, TeamsTableWidget } from './overview-widgets';
 import {
@@ -8,6 +9,7 @@ import {
   InspectionWidget,
   MatchDelaysWidget,
   MissionSuccessWidget,
+  PenaltiesWidget,
   PrecisionTokensWidget,
   RobotConsistencyWidget,
   RobotGameStatsWidget,
@@ -29,6 +31,8 @@ type ResponsiveSize = { xs?: GridSize; md?: GridSize; lg?: GridSize };
 interface WidgetDefinition {
   component: React.FC<WidgetProps>;
   size: ResponsiveSize;
+  /** Editions the widget applies to. Omitted means all editions. */
+  editions?: Edition[];
 }
 
 const FULL: ResponsiveSize = { xs: 12 };
@@ -45,8 +49,9 @@ export const INSIGHTS_WIDGETS = {
   'scores-by-round': { component: ScoresByRoundWidget, size: HALF },
   'scores-per-table': { component: ScoresPerTableWidget, size: HALF },
   'mission-success': { component: MissionSuccessWidget, size: FULL },
-  inspection: { component: InspectionWidget, size: HALF },
-  'precision-tokens': { component: PrecisionTokensWidget, size: HALF },
+  inspection: { component: InspectionWidget, size: HALF, editions: ['founders'] },
+  'precision-tokens': { component: PrecisionTokensWidget, size: HALF, editions: ['founders'] },
+  penalties: { component: PenaltiesWidget, size: HALF, editions: ['future'] },
   'cycle-times': { component: CycleTimesWidget, size: HALF },
   'match-delays': { component: MatchDelaysWidget, size: HALF },
   'robot-consistency': { component: RobotConsistencyWidget, size: FULL },
@@ -71,6 +76,7 @@ export const INSIGHTS_DASHBOARDS = {
     'scores-per-table',
     'mission-success',
     'precision-tokens',
+    'penalties',
     'match-delays',
     'robot-consistency'
   ],
@@ -86,3 +92,9 @@ export const INSIGHTS_DASHBOARDS = {
 } satisfies Record<string, InsightsWidgetId[]>;
 
 export type InsightsDashboardId = keyof typeof INSIGHTS_DASHBOARDS;
+
+export const getDashboardWidgets = (dashboard: InsightsDashboardId, edition: Edition) =>
+  INSIGHTS_DASHBOARDS[dashboard].filter(widgetId => {
+    const { editions } = INSIGHTS_WIDGETS[widgetId] as WidgetDefinition;
+    return !editions || editions.includes(edition);
+  });
