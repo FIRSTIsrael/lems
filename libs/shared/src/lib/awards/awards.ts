@@ -120,7 +120,8 @@ export const FUTURE_ONLY_AWARDS = [
 /** Awards whose winners stay eligible for other awards. */
 export const STACKABLE_AWARDS = [
   'robot-performance',
-  'coopertition'
+  'coopertition',
+  'advancement'
 ] as const satisfies readonly Award[];
 
 /** Awards where each place is shared by two teams (two award rows per place). */
