@@ -10,7 +10,7 @@ export const pairDividerSx: Exclude<
 > = {
   borderInlineStartWidth: 2,
   borderInlineStartStyle: 'solid',
-  borderInlineStartColor: 'divider'
+  borderInlineStartColor: theme => theme.palette.divider
 };
 
 interface TablePairOutlineProps {
