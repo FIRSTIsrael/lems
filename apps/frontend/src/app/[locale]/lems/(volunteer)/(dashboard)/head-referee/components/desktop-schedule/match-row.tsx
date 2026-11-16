@@ -52,7 +52,7 @@ export function MatchRow({
       ref={rowRef}
       hover
       sx={{
-        backgroundColor: isActive ? 'primary.light' : 'background.paper',
+        backgroundColor: isActive ? '#E9ECF7' : 'background.paper',
         '&:last-child td': { border: 0 },
         '& td': { py: 2 }
       }}
