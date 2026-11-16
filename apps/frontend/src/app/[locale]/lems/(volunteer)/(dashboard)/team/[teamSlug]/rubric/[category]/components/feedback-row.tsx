@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
 import { useTranslations } from 'next-intl';
 import toast from 'react-hot-toast';
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { getRubricColors } from '@lems/shared/rubrics';
 import { useEdition } from '../../../../../../hooks/use-edition';
 import { useRubric } from '../rubric-context';
 
@@ -14,34 +15,30 @@ interface FeedbackRowProps {
   disabled?: boolean;
 }
 
-const colors: { [key: string]: string } = {
-  'core-values': '#F5DAD4',
-  'innovation-project': '#D3DAED',
-  'robot-design': '#DAE8D8'
-};
-
 const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = false }) => {
   const t = useTranslations('pages.rubric');
 
-  const { getFeedbackTitle } = useRubricsGeneralTranslations(useEdition());
+  const edition = useEdition();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
   const { rubric, updateFeedback } = useRubric();
 
-  const [feedback, setFeedback] = useState(
-    rubric.data?.feedback || {
-      greatJob: '',
-      thinkAbout: ''
-    }
-  );
+  const contextFeedback = {
+    greatJob: rubric.data?.feedback?.greatJob || '',
+    thinkAbout: rubric.data?.feedback?.thinkAbout || ''
+  };
+  const [feedback, setFeedback] = useState(contextFeedback);
+  const [syncedFeedback, setSyncedFeedback] = useState(contextFeedback);
 
-  useEffect(() => {
-    // Sync local state with context changes -> It's OK
-    setFeedback({
-      greatJob: rubric.data?.feedback?.greatJob || '',
-      thinkAbout: rubric.data?.feedback?.thinkAbout || ''
-    });
-  }, [rubric.data?.feedback?.greatJob, rubric.data?.feedback?.thinkAbout]);
+  // Sync local state with context changes -> It's OK
+  if (
+    syncedFeedback.greatJob !== contextFeedback.greatJob ||
+    syncedFeedback.thinkAbout !== contextFeedback.thinkAbout
+  ) {
+    setSyncedFeedback(contextFeedback);
+    setFeedback(contextFeedback);
+  }
 
   const handleFeedbackBlur = useCallback(
     (field: 'greatJob' | 'thinkAbout', value: string) => {
@@ -72,7 +69,7 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled = f
             colSpan={2}
             align="center"
             sx={{
-              backgroundColor: colors[category],
+              backgroundColor: getRubricColors(edition, category).section,
               padding: '0.75em',
               fontWeight: 600,
               borderRight: index === 0 ? '1px solid rgba(0,0,0,0.2)' : 'none',

@@ -2,6 +2,7 @@
 
 import { useRubricsGeneralTranslations } from '@lems/localization';
 import { JudgingCategory } from '@lems/types/judging';
+import { getRubricColors } from '@lems/shared/rubrics';
 import { TableRow, TableCell, Typography, TextField } from '@mui/material';
 import { useToolEdition } from '../../../hooks/use-tool-edition';
 import { useRubricContext } from '../rubric-context';
@@ -11,16 +12,11 @@ interface FeedbackRowProps {
   disabled?: boolean;
 }
 
-const colors: { [key: string]: string } = {
-  'core-values': '#F5DAD4',
-  'innovation-project': '#D3DAED',
-  'robot-design': '#DAE8D8'
-};
-
 const feedbackFields = ['greatJob', 'thinkAbout'] as const;
 
 export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) => {
-  const { getFeedbackTitle } = useRubricsGeneralTranslations(useToolEdition());
+  const edition = useToolEdition();
+  const { getFeedbackTitle } = useRubricsGeneralTranslations(edition);
   const { rubric, updateRubric } = useRubricContext();
 
   const handleFeedbackUpdate = async (field: 'greatJob' | 'thinkAbout', value: string) => {
@@ -49,7 +45,7 @@ export const FeedbackRow: React.FC<FeedbackRowProps> = ({ category, disabled }) 
             colSpan={2}
             align="center"
             sx={{
-              backgroundColor: colors[category],
+              backgroundColor: getRubricColors(edition, category).section,
               padding: '0.75em',
               fontWeight: 600,
               borderRight: index === 0 ? '1px solid rgba(0,0,0,0.2)' : 'none',
